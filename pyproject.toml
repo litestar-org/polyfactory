@@ -1,0 +1,53 @@
+[tool.poetry]
+name = "pydantic-factories"
+version = "0.1.0"
+description = "Easy data mocking and fixture generation for pydantic based models"
+authors = ["Na'aman Hirschfeld <Naaman.Hirschfeld@sprylab.com>"]
+license = "MIT"
+
+[tool.poetry.dependencies]
+python = ">=3.7,<4.0"
+pydantic = "*"
+faker = "*"
+
+[tool.poetry.dev-dependencies]
+pytest = "*"
+pre-commit = "*"
+hypothesis = "*"
+beanie = "*"
+fastapi = "*"
+
+[build-system]
+requires = ["poetry-core>=1.0.0"]
+build-backend = "poetry.core.masonry.api"
+
+[tool.black]
+line-length = 120
+include = '\.pyi?$'
+
+[tool.isort]
+profile = "black"
+multi_line_output = 3
+
+[tool.pylint.MESSAGE_CONTROL]
+disable = ["fixme"]
+enable = "useless-suppression"
+
+[tool.pylint.REPORTS]
+msg-template = "{path}:{line}: [{msg_id}({symbol}), {obj}] {msg}"
+reports = "no"
+
+[tool.pylint.FORMAT]
+max-line-length = "120"
+
+[tool.pylint.VARIABLES]
+ignored-argument-names = "args|kwargs|_|__"
+
+[tool.pylint.BASIC]
+good-names = "_,i,e,mm,yy,T"
+
+[tool.mypy]
+plugins = ["pydantic.mypy"]
+warn_unused_ignores = true
+warn_redundant_casts = true
+strict_optional = true
