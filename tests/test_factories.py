@@ -87,6 +87,11 @@ def test_merges_defaults_with_kwargs():
     assert second_obj.birthday == PersonFactory.birthday
 
 
+def test_respects_none_overrides():
+    result = PersonFactory().build(hobbies=None)
+    assert result.hobbies is None
+
+
 def test_uses_faker_to_set_values_when_none_available_on_class():
     result = PetFactory().build()
     assert isinstance(result.name, str)
