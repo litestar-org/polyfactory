@@ -17,6 +17,8 @@
       <excludeFolder url="file://$MODULE_DIR$/.idea/azure" />
       <excludeFolder url="file://$MODULE_DIR$/pydantic_factories/.hypothesis" />
       <excludeFolder url="file://$MODULE_DIR$/tests/.hypothesis" />
+      <excludeFolder url="file://$MODULE_DIR$/.hypothesis" />
+      <excludeFolder url="file://$MODULE_DIR$/.pytest_cache" />
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />

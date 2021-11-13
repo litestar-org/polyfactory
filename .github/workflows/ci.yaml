@@ -52,7 +52,7 @@ jobs:
       - name: Set pythonpath
         run: echo "PYTHONPATH=$PWD" >> $GITHUB_ENV
       - name: Test
-        run: poetry run pytest --cov=pydantic-factories
+        run: poetry run pytest
   coverage:
     needs: test
     runs-on: ubuntu-latest
@@ -78,7 +78,7 @@ jobs:
       - name: Set pythonpath
         run: echo "PYTHONPATH=$PWD" >> $GITHUB_ENV
       - name: Test
-        run: poetry run pytest --cov=pydantic-factories --cov-report=xml
+        run: poetry run pytest --cov=pydantic_factories --cov-report=xml
       - name: SonarCloud Scan
         uses: sonarsource/sonarcloud-github-action@master
         env:

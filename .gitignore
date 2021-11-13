@@ -3,7 +3,9 @@
 .hypothesis/
 .mypy_cache/
 .idea/azure/
+__pycache__/
 
 # files
 .DS_Store
 coverage.*
+.coverage
