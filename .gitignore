@@ -6,3 +6,4 @@
 
 # files
 .DS_Store
+coverage.*
