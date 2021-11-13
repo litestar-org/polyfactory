@@ -4,6 +4,7 @@
 .mypy_cache/
 .idea/azure/
 __pycache__/
+dist/
 
 # files
 .DS_Store
