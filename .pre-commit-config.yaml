@@ -48,7 +48,7 @@ repos:
     rev: "v2.11.1"
     hooks:
       - id: pylint
-        exclude: "[a-zA-Z]*/tests/(.)*"
+        exclude: "test_*"
         args:
           [
             "--unsafe-load-any-extension=y"
@@ -62,7 +62,7 @@ repos:
     rev: "v0.910-1"
     hooks:
       - id: mypy
-        exclude: "[a-zA-Z]*/tests/(.)*"
+        exclude: "test_*"
         additional_dependencies: [
           pydantic,
           faker,
