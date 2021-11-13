@@ -4,6 +4,38 @@ version = "0.1.0"
 description = "Easy data mocking and fixture generation for pydantic based models"
 authors = ["Na'aman Hirschfeld <Naaman.Hirschfeld@sprylab.com>"]
 license = "MIT"
+readme = "README.md"
+homepage = "https://github.com/Goldziher/pydantic-factories"
+repository = "https://github.com/Goldziher/pydantic-factories"
+documentation = "https://github.com/Goldziher/pydantic-factories"
+keywords = ["pydantic", "pytest", "factory", "model factory", "fastapi", "beanie", "ormar", "sqlmodel", "factory boy"]
+classifiers = [
+    "Development Status :: 5 - Production/Stable",
+    "Environment :: Web Environment",
+    "Framework :: Pytest",
+    "Intended Audience :: Developers",
+    "License :: OSI Approved :: MIT License",
+    "Natural Language :: English",
+    "Operating System :: OS Independent",
+    "Programming Language :: Python",
+    "Programming Language :: Python :: 3.6",
+    "Programming Language :: Python :: 3.7",
+    "Programming Language :: Python :: 3.8",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+    "Topic :: Software Development",
+    "Topic :: Software Development :: Libraries",
+    "Topic :: Software Development :: Libraries :: Application Frameworks",
+    "Topic :: Software Development :: Libraries :: Python Modules",
+    "Topic :: Software Development :: Testing",
+    "Topic :: Software Development :: Testing :: Unit",
+    "Topic :: Utilities",
+    "Typing :: Typed",
+]
+include = ["CHANGELOG.md"]
+packages = [
+    { include = "pydantic_factories" },
+]
 
 [tool.poetry.dependencies]
 python = ">=3.7,<4.0"
