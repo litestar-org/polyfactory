@@ -1,4 +1,5 @@
 import os
+from abc import ABC
 from base64 import b64encode
 from collections import deque
 from datetime import date, datetime, time, timedelta
@@ -12,35 +13,27 @@ from ipaddress import (
     IPv6Network,
 )
 from pathlib import Path
-from typing import Any, Callable, Generic, Optional, TypeVar
+from typing import Any, Callable, Generic, TypeVar
 from uuid import UUID
 
 from faker import Faker
 from pydantic import BaseModel, ByteSize
 
+from pydantic_factories.exceptions import ConfigurationError
+
 T = TypeVar("T", bound=BaseModel)
 
-
-def merge(*args: dict[str, Any]) -> dict[str, Any]:
-    """helper function to shallow merge dictionaries"""
-    output = {}
-    for dictionary in args:
-        for key, value in dictionary.items():
-            output[key] = value
-    return output
+default_faker = Faker()
 
 
-class ModelFactory(Generic[T]):
-    def __init__(
-        self, model: type[T], faker: Optional[Faker], field_handlers: Optional[dict[str, Callable]] = None, **defaults
-    ):
-        self.model = model
-        self.defaults = defaults
-        self.field_handlers = field_handlers
-        if faker:
-            self.faker = faker
-        else:
-            self.faker = Faker()
+class ModelFactory(ABC, Generic[T]):
+    __model__: type[T]
+
+    def __init__(self, faker: Faker = default_faker):
+        self.faker = faker
+
+        if not hasattr(self, "__model__"):
+            raise ConfigurationError("missing model class in factory Meta")
 
     def get_mock_value(self, field_type: Any) -> Any:
         """
@@ -86,18 +79,20 @@ class ModelFactory(Generic[T]):
                 return handler()
         return None
 
+    def get_field_value(self, field_name: str, field_type: Any) -> Any:
+        """Returns a field value on the sub-class if existing, otherwise returns a mock value"""
+        try:
+            return getattr(self, field_name)
+        except AttributeError:
+            return self.get_mock_value(field_type=field_type)
+
     def build(self, **kwargs) -> T:
-        parameters = merge(self.defaults, kwargs)
-        for field_name, model_field in self.model.__fields__.items():
-            if (
-                parameters.get(field_name) is None
-                and model_field.default is None
-                and model_field.default_factory is None
-            ):
-                if self.field_handlers and field_name in self.field_handlers:
-                    value = self.field_handlers[field_name]()
-                else:
-                    value = self.get_mock_value(field_type=model_field.type_)
-                if value is not None:
-                    parameters.setdefault(field_name, value)
-        return self.model(**parameters)
+        """builds an instance of the factory's Meta.model"""
+        for field_name, model_field in self.__model__.__fields__.items():
+            if kwargs.get(field_name) is None:
+                kwargs.setdefault(field_name, self.get_field_value(field_name=field_name, field_type=model_field.type_))
+        return self.__model__(**kwargs)
+
+    def batch(self, size: int, **kwargs) -> list[T]:
+        """builds a batch of size n of the factory's Meta.model"""
+        return [self.build(**kwargs) for _ in range(size)]

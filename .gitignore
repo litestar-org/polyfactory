@@ -1,0 +1,8 @@
+# folders
+.pytest_cache/
+.hypothesis/
+.mypy_cache/
+.idea/azure/
+
+# files
+.DS_Store

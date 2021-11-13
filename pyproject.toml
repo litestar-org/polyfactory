@@ -16,6 +16,7 @@ pre-commit = "*"
 hypothesis = "*"
 beanie = "*"
 fastapi = "*"
+pytest-cov = "*"
 
 [build-system]
 requires = ["poetry-core>=1.0.0"]
@@ -30,7 +31,7 @@ profile = "black"
 multi_line_output = 3
 
 [tool.pylint.MESSAGE_CONTROL]
-disable = ["fixme"]
+disable = ["fixme", "missing-module-docstring", "missing-class-docstring"]
 enable = "useless-suppression"
 
 [tool.pylint.REPORTS]

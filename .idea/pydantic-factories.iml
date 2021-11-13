@@ -7,7 +7,14 @@
   </component>
   <component name="NewModuleRootManager" inherit-compiler-output="true">
     <exclude-output />
-    <content url="file://$MODULE_DIR$" />
+    <content url="file://$MODULE_DIR$">
+      <excludeFolder url="file://$MODULE_DIR$/.mypy_cache/3.9" />
+      <excludeFolder url="file://$MODULE_DIR$/pydantic_factories/.pytest_cache" />
+      <excludeFolder url="file://$MODULE_DIR$/pydantic_factories/.pytest_cache/v" />
+      <excludeFolder url="file://$MODULE_DIR$/tests/.pytest_cache" />
+      <excludeFolder url="file://$MODULE_DIR$/tests/.pytest_cache/v" />
+      <excludeFolder url="file://$MODULE_DIR$/.mypy_cache" />
+    </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="library" name="Remote Python 3.9.8 Docker Compose (tracking at [/Users/nhirschfeld/workspace/acm/docker-compose.yaml]) interpreter library" level="application" />
