@@ -4,7 +4,23 @@ on:
     branches:
       - main
 jobs:
+  validate:
+    runs-on: ubuntu-latest
+    env:
+      PRE_COMMIT_HOME: "$GITHUB_WORKSPACE/.cache/pre-commit"
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-python@v2
+      - uses: actions/cache@v2
+        with:
+          path: $PRE_COMMIT_HOME
+          key: ${{ runner.os }}-pre-commit
+          restore-keys: ${{ runner.os }}-pre-commit
+      - run: python -m pip install pre-commit
+      - run: pre-commit install
+      - run: pre-commit run --all-files
   test:
+    needs: validate
     runs-on: ubuntu-latest
     strategy:
       fail-fast: true
