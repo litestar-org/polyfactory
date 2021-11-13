@@ -19,7 +19,7 @@ class Person(BaseModel):
     id: UUID
     name: str
     hobbies: Optional[list[str]] = None
-    age: float
+    age: Union[float, int]
     pets: list[Pet]
     birthday: Union[datetime, date]
 
