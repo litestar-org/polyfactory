@@ -1,5 +1,5 @@
 from datetime import date, datetime
-from typing import Optional, Union
+from typing import List, Optional, Union
 from uuid import UUID, uuid4
 
 import pytest
@@ -20,9 +20,9 @@ class Pet(BaseModel):
 class Person(BaseModel):
     id: UUID
     name: str
-    hobbies: Optional[list[str]] = None
+    hobbies: Optional[List[str]] = None
     age: Union[float, int]
-    pets: list[Pet]
+    pets: List[Pet]
     birthday: Union[datetime, date]
 
 

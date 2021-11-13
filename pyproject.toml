@@ -9,6 +9,7 @@ license = "MIT"
 python = ">=3.7,<4.0"
 pydantic = "*"
 faker = "*"
+typing-extensions = "*"
 
 [tool.poetry.dev-dependencies]
 pytest = "*"

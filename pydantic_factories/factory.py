@@ -13,11 +13,12 @@ from ipaddress import (
     IPv6Network,
 )
 from pathlib import Path
-from typing import Any, Callable, Generic, TypeVar
+from typing import Any, Callable, Dict, Generic, List, TypeVar
 from uuid import UUID
 
 from faker import Faker
 from pydantic import BaseModel, ByteSize
+from typing_extensions import Type
 
 from pydantic_factories.exceptions import ConfigurationError
 
@@ -27,7 +28,7 @@ default_faker = Faker()
 
 
 class ModelFactory(ABC, Generic[T]):
-    __model__: type[T]
+    __model__: Type[T]
 
     def __init__(self, faker: Faker = default_faker):
         self.faker = faker
@@ -41,7 +42,7 @@ class ModelFactory(ABC, Generic[T]):
         see: https://pydantic-docs.helpmanual.io/usage/types/
         """
         if field_type is not None:
-            faker_handler_map: dict[Any, Callable] = {
+            faker_handler_map: Dict[Any, Callable] = {
                 # primitives
                 float: self.faker.pyfloat,
                 int: self.faker.pyint,
@@ -93,6 +94,6 @@ class ModelFactory(ABC, Generic[T]):
                 kwargs.setdefault(field_name, self.get_field_value(field_name=field_name, field_type=model_field.type_))
         return self.__model__(**kwargs)
 
-    def batch(self, size: int, **kwargs) -> list[T]:
+    def batch(self, size: int, **kwargs) -> List[T]:
         """builds a batch of size n of the factory's Meta.model"""
         return [self.build(**kwargs) for _ in range(size)]
