@@ -53,3 +53,6 @@ plugins = ["pydantic.mypy"]
 warn_unused_ignores = true
 warn_redundant_casts = true
 strict_optional = true
+
+[tool.coverage.run]
+omit = ["*/tests/*"]
