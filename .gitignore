@@ -2,7 +2,7 @@
 .pytest_cache/
 .hypothesis/
 .mypy_cache/
-.idea/azure/
+.idea/
 __pycache__/
 dist/
 

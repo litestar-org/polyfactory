@@ -81,7 +81,6 @@ ignored-argument-names = "args|kwargs|_|__"
 good-names = "_,i,e,mm,yy,T"
 
 [tool.mypy]
-plugins = ["pydantic.mypy"]
 warn_unused_ignores = true
 warn_redundant_casts = true
 strict_optional = true

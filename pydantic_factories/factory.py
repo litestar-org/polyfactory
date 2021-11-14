@@ -13,7 +13,7 @@ from ipaddress import (
     IPv6Network,
 )
 from pathlib import Path
-from typing import Any, Callable, Dict, Generic, List, TypeVar
+from typing import Any, Callable, Dict, Generic, List, Optional, TypeVar
 from uuid import UUID
 
 from faker import Faker
@@ -21,6 +21,10 @@ from pydantic import BaseModel, ByteSize
 from typing_extensions import Type
 
 from pydantic_factories.exceptions import ConfigurationError
+from pydantic_factories.protocols import (
+    AsyncPersistenceProtocol,
+    SyncPersistenceProtocol,
+)
 
 T = TypeVar("T", bound=BaseModel)
 
@@ -29,12 +33,31 @@ default_faker = Faker()
 
 class ModelFactory(ABC, Generic[T]):
     __model__: Type[T]
+    __sync_persistence__: Optional[SyncPersistenceProtocol[T]]
+    __async_persistence__: Optional[AsyncPersistenceProtocol[T]]
 
-    def __init__(self, faker: Faker = default_faker):
-        self.faker = faker
-
+    def __init__(
+        self,
+        faker: Faker = default_faker,
+    ):
         if not hasattr(self, "__model__"):
             raise ConfigurationError("missing model class in factory Meta")
+
+        self.faker = faker
+
+    @property
+    def sync_persistence(self) -> Optional[SyncPersistenceProtocol[T]]:
+        """Returns sync_persistence protocol if present"""
+        if hasattr(self, "__sync_persistence__"):
+            return self.__sync_persistence__
+        return None
+
+    @property
+    def async_persistence(self) -> Optional[AsyncPersistenceProtocol[T]]:
+        """Returns async_persistence protocol if present"""
+        if hasattr(self, "__async_persistence__"):
+            return self.__async_persistence__
+        return None
 
     def get_mock_value(self, field_type: Any) -> Any:
         """
@@ -97,3 +120,31 @@ class ModelFactory(ABC, Generic[T]):
     def batch(self, size: int, **kwargs) -> List[T]:
         """builds a batch of size n of the factory's Meta.model"""
         return [self.build(**kwargs) for _ in range(size)]
+
+    def create_sync(self, **kwargs) -> T:
+        """Build and persist a single model instance synchronously"""
+        if not self.sync_persistence:
+            raise ConfigurationError("An sync_persistence handler must be defined in the factory to use this method")
+        instance = self.build(**kwargs)
+        return self.sync_persistence.save(instance)
+
+    def create_batch_sync(self, size: int, **kwargs) -> List[T]:
+        """Build and persist a batch of n size model instances synchronously"""
+        if not self.sync_persistence:
+            raise ConfigurationError("An sync_persistence handler must be defined in the factory to use this method")
+        batch = self.batch(size, **kwargs)
+        return self.sync_persistence.save_many(batch)
+
+    async def create_async(self, **kwargs) -> T:
+        """Build and persist a single model instance asynchronously"""
+        if not self.async_persistence:
+            raise ConfigurationError("An async_persistence handler must be defined in the factory to use this method")
+        instance = self.build(**kwargs)
+        return await self.async_persistence.save(instance)
+
+    async def create_batch_async(self, size: int, **kwargs) -> List[T]:
+        """Build and persist a batch of n size model instances asynchronously"""
+        if not self.async_persistence:
+            raise ConfigurationError("An async_persistence handler must be defined in the factory to use this method")
+        batch = self.batch(size, **kwargs)
+        return await self.async_persistence.save_many(batch)
