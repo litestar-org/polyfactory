@@ -115,10 +115,9 @@ class ModelFactory(ABC, Generic[T]):
 
     def get_field_value(self, field_name: str, field_type: Any) -> Any:
         """Returns a field value on the sub-class if existing, otherwise returns a mock value"""
-        try:
+        if hasattr(self, field_name):
             return getattr(self, field_name)
-        except AttributeError:
-            return self.get_mock_value(field_type=field_type)
+        return self.get_mock_value(field_type=field_type)
 
     def build(self, **kwargs) -> T:
         """builds an instance of the factory's Meta.model"""
