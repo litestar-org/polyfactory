@@ -1,9 +1,21 @@
-from datetime import date, datetime
+from collections import deque
+from datetime import date, datetime, time, timedelta
+from decimal import Decimal
+from ipaddress import (
+    IPv4Address,
+    IPv4Interface,
+    IPv4Network,
+    IPv6Address,
+    IPv6Interface,
+    IPv6Network,
+)
+from pathlib import Path
 from typing import List, Optional, Union
 from uuid import UUID, uuid4
 
 import pytest
-from pydantic import BaseModel
+from faker import Faker
+from pydantic import BaseModel, ByteSize
 
 from pydantic_factories.exceptions import ConfigurationError
 from pydantic_factories.factory import ModelFactory
@@ -52,10 +64,15 @@ def test_init_validation():
 
 
 def test_init_faker_override():
-    my_obj = {}
-    # noinspection PyTypeChecker
-    factory = PersonFactory(faker=my_obj)
-    assert factory.faker == my_obj
+    my_faker = Faker()
+    setattr(my_faker, "__test__attr__", None)
+
+    class MyFactory(ModelFactory):
+        __model__ = Pet
+        __faker__ = my_faker
+
+    factory = MyFactory()
+    assert hasattr(factory.faker, "__test__attr__")
 
 
 def test_merges_defaults_with_kwargs():
@@ -111,3 +128,46 @@ def test_builds_batch():
         assert isinstance(result.color, str)
         assert isinstance(result.sound, str)
         assert isinstance(result.age, float)
+
+
+def test_property_parsing():
+    class MyModel(BaseModel):
+        float_field: float
+        int_field: int
+        bool_field: bool
+        str_field: str
+        bytes_field: bytes
+        # built-in objects
+        dict_field: dict
+        tuple_field: tuple
+        list_field: list
+        set_field: set
+        frozenset_field: frozenset
+        deque_field: deque
+        # standard library objects
+        Path_field: Path
+        Decimal_field: Decimal
+        UUID_field: UUID
+        # datetime
+        datetime_field: datetime
+        date_field: date
+        time_field: time
+        timedelta_field: timedelta
+        # ip addresses
+        IPv4Address_field: IPv4Address
+        IPv4Interface_field: IPv4Interface
+        IPv4Network_field: IPv4Network
+        IPv6Address_field: IPv6Address
+        IPv6Interface_field: IPv6Interface
+        IPv6Network_field: IPv6Network
+        # pydantic specific
+        ByteSize_field: ByteSize
+
+    class MyFactory(ModelFactory):
+        __model__ = MyModel
+
+    factory = MyFactory()
+    result = factory.build()
+
+    for key in factory.get_provider_map().keys():
+        assert isinstance(getattr(result, f"{key.__name__}_field"), key)

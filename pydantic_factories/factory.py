@@ -13,7 +13,7 @@ from ipaddress import (
     IPv6Network,
 )
 from pathlib import Path
-from typing import Any, Callable, Dict, Generic, List, Optional, TypeVar
+from typing import Any, Callable, Generic, List, Optional, TypeVar
 from uuid import UUID
 
 from faker import Faker
@@ -33,17 +33,13 @@ default_faker = Faker()
 
 class ModelFactory(ABC, Generic[T]):
     __model__: Type[T]
+    __faker__: Optional[Faker]
     __sync_persistence__: Optional[SyncPersistenceProtocol[T]]
     __async_persistence__: Optional[AsyncPersistenceProtocol[T]]
 
-    def __init__(
-        self,
-        faker: Faker = default_faker,
-    ):
+    def __init__(self):
         if not hasattr(self, "__model__"):
             raise ConfigurationError("missing model class in factory Meta")
-
-        self.faker = faker
 
     @property
     def sync_persistence(self) -> Optional[SyncPersistenceProtocol[T]]:
@@ -59,46 +55,60 @@ class ModelFactory(ABC, Generic[T]):
             return self.__async_persistence__
         return None
 
+    @property
+    def faker(self) -> Faker:
+        """Returns an instance of faker"""
+        if hasattr(self, "__faker__") and self.__faker__:
+            return self.__faker__
+        return default_faker
+
+    def get_provider_map(self) -> dict[Any, Callable]:
+        """
+        Returns a dictionary of <type>:<callable> values
+
+        Note: this method is distinct to allow overriding
+        """
+        return {
+            # primitives
+            float: self.faker.pyfloat,
+            int: self.faker.pyint,
+            bool: self.faker.pybool,
+            str: self.faker.pystr,
+            bytes: lambda: b64encode(self.faker.pystr().encode("utf-8")).decode("utf-8"),
+            # built-in objects
+            dict: self.faker.pydict,
+            tuple: self.faker.pytuple,
+            list: self.faker.pylist,
+            set: self.faker.pyset,
+            frozenset: self.faker.pylist,
+            deque: self.faker.pylist,
+            # standard library objects
+            Path: lambda: Path(os.path.realpath(__file__)),
+            Decimal: self.faker.pydecimal,
+            UUID: self.faker.uuid4,
+            # datetime
+            datetime: self.faker.date_time_between,
+            date: self.faker.date_this_decade,
+            time: self.faker.time,
+            timedelta: self.faker.time_delta,
+            # ip addresses
+            IPv4Address: self.faker.ipv4,
+            IPv4Interface: self.faker.ipv4,
+            IPv4Network: lambda: self.faker.ipv4(network=True),
+            IPv6Address: self.faker.ipv6,
+            IPv6Interface: self.faker.ipv6,
+            IPv6Network: lambda: self.faker.ipv6(network=True),
+            # pydantic specific
+            ByteSize: self.faker.pyint,
+        }
+
     def get_mock_value(self, field_type: Any) -> Any:
         """
         Returns a mock value corresponding to the types supported by pydantic
         see: https://pydantic-docs.helpmanual.io/usage/types/
         """
         if field_type is not None:
-            faker_handler_map: Dict[Any, Callable] = {
-                # primitives
-                float: self.faker.pyfloat,
-                int: self.faker.pyint,
-                bool: self.faker.pybool,
-                str: self.faker.pystr,
-                bytes: lambda: b64encode(self.faker.pystr().encode("utf-8")).decode("utf-8"),
-                # built-in objects
-                dict: self.faker.pydict,
-                tuple: self.faker.pydict,
-                list: self.faker.pylist,
-                set: self.faker.pyset,
-                frozenset: self.faker.pylist,
-                deque: self.faker.pylist,
-                # standard library objects
-                Path: lambda: Path(os.path.realpath(__file__)),
-                Decimal: self.faker.pydecimal,
-                UUID: self.faker.uuid4,
-                # datetime
-                datetime: self.faker.date_time_between,
-                date: self.faker.date_this_decade,
-                time: self.faker.time,
-                timedelta: self.faker.time_delta,
-                # ip addresses
-                IPv4Address: self.faker.ipv4,
-                IPv4Interface: self.faker.ipv4,
-                IPv4Network: lambda: self.faker.ipv4(network=True),
-                IPv6Address: self.faker.ipv6,
-                IPv6Interface: self.faker.ipv6,
-                IPv6Network: lambda: self.faker.ipv6(network=True),
-                # pydantic specific
-                ByteSize: lambda: b64encode(self.faker.pystr().encode("utf-8")).decode("utf-8"),
-            }
-            handler = faker_handler_map[field_type]
+            handler = self.get_provider_map().get(field_type)
             if handler is not None:
                 return handler()
         return None
