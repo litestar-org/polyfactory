@@ -70,7 +70,12 @@ from pydantic_factories.protocols import (
     AsyncPersistenceProtocol,
     SyncPersistenceProtocol,
 )
-from pydantic_factories.utils import handle_constrained_number, handle_constrained_string, handle_constrained_decimal
+from pydantic_factories.utils import (
+    handle_constrained_float,
+    handle_constrained_int,
+    handle_constrained_string,
+    handle_constrained_decimal,
+)
 
 T = TypeVar("T", bound=BaseModel)
 
@@ -201,8 +206,10 @@ class ModelFactory(ABC, Generic[T]):
 
     def handle_constrained_field(self, outer_field_type: Any, inner_field_type: Any) -> Any:
         """Handle the built-in pydantic constrained value field types"""
-        if isinstance(outer_field_type, (ConstrainedInt, ConstrainedFloat)):
-            return handle_constrained_number(outer_field_type, inner_field_type, self.faker)
+        if isinstance(outer_field_type, ConstrainedFloat):
+            return handle_constrained_float(outer_field_type, inner_field_type, self.faker)
+        if isinstance(outer_field_type, ConstrainedInt):
+            return handle_constrained_int(outer_field_type, inner_field_type, self.faker)
         if isinstance(outer_field_type, ConstrainedStr):
             return handle_constrained_string(outer_field_type, self.faker)
         if isinstance(outer_field_type, ConstrainedDecimal):
