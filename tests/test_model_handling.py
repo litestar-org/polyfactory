@@ -10,12 +10,56 @@ from ipaddress import (
     IPv6Network,
 )
 from pathlib import Path
-from typing import List, Optional, Union
+from typing import List, Optional, Union, Set
 from uuid import UUID, uuid4
 
 import pytest
 from faker import Faker
-from pydantic import BaseModel, ByteSize
+from pydantic import (
+    BaseModel,
+    ByteSize,
+    PositiveInt,
+    FilePath,
+    NegativeFloat,
+    NegativeInt,
+    PositiveFloat,
+    NonPositiveFloat,
+    NonNegativeInt,
+    StrictInt,
+    StrictBool,
+    StrictBytes,
+    StrictFloat,
+    StrictStr,
+    DirectoryPath,
+    EmailStr,
+    NameEmail,
+    PyObject,
+    Json,
+    PaymentCardNumber,
+    AnyUrl,
+    AnyHttpUrl,
+    HttpUrl,
+    PostgresDsn,
+    RedisDsn,
+    stricturl,
+    UUID1,
+    UUID3,
+    UUID4,
+    UUID5,
+    SecretBytes,
+    SecretStr,
+    IPvAnyAddress,
+    IPvAnyInterface,
+    IPvAnyNetwork,
+    conbytes,
+    condecimal,
+    confloat,
+    conint,
+    conlist,
+    conset,
+    constr,
+)
+from pydantic.color import Color
 
 from pydantic_factories.exceptions import ConfigurationError
 from pydantic_factories.factory import ModelFactory
@@ -130,7 +174,7 @@ def test_builds_batch():
         assert isinstance(result.age, float)
 
 
-def test_property_parsing():
+def test_type_property_parsing():
     class MyModel(BaseModel):
         float_field: float
         int_field: int
@@ -161,7 +205,40 @@ def test_property_parsing():
         IPv6Interface_field: IPv6Interface
         IPv6Network_field: IPv6Network
         # pydantic specific
-        ByteSize_field: ByteSize
+        ByteSize_pydantic_type: ByteSize
+        PositiveInt_pydantic_type: PositiveInt
+        FilePath_pydantic_type: FilePath
+        NegativeFloat_pydantic_type: NegativeFloat
+        NegativeInt_pydantic_type: NegativeInt
+        PositiveFloat_pydantic_type: PositiveFloat
+        NonPositiveFloat_pydantic_type: NonPositiveFloat
+        NonNegativeInt_pydantic_type: NonNegativeInt
+        StrictInt_pydantic_type: StrictInt
+        StrictBool_pydantic_type: StrictBool
+        StrictBytes_pydantic_type: StrictBytes
+        StrictFloat_pydantic_type: StrictFloat
+        StrictStr_pydantic_type: StrictStr
+        DirectoryPath_pydantic_type: DirectoryPath
+        EmailStr_pydantic_type: EmailStr
+        NameEmail_pydantic_type: NameEmail
+        PyObject_pydantic_type: PyObject
+        Color_pydantic_type: Color
+        Json_pydantic_type: Json
+        PaymentCardNumber_pydantic_type: PaymentCardNumber
+        AnyUrl_pydantic_type: AnyUrl
+        AnyHttpUrl_pydantic_type: AnyHttpUrl
+        HttpUrl_pydantic_type: HttpUrl
+        PostgresDsn_pydantic_type: PostgresDsn
+        RedisDsn_pydantic_type: RedisDsn
+        UUID1_pydantic_type: UUID1
+        UUID3_pydantic_type: UUID3
+        UUID4_pydantic_type: UUID4
+        UUID5_pydantic_type: UUID5
+        SecretBytes_pydantic_type: SecretBytes
+        SecretStr_pydantic_type: SecretStr
+        IPvAnyAddress_pydantic_type: IPvAnyAddress
+        IPvAnyInterface_pydantic_type: IPvAnyInterface
+        IPvAnyNetwork_pydantic_type: IPvAnyNetwork
 
     class MyFactory(ModelFactory):
         __model__ = MyModel
@@ -170,4 +247,26 @@ def test_property_parsing():
     result = factory.build()
 
     for key in factory.get_provider_map().keys():
-        assert isinstance(getattr(result, f"{key.__name__}_field"), key)
+        if hasattr(result, f"{key.__name__}_field"):
+            assert isinstance(getattr(result, f"{key.__name__}_field"), key)
+        elif hasattr(result, f"{key.__name__}_pydantic_type"):
+            assert getattr(result, f"{key.__name__}_pydantic_type") is not None
+
+
+# def test_constrained_property_parsing():
+#     class MyModel(BaseModel):
+#         conbytes_field: conbytes()
+#         condecimal_field: condecimal()
+#         confloat_field: confloat()
+#         conint_field: conint()
+#         conlist_field: conlist(List[str])
+#         conset_field: conset(Set[str])
+#         constr_field: constr()
+#         stricturl_field: stricturl()
+#
+#     class MyFactory(ModelFactory):
+#         __model__ = MyModel
+#
+#     result = MyFactory().build()
+#
+#     assert result is not None

@@ -42,6 +42,7 @@ python = ">=3.7,<4.0"
 pydantic = "*"
 faker = "*"
 typing-extensions = "*"
+exrex = "*"
 
 [tool.poetry.dev-dependencies]
 pytest = "*"
@@ -50,6 +51,7 @@ hypothesis = "*"
 beanie = "*"
 fastapi = "*"
 pytest-cov = "*"
+email-validator = "*"
 
 [build-system]
 requires = ["poetry-core>=1.0.0"]

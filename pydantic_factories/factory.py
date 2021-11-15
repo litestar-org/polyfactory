@@ -13,11 +13,56 @@ from ipaddress import (
     IPv6Network,
 )
 from pathlib import Path
+from random import uniform
 from typing import Any, Callable, Generic, List, Optional, TypeVar
-from uuid import UUID
+from uuid import UUID, uuid1, uuid3, uuid4, uuid5, NAMESPACE_DNS
 
 from faker import Faker
-from pydantic import BaseModel, ByteSize
+from pydantic import (
+    BaseModel,
+    ByteSize,
+    PositiveInt,
+    FilePath,
+    NegativeFloat,
+    NegativeInt,
+    PositiveFloat,
+    NonPositiveFloat,
+    NonNegativeInt,
+    StrictInt,
+    StrictBool,
+    StrictBytes,
+    StrictFloat,
+    StrictStr,
+    DirectoryPath,
+    EmailStr,
+    NameEmail,
+    PyObject,
+    Json,
+    PaymentCardNumber,
+    AnyUrl,
+    AnyHttpUrl,
+    HttpUrl,
+    PostgresDsn,
+    RedisDsn,
+    UUID1,
+    UUID3,
+    UUID4,
+    UUID5,
+    SecretBytes,
+    SecretStr,
+    IPvAnyAddress,
+    IPvAnyInterface,
+    IPvAnyNetwork,
+    ConstrainedDecimal,
+    ConstrainedFloat,
+    ConstrainedInt,
+    ConstrainedStr,
+    ConstrainedSet,
+    ConstrainedList,
+    ConstrainedBytes,
+)
+from pydantic.color import Color
+from pydantic.fields import ModelField
 from typing_extensions import Type
 
 from pydantic_factories.exceptions import ConfigurationError
@@ -25,6 +70,7 @@ from pydantic_factories.protocols import (
     AsyncPersistenceProtocol,
     SyncPersistenceProtocol,
 )
+from pydantic_factories.utils import handle_constrained_number, handle_constrained_string, handle_constrained_decimal
 
 T = TypeVar("T", bound=BaseModel)
 
@@ -68,13 +114,20 @@ class ModelFactory(ABC, Generic[T]):
 
         Note: this method is distinct to allow overriding
         """
+
+        def create_bytes() -> bytes:
+            return b64encode(self.faker.pystr().encode("utf-8"))
+
+        def create_path() -> Path:
+            return Path(os.path.realpath(__file__))
+
         return {
             # primitives
             float: self.faker.pyfloat,
             int: self.faker.pyint,
             bool: self.faker.pybool,
             str: self.faker.pystr,
-            bytes: lambda: b64encode(self.faker.pystr().encode("utf-8")).decode("utf-8"),
+            bytes: create_bytes,
             # built-in objects
             dict: self.faker.pydict,
             tuple: self.faker.pytuple,
@@ -83,7 +136,7 @@ class ModelFactory(ABC, Generic[T]):
             frozenset: self.faker.pylist,
             deque: self.faker.pylist,
             # standard library objects
-            Path: lambda: Path(os.path.realpath(__file__)),
+            Path: create_path,
             Decimal: self.faker.pydecimal,
             UUID: self.faker.uuid4,
             # datetime
@@ -100,6 +153,39 @@ class ModelFactory(ABC, Generic[T]):
             IPv6Network: lambda: self.faker.ipv6(network=True),
             # pydantic specific
             ByteSize: self.faker.pyint,
+            PositiveInt: self.faker.pyint,
+            FilePath: create_path,
+            NegativeFloat: lambda: uniform(-100, -1),
+            NegativeInt: lambda: self.faker.pyint() * -1,
+            PositiveFloat: self.faker.pyint,
+            NonPositiveFloat: lambda: uniform(-100, 0),
+            NonNegativeInt: self.faker.pyint,
+            StrictInt: self.faker.pyint,
+            StrictBool: self.faker.pybool,
+            StrictBytes: create_bytes,
+            StrictFloat: self.faker.pyfloat,
+            StrictStr: self.faker.pystr,
+            DirectoryPath: lambda: create_path().parent,
+            EmailStr: self.faker.free_email,
+            NameEmail: self.faker.free_email,
+            PyObject: lambda: "decimal.Decimal",
+            Color: self.faker.hex_color,
+            Json: self.faker.json,
+            PaymentCardNumber: self.faker.credit_card_number,
+            AnyUrl: self.faker.url,
+            AnyHttpUrl: self.faker.url,
+            HttpUrl: self.faker.url,
+            PostgresDsn: lambda: "postgresql://user:secret@localhost",
+            RedisDsn: lambda: "redis://localhost:6379",
+            UUID1: lambda: uuid1(),
+            UUID3: lambda: uuid3(NAMESPACE_DNS, self.faker.pystr()),
+            UUID4: lambda: uuid4(),
+            UUID5: lambda: uuid5(NAMESPACE_DNS, self.faker.pystr()),
+            SecretBytes: create_bytes,
+            SecretStr: self.faker.pystr,
+            IPvAnyAddress: self.faker.ipv4,
+            IPvAnyInterface: self.faker.ipv4,
+            IPvAnyNetwork: lambda: self.faker.ipv4(network=True),
         }
 
     def get_mock_value(self, field_type: Any) -> Any:
@@ -113,17 +199,50 @@ class ModelFactory(ABC, Generic[T]):
                 return handler()
         return None
 
-    def get_field_value(self, field_name: str, field_type: Any) -> Any:
+    def handle_constrained_field(self, outer_field_type: Any, inner_field_type: Any) -> Any:
+        """Handle the built-in pydantic constrained value field types"""
+        if isinstance(outer_field_type, (ConstrainedInt, ConstrainedFloat)):
+            return handle_constrained_number(outer_field_type, inner_field_type, self.faker)
+        if isinstance(outer_field_type, ConstrainedStr):
+            return handle_constrained_string(outer_field_type, self.faker)
+        if isinstance(outer_field_type, ConstrainedDecimal):
+            return handle_constrained_decimal(outer_field_type, self.faker)
+        if isinstance(outer_field_type, ConstrainedBytes):
+            return
+        if isinstance(outer_field_type, ConstrainedList):
+            return
+        if isinstance(outer_field_type, ConstrainedSet):
+            return
+
+    def get_field_value(self, field_name: str, model_field: ModelField) -> Any:
         """Returns a field value on the sub-class if existing, otherwise returns a mock value"""
         if hasattr(self, field_name):
             return getattr(self, field_name)
+
+        outer_field_type = model_field.outer_type_
+        inner_field_type = model_field.type_
+        if isinstance(
+            outer_field_type,
+            (
+                ConstrainedList,
+                ConstrainedBytes,
+                ConstrainedSet,
+                ConstrainedDecimal,
+                ConstrainedStr,
+                ConstrainedFloat,
+                ConstrainedInt,
+            ),
+        ):
+            return self.handle_constrained_field(outer_field_type=outer_field_type, inner_field_type=inner_field_type)
+        # this is a workaround for the following issue: https://github.com/samuelcolvin/pydantic/issues/3415
+        field_type = inner_field_type if inner_field_type != Any else outer_field_type
         return self.get_mock_value(field_type=field_type)
 
     def build(self, **kwargs) -> T:
         """builds an instance of the factory's Meta.model"""
         for field_name, model_field in self.__model__.__fields__.items():
-            if kwargs.get(field_name) is None:
-                kwargs.setdefault(field_name, self.get_field_value(field_name=field_name, field_type=model_field.type_))
+            if field_name not in kwargs:
+                kwargs.setdefault(field_name, self.get_field_value(field_name=field_name, model_field=model_field))
         return self.__model__(**kwargs)
 
     def batch(self, size: int, **kwargs) -> List[T]:
