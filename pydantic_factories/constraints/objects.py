@@ -2,14 +2,13 @@ from random import randint
 from typing import Any, Callable, List, Optional, Set, Union, cast
 
 from pydantic import ConstrainedList, ConstrainedSet
-from typing_extensions import Type
 
 from pydantic_factories.exceptions import ParameterError
 
 
 def create_constrained_of_collection(
     t_type: Any,
-    collection_type: Union[Type[list], Type[set]],
+    collection_type: Any,
     providers: dict[Any, Callable],
     min_items: Optional[int] = None,
     max_items: Optional[int] = None,
