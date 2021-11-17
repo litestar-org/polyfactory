@@ -1,15 +1,16 @@
 from random import randint
-from typing import Any, Callable, List, Optional, Set, Union, cast
+from typing import Any, Callable, Dict, List, Optional, Set, Union, cast
 
 from pydantic import ConstrainedList, ConstrainedSet
+from typing_extensions import Type
 
 from pydantic_factories.exceptions import ParameterError
 
 
 def create_constrained_of_collection(
     t_type: Any,
-    collection_type: Any,
-    providers: dict[Any, Callable],
+    collection_type: Union[Type[list], Type[set]],
+    providers: Dict[Any, Callable],
     min_items: Optional[int] = None,
     max_items: Optional[int] = None,
 ) -> Union[list, set]:
@@ -34,7 +35,7 @@ def create_constrained_of_collection(
     return collection
 
 
-def handle_constrained_set(field: ConstrainedSet, providers: dict[Any, Callable]) -> Set[Any]:
+def handle_constrained_set(field: ConstrainedSet, providers: Dict[Any, Callable]) -> Set[Any]:
     """Handle ConstrainedSet instances"""
     try:
         return cast(
@@ -51,7 +52,7 @@ def handle_constrained_set(field: ConstrainedSet, providers: dict[Any, Callable]
         raise ParameterError(f"cannot generate a constrained set of an hashable type: {field.item_type}") from e
 
 
-def handle_constrained_list(field: ConstrainedList, providers: dict[Any, Callable]) -> List[Any]:
+def handle_constrained_list(field: ConstrainedList, providers: Dict[Any, Callable]) -> List[Any]:
     """Handle ConstrainedList instances"""
     return cast(
         List,

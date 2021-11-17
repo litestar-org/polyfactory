@@ -14,7 +14,7 @@ from ipaddress import (
 )
 from pathlib import Path
 from random import choice, uniform
-from typing import Any, Callable, Generic, List, Optional, TypeVar, cast
+from typing import Any, Callable, Dict, Generic, List, Optional, TypeVar, cast
 from uuid import NAMESPACE_DNS, UUID, uuid1, uuid3, uuid4, uuid5
 
 from faker import Faker
@@ -133,7 +133,7 @@ class ModelFactory(ABC, Generic[T]):
         return default_faker
 
     @classmethod
-    def get_provider_map(cls) -> dict[Any, Callable]:
+    def get_provider_map(cls) -> Dict[Any, Callable]:
         """
         Returns a dictionary of <type>:<callable> values
 
