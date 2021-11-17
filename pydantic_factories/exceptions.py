@@ -2,5 +2,5 @@ class ConfigurationError(Exception):
     pass
 
 
-class ParameterError(Exception):
+class ParameterError(AssertionError):
     pass

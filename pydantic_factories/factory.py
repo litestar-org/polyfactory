@@ -65,16 +65,16 @@ from pydantic.color import Color
 from pydantic.fields import ModelField
 from typing_extensions import Type
 
+from pydantic_factories.constraints.numbers import (
+    handle_constrained_decimal,
+    handle_constrained_float,
+    handle_constrained_int,
+)
+from pydantic_factories.constraints.strings import handle_constrained_string
 from pydantic_factories.exceptions import ConfigurationError
 from pydantic_factories.protocols import (
     AsyncPersistenceProtocol,
     SyncPersistenceProtocol,
-)
-from pydantic_factories.utils import (
-    handle_constrained_decimal,
-    handle_constrained_float,
-    handle_constrained_int,
-    handle_constrained_string,
 )
 
 T = TypeVar("T", bound=BaseModel)

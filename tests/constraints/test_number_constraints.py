@@ -8,12 +8,12 @@ from hypothesis.errors import InvalidArgument
 from hypothesis.strategies import decimals, floats, integers
 from pydantic import condecimal, confloat, conint
 
-from pydantic_factories.exceptions import ParameterError
-from pydantic_factories.utils import (
+from pydantic_factories.constraints.numbers import (
     handle_constrained_decimal,
     handle_constrained_float,
     handle_constrained_int,
 )
+from pydantic_factories.exceptions import ParameterError
 
 faker = Faker()
 

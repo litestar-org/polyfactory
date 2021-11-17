@@ -1,16 +1,9 @@
-import re
 from decimal import Decimal
 from random import randint, random, uniform
 from typing import Any, Callable, Optional, Tuple, TypeVar
 
-from exrex import getone
 from faker import Faker
-from pydantic import (
-    ConstrainedDecimal,
-    ConstrainedFloat,
-    ConstrainedInt,
-    ConstrainedStr,
-)
+from pydantic import ConstrainedDecimal, ConstrainedFloat, ConstrainedInt
 from typing_extensions import Type
 
 from pydantic_factories.exceptions import ParameterError
@@ -148,23 +141,3 @@ def handle_constrained_int(field: ConstrainedInt, faker: Faker) -> int:
         generation_method=randint,
         faker_method=faker.pyint,
     )
-
-
-def handle_constrained_string(field: ConstrainedStr, faker: Faker) -> str:
-    """Handles ConstrainedStr and Fields with string constraints"""
-    to_lower = field.to_lower
-    min_length = field.min_length
-    max_length = field.max_length
-    regex = re.compile(field.regex) if field.regex else None
-    if regex:
-        result = getone(regex)
-    else:
-        result = faker.pystr()
-    if min_length and len(result) < min_length:
-        while len(result) < min_length:
-            result += getone(regex) if regex else faker.pystr()
-    if to_lower:
-        result = result.lower()
-    if max_length and len(result) > max_length:
-        return result[:max_length]
-    return result
