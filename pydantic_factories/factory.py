@@ -13,7 +13,7 @@ from ipaddress import (
 )
 from pathlib import Path
 from random import uniform
-from typing import Any, Callable, Generic, List, Optional, TypeVar
+from typing import Any, Callable, Generic, List, Optional, TypeVar, Union
 from uuid import NAMESPACE_DNS, UUID, uuid1, uuid3, uuid4, uuid5
 
 from faker import Faker
@@ -69,7 +69,10 @@ from pydantic_factories.constraints.numbers import (
     handle_constrained_float,
     handle_constrained_int,
 )
-from pydantic_factories.constraints.objects import handle_constrained_list
+from pydantic_factories.constraints.objects import (
+    handle_constrained_list,
+    handle_constrained_set,
+)
 from pydantic_factories.constraints.strings import (
     handle_constrained_bytes,
     handle_constrained_string,
@@ -85,6 +88,16 @@ T = TypeVar("T", bound=BaseModel)
 
 default_faker = Faker()
 
+PydanticConstrainedFields = Union[
+    ConstrainedList,
+    ConstrainedBytes,
+    ConstrainedSet,
+    ConstrainedDecimal,
+    ConstrainedStr,
+    ConstrainedFloat,
+    ConstrainedInt,
+]
+
 
 class ModelFactory(ABC, Generic[T]):
     __model__: Type[T]
@@ -93,11 +106,11 @@ class ModelFactory(ABC, Generic[T]):
     __async_persistence__: Optional[AsyncPersistenceProtocol[T]]
 
     @classmethod
-    def get_model_model(cls) -> T:
+    def get_model_model(cls) -> Type[T]:
         """
         Returns the factory's model
         """
-        if not hasattr(cls, "__model__") and cls.__model__:
+        if not hasattr(cls, "__model__") or not cls.__model__:
             raise ConfigurationError("missing model class in factory Meta")
         return cls.__model__
 
@@ -153,12 +166,12 @@ class ModelFactory(ABC, Generic[T]):
             tuple: faker.pytuple,
             list: faker.pylist,
             set: faker.pyset,
-            frozenset: faker.pylist,
-            deque: faker.pylist,
+            frozenset: lambda: frozenset(faker.pylist()),
+            deque: lambda: deque(faker.pylist()),
             # standard library objects
             Path: create_path,
             Decimal: faker.pydecimal,
-            UUID: faker.uuid4,
+            UUID: uuid4,
             # datetime
             datetime: faker.date_time_between,
             date: faker.date_this_decade,
@@ -221,7 +234,7 @@ class ModelFactory(ABC, Generic[T]):
         return None
 
     @classmethod
-    def handle_constrained_field(cls, outer_field_type: Any) -> Any:
+    def handle_constrained_field(cls, outer_field_type: PydanticConstrainedFields) -> Any:
         """Handle the built-in pydantic constrained value field types"""
         try:
             if isinstance(outer_field_type, ConstrainedFloat):
@@ -235,9 +248,8 @@ class ModelFactory(ABC, Generic[T]):
             if isinstance(outer_field_type, ConstrainedBytes):
                 return handle_constrained_bytes(outer_field_type)
             if isinstance(outer_field_type, ConstrainedList):
-                return handle_constrained_list(outer_field_type)
-            if isinstance(outer_field_type, ConstrainedSet):
-                raise NotImplementedError()
+                return handle_constrained_list(outer_field_type, cls.get_provider_map())
+            return handle_constrained_set(outer_field_type, cls.get_provider_map())
         except AssertionError as e:
             raise ParameterError from e
 
@@ -263,11 +275,7 @@ class ModelFactory(ABC, Generic[T]):
         ):
             return cls.handle_constrained_field(outer_field_type=outer_field_type)
         # this is a workaround for the following issue: https://github.com/samuelcolvin/pydantic/issues/3415
-        field_type = (
-            inner_field_type
-            if inner_field_type != Any  # pylint: disable=comparison-with-callable
-            else outer_field_type
-        )
+        field_type = inner_field_type if inner_field_type is not Any else outer_field_type
         return cls.get_mock_value(field_type=field_type)
 
     @classmethod
