@@ -1,7 +1,8 @@
 from random import randint
-from typing import Any, Callable, List, Optional, Set, Type, Union, cast
+from typing import Any, Callable, List, Optional, Set, Union, cast
 
 from pydantic import ConstrainedList, ConstrainedSet
+from typing_extensions import Type
 
 from pydantic_factories.exceptions import ParameterError
 
