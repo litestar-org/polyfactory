@@ -15,51 +15,51 @@ from ipaddress import (
 from pathlib import Path
 from random import uniform
 from typing import Any, Callable, Generic, List, Optional, TypeVar
-from uuid import UUID, uuid1, uuid3, uuid4, uuid5, NAMESPACE_DNS
+from uuid import NAMESPACE_DNS, UUID, uuid1, uuid3, uuid4, uuid5
 
 from faker import Faker
 from pydantic import (
-    BaseModel,
-    ByteSize,
-    PositiveInt,
-    FilePath,
-    NegativeFloat,
-    NegativeInt,
-    PositiveFloat,
-    NonPositiveFloat,
-    NonNegativeInt,
-    StrictInt,
-    StrictBool,
-    StrictBytes,
-    StrictFloat,
-    StrictStr,
-    DirectoryPath,
-    EmailStr,
-    NameEmail,
-    PyObject,
-    Json,
-    PaymentCardNumber,
-    AnyUrl,
-    AnyHttpUrl,
-    HttpUrl,
-    PostgresDsn,
-    RedisDsn,
     UUID1,
     UUID3,
     UUID4,
     UUID5,
-    SecretBytes,
-    SecretStr,
-    IPvAnyAddress,
-    IPvAnyInterface,
-    IPvAnyNetwork,
+    AnyHttpUrl,
+    AnyUrl,
+    BaseModel,
+    ByteSize,
+    ConstrainedBytes,
     ConstrainedDecimal,
     ConstrainedFloat,
     ConstrainedInt,
-    ConstrainedStr,
-    ConstrainedSet,
     ConstrainedList,
-    ConstrainedBytes,
+    ConstrainedSet,
+    ConstrainedStr,
+    DirectoryPath,
+    EmailStr,
+    FilePath,
+    HttpUrl,
+    IPvAnyAddress,
+    IPvAnyInterface,
+    IPvAnyNetwork,
+    Json,
+    NameEmail,
+    NegativeFloat,
+    NegativeInt,
+    NonNegativeInt,
+    NonPositiveFloat,
+    PaymentCardNumber,
+    PositiveFloat,
+    PositiveInt,
+    PostgresDsn,
+    PyObject,
+    RedisDsn,
+    SecretBytes,
+    SecretStr,
+    StrictBool,
+    StrictBytes,
+    StrictFloat,
+    StrictInt,
+    StrictStr,
 )
 from pydantic.color import Color
 from pydantic.fields import ModelField
@@ -71,10 +71,10 @@ from pydantic_factories.protocols import (
     SyncPersistenceProtocol,
 )
 from pydantic_factories.utils import (
+    handle_constrained_decimal,
     handle_constrained_float,
     handle_constrained_int,
     handle_constrained_string,
-    handle_constrained_decimal,
 )
 
 T = TypeVar("T", bound=BaseModel)
@@ -182,9 +182,9 @@ class ModelFactory(ABC, Generic[T]):
             HttpUrl: self.faker.url,
             PostgresDsn: lambda: "postgresql://user:secret@localhost",
             RedisDsn: lambda: "redis://localhost:6379",
-            UUID1: lambda: uuid1(),
+            UUID1: uuid1,
             UUID3: lambda: uuid3(NAMESPACE_DNS, self.faker.pystr()),
-            UUID4: lambda: uuid4(),
+            UUID4: uuid4,
             UUID5: lambda: uuid5(NAMESPACE_DNS, self.faker.pystr()),
             SecretBytes: create_bytes,
             SecretStr: self.faker.pystr,
@@ -204,22 +204,22 @@ class ModelFactory(ABC, Generic[T]):
                 return handler()
         return None
 
-    def handle_constrained_field(self, outer_field_type: Any, inner_field_type: Any) -> Any:
+    def handle_constrained_field(self, outer_field_type: Any) -> Any:
         """Handle the built-in pydantic constrained value field types"""
         if isinstance(outer_field_type, ConstrainedFloat):
-            return handle_constrained_float(outer_field_type, inner_field_type, self.faker)
+            return handle_constrained_float(outer_field_type, self.faker)
         if isinstance(outer_field_type, ConstrainedInt):
-            return handle_constrained_int(outer_field_type, inner_field_type, self.faker)
+            return handle_constrained_int(outer_field_type, self.faker)
         if isinstance(outer_field_type, ConstrainedStr):
             return handle_constrained_string(outer_field_type, self.faker)
         if isinstance(outer_field_type, ConstrainedDecimal):
             return handle_constrained_decimal(outer_field_type, self.faker)
         if isinstance(outer_field_type, ConstrainedBytes):
-            return
+            raise NotImplementedError()
         if isinstance(outer_field_type, ConstrainedList):
-            return
+            raise NotImplementedError()
         if isinstance(outer_field_type, ConstrainedSet):
-            return
+            raise NotImplementedError()
 
     def get_field_value(self, field_name: str, model_field: ModelField) -> Any:
         """Returns a field value on the sub-class if existing, otherwise returns a mock value"""
@@ -240,9 +240,13 @@ class ModelFactory(ABC, Generic[T]):
                 ConstrainedInt,
             ),
         ):
-            return self.handle_constrained_field(outer_field_type=outer_field_type, inner_field_type=inner_field_type)
+            return self.handle_constrained_field(outer_field_type=outer_field_type)
         # this is a workaround for the following issue: https://github.com/samuelcolvin/pydantic/issues/3415
-        field_type = inner_field_type if inner_field_type != Any else outer_field_type
+        field_type = (
+            inner_field_type
+            if inner_field_type != Any  # pylint: disable=comparison-with-callable
+            else outer_field_type
+        )
         return self.get_mock_value(field_type=field_type)
 
     def build(self, **kwargs) -> T:
