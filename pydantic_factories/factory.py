@@ -3,6 +3,7 @@ from abc import ABC
 from collections import deque
 from datetime import date, datetime, time, timedelta
 from decimal import Decimal
+from enum import EnumMeta
 from ipaddress import (
     IPv4Address,
     IPv4Interface,
@@ -12,7 +13,7 @@ from ipaddress import (
     IPv6Network,
 )
 from pathlib import Path
-from random import uniform
+from random import choice, uniform
 from typing import Any, Callable, Generic, List, Optional, TypeVar, cast
 from uuid import NAMESPACE_DNS, UUID, uuid1, uuid3, uuid4, uuid5
 
@@ -246,16 +247,21 @@ class ModelFactory(ABC, Generic[T]):
             raise ParameterError from e
 
     @classmethod
+    def handle_enum(cls, outer_field_type: EnumMeta) -> Any:
+        """Method that converts an enum to a list and picks a random element out of it"""
+        return choice(list(outer_field_type))
+
+    @classmethod
     def get_field_value(cls, field_name: str, model_field: ModelField) -> Any:
         """Returns a field value on the sub-class if existing, otherwise returns a mock value"""
         if hasattr(cls, field_name):
             return getattr(cls, field_name)
-
         outer_field_type = model_field.outer_type_
-        inner_field_type = model_field.type_
+        if isinstance(outer_field_type, EnumMeta):
+            return cls.handle_enum(outer_field_type)
         if "Constrained" in outer_field_type.__name__:
-            # we have to case here, because pydantic uses dynamic classes for constrained values
             return cls.handle_constrained_field(outer_field_type=outer_field_type)
+        inner_field_type = model_field.type_
         # this is a workaround for the following issue: https://github.com/samuelcolvin/pydantic/issues/3415
         field_type = inner_field_type if inner_field_type is not Any else outer_field_type
         return cls.get_mock_value(field_type=field_type)

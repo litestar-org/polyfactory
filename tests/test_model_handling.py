@@ -1,6 +1,7 @@
 from collections import deque
 from datetime import date, datetime, time, timedelta
 from decimal import Decimal
+from enum import Enum
 from ipaddress import (
     IPv4Address,
     IPv4Interface,
@@ -271,3 +272,25 @@ def test_constrained_property_parsing():
     assert isinstance(result.condecimal_field, Decimal)
     assert isinstance(result.conlist_field, list)
     assert isinstance(result.conset_field, set)
+
+
+def test_enum_parsing():
+    class MyStrEnum(str, Enum):
+        FIRST_NAME = "Moishe Zuchmir"
+        SECOND_NAME = "Hannah Arendt"
+
+    class MyIntEnum(Enum):
+        ONE_HUNDRED = 100
+        TWO_HUNDRED = 200
+
+    class MyModel(BaseModel):
+        name: MyStrEnum
+        worth: MyIntEnum
+
+    class MyFactory(ModelFactory):
+        __model__ = MyModel
+
+    result = MyFactory.build()
+
+    assert isinstance(result.name, MyStrEnum)
+    assert isinstance(result.worth, MyIntEnum)
