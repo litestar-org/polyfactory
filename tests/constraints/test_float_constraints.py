@@ -65,7 +65,7 @@ def test_handle_constrained_float_handles_multiple_of(multiple_of):
 )
 def test_handle_constrained_float_handles_multiple_of_with_lt(val1, val2):
     multiple_of, max_value = sorted([val1, val2])
-    if max_value - 0.001 > multiple_of or multiple_of == 0:
+    if max_value > multiple_of or multiple_of == 0:
         result = handle_constrained_float(create_constrained_field(multiple_of=multiple_of, lt=max_value))
         if multiple_of == 0:
             assert result == 0
@@ -126,7 +126,7 @@ def test_handle_constrained_float_handles_multiple_of_with_gt(val1, val2):
 )
 def test_handle_constrained_float_handles_multiple_of_with_ge_and_le(val1, val2, val3):
     min_value, multiple_of, max_value = sorted([val1, val2, val3])
-    if max_value - 0.001 > multiple_of or multiple_of == 0:
+    if max_value > multiple_of or multiple_of == 0:
         result = handle_constrained_float(create_constrained_field(multiple_of=multiple_of, ge=min_value, le=max_value))
         if multiple_of == 0:
             assert result == 0

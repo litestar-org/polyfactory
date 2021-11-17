@@ -1,6 +1,5 @@
 import os
 from abc import ABC
-from base64 import b64encode
 from collections import deque
 from datetime import date, datetime, time, timedelta
 from decimal import Decimal
@@ -70,6 +69,7 @@ from pydantic_factories.constraints.numbers import (
     handle_constrained_float,
     handle_constrained_int,
 )
+from pydantic_factories.constraints.objects import handle_constrained_list
 from pydantic_factories.constraints.strings import (
     handle_constrained_bytes,
     handle_constrained_string,
@@ -79,6 +79,7 @@ from pydantic_factories.protocols import (
     AsyncPersistenceProtocol,
     SyncPersistenceProtocol,
 )
+from pydantic_factories.utils import create_random_bytes
 
 T = TypeVar("T", bound=BaseModel)
 
@@ -91,124 +92,136 @@ class ModelFactory(ABC, Generic[T]):
     __sync_persistence__: Optional[SyncPersistenceProtocol[T]]
     __async_persistence__: Optional[AsyncPersistenceProtocol[T]]
 
-    def __init__(self):
-        if not hasattr(self, "__model__"):
+    @classmethod
+    def get_model_model(cls) -> T:
+        """
+        Returns the factory's model
+        """
+        if not hasattr(cls, "__model__") and cls.__model__:
             raise ConfigurationError("missing model class in factory Meta")
+        return cls.__model__
 
-    @property
-    def sync_persistence(self) -> Optional[SyncPersistenceProtocol[T]]:
-        """Returns sync_persistence protocol if present"""
-        if hasattr(self, "__sync_persistence__"):
-            return self.__sync_persistence__
-        return None
+    @classmethod
+    def get_sync_persistence(cls) -> SyncPersistenceProtocol[T]:
+        """
+        Returns a sync_persistence interface if present
+        """
+        if hasattr(cls, "__sync_persistence__") and cls.__sync_persistence__:
+            return cls.__sync_persistence__
+        raise ConfigurationError("A sync_persistence handler must be defined in the factory to use this method")
 
-    @property
-    def async_persistence(self) -> Optional[AsyncPersistenceProtocol[T]]:
-        """Returns async_persistence protocol if present"""
-        if hasattr(self, "__async_persistence__"):
-            return self.__async_persistence__
-        return None
+    @classmethod
+    def get_async_persistence(cls) -> AsyncPersistenceProtocol[T]:
+        """
+        Returns an async_persistence interface
+        """
+        if hasattr(cls, "__async_persistence__") and cls.__async_persistence__:
+            return cls.__async_persistence__
+        raise ConfigurationError("An async_persistence handler must be defined in the factory to use this method")
 
-    @property
-    def faker(self) -> Faker:
-        """Returns an instance of faker"""
-        if hasattr(self, "__faker__") and self.__faker__:
-            return self.__faker__
+    @classmethod
+    def get_faker(cls) -> Faker:
+        """
+        Returns an instance of faker
+        """
+        if hasattr(cls, "__faker__") and cls.__faker__:
+            return cls.__faker__
         return default_faker
 
-    def get_provider_map(self) -> dict[Any, Callable]:
+    @classmethod
+    def get_provider_map(cls) -> dict[Any, Callable]:
         """
         Returns a dictionary of <type>:<callable> values
 
         Note: this method is distinct to allow overriding
         """
 
-        def create_bytes() -> bytes:
-            return b64encode(self.faker.pystr().encode("utf-8"))
-
         def create_path() -> Path:
             return Path(os.path.realpath(__file__))
 
+        faker = cls.get_faker()
+
         return {
             # primitives
-            float: self.faker.pyfloat,
-            int: self.faker.pyint,
-            bool: self.faker.pybool,
-            str: self.faker.pystr,
-            bytes: create_bytes,
+            float: faker.pyfloat,
+            int: faker.pyint,
+            bool: faker.pybool,
+            str: faker.pystr,
+            bytes: create_random_bytes,
             # built-in objects
-            dict: self.faker.pydict,
-            tuple: self.faker.pytuple,
-            list: self.faker.pylist,
-            set: self.faker.pyset,
-            frozenset: self.faker.pylist,
-            deque: self.faker.pylist,
+            dict: faker.pydict,
+            tuple: faker.pytuple,
+            list: faker.pylist,
+            set: faker.pyset,
+            frozenset: faker.pylist,
+            deque: faker.pylist,
             # standard library objects
             Path: create_path,
-            Decimal: self.faker.pydecimal,
-            UUID: self.faker.uuid4,
+            Decimal: faker.pydecimal,
+            UUID: faker.uuid4,
             # datetime
-            datetime: self.faker.date_time_between,
-            date: self.faker.date_this_decade,
-            time: self.faker.time,
-            timedelta: self.faker.time_delta,
+            datetime: faker.date_time_between,
+            date: faker.date_this_decade,
+            time: faker.time,
+            timedelta: faker.time_delta,
             # ip addresses
-            IPv4Address: self.faker.ipv4,
-            IPv4Interface: self.faker.ipv4,
-            IPv4Network: lambda: self.faker.ipv4(network=True),
-            IPv6Address: self.faker.ipv6,
-            IPv6Interface: self.faker.ipv6,
-            IPv6Network: lambda: self.faker.ipv6(network=True),
+            IPv4Address: faker.ipv4,
+            IPv4Interface: faker.ipv4,
+            IPv4Network: lambda: faker.ipv4(network=True),
+            IPv6Address: faker.ipv6,
+            IPv6Interface: faker.ipv6,
+            IPv6Network: lambda: faker.ipv6(network=True),
             # pydantic specific
-            ByteSize: self.faker.pyint,
-            PositiveInt: self.faker.pyint,
+            ByteSize: faker.pyint,
+            PositiveInt: faker.pyint,
             FilePath: create_path,
             NegativeFloat: lambda: uniform(-100, -1),
-            NegativeInt: lambda: self.faker.pyint() * -1,
-            PositiveFloat: self.faker.pyint,
+            NegativeInt: lambda: faker.pyint() * -1,
+            PositiveFloat: faker.pyint,
             NonPositiveFloat: lambda: uniform(-100, 0),
-            NonNegativeInt: self.faker.pyint,
-            StrictInt: self.faker.pyint,
-            StrictBool: self.faker.pybool,
-            StrictBytes: create_bytes,
-            StrictFloat: self.faker.pyfloat,
-            StrictStr: self.faker.pystr,
+            NonNegativeInt: faker.pyint,
+            StrictInt: faker.pyint,
+            StrictBool: faker.pybool,
+            StrictBytes: create_random_bytes,
+            StrictFloat: faker.pyfloat,
+            StrictStr: faker.pystr,
             DirectoryPath: lambda: create_path().parent,
-            EmailStr: self.faker.free_email,
-            NameEmail: self.faker.free_email,
+            EmailStr: faker.free_email,
+            NameEmail: faker.free_email,
             PyObject: lambda: "decimal.Decimal",
-            Color: self.faker.hex_color,
-            Json: self.faker.json,
-            PaymentCardNumber: self.faker.credit_card_number,
-            AnyUrl: self.faker.url,
-            AnyHttpUrl: self.faker.url,
-            HttpUrl: self.faker.url,
+            Color: faker.hex_color,
+            Json: faker.json,
+            PaymentCardNumber: faker.credit_card_number,
+            AnyUrl: faker.url,
+            AnyHttpUrl: faker.url,
+            HttpUrl: faker.url,
             PostgresDsn: lambda: "postgresql://user:secret@localhost",
             RedisDsn: lambda: "redis://localhost:6379",
             UUID1: uuid1,
-            UUID3: lambda: uuid3(NAMESPACE_DNS, self.faker.pystr()),
+            UUID3: lambda: uuid3(NAMESPACE_DNS, faker.pystr()),
             UUID4: uuid4,
-            UUID5: lambda: uuid5(NAMESPACE_DNS, self.faker.pystr()),
-            SecretBytes: create_bytes,
-            SecretStr: self.faker.pystr,
-            IPvAnyAddress: self.faker.ipv4,
-            IPvAnyInterface: self.faker.ipv4,
-            IPvAnyNetwork: lambda: self.faker.ipv4(network=True),
+            UUID5: lambda: uuid5(NAMESPACE_DNS, faker.pystr()),
+            SecretBytes: create_random_bytes,
+            SecretStr: faker.pystr,
+            IPvAnyAddress: faker.ipv4,
+            IPvAnyInterface: faker.ipv4,
+            IPvAnyNetwork: lambda: faker.ipv4(network=True),
         }
 
-    def get_mock_value(self, field_type: Any) -> Any:
+    @classmethod
+    def get_mock_value(cls, field_type: Any) -> Any:
         """
         Returns a mock value corresponding to the types supported by pydantic
         see: https://pydantic-docs.helpmanual.io/usage/types/
         """
         if field_type is not None:
-            handler = self.get_provider_map().get(field_type)
+            handler = cls.get_provider_map().get(field_type)
             if handler is not None:
                 return handler()
         return None
 
-    @staticmethod
-    def handle_constrained_field(outer_field_type: Any) -> Any:
+    @classmethod
+    def handle_constrained_field(cls, outer_field_type: Any) -> Any:
         """Handle the built-in pydantic constrained value field types"""
         try:
             if isinstance(outer_field_type, ConstrainedFloat):
@@ -222,16 +235,17 @@ class ModelFactory(ABC, Generic[T]):
             if isinstance(outer_field_type, ConstrainedBytes):
                 return handle_constrained_bytes(outer_field_type)
             if isinstance(outer_field_type, ConstrainedList):
-                raise NotImplementedError()
+                return handle_constrained_list(outer_field_type)
             if isinstance(outer_field_type, ConstrainedSet):
                 raise NotImplementedError()
         except AssertionError as e:
             raise ParameterError from e
 
-    def get_field_value(self, field_name: str, model_field: ModelField) -> Any:
+    @classmethod
+    def get_field_value(cls, field_name: str, model_field: ModelField) -> Any:
         """Returns a field value on the sub-class if existing, otherwise returns a mock value"""
-        if hasattr(self, field_name):
-            return getattr(self, field_name)
+        if hasattr(cls, field_name):
+            return getattr(cls, field_name)
 
         outer_field_type = model_field.outer_type_
         inner_field_type = model_field.type_
@@ -247,50 +261,53 @@ class ModelFactory(ABC, Generic[T]):
                 ConstrainedInt,
             ),
         ):
-            return self.handle_constrained_field(outer_field_type=outer_field_type)
+            return cls.handle_constrained_field(outer_field_type=outer_field_type)
         # this is a workaround for the following issue: https://github.com/samuelcolvin/pydantic/issues/3415
         field_type = (
             inner_field_type
             if inner_field_type != Any  # pylint: disable=comparison-with-callable
             else outer_field_type
         )
-        return self.get_mock_value(field_type=field_type)
+        return cls.get_mock_value(field_type=field_type)
 
-    def build(self, **kwargs) -> T:
+    @classmethod
+    def build(cls, **kwargs) -> T:
         """builds an instance of the factory's Meta.model"""
-        for field_name, model_field in self.__model__.__fields__.items():
+        model = cls.get_model_model()
+        for field_name, model_field in model.__fields__.items():
             if field_name not in kwargs:
-                kwargs.setdefault(field_name, self.get_field_value(field_name=field_name, model_field=model_field))
-        return self.__model__(**kwargs)
+                kwargs.setdefault(field_name, cls.get_field_value(field_name=field_name, model_field=model_field))
+        return cls.__model__(**kwargs)
 
-    def batch(self, size: int, **kwargs) -> List[T]:
+    @classmethod
+    def batch(cls, size: int, **kwargs) -> List[T]:
         """builds a batch of size n of the factory's Meta.model"""
-        return [self.build(**kwargs) for _ in range(size)]
+        return [cls.build(**kwargs) for _ in range(size)]
 
-    def create_sync(self, **kwargs) -> T:
+    @classmethod
+    def create_sync(cls, **kwargs) -> T:
         """Build and persist a single model instance synchronously"""
-        if not self.sync_persistence:
-            raise ConfigurationError("An sync_persistence handler must be defined in the factory to use this method")
-        instance = self.build(**kwargs)
-        return self.sync_persistence.save(instance)
+        sync_persistence_handler = cls.get_sync_persistence()
+        instance = cls.build(**kwargs)
+        return sync_persistence_handler.save(instance)
 
-    def create_batch_sync(self, size: int, **kwargs) -> List[T]:
+    @classmethod
+    def create_batch_sync(cls, size: int, **kwargs) -> List[T]:
         """Build and persist a batch of n size model instances synchronously"""
-        if not self.sync_persistence:
-            raise ConfigurationError("An sync_persistence handler must be defined in the factory to use this method")
-        batch = self.batch(size, **kwargs)
-        return self.sync_persistence.save_many(batch)
+        sync_persistence_handler = cls.get_sync_persistence()
+        batch = cls.batch(size, **kwargs)
+        return sync_persistence_handler.save_many(batch)
 
-    async def create_async(self, **kwargs) -> T:
+    @classmethod
+    async def create_async(cls, **kwargs) -> T:
         """Build and persist a single model instance asynchronously"""
-        if not self.async_persistence:
-            raise ConfigurationError("An async_persistence handler must be defined in the factory to use this method")
-        instance = self.build(**kwargs)
-        return await self.async_persistence.save(instance)
+        async_persistence_handler = cls.get_async_persistence()
+        instance = cls.build(**kwargs)
+        return await async_persistence_handler.save(instance)
 
-    async def create_batch_async(self, size: int, **kwargs) -> List[T]:
+    @classmethod
+    async def create_batch_async(cls, size: int, **kwargs) -> List[T]:
         """Build and persist a batch of n size model instances asynchronously"""
-        if not self.async_persistence:
-            raise ConfigurationError("An async_persistence handler must be defined in the factory to use this method")
-        batch = self.batch(size, **kwargs)
-        return await self.async_persistence.save_many(batch)
+        async_persistence_handler = cls.get_async_persistence()
+        batch = cls.batch(size, **kwargs)
+        return await async_persistence_handler.save_many(batch)

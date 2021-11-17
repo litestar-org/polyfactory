@@ -96,7 +96,7 @@ def test_init_validation():
         class MyFactory(ModelFactory):
             pass
 
-        MyFactory()
+        MyFactory.build()
 
 
 def test_init_faker_override():
@@ -107,13 +107,11 @@ def test_init_faker_override():
         __model__ = Pet
         __faker__ = my_faker
 
-    factory = MyFactory()
-    assert hasattr(factory.faker, "__test__attr__")
+    assert hasattr(MyFactory.get_faker(), "__test__attr__")
 
 
 def test_merges_defaults_with_kwargs():
-    factory = PersonFactory()
-    first_obj = factory.build()
+    first_obj = PersonFactory.build()
     assert first_obj.id == PersonFactory.id
     assert first_obj.name == PersonFactory.name
     assert first_obj.hobbies == PersonFactory.hobbies
@@ -131,7 +129,7 @@ def test_merges_defaults_with_kwargs():
     new_hobbies = ["dancing"]
     new_age = 35
     new_pets = [pet]
-    second_obj = factory.build(id=new_id, hobbies=new_hobbies, age=new_age, pets=new_pets)
+    second_obj = PersonFactory.build(id=new_id, hobbies=new_hobbies, age=new_age, pets=new_pets)
     assert second_obj.id == new_id
     assert second_obj.hobbies == new_hobbies
     assert second_obj.age == new_age
@@ -141,12 +139,12 @@ def test_merges_defaults_with_kwargs():
 
 
 def test_respects_none_overrides():
-    result = PersonFactory().build(hobbies=None)
+    result = PersonFactory.build(hobbies=None)
     assert result.hobbies is None
 
 
 def test_uses_faker_to_set_values_when_none_available_on_class():
-    result = PetFactory().build()
+    result = PetFactory.build()
     assert isinstance(result.name, str)
     assert isinstance(result.species, str)
     assert isinstance(result.color, str)
@@ -155,7 +153,7 @@ def test_uses_faker_to_set_values_when_none_available_on_class():
 
 
 def test_builds_batch():
-    results = PetFactory().batch(10)
+    results = PetFactory.batch(10)
     assert isinstance(results, list)
     assert len(results) == 10
     for result in results:
@@ -235,10 +233,9 @@ def test_type_property_parsing():
     class MyFactory(ModelFactory):
         __model__ = MyModel
 
-    factory = MyFactory()
-    result = factory.build()
+    result = MyFactory.build()
 
-    for key in factory.get_provider_map().keys():
+    for key in MyFactory.get_provider_map().keys():
         if hasattr(result, f"{key.__name__}_field"):
             assert isinstance(getattr(result, f"{key.__name__}_field"), key)
         elif hasattr(result, f"{key.__name__}_pydantic_type"):
@@ -259,6 +256,6 @@ def test_type_property_parsing():
 #     class MyFactory(ModelFactory):
 #         __model__ = MyModel
 #
-#     result = MyFactory().build()
+#     result = MyFactory.build()
 #
 #     assert result is not None
