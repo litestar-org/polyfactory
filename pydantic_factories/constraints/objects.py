@@ -23,15 +23,15 @@ def create_constrained_of_collection(
     if t_type is Any:
         t_type = str
     collection: Union[list, set] = collection_type()
+    handler = providers.get(t_type)
+    if not handler:
+        raise ParameterError(f"cannot generate a constrained {t_type.__name__} of ${t_type.__name__} elements")
     while len(collection) < randint(min_items, max_items):
-        handler = providers[t_type]
-        if handler:
-            value = handler()
-            assert value is not None, f"cannot generate a constrained {t_type.__name__} of ${t_type.__name__} elements"
-            if isinstance(collection, set):
-                collection.add(value)
-            else:
-                collection.append(value)
+        value = handler()
+        if isinstance(collection, set):
+            collection.add(value)
+        else:
+            collection.append(value)
     return collection
 
 

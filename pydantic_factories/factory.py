@@ -13,7 +13,7 @@ from ipaddress import (
 )
 from pathlib import Path
 from random import uniform
-from typing import Any, Callable, Generic, List, Optional, TypeVar, Union
+from typing import Any, Callable, Generic, List, Optional, TypeVar, cast
 from uuid import NAMESPACE_DNS, UUID, uuid1, uuid3, uuid4, uuid5
 
 from faker import Faker
@@ -87,16 +87,6 @@ from pydantic_factories.utils import create_random_bytes
 T = TypeVar("T", bound=BaseModel)
 
 default_faker = Faker()
-
-PydanticConstrainedFields = Union[
-    ConstrainedList,
-    ConstrainedBytes,
-    ConstrainedSet,
-    ConstrainedDecimal,
-    ConstrainedStr,
-    ConstrainedFloat,
-    ConstrainedInt,
-]
 
 
 class ModelFactory(ABC, Generic[T]):
@@ -234,22 +224,24 @@ class ModelFactory(ABC, Generic[T]):
         return None
 
     @classmethod
-    def handle_constrained_field(cls, outer_field_type: PydanticConstrainedFields) -> Any:
+    def handle_constrained_field(cls, outer_field_type: Any) -> Any:
         """Handle the built-in pydantic constrained value field types"""
         try:
-            if isinstance(outer_field_type, ConstrainedFloat):
-                return handle_constrained_float(outer_field_type)
-            if isinstance(outer_field_type, ConstrainedInt):
-                return handle_constrained_int(outer_field_type)
-            if isinstance(outer_field_type, ConstrainedDecimal):
-                return handle_constrained_decimal(outer_field_type)
-            if isinstance(outer_field_type, ConstrainedStr):
-                return handle_constrained_string(outer_field_type)
-            if isinstance(outer_field_type, ConstrainedBytes):
-                return handle_constrained_bytes(outer_field_type)
-            if isinstance(outer_field_type, ConstrainedList):
-                return handle_constrained_list(outer_field_type, cls.get_provider_map())
-            return handle_constrained_set(outer_field_type, cls.get_provider_map())
+            if outer_field_type.__name__ == "ConstrainedFloatValue":
+                return handle_constrained_float(cast(ConstrainedFloat, outer_field_type))
+            if outer_field_type.__name__ == "ConstrainedIntValue":
+                return handle_constrained_int(cast(ConstrainedInt, outer_field_type))
+            if outer_field_type.__name__ == "ConstrainedDecimalValue":
+                return handle_constrained_decimal(cast(ConstrainedDecimal, outer_field_type))
+            if outer_field_type.__name__ == "ConstrainedStrValue":
+                return handle_constrained_string(cast(ConstrainedStr, outer_field_type))
+            if outer_field_type.__name__ == "ConstrainedBytesValue":
+                return handle_constrained_bytes(cast(ConstrainedBytes, outer_field_type))
+            if outer_field_type.__name__ == "ConstrainedListValue":
+                return handle_constrained_list(cast(ConstrainedList, outer_field_type), cls.get_provider_map())
+            if outer_field_type.__name__ == "ConstrainedSetValue":
+                return handle_constrained_set(cast(ConstrainedSet, outer_field_type), cls.get_provider_map())
+            raise ParameterError(f"Unknown constrained field: {outer_field_type.__name__}")  # pragma: no cover
         except AssertionError as e:
             raise ParameterError from e
 
@@ -261,18 +253,8 @@ class ModelFactory(ABC, Generic[T]):
 
         outer_field_type = model_field.outer_type_
         inner_field_type = model_field.type_
-        if isinstance(
-            outer_field_type,
-            (
-                ConstrainedList,
-                ConstrainedBytes,
-                ConstrainedSet,
-                ConstrainedDecimal,
-                ConstrainedStr,
-                ConstrainedFloat,
-                ConstrainedInt,
-            ),
-        ):
+        if "Constrained" in outer_field_type.__name__:
+            # we have to case here, because pydantic uses dynamic classes for constrained values
             return cls.handle_constrained_field(outer_field_type=outer_field_type)
         # this is a workaround for the following issue: https://github.com/samuelcolvin/pydantic/issues/3415
         field_type = inner_field_type if inner_field_type is not Any else outer_field_type

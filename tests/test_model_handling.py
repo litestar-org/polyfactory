@@ -50,6 +50,13 @@ from pydantic import (
     StrictFloat,
     StrictInt,
     StrictStr,
+    conbytes,
+    condecimal,
+    confloat,
+    conint,
+    conlist,
+    conset,
+    constr,
 )
 from pydantic.color import Color
 
@@ -242,20 +249,25 @@ def test_type_property_parsing():
             assert getattr(result, f"{key.__name__}_pydantic_type") is not None
 
 
-# def test_constrained_property_parsing():
-#     class MyModel(BaseModel):
-#         conbytes_field: conbytes()
-#         condecimal_field: condecimal()
-#         confloat_field: confloat()
-#         conint_field: conint()
-#         conlist_field: conlist(List[str])
-#         conset_field: conset(Set[str])
-#         constr_field: constr()
-#         stricturl_field: stricturl()
-#
-#     class MyFactory(ModelFactory):
-#         __model__ = MyModel
-#
-#     result = MyFactory.build()
-#
-#     assert result is not None
+def test_constrained_property_parsing():
+    class MyModel(BaseModel):
+        conbytes_field: conbytes()
+        condecimal_field: condecimal()
+        confloat_field: confloat()
+        conint_field: conint()
+        conlist_field: conlist(str)
+        conset_field: conset(str)
+        constr_field: constr()
+
+    class MyFactory(ModelFactory):
+        __model__ = MyModel
+
+    result = MyFactory.build()
+
+    assert isinstance(result.conbytes_field, bytes)
+    assert isinstance(result.constr_field, str)
+    assert isinstance(result.conint_field, int)
+    assert isinstance(result.confloat_field, float)
+    assert isinstance(result.condecimal_field, Decimal)
+    assert isinstance(result.conlist_field, list)
+    assert isinstance(result.conset_field, set)
