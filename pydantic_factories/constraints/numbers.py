@@ -1,19 +1,17 @@
 from decimal import Decimal
-from random import randint, random, uniform
-from typing import Any, Callable, Optional, Tuple, TypeVar
+from random import random
+from typing import Callable, Optional, Tuple, TypeVar
 
-from faker import Faker
 from pydantic import ConstrainedDecimal, ConstrainedFloat, ConstrainedInt
 from typing_extensions import Type
 
-from pydantic_factories.exceptions import ParameterError
+from pydantic_factories.utils import (
+    create_random_decimal,
+    create_random_float,
+    create_random_integer,
+)
 
 T = TypeVar("T", Decimal, int, float)
-
-
-def decimal_from_uniform(minimum: Decimal, maximum: Decimal) -> Decimal:
-    """Helper function that generates a random decimal given a maximum and minimum"""
-    return Decimal(uniform(float(minimum), float(maximum)))
 
 
 def get_increment(t_type: Type[T]) -> T:
@@ -67,22 +65,21 @@ def generate_constrained_number(
     minimum: Optional[T],
     maximum: Optional[T],
     multiple_of: Optional[T],
-    generation_method: Callable[[Any, Any], T],
-    faker_method: Callable[[], T],
+    method: Callable,
 ) -> T:
     """Generates a constrained number, output depends on the passed in callbacks"""
     if minimum is not None and maximum is not None:
         if multiple_of is None:
-            return generation_method(minimum, maximum)
+            return method(minimum, maximum)
         if multiple_of >= minimum:
             return multiple_of
-        return round(generation_method(minimum, maximum) / multiple_of) * multiple_of
+        return round(method(minimum, maximum) / multiple_of) * multiple_of
     if multiple_of is not None:
         return multiple_of
-    return faker_method()
+    return method()
 
 
-def handle_constrained_decimal(field: ConstrainedDecimal, faker: Faker) -> Decimal:
+def handle_constrained_decimal(field: ConstrainedDecimal) -> Decimal:
     """
     Handles 'ConstrainedDecimal' instances
 
@@ -91,21 +88,17 @@ def handle_constrained_decimal(field: ConstrainedDecimal, faker: Faker) -> Decim
     multiple_of = field.multiple_of
     if multiple_of == 0:
         return Decimal(0)
-    if multiple_of:
-        raise ParameterError(
-            "generating Decimals with multiple_of is not supported, please specify a value in the factory"
-        )
+    assert multiple_of is None, "generating Decimals with multiple_of is not supported"
     minimum, maximum = get_constrained_number_range(gt=field.gt, ge=field.ge, lt=field.lt, le=field.le, t_type=Decimal)  # type: ignore
     return generate_constrained_number(  # type: ignore
         minimum=minimum,
         maximum=maximum,
         multiple_of=None,
-        generation_method=decimal_from_uniform,
-        faker_method=faker.pydecimal,
+        method=create_random_decimal,
     )
 
 
-def handle_constrained_float(field: ConstrainedFloat, faker: Faker) -> float:
+def handle_constrained_float(field: ConstrainedFloat) -> float:
     """
     Handles 'ConstrainedFloat' instances
     """
@@ -119,12 +112,11 @@ def handle_constrained_float(field: ConstrainedFloat, faker: Faker) -> float:
         minimum=minimum,
         maximum=maximum,
         multiple_of=multiple_of,
-        generation_method=uniform,
-        faker_method=faker.pyfloat,
+        method=create_random_float,
     )
 
 
-def handle_constrained_int(field: ConstrainedInt, faker: Faker) -> int:
+def handle_constrained_int(field: ConstrainedInt) -> int:
     """
     Handles 'ConstrainedInt' instances
     """
@@ -135,9 +127,5 @@ def handle_constrained_int(field: ConstrainedInt, faker: Faker) -> int:
         gt=field.gt, ge=field.ge, lt=field.lt, le=field.le, t_type=int, multiple_of=multiple_of
     )
     return generate_constrained_number(
-        minimum=minimum,
-        maximum=maximum,
-        multiple_of=multiple_of,
-        generation_method=randint,
-        faker_method=faker.pyint,
+        minimum=minimum, maximum=maximum, multiple_of=multiple_of, method=create_random_integer
     )

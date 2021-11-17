@@ -1,34 +1,44 @@
-from random import randint
+from typing import Optional, Tuple, Union
 
 from exrex import getone  # pylint: disable=import-error
-from faker import Faker
-from pydantic import ConstrainedStr
+from pydantic import ConstrainedBytes, ConstrainedStr
+
+from pydantic_factories.utils import create_random_bytes, create_random_string
 
 
-def handle_constrained_string(field: ConstrainedStr, faker: Faker) -> str:
-    """Handles ConstrainedStr and Fields with string constraints"""
-    to_lower = field.to_lower
+def parse_constrained_string_or_bytes(
+    field: Union[ConstrainedStr, ConstrainedBytes]
+) -> Tuple[Optional[int], Optional[int], bool]:
+    """Parses and validates the given field"""
+    lower_case = field.to_lower
     min_length = field.min_length
     max_length = field.max_length
-
     assert min_length >= 0 if min_length is not None else True, "min_length must be greater or equal to 0"
     assert max_length >= 0 if max_length is not None else True, "max_length must be greater or equal to 0"
     if max_length is not None and min_length is not None:
         assert max_length >= min_length, "max_length must be greater than min_length"
+    return min_length, max_length, lower_case
+
+
+def handle_constrained_bytes(field: ConstrainedBytes) -> bytes:
+    """Handles ConstrainedStr and Fields with string constraints"""
+    min_length, max_length, lower_case = parse_constrained_string_or_bytes(field)
+    if max_length == 0:
+        return b""
+    return create_random_bytes(min_length=min_length, max_length=max_length, lower_case=lower_case)
+
+
+def handle_constrained_string(field: ConstrainedStr) -> str:
+    """Handles ConstrainedStr and Fields with string constraints"""
+    min_length, max_length, lower_case = parse_constrained_string_or_bytes(field)
     if max_length == 0:
         return ""
-    if field.regex:
-        result = getone(str(field.regex))
-        if min_length:
-            while len(result) < min_length:
-                result += getone(str(field.regex))
-    else:
-        min_chars = min_length or 0
-        max_chars = max_length if max_length is not None else min_chars + 1 * 2
-        result = faker.pystr(min_chars=min_chars, max_chars=max_chars)
-    if to_lower:
-        result = result.lower()
+    if not field.regex:
+        return create_random_string(min_length, max_length, lower_case=lower_case)
+    result = getone(str(field.regex))
+    if min_length:
+        while len(result) < min_length:
+            result += getone(str(field.regex))
     if max_length and len(result) > max_length:
-        end = randint(min_length or 0, max_length)
-        return result[0:end]
-    return result
+        result = result[:max_length]
+    return result.lower() if lower_case else result

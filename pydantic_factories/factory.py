@@ -70,8 +70,11 @@ from pydantic_factories.constraints.numbers import (
     handle_constrained_float,
     handle_constrained_int,
 )
-from pydantic_factories.constraints.strings import handle_constrained_string
-from pydantic_factories.exceptions import ConfigurationError
+from pydantic_factories.constraints.strings import (
+    handle_constrained_bytes,
+    handle_constrained_string,
+)
+from pydantic_factories.exceptions import ConfigurationError, ParameterError
 from pydantic_factories.protocols import (
     AsyncPersistenceProtocol,
     SyncPersistenceProtocol,
@@ -204,22 +207,26 @@ class ModelFactory(ABC, Generic[T]):
                 return handler()
         return None
 
-    def handle_constrained_field(self, outer_field_type: Any) -> Any:
+    @staticmethod
+    def handle_constrained_field(outer_field_type: Any) -> Any:
         """Handle the built-in pydantic constrained value field types"""
-        if isinstance(outer_field_type, ConstrainedFloat):
-            return handle_constrained_float(outer_field_type, self.faker)
-        if isinstance(outer_field_type, ConstrainedInt):
-            return handle_constrained_int(outer_field_type, self.faker)
-        if isinstance(outer_field_type, ConstrainedStr):
-            return handle_constrained_string(outer_field_type, self.faker)
-        if isinstance(outer_field_type, ConstrainedDecimal):
-            return handle_constrained_decimal(outer_field_type, self.faker)
-        if isinstance(outer_field_type, ConstrainedBytes):
-            raise NotImplementedError()
-        if isinstance(outer_field_type, ConstrainedList):
-            raise NotImplementedError()
-        if isinstance(outer_field_type, ConstrainedSet):
-            raise NotImplementedError()
+        try:
+            if isinstance(outer_field_type, ConstrainedFloat):
+                return handle_constrained_float(outer_field_type)
+            if isinstance(outer_field_type, ConstrainedInt):
+                return handle_constrained_int(outer_field_type)
+            if isinstance(outer_field_type, ConstrainedDecimal):
+                return handle_constrained_decimal(outer_field_type)
+            if isinstance(outer_field_type, ConstrainedStr):
+                return handle_constrained_string(outer_field_type)
+            if isinstance(outer_field_type, ConstrainedBytes):
+                return handle_constrained_bytes(outer_field_type)
+            if isinstance(outer_field_type, ConstrainedList):
+                raise NotImplementedError()
+            if isinstance(outer_field_type, ConstrainedSet):
+                raise NotImplementedError()
+        except AssertionError as e:
+            raise ParameterError from e
 
     def get_field_value(self, field_name: str, model_field: ModelField) -> Any:
         """Returns a field value on the sub-class if existing, otherwise returns a mock value"""
