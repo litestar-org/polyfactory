@@ -1,4 +1,4 @@
-from typing import Optional, Tuple, Union
+from typing import Any, Optional, Pattern, Tuple, Union
 
 from exrex import getone  # pylint: disable=import-error
 from pydantic import ConstrainedBytes, ConstrainedStr
@@ -33,12 +33,15 @@ def handle_constrained_string(field: ConstrainedStr) -> str:
     min_length, max_length, lower_case = parse_constrained_string_or_bytes(field)
     if max_length == 0:
         return ""
-    if not field.regex:
+    regex: Any = field.regex
+    if not regex:
         return create_random_string(min_length, max_length, lower_case=lower_case)
-    result = getone(str(field.regex))
+    if isinstance(regex, Pattern):
+        regex = regex.pattern
+    result = getone(regex)
     if min_length:
         while len(result) < min_length:
-            result += getone(str(field.regex))
+            result += getone(regex)
     if max_length and len(result) > max_length:
         result = result[:max_length]
     return result.lower() if lower_case else result

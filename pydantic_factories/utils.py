@@ -2,7 +2,7 @@ from binascii import hexlify
 from decimal import Decimal
 from os import urandom
 from random import randint, uniform
-from typing import Optional, Union
+from typing import Any, Optional, Union
 
 
 def create_random_float(
@@ -49,3 +49,8 @@ def create_random_string(
 ) -> str:
     """Generates a random string given the constraints"""
     return create_random_bytes(min_length=min_length, max_length=max_length, lower_case=lower_case).decode("utf-8")
+
+
+def inherits_from(parent: Any, value) -> bool:
+    """Determines whether a given value is a descendent of a given parent"""
+    return callable(value) and hasattr(value, "__bases__") and parent in value.__bases__

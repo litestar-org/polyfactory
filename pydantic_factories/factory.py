@@ -83,7 +83,7 @@ from pydantic_factories.protocols import (
     AsyncPersistenceProtocol,
     SyncPersistenceProtocol,
 )
-from pydantic_factories.utils import create_random_bytes
+from pydantic_factories.utils import create_random_bytes, inherits_from
 
 T = TypeVar("T", bound=BaseModel)
 
@@ -230,46 +230,71 @@ class ModelFactory(ABC, Generic[T]):
         return None
 
     @classmethod
-    def handle_constrained_field(cls, outer_field_type: Any) -> Any:
+    def handle_constrained_field(cls, outer_type: Any) -> Any:
         """Handle the built-in pydantic constrained value field types"""
         try:
-            if outer_field_type.__name__ == "ConstrainedFloatValue":
-                return handle_constrained_float(cast(ConstrainedFloat, outer_field_type))
-            if outer_field_type.__name__ == "ConstrainedIntValue":
-                return handle_constrained_int(cast(ConstrainedInt, outer_field_type))
-            if outer_field_type.__name__ == "ConstrainedDecimalValue":
-                return handle_constrained_decimal(cast(ConstrainedDecimal, outer_field_type))
-            if outer_field_type.__name__ == "ConstrainedStrValue":
-                return handle_constrained_string(cast(ConstrainedStr, outer_field_type))
-            if outer_field_type.__name__ == "ConstrainedBytesValue":
-                return handle_constrained_bytes(cast(ConstrainedBytes, outer_field_type))
-            if outer_field_type.__name__ == "ConstrainedListValue":
-                return handle_constrained_list(cast(ConstrainedList, outer_field_type), cls.get_provider_map())
-            if outer_field_type.__name__ == "ConstrainedSetValue":
-                return handle_constrained_set(cast(ConstrainedSet, outer_field_type), cls.get_provider_map())
-            raise ParameterError(f"Unknown constrained field: {outer_field_type.__name__}")  # pragma: no cover
+            if outer_type.__name__ == "ConstrainedFloatValue":
+                return handle_constrained_float(cast(ConstrainedFloat, outer_type))
+            if outer_type.__name__ == "ConstrainedIntValue":
+                return handle_constrained_int(cast(ConstrainedInt, outer_type))
+            if outer_type.__name__ == "ConstrainedDecimalValue":
+                return handle_constrained_decimal(cast(ConstrainedDecimal, outer_type))
+            if outer_type.__name__ == "ConstrainedStrValue":
+                return handle_constrained_string(cast(ConstrainedStr, outer_type))
+            if outer_type.__name__ == "ConstrainedBytesValue":
+                return handle_constrained_bytes(cast(ConstrainedBytes, outer_type))
+            if outer_type.__name__ == "ConstrainedListValue":
+                return handle_constrained_list(cast(ConstrainedList, outer_type), cls.get_provider_map())
+            if outer_type.__name__ == "ConstrainedSetValue":
+                return handle_constrained_set(cast(ConstrainedSet, outer_type), cls.get_provider_map())
+            raise ParameterError(f"Unknown constrained field: {outer_type.__name__}")  # pragma: no cover
         except AssertionError as e:
             raise ParameterError from e
 
     @classmethod
-    def handle_enum(cls, outer_field_type: EnumMeta) -> Any:
+    def handle_enum(cls, outer_type: EnumMeta) -> Any:
         """Method that converts an enum to a list and picks a random element out of it"""
-        return choice(list(outer_field_type))
+        return choice(list(outer_type))
+
+    @classmethod
+    def handle_factory_field(cls, field_name: str) -> Any:
+        """Handles a field defined on the factory class itself"""
+        value = getattr(cls, field_name)
+        if inherits_from(ModelFactory, value):
+            return cast(ModelFactory, value).build()
+        if callable(value):
+            return value()
+        return value
+
+    @classmethod
+    def create_dynamic_factory(cls, model: BaseModel) -> "ModelFactory":
+        """Dynamically generates a factory given a model"""
+        return cast(
+            ModelFactory,
+            type(
+                f"{model.__name__}Factory",  # type: ignore
+                (ModelFactory,),
+                {
+                    "__model__": model,
+                    "__faker__": cls.get_faker(),
+                },
+            ),
+        )
 
     @classmethod
     def get_field_value(cls, field_name: str, model_field: ModelField) -> Any:
         """Returns a field value on the sub-class if existing, otherwise returns a mock value"""
         if hasattr(cls, field_name):
-            value = getattr(cls, field_name)
-            return value() if callable(value) else value
-        outer_field_type = model_field.outer_type_
-        if isinstance(outer_field_type, EnumMeta):
-            return cls.handle_enum(outer_field_type)
-        if hasattr(outer_field_type, "__name__") and "Constrained" in outer_field_type.__name__:
-            return cls.handle_constrained_field(outer_field_type=outer_field_type)
-        inner_field_type = model_field.type_
+            return cls.handle_factory_field(field_name=field_name)
+        outer_type = model_field.outer_type_
+        if inherits_from(BaseModel, outer_type):
+            return cls.create_dynamic_factory(model=outer_type).build()
+        if isinstance(outer_type, EnumMeta):
+            return cls.handle_enum(outer_type)
+        if hasattr(outer_type, "__name__") and "Constrained" in outer_type.__name__:
+            return cls.handle_constrained_field(outer_type=outer_type)
         # this is a workaround for the following issue: https://github.com/samuelcolvin/pydantic/issues/3415
-        field_type = inner_field_type if inner_field_type is not Any else outer_field_type
+        field_type = model_field.type_ if model_field.type_ is not Any else outer_type
         return cls.get_mock_value(field_type=field_type)
 
     @classmethod
@@ -277,8 +302,10 @@ class ModelFactory(ABC, Generic[T]):
         """builds an instance of the factory's Meta.model"""
         model = cls.get_model_model()
         for field_name, model_field in model.__fields__.items():
+            if model_field.alias:
+                field_name = model_field.alias
             if field_name not in kwargs:
-                kwargs.setdefault(field_name, cls.get_field_value(field_name=field_name, model_field=model_field))
+                kwargs[field_name] = cls.get_field_value(field_name=field_name, model_field=model_field)
         return cls.__model__(**kwargs)
 
     @classmethod

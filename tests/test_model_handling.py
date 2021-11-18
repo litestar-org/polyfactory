@@ -1,3 +1,4 @@
+import re
 from collections import deque
 from datetime import date, datetime, time, timedelta
 from decimal import Decimal
@@ -27,6 +28,7 @@ from pydantic import (
     ByteSize,
     DirectoryPath,
     EmailStr,
+    Field,
     FilePath,
     HttpUrl,
     IPvAnyAddress,
@@ -254,6 +256,8 @@ def test_type_property_parsing():
 
 
 def test_constrained_property_parsing():
+    pattern = r"(a|b|c)zz"
+
     class MyModel(BaseModel):
         conbytes_field: conbytes()
         condecimal_field: condecimal()
@@ -261,7 +265,14 @@ def test_constrained_property_parsing():
         conint_field: conint()
         conlist_field: conlist(str)
         conset_field: conset(str)
-        constr_field: constr()
+        constr_field: constr(to_lower=True)
+        str_field1: str = Field(min_length=11)
+        str_field2: str = Field(max_length=11)
+        str_field3: str = Field(min_length=8, max_length=11, regex=pattern)
+        int_field: int = Field(gt=1, multiple_of=5)
+        float_field: float = Field(gt=100, lt=1000)
+        decimal_field: Decimal = Field(ge=100, le=1000)
+        list_field: List[str] = Field(min_items=1, max_items=10)
 
     class MyFactory(ModelFactory):
         __model__ = MyModel
@@ -269,12 +280,29 @@ def test_constrained_property_parsing():
     result = MyFactory.build()
 
     assert isinstance(result.conbytes_field, bytes)
-    assert isinstance(result.constr_field, str)
     assert isinstance(result.conint_field, int)
     assert isinstance(result.confloat_field, float)
     assert isinstance(result.condecimal_field, Decimal)
     assert isinstance(result.conlist_field, list)
     assert isinstance(result.conset_field, set)
+    assert isinstance(result.str_field1, str)
+    assert isinstance(result.constr_field, str)
+    assert result.constr_field.lower() == result.constr_field
+    assert len(result.str_field1) >= 11
+    assert len(result.str_field2) <= 11
+    assert len(result.str_field3) >= 8
+    assert len(result.str_field3) <= 11
+    match = re.search(pattern, result.str_field3)
+    assert match and match.group(0)
+    assert result.int_field >= 1
+    assert result.int_field % 5 == 0
+    assert result.float_field > 100
+    assert result.float_field < 1000
+    assert result.decimal_field > 100
+    assert result.decimal_field < 1000
+    assert len(result.list_field) >= 1
+    assert len(result.list_field) <= 10
+    assert all([isinstance(r, str) for r in result.list_field])
 
 
 def test_enum_parsing():
@@ -318,3 +346,36 @@ def test_callback_parsing():
     assert result.name == "moishe zuchmir"
     assert result.birthday == today
     assert callable(result.secret)
+
+
+def test_alias_parsing():
+    class MyModel(BaseModel):
+        aliased_field: str = Field(alias="special_field")
+
+    class MyFactory(ModelFactory):
+        __model__ = MyModel
+
+    assert isinstance(MyFactory.build().aliased_field, str)
+
+
+def test_dynamic_factory_creation_for_base_model_fields():
+    class MyModel(BaseModel):
+        pet: Pet
+
+    class MyFactory(ModelFactory):
+        __model__ = MyModel
+
+    result = MyFactory.build()
+    assert isinstance(result.pet, Pet)
+
+
+def test_using_sub_factories():
+    class MyModel(BaseModel):
+        person: Person
+
+    class MyFactory(ModelFactory):
+        __model__ = MyModel
+        person = PersonFactory
+
+    result = MyFactory.build()
+    assert isinstance(result.person, Person)
