@@ -56,7 +56,7 @@ def test_handle_constrained_float_handles_lt(maximum):
 @given(floats(allow_nan=False, allow_infinity=False, min_value=-1000000000, max_value=1000000000))
 def test_handle_constrained_float_handles_multiple_of(multiple_of):
     result = handle_constrained_float(create_constrained_field(multiple_of=multiple_of))
-    assert round(result) % round(multiple_of) < 0.01 if multiple_of != 0 else True
+    assert round(result % multiple_of) < 0.01 if multiple_of != 0 else True
 
 
 @given(
@@ -70,7 +70,7 @@ def test_handle_constrained_float_handles_multiple_of_with_lt(val1, val2):
         if multiple_of == 0:
             assert result == 0
         else:
-            assert round(result) % round(multiple_of) < 0.01
+            assert round(result % multiple_of) < 0.01
     else:
         with pytest.raises(AssertionError):
             handle_constrained_float(create_constrained_field(multiple_of=multiple_of, lt=max_value))
@@ -87,7 +87,7 @@ def test_handle_constrained_float_handles_multiple_of_with_le(val1, val2):
         if multiple_of == 0:
             assert result == 0
         else:
-            assert round(result) % round(multiple_of) < 0.01
+            assert round(result % multiple_of) < 0.01
     else:
         with pytest.raises(AssertionError):
             handle_constrained_float(create_constrained_field(multiple_of=multiple_of, le=max_value))
@@ -103,7 +103,7 @@ def test_handle_constrained_float_handles_multiple_of_with_ge(val1, val2):
     if multiple_of == 0:
         assert result == 0
     else:
-        assert round(result) % round(multiple_of) < 0.01
+        assert round(result % multiple_of) < 0.01
 
 
 @given(
@@ -116,7 +116,7 @@ def test_handle_constrained_float_handles_multiple_of_with_gt(val1, val2):
     if multiple_of == 0:
         assert result == 0
     else:
-        assert round(result) % round(multiple_of) < 0.01
+        assert round(result % multiple_of) < 0.01
 
 
 @given(
@@ -131,7 +131,7 @@ def test_handle_constrained_float_handles_multiple_of_with_ge_and_le(val1, val2,
         if multiple_of == 0:
             assert result == 0
         else:
-            assert round(result) % round(multiple_of) == 0
+            assert round(result % multiple_of) == 0
     else:
         with pytest.raises(AssertionError):
             handle_constrained_float(create_constrained_field(multiple_of=multiple_of, ge=min_value, le=max_value))

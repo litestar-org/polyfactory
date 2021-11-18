@@ -11,7 +11,7 @@ from ipaddress import (
     IPv6Network,
 )
 from pathlib import Path
-from typing import List, Optional, Union
+from typing import Callable, List, Optional, Union
 from uuid import UUID, uuid4
 
 import pytest
@@ -202,6 +202,8 @@ def test_type_property_parsing():
         IPv6Address_field: IPv6Address
         IPv6Interface_field: IPv6Interface
         IPv6Network_field: IPv6Network
+        # types
+        Callable_field: Callable
         # pydantic specific
         ByteSize_pydantic_type: ByteSize
         PositiveInt_pydantic_type: PositiveInt
@@ -244,10 +246,11 @@ def test_type_property_parsing():
     result = MyFactory.build()
 
     for key in MyFactory.get_provider_map().keys():
-        if hasattr(result, f"{key.__name__}_field"):
-            assert isinstance(getattr(result, f"{key.__name__}_field"), key)
-        elif hasattr(result, f"{key.__name__}_pydantic_type"):
-            assert getattr(result, f"{key.__name__}_pydantic_type") is not None
+        key_name = key.__name__ if hasattr(key, "__name__") else key._name
+        if hasattr(result, f"{key_name}_field"):
+            assert isinstance(getattr(result, f"{key_name}_field"), key)
+        elif hasattr(result, f"{key_name}_pydantic_type"):
+            assert getattr(result, f"{key_name}_pydantic_type") is not None
 
 
 def test_constrained_property_parsing():
@@ -294,3 +297,24 @@ def test_enum_parsing():
 
     assert isinstance(result.name, MyStrEnum)
     assert isinstance(result.worth, MyIntEnum)
+
+
+def test_callback_parsing():
+    today = date.today()
+
+    class MyModel(BaseModel):
+        name: str
+        birthday: date
+        secret: Callable
+
+    class MyFactory(ModelFactory):
+        __model__ = MyModel
+
+        name = lambda: "moishe zuchmir"  # noqa: E731
+        birthday = lambda: today  # noqa: E731
+
+    result = MyFactory.build()
+
+    assert result.name == "moishe zuchmir"
+    assert result.birthday == today
+    assert callable(result.secret)

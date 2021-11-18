@@ -143,6 +143,9 @@ class ModelFactory(ABC, Generic[T]):
         def create_path() -> Path:
             return Path(os.path.realpath(__file__))
 
+        def create_generic_fn() -> Callable:
+            return lambda *args: None
+
         faker = cls.get_faker()
 
         return {
@@ -175,6 +178,8 @@ class ModelFactory(ABC, Generic[T]):
             IPv6Address: faker.ipv6,
             IPv6Interface: faker.ipv6,
             IPv6Network: lambda: faker.ipv6(network=True),
+            # types
+            Callable: create_generic_fn,
             # pydantic specific
             ByteSize: faker.pyint,
             PositiveInt: faker.pyint,
@@ -255,11 +260,12 @@ class ModelFactory(ABC, Generic[T]):
     def get_field_value(cls, field_name: str, model_field: ModelField) -> Any:
         """Returns a field value on the sub-class if existing, otherwise returns a mock value"""
         if hasattr(cls, field_name):
-            return getattr(cls, field_name)
+            value = getattr(cls, field_name)
+            return value() if callable(value) else value
         outer_field_type = model_field.outer_type_
         if isinstance(outer_field_type, EnumMeta):
             return cls.handle_enum(outer_field_type)
-        if "Constrained" in outer_field_type.__name__:
+        if hasattr(outer_field_type, "__name__") and "Constrained" in outer_field_type.__name__:
             return cls.handle_constrained_field(outer_field_type=outer_field_type)
         inner_field_type = model_field.type_
         # this is a workaround for the following issue: https://github.com/samuelcolvin/pydantic/issues/3415
