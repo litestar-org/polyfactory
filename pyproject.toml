@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "pydantic-factories"
-version = "0.1.0a"
+version = "0.2.0a"
 description = "Easy data mocking and fixture generation for pydantic based models"
 authors = ["Na'aman Hirschfeld <Naaman.Hirschfeld@sprylab.com>"]
 license = "MIT"
@@ -10,7 +10,6 @@ repository = "https://github.com/Goldziher/pydantic-factories"
 documentation = "https://github.com/Goldziher/pydantic-factories"
 keywords = ["pydantic", "pytest", "factory", "model factory", "fastapi", "beanie", "ormar", "sqlmodel", "factory boy"]
 classifiers = [
-    "Development Status :: 5 - Production/Stable",
     "Environment :: Web Environment",
     "Framework :: Pytest",
     "Intended Audience :: Developers",
