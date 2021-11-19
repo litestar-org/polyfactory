@@ -7,7 +7,9 @@ from hypothesis.strategies import integers
 from pydantic import ConstrainedSet
 
 from pydantic_factories import ModelFactory
-from pydantic_factories.constraints.objects import handle_constrained_set
+from pydantic_factories.constraints.constrained_set_handler import (
+    handle_constrained_set,
+)
 from pydantic_factories.exceptions import ParameterError
 
 

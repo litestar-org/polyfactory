@@ -5,7 +5,9 @@ from hypothesis import given
 from hypothesis.strategies import integers
 from pydantic import ConstrainedInt
 
-from pydantic_factories.constraints.numbers import handle_constrained_int
+from pydantic_factories.constraints.constrained_integer_handler import (
+    handle_constrained_int,
+)
 
 
 def create_constrained_field(

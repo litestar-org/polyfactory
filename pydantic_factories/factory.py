@@ -65,13 +65,19 @@ from pydantic.color import Color
 from pydantic.fields import ModelField
 from typing_extensions import Type
 
-from pydantic_factories.constraints.numbers import (
+from pydantic_factories.constraints.constrained_decimal_handler import (
     handle_constrained_decimal,
+)
+from pydantic_factories.constraints.constrained_float_handler import (
     handle_constrained_float,
+)
+from pydantic_factories.constraints.constrained_integer_handler import (
     handle_constrained_int,
 )
-from pydantic_factories.constraints.objects import (
+from pydantic_factories.constraints.constrained_list_handler import (
     handle_constrained_list,
+)
+from pydantic_factories.constraints.constrained_set_handler import (
     handle_constrained_set,
 )
 from pydantic_factories.constraints.strings import (
@@ -83,7 +89,8 @@ from pydantic_factories.protocols import (
     AsyncPersistenceProtocol,
     SyncPersistenceProtocol,
 )
-from pydantic_factories.utils import create_random_bytes, inherits_from
+from pydantic_factories.utils import inherits_from
+from pydantic_factories.value_generators.primitives import create_random_bytes
 
 T = TypeVar("T", bound=BaseModel)
 

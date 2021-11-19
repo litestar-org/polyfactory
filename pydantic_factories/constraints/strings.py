@@ -3,7 +3,10 @@ from typing import Any, Optional, Pattern, Tuple, Union
 from exrex import getone  # pylint: disable=import-error
 from pydantic import ConstrainedBytes, ConstrainedStr
 
-from pydantic_factories.utils import create_random_bytes, create_random_string
+from pydantic_factories.value_generators.primitives import (
+    create_random_bytes,
+    create_random_string,
+)
 
 
 def parse_constrained_string_or_bytes(
