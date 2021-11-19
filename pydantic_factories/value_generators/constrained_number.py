@@ -12,8 +12,8 @@ def get_increment(t_type: Type[T]) -> T:
     if t_type == int:
         return t_type(1)
     if t_type == float:
-        return t_type(0.0001)
-    return t_type(0.001)
+        return t_type(0.001)
+    return t_type("0.001")
 
 
 def get_value_or_none(equal_value: Optional[T], constrained: Optional[T], increment: T) -> Optional[T]:
@@ -38,8 +38,8 @@ def get_constrained_number_range(
 ) -> Tuple[Optional[T], Optional[T]]:
     """Returns the minimum and maximum values given a field's constraints"""
     seed = t_type(random() * 10)
-    minimum = get_value_or_none(ge, gt, get_increment(t_type))
-    maximum = get_value_or_none(le, lt, -get_increment(t_type))
+    minimum = get_value_or_none(equal_value=ge, constrained=gt, increment=get_increment(t_type))
+    maximum = get_value_or_none(equal_value=le, constrained=lt, increment=-get_increment(t_type))
     if minimum is not None and maximum is not None:
         assert minimum < maximum, "minimum must be lower then maximum"
     if multiple_of is not None and maximum is not None:

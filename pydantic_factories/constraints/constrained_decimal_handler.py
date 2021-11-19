@@ -61,19 +61,20 @@ def handle_constrained_decimal(field: ConstrainedDecimal) -> Decimal:
     """
     Handles 'ConstrainedDecimal' instances
     """
-    multiple_of = field.multiple_of
+    multiple_of = cast(Optional[Decimal], field.multiple_of)
     decimal_places = field.decimal_places
     max_digits = field.max_digits
     if multiple_of == 0:
         return Decimal(0)
-    assert multiple_of is None, "generating Decimals with multiple_of is not supported"
-    minimum, maximum = get_constrained_number_range(gt=field.gt, ge=field.ge, lt=field.lt, le=field.le, t_type=Decimal)  # type: ignore
+    minimum, maximum = get_constrained_number_range(
+        gt=field.gt, ge=field.ge, lt=field.lt, le=field.le, multiple_of=multiple_of, t_type=Decimal  # type: ignore
+    )
     if max_digits is not None:
         validate_max_digits(max_digits=max_digits, minimum=cast(Decimal, minimum), decimal_places=decimal_places)
     generated_decimal = generate_constrained_number(
         minimum=cast(Decimal, minimum),
         maximum=cast(Decimal, maximum),
-        multiple_of=None,
+        multiple_of=multiple_of,
         method=create_random_decimal,
     )
     if max_digits is not None or decimal_places is not None:
