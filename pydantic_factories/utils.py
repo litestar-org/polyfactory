@@ -23,7 +23,7 @@ def create_random_integer(minimum: Optional[int] = None, maximum: Optional[int] 
 
 def create_random_decimal(minimum: Optional[Decimal] = None, maximum: Optional[Decimal] = None) -> Decimal:
     """Generates a random Decimal given the constraints"""
-    return Decimal(create_random_float(minimum, maximum))
+    return Decimal(str(create_random_float(minimum, maximum)))
 
 
 def create_random_bytes(
