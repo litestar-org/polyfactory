@@ -273,6 +273,7 @@ def test_constrained_property_parsing():
         float_field: float = Field(gt=100, lt=1000)
         decimal_field: Decimal = Field(ge=100, le=1000)
         list_field: List[str] = Field(min_items=1, max_items=10)
+        constant_field: int = Field(const=True, default=100)
 
     class MyFactory(ModelFactory):
         __model__ = MyModel
@@ -303,6 +304,7 @@ def test_constrained_property_parsing():
     assert len(result.list_field) >= 1
     assert len(result.list_field) <= 10
     assert all([isinstance(r, str) for r in result.list_field])
+    assert result.constant_field == 100
 
 
 def test_enum_parsing():

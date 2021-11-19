@@ -293,6 +293,8 @@ class ModelFactory(ABC, Generic[T]):
         """Returns a field value on the sub-class if existing, otherwise returns a mock value"""
         if hasattr(cls, field_name):
             return cls.handle_factory_field(field_name=field_name)
+        if model_field.field_info.const:
+            return model_field.get_default()
         outer_type = model_field.outer_type_
         if inherits_from(BaseModel, outer_type):
             return cls.create_dynamic_factory(model=outer_type).build()
