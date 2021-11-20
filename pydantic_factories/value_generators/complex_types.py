@@ -1,27 +1,20 @@
-from collections import deque, defaultdict
+from collections import defaultdict, deque
 from random import choice
-from typing import (
-    Any,
-    Optional,
-    Callable,
-)
+from typing import Any, Callable, Dict, Optional, cast
 
 from pydantic.fields import (
-    ModelField,
-    # SHAPE_SINGLETON,
-    SHAPE_LIST,
-    SHAPE_SET,
-    SHAPE_MAPPING,
-    SHAPE_TUPLE,
-    SHAPE_TUPLE_ELLIPSIS,
-    SHAPE_SEQUENCE,
-    SHAPE_FROZENSET,
-    SHAPE_ITERABLE,
-    # SHAPE_GENERIC,
+    SHAPE_DEFAULTDICT,
     SHAPE_DEQUE,
     SHAPE_DICT,
-    SHAPE_DEFAULTDICT,
-    SHAPE_GENERIC,
+    SHAPE_FROZENSET,
+    SHAPE_ITERABLE,
+    SHAPE_LIST,
+    SHAPE_MAPPING,
+    SHAPE_SEQUENCE,
+    SHAPE_SET,
+    SHAPE_TUPLE,
+    SHAPE_TUPLE_ELLIPSIS,
+    ModelField,
 )
 
 from pydantic_factories.exceptions import ParameterError
@@ -41,7 +34,6 @@ type_mapping = {
 }
 
 shape_mapping = {
-    # SHAPE_SINGLETON: dict,  # fixme
     SHAPE_LIST: list,
     SHAPE_SET: set,
     SHAPE_MAPPING: dict,
@@ -50,46 +42,38 @@ shape_mapping = {
     SHAPE_SEQUENCE: list,
     SHAPE_FROZENSET: frozenset,
     SHAPE_ITERABLE: list,
-    # SHAPE_GENERIC: dict,  # fixme
     SHAPE_DEQUE: deque,
     SHAPE_DICT: dict,
     SHAPE_DEFAULTDICT: defaultdict,
 }
 
 
-def validate_is_not_generic(shape: int):
-    """validates that the field's shapre is not generic"""
-    if shape == SHAPE_GENERIC:
-        raise ParameterError("Generic typings are not supported")
-
-
 def is_union(model_field: ModelField) -> bool:
-    return "typing.Union" == repr(model_field.outer_type_).split("[")[0]
+    """Determines whether the given model_field is type Union"""
+    return repr(model_field.outer_type_).split("[")[0] == "typing.Union"
 
 
 def is_any(model_field: ModelField) -> bool:
+    """Determines whether the given model_field is type Any"""
     try:
-        name = getattr(model_field.outer_type_, "_name")
+        name = model_field.outer_type_._name  # pylint: disable=protected-access
         return name and "Any" in name
     except AttributeError:
         return False
 
 
-def handle_container_type(model_field: ModelField, container_type: Callable, providers: dict[Any, Callable]):
+def handle_container_type(model_field: ModelField, container_type: Callable, providers: Dict[Any, Callable]):
+    """Handles generation of container types, e.g. dict, list etc. recursively"""
     is_frozen_set = False
-    is_tuple = False
     if container_type == frozenset:
         container = set()
         is_frozen_set = True
-    elif container_type == tuple:
-        container = list()
-        is_tuple = True
     else:
         container = container_type()
     try:
         if model_field.sub_fields:
             value = handle_complex_type(model_field=choice(model_field.sub_fields), providers=providers)
-        elif model_field.type_ != Any:
+        elif model_field.type_ != Any:  # pylint: disable=comparison-with-callable
             handler = providers[model_field.type_]
             value = handler()
         else:
@@ -98,30 +82,32 @@ def handle_container_type(model_field: ModelField, container_type: Callable, pro
             container[handle_complex_type(model_field=model_field.key_field, providers=providers)] = value
         elif isinstance(container, (list, deque)):
             container.append(value)
-            if is_tuple:
-                container = tuple(*container)
         else:
             container.add(value)
             if is_frozen_set:
-                container = frozenset(*container)
+                container = cast(set, frozenset(*container))
         return container
-    except KeyError:
-        raise ParameterError("Unsupported type")
+    except KeyError as e:
+        raise ParameterError("Unsupported type") from e
 
 
-def handle_complex_type(model_field: ModelField, providers: dict[Any, Callable]) -> Any:
-    validate_is_not_generic(shape=model_field.shape)
+def handle_complex_type(model_field: ModelField, providers: Dict[Any, Callable]) -> Any:
+    """Recursive type generation based on typing info stored in the graphic like structure of pydantic model_fields"""
     container_type: Optional[Callable] = shape_mapping.get(model_field.shape)
     if container_type:
-        return handle_container_type(model_field=model_field, container_type=container_type, providers=providers)
-    else:
-        if is_union(model_field=model_field):
-            return handle_complex_type(model_field=choice(model_field.sub_fields), providers=providers)
-        if is_any(model_field=model_field):
-            return create_random_string(min_length=1, max_length=10)
-        if model_field.type_ in providers.keys():
-            return providers[model_field.type_]()
-        raise ParameterError(
-            f"Unsupported type: {repr(model_field.type_)}"
-            f"\n\nEither extend the providers map or add a factory function for this model field"
+        if container_type != tuple:
+            return handle_container_type(model_field=model_field, container_type=container_type, providers=providers)
+        return tuple(
+            handle_complex_type(model_field=sub_field, providers=providers)
+            for sub_field in (model_field.sub_fields or [])
         )
+    if is_union(model_field=model_field) and model_field.sub_fields:
+        return handle_complex_type(model_field=choice(model_field.sub_fields), providers=providers)
+    if is_any(model_field=model_field):
+        return create_random_string(min_length=1, max_length=10)
+    if model_field.type_ in providers:
+        return providers[model_field.type_]()
+    raise ParameterError(
+        f"Unsupported type: {repr(model_field.type_)}"
+        f"\n\nEither extend the providers map or add a factory function for this model field"
+    )
