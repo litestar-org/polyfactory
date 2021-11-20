@@ -265,7 +265,7 @@ class ModelFactory(ABC, Generic[T]):
             if outer_type.__name__ == "ConstrainedSetValue":
                 return handle_constrained_set(cast(ConstrainedSet, outer_type), cls.get_provider_map())
             raise ParameterError(f"Unknown constrained field: {outer_type.__name__}")  # pragma: no cover
-        except AssertionError as e:
+        except AssertionError as e:  # pragma: no cover
             raise ParameterError from e
 
     @classmethod
