@@ -70,25 +70,18 @@ def handle_container_type(model_field: ModelField, container_type: Callable, pro
         is_frozen_set = True
     else:
         container = container_type()
-    try:
-        if model_field.sub_fields:
-            value = handle_complex_type(model_field=choice(model_field.sub_fields), providers=providers)
-        elif model_field.type_ != Any:  # pylint: disable=comparison-with-callable
-            handler = providers[model_field.type_]
-            value = handler()
-        else:
-            value = create_random_string(min_length=1, max_length=10)
-        if isinstance(container, (dict, defaultdict)):
-            container[handle_complex_type(model_field=model_field.key_field, providers=providers)] = value
-        elif isinstance(container, (list, deque)):
-            container.append(value)
-        else:
-            container.add(value)
-            if is_frozen_set:
-                container = cast(set, frozenset(*container))
-        return container
-    except KeyError as e:
-        raise ParameterError("Unsupported type") from e
+    value = None
+    if model_field.sub_fields:
+        value = handle_complex_type(model_field=choice(model_field.sub_fields), providers=providers)
+    if isinstance(container, (dict, defaultdict)):
+        container[handle_complex_type(model_field=model_field.key_field, providers=providers)] = value
+    elif isinstance(container, (list, deque)):
+        container.append(value)
+    else:
+        container.add(value)
+        if is_frozen_set:
+            container = cast(set, frozenset(*container))
+    return container
 
 
 def handle_complex_type(model_field: ModelField, providers: Dict[Any, Callable]) -> Any:

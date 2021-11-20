@@ -12,14 +12,17 @@ from typing import (
     Union,
 )
 
+import pytest
 from pydantic import BaseModel
 
 from pydantic_factories import ModelFactory
+from pydantic_factories.exceptions import ParameterError
 
 
-def test_handles_custom_typing():
+def test_handles_complex_typing():
     class MyModel(BaseModel):
         nested_dict: Dict[str, Dict[Union[int, str], Dict[Any, List[Dict[str, str]]]]]
+        dict_str_any: Dict[str, Any]
         nested_list: List[List[List[Dict[str, List[Any]]]]]
         sequence_dict: Sequence[Dict]
         iterable_float: Iterable[float]
@@ -35,6 +38,7 @@ def test_handles_custom_typing():
 
     result = MyFactory.build()
     assert result.nested_dict
+    assert result.dict_str_any
     assert result.nested_list
     assert result.sequence_dict
     assert result.iterable_float
@@ -44,3 +48,20 @@ def test_handles_custom_typing():
     assert result.deque
     assert result.set_union
     assert result.frozen_set
+
+
+def test_raises_for_user_defined_types():
+    class MyClass:
+        pass
+
+    class MyModel(BaseModel):
+        my_class_field: Dict[str, MyClass]
+
+        class Config:
+            arbitrary_types_allowed = True
+
+    class MyFactory(ModelFactory):
+        __model__ = MyModel
+
+    with pytest.raises(ParameterError):
+        MyFactory.build()

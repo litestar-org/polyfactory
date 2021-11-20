@@ -267,7 +267,11 @@ class ModelFactory(ABC, Generic[T]):
     @classmethod
     def handle_factory_field(cls, field_name: str) -> Any:
         """Handles a field defined on the factory class itself"""
+        from pydantic_factories.fields import FieldFactory
+
         value = getattr(cls, field_name)
+        if isinstance(value, FieldFactory):
+            return value.to_value()
         if inherits_from(ModelFactory, value):
             return cast(ModelFactory, value).build()
         if callable(value):
@@ -275,12 +279,12 @@ class ModelFactory(ABC, Generic[T]):
         return value
 
     @classmethod
-    def create_dynamic_factory(cls, model: BaseModel) -> "ModelFactory":
+    def create_dynamic_factory(cls, model: Type[BaseModel]) -> "ModelFactory":
         """Dynamically generates a factory given a model"""
         return cast(
             ModelFactory,
             type(
-                f"{model.__name__}Factory",  # type: ignore
+                f"{model.__name__}Factory",
                 (ModelFactory,),
                 {
                     "__model__": model,
@@ -316,6 +320,7 @@ class ModelFactory(ABC, Generic[T]):
         for field_name, model_field in model.__fields__.items():
             if model_field.alias:
                 field_name = model_field.alias
+
             if field_name not in kwargs:
                 kwargs[field_name] = cls.get_field_value(field_name=field_name, model_field=model_field)
         return cls.__model__(**kwargs)
