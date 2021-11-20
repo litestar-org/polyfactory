@@ -90,6 +90,7 @@ from pydantic_factories.protocols import (
     SyncPersistenceProtocol,
 )
 from pydantic_factories.utils import inherits_from
+from pydantic_factories.value_generators.complex_types import handle_complex_type
 from pydantic_factories.value_generators.primitives import create_random_bytes
 
 T = TypeVar("T", bound=BaseModel)
@@ -302,6 +303,8 @@ class ModelFactory(ABC, Generic[T]):
             return cls.handle_enum(outer_type)
         if hasattr(outer_type, "__name__") and "Constrained" in outer_type.__name__:
             return cls.handle_constrained_field(outer_type=outer_type)
+        if model_field.sub_fields:
+            return handle_complex_type(model_field=model_field, providers=cls.get_provider_map())
         # this is a workaround for the following issue: https://github.com/samuelcolvin/pydantic/issues/3415
         field_type = model_field.type_ if model_field.type_ is not Any else outer_type
         return cls.get_mock_value(field_type=field_type)

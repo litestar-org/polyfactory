@@ -12,7 +12,7 @@ from ipaddress import (
     IPv6Network,
 )
 from pathlib import Path
-from typing import Callable, List, Optional, Union
+from typing import Callable, List, Optional, Union, Dict, Any, Sequence
 from uuid import UUID, uuid4
 
 import pytest
@@ -381,3 +381,18 @@ def test_using_sub_factories():
 
     result = MyFactory.build()
     assert isinstance(result.person, Person)
+
+
+def test_handles_custom_typing():
+    class MyModel(BaseModel):
+        nested_dict: Dict[str, Dict[Union[int, str], Dict[Any, List[Dict[str, str]]]]]
+        nested_list: List[List[List[Dict[str, List[Any]]]]]
+        sequence: Sequence[Dict]
+
+    class MyFactory(ModelFactory):
+        __model__ = MyModel
+
+    result = MyFactory.build()
+    assert result.nested_dict
+    assert result.nested_list
+    assert result.sequence
