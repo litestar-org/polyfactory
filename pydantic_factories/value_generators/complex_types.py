@@ -57,7 +57,7 @@ def is_any(model_field: ModelField) -> bool:
     """Determines whether the given model_field is type Any"""
     try:
         name = model_field.outer_type_._name  # pylint: disable=protected-access
-        return name and "Any" in name
+        return (name and "Any" in name) or model_field.type_ is Any
     except AttributeError:
         return False
 
