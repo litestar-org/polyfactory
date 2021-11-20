@@ -23,7 +23,7 @@ def test_field_factory():
 
     class MyFactory(ModelFactory):
         __model__ = MyModel
-        my_class = FieldFactory(fn=MyClass.builder, name=default_name)
+        my_class = FieldFactory(builder_fn=MyClass.builder, name=default_name)
 
     result = MyFactory.build()
     assert result.my_class.name == default_name

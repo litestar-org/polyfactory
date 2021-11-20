@@ -4,6 +4,7 @@ from collections import deque
 from datetime import date, datetime, time, timedelta
 from decimal import Decimal
 from enum import EnumMeta
+from inspect import isclass
 from ipaddress import (
     IPv4Address,
     IPv4Interface,
@@ -14,7 +15,7 @@ from ipaddress import (
 )
 from pathlib import Path
 from random import choice, uniform
-from typing import Any, Callable, Dict, Generic, List, Optional, TypeVar, cast
+from typing import Any, Callable, Dict, Generic, List, Optional, TypeVar, Union, cast
 from uuid import NAMESPACE_DNS, UUID, uuid1, uuid3, uuid4, uuid5
 
 from faker import Faker
@@ -101,8 +102,8 @@ default_faker = Faker()
 class ModelFactory(ABC, Generic[T]):
     __model__: Type[T]
     __faker__: Optional[Faker]
-    __sync_persistence__: Optional[SyncPersistenceProtocol[T]]
-    __async_persistence__: Optional[AsyncPersistenceProtocol[T]]
+    __sync_persistence__: Optional[Union[Type[SyncPersistenceProtocol[T]], SyncPersistenceProtocol[T]]]
+    __async_persistence__: Optional[Union[Type[AsyncPersistenceProtocol[T]], AsyncPersistenceProtocol[T]]]
 
     @classmethod
     def get_model_model(cls) -> Type[T]:
@@ -118,18 +119,26 @@ class ModelFactory(ABC, Generic[T]):
         """
         Returns a sync_persistence interface if present
         """
-        if hasattr(cls, "__sync_persistence__") and cls.__sync_persistence__:
-            return cls.__sync_persistence__
-        raise ConfigurationError("A sync_persistence handler must be defined in the factory to use this method")
+        try:
+            persistence = getattr(cls, "__sync_persistence__")
+            return persistence if not isclass(persistence) else persistence()
+        except AttributeError as e:
+            raise ConfigurationError(
+                "A sync_persistence handler must be defined in the factory to use this method"
+            ) from e
 
     @classmethod
     def get_async_persistence(cls) -> AsyncPersistenceProtocol[T]:
         """
         Returns an async_persistence interface
         """
-        if hasattr(cls, "__async_persistence__") and cls.__async_persistence__:
-            return cls.__async_persistence__
-        raise ConfigurationError("An async_persistence handler must be defined in the factory to use this method")
+        try:
+            persistence = getattr(cls, "__async_persistence__")
+            return persistence if not isclass(persistence) else persistence()
+        except AttributeError as e:
+            raise ConfigurationError(
+                "An async_persistence handler must be defined in the factory to use this method"
+            ) from e
 
     @classmethod
     def get_faker(cls) -> Faker:
@@ -335,25 +344,25 @@ class ModelFactory(ABC, Generic[T]):
         """Build and persist a single model instance synchronously"""
         sync_persistence_handler = cls.get_sync_persistence()
         instance = cls.build(**kwargs)
-        return sync_persistence_handler.save(instance)
+        return sync_persistence_handler.save(data=instance)
 
     @classmethod
     def create_batch_sync(cls, size: int, **kwargs) -> List[T]:
         """Build and persist a batch of n size model instances synchronously"""
         sync_persistence_handler = cls.get_sync_persistence()
         batch = cls.batch(size, **kwargs)
-        return sync_persistence_handler.save_many(batch)
+        return sync_persistence_handler.save_many(data=batch)
 
     @classmethod
     async def create_async(cls, **kwargs) -> T:
         """Build and persist a single model instance asynchronously"""
         async_persistence_handler = cls.get_async_persistence()
         instance = cls.build(**kwargs)
-        return await async_persistence_handler.save(instance)
+        return await async_persistence_handler.save(data=instance)
 
     @classmethod
     async def create_batch_async(cls, size: int, **kwargs) -> List[T]:
         """Build and persist a batch of n size model instances asynchronously"""
         async_persistence_handler = cls.get_async_persistence()
         batch = cls.batch(size, **kwargs)
-        return await async_persistence_handler.save_many(batch)
+        return await async_persistence_handler.save_many(data=batch)
