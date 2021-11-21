@@ -123,3 +123,18 @@ def test_handle_constrained_int_handles_multiple_of_with_ge_and_le(val1, val2, v
     else:
         with pytest.raises(AssertionError):
             handle_constrained_int(create_constrained_field(multiple_of=multiple_of, ge=min_value, le=max_value))
+
+
+@given(
+    integers(min_value=-1000000000, max_value=1000000000),
+    integers(min_value=-1000000000, max_value=1000000000),
+    integers(min_value=-1000000000, max_value=1000000000),
+)
+def test_handle_constrained_int_handles_ge_and_le_with_lower_multiple_of(val1, val2, val3):
+    multiple_of, min_value, max_value = sorted([val1, val2, val3])
+    if multiple_of == 0 or multiple_of < max_value and min_value < max_value:
+        result = handle_constrained_int(create_constrained_field(multiple_of=multiple_of, ge=min_value, le=max_value))
+        assert passes_pydantic_multiple_validator(result, multiple_of)
+    else:
+        with pytest.raises(AssertionError):
+            handle_constrained_int(create_constrained_field(multiple_of=multiple_of, ge=min_value, le=max_value))

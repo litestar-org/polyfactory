@@ -158,3 +158,20 @@ def test_handle_constrained_decimal_handles_multiple_of_with_ge_and_le(val1, val
     else:
         with pytest.raises(AssertionError):
             handle_constrained_decimal(create_constrained_field(multiple_of=multiple_of, ge=min_value, le=max_value))
+
+
+@given(
+    decimals(allow_nan=False, allow_infinity=False, min_value=-1000000000, max_value=1000000000),
+    decimals(allow_nan=False, allow_infinity=False, min_value=-1000000000, max_value=1000000000),
+    decimals(allow_nan=False, allow_infinity=False, min_value=-1000000000, max_value=1000000000),
+)
+def test_handle_constrained_decimal_handles_with_ge_and_le_and_lower_multiple_of(val1, val2, val3):
+    multiple_of, min_value, max_value = sorted([val1, val2, val3])
+    if multiple_of == 0 or max_value > min_value and max_value > multiple_of:
+        result = handle_constrained_decimal(
+            create_constrained_field(multiple_of=multiple_of, ge=min_value, le=max_value)
+        )
+        assert passes_pydantic_multiple_validator(result, multiple_of)
+    else:
+        with pytest.raises(AssertionError):
+            handle_constrained_decimal(create_constrained_field(multiple_of=multiple_of, ge=min_value, le=max_value))

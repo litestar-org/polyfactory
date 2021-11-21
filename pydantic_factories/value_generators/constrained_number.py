@@ -4,6 +4,8 @@ from typing import Callable, Optional, Tuple, TypeVar
 
 from typing_extensions import Type
 
+from tests.utils import passes_pydantic_multiple_validator
+
 T = TypeVar("T", Decimal, int, float)
 
 
@@ -41,7 +43,7 @@ def get_constrained_number_range(
     minimum = get_value_or_none(equal_value=ge, constrained=gt, increment=get_increment(t_type))
     maximum = get_value_or_none(equal_value=le, constrained=lt, increment=-get_increment(t_type))
     if minimum is not None and maximum is not None:
-        assert minimum < maximum, "minimum must be lower than maximum"
+        assert maximum > minimum, "maximum value must be greater than minimum value"
     if multiple_of is not None and maximum is not None:
         assert maximum > multiple_of, "maximum value must be greater than multiple_of"
     if multiple_of is None:
@@ -66,7 +68,10 @@ def generate_constrained_number(
             return method(minimum, maximum)
         if multiple_of >= minimum:
             return multiple_of
-        return round(method(minimum, maximum) / multiple_of) * multiple_of
+        result = minimum
+        while not passes_pydantic_multiple_validator(result, multiple_of):
+            result = round(method(minimum, maximum) / multiple_of) * multiple_of
+        return result
     if multiple_of is not None:
         return multiple_of
     return method()
