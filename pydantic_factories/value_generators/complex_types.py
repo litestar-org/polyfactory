@@ -1,6 +1,6 @@
 from collections import defaultdict, deque
 from random import choice
-from typing import Any, Callable, Dict, Optional, cast
+from typing import TYPE_CHECKING, Any, Callable, Optional, Type, cast
 
 from pydantic.fields import (
     SHAPE_DEFAULTDICT,
@@ -19,6 +19,9 @@ from pydantic.fields import (
 
 from pydantic_factories.exceptions import ParameterError
 from pydantic_factories.value_generators.primitives import create_random_string
+
+if TYPE_CHECKING:  # pragma: no cover
+    from pydantic_factories.factory import ModelFactory
 
 type_mapping = {
     "Dict": dict,
@@ -62,7 +65,7 @@ def is_any(model_field: ModelField) -> bool:
     )
 
 
-def handle_container_type(model_field: ModelField, container_type: Callable, providers: Dict[Any, Callable]):
+def handle_container_type(model_field: ModelField, container_type: Callable, model_factory: Type["ModelFactory"]):
     """Handles generation of container types, e.g. dict, list etc. recursively"""
     is_frozen_set = False
     if container_type == frozenset:
@@ -72,9 +75,9 @@ def handle_container_type(model_field: ModelField, container_type: Callable, pro
         container = container_type()
     value = None
     if model_field.sub_fields:
-        value = handle_complex_type(model_field=choice(model_field.sub_fields), providers=providers)
+        value = handle_complex_type(model_field=choice(model_field.sub_fields), model_factory=model_factory)
     if isinstance(container, (dict, defaultdict)):
-        container[handle_complex_type(model_field=model_field.key_field, providers=providers)] = value
+        container[handle_complex_type(model_field=model_field.key_field, model_factory=model_factory)] = value
     elif isinstance(container, (list, deque)):
         container.append(value)
     else:
@@ -84,23 +87,29 @@ def handle_container_type(model_field: ModelField, container_type: Callable, pro
     return container
 
 
-def handle_complex_type(model_field: ModelField, providers: Dict[Any, Callable]) -> Any:
+def handle_complex_type(model_field: ModelField, model_factory: Type["ModelFactory"]) -> Any:
     """Recursive type generation based on typing info stored in the graphic like structure of pydantic model_fields"""
+    providers = model_factory.get_provider_map()
+    field_type = model_field.type_
     container_type: Optional[Callable] = shape_mapping.get(model_field.shape)
     if container_type:
         if container_type != tuple:
-            return handle_container_type(model_field=model_field, container_type=container_type, providers=providers)
+            return handle_container_type(
+                model_field=model_field, container_type=container_type, model_factory=model_factory
+            )
         return tuple(
-            handle_complex_type(model_field=sub_field, providers=providers)
+            handle_complex_type(model_field=sub_field, model_factory=model_factory)
             for sub_field in (model_field.sub_fields or [])
         )
     if is_union(model_field=model_field) and model_field.sub_fields:
-        return handle_complex_type(model_field=choice(model_field.sub_fields), providers=providers)
+        return handle_complex_type(model_field=choice(model_field.sub_fields), model_factory=model_factory)
     if is_any(model_field=model_field):
         return create_random_string(min_length=1, max_length=10)
-    if model_field.type_ in providers:
-        return providers[model_field.type_]()
+    if field_type in model_factory.get_provider_map():
+        return providers[field_type]()
+    if model_factory.is_model(field_type):
+        return model_factory.create_dynamic_factory(model=field_type).build()
     raise ParameterError(
-        f"Unsupported type: {repr(model_field.type_)}"
+        f"Unsupported type: {repr(field_type)}"
         f"\n\nEither extend the providers map or add a factory function for this model field"
     )

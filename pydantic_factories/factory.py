@@ -105,6 +105,16 @@ class ModelFactory(ABC, Generic[T]):
     __async_persistence__: Optional[Union[Type[AsyncPersistenceProtocol[T]], AsyncPersistenceProtocol[T]]]
 
     @classmethod
+    def is_model(cls, value) -> bool:
+        """Method to determine if a given value is a subclass of BaseModel"""
+        return isclass(value) and issubclass(value, BaseModel)
+
+    @classmethod
+    def is_model_factory(cls, value) -> bool:
+        """Method to determine if a given value is a subclass of ModelFactory"""
+        return isclass(value) and issubclass(value, ModelFactory)
+
+    @classmethod
     def get_model_model(cls) -> Type[T]:
         """
         Returns the factory's model
@@ -280,7 +290,7 @@ class ModelFactory(ABC, Generic[T]):
         value = getattr(cls, field_name)
         if isinstance(value, FieldFactory):
             return value.to_value()
-        if isclass(value) and issubclass(value, ModelFactory):
+        if cls.is_model_factory(value):
             return cast(ModelFactory, value).build()
         if callable(value):
             return value()
@@ -309,14 +319,14 @@ class ModelFactory(ABC, Generic[T]):
         if model_field.field_info.const:
             return model_field.get_default()
         outer_type = model_field.outer_type_
-        if isclass(outer_type) and issubclass(outer_type, BaseModel):
+        if cls.is_model(outer_type):
             return cls.create_dynamic_factory(model=outer_type).build()
         if isinstance(outer_type, EnumMeta):
             return cls.handle_enum(outer_type)
         if hasattr(outer_type, "__name__") and "Constrained" in outer_type.__name__:
             return cls.handle_constrained_field(outer_type=outer_type)
         if model_field.sub_fields:
-            return handle_complex_type(model_field=model_field, providers=cls.get_provider_map())
+            return handle_complex_type(model_field=model_field, model_factory=cls)
         # this is a workaround for the following issue: https://github.com/samuelcolvin/pydantic/issues/3415
         field_type = model_field.type_ if model_field.type_ is not Any else outer_type
         return cls.get_mock_value(field_type=field_type)

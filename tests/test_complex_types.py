@@ -17,6 +17,7 @@ from pydantic import BaseModel
 
 from pydantic_factories import ModelFactory
 from pydantic_factories.exceptions import ParameterError
+from tests.models import Person
 
 
 def test_handles_complex_typing():
@@ -48,6 +49,20 @@ def test_handles_complex_typing():
     assert result.deque
     assert result.set_union
     assert result.frozen_set
+
+
+def test_handles_complex_typing_with_embedded_models():
+    class MyModel(BaseModel):
+        person_dict: Dict[str, Person]
+        person_list: List[Person]
+
+    class MyFactory(ModelFactory):
+        __model__ = MyModel
+
+    result = MyFactory.build()
+
+    assert result.person_dict
+    assert result.person_list[0].pets
 
 
 def test_raises_for_user_defined_types():
