@@ -4,5 +4,5 @@
 [0.2.0a]
 - handling of all pydantic constraint
 
-[1.0.0]
+[0.3.0b]
 - full features MvP
