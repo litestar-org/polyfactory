@@ -20,7 +20,7 @@ def validate_max_digits(
     if minimum is not None:
         assert len(str(max_digits)) >= len(str(abs(minimum))), "minimum is greater than max_digits"
     if decimal_places is not None:
-        assert max_digits > decimal_places, "max_digits must be bigger then decimal places"
+        assert max_digits > decimal_places, "max_digits must be greater than decimal places"
 
 
 def handle_decimal_length(

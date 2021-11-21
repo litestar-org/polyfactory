@@ -41,9 +41,9 @@ def get_constrained_number_range(
     minimum = get_value_or_none(equal_value=ge, constrained=gt, increment=get_increment(t_type))
     maximum = get_value_or_none(equal_value=le, constrained=lt, increment=-get_increment(t_type))
     if minimum is not None and maximum is not None:
-        assert minimum < maximum, "minimum must be lower then maximum"
+        assert minimum < maximum, "minimum must be lower than maximum"
     if multiple_of is not None and maximum is not None:
-        assert maximum > multiple_of, "maximum value must be greater then multiple_of"
+        assert maximum > multiple_of, "maximum value must be greater than multiple_of"
     if multiple_of is None:
         if minimum is not None and maximum is None:
             if minimum == 0:
