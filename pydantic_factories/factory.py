@@ -266,7 +266,7 @@ class ModelFactory(ABC, Generic[T]):
             handler = cls.get_provider_map().get(field_type)
             if handler is not None:
                 return handler()
-        return None
+        raise ParameterError(f"No provider found for type: {field_type.__name__}")  # pragma: no cover
 
     @classmethod
     def handle_constrained_field(cls, model_field: ModelField) -> Any:

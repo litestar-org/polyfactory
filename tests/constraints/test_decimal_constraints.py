@@ -37,6 +37,11 @@ def test_handle_constrained_decimal_without_constraints():
     assert isinstance(result, Decimal)
 
 
+def test_handle_constrained_decimal_length_validation():
+    with pytest.raises(AssertionError):
+        handle_constrained_decimal(create_constrained_field(max_digits=2, ge=Decimal("100.00")))
+
+
 @given(integers(min_value=0, max_value=100))
 def test_handle_constrained_decimal_handles_max_digits(max_digits):
     if max_digits > 0:

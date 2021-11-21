@@ -35,13 +35,13 @@ def create_model_field(
 def test_handle_constrained_set_with_min_items_and_max_items(min_items: int, max_items: int):
     if max_items >= min_items:
         field = create_model_field(str, min_items=min_items, max_items=max_items)
-        result = handle_constrained_collection(collection_type=list, model_field=field, model_factory=ModelFactory)
+        result = handle_constrained_collection(collection_type=set, model_field=field, model_factory=ModelFactory)
         assert len(result) >= min_items
         assert len(result) <= max_items
     else:
         with pytest.raises(AssertionError):
             field = create_model_field(str, min_items=min_items, max_items=max_items)
-            handle_constrained_collection(collection_type=list, model_field=field, model_factory=ModelFactory)
+            handle_constrained_collection(collection_type=set, model_field=field, model_factory=ModelFactory)
 
 
 @given(
@@ -51,7 +51,7 @@ def test_handle_constrained_set_with_max_items(
     max_items: int,
 ):
     field = create_model_field(str, max_items=max_items)
-    result = handle_constrained_collection(collection_type=list, model_field=field, model_factory=ModelFactory)
+    result = handle_constrained_collection(collection_type=set, model_field=field, model_factory=ModelFactory)
     assert len(result) <= max_items
 
 
@@ -62,7 +62,7 @@ def test_handle_constrained_set_with_min_items(
     min_items: int,
 ):
     field = create_model_field(str, min_items=min_items)
-    result = handle_constrained_collection(collection_type=list, model_field=field, model_factory=ModelFactory)
+    result = handle_constrained_collection(collection_type=set, model_field=field, model_factory=ModelFactory)
     assert len(result) >= min_items
 
 
@@ -70,5 +70,5 @@ def test_handle_constrained_set_with_different_types():
     with suppress(ParameterError):
         for t_type in ModelFactory.get_provider_map().keys():
             field = create_model_field(t_type, min_items=1)
-            result = handle_constrained_collection(collection_type=list, model_field=field, model_factory=ModelFactory)
+            result = handle_constrained_collection(collection_type=set, model_field=field, model_factory=ModelFactory)
             assert len(result) > 0

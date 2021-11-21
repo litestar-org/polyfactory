@@ -30,17 +30,11 @@ def handle_decimal_length(
 ) -> Decimal:
     """
     Handles the length of the decimal
-
-    TODO: refactor this to be less brittle and clearer
     """
     string_number = str(generated_decimal)
     sign = "-" if "-" in string_number else "+"
     string_number = string_number.replace("-", "")
-    if "." in string_number:
-        whole_numbers, decimals = string_number.split(".")
-    else:
-        whole_numbers = string_number
-        decimals = ""
+    whole_numbers, decimals = string_number.split(".")
     if max_digits is not None and decimal_places is not None:
         max_length = max_digits - decimal_places
     elif max_digits is not None:
