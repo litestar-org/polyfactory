@@ -66,6 +66,9 @@ from pydantic.color import Color
 from pydantic.fields import ModelField
 from typing_extensions import Type
 
+from pydantic_factories.constraints.constrained_collection_handler import (
+    handle_constrained_collection,
+)
 from pydantic_factories.constraints.constrained_decimal_handler import (
     handle_constrained_decimal,
 )
@@ -74,12 +77,6 @@ from pydantic_factories.constraints.constrained_float_handler import (
 )
 from pydantic_factories.constraints.constrained_integer_handler import (
     handle_constrained_int,
-)
-from pydantic_factories.constraints.constrained_list_handler import (
-    handle_constrained_list,
-)
-from pydantic_factories.constraints.constrained_set_handler import (
-    handle_constrained_set,
 )
 from pydantic_factories.constraints.strings import (
     handle_constrained_bytes,
@@ -113,6 +110,22 @@ class ModelFactory(ABC, Generic[T]):
     def is_model_factory(cls, value) -> bool:
         """Method to determine if a given value is a subclass of ModelFactory"""
         return isclass(value) and issubclass(value, ModelFactory)
+
+    @classmethod
+    def is_constrained_field(cls, value) -> bool:
+        """Method to determine if a given value is a pydantic Constrained Field"""
+        return isclass(value) and any(
+            issubclass(value, c)
+            for c in [
+                ConstrainedBytes,
+                ConstrainedDecimal,
+                ConstrainedFloat,
+                ConstrainedInt,
+                ConstrainedList,
+                ConstrainedSet,
+                ConstrainedStr,
+            ]
+        )
 
     @classmethod
     def get_model_model(cls) -> Type[T]:
@@ -256,23 +269,25 @@ class ModelFactory(ABC, Generic[T]):
         return None
 
     @classmethod
-    def handle_constrained_field(cls, outer_type: Any) -> Any:
+    def handle_constrained_field(cls, model_field: ModelField) -> Any:
         """Handle the built-in pydantic constrained value field types"""
+        outer_type = model_field.outer_type_
         try:
-            if outer_type.__name__ == "ConstrainedFloatValue":
-                return handle_constrained_float(cast(ConstrainedFloat, outer_type))
-            if outer_type.__name__ == "ConstrainedIntValue":
-                return handle_constrained_int(cast(ConstrainedInt, outer_type))
-            if outer_type.__name__ == "ConstrainedDecimalValue":
-                return handle_constrained_decimal(cast(ConstrainedDecimal, outer_type))
-            if outer_type.__name__ == "ConstrainedStrValue":
-                return handle_constrained_string(cast(ConstrainedStr, outer_type))
-            if outer_type.__name__ == "ConstrainedBytesValue":
-                return handle_constrained_bytes(cast(ConstrainedBytes, outer_type))
-            if outer_type.__name__ == "ConstrainedListValue":
-                return handle_constrained_list(cast(ConstrainedList, outer_type), cls.get_provider_map())
-            if outer_type.__name__ == "ConstrainedSetValue":
-                return handle_constrained_set(cast(ConstrainedSet, outer_type), cls.get_provider_map())
+            if issubclass(outer_type, ConstrainedFloat):
+                return handle_constrained_float(field=cast(ConstrainedFloat, outer_type))
+            if issubclass(outer_type, ConstrainedInt):
+                return handle_constrained_int(field=cast(ConstrainedInt, outer_type))
+            if issubclass(outer_type, ConstrainedDecimal):
+                return handle_constrained_decimal(field=cast(ConstrainedDecimal, outer_type))
+            if issubclass(outer_type, ConstrainedStr):
+                return handle_constrained_string(field=cast(ConstrainedStr, outer_type))
+            if issubclass(outer_type, ConstrainedBytes):
+                return handle_constrained_bytes(field=cast(ConstrainedBytes, outer_type))
+            if issubclass(outer_type, ConstrainedSet) or issubclass(outer_type, ConstrainedList):
+                collection_type = list if issubclass(outer_type, ConstrainedList) else set
+                return handle_constrained_collection(
+                    collection_type=collection_type, model_field=model_field, model_factory=cls  # type: ignore
+                )
             raise ParameterError(f"Unknown constrained field: {outer_type.__name__}")  # pragma: no cover
         except AssertionError as e:  # pragma: no cover
             raise ParameterError from e
@@ -319,12 +334,12 @@ class ModelFactory(ABC, Generic[T]):
         if model_field.field_info.const:
             return model_field.get_default()
         outer_type = model_field.outer_type_
-        if cls.is_model(outer_type):
-            return cls.create_dynamic_factory(model=outer_type).build()
         if isinstance(outer_type, EnumMeta):
             return cls.handle_enum(outer_type)
-        if hasattr(outer_type, "__name__") and "Constrained" in outer_type.__name__:
-            return cls.handle_constrained_field(outer_type=outer_type)
+        if cls.is_model(outer_type):
+            return cls.create_dynamic_factory(model=outer_type).build()
+        if cls.is_constrained_field(outer_type):
+            return cls.handle_constrained_field(model_field=model_field)
         if model_field.sub_fields:
             return handle_complex_type(model_field=model_field, model_factory=cls)
         # this is a workaround for the following issue: https://github.com/samuelcolvin/pydantic/issues/3415

@@ -12,7 +12,7 @@ from ipaddress import (
     IPv6Network,
 )
 from pathlib import Path
-from typing import Callable, List
+from typing import Callable, Dict, List, Tuple
 from uuid import UUID
 
 from pydantic import (
@@ -196,6 +196,25 @@ def test_constrained_property_parsing():
     assert len(result.list_field) <= 10
     assert all([isinstance(r, str) for r in result.list_field])
     assert result.constant_field == 100
+
+
+def test_complex_constrained_property_parsing():
+    class MyModel(BaseModel):
+        conlist_with_model_field: conlist(Person, min_items=3)
+        conlist_with_complex_type: conlist(Dict[str, Tuple[Person, Person, Person]], min_items=1)
+
+    class MyFactory(ModelFactory):
+        __model__ = MyModel
+
+    result = MyFactory.build()
+
+    assert len(result.conlist_with_model_field) >= 3
+    assert all([isinstance(v, Person) for v in result.conlist_with_model_field])
+    assert result.conlist_with_complex_type
+    assert isinstance(result.conlist_with_complex_type[0], dict)
+    assert isinstance(list(result.conlist_with_complex_type[0].values())[0], tuple)
+    assert len(list(result.conlist_with_complex_type[0].values())[0]) == 3
+    assert all([isinstance(v, Person) for v in list(result.conlist_with_complex_type[0].values())[0]])
 
 
 def test_enum_parsing():
