@@ -90,7 +90,6 @@ from pydantic_factories.protocols import (
     AsyncPersistenceProtocol,
     SyncPersistenceProtocol,
 )
-from pydantic_factories.utils import inherits_from
 from pydantic_factories.value_generators.complex_types import handle_complex_type
 from pydantic_factories.value_generators.primitives import create_random_bytes
 
@@ -281,7 +280,7 @@ class ModelFactory(ABC, Generic[T]):
         value = getattr(cls, field_name)
         if isinstance(value, FieldFactory):
             return value.to_value()
-        if inherits_from(ModelFactory, value):
+        if isclass(value) and issubclass(value, ModelFactory):
             return cast(ModelFactory, value).build()
         if callable(value):
             return value()
@@ -310,7 +309,7 @@ class ModelFactory(ABC, Generic[T]):
         if model_field.field_info.const:
             return model_field.get_default()
         outer_type = model_field.outer_type_
-        if inherits_from(BaseModel, outer_type):
+        if isclass(outer_type) and issubclass(outer_type, BaseModel):
             return cls.create_dynamic_factory(model=outer_type).build()
         if isinstance(outer_type, EnumMeta):
             return cls.handle_enum(outer_type)
@@ -329,7 +328,6 @@ class ModelFactory(ABC, Generic[T]):
         for field_name, model_field in model.__fields__.items():
             if model_field.alias:
                 field_name = model_field.alias
-
             if field_name not in kwargs:
                 kwargs[field_name] = cls.get_field_value(field_name=field_name, model_field=model_field)
         return cls.__model__(**kwargs)

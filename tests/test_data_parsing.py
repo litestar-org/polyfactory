@@ -62,7 +62,7 @@ from pydantic import (
 from pydantic.color import Color
 
 from pydantic_factories import ModelFactory
-from tests.test_factory_build import Person, PersonFactory, Pet
+from tests.models import Person, PersonFactoryWithDefaults, Pet
 
 
 def test_type_property_parsing():
@@ -268,7 +268,7 @@ def test_embedded_factories_parsing():
 
     class MyFactory(ModelFactory):
         __model__ = MyModel
-        person = PersonFactory
+        person = PersonFactoryWithDefaults
 
     result = MyFactory.build()
     assert isinstance(result.person, Person)

@@ -2,7 +2,7 @@ import pytest
 from faker import Faker
 
 from pydantic_factories import ConfigurationError, ModelFactory
-from tests.test_factory_build import Pet
+from tests.models import Pet
 
 
 def test_allows_user_to_define_faker_instance():
