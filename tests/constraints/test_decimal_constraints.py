@@ -9,7 +9,7 @@ from pydantic import ConstrainedDecimal
 from pydantic_factories.constraints.constrained_decimal_handler import (
     handle_constrained_decimal,
 )
-from tests.utils import passes_pydantic_multiple_validator
+from pydantic_factories.utils import passes_pydantic_multiple_validator
 
 
 def create_constrained_field(
