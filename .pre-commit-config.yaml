@@ -57,6 +57,7 @@ repos:
           pydantic,
           faker,
           pytest,
+          beanie
         ]
   - repo: https://github.com/pre-commit/mirrors-mypy
     rev: "v0.910-1"
@@ -66,4 +67,5 @@ repos:
         additional_dependencies: [
           pydantic,
           faker,
+          beanie
         ]

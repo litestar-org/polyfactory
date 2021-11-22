@@ -76,19 +76,20 @@ def handle_container_type(model_field: ModelField, container_type: Callable, mod
     value = None
     if model_field.sub_fields:
         value = handle_complex_type(model_field=choice(model_field.sub_fields), model_factory=model_factory)
-    if isinstance(container, (dict, defaultdict)):
-        container[handle_complex_type(model_field=model_field.key_field, model_factory=model_factory)] = value
-    elif isinstance(container, (list, deque)):
-        container.append(value)
-    else:
-        container.add(value)
-        if is_frozen_set:
-            container = cast(set, frozenset(*container))
+    if value is not None:
+        if isinstance(container, (dict, defaultdict)):
+            container[handle_complex_type(model_field=model_field.key_field, model_factory=model_factory)] = value
+        elif isinstance(container, (list, deque)):
+            container.append(value)
+        else:
+            container.add(value)
+            if is_frozen_set:
+                container = cast(set, frozenset(*container))
     return container
 
 
 def handle_complex_type(model_field: ModelField, model_factory: Type["ModelFactory"]) -> Any:
-    """Recursive type generation based on typing info stored in the graphic like structure of pydantic model_fields"""
+    """Recursive type generation based on typing info stored in the graph like structure of pydantic model_fields"""
     providers = model_factory.get_provider_map()
     field_type = model_field.type_
     container_type: Optional[Callable] = shape_mapping.get(model_field.shape)
@@ -109,6 +110,8 @@ def handle_complex_type(model_field: ModelField, model_factory: Type["ModelFacto
         return providers[field_type]()
     if model_factory.is_model(field_type):
         return model_factory.create_dynamic_factory(model=field_type).build()
+    if model_factory.is_ignored_type(field_type):
+        return None
     raise ParameterError(
         f"Unsupported type: {repr(field_type)}"
         f"\n\nEither extend the providers map or add a factory function for this model field"

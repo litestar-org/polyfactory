@@ -102,17 +102,17 @@ class ModelFactory(ABC, Generic[T]):
     __async_persistence__: Optional[Union[Type[AsyncPersistenceProtocol[T]], AsyncPersistenceProtocol[T]]]
 
     @classmethod
-    def is_model(cls, value) -> bool:
+    def is_model(cls, value: Any) -> bool:
         """Method to determine if a given value is a subclass of BaseModel"""
         return isclass(value) and issubclass(value, BaseModel)
 
     @classmethod
-    def is_model_factory(cls, value) -> bool:
+    def is_model_factory(cls, value: Any) -> bool:
         """Method to determine if a given value is a subclass of ModelFactory"""
         return isclass(value) and issubclass(value, ModelFactory)
 
     @classmethod
-    def is_constrained_field(cls, value) -> bool:
+    def is_constrained_field(cls, value: Any) -> bool:
         """Method to determine if a given value is a pydantic Constrained Field"""
         return isclass(value) and any(
             issubclass(value, c)
@@ -128,7 +128,16 @@ class ModelFactory(ABC, Generic[T]):
         )
 
     @classmethod
-    def get_model_model(cls) -> Type[T]:
+    def is_ignored_type(cls, value: Any) -> bool:
+        """
+        Checks whether a given value is an ignored type
+
+        Note: This method is meant to be overwritten by extension factories and other subclasses
+        """
+        return value is None
+
+    @classmethod
+    def _get_model(cls) -> Type[T]:
         """
         Returns the factory's model
         """
@@ -137,7 +146,7 @@ class ModelFactory(ABC, Generic[T]):
         return cls.__model__
 
     @classmethod
-    def get_sync_persistence(cls) -> SyncPersistenceProtocol[T]:
+    def _get_sync_persistence(cls) -> SyncPersistenceProtocol[T]:
         """
         Returns a sync_persistence interface if present
         """
@@ -150,7 +159,7 @@ class ModelFactory(ABC, Generic[T]):
             ) from e
 
     @classmethod
-    def get_async_persistence(cls) -> AsyncPersistenceProtocol[T]:
+    def _get_async_persistence(cls) -> AsyncPersistenceProtocol[T]:
         """
         Returns an async_persistence interface
         """
@@ -262,11 +271,10 @@ class ModelFactory(ABC, Generic[T]):
         Returns a mock value corresponding to the types supported by pydantic
         see: https://pydantic-docs.helpmanual.io/usage/types/
         """
-        if field_type is not None:
-            handler = cls.get_provider_map().get(field_type)
-            if handler is not None:
-                return handler()
-        raise ParameterError(f"No provider found for type: {field_type.__name__}")  # pragma: no cover
+        handler = cls.get_provider_map().get(field_type)
+        if handler is not None:
+            return handler()
+        return None  # pragma: no cover
 
     @classmethod
     def handle_constrained_field(cls, model_field: ModelField) -> Any:
@@ -344,12 +352,14 @@ class ModelFactory(ABC, Generic[T]):
             return handle_complex_type(model_field=model_field, model_factory=cls)
         # this is a workaround for the following issue: https://github.com/samuelcolvin/pydantic/issues/3415
         field_type = model_field.type_ if model_field.type_ is not Any else outer_type
+        if cls.is_ignored_type(field_type):
+            return None
         return cls.get_mock_value(field_type=field_type)
 
     @classmethod
     def build(cls, **kwargs) -> T:
         """builds an instance of the factory's Meta.model"""
-        model = cls.get_model_model()
+        model = cls._get_model()
         for field_name, model_field in model.__fields__.items():
             if model_field.alias:
                 field_name = model_field.alias
@@ -365,27 +375,27 @@ class ModelFactory(ABC, Generic[T]):
     @classmethod
     def create_sync(cls, **kwargs) -> T:
         """Build and persist a single model instance synchronously"""
-        sync_persistence_handler = cls.get_sync_persistence()
+        sync_persistence_handler = cls._get_sync_persistence()
         instance = cls.build(**kwargs)
         return sync_persistence_handler.save(data=instance)
 
     @classmethod
     def create_batch_sync(cls, size: int, **kwargs) -> List[T]:
         """Build and persist a batch of n size model instances synchronously"""
-        sync_persistence_handler = cls.get_sync_persistence()
+        sync_persistence_handler = cls._get_sync_persistence()
         batch = cls.batch(size, **kwargs)
         return sync_persistence_handler.save_many(data=batch)
 
     @classmethod
     async def create_async(cls, **kwargs) -> T:
         """Build and persist a single model instance asynchronously"""
-        async_persistence_handler = cls.get_async_persistence()
+        async_persistence_handler = cls._get_async_persistence()
         instance = cls.build(**kwargs)
         return await async_persistence_handler.save(data=instance)
 
     @classmethod
     async def create_batch_async(cls, size: int, **kwargs) -> List[T]:
         """Build and persist a batch of n size model instances asynchronously"""
-        async_persistence_handler = cls.get_async_persistence()
+        async_persistence_handler = cls._get_async_persistence()
         batch = cls.batch(size, **kwargs)
         return await async_persistence_handler.save_many(data=batch)
