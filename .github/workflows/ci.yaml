@@ -29,6 +29,14 @@ jobs:
       fail-fast: true
       matrix:
         python-version: ["3.6", "3.7", "3.8", "3.9", "3.10"]
+    env:
+      MONGO_INITDB_ROOT_USERNAME: pydantic-factories
+      MONGO_INITDB_ROOT_PASSWORD: pydantic-factories
+    services:
+      mongodb:
+        image: mongo:latest
+        ports:
+          - 27017:27017
     steps:
       - name: Check out repository
         uses: actions/checkout@v2
@@ -57,6 +65,14 @@ jobs:
   coverage:
     needs: test
     runs-on: ubuntu-latest
+    env:
+      MONGO_INITDB_ROOT_USERNAME: pydantic-factories
+      MONGO_INITDB_ROOT_PASSWORD: pydantic-factories
+    services:
+      mongodb:
+        image: mongo:latest
+        ports:
+          - 27017:27017
     steps:
       - uses: actions/checkout@v2
       - uses: actions/setup-python@v2
