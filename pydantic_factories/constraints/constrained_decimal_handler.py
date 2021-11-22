@@ -49,7 +49,7 @@ def handle_decimal_length(
             decimals = decimals[: len(decimals) - 1]
         else:
             whole_numbers = whole_numbers[1:]
-    return Decimal(f"{sign}{whole_numbers}" + (f".{decimals}" if decimals else "0"))
+    return Decimal(f"{sign}{whole_numbers}" + (f".{decimals[:decimal_places]}" if decimals else "0"))
 
 
 def handle_constrained_decimal(field: ConstrainedDecimal) -> Decimal:
