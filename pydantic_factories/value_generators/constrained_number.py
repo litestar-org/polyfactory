@@ -4,7 +4,7 @@ from typing import Callable, Optional, Tuple, TypeVar
 
 from typing_extensions import Type
 
-from tests.utils import passes_pydantic_multiple_validator
+from pydantic_factories.utils import passes_pydantic_multiple_validator
 
 T = TypeVar("T", Decimal, int, float)
 

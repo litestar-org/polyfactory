@@ -6,6 +6,7 @@ from pydantic import ConstrainedDecimal
 from pydantic_factories.value_generators.constrained_number import (
     generate_constrained_number,
     get_constrained_number_range,
+    get_increment,
 )
 from pydantic_factories.value_generators.primitives import create_random_decimal
 
@@ -18,7 +19,8 @@ def validate_max_digits(
     """Validates that max digits and other parameters make sense"""
     assert max_digits > 0, "max_digits must be greater than 0"
     if minimum is not None:
-        assert len(str(max_digits)) >= len(str(abs(minimum))), "minimum is greater than max_digits"
+        minimum -= get_increment(Decimal)
+        assert max_digits >= len(str(abs(minimum))), "minimum is greater than max_digits"
     if decimal_places is not None:
         assert max_digits > decimal_places, "max_digits must be greater than decimal places"
 
@@ -48,7 +50,7 @@ def handle_decimal_length(
             decimals = decimals[: len(decimals) - 1]
         else:
             whole_numbers = whole_numbers[1:]
-    return Decimal(f"{sign}{whole_numbers}" + (f".{decimals}" if decimals else "0"))
+    return Decimal(f"{sign}{whole_numbers}" + (f".{decimals[:decimal_places]}" if decimals else "0"))
 
 
 def handle_constrained_decimal(field: ConstrainedDecimal) -> Decimal:

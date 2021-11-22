@@ -8,7 +8,7 @@ from pydantic import ConstrainedInt
 from pydantic_factories.constraints.constrained_integer_handler import (
     handle_constrained_int,
 )
-from tests.utils import passes_pydantic_multiple_validator
+from pydantic_factories.utils import passes_pydantic_multiple_validator
 
 
 def create_constrained_field(
