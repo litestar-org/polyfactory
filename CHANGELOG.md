@@ -6,3 +6,6 @@
 
 [0.3.0b]
 - full features MvP
+
+[0.3.1b]
+- fix issues with decimal parsing
