@@ -5,7 +5,8 @@ from pydantic import ConstrainedDecimal
 
 from pydantic_factories.value_generators.constrained_number import (
     generate_constrained_number,
-    get_constrained_number_range, get_increment,
+    get_constrained_number_range,
+    get_increment,
 )
 from pydantic_factories.value_generators.primitives import create_random_decimal
 

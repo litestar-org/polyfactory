@@ -4,8 +4,9 @@ from typing import Optional
 import pytest
 from hypothesis import given
 from hypothesis.strategies import decimals, integers
-from pydantic import ConstrainedDecimal
+from pydantic import BaseModel, ConstrainedDecimal, condecimal
 
+from pydantic_factories import ModelFactory
 from pydantic_factories.constraints.constrained_decimal_handler import (
     handle_constrained_decimal,
 )
@@ -180,3 +181,16 @@ def test_handle_constrained_decimal_handles_with_ge_and_le_and_lower_multiple_of
     else:
         with pytest.raises(AssertionError):
             handle_constrained_decimal(create_constrained_field(multiple_of=multiple_of, ge=min_value, le=max_value))
+
+
+def test_max_digits_and_decimal_places():
+    class Person(BaseModel):
+        social_score: condecimal(decimal_places=3, max_digits=20, gt=Decimal(0))
+
+    class PersonFactory(ModelFactory):
+        __model__ = Person
+
+    result = PersonFactory.build()
+    assert isinstance(result.social_score, Decimal)
+    assert len(str(result.social_score).split(".")[1]) == 3
+    assert result.social_score > 0
