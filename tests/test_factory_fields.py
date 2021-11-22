@@ -1,4 +1,6 @@
-from pydantic import BaseModel
+from decimal import Decimal
+
+from pydantic import BaseModel, condecimal
 
 from pydantic_factories import FieldFactory, ModelFactory, SubFactory
 
@@ -44,3 +46,15 @@ def test_sub_factory():
 
     result = MyFactory.build()
     assert result.first_model.name == default_name
+
+def test_decimal():
+    class Person(BaseModel):
+        social_score: condecimal(decimal_places=3, max_digits=20, gt=Decimal(0))
+
+    class PersonFactory(ModelFactory):
+        __model__ = Person
+
+    result = PersonFactory.build()
+    assert isinstance(result.social_score, Decimal)
+    assert len(str(result.social_score).split('.')[1]) == 3
+    assert result.social_score > 0
