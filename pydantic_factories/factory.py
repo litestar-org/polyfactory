@@ -104,7 +104,12 @@ class ModelFactory(ABC, Generic[T]):
     @classmethod
     def is_model(cls, value: Any) -> bool:
         """Method to determine if a given value is a subclass of BaseModel"""
-        return isclass(value) and issubclass(value, BaseModel)
+        try:
+            return isclass(value) and issubclass(value, BaseModel)
+        except TypeError:  # pragma: no cover
+            # isclass(value) returns True for python 3.9+ typings such as list[str] etc.
+            # this raises a TypeError in issubclass, and so we need to handle it.
+            return False
 
     @classmethod
     def is_model_factory(cls, value: Any) -> bool:

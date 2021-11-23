@@ -13,3 +13,6 @@
 [0.3.2b]
 - removed support for python 3.6
 - added beanie extension
+
+[0.3.3b]
+- resolve TypeError being raised from issubclass() for python 3.9+
