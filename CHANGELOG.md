@@ -9,3 +9,7 @@
 
 [0.3.1b]
 - fix issues with decimal parsing
+
+[0.3.2b]
+- removed support for python 3.6
+- added beanie extension
