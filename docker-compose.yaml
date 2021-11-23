@@ -2,8 +2,5 @@ version: "3.9"
 services:
   mongo:
     image: mongo:latest
-    environment:
-      MONGO_INITDB_ROOT_USERNAME: pydantic-factories
-      MONGO_INITDB_ROOT_PASSWORD: pydantic-factories
     ports:
       - '27017:27017'
