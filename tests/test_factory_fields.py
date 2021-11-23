@@ -1,9 +1,9 @@
 from pydantic import BaseModel
 
-from pydantic_factories import FieldFactory, ModelFactory, SubFactory
+from pydantic_factories import ModelFactory, SubFactory, Use
 
 
-def test_field_factory():
+def test_use():
     class MyClass:
         name: str
 
@@ -23,7 +23,7 @@ def test_field_factory():
 
     class MyFactory(ModelFactory):
         __model__ = MyModel
-        my_class = FieldFactory(builder_fn=MyClass.builder, name=default_name)
+        my_class = Use(cb=MyClass.builder, name=default_name)
 
     result = MyFactory.build()
     assert result.my_class.name == default_name

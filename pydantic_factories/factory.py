@@ -313,10 +313,10 @@ class ModelFactory(ABC, Generic[T]):
     @classmethod
     def handle_factory_field(cls, field_name: str) -> Any:
         """Handles a field defined on the factory class itself"""
-        from pydantic_factories.fields import FieldFactory
+        from pydantic_factories.fields import Use
 
         value = getattr(cls, field_name)
-        if isinstance(value, FieldFactory):
+        if isinstance(value, Use):
             return value.to_value()
         if cls.is_model_factory(value):
             return cast(ModelFactory, value).build()

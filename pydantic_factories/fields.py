@@ -4,16 +4,17 @@ if TYPE_CHECKING:  # pragma: no cover
     from pydantic_factories.factory import ModelFactory
 
 
-class FieldFactory:
-    def __init__(self, builder_fn: Callable, **defaults):
-        self.builder_fn = builder_fn
+class Use:
+    def __init__(self, cb: Callable, *args, **defaults):
+        self.cb = cb
         self.defaults = defaults
+        self.args = args
 
     def to_value(self) -> Any:
-        """Calls the field's builder_fn with the predefined defaults"""
-        return self.builder_fn(**self.defaults)
+        """Calls the field's cb with the predefined defaults"""
+        return self.cb(*self.args, **self.defaults)
 
 
-class SubFactory(FieldFactory):
+class SubFactory(Use):
     def __init__(self, model_factory: "ModelFactory", **defaults):
-        super().__init__(builder_fn=model_factory.build, **defaults)
+        super().__init__(cb=model_factory.build, **defaults)
