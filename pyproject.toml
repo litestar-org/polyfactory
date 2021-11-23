@@ -17,7 +17,6 @@ classifiers = [
     "Natural Language :: English",
     "Operating System :: OS Independent",
     "Programming Language :: Python",
-    "Programming Language :: Python :: 3.6",
     "Programming Language :: Python :: 3.7",
     "Programming Language :: Python :: 3.8",
     "Programming Language :: Python :: 3.9",
@@ -35,7 +34,7 @@ packages = [
 ]
 
 [tool.poetry.dependencies]
-python = ">=3.6.1,<4.0"
+python = ">=3.7,<4.0"
 pydantic = "*"
 faker = "*"
 typing-extensions = "*"
