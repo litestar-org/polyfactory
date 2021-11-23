@@ -9,7 +9,7 @@ from pydantic_factories.factory import ModelFactory
 try:
     from beanie import Document
     from beanie.odm.fields import PydanticObjectId
-except ImportError:
+except ImportError:  # pragma: no cover
     PydanticObjectId = None
     Document = BaseModel
 
