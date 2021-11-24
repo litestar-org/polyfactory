@@ -16,3 +16,8 @@
 
 [0.3.3b]
 - resolve TypeError being raised from issubclass() for python 3.9+
+
+[0.3.4b]
+- add support for forward refs
+- add support for odmantic
+- add Ignored and BuildKwarg fields
