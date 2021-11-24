@@ -3,8 +3,8 @@ from typing import Any, List, TypeVar
 from pydantic import BaseModel
 from pydantic.fields import ModelField
 
-from pydantic_factories import AsyncPersistenceProtocol
 from pydantic_factories.factory import ModelFactory
+from pydantic_factories.protocols import AsyncPersistenceProtocol
 
 try:
     from beanie import Document

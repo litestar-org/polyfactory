@@ -7,6 +7,7 @@ T = TypeVar("T", int, float, Decimal)
 
 
 def passes_pydantic_multiple_validator(value: T, multiple_of: T) -> bool:
+    """A function that determines whether a given value passes the pydantic multiple_of validation"""
     if multiple_of == 0:
         return True
     mod = float(value) / float(multiple_of) % 1
