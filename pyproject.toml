@@ -49,9 +49,9 @@ email-validator = "*"
 pytest-asyncio = "*"
 # extensions
 beanie = "*"
-fastapi = "*"
 ormar = "*"
 sqlmodel = "*"
+odmantic = "*"
 
 [build-system]
 requires = ["poetry-core>=1.0.0"]

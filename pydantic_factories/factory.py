@@ -82,7 +82,12 @@ from pydantic_factories.constraints.strings import (
     handle_constrained_bytes,
     handle_constrained_string,
 )
-from pydantic_factories.exceptions import ConfigurationError, ParameterError
+from pydantic_factories.exceptions import (
+    ConfigurationError,
+    MissingBuildKwargError,
+    ParameterError,
+)
+from pydantic_factories.fields import BuildKwarg, Ignored
 from pydantic_factories.protocols import (
     AsyncPersistenceProtocol,
     SyncPersistenceProtocol,
@@ -148,7 +153,9 @@ class ModelFactory(ABC, Generic[T]):
         """
         if not hasattr(cls, "__model__") or not cls.__model__:
             raise ConfigurationError("missing model class in factory Meta")
-        return cls.__model__
+        model = cls.__model__
+        model.update_forward_refs()
+        return model
 
     @classmethod
     def _get_sync_persistence(cls) -> SyncPersistenceProtocol[T]:
@@ -325,7 +332,7 @@ class ModelFactory(ABC, Generic[T]):
         return value
 
     @classmethod
-    def create_dynamic_factory(cls, model: Type[BaseModel]) -> "ModelFactory":
+    def create_factory(cls, model: Type[BaseModel]) -> "ModelFactory":
         """Dynamically generates a factory given a model"""
         return cast(
             ModelFactory,
@@ -350,7 +357,9 @@ class ModelFactory(ABC, Generic[T]):
         if isinstance(outer_type, EnumMeta):
             return cls.handle_enum(outer_type)
         if cls.is_model(outer_type):
-            return cls.create_dynamic_factory(model=outer_type).build()
+            if outer_type == cls.__model__:
+                return cls.build()
+            return cls.create_factory(model=outer_type).build()
         if cls.is_constrained_field(outer_type):
             return cls.handle_constrained_field(model_field=model_field)
         if model_field.sub_fields:
@@ -362,13 +371,29 @@ class ModelFactory(ABC, Generic[T]):
         return cls.get_mock_value(field_type=field_type)
 
     @classmethod
+    def should_set_field_value(cls, field_name: str, **kwargs) -> bool:
+        """
+        Ascertain whether to set a value for a given field_name
+
+        Separated to its own method to allow black-listing field names in sub-classes
+        """
+        is_field_ignored = False
+        is_field_in_kwargs = field_name in kwargs
+        if hasattr(cls, field_name):
+            value = getattr(cls, field_name)
+            if isinstance(value, BuildKwarg) and not is_field_in_kwargs:
+                raise MissingBuildKwargError(f"Required kwarg {field_name} is missing")
+            is_field_ignored = isinstance(value, Ignored)
+        return not is_field_ignored and not is_field_in_kwargs
+
+    @classmethod
     def build(cls, **kwargs) -> T:
         """builds an instance of the factory's Meta.model"""
         model = cls._get_model()
         for field_name, model_field in model.__fields__.items():
             if model_field.alias:
                 field_name = model_field.alias
-            if field_name not in kwargs:
+            if cls.should_set_field_value(field_name, **kwargs):
                 kwargs[field_name] = cls.get_field_value(field_name=field_name, model_field=model_field)
         return cls.__model__(**kwargs)
 

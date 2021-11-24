@@ -90,6 +90,7 @@ def handle_container_type(model_field: ModelField, container_type: Callable, mod
 
 def handle_complex_type(model_field: ModelField, model_factory: Type["ModelFactory"]) -> Any:
     """Recursive type generation based on typing info stored in the graph like structure of pydantic model_fields"""
+
     providers = model_factory.get_provider_map()
     field_type = model_field.type_
     container_type: Optional[Callable] = shape_mapping.get(model_field.shape)
@@ -109,7 +110,9 @@ def handle_complex_type(model_field: ModelField, model_factory: Type["ModelFacto
     if field_type in model_factory.get_provider_map():
         return providers[field_type]()
     if model_factory.is_model(field_type):
-        return model_factory.create_dynamic_factory(model=field_type).build()
+        if field_type == model_factory.__model__:
+            return model_factory.build()
+        return model_factory.create_factory(model=field_type).build()
     if model_factory.is_ignored_type(field_type):
         return None
     raise ParameterError(

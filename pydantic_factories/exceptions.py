@@ -1,6 +1,14 @@
-class ConfigurationError(Exception):
+class ModelFactoryError(Exception):
     pass
 
 
-class ParameterError(AssertionError):
+class ConfigurationError(ModelFactoryError):
+    pass
+
+
+class ParameterError(ModelFactoryError):
+    pass
+
+
+class MissingBuildKwargError(ModelFactoryError):
     pass
