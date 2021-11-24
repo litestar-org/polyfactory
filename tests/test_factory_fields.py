@@ -3,9 +3,9 @@ from typing import Optional
 import pytest
 from pydantic import BaseModel
 
-from pydantic_factories import ModelFactory, SubFactory, Use
+from pydantic_factories import ModelFactory, Use
 from pydantic_factories.exceptions import MissingBuildKwargError
-from pydantic_factories.fields import BuildKwarg, Ignored
+from pydantic_factories.fields import Ignore, Require
 
 
 def test_use():
@@ -45,7 +45,7 @@ def test_sub_factory():
 
     class MyFactory(ModelFactory):
         __model__ = SecondModel
-        first_model = SubFactory(model_factory=ModelFactory.create_factory(FirstModel), name=default_name)
+        first_model = Use(cb=ModelFactory.create_factory(FirstModel).build, name=default_name)
 
     result = MyFactory.build()
     assert result.first_model.name == default_name
@@ -57,7 +57,7 @@ def test_build_kwarg():
 
     class MyFactory(ModelFactory):
         __model__ = MyModel
-        name = BuildKwarg()
+        name = Require()
 
     with pytest.raises(MissingBuildKwargError):
         MyFactory.build()
@@ -71,6 +71,6 @@ def test_ignored():
 
     class MyFactory(ModelFactory):
         __model__ = MyModel
-        name = Ignored()
+        name = Ignore()
 
     assert MyFactory.build().name is None

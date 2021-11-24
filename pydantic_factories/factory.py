@@ -87,7 +87,7 @@ from pydantic_factories.exceptions import (
     MissingBuildKwargError,
     ParameterError,
 )
-from pydantic_factories.fields import BuildKwarg, Ignored
+from pydantic_factories.fields import Ignore, Require
 from pydantic_factories.protocols import (
     AsyncPersistenceProtocol,
     SyncPersistenceProtocol,
@@ -381,9 +381,9 @@ class ModelFactory(ABC, Generic[T]):
         is_field_in_kwargs = field_name in kwargs
         if hasattr(cls, field_name):
             value = getattr(cls, field_name)
-            if isinstance(value, BuildKwarg) and not is_field_in_kwargs:
-                raise MissingBuildKwargError(f"Required kwarg {field_name} is missing")
-            is_field_ignored = isinstance(value, Ignored)
+            if isinstance(value, Require) and not is_field_in_kwargs:
+                raise MissingBuildKwargError(f"Require kwarg {field_name} is missing")
+            is_field_ignored = isinstance(value, Ignore)
         return not is_field_ignored and not is_field_in_kwargs
 
     @classmethod

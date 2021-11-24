@@ -1,7 +1,4 @@
-from typing import TYPE_CHECKING, Any, Callable
-
-if TYPE_CHECKING:  # pragma: no cover
-    from pydantic_factories.factory import ModelFactory
+from typing import Any, Callable
 
 
 class Use:
@@ -16,20 +13,13 @@ class Use:
         self.args = args
 
     def to_value(self) -> Any:
-        """Calls the field's cb with the predefined defaults"""
+        """invokes the callback function"""
         return self.cb(*self.args, **self.defaults)
 
 
-class SubFactory(Use):
-    """A class used to wrap an instance of ModelFactory alongside defaults to be used"""
-
-    def __init__(self, model_factory: "ModelFactory", **defaults):
-        super().__init__(cb=model_factory.build, **defaults)
-
-
-class BuildKwarg:
+class Require:
     """A placeholder class used to mark a given factory attribute as a required build-time kwarg"""
 
 
-class Ignored:
+class Ignore:
     """A placeholder class used to mark a given factory attribute as ignored"""
