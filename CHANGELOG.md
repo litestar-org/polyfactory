@@ -28,3 +28,8 @@
 - add support for forward refs
 - add support for odmantic
 - add Ignore and Require fields
+
+[0.3.5b]
+
+- update readme
+- update fields
