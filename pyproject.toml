@@ -8,7 +8,7 @@ readme = "README.md"
 homepage = "https://github.com/Goldziher/pydantic-factories"
 repository = "https://github.com/Goldziher/pydantic-factories"
 documentation = "https://github.com/Goldziher/pydantic-factories"
-keywords = ["pydantic", "pytest", "factory", "fastapi", "beanie", "ormar", "sqlmodel", "factory-boy", "testing", "mock", "fixtures", "faker"]
+keywords = ["pydantic", "pytest", "factory", "fastapi", "beanie", "ormar", "sqlmodel", "factory-boy", "testing", "mock", "fixtures", "faker", "dataclasses", "tdd"]
 classifiers = [
     "Environment :: Web Environment",
     "Framework :: Pytest",
