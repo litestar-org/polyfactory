@@ -6,7 +6,7 @@ from typing_extensions import Protocol
 
 class DataclassProtocol(Protocol):
     def __init__(self, **kwargs):  # pylint: disable=super-init-not-called
-        ...
+        ...  # pragma: no cover
 
     __dataclass_fields__: Dict
     __dataclass_params__: Dict
