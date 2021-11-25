@@ -7,7 +7,7 @@
 # Pydantic-Factories
 
 This library offers powerful mock data generation capabilities for [pydantic](https://github.com/samuelcolvin/pydantic)
-based models. It can also be used with other libraries that use pydantic as a foundation, for
+based models and `dataclasses`. It can also be used with other libraries that use pydantic as a foundation, for
 example [SQLModel](https://github.com/tiangolo/sqlmodel), [Beanie](https://github.com/roman-right/beanie)
 and [ormar](https://github.com/collerek/ormar).
 
@@ -44,7 +44,6 @@ source of truth for data generation.
 
 The factory parses the information stored in the pydantic model and generates a dictionary of kwargs that are passed to
 the `Person` class' init method.
-
 
 ### Features
 
@@ -156,6 +155,49 @@ fitting this signature, therefore passing validation.
 **Please note**: the one thing factories cannot handle is self referencing models, because this can lead to recursion
 errors. In this case you will need to handle the particular field by setting defaults for it.
 
+### Models and Dataclasses
+
+This library works with any class that inherits the pydantic `BaseModel` class, including `GenericModel` and classes
+from 3rd party libraries, and also with dataclasses - both those from the python standard library and pydantic's
+dataclasses. In fact, you can use them interchangeably as you like:
+
+```python
+
+import dataclasses
+from typing import Dict, List
+
+import pydantic
+from pydantic_factories import ModelFactory
+
+
+@pydantic.dataclasses.dataclass
+class MyPydanticDataClass:
+    name: str
+
+
+class MyFirstModel(pydantic.BaseModel):
+    dataclass: MyPydanticDataClass
+
+
+@dataclasses.dataclass()
+class MyPythonDataClass:
+    id: str
+    complex_type: Dict[str, Dict[int, List[MyFirstModel]]]
+
+
+class MySecondModel(pydantic.BaseModel):
+    dataclasses: List[MyPythonDataClass]
+
+
+class MyFactory(ModelFactory):
+    __model__ = MySecondModel
+
+
+result = MyFactory.build()
+```
+
+The above example will build correctly.
+
 ### Factory Configuration
 
 Configuration of `ModelFactory` is done using class variables:
@@ -205,8 +247,6 @@ from enum import Enum
 from pydantic import BaseModel, UUID4
 from typing import Any, Dict, List, Union
 
-from pydantic_factories import ModelFactory
-
 
 class Species(str, Enum):
     CAT = "Cat"
@@ -250,8 +290,10 @@ range we like. For example:
 
 ```python
 from enum import Enum
-from pydantic_factories.fields import Use
+from pydantic_factories import ModelFactory, Use
 from random import choice
+
+from .models import Pet, Person
 
 
 class Species(str, Enum):
@@ -295,8 +337,10 @@ class PetFactory(ModelFactory):
 as ignored:
 
 ```python
+from typing import TypeVar
+
 from odmantic import EmbeddedModel, Model
-from pydantic_factories.fields import Ignore
+from pydantic_factories import ModelFactory, Ignore
 
 T = TypeVar("T", Model, EmbeddedModel)
 
@@ -310,15 +354,16 @@ The above example is basically the extension included in `pydantic-factories` fo
 library [odmantic](https://github.com/art049/odmantic), which is a pydantic based mongo ODM.
 
 For odmantic models, the `id` attribute should not be set by the factory, but rather handled by the odmantic logic
-itself. Thus the `id` field is marked as ignored.
+itself. Thus, the `id` field is marked as ignored.
 
 When you ignore an attribute using `Ignore`, it will be completely ignored by the factory - that is, it will not be set
 as a kwarg passed to pydantic at all.
 
 #### Require (field)
 
-The `Require` field in turn specifies that a particular attribute is a **required kwarg**. That is, if a kwarg with a value for
-this particular attribute is not passed when calling `factory.build()`, a `MissingBuildKwargError` will be raised.
+The `Require` field in turn specifies that a particular attribute is a **required kwarg**. That is, if a kwarg with a
+value for this particular attribute is not passed when calling `factory.build()`, a `MissingBuildKwargError` will be
+raised.
 
 What is the use case for this? For example, lets say we have a document called `Article` which we store in some DB and
 is represented using a non-pydantic model, say, an `elastic-dsl` document. We then need to store in our pydantic object
@@ -425,16 +470,20 @@ Any class that is derived from pydantic's `BaseModel` can be used as the `__mode
 libraries, e.g. [SQLModel](https://sqlmodel.tiangolo.com/) or [Ormar](https://collerek.github.io/ormar/), this library
 will work as is out of the box.
 
-Currently, this library also includes extensions for two ODM libraries - [odmatic](https://github.com/art049/odmantic) and [Beanie](https://github.com/roman-right/beanie).
+Currently, this library also includes extensions for two ODM libraries - [odmatic](https://github.com/art049/odmantic)
+and [Beanie](https://github.com/roman-right/beanie).
 
 ### Odmatic
 
-This extension includes a class called `OdmanticModelFactory` and it can be imported from `pydantic_factory.extensions`. This class is meant to be used with the `Model` and `EmbeddedModel` classes exported by the library, but it will also work with regular instances of pydantic's `BaseModel`.
-
+This extension includes a class called `OdmanticModelFactory` and it can be imported from `pydantic_factory.extensions`.
+This class is meant to be used with the `Model` and `EmbeddedModel` classes exported by the library, but it will also
+work with regular instances of pydantic's `BaseModel`.
 
 ### Beanie
 
-This extension includes a class called `BeanieDocumentFactory` as well as an `BeaniePersistenceHandler`. Both of these can be imported from `pydantic_factory.extensions`. The `BeanieDocumentFactory` is meant to be used with the Beanie `Document` class and it includes async persistence build in.
+This extension includes a class called `BeanieDocumentFactory` as well as an `BeaniePersistenceHandler`. Both of these
+can be imported from `pydantic_factory.extensions`. The `BeanieDocumentFactory` is meant to be used with the
+Beanie `Document` class, and it includes async persistence build in.
 
 ## Contributing
 
