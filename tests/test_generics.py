@@ -1,0 +1,86 @@
+from typing import Generic, List, Optional, TypeVar, Union
+
+from pydantic import BaseModel
+from pydantic.generics import GenericModel
+
+from pydantic_factories import ModelFactory
+
+Inner = TypeVar("Inner")
+APIResponseData = TypeVar("APIResponseData")
+
+
+class Attributes(GenericModel, Generic[Inner]):
+    attributes: Inner
+
+
+class OneInner(BaseModel):
+    one: str
+    id: Optional[int]
+    description: Optional[str]
+
+
+class OneResponse(BaseModel):
+    one: Attributes[OneInner]
+
+
+class TwoInner(BaseModel):
+    two: str
+    id: Optional[int]
+    description: Optional[str]
+
+
+class TwoResponse(BaseModel):
+    two: Attributes[TwoInner]
+
+
+class ThreeInner(BaseModel):
+    three: str
+    relation: int
+
+
+class ThreeResponse(BaseModel):
+    three: Attributes[ThreeInner]
+
+
+class APIResponse(GenericModel, Generic[APIResponseData]):
+    data: List[APIResponseData]
+
+
+def test_generic_factory_one_response():
+    class APIResponseFactory(ModelFactory):
+        __model__ = APIResponse[OneResponse]
+
+    result = APIResponseFactory.build()
+
+    assert result.data
+    assert isinstance(result.data[0], OneResponse)
+
+
+def test_generic_factory_two_response():
+    class APIResponseFactory(ModelFactory):
+        __model__ = APIResponse[TwoResponse]
+
+    result = APIResponseFactory.build()
+
+    assert result.data
+    assert isinstance(result.data[0], TwoResponse)
+
+
+def test_generic_factory_three_response():
+    class APIResponseFactory(ModelFactory):
+        __model__ = APIResponse[ThreeResponse]
+
+    result = APIResponseFactory.build()
+
+    assert result.data
+    assert isinstance(result.data[0], ThreeResponse)
+
+
+def test_generic_factory_union_response():
+    class APIResponseFactory(ModelFactory):
+        __model__ = APIResponse[Union[OneResponse, TwoResponse, ThreeResponse]]
+
+    result = APIResponseFactory.build()
+
+    assert result.data
+    assert isinstance(result.data[0], (OneResponse, TwoResponse, ThreeResponse))

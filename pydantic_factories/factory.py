@@ -357,8 +357,6 @@ class ModelFactory(ABC, Generic[T]):
         if isinstance(outer_type, EnumMeta):
             return cls.handle_enum(outer_type)
         if cls.is_model(outer_type):
-            if outer_type == cls.__model__:
-                return cls.build()
             return cls.create_factory(model=outer_type).build()
         if cls.is_constrained_field(outer_type):
             return cls.handle_constrained_field(model_field=model_field)

@@ -110,8 +110,6 @@ def handle_complex_type(model_field: ModelField, model_factory: Type["ModelFacto
     if field_type in model_factory.get_provider_map():
         return providers[field_type]()
     if model_factory.is_model(field_type):
-        if field_type == model_factory.__model__:
-            return model_factory.build()
         return model_factory.create_factory(model=field_type).build()
     if model_factory.is_ignored_type(field_type):
         return None
