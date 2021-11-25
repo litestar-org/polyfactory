@@ -4,7 +4,6 @@ repos:
     hooks:
       - id: check-ast
       - id: check-case-conflict
-      - id: check-executables-have-shebangs
       - id: check-merge-conflict
       - id: debug-statements
       - id: end-of-file-fixer
@@ -43,7 +42,7 @@ repos:
             "flake8-type-checking",
           ]
   - repo: https://github.com/pycqa/pylint
-    rev: "v2.11.1"
+    rev: "v2.12.0"
     hooks:
       - id: pylint
         exclude: "test_*"
@@ -64,6 +63,5 @@ repos:
         exclude: "test_*"
         additional_dependencies: [
           pydantic,
-          faker,
-          beanie
+          faker
         ]

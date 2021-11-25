@@ -13,7 +13,7 @@ def test_allows_user_to_define_faker_instance():
         __model__ = Pet
         __faker__ = my_faker
 
-    assert hasattr(MyFactory.get_faker(), "__test__attr__")
+    assert hasattr(MyFactory._get_faker(), "__test__attr__")
 
 
 def test_validates_model_is_set_in_build():
