@@ -470,7 +470,7 @@ Any class that is derived from pydantic's `BaseModel` can be used as the `__mode
 libraries, e.g. [SQLModel](https://sqlmodel.tiangolo.com/) or [Ormar](https://collerek.github.io/ormar/), this library
 will work as is out of the box.
 
-Currently, this library also includes extensions for two ODM libraries - [odmatic](https://github.com/art049/odmantic)
+Currently, this library also includes extensions for two ODM libraries - [odmantic](https://github.com/art049/odmantic)
 and [Beanie](https://github.com/roman-right/beanie).
 
 ### Odmatic
