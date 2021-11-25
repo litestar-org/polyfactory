@@ -1,6 +1,7 @@
 import os
 from abc import ABC
 from collections import deque
+from dataclasses import is_dataclass
 from datetime import date, datetime, time, timedelta
 from decimal import Decimal
 from enum import EnumMeta
@@ -90,12 +91,14 @@ from pydantic_factories.exceptions import (
 from pydantic_factories.fields import Ignore, Require
 from pydantic_factories.protocols import (
     AsyncPersistenceProtocol,
+    DataclassProtocol,
     SyncPersistenceProtocol,
 )
+from pydantic_factories.utils import get_model_fields, is_pydantic_model
 from pydantic_factories.value_generators.complex_types import handle_complex_type
 from pydantic_factories.value_generators.primitives import create_random_bytes
 
-T = TypeVar("T", bound=BaseModel)
+T = TypeVar("T", BaseModel, DataclassProtocol)
 
 default_faker = Faker()
 
@@ -105,16 +108,6 @@ class ModelFactory(ABC, Generic[T]):
     __faker__: Optional[Faker]
     __sync_persistence__: Optional[Union[Type[SyncPersistenceProtocol[T]], SyncPersistenceProtocol[T]]]
     __async_persistence__: Optional[Union[Type[AsyncPersistenceProtocol[T]], AsyncPersistenceProtocol[T]]]
-
-    @classmethod
-    def is_model(cls, value: Any) -> bool:
-        """Method to determine if a given value is a subclass of BaseModel"""
-        try:
-            return isclass(value) and issubclass(value, BaseModel)
-        except TypeError:  # pragma: no cover
-            # isclass(value) returns True for python 3.9+ typings such as list[str] etc.
-            # this raises a TypeError in issubclass, and so we need to handle it.
-            return False
 
     @classmethod
     def is_model_factory(cls, value: Any) -> bool:
@@ -154,7 +147,9 @@ class ModelFactory(ABC, Generic[T]):
         if not hasattr(cls, "__model__") or not cls.__model__:
             raise ConfigurationError("missing model class in factory Meta")
         model = cls.__model__
-        model.update_forward_refs()
+        if is_pydantic_model(model):
+            # model can also be an instance of dataclass
+            cast(BaseModel, model).update_forward_refs()
         return model
 
     @classmethod
@@ -184,7 +179,7 @@ class ModelFactory(ABC, Generic[T]):
             ) from e
 
     @classmethod
-    def get_faker(cls) -> Faker:
+    def _get_faker(cls) -> Faker:
         """
         Returns an instance of faker
         """
@@ -206,7 +201,7 @@ class ModelFactory(ABC, Generic[T]):
         def create_generic_fn() -> Callable:
             return lambda *args: None
 
-        faker = cls.get_faker()
+        faker = cls._get_faker()
 
         return {
             # primitives
@@ -341,7 +336,7 @@ class ModelFactory(ABC, Generic[T]):
                 (ModelFactory,),
                 {
                     "__model__": model,
-                    "__faker__": cls.get_faker(),
+                    "__faker__": cls._get_faker(),
                 },
             ),
         )
@@ -356,7 +351,7 @@ class ModelFactory(ABC, Generic[T]):
         outer_type = model_field.outer_type_
         if isinstance(outer_type, EnumMeta):
             return cls.handle_enum(outer_type)
-        if cls.is_model(outer_type):
+        if is_pydantic_model(outer_type) or is_dataclass(outer_type):
             return cls.create_factory(model=outer_type).build()
         if cls.is_constrained_field(outer_type):
             return cls.handle_constrained_field(model_field=model_field)
@@ -387,8 +382,7 @@ class ModelFactory(ABC, Generic[T]):
     @classmethod
     def build(cls, **kwargs) -> T:
         """builds an instance of the factory's Meta.model"""
-        model = cls._get_model()
-        for field_name, model_field in model.__fields__.items():
+        for field_name, model_field in get_model_fields(cls._get_model()):
             if model_field.alias:
                 field_name = model_field.alias
             if cls.should_set_field_value(field_name, **kwargs):

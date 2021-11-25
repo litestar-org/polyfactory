@@ -1,9 +1,19 @@
-from typing import List, TypeVar
+from typing import Callable, Dict, List, Optional, TypeVar
 
 from pydantic import BaseModel
 from typing_extensions import Protocol
 
-T = TypeVar("T", bound=BaseModel)
+
+class DataclassProtocol(Protocol):
+    def __init__(self, **kwargs):  # pylint: disable=super-init-not-called
+        ...
+
+    __dataclass_fields__: Dict
+    __dataclass_params__: Dict
+    __post_init__: Optional[Callable]
+
+
+T = TypeVar("T", BaseModel, DataclassProtocol)
 
 
 class SyncPersistenceProtocol(Protocol[T]):

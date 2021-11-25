@@ -33,3 +33,7 @@
 
 - update readme
 - update fields
+
+[0.4.0]
+
+- added support for dataclasses

@@ -1,4 +1,4 @@
-from typing import Any, List, TypeVar
+from typing import Any, List
 
 from pydantic import BaseModel
 from pydantic.fields import ModelField
@@ -13,17 +13,15 @@ except ImportError:  # pragma: no cover
     PydanticObjectId = None
     Document = BaseModel
 
-T = TypeVar("T", bound=Document)
 
-
-class BeaniePersistenceHandler(AsyncPersistenceProtocol[T]):
-    async def save(self, data: T) -> T:
+class BeaniePersistenceHandler(AsyncPersistenceProtocol[Document]):
+    async def save(self, data: Document) -> Document:
         """
         Persists a single instance in mongoDB
         """
         return await data.insert()
 
-    async def save_many(self, data: List[T]) -> List[T]:
+    async def save_many(self, data: List[Document]) -> List[Document]:
         """
         Persists multiple instances in mongoDB
 
@@ -35,7 +33,7 @@ class BeaniePersistenceHandler(AsyncPersistenceProtocol[T]):
         return result
 
 
-class BeanieDocumentFactory(ModelFactory[T]):
+class BeanieDocumentFactory(ModelFactory[Document]):
     """Subclass of ModelFactory for Beanie Documents"""
 
     __async_persistence__ = BeaniePersistenceHandler

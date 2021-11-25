@@ -1,4 +1,5 @@
 from collections import defaultdict, deque
+from dataclasses import is_dataclass
 from random import choice
 from typing import TYPE_CHECKING, Any, Callable, Optional, Type, cast
 
@@ -18,6 +19,7 @@ from pydantic.fields import (
 )
 
 from pydantic_factories.exceptions import ParameterError
+from pydantic_factories.utils import is_pydantic_model
 from pydantic_factories.value_generators.primitives import create_random_string
 
 if TYPE_CHECKING:  # pragma: no cover
@@ -109,7 +111,7 @@ def handle_complex_type(model_field: ModelField, model_factory: Type["ModelFacto
         return create_random_string(min_length=1, max_length=10)
     if field_type in model_factory.get_provider_map():
         return providers[field_type]()
-    if model_factory.is_model(field_type):
+    if is_pydantic_model(field_type) or is_dataclass(field_type):
         return model_factory.create_factory(model=field_type).build()
     if model_factory.is_ignored_type(field_type):
         return None
