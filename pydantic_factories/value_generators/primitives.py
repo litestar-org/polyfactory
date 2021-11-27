@@ -1,7 +1,7 @@
 from binascii import hexlify
 from decimal import Decimal
 from os import urandom
-from random import randint, uniform
+from random import getrandbits, randint, uniform
 from typing import Optional, Union
 
 
@@ -49,3 +49,8 @@ def create_random_string(
 ) -> str:
     """Generates a random string given the constraints"""
     return create_random_bytes(min_length=min_length, max_length=max_length, lower_case=lower_case).decode("utf-8")
+
+
+def create_random_boolean() -> bool:
+    """Generates a random boolean value"""
+    return bool(getrandbits(1))

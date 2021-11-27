@@ -6,6 +6,8 @@ from typing import (
     FrozenSet,
     Iterable,
     List,
+    Mapping,
+    Optional,
     Sequence,
     Set,
     Tuple,
@@ -80,3 +82,32 @@ def test_raises_for_user_defined_types():
 
     with pytest.raises(ParameterError):
         MyFactory.build()
+
+
+def test_randomizes_optional_returns():
+    class MyModel(BaseModel):
+        optional_1: List[Optional[str]]
+        optional_2: Dict[str, Optional[str]]
+        optional_3: Set[Optional[str]]
+        optional_4: Mapping[int, Optional[str]]
+
+    class MyFactory(ModelFactory):
+        __model__ = MyModel
+
+    result = MyFactory.build()
+    assert any(
+        [
+            not result.optional_1,
+            not result.optional_2,
+            not result.optional_3,
+            not result.optional_4,
+        ]
+    )
+    assert any(
+        [
+            bool(result.optional_1),
+            bool(result.optional_2),
+            bool(result.optional_3),
+            bool(result.optional_4),
+        ]
+    )

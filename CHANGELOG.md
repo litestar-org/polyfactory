@@ -37,3 +37,7 @@
 [0.4.0]
 
 - added support for dataclasses
+
+[0.4.1]
+
+- randomly return None values for Optional[] marked fields

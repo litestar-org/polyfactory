@@ -94,9 +94,12 @@ from pydantic_factories.protocols import (
     DataclassProtocol,
     SyncPersistenceProtocol,
 )
-from pydantic_factories.utils import get_model_fields, is_pydantic_model
+from pydantic_factories.utils import get_model_fields, is_optional, is_pydantic_model
 from pydantic_factories.value_generators.complex_types import handle_complex_type
-from pydantic_factories.value_generators.primitives import create_random_bytes
+from pydantic_factories.value_generators.primitives import (
+    create_random_boolean,
+    create_random_bytes,
+)
 
 T = TypeVar("T", BaseModel, DataclassProtocol)
 
@@ -347,6 +350,8 @@ class ModelFactory(ABC, Generic[T]):
             return cls.handle_factory_field(field_name=field_name)
         if model_field.field_info.const:
             return model_field.get_default()
+        if is_optional(model_field=model_field) and not create_random_boolean():
+            return None
         outer_type = model_field.outer_type_
         if isinstance(outer_type, EnumMeta):
             return cls.handle_enum(outer_type)

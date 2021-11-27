@@ -30,6 +30,18 @@ def is_pydantic_model(value: Any) -> bool:
         return False
 
 
+def recursive_set_model_fields_required(model_field: ModelField) -> ModelField:
+    """
+    Traverse and update model_fields graph to all be required
+
+    This is required because create_model exported from pydantic does not support required fields
+    """
+    model_field.required = True
+    for index, sub_field in enumerate(model_field.sub_fields or []):
+        model_field.sub_fields[index] = recursive_set_model_fields_required(model_field=sub_field)  # type: ignore
+    return model_field
+
+
 def get_model_fields(model: Union[Type[BaseModel], Type[DataclassProtocol]]) -> ItemsView[str, ModelField]:
     """
     A function to retrieve the fields of a given model.
@@ -37,6 +49,28 @@ def get_model_fields(model: Union[Type[BaseModel], Type[DataclassProtocol]]) -> 
     If the model passed is a dataclass, its converted to a pydantic model first.
     """
     if not is_pydantic_model(model):
-        field_definitions = {field.name: (field.type, None) for field in fields(model)}
-        model = create_model("DataclassProxy", **field_definitions)  # type: ignore
+        model_fields = fields(model)
+        field_definitions = {field.name: (field.type, None) for field in model_fields}
+        model = cast(Type[BaseModel], create_model("DataclassProxy", **field_definitions))  # type: ignore
+        for field_name, field in model.__fields__.items():
+            setattr(model, field_name, recursive_set_model_fields_required(model_field=field))
     return cast(Type[BaseModel], model).__fields__.items()
+
+
+def is_union(model_field: ModelField) -> bool:
+    """Determines whether the given model_field is type Union"""
+    return repr(model_field.outer_type_).split("[")[0] == "typing.Union"
+
+
+def is_any(model_field: ModelField) -> bool:
+    """Determines whether the given model_field is type Any"""
+    return model_field.type_ is Any or (
+        hasattr(model_field.outer_type_, "_name")
+        and getattr(model_field.outer_type_, "_name")
+        and "Any" in getattr(model_field.outer_type_, "_name")
+    )
+
+
+def is_optional(model_field: ModelField) -> bool:
+    """Determines whether the given model_field is type Optional"""
+    return model_field.allow_none and not is_any(model_field=model_field) and not model_field.required

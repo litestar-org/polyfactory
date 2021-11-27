@@ -19,8 +19,11 @@ from pydantic.fields import (
 )
 
 from pydantic_factories.exceptions import ParameterError
-from pydantic_factories.utils import is_pydantic_model
-from pydantic_factories.value_generators.primitives import create_random_string
+from pydantic_factories.utils import is_any, is_optional, is_pydantic_model, is_union
+from pydantic_factories.value_generators.primitives import (
+    create_random_boolean,
+    create_random_string,
+)
 
 if TYPE_CHECKING:  # pragma: no cover
     from pydantic_factories.factory import ModelFactory
@@ -51,20 +54,6 @@ shape_mapping = {
     SHAPE_DICT: dict,
     SHAPE_DEFAULTDICT: defaultdict,
 }
-
-
-def is_union(model_field: ModelField) -> bool:
-    """Determines whether the given model_field is type Union"""
-    return repr(model_field.outer_type_).split("[")[0] == "typing.Union"
-
-
-def is_any(model_field: ModelField) -> bool:
-    """Determines whether the given model_field is type Any"""
-    return model_field.type_ is Any or (
-        hasattr(model_field.outer_type_, "_name")
-        and getattr(model_field.outer_type_, "_name")
-        and "Any" in getattr(model_field.outer_type_, "_name")
-    )
 
 
 def handle_container_type(model_field: ModelField, container_type: Callable, model_factory: Type["ModelFactory"]):
@@ -109,6 +98,8 @@ def handle_complex_type(model_field: ModelField, model_factory: Type["ModelFacto
         return handle_complex_type(model_field=choice(model_field.sub_fields), model_factory=model_factory)
     if is_any(model_field=model_field):
         return create_random_string(min_length=1, max_length=10)
+    if is_optional(model_field) and not create_random_boolean():
+        return None
     if field_type in model_factory.get_provider_map():
         return providers[field_type]()
     if is_pydantic_model(field_type) or is_dataclass(field_type):
