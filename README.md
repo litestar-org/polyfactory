@@ -351,9 +351,9 @@ class OdmanticModelFactory(ModelFactory[T]):
 ```
 
 The above example is basically the extension included in `pydantic-factories` for the
-library [odmantic](https://github.com/art049/odmantic), which is a pydantic based mongo ODM.
+library [ODMantic](https://github.com/art049/odmantic), which is a pydantic based mongo ODM.
 
-For odmantic models, the `id` attribute should not be set by the factory, but rather handled by the odmantic logic
+For ODMantic models, the `id` attribute should not be set by the factory, but rather handled by the odmantic logic
 itself. Thus, the `id` field is marked as ignored.
 
 When you ignore an attribute using `Ignore`, it will be completely ignored by the factory - that is, it will not be set
@@ -470,10 +470,10 @@ Any class that is derived from pydantic's `BaseModel` can be used as the `__mode
 libraries, e.g. [SQLModel](https://sqlmodel.tiangolo.com/) or [Ormar](https://collerek.github.io/ormar/), this library
 will work as is out of the box.
 
-Currently, this library also includes extensions for two ODM libraries - [odmantic](https://github.com/art049/odmantic)
+Currently, this library also includes extensions for two ODM libraries - [ODMantic](https://github.com/art049/odmantic)
 and [Beanie](https://github.com/roman-right/beanie).
 
-### Odmatic
+### Odmantic
 
 This extension includes a class called `OdmanticModelFactory` and it can be imported from `pydantic_factory.extensions`.
 This class is meant to be used with the `Model` and `EmbeddedModel` classes exported by the library, but it will also

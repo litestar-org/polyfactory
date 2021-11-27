@@ -26,7 +26,7 @@
 [0.3.4b]
 
 - add support for forward refs
-- add support for odmantic
+- add support for ODMantic
 - add Ignore and Require fields
 
 [0.3.5b]
