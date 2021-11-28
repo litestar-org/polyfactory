@@ -85,6 +85,8 @@ def test_raises_for_user_defined_types():
 
 
 def test_randomizes_optional_returns():
+    """this is a flaky test - because it depends on randomness, hence its been reran multiple times."""
+
     class MyModel(BaseModel):
         optional_1: List[Optional[str]]
         optional_2: Dict[str, Optional[str]]
@@ -94,20 +96,28 @@ def test_randomizes_optional_returns():
     class MyFactory(ModelFactory):
         __model__ = MyModel
 
-    result = MyFactory.build()
-    assert any(
-        [
-            not result.optional_1,
-            not result.optional_2,
-            not result.optional_3,
-            not result.optional_4,
-        ]
-    )
-    assert any(
-        [
-            bool(result.optional_1),
-            bool(result.optional_2),
-            bool(result.optional_3),
-            bool(result.optional_4),
-        ]
-    )
+    failed = False
+    for _ in range(5):
+        try:
+            result = MyFactory.build()
+            assert any(
+                [
+                    not result.optional_1,
+                    not result.optional_2,
+                    not result.optional_3,
+                    not result.optional_4,
+                ]
+            )
+            assert any(
+                [
+                    bool(result.optional_1),
+                    bool(result.optional_2),
+                    bool(result.optional_3),
+                    bool(result.optional_4),
+                ]
+            )
+            failed = False
+            break
+        except AssertionError:
+            failed = True
+    assert not failed
