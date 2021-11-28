@@ -1,7 +1,8 @@
-from dataclasses import fields
+from dataclasses import Field as DataclassField
+from dataclasses import fields as get_dataclass_fields
 from decimal import Decimal
 from inspect import isclass
-from typing import Any, ItemsView, Type, TypeVar, Union, cast
+from typing import Any, ItemsView, Tuple, Type, TypeVar, Union, cast
 
 from pydantic import BaseModel, create_model
 from pydantic.fields import ModelField
@@ -30,16 +31,30 @@ def is_pydantic_model(value: Any) -> bool:
         return False
 
 
-def recursive_set_model_fields_required(model_field: ModelField) -> ModelField:
+def create_model_from_dataclass(
+    dataclass: Type[DataclassProtocol],
+) -> Type[BaseModel]:
     """
-    Traverse and update model_fields graph to all be required
+    Creates a a subclass of BaseModel from a given dataclass
 
-    This is required because create_model exported from pydantic does not support required fields
+    We are limited here because Pydantic does not perform proper field parsing when going this route -
+    which requires we set the fields as required and not required independently.
+    We currently do not handle deeply nested Any and Optional.
     """
-    model_field.required = True
-    for index, sub_field in enumerate(model_field.sub_fields or []):
-        model_field.sub_fields[index] = recursive_set_model_fields_required(model_field=sub_field)  # type: ignore
-    return model_field
+    dataclass_fields: Tuple[DataclassField, ...] = get_dataclass_fields(dataclass)
+    model = create_model("DataclassProxy", **{field.name: (field.type, ...) for field in dataclass_fields})  # type: ignore
+    for field_name, model_field in model.__fields__.items():
+        dataclass_field = [field for field in dataclass_fields if field.name == field_name][0]
+
+        typing_string = repr(dataclass_field.type)
+        if typing_string.startswith("typing.Optional") or typing_string == "typing.Any":
+            model_field.required = False
+            model_field.allow_none = True
+        else:
+            model_field.required = True
+            model_field.allow_none = False
+        setattr(model, field_name, model_field)
+    return model
 
 
 def get_model_fields(model: Union[Type[BaseModel], Type[DataclassProtocol]]) -> ItemsView[str, ModelField]:
@@ -49,11 +64,7 @@ def get_model_fields(model: Union[Type[BaseModel], Type[DataclassProtocol]]) -> 
     If the model passed is a dataclass, its converted to a pydantic model first.
     """
     if not is_pydantic_model(model):
-        model_fields = fields(model)
-        field_definitions = {field.name: (field.type, None) for field in model_fields}
-        model = cast(Type[BaseModel], create_model("DataclassProxy", **field_definitions))  # type: ignore
-        for field_name, field in model.__fields__.items():
-            setattr(model, field_name, recursive_set_model_fields_required(model_field=field))
+        model = create_model_from_dataclass(dataclass=model)  # type: ignore
     return cast(Type[BaseModel], model).__fields__.items()
 
 

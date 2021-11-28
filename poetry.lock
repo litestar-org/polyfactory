@@ -196,7 +196,7 @@ docs = ["sphinx"]
 
 [[package]]
 name = "hypothesis"
-version = "6.27.2"
+version = "6.28.1"
 description = "A library for property-based testing"
 category = "dev"
 optional = false
@@ -806,8 +806,8 @@ greenlet = [
     {file = "greenlet-1.1.2.tar.gz", hash = "sha256:e30f5ea4ae2346e62cedde8794a56858a67b878dd79f7df76a0767e356b1744a"},
 ]
 hypothesis = [
-    {file = "hypothesis-6.27.2-py3-none-any.whl", hash = "sha256:92005826894782cc57c47b98debe1bc889b716f0774e60f83536f14360a9199e"},
-    {file = "hypothesis-6.27.2.tar.gz", hash = "sha256:c4943d159f299a96b1c23277c4bcf0759a757888b67a6d73e9c70d853024aa15"},
+    {file = "hypothesis-6.28.1-py3-none-any.whl", hash = "sha256:3846ce6687d6b3f07ef9719433f7738fe1ea58b509170cdddfdd3beedf75ad1f"},
+    {file = "hypothesis-6.28.1.tar.gz", hash = "sha256:ecc82d2eb6eee3072ebf16661e8dd009567c727a70e0f6a3bc586b0129f903d1"},
 ]
 identify = [
     {file = "identify-2.4.0-py2.py3-none-any.whl", hash = "sha256:eba31ca80258de6bb51453084bff4a923187cd2193b9c13710f2516ab30732cc"},

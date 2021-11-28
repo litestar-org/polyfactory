@@ -41,3 +41,7 @@
 [0.4.1]
 
 - randomly return None values for Optional[] marked fields
+
+[0.4.2]
+
+- updated handling of dataclasses to support randomized optionals
