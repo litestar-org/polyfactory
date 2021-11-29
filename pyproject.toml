@@ -28,7 +28,7 @@ classifiers = [
     "Topic :: Utilities",
     "Typing :: Typed",
 ]
-include = ["CHANGELOG.md", "py.typed"]
+include = ["CHANGELOG.md"]
 packages = [
     { include = "pydantic_factories" },
 ]
