@@ -61,3 +61,7 @@
 [0.4.6]
 
 - fix generation of nested constrained fields
+
+[0.5.0]
+
+- add ormar extension
