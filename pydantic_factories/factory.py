@@ -16,7 +16,18 @@ from ipaddress import (
 )
 from pathlib import Path
 from random import choice, uniform
-from typing import Any, Callable, Dict, Generic, List, Optional, TypeVar, Union, cast, ItemsView
+from typing import (
+    Any,
+    Callable,
+    Dict,
+    Generic,
+    ItemsView,
+    List,
+    Optional,
+    TypeVar,
+    Union,
+    cast,
+)
 from uuid import NAMESPACE_DNS, UUID, uuid1, uuid3, uuid4, uuid5
 
 from faker import Faker
@@ -94,7 +105,11 @@ from pydantic_factories.protocols import (
     DataclassProtocol,
     SyncPersistenceProtocol,
 )
-from pydantic_factories.utils import is_optional, is_pydantic_model
+from pydantic_factories.utils import (
+    create_model_from_dataclass,
+    is_optional,
+    is_pydantic_model,
+)
 from pydantic_factories.value_generators.complex_types import handle_complex_type
 from pydantic_factories.value_generators.primitives import (
     create_random_boolean,
@@ -393,7 +408,7 @@ class ModelFactory(ABC, Generic[T]):
         """
         if not is_pydantic_model(model):
             model = create_model_from_dataclass(dataclass=model)  # type: ignore
-        return cast(Type[BaseModel], model).__fields__.items()
+        return model.__fields__.items()  # type: ignore
 
     @classmethod
     def build(cls, **kwargs) -> T:
