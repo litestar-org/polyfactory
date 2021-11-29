@@ -49,3 +49,7 @@
 [0.4.3]
 
 - fixed `py.typed` not placed inside the package
+
+[0.4.4]
+
+- make exports explicit

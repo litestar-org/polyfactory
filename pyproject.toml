@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "pydantic-factories"
-version = "0.4.3"
+version = "0.4.4"
 description = "Mock data generation for pydantic based models"
 authors = ["Na'aman Hirschfeld <Naaman.Hirschfeld@sprylab.com>"]
 license = "MIT"
@@ -92,6 +92,7 @@ good-names = "_,i,e,mm,yy,T,lt,le,gt,ge,cb"
 warn_unused_ignores = true
 warn_redundant_casts = true
 strict_optional = true
+implicit_reexport = false
 
 [tool.coverage.run]
 omit = ["*/tests/*"]

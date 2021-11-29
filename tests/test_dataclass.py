@@ -3,7 +3,7 @@ from dataclasses import field
 from typing import Dict, List, Optional
 
 from pydantic import BaseModel
-from pydantic.dataclasses import Field
+from pydantic.dataclasses import Field  # type: ignore
 from pydantic.dataclasses import dataclass as pydantic_dataclass
 
 from pydantic_factories import ModelFactory
