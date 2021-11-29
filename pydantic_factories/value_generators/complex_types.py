@@ -1,5 +1,6 @@
 from collections import defaultdict, deque
 from dataclasses import is_dataclass
+from enum import EnumMeta
 from random import choice
 from typing import TYPE_CHECKING, Any, Callable, Optional, Type, cast
 
@@ -104,6 +105,8 @@ def handle_complex_type(model_field: ModelField, model_factory: Type["ModelFacto
         return providers[field_type]()
     if is_pydantic_model(field_type) or is_dataclass(field_type):
         return model_factory.create_factory(model=field_type).build()
+    if isinstance(field_type, EnumMeta):
+        return model_factory.handle_enum(field_type)
     if model_factory.is_ignored_type(field_type):
         return None
     raise ParameterError(

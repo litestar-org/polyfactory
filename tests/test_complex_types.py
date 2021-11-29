@@ -1,3 +1,4 @@
+from enum import Enum
 from typing import (
     Any,
     DefaultDict,
@@ -121,3 +122,19 @@ def test_randomizes_optional_returns():
         except AssertionError:
             failed = True
     assert not failed
+
+
+def test_complex_typing_with_enum():
+    class Animal(str, Enum):
+        DOG = "Dog"
+        CAT = "Cat"
+        MONKEY = "Monkey"
+
+    class MyModel(BaseModel):
+        animal_list: List[Animal]
+
+    class MyFactory(ModelFactory):
+        __model__ = MyModel
+
+    result = MyFactory.build()
+    assert result.animal_list

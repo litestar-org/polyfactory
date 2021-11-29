@@ -53,3 +53,7 @@
 [0.4.4]
 
 - make exports explicit
+
+[0.4.5]
+
+- fix generation of enum in complex types
