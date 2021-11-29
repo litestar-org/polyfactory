@@ -476,8 +476,7 @@ handler to use these methods.
 Any class that is derived from pydantic's `BaseModel` can be used as the `__model__` of a factory. For most 3rd party
 libraries, e.g. [SQLModel](https://sqlmodel.tiangolo.com/), this library will work as is out of the box.
 
-Currently, this library also includes extensions for two ODM libraries - [ODMantic](https://github.com/art049/odmantic)
-and [Beanie](https://github.com/roman-right/beanie).
+Currently, this library also includes the following extensions:
 
 ### ODMantic
 

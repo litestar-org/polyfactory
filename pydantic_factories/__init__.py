@@ -4,6 +4,7 @@ from .extensions import (
     BeanieDocumentFactory,
     BeaniePersistenceHandler,
     OdmanticModelFactory,
+    OrmarModelFactory,
 )
 from .factory import ModelFactory
 from .fields import Ignore, Require, Use
@@ -17,6 +18,7 @@ __all__ = [
     "Ignore",
     "ModelFactory",
     "OdmanticModelFactory",
+    "OrmarModelFactory",
     "Require",
     "SyncPersistenceProtocol",
     "Use",
