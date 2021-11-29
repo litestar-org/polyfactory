@@ -1,6 +1,4 @@
 from collections import defaultdict, deque
-from dataclasses import is_dataclass
-from enum import EnumMeta
 from random import choice
 from typing import TYPE_CHECKING, Any, Callable, Optional, Type, cast
 
@@ -19,8 +17,7 @@ from pydantic.fields import (
     ModelField,
 )
 
-from pydantic_factories.exceptions import ParameterError
-from pydantic_factories.utils import is_any, is_optional, is_pydantic_model, is_union
+from pydantic_factories.utils import is_any, is_optional, is_union
 from pydantic_factories.value_generators.primitives import (
     create_random_boolean,
     create_random_string,
@@ -82,9 +79,6 @@ def handle_container_type(model_field: ModelField, container_type: Callable, mod
 
 def handle_complex_type(model_field: ModelField, model_factory: Type["ModelFactory"]) -> Any:
     """Recursive type generation based on typing info stored in the graph like structure of pydantic model_fields"""
-
-    providers = model_factory.get_provider_map()
-    field_type = model_field.type_
     container_type: Optional[Callable] = shape_mapping.get(model_field.shape)
     if container_type:
         if container_type != tuple:
@@ -101,15 +95,4 @@ def handle_complex_type(model_field: ModelField, model_factory: Type["ModelFacto
         return create_random_string(min_length=1, max_length=10)
     if is_optional(model_field) and not create_random_boolean():
         return None
-    if field_type in model_factory.get_provider_map():
-        return providers[field_type]()
-    if is_pydantic_model(field_type) or is_dataclass(field_type):
-        return model_factory.create_factory(model=field_type).build()
-    if isinstance(field_type, EnumMeta):
-        return model_factory.handle_enum(field_type)
-    if model_factory.is_ignored_type(field_type):
-        return None
-    raise ParameterError(
-        f"Unsupported type: {repr(field_type)}"
-        f"\n\nEither extend the providers map or add a factory function for this model field"
-    )
+    return model_factory.get_field_value(model_field=model_field)

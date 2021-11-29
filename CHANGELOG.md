@@ -57,3 +57,7 @@
 [0.4.5]
 
 - fix generation of enum in complex types
+
+[0.4.6]
+
+- fix generation of nested constrained fields

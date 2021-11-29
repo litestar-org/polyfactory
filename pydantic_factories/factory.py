@@ -283,7 +283,10 @@ class ModelFactory(ABC, Generic[T]):
         handler = cls.get_provider_map().get(field_type)
         if handler is not None:
             return handler()
-        return None  # pragma: no cover
+        raise ParameterError(
+            f"Unsupported type: {repr(field_type)}"
+            f"\n\nEither extend the providers map or add a factory function for this model field"
+        )
 
     @classmethod
     def handle_constrained_field(cls, model_field: ModelField) -> Any:
@@ -344,10 +347,8 @@ class ModelFactory(ABC, Generic[T]):
         )
 
     @classmethod
-    def get_field_value(cls, field_name: str, model_field: ModelField) -> Any:
+    def get_field_value(cls, model_field: ModelField) -> Any:
         """Returns a field value on the sub-class if existing, otherwise returns a mock value"""
-        if hasattr(cls, field_name):
-            return cls.handle_factory_field(field_name=field_name)
         if model_field.field_info.const:
             return model_field.get_default()
         if is_optional(model_field=model_field) and not create_random_boolean():
@@ -390,7 +391,10 @@ class ModelFactory(ABC, Generic[T]):
             if model_field.alias:
                 field_name = model_field.alias
             if cls.should_set_field_value(field_name, **kwargs):
-                kwargs[field_name] = cls.get_field_value(field_name=field_name, model_field=model_field)
+                if hasattr(cls, field_name):
+                    kwargs[field_name] = cls.handle_factory_field(field_name=field_name)
+                else:
+                    kwargs[field_name] = cls.get_field_value(model_field=model_field)
         return cls.__model__(**kwargs)
 
     @classmethod
