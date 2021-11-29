@@ -52,6 +52,7 @@ beanie = "*"
 ormar = "*"
 sqlmodel = "*"
 odmantic = "*"
+asyncpg = "*"
 
 [build-system]
 requires = ["poetry-core>=1.0.0"]

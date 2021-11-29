@@ -2,7 +2,7 @@ from dataclasses import Field as DataclassField
 from dataclasses import fields as get_dataclass_fields
 from decimal import Decimal
 from inspect import isclass
-from typing import Any, ItemsView, Tuple, Type, TypeVar, Union, cast
+from typing import Any, Tuple, Type, TypeVar
 
 from pydantic import BaseModel, create_model
 from pydantic.fields import ModelField
@@ -31,6 +31,15 @@ def is_pydantic_model(value: Any) -> bool:
         return False
 
 
+def set_model_field_to_requried(model_field: ModelField) -> ModelField:
+    """recursively sets the model_field and all sub_fields to required"""
+    model_field.required = True
+    if model_field.sub_fields:
+        for index, sub_field in enumerate(model_field.sub_fields):
+            model_field.sub_fields[index] = set_model_field_to_requried(model_field=sub_field)
+    return model_field
+
+
 def create_model_from_dataclass(
     dataclass: Type[DataclassProtocol],
 ) -> Type[BaseModel]:
@@ -45,8 +54,8 @@ def create_model_from_dataclass(
     model = create_model("DataclassProxy", **{field.name: (field.type, ...) for field in dataclass_fields})  # type: ignore
     for field_name, model_field in model.__fields__.items():
         dataclass_field = [field for field in dataclass_fields if field.name == field_name][0]
-
         typing_string = repr(dataclass_field.type)
+        model_field = set_model_field_to_requried(model_field=model_field)
         if typing_string.startswith("typing.Optional") or typing_string == "typing.Any":
             model_field.required = False
             model_field.allow_none = True
@@ -55,17 +64,6 @@ def create_model_from_dataclass(
             model_field.allow_none = False
         setattr(model, field_name, model_field)
     return model
-
-
-def get_model_fields(model: Union[Type[BaseModel], Type[DataclassProtocol]]) -> ItemsView[str, ModelField]:
-    """
-    A function to retrieve the fields of a given model.
-
-    If the model passed is a dataclass, its converted to a pydantic model first.
-    """
-    if not is_pydantic_model(model):
-        model = create_model_from_dataclass(dataclass=model)  # type: ignore
-    return cast(Type[BaseModel], model).__fields__.items()
 
 
 def is_union(model_field: ModelField) -> bool:

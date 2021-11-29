@@ -4,3 +4,11 @@ services:
     image: mongo:latest
     ports:
       - '27017:27017'
+  postgres:
+    image: postgres:latest
+    ports:
+      - '5434:5432'
+    environment:
+      POSTGRES_DB: 'pydantic-factories'
+      POSTGRES_USER: 'pydantic-factories'
+      POSTGRES_PASSWORD: 'pydantic-factories'
