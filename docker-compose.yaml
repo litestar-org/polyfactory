@@ -4,3 +4,13 @@ services:
     image: mongo:latest
     ports:
       - '27017:27017'
+
+  postgres:
+    image: postgres:13.4-alpine
+    restart: always
+    ports:
+      - '127.0.0.1:5434:5432'
+    environment:
+      POSTGRES_DB: 'db'
+      POSTGRES_USER: 'username'
+      POSTGRES_PASSWORD: 'password'
