@@ -57,17 +57,6 @@ def create_model_from_dataclass(
     return model
 
 
-def get_model_fields(model: Union[Type[BaseModel], Type[DataclassProtocol]]) -> ItemsView[str, ModelField]:
-    """
-    A function to retrieve the fields of a given model.
-
-    If the model passed is a dataclass, its converted to a pydantic model first.
-    """
-    if not is_pydantic_model(model):
-        model = create_model_from_dataclass(dataclass=model)  # type: ignore
-    return cast(Type[BaseModel], model).__fields__.items()
-
-
 def is_union(model_field: ModelField) -> bool:
     """Determines whether the given model_field is type Union"""
     return repr(model_field.outer_type_).split("[")[0] == "typing.Union"

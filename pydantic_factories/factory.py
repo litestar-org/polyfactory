@@ -16,7 +16,7 @@ from ipaddress import (
 )
 from pathlib import Path
 from random import choice, uniform
-from typing import Any, Callable, Dict, Generic, List, Optional, TypeVar, Union, cast
+from typing import Any, Callable, Dict, Generic, List, Optional, TypeVar, Union, cast, ItemsView
 from uuid import NAMESPACE_DNS, UUID, uuid1, uuid3, uuid4, uuid5
 
 from faker import Faker
@@ -94,7 +94,7 @@ from pydantic_factories.protocols import (
     DataclassProtocol,
     SyncPersistenceProtocol,
 )
-from pydantic_factories.utils import get_model_fields, is_optional, is_pydantic_model
+from pydantic_factories.utils import is_optional, is_pydantic_model
 from pydantic_factories.value_generators.complex_types import handle_complex_type
 from pydantic_factories.value_generators.primitives import (
     create_random_boolean,
@@ -385,9 +385,20 @@ class ModelFactory(ABC, Generic[T]):
         return not is_field_ignored and not is_field_in_kwargs
 
     @classmethod
+    def get_model_fields(cls, model: Type[T]) -> ItemsView[str, ModelField]:
+        """
+        A function to retrieve the fields of a given model.
+
+        If the model passed is a dataclass, its converted to a pydantic model first.
+        """
+        if not is_pydantic_model(model):
+            model = create_model_from_dataclass(dataclass=model)  # type: ignore
+        return cast(Type[BaseModel], model).__fields__.items()
+
+    @classmethod
     def build(cls, **kwargs) -> T:
         """builds an instance of the factory's Meta.model"""
-        for field_name, model_field in get_model_fields(cls._get_model()):
+        for field_name, model_field in cls.get_model_fields(cls._get_model()):
             if model_field.alias:
                 field_name = model_field.alias
             if cls.should_set_field_value(field_name, **kwargs):
