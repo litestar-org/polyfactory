@@ -10,7 +10,7 @@ from pydantic_factories.extensions import BeanieDocumentFactory
 
 class MyDocument(Document):
     name: str
-    index: Indexed(str, pymongo.DESCENDING)
+    index: Indexed(str, pymongo.DESCENDING)  # type: ignore
     siblings: List[PydanticObjectId]
 
 

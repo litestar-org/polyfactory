@@ -47,7 +47,7 @@ def test_handle_constrained_string_with_min_length_and_max_length_and_regex(
             handle_constrained_string(field=field)
     else:
         for regex in REGEXES:
-            field.regex = regex
+            field.regex = regex  # type: ignore
             result = handle_constrained_string(field=field)
             if to_lower:
                 assert result == result.lower()

@@ -33,9 +33,9 @@ class PersonFactoryWithDefaults(PersonFactoryWithoutDefaults):
     id = uuid4()
     name = "moishe"
     hobbies = ["fishing"]
-    nicks = []
+    nicks: List[str] = []
     age = 33
-    pets = []
+    pets: List[Pet] = []
     birthday = datetime(2021 - 33, 1, 1)
 
 
