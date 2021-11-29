@@ -198,6 +198,13 @@ result = MyFactory.build()
 
 The above example will build correctly.
 
+#### Note Regarding Nested Optional Types in Dataclasses
+
+When generating mock values for fields typed as `Optional` the field value will be either a value or None - depending on
+a random decision. This works for even when the `Optional` typing is deeply nested, except for dataclasses - typing is
+only shallowly evaluated for dataclasses, and as such they are always assumed to require a value. If you wish to
+nonetheless have None - you should do so manually by configured a `Use` callback for the particular field.
+
 ### Factory Configuration
 
 Configuration of `ModelFactory` is done using class variables:
@@ -473,7 +480,7 @@ will work as is out of the box.
 Currently, this library also includes extensions for two ODM libraries - [ODMantic](https://github.com/art049/odmantic)
 and [Beanie](https://github.com/roman-right/beanie).
 
-### Odmantic
+### ODMantic
 
 This extension includes a class called `OdmanticModelFactory` and it can be imported from `pydantic_factory.extensions`.
 This class is meant to be used with the `Model` and `EmbeddedModel` classes exported by the library, but it will also
