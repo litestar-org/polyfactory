@@ -45,3 +45,7 @@
 [0.4.2]
 
 - updated handling of dataclasses to support randomized optionals
+
+[0.4.3]
+
+- fixed `py.typed` not placed inside the package
