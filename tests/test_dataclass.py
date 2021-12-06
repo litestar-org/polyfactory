@@ -106,6 +106,10 @@ def test_model_with_embedded_dataclasses():
     assert result.east.people
 
 
+def function_with_kwargs(first: int, second: float, third: str = "moishe") -> None:
+    pass
+
+
 def test_complex_embedded_dataclass():
     @vanilla_dataclass
     class VanillaDC:
