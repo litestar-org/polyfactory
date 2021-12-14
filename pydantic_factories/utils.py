@@ -59,6 +59,7 @@ def create_model_from_dataclass(
         if typing_string.startswith("typing.Optional") or typing_string == "typing.Any":
             model_field.required = False
             model_field.allow_none = True
+            model_field.default = None
         else:
             model_field.required = True
             model_field.allow_none = False

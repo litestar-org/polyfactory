@@ -200,10 +200,11 @@ The above example will build correctly.
 
 #### Note Regarding Nested Optional Types in Dataclasses
 
-When generating mock values for fields typed as `Optional` the field value will be either a value or None - depending on
-a random decision. This works for even when the `Optional` typing is deeply nested, except for dataclasses - typing is
-only shallowly evaluated for dataclasses, and as such they are always assumed to require a value. If you wish to
-nonetheless have None - you should do so manually by configured a `Use` callback for the particular field.
+When generating mock values for fields typed as `Optional`, if the factory is defined
+with `__allow_none_optionals__ = True`, the field value will be either a value or None - depending on a random decision.
+This works even when the `Optional` typing is deeply nested, except for dataclasses - typing is only shallowly evaluated
+for dataclasses, and as such they are always assumed to require a value. If you wish to have a None value, in this
+particular case, you should do so manually by configured a `Use` callback for the particular field.
 
 ### Factory Configuration
 
@@ -223,6 +224,9 @@ Configuration of `ModelFactory` is done using class variables:
 - **\_\_async_persistence\_\_**: an _optional_ variable specifying the handler for asynchronously persisting data. If
   this is variable is not set, the `.create_async` and `.create_batch_async` methods of the factory cannot be used.
   See: [persistence methods](#persistence)
+
+- **\_\_allow_none_optionals_\_\_**: an _optional_ variable sepcifying whether the factory should randomly set None
+  values for optional fields, or always set a value for them. This is `True` by default.
 
 ```python
 from faker import Faker
