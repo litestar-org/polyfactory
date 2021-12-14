@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "pydantic-factories"
-version = "0.5.0"
+version = "0.6.0"
 description = "Mock data generation for pydantic based models"
 authors = ["Na'aman Hirschfeld <Naaman.Hirschfeld@sprylab.com>"]
 license = "MIT"
