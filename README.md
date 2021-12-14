@@ -224,6 +224,9 @@ Configuration of `ModelFactory` is done using class variables:
   this is variable is not set, the `.create_async` and `.create_batch_async` methods of the factory cannot be used.
   See: [persistence methods](#persistence)
 
+- **\_\_allow_none_optionals_\_\_**: an _optional_ variable sepcifying whether the factory should randomly set None
+  values for optional fields, or always set a value for them. This is `True` by default.
+
 ```python
 from faker import Faker
 from pydantic_factories import ModelFactory
