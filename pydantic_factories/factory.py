@@ -124,8 +124,9 @@ default_faker = Faker()
 class ModelFactory(ABC, Generic[T]):
     __model__: Type[T]
     __faker__: Optional[Faker]
-    __sync_persistence__: Optional[Union[Type[SyncPersistenceProtocol[T]], SyncPersistenceProtocol[T]]]
-    __async_persistence__: Optional[Union[Type[AsyncPersistenceProtocol[T]], AsyncPersistenceProtocol[T]]]
+    __sync_persistence__: Optional[Union[Type[SyncPersistenceProtocol[T]], SyncPersistenceProtocol[T]]] = None
+    __async_persistence__: Optional[Union[Type[AsyncPersistenceProtocol[T]], AsyncPersistenceProtocol[T]]] = None
+    __allow_none_optionals__: bool = True
 
     @classmethod
     def is_model_factory(cls, value: Any) -> bool:
@@ -174,26 +175,20 @@ class ModelFactory(ABC, Generic[T]):
         """
         Returns a sync_persistence interface if present
         """
-        try:
-            persistence = getattr(cls, "__sync_persistence__")
-            return persistence if not isclass(persistence) else persistence()
-        except AttributeError as e:
-            raise ConfigurationError(
-                "A sync_persistence handler must be defined in the factory to use this method"
-            ) from e
+        persistence = cls.__sync_persistence__
+        if persistence:
+            return persistence if not callable(persistence) else persistence()  # pylint: disable=not-callable
+        raise ConfigurationError("A sync_persistence handler must be defined in the factory to use this method")
 
     @classmethod
     def _get_async_persistence(cls) -> AsyncPersistenceProtocol[T]:
         """
         Returns an async_persistence interface
         """
-        try:
-            persistence = getattr(cls, "__async_persistence__")
-            return persistence if not isclass(persistence) else persistence()
-        except AttributeError as e:
-            raise ConfigurationError(
-                "An async_persistence handler must be defined in the factory to use this method"
-            ) from e
+        persistence = cls.__async_persistence__
+        if persistence:
+            return persistence if not callable(persistence) else persistence()  # pylint: disable=not-callable
+        raise ConfigurationError("An async_persistence handler must be defined in the factory to use this method")
 
     @classmethod
     def _get_faker(cls) -> Faker:
@@ -347,17 +342,24 @@ class ModelFactory(ABC, Generic[T]):
         return value
 
     @classmethod
-    def create_factory(cls, model: Type[BaseModel]) -> "ModelFactory":
+    def create_factory(
+        cls,
+        model: Type[BaseModel],
+        base: Optional[Type["ModelFactory"]] = None,
+        **kwargs,
+    ) -> "ModelFactory":  # pragma: no cover
         """Dynamically generates a factory given a model"""
+
+        kwargs.setdefault("__faker__", cls._get_faker())
+        kwargs.setdefault("__sync_persistence__", cls.__sync_persistence__)
+        kwargs.setdefault("__async_persistence__", cls.__async_persistence__)
+        kwargs.setdefault("__allow_none_optionals__", cls.__allow_none_optionals__)
         return cast(
             ModelFactory,
             type(
                 f"{model.__name__}Factory",
-                (ModelFactory,),
-                {
-                    "__model__": model,
-                    "__faker__": cls._get_faker(),
-                },
+                (base or ModelFactory,),
+                {"__model__": model, **kwargs},
             ),
         )
 
@@ -366,7 +368,7 @@ class ModelFactory(ABC, Generic[T]):
         """Returns a field value on the sub-class if existing, otherwise returns a mock value"""
         if model_field.field_info.const:
             return model_field.get_default()
-        if is_optional(model_field=model_field) and not create_random_boolean():
+        if cls.should_set_none_value(model_field=model_field):
             return None
         outer_type = model_field.outer_type_
         if isinstance(outer_type, EnumMeta):
@@ -382,6 +384,17 @@ class ModelFactory(ABC, Generic[T]):
         if cls.is_ignored_type(field_type):
             return None
         return cls.get_mock_value(field_type=field_type)
+
+    @classmethod
+    def should_set_none_value(cls, model_field: ModelField) -> bool:
+        """
+        Determines whether a given model field should be set to None
+
+        Separated to its own method to allow easy overriding
+        """
+        if cls.__allow_none_optionals__:
+            return is_optional(model_field=model_field) and not create_random_boolean()
+        return False
 
     @classmethod
     def should_set_field_value(cls, field_name: str, **kwargs) -> bool:

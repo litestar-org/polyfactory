@@ -1,5 +1,8 @@
+from typing import Optional
+
 import pytest
 from faker import Faker
+from pydantic import BaseModel
 
 from pydantic_factories import ConfigurationError, ModelFactory
 from tests.models import Pet
@@ -70,3 +73,20 @@ async def test_validates_connection_in_create_batch_async():
             pass
 
         await MyFactory.create_batch_async(2)
+
+
+def test_factory_handling_of_optionals():
+    class ModelWithOptionalValues(BaseModel):
+        name: Optional[str]
+
+    class FactoryWithNoneOptionals(ModelFactory):
+        __model__ = ModelWithOptionalValues
+        __allow_none_optionals__ = True
+
+    assert any(r.name is None for r in FactoryWithNoneOptionals.batch(10))
+
+    class FactoryWithoutNoneOptionals(ModelFactory):
+        __model__ = ModelWithOptionalValues
+        __allow_none_optionals__ = False
+
+    assert all(r.name is not None for r in FactoryWithoutNoneOptionals.batch(10))
