@@ -244,6 +244,7 @@ class PersonFactory(ModelFactory):
     __faker__ = my_faker
     __sync_persistence__ = SyncPersistenceHandler
     __async_persistence__ = AsyncPersistenceHandler
+    __allow_none_optionals__ = False
     ...
 ```
 
