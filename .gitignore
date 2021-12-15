@@ -12,3 +12,4 @@ coverage.*
 .coverage
 .python-version
 *.iml
+*.mod

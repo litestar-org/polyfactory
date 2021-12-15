@@ -73,3 +73,8 @@
 - updated the `ModelFactory.create_factory` method to accept an optional `base` kwarg user defined **kwargs
 - added a new method on `ModelFactory` called `should_set_none_value`, which dictates whether a None value should be set for a given `ModelField`
 - updated dependencies
+
+
+[0.6.1]
+
+- fix bug were nested optionals did not factor in `__allow_none_optionals__` settings

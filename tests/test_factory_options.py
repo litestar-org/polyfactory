@@ -1,8 +1,8 @@
-from typing import Optional
+from typing import List, Optional
 
 import pytest
 from faker import Faker
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 
 from pydantic_factories import ConfigurationError, ModelFactory
 from tests.models import Pet
@@ -78,15 +78,22 @@ async def test_validates_connection_in_create_batch_async():
 def test_factory_handling_of_optionals():
     class ModelWithOptionalValues(BaseModel):
         name: Optional[str]
+        id: str
+        complex: List[Optional[str]] = Field(min_items=1)
 
     class FactoryWithNoneOptionals(ModelFactory):
         __model__ = ModelWithOptionalValues
-        __allow_none_optionals__ = True
 
-    assert any(r.name is None for r in FactoryWithNoneOptionals.batch(10))
+    assert any(r.name is None for r in [FactoryWithNoneOptionals.build() for _ in range(10)])
+    assert any(r.name is not None for r in [FactoryWithNoneOptionals.build() for _ in range(10)])
+    assert all(r.id is not None for r in [FactoryWithNoneOptionals.build() for _ in range(10)])
+    assert any(r.complex[0] is None for r in [FactoryWithNoneOptionals.build() for _ in range(10)])
+    assert any(r.complex[0] is not None for r in [FactoryWithNoneOptionals.build() for _ in range(10)])
 
     class FactoryWithoutNoneOptionals(ModelFactory):
         __model__ = ModelWithOptionalValues
         __allow_none_optionals__ = False
 
-    assert all(r.name is not None for r in FactoryWithoutNoneOptionals.batch(10))
+    assert all(r.name is not None for r in [FactoryWithoutNoneOptionals.build() for _ in range(10)])
+    assert all(r.id is not None for r in [FactoryWithoutNoneOptionals.build() for _ in range(10)])
+    assert any(r.complex[0] is not None for r in [FactoryWithoutNoneOptionals.build() for _ in range(10)])

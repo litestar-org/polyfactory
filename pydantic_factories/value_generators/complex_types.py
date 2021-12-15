@@ -17,11 +17,8 @@ from pydantic.fields import (
     ModelField,
 )
 
-from pydantic_factories.utils import is_any, is_optional, is_union
-from pydantic_factories.value_generators.primitives import (
-    create_random_boolean,
-    create_random_string,
-)
+from pydantic_factories.utils import is_any, is_union
+from pydantic_factories.value_generators.primitives import create_random_string
 
 if TYPE_CHECKING:  # pragma: no cover
     from pydantic_factories.factory import ModelFactory
@@ -93,6 +90,6 @@ def handle_complex_type(model_field: ModelField, model_factory: Type["ModelFacto
         return handle_complex_type(model_field=choice(model_field.sub_fields), model_factory=model_factory)
     if is_any(model_field=model_field):
         return create_random_string(min_length=1, max_length=10)
-    if is_optional(model_field) and not create_random_boolean():
+    if model_factory.should_set_none_value(model_field):
         return None
     return model_factory.get_field_value(model_field=model_field)
