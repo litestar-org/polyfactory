@@ -84,3 +84,10 @@ def is_any(model_field: ModelField) -> bool:
 def is_optional(model_field: ModelField) -> bool:
     """Determines whether the given model_field is type Optional"""
     return model_field.allow_none and not is_any(model_field=model_field) and not model_field.required
+
+
+def is_literal(model_field: ModelField) -> bool:
+    """Determines whether a given model_field is a Literal type"""
+    return "typing.Literal" in repr(model_field.outer_type_) or "typing_extensions.Literal" in repr(
+        model_field.outer_type_
+    )
