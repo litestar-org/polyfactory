@@ -27,7 +27,6 @@ from typing import (
     TypeVar,
     Union,
     cast,
-    get_args,
 )
 from uuid import NAMESPACE_DNS, UUID, uuid1, uuid3, uuid4, uuid5
 
@@ -77,7 +76,7 @@ from pydantic import (
 )
 from pydantic.color import Color
 from pydantic.fields import ModelField
-from typing_extensions import Type
+from typing_extensions import Type, get_args
 
 from pydantic_factories.constraints.constrained_collection_handler import (
     handle_constrained_collection,

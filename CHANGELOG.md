@@ -83,3 +83,8 @@
 [0.6.2]
 
 - fix bug with Literal[] values not being recognized
+
+
+[0.6.3]
+
+- fix backwards compatible import
