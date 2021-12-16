@@ -27,6 +27,7 @@ from typing import (
     TypeVar,
     Union,
     cast,
+    get_args,
 )
 from uuid import NAMESPACE_DNS, UUID, uuid1, uuid3, uuid4, uuid5
 
@@ -379,6 +380,8 @@ class ModelFactory(ABC, Generic[T]):
             return cls.handle_constrained_field(model_field=model_field)
         if model_field.sub_fields:
             return handle_complex_type(model_field=model_field, model_factory=cls)
+        if "typing.Literal" in repr(outer_type):
+            return get_args(outer_type)[0]
         # this is a workaround for the following issue: https://github.com/samuelcolvin/pydantic/issues/3415
         field_type = model_field.type_ if model_field.type_ is not Any else outer_type
         if cls.is_ignored_type(field_type):

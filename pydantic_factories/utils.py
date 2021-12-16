@@ -51,7 +51,7 @@ def create_model_from_dataclass(
     We currently do not handle deeply nested Any and Optional.
     """
     dataclass_fields: Tuple[DataclassField, ...] = get_dataclass_fields(dataclass)
-    model = create_model("DataclassProxy", **{field.name: (field.type, ...) for field in dataclass_fields})  # type: ignore
+    model = create_model(dataclass.__name__, **{field.name: (field.type, ...) for field in dataclass_fields})  # type: ignore
     for field_name, model_field in model.__fields__.items():
         dataclass_field = [field for field in dataclass_fields if field.name == field_name][0]
         typing_string = repr(dataclass_field.type)

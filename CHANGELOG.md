@@ -78,3 +78,8 @@
 [0.6.1]
 
 - fix bug were nested optionals did not factor in `__allow_none_optionals__` settings
+
+
+[0.6.2]
+
+- fix bug with Literal[] values not being recognized

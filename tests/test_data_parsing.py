@@ -52,6 +52,7 @@ from pydantic import (
     StrictStr,
 )
 from pydantic.color import Color
+from typing_extensions import Literal
 
 from pydantic_factories import ModelFactory
 from tests.models import Person, PersonFactoryWithDefaults, Pet
@@ -108,6 +109,16 @@ def test_alias_parsing():
         __model__ = MyModel
 
     assert isinstance(MyFactory.build().aliased_field, str)
+
+
+def test_literal_parsing():
+    class MyModel(BaseModel):
+        literal_field: Literal["yoyos"]
+
+    class MyFactory(ModelFactory):
+        __model__ = MyModel
+
+    assert MyFactory.build().literal_field == "yoyos"
 
 
 def test_embedded_models_parsing():
