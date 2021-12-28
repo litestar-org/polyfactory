@@ -88,3 +88,8 @@
 [0.6.3]
 
 - fix backwards compatible import
+
+
+[0.7.0]
+
+- added support for `factory_use_construct` kwargs, thanks - @danielkatzan
