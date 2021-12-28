@@ -445,7 +445,7 @@ class ModelFactory(ABC, Generic[T]):
                     kwargs[field_name] = cls.get_field_value(model_field=model_field)
         if factory_use_construct:
             if is_pydantic_model(cls.__model__):
-                return cls.__model__.construct(**kwargs)  # type: ignore
+                return cast(BaseModel, cls.__model__).construct(**kwargs)
             raise NotSupportedWithDataClassesError("factory_use_construct is not allowed to be used with dataclasses")
         return cls.__model__(**kwargs)
 
