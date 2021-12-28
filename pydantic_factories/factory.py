@@ -97,7 +97,6 @@ from pydantic_factories.constraints.strings import (
 from pydantic_factories.exceptions import (
     ConfigurationError,
     MissingBuildKwargError,
-    NotSupportedWithDataClassesError,
     ParameterError,
 )
 from pydantic_factories.fields import Ignore, Require
@@ -448,9 +447,7 @@ class ModelFactory(ABC, Generic[T]):
         if factory_use_construct:
             if is_pydantic_model(cls.__model__):
                 return cls.__model__.construct(**kwargs)  # type: ignore
-            raise NotSupportedWithDataClassesError(
-                "factory_use_construct requires a pydantic model as the factory's __model__"
-            )
+            raise ConfigurationError("factory_use_construct requires a pydantic model as the factory's __model__")
         return cls.__model__(**kwargs)
 
     @classmethod

@@ -5,7 +5,7 @@ import pytest
 from pydantic import ValidationError
 
 from pydantic_factories import ModelFactory
-from pydantic_factories.exceptions import NotSupportedWithDataClassesError
+from pydantic_factories.exceptions import ConfigurationError
 from tests.models import PersonFactoryWithDefaults, Pet, PetFactory
 
 
@@ -83,5 +83,5 @@ def test_factory_use_construct():
     class MyFactory(ModelFactory):
         __model__ = VanillaDC
 
-    with pytest.raises(NotSupportedWithDataClassesError):
+    with pytest.raises(ConfigurationError):
         MyFactory.build(factory_use_construct=True)

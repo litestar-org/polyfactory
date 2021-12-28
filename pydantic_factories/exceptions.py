@@ -12,7 +12,3 @@ class ParameterError(ModelFactoryError):
 
 class MissingBuildKwargError(ModelFactoryError):
     pass
-
-
-class NotSupportedWithDataClassesError(ModelFactoryError):
-    pass
