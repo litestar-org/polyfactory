@@ -106,7 +106,9 @@ By default, when building a pydantic class, kwargs are validated, to avoid input
 ```python
 result = PersonFactory.build(id=5)  # Raises a validation error
 
-result = PersonFactory.build(factory_use_construct=True, id=5)  # Build a Person with invalid id
+result = PersonFactory.build(
+    factory_use_construct=True, id=5
+)  # Build a Person with invalid id
 ```
 
 ### Nested Models and Complex types
@@ -169,7 +171,6 @@ from 3rd party libraries, and also with dataclasses - both those from the python
 dataclasses. In fact, you can use them interchangeably as you like:
 
 ```python
-
 import dataclasses
 from typing import Dict, List
 
@@ -366,7 +367,6 @@ T = TypeVar("T", Model, EmbeddedModel)
 
 class OdmanticModelFactory(ModelFactory[T]):
     id = Ignore()
-
 ```
 
 The above example is basically the extension included in `pydantic-factories` for the
@@ -443,7 +443,6 @@ class AsyncPersistenceHandler(AsyncPersistenceProtocol[T]):
 
     async def save_many(self, data: List[T]) -> List[T]:
         ...  # do stuff
-
 ```
 
 You can then specify one or both of these handlers in your factory:
