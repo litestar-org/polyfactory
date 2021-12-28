@@ -97,6 +97,7 @@ from pydantic_factories.constraints.strings import (
 from pydantic_factories.exceptions import (
     ConfigurationError,
     MissingBuildKwargError,
+    NotSupportedWithDataClassesError,
     ParameterError,
 )
 from pydantic_factories.fields import Ignore, Require
@@ -427,8 +428,13 @@ class ModelFactory(ABC, Generic[T]):
         return model.__fields__.items()  # type: ignore
 
     @classmethod
-    def build(cls, **kwargs) -> T:
-        """builds an instance of the factory's Meta.model"""
+    def build(cls, factory_use_construct: bool = False, **kwargs) -> T:
+        """
+        builds an instance of the factory's Meta.model
+
+        If factory_use_construct is True, then no validations will be made when instantiating the model,
+        see: https://pydantic-docs.helpmanual.io/usage/models/#creating-models-without-validation.
+        """
         for field_name, model_field in cls.get_model_fields(cls._get_model()):
             if model_field.alias:
                 field_name = model_field.alias
@@ -437,6 +443,10 @@ class ModelFactory(ABC, Generic[T]):
                     kwargs[field_name] = cls.handle_factory_field(field_name=field_name)
                 else:
                     kwargs[field_name] = cls.get_field_value(model_field=model_field)
+        if factory_use_construct:
+            if is_pydantic_model(cls.__model__):
+                return cast(BaseModel, cls.__model__).construct(**kwargs)
+            raise NotSupportedWithDataClassesError("factory_use_construct is not allowed to be used with dataclasses")
         return cls.__model__(**kwargs)
 
     @classmethod

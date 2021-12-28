@@ -1,5 +1,11 @@
+from dataclasses import dataclass as vanilla_dataclass
 from uuid import uuid4
 
+import pytest
+from pydantic import ValidationError
+
+from pydantic_factories import ModelFactory
+from pydantic_factories.exceptions import NotSupportedWithDataClassesError
 from tests.models import PersonFactoryWithDefaults, Pet, PetFactory
 
 
@@ -57,3 +63,25 @@ def test_builds_batch():
         assert isinstance(result.color, str)
         assert isinstance(result.sound, str)
         assert isinstance(result.age, float)
+
+
+def test_factory_use_construct():
+    invalid_age = "non_valid_age"
+    non_validated_pet = PetFactory.build(factory_use_construct=True, age=invalid_age)
+    assert non_validated_pet.age == invalid_age
+
+    with pytest.raises(ValidationError):
+        PetFactory.build(factory_use_construct=False, age=invalid_age)
+
+    with pytest.raises(ValidationError):
+        PetFactory.build(age=invalid_age)
+
+    @vanilla_dataclass
+    class VanillaDC:
+        id: int
+
+    class MyFactory(ModelFactory):
+        __model__ = VanillaDC
+
+    with pytest.raises(NotSupportedWithDataClassesError):
+        MyFactory.build(factory_use_construct=True)
