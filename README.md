@@ -102,6 +102,13 @@ result = PersonFactory.batch(size=5)  # list[Person, Person, Person, Person, Per
 Any `kwargs` you pass to `.build`, `.batch` or any of the [persistence methods](#persistence), will take precedence over
 whatever defaults are defined on the factory class itself.
 
+By default, when building a pydantic class, kwargs are validated, to avoid input validation you can use the `factory_use_construct` param.
+```python
+result = PersonFactory.build(id=5)  # Raises a validation error
+
+result = PersonFactory.build(factory_use_construct=True, id=5)  # Build a Person with invalid id
+```
+
 ### Nested Models and Complex types
 
 The automatic generation of mock data works for all types supported by pydantic, as well as nested classes that derive
