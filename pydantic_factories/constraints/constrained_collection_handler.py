@@ -1,4 +1,3 @@
-from random import choice, randint
 from typing import TYPE_CHECKING, Any, Union, cast
 
 from pydantic import ConstrainedList, ConstrainedSet
@@ -6,6 +5,7 @@ from pydantic.fields import ModelField
 from typing_extensions import Type
 
 from pydantic_factories.exceptions import ParameterError
+from pydantic_factories.utils import random
 from pydantic_factories.value_generators.complex_types import handle_complex_type
 
 if TYPE_CHECKING:  # pragma: no cover
@@ -24,14 +24,14 @@ def handle_constrained_collection(
     assert max_items >= min_items, "max_items must be longer or equal to min_items"
     if model_field.sub_fields:
         handler = lambda: handle_complex_type(  # noqa: E731
-            model_field=choice(model_field.sub_fields), model_factory=model_factory
+            model_field=random.choice(model_field.sub_fields), model_factory=model_factory
         )
     else:
         t_type = constrained_field.item_type if constrained_field.item_type is not Any else str
         handler = lambda: model_factory.get_mock_value(t_type)  # noqa: E731
     collection: Union[list, set] = collection_type()
     try:
-        while len(collection) < randint(min_items, max_items):
+        while len(collection) < random.randint(min_items, max_items):
             value = handler()
             if isinstance(collection, set):
                 collection.add(value)

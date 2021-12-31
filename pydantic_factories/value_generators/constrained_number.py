@@ -1,10 +1,9 @@
 from decimal import Decimal
-from random import random
 from typing import Callable, Optional, Tuple, TypeVar
 
 from typing_extensions import Type
 
-from pydantic_factories.utils import passes_pydantic_multiple_validator
+from pydantic_factories.utils import passes_pydantic_multiple_validator, random
 
 T = TypeVar("T", Decimal, int, float)
 
@@ -39,7 +38,7 @@ def get_constrained_number_range(
     multiple_of: Optional[T] = None,
 ) -> Tuple[Optional[T], Optional[T]]:
     """Returns the minimum and maximum values given a field's constraints"""
-    seed = t_type(random() * 10)
+    seed = t_type(random.random() * 10)
     minimum = get_value_or_none(equal_value=ge, constrained=gt, increment=get_increment(t_type))
     maximum = get_value_or_none(equal_value=le, constrained=lt, increment=-get_increment(t_type))
     if minimum is not None and maximum is not None:

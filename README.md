@@ -255,6 +255,10 @@ class PersonFactory(ModelFactory):
     __allow_none_optionals__ = False
     ...
 ```
+#### Generating deterministic objects
+
+In order to generate determenistic data, use `ModelFactory.seed_random` method. This will pass  the seed value to both
+Faker and random method calls, guaranteeing data to be the same in between the calls. Especially useful for testing.
 
 ### Defining Factory Attributes
 

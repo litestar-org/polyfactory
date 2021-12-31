@@ -97,3 +97,17 @@ def test_factory_handling_of_optionals():
     assert all(r.name is not None for r in [FactoryWithoutNoneOptionals.build() for _ in range(10)])
     assert all(r.id is not None for r in [FactoryWithoutNoneOptionals.build() for _ in range(10)])
     assert any(r.complex[0] is not None for r in [FactoryWithoutNoneOptionals.build() for _ in range(10)])
+
+
+def test_determine_results():
+    class ModelWithOptionalValues(BaseModel):
+        name: Optional[str]
+
+    class FactoryWithNoneOptionals(ModelFactory):
+        __model__ = ModelWithOptionalValues
+
+    ModelFactory.seed_random(0)
+    before_seeding = [FactoryWithNoneOptionals.build() for _ in range(10)]
+    ModelFactory.seed_random(0)
+    after_seeding = [FactoryWithNoneOptionals.build() for _ in range(10)]
+    assert before_seeding == after_seeding

@@ -1,10 +1,10 @@
-from random import choice
 from typing import Any
 
 from pydantic import BaseModel
 from pydantic.fields import ModelField
 
 from pydantic_factories.factory import ModelFactory
+from pydantic_factories.utils import random
 
 try:
     from ormar import Model
@@ -20,5 +20,5 @@ class OrmarModelFactory(ModelFactory[Model]):
         """
         model_field.required = True
         if hasattr(model_field.field_info, "choices") and len(model_field.field_info.choices) > 0:  # type: ignore
-            return choice(list(model_field.field_info.choices))  # type: ignore
+            return random.choice(list(model_field.field_info.choices))  # type: ignore
         return super().get_field_value(model_field=model_field)
