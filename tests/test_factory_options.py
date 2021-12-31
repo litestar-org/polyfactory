@@ -100,10 +100,14 @@ def test_factory_handling_of_optionals():
 
 
 def test_determine_results():
-    from pydantic_factories.utils import random
-    from pydantic_factories.value_generators.primitives import create_random_float
+    class ModelWithOptionalValues(BaseModel):
+        name: Optional[str]
 
-    random.seed(0)
-    before_seed = create_random_float()
-    random.seed(0)
-    assert create_random_float() == before_seed
+    class FactoryWithNoneOptionals(ModelFactory):
+        __model__ = ModelWithOptionalValues
+
+    ModelFactory.seed_random(0)
+    before_seeding = [FactoryWithNoneOptionals.build() for _ in range(10)]
+    ModelFactory.seed_random(0)
+    after_seeding = [FactoryWithNoneOptionals.build() for _ in range(10)]
+    assert before_seeding == after_seeding

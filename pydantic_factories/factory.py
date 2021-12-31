@@ -130,6 +130,14 @@ class ModelFactory(ABC, Generic[T]):
     __allow_none_optionals__: bool = True
 
     @classmethod
+    def seed_random(cls, seed: int):
+        """
+        Seeds Fake and random methods with seed
+        """
+        random.seed(seed)
+        Faker.seed(seed)
+
+    @classmethod
     def is_model_factory(cls, value: Any) -> bool:
         """Method to determine if a given value is a subclass of ModelFactory"""
         return isclass(value) and issubclass(value, ModelFactory)
