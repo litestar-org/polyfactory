@@ -1,8 +1,9 @@
 from binascii import hexlify
 from decimal import Decimal
 from os import urandom
-from random import getrandbits, randint, uniform
 from typing import Optional, Union
+
+from pydantic_factories.utils import random
 
 
 def create_random_float(
@@ -10,10 +11,10 @@ def create_random_float(
 ) -> float:
     """Generates a random float given the constraints"""
     if minimum is None:
-        minimum = float(randint(0, 100)) if maximum is None else float(maximum) - 100.0
+        minimum = float(random.randint(0, 100)) if maximum is None else float(maximum) - 100.0
     if maximum is None:
         maximum = float(minimum) + 1.0 * 2.0 if minimum >= 0 else float(minimum) + 1.0 / 2.0
-    return uniform(float(minimum), float(maximum))
+    return random.uniform(float(minimum), float(maximum))
 
 
 def create_random_integer(minimum: Optional[int] = None, maximum: Optional[int] = None) -> int:
@@ -34,12 +35,12 @@ def create_random_bytes(
         min_length = 0
     if max_length is None:
         max_length = min_length + 1 * 2
-    length = randint(min_length, max_length)
+    length = random.randint(min_length, max_length)
     result = hexlify(urandom(length))
     if lower_case:
         result = result.lower()
     if max_length and len(result) > max_length:
-        end = randint(min_length or 0, max_length)
+        end = random.randint(min_length or 0, max_length)
         return result[0:end]
     return result
 
@@ -53,4 +54,4 @@ def create_random_string(
 
 def create_random_boolean() -> bool:
     """Generates a random boolean value"""
-    return bool(getrandbits(1))
+    return bool(random.getrandbits(1))

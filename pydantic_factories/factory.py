@@ -15,7 +15,6 @@ from ipaddress import (
     IPv6Network,
 )
 from pathlib import Path
-from random import choice, uniform
 from typing import (
     Any,
     Callable,
@@ -110,6 +109,7 @@ from pydantic_factories.utils import (
     is_literal,
     is_optional,
     is_pydantic_model,
+    random,
 )
 from pydantic_factories.value_generators.complex_types import handle_complex_type
 from pydantic_factories.value_generators.primitives import (
@@ -252,10 +252,10 @@ class ModelFactory(ABC, Generic[T]):
             ByteSize: faker.pyint,
             PositiveInt: faker.pyint,
             FilePath: create_path,
-            NegativeFloat: lambda: uniform(-100, -1),
+            NegativeFloat: lambda: random.uniform(-100, -1),
             NegativeInt: lambda: faker.pyint() * -1,
             PositiveFloat: faker.pyint,
-            NonPositiveFloat: lambda: uniform(-100, 0),
+            NonPositiveFloat: lambda: random.uniform(-100, 0),
             NonNegativeInt: faker.pyint,
             StrictInt: faker.pyint,
             StrictBool: faker.pybool,
@@ -326,7 +326,7 @@ class ModelFactory(ABC, Generic[T]):
     @classmethod
     def handle_enum(cls, outer_type: EnumMeta) -> Any:
         """Method that converts an enum to a list and picks a random element out of it"""
-        return choice(list(outer_type))
+        return random.choice(list(outer_type))
 
     @classmethod
     def handle_factory_field(cls, field_name: str) -> Any:

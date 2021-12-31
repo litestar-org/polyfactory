@@ -1,5 +1,4 @@
 from collections import defaultdict, deque
-from random import choice
 from typing import TYPE_CHECKING, Any, Callable, Optional, Type, cast
 
 from pydantic.fields import (
@@ -17,7 +16,7 @@ from pydantic.fields import (
     ModelField,
 )
 
-from pydantic_factories.utils import is_any, is_union
+from pydantic_factories.utils import is_any, is_union, random
 from pydantic_factories.value_generators.primitives import create_random_string
 
 if TYPE_CHECKING:  # pragma: no cover
@@ -61,7 +60,7 @@ def handle_container_type(model_field: ModelField, container_type: Callable, mod
         container = container_type()
     value = None
     if model_field.sub_fields:
-        value = handle_complex_type(model_field=choice(model_field.sub_fields), model_factory=model_factory)
+        value = handle_complex_type(model_field=random.choice(model_field.sub_fields), model_factory=model_factory)
     if value is not None:
         if isinstance(container, (dict, defaultdict)):
             container[handle_complex_type(model_field=model_field.key_field, model_factory=model_factory)] = value
@@ -87,7 +86,7 @@ def handle_complex_type(model_field: ModelField, model_factory: Type["ModelFacto
             for sub_field in (model_field.sub_fields or [])
         )
     if is_union(model_field=model_field) and model_field.sub_fields:
-        return handle_complex_type(model_field=choice(model_field.sub_fields), model_factory=model_factory)
+        return handle_complex_type(model_field=random.choice(model_field.sub_fields), model_factory=model_factory)
     if is_any(model_field=model_field):
         return create_random_string(min_length=1, max_length=10)
     if model_factory.should_set_none_value(model_field):

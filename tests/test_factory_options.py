@@ -97,3 +97,13 @@ def test_factory_handling_of_optionals():
     assert all(r.name is not None for r in [FactoryWithoutNoneOptionals.build() for _ in range(10)])
     assert all(r.id is not None for r in [FactoryWithoutNoneOptionals.build() for _ in range(10)])
     assert any(r.complex[0] is not None for r in [FactoryWithoutNoneOptionals.build() for _ in range(10)])
+
+
+def test_determine_results():
+    from pydantic_factories.utils import random
+    from pydantic_factories.value_generators.primitives import create_random_float
+
+    random.seed(0)
+    before_seed = create_random_float()
+    random.seed(0)
+    assert create_random_float() == before_seed
