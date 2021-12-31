@@ -93,3 +93,8 @@
 [0.7.0]
 
 - added support for `factory_use_construct` kwargs, thanks - @danielkatzan
+
+
+[0.8.0]
+
+- added random configuration. Thanks to @eviltnan
