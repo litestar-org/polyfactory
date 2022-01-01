@@ -98,3 +98,8 @@
 [0.8.0]
 
 - added random configuration. Thanks to @eviltnan
+
+
+[1.0.0]
+
+- updated to support pydantic 1.9.0, including all new types

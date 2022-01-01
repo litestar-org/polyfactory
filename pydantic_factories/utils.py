@@ -3,7 +3,7 @@ from dataclasses import fields as get_dataclass_fields
 from decimal import Decimal
 from inspect import isclass
 from random import Random
-from typing import Any, Tuple, Type, TypeVar
+from typing import Any, Tuple, Type, TypeVar, cast
 
 from pydantic import BaseModel, create_model
 from pydantic.fields import ModelField
@@ -66,7 +66,7 @@ def create_model_from_dataclass(
             model_field.required = True
             model_field.allow_none = False
         setattr(model, field_name, model_field)
-    return model
+    return cast(Type[BaseModel], model)
 
 
 def is_union(model_field: ModelField) -> bool:

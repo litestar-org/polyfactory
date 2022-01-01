@@ -1,11 +1,11 @@
-from typing import Callable, Dict, List, Optional, TypeVar
+from typing import Any, Callable, Dict, List, Optional, TypeVar
 
 from pydantic import BaseModel
 from typing_extensions import Protocol
 
 
 class DataclassProtocol(Protocol):
-    def __init__(self, **kwargs):  # pylint: disable=super-init-not-called
+    def __init__(self, **kwargs: Any) -> None:  # pylint: disable=super-init-not-called
         ...  # pragma: no cover
 
     __dataclass_fields__: Dict

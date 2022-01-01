@@ -32,7 +32,7 @@ def handle_constrained_collection(
     collection: Union[list, set] = collection_type()
     try:
         while len(collection) < random.randint(min_items, max_items):
-            value = handler()
+            value = handler()  # type: ignore
             if isinstance(collection, set):
                 collection.add(value)
             else:

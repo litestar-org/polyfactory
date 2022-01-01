@@ -1,4 +1,4 @@
-from collections import deque
+from collections import Counter, deque
 from datetime import date, datetime, time, timedelta
 from decimal import Decimal
 from enum import Enum
@@ -19,6 +19,7 @@ from pydantic import (
     UUID3,
     UUID4,
     UUID5,
+    AmqpDsn,
     AnyHttpUrl,
     AnyUrl,
     BaseModel,
@@ -27,16 +28,19 @@ from pydantic import (
     EmailStr,
     Field,
     FilePath,
+    FutureDate,
     HttpUrl,
     IPvAnyAddress,
     IPvAnyInterface,
     IPvAnyNetwork,
     Json,
+    KafkaDsn,
     NameEmail,
     NegativeFloat,
     NegativeInt,
     NonNegativeInt,
     NonPositiveFloat,
+    PastDate,
     PaymentCardNumber,
     PositiveFloat,
     PositiveInt,
@@ -146,6 +150,7 @@ def test_embedded_factories_parsing():
 
 def test_type_property_parsing():
     class MyModel(BaseModel):
+        object_field: object
         float_field: float
         int_field: int
         bool_field: bool
@@ -211,6 +216,11 @@ def test_type_property_parsing():
         IPvAnyAddress_pydantic_type: IPvAnyAddress
         IPvAnyInterface_pydantic_type: IPvAnyInterface
         IPvAnyNetwork_pydantic_type: IPvAnyNetwork
+        AmqpDsn_pydantic_type: AmqpDsn
+        KafkaDsn_pydantic_type: KafkaDsn
+        PastDate_pydantic_type: PastDate
+        FutureDate_pydantic_type: FutureDate
+        Counter_pydantic_type: Counter
 
     class MyFactory(ModelFactory):
         __model__ = MyModel

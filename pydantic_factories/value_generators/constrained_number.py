@@ -1,5 +1,5 @@
 from decimal import Decimal
-from typing import Callable, Optional, Tuple, TypeVar
+from typing import Callable, Optional, Tuple, TypeVar, cast
 
 from typing_extensions import Type
 
@@ -64,7 +64,7 @@ def generate_constrained_number(
     """Generates a constrained number, output depends on the passed in callbacks"""
     if minimum is not None and maximum is not None:
         if multiple_of is None:
-            return method(minimum, maximum)
+            return cast(T, method(minimum, maximum))
         if multiple_of >= minimum:
             return multiple_of
         result = minimum
@@ -73,4 +73,4 @@ def generate_constrained_number(
         return result
     if multiple_of is not None:
         return multiple_of
-    return method()
+    return cast(T, method())

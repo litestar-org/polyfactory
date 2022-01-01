@@ -1,5 +1,5 @@
 from collections import defaultdict, deque
-from typing import TYPE_CHECKING, Any, Callable, Optional, Type, cast
+from typing import TYPE_CHECKING, Any, Optional, Type, cast
 
 from pydantic.fields import (
     SHAPE_DEFAULTDICT,
@@ -50,20 +50,20 @@ shape_mapping = {
 }
 
 
-def handle_container_type(model_field: ModelField, container_type: Callable, model_factory: Type["ModelFactory"]):
+def handle_container_type(
+    model_field: ModelField, container_type: Type[Any], model_factory: Type["ModelFactory"]
+) -> Any:
     """Handles generation of container types, e.g. dict, list etc. recursively"""
-    is_frozen_set = False
-    if container_type == frozenset:
-        container = set()
-        is_frozen_set = True
-    else:
-        container = container_type()
+    is_frozen_set = container_type is frozenset
+    container = container_type() if not is_frozen_set else set()
     value = None
     if model_field.sub_fields:
         value = handle_complex_type(model_field=random.choice(model_field.sub_fields), model_factory=model_factory)
     if value is not None:
-        if isinstance(container, (dict, defaultdict)):
-            container[handle_complex_type(model_field=model_field.key_field, model_factory=model_factory)] = value
+        if isinstance(container, dict):
+            container[
+                handle_complex_type(model_field=cast(ModelField, model_field.key_field), model_factory=model_factory)
+            ] = value
         elif isinstance(container, (list, deque)):
             container.append(value)
         else:
@@ -75,9 +75,9 @@ def handle_container_type(model_field: ModelField, container_type: Callable, mod
 
 def handle_complex_type(model_field: ModelField, model_factory: Type["ModelFactory"]) -> Any:
     """Recursive type generation based on typing info stored in the graph like structure of pydantic model_fields"""
-    container_type: Optional[Callable] = shape_mapping.get(model_field.shape)
+    container_type: Optional[Type[Any]] = shape_mapping.get(model_field.shape)
     if container_type:
-        if container_type != tuple:
+        if container_type is not tuple:
             return handle_container_type(
                 model_field=model_field, container_type=container_type, model_factory=model_factory
             )

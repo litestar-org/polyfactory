@@ -1,6 +1,6 @@
 import os
 from abc import ABC
-from collections import deque
+from collections import Counter, deque
 from dataclasses import is_dataclass
 from datetime import date, datetime, time, timedelta
 from decimal import Decimal
@@ -35,6 +35,7 @@ from pydantic import (
     UUID3,
     UUID4,
     UUID5,
+    AmqpDsn,
     AnyHttpUrl,
     AnyUrl,
     BaseModel,
@@ -49,16 +50,19 @@ from pydantic import (
     DirectoryPath,
     EmailStr,
     FilePath,
+    FutureDate,
     HttpUrl,
     IPvAnyAddress,
     IPvAnyInterface,
     IPvAnyNetwork,
     Json,
+    KafkaDsn,
     NameEmail,
     NegativeFloat,
     NegativeInt,
     NonNegativeInt,
     NonPositiveFloat,
+    PastDate,
     PaymentCardNumber,
     PositiveFloat,
     PositiveInt,
@@ -130,7 +134,7 @@ class ModelFactory(ABC, Generic[T]):
     __allow_none_optionals__: bool = True
 
     @classmethod
-    def seed_random(cls, seed: int):
+    def seed_random(cls, seed: int) -> None:
         """
         Seeds Fake and random methods with seed
         """
@@ -226,6 +230,7 @@ class ModelFactory(ABC, Generic[T]):
 
         return {
             # primitives
+            object: object,
             float: faker.pyfloat,
             int: faker.pyint,
             bool: faker.pybool,
@@ -291,6 +296,11 @@ class ModelFactory(ABC, Generic[T]):
             IPvAnyAddress: faker.ipv4,
             IPvAnyInterface: faker.ipv4,
             IPvAnyNetwork: lambda: faker.ipv4(network=True),
+            AmqpDsn: lambda: "amqps://",
+            KafkaDsn: lambda: "kafka://",
+            PastDate: faker.past_date,
+            FutureDate: faker.future_date,
+            Counter: lambda: Counter(faker.pystr()),
         }
 
     @classmethod
@@ -355,7 +365,7 @@ class ModelFactory(ABC, Generic[T]):
         cls,
         model: Type[BaseModel],
         base: Optional[Type["ModelFactory"]] = None,
-        **kwargs,
+        **kwargs: Any,
     ) -> "ModelFactory":  # pragma: no cover
         """Dynamically generates a factory given a model"""
 
@@ -408,7 +418,7 @@ class ModelFactory(ABC, Generic[T]):
         return False
 
     @classmethod
-    def should_set_field_value(cls, field_name: str, **kwargs) -> bool:
+    def should_set_field_value(cls, field_name: str, **kwargs: Any) -> bool:
         """
         Ascertain whether to set a value for a given field_name
 
@@ -435,7 +445,7 @@ class ModelFactory(ABC, Generic[T]):
         return model.__fields__.items()  # type: ignore
 
     @classmethod
-    def build(cls, factory_use_construct: bool = False, **kwargs) -> T:
+    def build(cls, factory_use_construct: bool = False, **kwargs: Any) -> T:
         """
         builds an instance of the factory's __model__
 
@@ -459,33 +469,33 @@ class ModelFactory(ABC, Generic[T]):
         return cls.__model__(**kwargs)
 
     @classmethod
-    def batch(cls, size: int, **kwargs) -> List[T]:
+    def batch(cls, size: int, **kwargs: Any) -> List[T]:
         """builds a batch of size n of the factory's Meta.model"""
         return [cls.build(**kwargs) for _ in range(size)]
 
     @classmethod
-    def create_sync(cls, **kwargs) -> T:
+    def create_sync(cls, **kwargs: Any) -> T:
         """Build and persist a single model instance synchronously"""
         sync_persistence_handler = cls._get_sync_persistence()
         instance = cls.build(**kwargs)
         return sync_persistence_handler.save(data=instance)
 
     @classmethod
-    def create_batch_sync(cls, size: int, **kwargs) -> List[T]:
+    def create_batch_sync(cls, size: int, **kwargs: Any) -> List[T]:
         """Build and persist a batch of n size model instances synchronously"""
         sync_persistence_handler = cls._get_sync_persistence()
         batch = cls.batch(size, **kwargs)
         return sync_persistence_handler.save_many(data=batch)
 
     @classmethod
-    async def create_async(cls, **kwargs) -> T:
+    async def create_async(cls, **kwargs: Any) -> T:
         """Build and persist a single model instance asynchronously"""
         async_persistence_handler = cls._get_async_persistence()
         instance = cls.build(**kwargs)
         return await async_persistence_handler.save(data=instance)
 
     @classmethod
-    async def create_batch_async(cls, size: int, **kwargs) -> List[T]:
+    async def create_batch_async(cls, size: int, **kwargs: Any) -> List[T]:
         """Build and persist a batch of n size model instances asynchronously"""
         async_persistence_handler = cls._get_async_persistence()
         batch = cls.batch(size, **kwargs)

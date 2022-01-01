@@ -1,4 +1,4 @@
-from typing import Any, Optional, Pattern, Tuple, Union
+from typing import Any, Optional, Pattern, Tuple, Union, cast
 
 from exrex import getone  # pylint: disable=import-error
 from pydantic import ConstrainedBytes, ConstrainedStr
@@ -47,4 +47,4 @@ def handle_constrained_string(field: ConstrainedStr) -> str:
             result += getone(regex)
     if max_length and len(result) > max_length:
         result = result[:max_length]
-    return result.lower() if lower_case else result
+    return cast(str, result.lower() if lower_case else result)
