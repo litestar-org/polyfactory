@@ -117,7 +117,7 @@ from pydantic_factories.value_generators.primitives import (
     create_random_bytes,
 )
 
-T = TypeVar("T", BaseModel, DataclassProtocol)
+T = TypeVar("T", bound=Union[BaseModel, DataclassProtocol])
 
 default_faker = Faker()
 
@@ -487,7 +487,7 @@ class ModelFactory(ABC, Generic[T]):
             if is_pydantic_model(cls.__model__):
                 return cls.__model__.construct(**kwargs)  # type: ignore
             raise ConfigurationError("factory_use_construct requires a pydantic model as the factory's __model__")
-        return cls.__model__(**kwargs)
+        return cast(T, cls.__model__(**kwargs))
 
     @classmethod
     def batch(cls, size: int, **kwargs: Any) -> List[T]:

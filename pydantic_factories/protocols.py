@@ -1,19 +1,19 @@
-from typing import Any, Callable, Dict, List, Optional, TypeVar
+from typing import Any, Dict, List, TypeVar, Union
 
 from pydantic import BaseModel
 from typing_extensions import Protocol
 
 
+# According to https://github.com/python/cpython/blob/main/Lib/dataclasses.py#L1213
+# having __dataclass_fields__ is enough to identity a dataclass.
 class DataclassProtocol(Protocol):
     def __init__(self, **kwargs: Any) -> None:  # pylint: disable=super-init-not-called
         ...  # pragma: no cover
 
     __dataclass_fields__: Dict
-    __dataclass_params__: Dict
-    __post_init__: Optional[Callable]
 
 
-T = TypeVar("T", BaseModel, DataclassProtocol)
+T = TypeVar("T", bound=Union[BaseModel, DataclassProtocol])
 
 
 class SyncPersistenceProtocol(Protocol[T]):
