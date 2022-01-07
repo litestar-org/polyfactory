@@ -103,3 +103,9 @@
 [1.0.0]
 
 - updated to support pydantic 1.9.0, including all new types
+
+
+[1.1.0]
+
+- resolve compatibilities issues with pydantic 1.8.2
+- add support for constrained frozenset

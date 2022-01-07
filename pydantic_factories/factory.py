@@ -35,7 +35,6 @@ from pydantic import (
     UUID3,
     UUID4,
     UUID5,
-    AmqpDsn,
     AnyHttpUrl,
     AnyUrl,
     BaseModel,
@@ -50,19 +49,16 @@ from pydantic import (
     DirectoryPath,
     EmailStr,
     FilePath,
-    FutureDate,
     HttpUrl,
     IPvAnyAddress,
     IPvAnyInterface,
     IPvAnyNetwork,
     Json,
-    KafkaDsn,
     NameEmail,
     NegativeFloat,
     NegativeInt,
     NonNegativeInt,
     NonPositiveFloat,
-    PastDate,
     PaymentCardNumber,
     PositiveFloat,
     PositiveInt,
@@ -125,6 +121,25 @@ T = TypeVar("T", BaseModel, DataclassProtocol)
 
 default_faker = Faker()
 
+try:
+    # pydantic 1.9.0
+    from pydantic import (  # pylint: disable=ungrouped-imports
+        AmqpDsn,
+        ConstrainedFrozenSet,
+        FutureDate,
+        KafkaDsn,
+        PastDate,
+    )
+
+    is_latest_pydantic = True  # pylint: disable=invalid-name
+except ImportError:  # pragma: no cover
+    AmqpDsn = Any  # type: ignore
+    KafkaDsn = Any  # type: ignore
+    PastDate = Any  # type: ignore
+    FutureDate = Any  # type: ignore
+    ConstrainedFrozenSet = ConstrainedSet  # type: ignore
+    is_latest_pydantic = False  # pylint: disable=invalid-name
+
 
 class ModelFactory(ABC, Generic[T]):
     __model__: Type[T]
@@ -155,6 +170,7 @@ class ModelFactory(ABC, Generic[T]):
                 ConstrainedBytes,
                 ConstrainedDecimal,
                 ConstrainedFloat,
+                ConstrainedFrozenSet,
                 ConstrainedInt,
                 ConstrainedList,
                 ConstrainedSet,
@@ -332,11 +348,16 @@ class ModelFactory(ABC, Generic[T]):
                 return handle_constrained_string(field=cast(ConstrainedStr, outer_type))
             if issubclass(outer_type, ConstrainedBytes):
                 return handle_constrained_bytes(field=cast(ConstrainedBytes, outer_type))
-            if issubclass(outer_type, ConstrainedSet) or issubclass(outer_type, ConstrainedList):
+            if issubclass(outer_type, (ConstrainedSet, ConstrainedList)) or (
+                is_latest_pydantic and issubclass(outer_type, ConstrainedFrozenSet)
+            ):
                 collection_type = list if issubclass(outer_type, ConstrainedList) else set
-                return handle_constrained_collection(
+                result = handle_constrained_collection(
                     collection_type=collection_type, model_field=model_field, model_factory=cls  # type: ignore
                 )
+                if is_latest_pydantic and issubclass(outer_type, ConstrainedFrozenSet):
+                    return frozenset(*result)
+                return result
             raise ParameterError(f"Unknown constrained field: {outer_type.__name__}")  # pragma: no cover
         except AssertionError as e:  # pragma: no cover
             raise ParameterError from e

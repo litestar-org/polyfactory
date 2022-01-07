@@ -15,8 +15,7 @@
 
 This library offers powerful mock data generation capabilities for [pydantic](https://github.com/samuelcolvin/pydantic)
 based models and `dataclasses`. It can also be used with other libraries that use pydantic as a foundation, for
-example [SQLModel](https://github.com/tiangolo/sqlmodel), [Beanie](https://github.com/roman-right/beanie)
-and [ormar](https://github.com/collerek/ormar).
+example [SQLModel](https://github.com/tiangolo/sqlmodel) and [Beanie](https://github.com/roman-right/beanie).
 
 ### Example
 
