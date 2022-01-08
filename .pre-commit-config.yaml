@@ -49,7 +49,7 @@ repos:
     rev: "v2.12.2"
     hooks:
       - id: pylint
-        exclude: "test_*"
+        exclude: "/(test_|conftest.py)"
         args:
           [
             "--unsafe-load-any-extension=y"
@@ -64,7 +64,7 @@ repos:
     rev: "v0.930"
     hooks:
       - id: mypy
-        exclude: "test_*"
+        exclude: "/(test_|conftest.py)"
         additional_dependencies: [
           pydantic,
           faker
