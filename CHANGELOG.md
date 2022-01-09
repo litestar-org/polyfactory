@@ -109,3 +109,10 @@
 
 - resolve compatibilities issues with pydantic 1.8.2
 - add support for constrained frozenset
+
+
+[1.2.0]
+
+- fix factory typing and resolve issue with TypeVars not being bounded, @lindycoder
+- add support for naive classes (including all builtin exceptions)
+- fix the `create_model_factory` method to use the current `cls` as the created factory's base by default
