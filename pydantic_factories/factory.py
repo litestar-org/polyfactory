@@ -1,6 +1,7 @@
 import os
 from abc import ABC
 from collections import Counter, deque
+from contextlib import suppress
 from dataclasses import is_dataclass
 from datetime import date, datetime, time, timedelta
 from decimal import Decimal
@@ -328,6 +329,11 @@ class ModelFactory(ABC, Generic[T]):
         handler = cls.get_provider_map().get(field_type)
         if handler is not None:
             return handler()
+        if isclass(field_type):
+            # if value is a class we can try to naively instantiate it.
+            # this will work for classes that do not require any parameters passed to __init__
+            with suppress(Exception):
+                return field_type()
         raise ParameterError(
             f"Unsupported type: {repr(field_type)}"
             f"\n\nEither extend the providers map or add a factory function for this model field"
@@ -355,7 +361,7 @@ class ModelFactory(ABC, Generic[T]):
                 result = handle_constrained_collection(
                     collection_type=collection_type, model_field=model_field, model_factory=cls  # type: ignore
                 )
-                if is_latest_pydantic and issubclass(outer_type, ConstrainedFrozenSet):
+                if is_latest_pydantic and issubclass(outer_type, ConstrainedFrozenSet):  # pragma: no cover
                     return frozenset(*result)
                 return result
             raise ParameterError(f"Unknown constrained field: {outer_type.__name__}")  # pragma: no cover
@@ -398,14 +404,16 @@ class ModelFactory(ABC, Generic[T]):
             ModelFactory,
             type(
                 f"{model.__name__}Factory",
-                (base or ModelFactory,),
+                (base or cls,),
                 {"__model__": model, **kwargs},
             ),
         )
 
     @classmethod
     def get_field_value(cls, model_field: ModelField) -> Any:
-        """Returns a field value on the sub-class if existing, otherwise returns a mock value"""
+        """
+        Returns a field value on the subclass if existing, otherwise returns a mock value
+        """
         if model_field.field_info.const:
             return model_field.get_default()
         if cls.should_set_none_value(model_field=model_field):

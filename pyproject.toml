@@ -1,8 +1,9 @@
 [tool.poetry]
 name = "pydantic-factories"
-version = "1.1.0"
+version = "1.2.0"
 description = "Mock data generation for pydantic based models"
-authors = ["Na'aman Hirschfeld <Naaman.Hirschfeld@sprylab.com>"]
+authors = ["Na'aman Hirschfeld <nhirschfeld@gmail.com>"]
+maintainers = ["Na'aman Hirschfeld <nhirschfeld@gmail.com>", "Martin Roy <lindycoder@gmail.com>"]
 license = "MIT"
 readme = "README.md"
 homepage = "https://github.com/Goldziher/pydantic-factories"

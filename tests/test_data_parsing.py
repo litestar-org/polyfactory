@@ -14,6 +14,7 @@ from pathlib import Path
 from typing import Callable
 from uuid import UUID
 
+import pytest
 from pydantic import (
     UUID1,
     UUID3,
@@ -22,6 +23,7 @@ from pydantic import (
     AmqpDsn,
     AnyHttpUrl,
     AnyUrl,
+    BaseConfig,
     BaseModel,
     ByteSize,
     DirectoryPath,
@@ -59,6 +61,7 @@ from pydantic.color import Color
 from typing_extensions import Literal
 
 from pydantic_factories import ModelFactory
+from pydantic_factories.exceptions import ParameterError
 from tests.models import Person, PersonFactoryWithDefaults, Pet
 
 
@@ -233,3 +236,48 @@ def test_type_property_parsing():
             assert isinstance(getattr(result, f"{key_name}_field"), key)
         elif hasattr(result, f"{key_name}_pydantic_type"):
             assert getattr(result, f"{key_name}_pydantic_type") is not None
+
+
+def test_class_parsing():
+    class TestClassWithoutKwargs:
+        def __init__(self):
+            self.flag = "123"
+
+    class MyModel(BaseModel):
+        class Config(BaseConfig):
+            arbitrary_types_allowed = True
+
+        class_field: TestClassWithoutKwargs
+        # just a few select exceptions, to verify this works
+        exception_field: Exception
+        type_error_field: TypeError
+        attribute_error_field: AttributeError
+        runtime_error_field: RuntimeError
+
+    class MyFactory(ModelFactory):
+        __model__ = MyModel
+
+    result = MyFactory.build()
+
+    assert isinstance(result.class_field, TestClassWithoutKwargs)
+    assert result.class_field.flag == "123"
+    assert isinstance(result.exception_field, Exception)
+    assert isinstance(result.type_error_field, TypeError)
+    assert isinstance(result.attribute_error_field, AttributeError)
+    assert isinstance(result.runtime_error_field, RuntimeError)
+
+    class TestClassWithKwargs:
+        def __init__(self, flag: str):
+            self.flag = str
+
+    class MyModel(BaseModel):
+        class Config(BaseConfig):
+            arbitrary_types_allowed = True
+
+        class_field: TestClassWithKwargs
+
+    class MySecondFactory(ModelFactory):
+        __model__ = MyModel
+
+    with pytest.raises(ParameterError):
+        MySecondFactory.build()

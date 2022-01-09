@@ -70,7 +70,8 @@ def test_handles_complex_typing_with_embedded_models():
 
 def test_raises_for_user_defined_types():
     class MyClass:
-        pass
+        def __init__(self, value: int):
+            self.value = value
 
     class MyModel(BaseModel):
         my_class_field: Dict[str, MyClass]
