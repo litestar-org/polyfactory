@@ -197,7 +197,8 @@ class ModelFactory(ABC, Generic[T]):
             raise ConfigurationError("missing model class in factory Meta")
         model = cls.__model__
         if is_pydantic_model(model):
-            cast(BaseModel, model).update_forward_refs()
+            with suppress(NameError):
+                cast(BaseModel, model).update_forward_refs()
         return model
 
     @classmethod

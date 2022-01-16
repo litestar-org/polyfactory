@@ -116,3 +116,8 @@
 - fix factory typing and resolve issue with TypeVars not being bounded, @lindycoder
 - add support for naive classes (including all builtin exceptions)
 - fix the `create_model_factory` method to use the current `cls` as the created factory's base by default
+
+
+[1.2.1]
+
+- suppress NameError that can occur when calling `update_forward_refs` without access to a localNS
