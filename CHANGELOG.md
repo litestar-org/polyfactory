@@ -126,3 +126,8 @@
 [1.2.2]
 
 - added `Any` to Providers
+
+
+[1.2.3]
+
+- fixed regression due to lambda function argument

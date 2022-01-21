@@ -247,7 +247,7 @@ class ModelFactory(ABC, Generic[T]):
         faker = cls._get_faker()
 
         return {
-            Any: lambda x: None,
+            Any: lambda: None,
             # primitives
             object: object,
             float: faker.pyfloat,
