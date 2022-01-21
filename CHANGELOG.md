@@ -121,3 +121,8 @@
 [1.2.1]
 
 - suppress NameError that can occur when calling `update_forward_refs` without access to a localNS
+
+
+[1.2.2]
+
+- added `Any` to Providers
