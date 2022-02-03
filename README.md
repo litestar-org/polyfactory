@@ -330,7 +330,6 @@ class Species(str, Enum):
     CAT = "Cat"
     DOG = "Dog"
 
-
 class PetFactory(ModelFactory):
     __model__ = Pet
 
@@ -495,11 +494,13 @@ handler to use these methods.
 
 ## Create Factory Method
 
-When creating various models you might want to create a Base Factory with Generic Models
-with the `create_factory` method. This method will create a Generic factory with the given models. 
+If you prefer to create a factory imperatively, you can do so using the `ModelFactory.create_factory` method. This method receives the following arguments:
 
-You could also override the child factory's `__model__` attribute to specify the model to use and the default values of the fields.
-For example setting the name values of the Pets as shown below:
+- model - the model for the factory.
+- base - an optional base factory class. Defaults to the factory class on which the method is called.
+- kwargs - a dictionary of arguments correlating to the class vars accepted by ModelFactory, e.g. __faker__.
+
+You could also override the child factory's `__model__` attribute to specify the model to use and the default kwargs as shown as the BuildPet class as shown below:
 
 
 ```python
