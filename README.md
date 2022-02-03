@@ -492,6 +492,120 @@ With the persistence handlers in place, you can now use all persistence methods.
 any or both persistence handlers. If you will only use sync or async persistence, you only need to define the respective
 handler to use these methods.
 
+
+## Create Factory Method
+
+When creating various models you might want to create a Base Factory with Generic Models
+with the `create_factory` method. This method will create a Generic factory with the given models. 
+
+
+```python
+
+from datetime import date, datetime
+from enum import Enum
+from pydantic import BaseModel, UUID4
+from typing import Any, Dict, List, TypeVar, Union, Generic, Optional
+from pydantic_factories import ModelFactory
+
+
+class Species(str, Enum):
+    CAT = "Cat"
+    DOG = "Dog"
+
+
+class PetBase(BaseModel):
+    name: str
+    species: Species
+
+
+class Pet(PetBase):
+    id: UUID4
+
+
+class PetCreate(PetBase):
+    pass
+
+
+class PetUpdate(PetBase):
+    pass
+
+
+class PersonBase(BaseModel):
+
+    name: str
+    hobbies: List[str]
+    age: Union[float, int]
+    birthday: Union[datetime, date]
+    pets: List[Pet]
+    assets: List[Dict[str, Dict[str, Any]]]
+
+
+class PersonCreate(PersonBase):
+    pass
+
+
+class Person(PersonBase):
+    id: UUID4
+
+
+class PersonUpdate(PersonBase):
+    pass
+
+
+
+ModelType = TypeVar("ModelType", bound=BaseModel)
+CreateSchemaType = TypeVar("CreateSchemaType", bound=BaseModel)
+UpdateSchemaType = TypeVar("UpdateSchemaType", bound=BaseModel)
+
+
+class CREATEBase(Generic[ModelType, CreateSchemaType, UpdateSchemaType]):
+    def __init__(
+        self,
+        model: ModelType = None,
+        create_schema: Optional[CreateSchemaType] = None,
+        update_schema: Optional[UpdateSchemaType] = None,
+    ):
+        self.model = model
+        self.create_model = create_schema
+        self.update_model = update_schema
+
+    def build_object(self) -> ModelType:
+        object_Factory = ModelFactory.create_factory(self.model)
+        return object_Factory.build()
+
+    def build_create_object(self) -> CreateSchemaType:
+        object_Factory = ModelFactory.create_factory(self.create_model)
+        return object_Factory.build()
+
+    def build_update_object(self) -> UpdateSchemaType:
+        object_Factory = ModelFactory.create_factory(self.update_model)
+        return object_Factory.build()
+
+
+def test_factory_create():
+
+    person_factory = CREATEBase(Person, PersonCreate, PersonUpdate)
+
+    pet_factory = CREATEBase(Pet, PetCreate, PetUpdate)
+
+    create_person = person_factory.build_create_object()
+    update_person = person_factory.build_update_object()
+
+    create_pet = pet_factory.build_create_object()
+    update_pet = pet_factory.build_update_object()
+
+    assert create_person != None
+    assert update_person != None
+
+    assert create_pet != None
+    assert update_pet != None
+
+
+
+
+
+```
+
 ## Extensions and Third Party Libraries
 
 Any class that is derived from pydantic's `BaseModel` can be used as the `__model__` of a factory. For most 3rd party
