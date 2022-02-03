@@ -498,6 +498,9 @@ handler to use these methods.
 When creating various models you might want to create a Base Factory with Generic Models
 with the `create_factory` method. This method will create a Generic factory with the given models. 
 
+You could also override the child factory's `__model__` attribute to specify the model to use and the default values of the fields.
+For example setting the name values of the Pets as shown below:
+
 
 ```python
 
@@ -552,13 +555,21 @@ class PersonUpdate(PersonBase):
     pass
 
 
+def test_factory():
+    class PersonFactory(ModelFactory):
+        __model__ = Person
+
+    person = PersonFactory.build()
+
+    assert person.pets != []
+
 
 ModelType = TypeVar("ModelType", bound=BaseModel)
 CreateSchemaType = TypeVar("CreateSchemaType", bound=BaseModel)
 UpdateSchemaType = TypeVar("UpdateSchemaType", bound=BaseModel)
 
 
-class CREATEBase(Generic[ModelType, CreateSchemaType, UpdateSchemaType]):
+class BUILDBase(Generic[ModelType, CreateSchemaType, UpdateSchemaType]):
     def __init__(
         self,
         model: ModelType = None,
@@ -582,23 +593,39 @@ class CREATEBase(Generic[ModelType, CreateSchemaType, UpdateSchemaType]):
         return object_Factory.build()
 
 
+class BUILDPet(BUILDBase[Pet, PetCreate, PetUpdate]):
+    def build_object(self) -> Pet:
+        object_Factory = ModelFactory.create_factory(self.model, name="Fido")
+        return object_Factory.build()
+
+    def build_create_object(self) -> PetCreate:
+        object_Factory = ModelFactory.create_factory(self.create_model, name="Rover")
+        return object_Factory.build()
+
+    def build_update_object(self) -> PetUpdate:
+        object_Factory = ModelFactory.create_factory(self.update_model, name="Spot")
+        return object_Factory.build()
+
+
 def test_factory_create():
 
-    person_factory = CREATEBase(Person, PersonCreate, PersonUpdate)
+    person_factory = BUILDBase(Person, PersonCreate, PersonUpdate)
 
-    pet_factory = CREATEBase(Pet, PetCreate, PetUpdate)
+    pet_factory = BUILDPet(Pet, PetCreate, PetUpdate)
 
     create_person = person_factory.build_create_object()
     update_person = person_factory.build_update_object()
 
+    pet = pet_factory.build_object()
     create_pet = pet_factory.build_create_object()
     update_pet = pet_factory.build_update_object()
 
     assert create_person != None
     assert update_person != None
 
-    assert create_pet != None
-    assert update_pet != None
+    assert pet.name == "Fido"
+    assert create_pet.name == "Rover"
+    assert update_pet.name == "Spot"
 
 
 
