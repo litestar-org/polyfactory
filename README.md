@@ -330,6 +330,7 @@ class Species(str, Enum):
     CAT = "Cat"
     DOG = "Dog"
 
+
 class PetFactory(ModelFactory):
     __model__ = Pet
 
@@ -504,7 +505,6 @@ You could also override the child factory's `__model__` attribute to specify the
 
 
 ```python
-
 from datetime import date, datetime
 from enum import Enum
 from pydantic import BaseModel, UUID4
@@ -627,11 +627,6 @@ def test_factory_create():
     assert pet.name == "Fido"
     assert create_pet.name == "Rover"
     assert update_pet.name == "Spot"
-
-
-
-
-
 ```
 
 ## Extensions and Third Party Libraries
