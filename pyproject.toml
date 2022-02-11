@@ -107,3 +107,6 @@ good-names = "_,i,e,mm,yy,T,lt,le,gt,ge,cb"
 
 [tool.coverage.run]
 omit = ["*/tests/*"]
+
+[tool.pytest.ini_options]
+asyncio_mode = "auto"
