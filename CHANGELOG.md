@@ -131,3 +131,7 @@
 [1.2.3]
 
 - fixed regression due to lambda function argument
+
+[1.2.4]
+
+- updated dependencies
