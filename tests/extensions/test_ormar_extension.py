@@ -1,6 +1,8 @@
 from datetime import datetime
 from enum import Enum
+from typing import Dict, Optional, Union
 
+import ormar
 import sqlalchemy
 from databases import Database
 from ormar import DateTime, Integer, Model, String
@@ -33,8 +35,21 @@ class Person(Model):
         pass
 
 
+class Job(Model):
+    id: int = Integer(autoincrement=True, primary_key=True)
+    person: Optional[Union[Person, Dict]] = ormar.ForeignKey(Person)
+    name: str = String(max_length=20)
+
+    class Meta(BaseMeta):
+        pass
+
+
 class PersonFactory(OrmarModelFactory):
     __model__ = Person
+
+
+class JobFactory(OrmarModelFactory):
+    __model__ = Job
 
 
 def test_person_factory():
@@ -44,3 +59,12 @@ def test_person_factory():
     assert result.created_at
     assert result.updated_at
     assert result.mood
+
+
+def test_job_factory():
+    job_name: str = "Unemployed"
+    result = JobFactory.build(name=job_name)
+
+    assert result.id
+    assert result.name == job_name
+    assert result.person
