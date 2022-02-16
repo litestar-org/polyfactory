@@ -2,10 +2,9 @@ from datetime import datetime
 from enum import Enum
 from typing import Dict, Optional, Union
 
-import ormar
 import sqlalchemy
 from databases import Database
-from ormar import DateTime, Integer, Model, String
+from ormar import DateTime, ForeignKey, Integer, Model, String
 from sqlalchemy import func
 
 from pydantic_factories.extensions import OrmarModelFactory
@@ -37,7 +36,7 @@ class Person(Model):
 
 class Job(Model):
     id: int = Integer(autoincrement=True, primary_key=True)
-    person: Optional[Union[Person, Dict]] = ormar.ForeignKey(Person)
+    person: Optional[Union[Person, Dict]] = ForeignKey(Person)
     name: str = String(max_length=20)
 
     class Meta(BaseMeta):
