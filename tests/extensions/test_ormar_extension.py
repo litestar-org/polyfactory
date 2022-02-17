@@ -49,6 +49,12 @@ class PersonFactory(OrmarModelFactory):
 
 class JobFactory(OrmarModelFactory):
     __model__ = Job
+    person = None
+
+
+class JobWithPersonFactory(OrmarModelFactory):
+    __model__ = Job
+    person = PersonFactory
 
 
 def test_person_factory():
@@ -66,4 +72,14 @@ def test_job_factory():
 
     assert result.id
     assert result.name == job_name
+    assert not result.person
+
+
+def test_job_with_person_factory():
+    job_name: str = "Unemployed"
+    result = JobWithPersonFactory.build(name=job_name)
+
+    assert result.id
+    assert result.name == job_name
     assert result.person
+    assert isinstance(result.person, Person)
