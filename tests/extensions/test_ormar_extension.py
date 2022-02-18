@@ -1,6 +1,6 @@
 from datetime import datetime
 from enum import Enum
-from typing import Dict, Optional, Union
+from typing import Optional
 
 import sqlalchemy
 from databases import Database
@@ -36,7 +36,7 @@ class Person(Model):
 
 class Job(Model):
     id: int = Integer(autoincrement=True, primary_key=True)
-    person: Optional[Union[Person, Dict]] = ForeignKey(Person)
+    person: Optional[Person] = ForeignKey(Person)
     name: str = String(max_length=20)
 
     class Meta(BaseMeta):
