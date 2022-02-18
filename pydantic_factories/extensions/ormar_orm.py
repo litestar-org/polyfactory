@@ -22,6 +22,6 @@ class OrmarModelFactory(ModelFactory[Model]):  # pragma: no cover
         We need to handle here both choices and the fact that ormar sets values to be optional
         """
         model_field.required = True
-        if hasattr(model_field.field_info, "choices") and len(model_field.field_info.choices) > 0:  # type: ignore
+        if getattr(model_field.field_info, "choices", False):
             return random.choice(list(model_field.field_info.choices))  # type: ignore
         return super().get_field_value(model_field=model_field)

@@ -1,9 +1,10 @@
 from datetime import datetime
 from enum import Enum
+from typing import Optional
 
 import sqlalchemy
 from databases import Database
-from ormar import DateTime, Integer, Model, String
+from ormar import DateTime, ForeignKey, Integer, Model, String
 from sqlalchemy import func
 
 from pydantic_factories.extensions import OrmarModelFactory
@@ -33,8 +34,27 @@ class Person(Model):
         pass
 
 
+class Job(Model):
+    id: int = Integer(autoincrement=True, primary_key=True)
+    person: Optional[Person] = ForeignKey(Person)
+    name: str = String(max_length=20)
+
+    class Meta(BaseMeta):
+        pass
+
+
 class PersonFactory(OrmarModelFactory):
     __model__ = Person
+
+
+class JobFactory(OrmarModelFactory):
+    __model__ = Job
+    person = None
+
+
+class JobWithPersonFactory(OrmarModelFactory):
+    __model__ = Job
+    person = PersonFactory
 
 
 def test_person_factory():
@@ -44,3 +64,22 @@ def test_person_factory():
     assert result.created_at
     assert result.updated_at
     assert result.mood
+
+
+def test_job_factory():
+    job_name: str = "Unemployed"
+    result = JobFactory.build(name=job_name)
+
+    assert result.id
+    assert result.name == job_name
+    assert not result.person
+
+
+def test_job_with_person_factory():
+    job_name: str = "Unemployed"
+    result = JobWithPersonFactory.build(name=job_name)
+
+    assert result.id
+    assert result.name == job_name
+    assert result.person
+    assert isinstance(result.person, Person)
