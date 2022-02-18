@@ -1,6 +1,5 @@
 from datetime import datetime
 from enum import Enum
-from typing import Optional
 
 import sqlalchemy
 from databases import Database
@@ -36,7 +35,7 @@ class Person(Model):
 
 class Job(Model):
     id: int = Integer(autoincrement=True, primary_key=True)
-    person: Optional[Person] = ForeignKey(Person)
+    person: Person = ForeignKey(Person)
     name: str = String(max_length=20)
 
     class Meta(BaseMeta):
@@ -49,12 +48,6 @@ class PersonFactory(OrmarModelFactory):
 
 class JobFactory(OrmarModelFactory):
     __model__ = Job
-    person = None
-
-
-class JobWithPersonFactory(OrmarModelFactory):
-    __model__ = Job
-    person = PersonFactory
 
 
 def test_person_factory():
@@ -72,14 +65,4 @@ def test_job_factory():
 
     assert result.id
     assert result.name == job_name
-    assert not result.person
-
-
-def test_job_with_person_factory():
-    job_name: str = "Unemployed"
-    result = JobWithPersonFactory.build(name=job_name)
-
-    assert result.id
-    assert result.name == job_name
     assert result.person
-    assert isinstance(result.person, Person)

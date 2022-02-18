@@ -135,3 +135,9 @@
 [1.2.4]
 
 - updated dependencies
+
+
+[1.2.5]
+
+- fix handling of choice for ormar extension @mciszczon
+- fix handling of FKs for ormar extension
