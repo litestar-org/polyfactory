@@ -9,6 +9,7 @@ from pydantic import BaseModel, ConstrainedDecimal, condecimal
 from pydantic_factories import ModelFactory
 from pydantic_factories.constraints.constrained_decimal_handler import (
     handle_constrained_decimal,
+    handle_decimal_length,
 )
 from pydantic_factories.utils import passes_pydantic_multiple_validator
 
@@ -185,7 +186,7 @@ def test_handle_constrained_decimal_handles_with_ge_and_le_and_lower_multiple_of
 
 def test_max_digits_and_decimal_places():
     class Person(BaseModel):
-        social_score: condecimal(decimal_places=3, max_digits=20, gt=Decimal(0))
+        social_score: condecimal(decimal_places=3, max_digits=20, gt=Decimal(0), le=Decimal("999.9999"))
 
     class PersonFactory(ModelFactory):
         __model__ = Person
@@ -194,3 +195,52 @@ def test_max_digits_and_decimal_places():
     assert isinstance(result.social_score, Decimal)
     assert len(str(result.social_score).split(".")[1]) == 3
     assert result.social_score > 0
+
+
+def test_handle_decimal_length():
+    decimal = Decimal("999.9999999")
+
+    # here digits should determine decimal length
+    max_digits = 5
+    decimal_places = 5
+
+    result = handle_decimal_length(decimal, decimal_places, max_digits)
+
+    assert isinstance(result, Decimal)
+    assert len(result.as_tuple().digits) == 5
+    assert abs(result.as_tuple().exponent) == 2
+
+    # here decimal places should determine max length
+    max_digits = 10
+    decimal_places = 5
+
+    result = handle_decimal_length(decimal, decimal_places, max_digits)
+    assert isinstance(result, Decimal)
+    assert len(result.as_tuple().digits) == 8
+    assert abs(result.as_tuple().exponent) == 5
+
+    # here digits determine decimal length
+    max_digits = 10
+    decimal_places = None
+
+    result = handle_decimal_length(decimal, decimal_places, max_digits)
+    assert isinstance(result, Decimal)
+    assert len(result.as_tuple().digits) == 10
+    assert abs(result.as_tuple().exponent) == 7
+
+    # here decimal places determine decimal length
+    max_digits = None
+    decimal_places = 5
+
+    result = handle_decimal_length(decimal, decimal_places, max_digits)
+    assert isinstance(result, Decimal)
+    assert len(result.as_tuple().digits) == 8
+    assert abs(result.as_tuple().exponent) == 5
+
+    # here max_decimals is below 0
+    decimal = Decimal("99.99")
+    max_digits = 1
+    result = handle_decimal_length(decimal, decimal_places, max_digits)
+    assert isinstance(result, Decimal)
+    assert len(result.as_tuple().digits) == 1
+    assert result.as_tuple().exponent == 0
