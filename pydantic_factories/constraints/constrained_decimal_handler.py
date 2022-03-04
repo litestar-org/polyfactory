@@ -48,15 +48,14 @@ def handle_decimal_length(
     elif max_digits is not None:
         max_decimals = max_digits - len(whole_numbers)
     else:
-        max_decimals = decimal_places
+        max_decimals = cast(int, decimal_places)
 
     if max_decimals < 0:
         # in this case there are less digits than the len of whole_numbers
         return Decimal(f"{sign}{whole_numbers[:max_decimals]}")
 
-    else:
-        decimals = decimals[:max_decimals]
-        return Decimal(f"{sign}{whole_numbers}" + f".{decimals[:decimal_places]}")
+    decimals = decimals[:max_decimals]
+    return Decimal(f"{sign}{whole_numbers}" + f".{decimals[:decimal_places]}")
 
 
 def handle_constrained_decimal(field: ConstrainedDecimal) -> Decimal:
