@@ -653,7 +653,7 @@ Beanie `Document` class, and it includes async persistence build in.
 This extension includes a class called `OrmarModelFactory`. This class is meant to be used with the `Model` class
 exported by ormar.
 
-### Custom extension
+### Adding Factory Values
 
 If your model has an attribute that is not supported by `pydantic-factories` and
 it depends on third party libraries, you can create your custom extension
