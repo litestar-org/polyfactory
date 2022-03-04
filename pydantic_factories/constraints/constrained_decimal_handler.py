@@ -37,20 +37,26 @@ def handle_decimal_length(
     sign = "-" if "-" in string_number else "+"
     string_number = string_number.replace("-", "")
     whole_numbers, decimals = string_number.split(".")
+
     if max_digits is not None and decimal_places is not None:
-        max_length = max_digits - decimal_places
-    elif max_digits is not None:
-        max_length = max_digits
-    else:
-        max_length = cast(int, decimal_places)
-    while len(whole_numbers) + len(decimals) > max_length:
-        if max_digits is not None and decimal_places is None and len(whole_numbers) > 0:
-            whole_numbers = whole_numbers[1:]
-        elif len(decimals) > 0:
-            decimals = decimals[: len(decimals) - 1]
+        if len(whole_numbers) + decimal_places > max_digits:
+            # max digits determines decimal length
+            max_decimals = max_digits - len(whole_numbers)
         else:
-            whole_numbers = whole_numbers[1:]
-    return Decimal(f"{sign}{whole_numbers}" + (f".{decimals[:decimal_places]}" if decimals else "0"))
+            # decimal places determines max decimal length
+            max_decimals = decimal_places
+    elif max_digits is not None:
+        max_decimals = max_digits - len(whole_numbers)
+    else:
+        max_decimals = decimal_places
+
+    if max_decimals < 0:
+        # in this case there are less digits than the len of whole_numbers
+        return Decimal(f"{sign}{whole_numbers[:max_decimals]}")
+
+    else:
+        decimals = decimals[:max_decimals]
+        return Decimal(f"{sign}{whole_numbers}" + f".{decimals[:decimal_places]}")
 
 
 def handle_constrained_decimal(field: ConstrainedDecimal) -> Decimal:
