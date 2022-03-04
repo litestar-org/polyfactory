@@ -141,3 +141,8 @@
 
 - fix handling of choice for ormar extension @mciszczon
 - fix handling of FKs for ormar extension
+
+
+[1.2.6]
+
+- fix handling of decimal mac length @DaanRademaker
