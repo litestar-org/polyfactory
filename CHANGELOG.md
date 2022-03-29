@@ -146,3 +146,7 @@
 [1.2.6]
 
 - fix handling of decimal mac length @DaanRademaker
+
+[1.2.7]
+
+- fix checking of Union types in python 3.10 using pipe operator @DaanRademaker
