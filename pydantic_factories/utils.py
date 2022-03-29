@@ -71,7 +71,9 @@ def create_model_from_dataclass(
 
 def is_union(model_field: ModelField) -> bool:
     """Determines whether the given model_field is type Union"""
-    return repr(model_field.outer_type_).split("[")[0] == "typing.Union"
+    if (repr(model_field.outer_type_).split("[")[0] == "typing.Union") or ("|" in repr(model_field.outer_type_)):
+        return True
+    return False
 
 
 def is_any(model_field: ModelField) -> bool:
