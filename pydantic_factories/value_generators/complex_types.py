@@ -1,3 +1,4 @@
+import random
 from collections import defaultdict, deque
 from typing import TYPE_CHECKING, Any, Optional, Type, cast
 
@@ -16,7 +17,7 @@ from pydantic.fields import (
     ModelField,
 )
 
-from pydantic_factories.utils import is_any, is_union, random
+from pydantic_factories.utils import is_any, is_union
 from pydantic_factories.value_generators.primitives import create_random_string
 
 if TYPE_CHECKING:  # pragma: no cover

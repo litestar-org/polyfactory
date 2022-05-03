@@ -1,9 +1,7 @@
+import random
 from binascii import hexlify
 from decimal import Decimal
-from os import urandom
 from typing import Optional, Union
-
-from pydantic_factories.utils import random
 
 
 def create_random_float(
@@ -36,7 +34,7 @@ def create_random_bytes(
     if max_length is None:
         max_length = min_length + 1 * 2
     length = random.randint(min_length, max_length)
-    result = hexlify(urandom(length))
+    result = hexlify(random.randbytes(length))
     if lower_case:
         result = result.lower()
     if max_length and len(result) > max_length:

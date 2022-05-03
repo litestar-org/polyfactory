@@ -1,9 +1,10 @@
+import random
 from decimal import Decimal
 from typing import Callable, Optional, Tuple, TypeVar, cast
 
 from typing_extensions import Type
 
-from pydantic_factories.utils import passes_pydantic_multiple_validator, random
+from pydantic_factories.utils import passes_pydantic_multiple_validator
 
 T = TypeVar("T", Decimal, int, float)
 
