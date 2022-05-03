@@ -150,3 +150,7 @@
 [1.2.7]
 
 - fix checking of Union types in python 3.10 using pipe operator @DaanRademaker
+
+[1.2.8]
+
+- update random seed to affect exrex @blagasz
