@@ -2,7 +2,6 @@ from dataclasses import Field as DataclassField
 from dataclasses import fields as get_dataclass_fields
 from decimal import Decimal
 from inspect import isclass
-from random import Random
 from typing import Any, Tuple, Type, TypeVar, cast
 
 from pydantic import BaseModel, create_model
@@ -12,7 +11,6 @@ from pydantic.utils import almost_equal_floats
 from pydantic_factories.protocols import DataclassProtocol
 
 T = TypeVar("T", int, float, Decimal)
-random = Random()
 
 
 def passes_pydantic_multiple_validator(value: T, multiple_of: T) -> bool:

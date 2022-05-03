@@ -1,4 +1,5 @@
 import os
+import random
 from abc import ABC
 from collections import Counter, deque
 from contextlib import suppress
@@ -110,7 +111,6 @@ from pydantic_factories.utils import (
     is_literal,
     is_optional,
     is_pydantic_model,
-    random,
 )
 from pydantic_factories.value_generators.complex_types import handle_complex_type
 from pydantic_factories.value_generators.primitives import (

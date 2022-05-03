@@ -1,10 +1,11 @@
+import random
 from typing import Any
 
 from pydantic import BaseModel
 from pydantic.fields import ModelField
 
 from pydantic_factories.factory import ModelFactory
-from pydantic_factories.utils import is_pydantic_model, is_union, random
+from pydantic_factories.utils import is_pydantic_model, is_union
 
 try:
     from ormar import Model
