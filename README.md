@@ -361,6 +361,38 @@ class PetFactory(ModelFactory):
 
 `Use` is merely a semantic abstraction that makes the factory cleaner and simpler to understand.
 
+#### PostGenerated (field)
+
+It allows for post generating fields based on already generated values of other
+(non post generated) fields. In most cases this pattern is best avoided, but for
+the few valid cases the `PostGenerated` helper is provided. For example:
+
+```python
+from pydantic import BaseModel
+from pydantic_factories import ModelFactory, PostGenerated
+from random import randint
+
+
+def add_timedelta(name: str, values: dict, *args, **kwds):
+    delta = timedelta(days=randint(0, 12), seconds=randint(13, 13000))
+    return values["from_dt"] + delta
+
+
+class MyModel(BaseModel):
+    from_dt: datetime
+    to_dt: datetime
+
+
+class MyFactory(ModelFactory):
+    __model__ = MyModel
+
+    to_dt = PostGenerated(add_timedelta)
+```
+
+The signature for use is: `cb: Callable, *args, **defaults`, it can receive any sync callable. The signature
+for the callable should be: `name: str, values: dict[str, Any], *args, **defaults`. The already generated
+values are mapped by name in the `values` dictionary.
+
 #### Ignore (field)
 
 `Ignore` is another field exported by this library, and its used - as its name implies - to designate a given attribute

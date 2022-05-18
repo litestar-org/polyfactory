@@ -94,7 +94,7 @@ def test_post_generation():
 
     class MyFactory(ModelFactory):
         __model__ = MyModel
-        to_dt = PostGenerated(add_timedelta, extra=23)
+        to_dt = PostGenerated(add_timedelta)
 
     result = MyFactory.build()
     assert result.to_dt - result.from_dt == random_delta
