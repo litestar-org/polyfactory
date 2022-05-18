@@ -2,7 +2,7 @@ from dataclasses import dataclass as vanilla_dataclass
 from uuid import uuid4
 
 import pytest
-from pydantic import ValidationError
+from pydantic import BaseModel, Field, ValidationError
 
 from pydantic_factories import ModelFactory
 from pydantic_factories.exceptions import ConfigurationError
@@ -85,3 +85,31 @@ def test_factory_use_construct():
 
     with pytest.raises(ConfigurationError):
         MyFactory.build(factory_use_construct=True)
+
+
+def test_build_instance_by_field_alias_with_allow_population_by_field_name_flag():
+    class MyModel(BaseModel):
+        aliased_field: str = Field(..., alias="special_field")
+
+        class Config:
+            allow_population_by_field_name = True
+
+    class MyFactory(ModelFactory):
+        __model__ = MyModel
+
+    instance = MyFactory.build(aliased_field="some")
+    assert instance.aliased_field == "some"
+
+
+def test_build_instance_by_field_name_with_allow_population_by_field_name_flag():
+    class MyModel(BaseModel):
+        aliased_field: str = Field(..., alias="special_field")
+
+        class Config:
+            allow_population_by_field_name = True
+
+    class MyFactory(ModelFactory):
+        __model__ = MyModel
+
+    instance = MyFactory.build(special_field="some")
+    assert instance.aliased_field == "some"
