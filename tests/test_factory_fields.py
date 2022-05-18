@@ -1,3 +1,5 @@
+import random
+from datetime import datetime, timedelta
 from typing import Optional
 
 import pytest
@@ -5,7 +7,7 @@ from pydantic import BaseModel
 
 from pydantic_factories import ModelFactory, Use
 from pydantic_factories.exceptions import MissingBuildKwargError
-from pydantic_factories.fields import Ignore, Require
+from pydantic_factories.fields import Ignore, PostGenerated, Require
 
 
 def test_use():
@@ -74,3 +76,25 @@ def test_ignored():
         name = Ignore()
 
     assert MyFactory.build().name is None
+
+
+def test_post_generation():
+
+    random_delta = timedelta(days=random.randint(0, 12), seconds=random.randint(13, 13000))
+
+    def add_timedelta(name, values, **kwds):
+        assert name == "to_dt"
+        assert "from_dt" in values
+        assert isinstance(values["from_dt"], datetime)
+        return values["from_dt"] + random_delta
+
+    class MyModel(BaseModel):
+        from_dt: datetime
+        to_dt: datetime
+
+    class MyFactory(ModelFactory):
+        __model__ = MyModel
+        to_dt = PostGenerated(add_timedelta, extra=23)
+
+    result = MyFactory.build()
+    assert result.to_dt - result.from_dt == random_delta

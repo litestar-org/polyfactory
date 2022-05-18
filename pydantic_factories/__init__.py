@@ -7,7 +7,7 @@ from .extensions import (
     OrmarModelFactory,
 )
 from .factory import ModelFactory
-from .fields import Ignore, Require, Use
+from .fields import Ignore, PostGenerated, Require, Use
 from .protocols import AsyncPersistenceProtocol, SyncPersistenceProtocol
 
 __all__ = [
@@ -22,4 +22,5 @@ __all__ = [
     "Require",
     "SyncPersistenceProtocol",
     "Use",
+    "PostGenerated",
 ]
