@@ -1,4 +1,4 @@
-from typing import Any, Callable
+from typing import Any, Callable, Dict
 
 
 class Use:
@@ -32,7 +32,7 @@ class PostGenerated:
         self.defaults = defaults
         self.args = args
 
-    def to_value(self, name: str, values: dict[str, Any]) -> Any:
+    def to_value(self, name: str, values: Dict[str, Any]) -> Any:
         """invokes the callback function"""
         return self.cb(name, values, *self.args, **self.defaults)
 
