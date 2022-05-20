@@ -154,3 +154,8 @@
 [1.2.8]
 
 - update random seed to affect exrex @blagasz
+
+[1.2.9]
+
+- update to pydantic 1.9.1
+- handle `allow_population_by_field_name` flag @mrkovalchuk

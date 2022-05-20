@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "pydantic-factories"
-version = "1.2.8"
+version = "1.2.9"
 description = "Mock data generation for pydantic based models"
 authors = ["Na'aman Hirschfeld <nhirschfeld@gmail.com>"]
 maintainers = ["Na'aman Hirschfeld <nhirschfeld@gmail.com>", "Martin Roy <lindycoder@gmail.com>"]
@@ -83,7 +83,7 @@ profile = "black"
 multi_line_output = 3
 
 [tool.pylint.MESSAGE_CONTROL]
-disable = ["fixme", "missing-module-docstring", "missing-class-docstring", "line-too-long", "too-few-public-methods", "import-outside-toplevel"]
+disable = ["fixme", "missing-module-docstring", "missing-class-docstring", "line-too-long", "too-few-public-methods", "import-outside-toplevel", "unnecessary-lambda-assignment"]
 enable = "useless-suppression"
 
 [tool.pylint.REPORTS]

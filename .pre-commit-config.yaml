@@ -10,7 +10,7 @@ repos:
         exclude: "\\.idea/(.)*"
       - id: trailing-whitespace
   - repo: https://github.com/asottile/pyupgrade
-    rev: v2.32.0
+    rev: v2.32.1
     hooks:
       - id: pyupgrade
         args: ["--py37-plus"]
@@ -46,7 +46,7 @@ repos:
             "flake8-simplify",
           ]
   - repo: https://github.com/pycqa/pylint
-    rev: "v2.13.8"
+    rev: "v2.14.0-b1"
     hooks:
       - id: pylint
         exclude: "/(test_|conftest.py)"
