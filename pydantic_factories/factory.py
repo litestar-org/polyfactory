@@ -231,6 +231,16 @@ class ModelFactory(ABC, Generic[T]):
         return default_faker
 
     @classmethod
+    def should_use_alias_name(cls, model_field: ModelField, model: Type[T]) -> bool:
+        """Determines whether a given model field should be set by an alias"""
+        if not model_field.alias:
+            return False
+
+        if issubclass(model, BaseModel) and model.__config__.allow_population_by_field_name:
+            return False
+        return True
+
+    @classmethod
     def get_provider_map(cls) -> Dict[Any, Callable]:
         """
         Returns a dictionary of <type>:<callable> values
@@ -485,9 +495,11 @@ class ModelFactory(ABC, Generic[T]):
 
         Note - this is supported only for pydantic models
         """
-        for field_name, model_field in cls.get_model_fields(cls._get_model()):
-            if model_field.alias:
+        model = cls._get_model()
+        for field_name, model_field in cls.get_model_fields(model):
+            if cls.should_use_alias_name(model_field, model):
                 field_name = model_field.alias
+
             if cls.should_set_field_value(field_name, **kwargs):
                 if hasattr(cls, field_name):
                     kwargs[field_name] = cls.handle_factory_field(field_name=field_name)

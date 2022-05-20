@@ -98,6 +98,7 @@ max-args = 10
 max-attributes = 10
 max-locals = 12
 max-returns = 10
+max-public-methods=21
 
 [tool.pylint.VARIABLES]
 ignored-argument-names = "args|kwargs|_|__"
