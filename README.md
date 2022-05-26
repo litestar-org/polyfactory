@@ -363,9 +363,8 @@ class PetFactory(ModelFactory):
 
 #### PostGenerated (field)
 
-It allows for post generating fields based on already generated values of other
-(non post generated) fields. In most cases this pattern is best avoided, but for
-the few valid cases the `PostGenerated` helper is provided. For example:
+It allows for post generating fields based on already generated values of other (non post generated) fields. In most
+cases this pattern is best avoided, but for the few valid cases the `PostGenerated` helper is provided. For example:
 
 ```python
 from pydantic import BaseModel

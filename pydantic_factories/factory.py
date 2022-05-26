@@ -231,6 +231,16 @@ class ModelFactory(ABC, Generic[T]):
         return default_faker
 
     @classmethod
+    def should_use_alias_name(cls, model_field: ModelField, model: Type[T]) -> bool:
+        """Determines whether a given model field should be set by an alias"""
+        if not model_field.alias:
+            return False
+
+        if issubclass(model, BaseModel) and model.__config__.allow_population_by_field_name:
+            return False
+        return True
+
+    @classmethod
     def get_provider_map(cls) -> Dict[Any, Callable]:
         """
         Returns a dictionary of <type>:<callable> values
