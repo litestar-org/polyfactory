@@ -32,5 +32,5 @@ class PythonDataClass:
     field: str
 
 
-class PythonDataClassFactory(ModelFactory[PythonDataClass]):
+class PythonDataClassFactory(ModelFactory[PythonDataClass]):  # type: ignore
     __model__ = PythonDataClass
