@@ -1,3 +1,5 @@
+import random
+from datetime import datetime, timedelta
 from typing import Optional
 
 import pytest
@@ -5,7 +7,7 @@ from pydantic import BaseModel
 
 from pydantic_factories import ModelFactory, Use
 from pydantic_factories.exceptions import MissingBuildKwargError
-from pydantic_factories.fields import Ignore, Require
+from pydantic_factories.fields import Ignore, PostGenerated, Require
 
 
 def test_use():
@@ -74,3 +76,49 @@ def test_ignored():
         name = Ignore()
 
     assert MyFactory.build().name is None
+
+
+def test_post_generation():
+
+    random_delta = timedelta(days=random.randint(0, 12), seconds=random.randint(13, 13000))
+
+    def add_timedelta(name, values, **kwds):
+        assert name == "to_dt"
+        assert "from_dt" in values
+        assert isinstance(values["from_dt"], datetime)
+        return values["from_dt"] + random_delta
+
+    def decide_long(name, values, **kwds):
+        assert name == "is_long"
+        assert "from_dt" in values
+        assert "to_dt" in values
+        assert "threshold" in kwds
+        assert isinstance(values["from_dt"], datetime)
+        assert isinstance(values["to_dt"], datetime)
+        difference = values["to_dt"] - values["from_dt"]
+        return difference.days > kwds["threshold"]
+
+    def make_caption(name, values, **kwds):
+        assert name == "caption"
+        assert "is_long" in values
+        return "this was really long for me" if values["is_long"] else "just this"
+
+    class MyModel(BaseModel):
+        from_dt: datetime
+        to_dt: datetime
+        is_long: bool
+        caption: str
+
+    class MyFactory(ModelFactory):
+        __model__ = MyModel
+        to_dt = PostGenerated(add_timedelta)
+        is_long = PostGenerated(decide_long, threshold=1)
+        caption = PostGenerated(make_caption)
+
+    result = MyFactory.build()
+    assert result.to_dt - result.from_dt == random_delta
+    assert result.is_long == (random_delta.days > 1)
+    if result.is_long:
+        assert result.caption == "this was really long for me"
+    else:
+        assert result.caption == "just this"

@@ -386,18 +386,17 @@ class ModelFactory(ABC, Generic[T]):
         return random.choice(list(outer_type))
 
     @classmethod
-    def handle_factory_field(cls, field_name: str) -> Any:
+    def handle_factory_field(cls, field_value: Any) -> Any:
         """Handles a field defined on the factory class itself"""
         from pydantic_factories.fields import Use
 
-        value = getattr(cls, field_name)
-        if isinstance(value, Use):
-            return value.to_value()
-        if cls.is_model_factory(value):
-            return cast(ModelFactory, value).build()
-        if callable(value):
-            return value()
-        return value
+        if isinstance(field_value, Use):
+            return field_value.to_value()
+        if cls.is_model_factory(field_value):
+            return cast(ModelFactory, field_value).build()
+        if callable(field_value):
+            return field_value()
+        return field_value
 
     @classmethod
     def create_factory(
@@ -495,16 +494,25 @@ class ModelFactory(ABC, Generic[T]):
 
         Note - this is supported only for pydantic models
         """
+        from pydantic_factories.fields import PostGenerated
+
+        generate_post: Dict[str, PostGenerated] = {}
+
         model = cls._get_model()
         for field_name, model_field in cls.get_model_fields(model):
             if cls.should_use_alias_name(model_field, model):
                 field_name = model_field.alias
-
             if cls.should_set_field_value(field_name, **kwargs):
                 if hasattr(cls, field_name):
-                    kwargs[field_name] = cls.handle_factory_field(field_name=field_name)
+                    value = getattr(cls, field_name)
+                    if isinstance(value, PostGenerated):
+                        generate_post[field_name] = value
+                    else:
+                        kwargs[field_name] = cls.handle_factory_field(field_value=value)
                 else:
                     kwargs[field_name] = cls.get_field_value(model_field=model_field)
+        for field_name, post_generator in generate_post.items():
+            kwargs[field_name] = post_generator.to_value(field_name, kwargs)
         if factory_use_construct:
             if is_pydantic_model(cls.__model__):
                 return cls.__model__.construct(**kwargs)  # type: ignore
