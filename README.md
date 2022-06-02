@@ -17,6 +17,38 @@ This library offers powerful mock data generation capabilities for [pydantic](ht
 based models and `dataclasses`. It can also be used with other libraries that use pydantic as a foundation, for
 example [SQLModel](https://github.com/tiangolo/sqlmodel) and [Beanie](https://github.com/roman-right/beanie).
 
+## Table of Contents
+<!-- TOC start -->
+- [Pydantic-Factories](#pydantic-factories)
+  - [Table of Contents](#table-of-contents)
+    - [Example](#example)
+    - [Features](#features)
+    - [Why This Library?](#why-this-library)
+  - [Installation](#installation)
+  - [Usage](#usage)
+    - [Build Methods](#build-methods)
+    - [Nested Models and Complex types](#nested-models-and-complex-types)
+    - [Models and Dataclasses](#models-and-dataclasses)
+      - [Note Regarding Nested Optional Types in Dataclasses](#note-regarding-nested-optional-types-in-dataclasses)
+    - [Factory Configuration](#factory-configuration)
+      - [Generating deterministic objects](#generating-deterministic-objects)
+    - [Defining Factory Attributes](#defining-factory-attributes)
+      - [Use (field)](#use-field)
+      - [PostGenerated (field)](#postgenerated-field)
+      - [Ignore (field)](#ignore-field)
+      - [Require (field)](#require-field)
+    - [Persistence](#persistence)
+  - [Create Factory Method](#create-factory-method)
+  - [Extensions and Third Party Libraries](#extensions-and-third-party-libraries)
+    - [ODMantic](#odmantic)
+    - [Beanie](#beanie)
+    - [Ormar](#ormar)
+    - [Adding Factory Values](#adding-factory-values)
+  - [Contributing](#contributing)
+  - [Frequently Asked Questions (FAQs)](#frequently-asked-questions-faqs)
+<!-- TOC end -->
+
+
 ### Example
 
 ```python
@@ -64,6 +96,8 @@ the `Person` class' init method.
 - 💯 extensible
 - 💯 simple
 - 💯 rigorously tested
+
+See [Frequently Asked Questions (FAQs)](#frequently-asked-questions-faqs) for more information.
 
 ## Installation
 
@@ -709,6 +743,14 @@ class CustomFactory(ModelFactory[Any]):
 
 Where `cls._get_faker()` is a `faker` instance that you can use to build your
 returned value.
+
+## Frequently Asked Questions (FAQs)
+
+* How does this differ from using the [Hypothesis plugin](https://pydantic-docs.helpmanual.io/hypothesis_plugin/) for Pydantic?
+This library is closer to [FactoryBoy](https://github.com/FactoryBoy/factory_boy) than Hypothesis (intended for property based testing) by enabling you to define reusable factories. It is possible to use Hypothesis strategies to build your model via `st.builds(Model)`, and even wrap these strategies for re-use, but if you want to share these outside of your codebase you will need to make a library.
+
+* Why doesn't this project use Hypothesis?
+Hypothesis is a large dependency that does much more than this project needs. [Faker](https://faker.readthedocs.io/en/master/) handles the data mocking as it covers the complete range of data types supported by Pydantic.
 
 ## Contributing
 
