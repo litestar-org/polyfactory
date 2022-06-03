@@ -749,8 +749,12 @@ returned value.
 * How does this differ from using the [Hypothesis plugin](https://pydantic-docs.helpmanual.io/hypothesis_plugin/) for Pydantic?
 This library is closer to [FactoryBoy](https://github.com/FactoryBoy/factory_boy) than Hypothesis (intended for property based testing) by enabling you to define reusable factories. It is possible to use Hypothesis strategies to build your model via `st.builds(Model)`, and even wrap these strategies for re-use, but if you want to share these outside of your codebase you will need to make a library.
 
-* Why doesn't this project use Hypothesis?
-Hypothesis is a large dependency that does much more than this project needs. [Faker](https://faker.readthedocs.io/en/master/) handles the data mocking as it covers the complete range of data types supported by Pydantic.
+* Why doesn't this library use Hypothesis?
+Hypothesis is a large dependency with many features this library does not need and only supports a subset of Pydantic types.
+
+Pydantic Factories uses [Faker](https://faker.readthedocs.io/en/master/) to handle some of the data mocking, while also incorporating its own mock data generation logic to go beyond what Faker is capable of and providing more complete support for Pydantic types than both Hypothesis and the official Pydantic Hypothesis plugin.
+
+Finally, this library allows for more granular control of model generation and persistence.
 
 ## Contributing
 
