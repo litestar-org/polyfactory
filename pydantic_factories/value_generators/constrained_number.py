@@ -1,8 +1,6 @@
 import random
 from decimal import Decimal
-from typing import Callable, Optional, Tuple, TypeVar, cast
-
-from typing_extensions import Type
+from typing import Callable, Optional, Tuple, Type, TypeVar, cast
 
 from pydantic_factories.utils import passes_pydantic_multiple_validator
 

@@ -1,9 +1,8 @@
 import random
-from typing import TYPE_CHECKING, Any, Union, cast
+from typing import TYPE_CHECKING, Any, Type, Union, cast
 
 from pydantic import ConstrainedList, ConstrainedSet
 from pydantic.fields import ModelField
-from typing_extensions import Type
 
 from pydantic_factories.exceptions import ParameterError
 from pydantic_factories.value_generators.complex_types import handle_complex_type
