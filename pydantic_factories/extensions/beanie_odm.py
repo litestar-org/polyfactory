@@ -41,7 +41,7 @@ class BeanieDocumentFactory(ModelFactory[Document]):
     @classmethod
     def is_ignored_type(cls, value: Any) -> bool:
         """
-        Overriden to exclude PydanticObjectId
+        Overridden to exclude PydanticObjectId
 
         """
         return super().is_ignored_type(value=value) or value is PydanticObjectId

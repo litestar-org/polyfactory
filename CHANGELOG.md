@@ -69,7 +69,7 @@
 [0.6.0]
 
 - added `__allow_none_optionals__` factory class variable
-- updated the `ModelFactory.create_factory` method to accept an optional `base` kwarg user defined **kwargs
+- updated the `ModelFactory.create_factory` method to accept an optional `base` kwarg user defined \*\*kwargs
 - added a new method on `ModelFactory` called `should_set_none_value`, which dictates whether a None value should be set
   for a given `ModelField`
 - updated dependencies
@@ -150,3 +150,7 @@
 [1.3.0]
 
 - a `PostGenerate` @blagasz
+
+[1.4.0]
+
+- replace `exrex` with `xeger` due to licensing issues

@@ -12,5 +12,5 @@ To contribute, please follow these steps:
 6. Once you are ready, add a PR in the main repo
 7. Create a pull request to the main repository with an explanation of your changes
 
-__NOTE__: The test suite requires having an instance of MongoDB available. You can launch one using the root level
+**NOTE**: The test suite requires having an instance of MongoDB available. You can launch one using the root level
 docker-compose config with `docker-compose up --detach`, or by any other means you deem.

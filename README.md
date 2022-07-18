@@ -18,7 +18,9 @@ based models and `dataclasses`. It can also be used with other libraries that us
 example [SQLModel](https://github.com/tiangolo/sqlmodel) and [Beanie](https://github.com/roman-right/beanie).
 
 ## Table of Contents
+
 <!-- TOC start -->
+
 - [Pydantic-Factories](#pydantic-factories)
   - [Table of Contents](#table-of-contents)
     - [Example](#example)
@@ -46,8 +48,7 @@ example [SQLModel](https://github.com/tiangolo/sqlmodel) and [Beanie](https://gi
     - [Adding Factory Values](#adding-factory-values)
   - [Contributing](#contributing)
   - [Frequently Asked Questions (FAQs)](#frequently-asked-questions-faqs)
-<!-- TOC end -->
-
+  <!-- TOC end -->
 
 ### Example
 
@@ -122,7 +123,7 @@ pipenv install --dev pydantic-factories
 **pydantic-factories** has very few dependencies aside from _pydantic_ - [
 typing-extensions](https://github.com/python/typing/blob/master/typing_extensions/README.rst) which is used for typing
 support in older versions of python, as well as [faker](https://github.com/joke2k/faker)
-and [exrex](https://github.com/asciimoo/exrex), both of which are used for generating mock data.
+and [xeger](https://github.com/crdoconnor/xeger), both of which are used for generating mock data.
 
 ## Usage
 
@@ -143,6 +144,7 @@ Any `kwargs` you pass to `.build`, `.batch` or any of the [persistence methods](
 whatever defaults are defined on the factory class itself.
 
 By default, when building a pydantic class, kwargs are validated, to avoid input validation you can use the `factory_use_construct` param.
+
 ```python
 result = PersonFactory.build(id=5)  # Raises a validation error
 
@@ -273,7 +275,7 @@ Configuration of `ModelFactory` is done using class variables:
   this is variable is not set, the `.create_async` and `.create_batch_async` methods of the factory cannot be used.
   See: [persistence methods](#persistence)
 
-- **\_\_allow_none_optionals_\_\_**: an _optional_ variable sepcifying whether the factory should randomly set None
+- **\_\_allow*none_optionals*\_\_**: an _optional_ variable specifying whether the factory should randomly set None
   values for optional fields, or always set a value for them. This is `True` by default.
 
 ```python
@@ -295,9 +297,10 @@ class PersonFactory(ModelFactory):
     __allow_none_optionals__ = False
     ...
 ```
+
 #### Generating deterministic objects
 
-In order to generate determenistic data, use `ModelFactory.seed_random` method. This will pass  the seed value to both
+In order to generate deterministic data, use `ModelFactory.seed_random` method. This will pass the seed value to both
 Faker and random method calls, guaranteeing data to be the same in between the calls. Especially useful for testing.
 
 ### Defining Factory Attributes
@@ -557,17 +560,15 @@ With the persistence handlers in place, you can now use all persistence methods.
 any or both persistence handlers. If you will only use sync or async persistence, you only need to define the respective
 handler to use these methods.
 
-
 ## Create Factory Method
 
 If you prefer to create a factory imperatively, you can do so using the `ModelFactory.create_factory` method. This method receives the following arguments:
 
 - model - the model for the factory.
 - base - an optional base factory class. Defaults to the factory class on which the method is called.
-- kwargs - a dictionary of arguments correlating to the class vars accepted by ModelFactory, e.g. __faker__.
+- kwargs - a dictionary of arguments correlating to the class vars accepted by ModelFactory, e.g. **faker**.
 
 You could also override the child factory's `__model__` attribute to specify the model to use and the default kwargs as shown as the BuildPet class as shown below:
-
 
 ```python
 from datetime import date, datetime
@@ -725,7 +726,6 @@ it depends on third party libraries, you can create your custom extension
 subclassing the `ModelFactory`, and overriding the `get_mock_value` method to
 add your logic.
 
-
 ```
 from pydantic_factories import ModelFactory
 
@@ -746,11 +746,11 @@ returned value.
 
 ## Frequently Asked Questions (FAQs)
 
-* How does this differ from using the [Hypothesis plugin](https://pydantic-docs.helpmanual.io/hypothesis_plugin/) for Pydantic?
-This library is closer to [FactoryBoy](https://github.com/FactoryBoy/factory_boy) than Hypothesis (intended for property based testing) by enabling you to define reusable factories. It is possible to use Hypothesis strategies to build your model via `st.builds(Model)`, and even wrap these strategies for re-use, but if you want to share these outside of your codebase you will need to make a library.
+- How does this differ from using the [Hypothesis plugin](https://pydantic-docs.helpmanual.io/hypothesis_plugin/) for Pydantic?
+  This library is closer to [FactoryBoy](https://github.com/FactoryBoy/factory_boy) than Hypothesis (intended for property based testing) by enabling you to define reusable factories. It is possible to use Hypothesis strategies to build your model via `st.builds(Model)`, and even wrap these strategies for re-use, but if you want to share these outside of your codebase you will need to make a library.
 
-* Why doesn't this library use Hypothesis?
-Hypothesis is a large dependency with many features this library does not need and only supports a subset of Pydantic types.
+- Why doesn't this library use Hypothesis?
+  Hypothesis is a large dependency with many features this library does not need and only supports a subset of Pydantic types.
 
 Pydantic Factories uses [Faker](https://faker.readthedocs.io/en/master/) to handle some of the data mocking, while also incorporating its own mock data generation logic to go beyond what Faker is capable of and providing more complete support for Pydantic types than both Hypothesis and the official Pydantic Hypothesis plugin.
 

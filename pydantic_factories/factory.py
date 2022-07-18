@@ -25,6 +25,7 @@ from typing import (
     ItemsView,
     List,
     Optional,
+    Type,
     TypeVar,
     Union,
     cast,
@@ -77,7 +78,7 @@ from pydantic import (
 )
 from pydantic.color import Color
 from pydantic.fields import ModelField
-from typing_extensions import Type, get_args
+from typing_extensions import get_args
 
 from pydantic_factories.constraints.constrained_collection_handler import (
     handle_constrained_collection,
@@ -148,14 +149,16 @@ class ModelFactory(ABC, Generic[T]):
     __sync_persistence__: Optional[Union[Type[SyncPersistenceProtocol[T]], SyncPersistenceProtocol[T]]] = None
     __async_persistence__: Optional[Union[Type[AsyncPersistenceProtocol[T]], AsyncPersistenceProtocol[T]]] = None
     __allow_none_optionals__: bool = True
+    __random_seed__: Optional[int] = None
 
     @classmethod
     def seed_random(cls, seed: int) -> None:
         """
         Seeds Fake and random methods with seed
         """
-        random.seed(seed)
+        random.seed(seed, version=3)
         Faker.seed(seed)
+        cls.__random_seed__ = seed
 
     @classmethod
     def is_model_factory(cls, value: Any) -> bool:
@@ -363,7 +366,9 @@ class ModelFactory(ABC, Generic[T]):
             if issubclass(outer_type, ConstrainedDecimal):
                 return handle_constrained_decimal(field=cast(ConstrainedDecimal, outer_type))
             if issubclass(outer_type, ConstrainedStr):
-                return handle_constrained_string(field=cast(ConstrainedStr, outer_type))
+                return handle_constrained_string(
+                    field=cast(ConstrainedStr, outer_type), random_seed=cls.__random_seed__
+                )
             if issubclass(outer_type, ConstrainedBytes):
                 return handle_constrained_bytes(field=cast(ConstrainedBytes, outer_type))
             if issubclass(outer_type, (ConstrainedSet, ConstrainedList)) or (
@@ -411,6 +416,7 @@ class ModelFactory(ABC, Generic[T]):
         kwargs.setdefault("__sync_persistence__", cls.__sync_persistence__)
         kwargs.setdefault("__async_persistence__", cls.__async_persistence__)
         kwargs.setdefault("__allow_none_optionals__", cls.__allow_none_optionals__)
+        kwargs.setdefault("__random__seed__", cls.__random_seed__)
         return cast(
             ModelFactory,
             type(
