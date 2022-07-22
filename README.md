@@ -275,7 +275,7 @@ Configuration of `ModelFactory` is done using class variables:
   this is variable is not set, the `.create_async` and `.create_batch_async` methods of the factory cannot be used.
   See: [persistence methods](#persistence)
 
-- **\_\_allow*none_optionals*\_\_**: an _optional_ variable specifying whether the factory should randomly set None
+- **\_\_allow_none_optionals\_\_**: an _optional_ variable specifying whether the factory should randomly set None
   values for optional fields, or always set a value for them. This is `True` by default.
 
 ```python
