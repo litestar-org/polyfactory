@@ -52,7 +52,7 @@ class BeanieDocumentFactory(ModelFactory[Document]):
         Override to handle the fields created by the beanie Indexed helper function
 
         Note: these fields do not have a class we can use, rather they instantiate a private class inside a closure.
-        Hence the hacky solution of checking the __name__ property
+        Hence, the hacky solution of checking the __name__ property
         """
         if hasattr(model_field.type_, "__name__") and "Indexed " in model_field.type_.__name__:
             base_type = model_field.outer_type_.__bases__[0]

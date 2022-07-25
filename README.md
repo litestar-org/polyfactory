@@ -752,7 +752,7 @@ returned value.
 - Why doesn't this library use Hypothesis?
   Hypothesis is a large dependency with many features this library does not need and only supports a subset of Pydantic types.
 
-Pydantic Factories uses [Faker](https://faker.readthedocs.io/en/master/) to handle some of the data mocking, while also incorporating its own mock data generation logic to go beyond what Faker is capable of and providing more complete support for Pydantic types than both Hypothesis and the official Pydantic Hypothesis plugin.
+Pydantic Factories uses [Faker](https://faker.readthedocs.io/en/master/) to handle some data mocking, while also incorporating its own mock data generation logic to go beyond what Faker is capable of and providing more complete support for Pydantic types than both Hypothesis and the official Pydantic Hypothesis plugin.
 
 Finally, this library allows for more granular control of model generation and persistence.
 

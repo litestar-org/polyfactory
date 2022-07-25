@@ -121,11 +121,15 @@ def test_alias_parsing():
 def test_literal_parsing():
     class MyModel(BaseModel):
         literal_field: Literal["yoyos"]
+        multi_literal_field: Literal["nolos", "zozos", "kokos"]
 
     class MyFactory(ModelFactory):
         __model__ = MyModel
 
     assert MyFactory.build().literal_field == "yoyos"
+    batch = MyFactory.batch(30)
+    values = {v.multi_literal_field for v in batch}
+    assert values == {"nolos", "zozos", "kokos"}
 
 
 def test_embedded_models_parsing():

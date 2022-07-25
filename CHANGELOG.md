@@ -154,3 +154,7 @@
 [1.4.0]
 
 - replace `exrex` with `xeger` due to licensing issues
+
+[1.4.1]
+
+- fix sampling of `Literal` values

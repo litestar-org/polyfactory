@@ -445,7 +445,8 @@ class ModelFactory(ABC, Generic[T]):
         if model_field.sub_fields:
             return handle_complex_type(model_field=model_field, model_factory=cls)
         if is_literal(model_field):
-            return get_args(outer_type)[0]
+            literal_args = get_args(outer_type)
+            return random.choice(literal_args)
         # this is a workaround for the following issue: https://github.com/samuelcolvin/pydantic/issues/3415
         field_type = model_field.type_ if model_field.type_ is not Any else outer_type
         if cls.is_ignored_type(field_type):
@@ -468,7 +469,7 @@ class ModelFactory(ABC, Generic[T]):
         """
         Ascertain whether to set a value for a given field_name
 
-        Separated to its own method to allow black-listing field names in sub-classes
+        Separated to its own method to allow black-listing field names in subclasses
         """
         is_field_ignored = False
         is_field_in_kwargs = field_name in kwargs
@@ -484,7 +485,7 @@ class ModelFactory(ABC, Generic[T]):
         """
         A function to retrieve the fields of a given model.
 
-        If the model passed is a dataclass, its converted to a pydantic model first.
+        If the model passed is a dataclass, it's converted to a pydantic model first.
         """
         if not is_pydantic_model(model):
             model = create_model_from_dataclass(dataclass=model)  # type: ignore

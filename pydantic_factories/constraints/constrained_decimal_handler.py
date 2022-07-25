@@ -51,7 +51,7 @@ def handle_decimal_length(
         max_decimals = cast(int, decimal_places)
 
     if max_decimals < 0:
-        # in this case there are less digits than the len of whole_numbers
+        # in this case there are fewer digits than the len of whole_numbers
         return Decimal(f"{sign}{whole_numbers[:max_decimals]}")
 
     decimals = decimals[:max_decimals]

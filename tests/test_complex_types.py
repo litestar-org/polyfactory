@@ -87,7 +87,7 @@ def test_raises_for_user_defined_types():
 
 
 def test_randomizes_optional_returns():
-    """this is a flaky test - because it depends on randomness, hence its been reran multiple times."""
+    """this is a flaky test - because it depends on randomness, hence it's been re-ran multiple times."""
 
     class MyModel(BaseModel):
         optional_1: List[Optional[str]]

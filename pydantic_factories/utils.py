@@ -44,7 +44,7 @@ def create_model_from_dataclass(
     dataclass: Type[DataclassProtocol],
 ) -> Type[BaseModel]:
     """
-    Creates a a subclass of BaseModel from a given dataclass
+    Creates a subclass of BaseModel from a given dataclass
 
     We are limited here because Pydantic does not perform proper field parsing when going this route -
     which requires we set the fields as required and not required independently.

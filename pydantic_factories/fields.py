@@ -24,7 +24,7 @@ class PostGenerated:
     factory attributes.
 
     Callback should be able to receive the field name as its first argument
-    and a dictionary of values as it's second argument.
+    and a dictionary of values as its second argument.
     """
 
     def __init__(self, cb: Callable, *args: Any, **defaults: Any) -> None:
