@@ -427,7 +427,7 @@ class ModelFactory(ABC, Generic[T]):
         )
 
     @classmethod
-    def get_field_value(cls, model_field: ModelField) -> Any:
+    def get_field_value(cls, model_field: ModelField, field_parameters: Union[dict, list, None] = None) -> Any:
         """
         Returns a field value on the subclass if existing, otherwise returns a mock value
         """
@@ -439,7 +439,12 @@ class ModelFactory(ABC, Generic[T]):
         if isinstance(outer_type, EnumMeta):
             return cls.handle_enum(outer_type)
         if is_pydantic_model(outer_type) or is_dataclass(outer_type):
-            return cls.create_factory(model=outer_type).build()
+            build_kwargs: dict = field_parameters or {}  # type: ignore
+            return cls.create_factory(model=outer_type).build(**build_kwargs)
+        if isinstance(field_parameters, list) and is_pydantic_model(model_field.type_):
+            return [
+                cls.create_factory(model=model_field.type_).build(**build_kwargs) for build_kwargs in field_parameters
+            ]
         if cls.is_constrained_field(outer_type):
             return cls.handle_constrained_field(model_field=model_field)
         if model_field.sub_fields:
@@ -465,7 +470,43 @@ class ModelFactory(ABC, Generic[T]):
         return False
 
     @classmethod
-    def should_set_field_value(cls, field_name: str, **kwargs: Any) -> bool:
+    def _is_kwargs_missing_pydantic_fields(cls, pydantic_model: Type[T], pydantic_model_kwargs: Any) -> bool:
+        """
+        Determines if the kwargs are missing fields that should be defined in the pydantic model.
+
+        Returns False if all fields of the pydantic model are defined in the kwargs, and True otherwise.
+        """
+        if is_pydantic_model(pydantic_model_kwargs.__class__):
+            return False
+        pydantic_model_fields = cls.get_model_fields(pydantic_model)
+        pydantic_model_field_names = set(dict(pydantic_model_fields).keys())
+        kwargs_field_names = set(pydantic_model_kwargs.keys())
+        return bool(pydantic_model_field_names - kwargs_field_names)
+
+    @classmethod
+    def _is_pydantic_with_partial_fields(cls, field_name: str, model_field: ModelField, **kwargs: Any) -> bool:
+        """
+        Determines if the field is a pydantic model AND if the kwargs are missing fields that should be defined in the pydantic model
+
+        Returns False if model_field isn't a Pydantic model OR if all fields of the pydantic model are defined in the kwargs, and True otherwise.
+        """
+        pydantic_model = model_field.type_
+        if not is_pydantic_model(pydantic_model):
+            return False
+
+        list_of_pydantic_models_kwargs = kwargs[field_name]
+        if not isinstance(list_of_pydantic_models_kwargs, list) and cls._is_kwargs_missing_pydantic_fields(
+            pydantic_model, list_of_pydantic_models_kwargs
+        ):
+            return True
+
+        return any(
+            cls._is_kwargs_missing_pydantic_fields(pydantic_model, pydantic_model_kwargs)
+            for pydantic_model_kwargs in list_of_pydantic_models_kwargs
+        )
+
+    @classmethod
+    def should_set_field_value(cls, field_name: str, model_field: ModelField, **kwargs: Dict[str, Any]) -> bool:
         """
         Ascertain whether to set a value for a given field_name
 
@@ -478,7 +519,9 @@ class ModelFactory(ABC, Generic[T]):
             if isinstance(value, Require) and not is_field_in_kwargs:
                 raise MissingBuildKwargError(f"Require kwarg {field_name} is missing")
             is_field_ignored = isinstance(value, Ignore)
-        return not is_field_ignored and not is_field_in_kwargs
+        return not is_field_ignored and (
+            not is_field_in_kwargs or cls._is_pydantic_with_partial_fields(field_name, model_field, **kwargs)
+        )
 
     @classmethod
     def get_model_fields(cls, model: Type[T]) -> ItemsView[str, ModelField]:
@@ -509,7 +552,7 @@ class ModelFactory(ABC, Generic[T]):
         for field_name, model_field in cls.get_model_fields(model):
             if cls.should_use_alias_name(model_field, model):
                 field_name = model_field.alias
-            if cls.should_set_field_value(field_name, **kwargs):
+            if cls.should_set_field_value(field_name, model_field, **kwargs):
                 if hasattr(cls, field_name):
                     value = getattr(cls, field_name)
                     if isinstance(value, PostGenerated):
@@ -517,7 +560,7 @@ class ModelFactory(ABC, Generic[T]):
                     else:
                         kwargs[field_name] = cls.handle_factory_field(field_value=value)
                 else:
-                    kwargs[field_name] = cls.get_field_value(model_field=model_field)
+                    kwargs[field_name] = cls.get_field_value(model_field, field_parameters=kwargs.get(field_name, {}))
         for field_name, post_generator in generate_post.items():
             kwargs[field_name] = post_generator.to_value(field_name, kwargs)
         if factory_use_construct:
