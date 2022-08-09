@@ -495,10 +495,8 @@ class ModelFactory(ABC, Generic[T]):
             return False
 
         list_of_pydantic_models_kwargs = kwargs[field_name]
-        if not isinstance(list_of_pydantic_models_kwargs, list) and cls._is_kwargs_missing_pydantic_fields(
-            pydantic_model, list_of_pydantic_models_kwargs
-        ):
-            return True
+        if not isinstance(list_of_pydantic_models_kwargs, list):
+            return cls._is_kwargs_missing_pydantic_fields(pydantic_model, list_of_pydantic_models_kwargs)
 
         return any(
             cls._is_kwargs_missing_pydantic_fields(pydantic_model, pydantic_model_kwargs)

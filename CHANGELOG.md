@@ -162,3 +162,7 @@
 [1.5.0]
 
 - Handle partial attributes factory for child factories solving issue #50 @phbernardes
+
+[1.5.1]
+
+- Fix error when building with a parameter that is a pydantic model [Issue #53] @phbernardes
