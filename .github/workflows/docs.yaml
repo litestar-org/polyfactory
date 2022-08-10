@@ -1,0 +1,18 @@
+name: docs
+on:
+  workflow_run:
+    workflows: ["ci"]
+    branches: [main]
+    types:
+      - completed
+jobs:
+  docs:
+    runs-on: ubuntu-latest
+    if: ${{ github.event.workflow_run.conclusion == 'success' }}
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-python@v4
+        with:
+          python-version: "3.10"
+      - run: pip install mkdocs-material
+      - run: mkdocs gh-deploy --force
