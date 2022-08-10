@@ -20,7 +20,7 @@ from pydantic import BaseModel
 
 from pydantic_factories import ModelFactory
 from pydantic_factories.exceptions import ParameterError
-from tests.models import Person
+from tests.models import Person  # noqa: TC001
 
 
 def test_handles_complex_typing():

@@ -1,8 +1,8 @@
-from collections import Counter, deque
+from collections import Counter, deque  # noqa: TC003
 from datetime import date, datetime, time, timedelta
-from decimal import Decimal
+from decimal import Decimal  # noqa: TC003
 from enum import Enum
-from ipaddress import (
+from ipaddress import (  # noqa: TC003
     IPv4Address,
     IPv4Interface,
     IPv4Network,
@@ -10,9 +10,9 @@ from ipaddress import (
     IPv6Interface,
     IPv6Network,
 )
-from pathlib import Path
+from pathlib import Path  # noqa: TC003
 from typing import Callable
-from uuid import UUID
+from uuid import UUID  # noqa: TC003
 
 import pytest
 from pydantic import (
@@ -57,7 +57,7 @@ from pydantic import (
     StrictInt,
     StrictStr,
 )
-from pydantic.color import Color
+from pydantic.color import Color  # noqa: TC002
 from typing_extensions import Literal
 
 from pydantic_factories import ModelFactory
@@ -120,8 +120,8 @@ def test_alias_parsing():
 
 def test_literal_parsing():
     class MyModel(BaseModel):
-        literal_field: Literal["yoyos"]
-        multi_literal_field: Literal["nolos", "zozos", "kokos"]
+        literal_field: "Literal['yoyos']"
+        multi_literal_field: "Literal['nolos', 'zozos', 'kokos']"
 
     class MyFactory(ModelFactory):
         __model__ = MyModel

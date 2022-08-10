@@ -20,58 +20,52 @@ def test_allows_user_to_define_faker_instance():
 
 
 def test_validates_model_is_set_in_build():
+    class MyFactory(ModelFactory):
+        pass
+
     with pytest.raises(ConfigurationError):
-
-        class MyFactory(ModelFactory):
-            pass
-
         MyFactory.build()
 
 
 def test_validates_model_is_set_in_batch():
+    class MyFactory(ModelFactory):
+        pass
+
     with pytest.raises(ConfigurationError):
-
-        class MyFactory(ModelFactory):
-            pass
-
         MyFactory.batch(2)
 
 
 def test_validates_connection_in_create_sync():
+    class MyFactory(ModelFactory):
+        pass
+
     with pytest.raises(ConfigurationError):
-
-        class MyFactory(ModelFactory):
-            pass
-
         MyFactory.create_sync()
 
 
 def test_validates_connection_in_create_batch_sync():
+    class MyFactory(ModelFactory):
+        pass
+
     with pytest.raises(ConfigurationError):
-
-        class MyFactory(ModelFactory):
-            pass
-
         MyFactory.create_batch_sync(2)
 
 
-@pytest.mark.asyncio
+@pytest.mark.asyncio()
 async def test_validates_connection_in_create_async():
+    class MyFactory(ModelFactory):
+        pass
+
     with pytest.raises(ConfigurationError):
-
-        class MyFactory(ModelFactory):
-            pass
-
         await MyFactory.create_async()
 
 
-@pytest.mark.asyncio
+@pytest.mark.asyncio()
 async def test_validates_connection_in_create_batch_async():
+    class MyFactory(ModelFactory):
+        pass
+
     with pytest.raises(ConfigurationError):
-
-        class MyFactory(ModelFactory):
-            pass
-
         await MyFactory.create_batch_async(2)
 
 

@@ -37,8 +37,8 @@ def test_handle_constrained_list_with_min_items_and_max_items(min_items: int, ma
         assert len(result) >= min_items
         assert len(result) <= max_items
     else:
+        field = create_model_field(str, min_items=min_items, max_items=max_items)
         with pytest.raises(AssertionError):
-            field = create_model_field(str, min_items=min_items, max_items=max_items)
             handle_constrained_collection(collection_type=list, model_field=field, model_factory=ModelFactory)
 
 

@@ -7,6 +7,6 @@ mongo_dsn = "mongodb://localhost:27017"
 postgres_dsn = "postgresql+asyncpg://pydantic-factories:pydantic-factories@postgres:5432/pydantic-factories"
 
 
-@pytest.fixture(scope="function")
+@pytest.fixture()
 def mongo_connection():
     return AsyncIOMotorClient(mongo_dsn)

@@ -1,6 +1,5 @@
-from typing import Any, Optional, Pattern, Tuple, Union, cast
+from typing import TYPE_CHECKING, Any, Optional, Pattern, Tuple, Union, cast
 
-from pydantic import ConstrainedBytes, ConstrainedStr
 from xeger import Xeger
 
 from pydantic_factories.value_generators.primitives import (
@@ -8,9 +7,12 @@ from pydantic_factories.value_generators.primitives import (
     create_random_string,
 )
 
+if TYPE_CHECKING:
+    from pydantic import ConstrainedBytes, ConstrainedStr
+
 
 def parse_constrained_string_or_bytes(
-    field: Union[ConstrainedStr, ConstrainedBytes]
+    field: Union["ConstrainedStr", "ConstrainedBytes"]
 ) -> Tuple[Optional[int], Optional[int], bool]:
     """Parses and validates the given field"""
     lower_case = field.to_lower
@@ -23,7 +25,7 @@ def parse_constrained_string_or_bytes(
     return min_length, max_length, lower_case
 
 
-def handle_constrained_bytes(field: ConstrainedBytes) -> bytes:
+def handle_constrained_bytes(field: "ConstrainedBytes") -> bytes:
     """Handles ConstrainedStr and Fields with string constraints"""
     min_length, max_length, lower_case = parse_constrained_string_or_bytes(field)
     if max_length == 0:
@@ -31,7 +33,7 @@ def handle_constrained_bytes(field: ConstrainedBytes) -> bytes:
     return create_random_bytes(min_length=min_length, max_length=max_length, lower_case=lower_case)
 
 
-def handle_constrained_string(field: ConstrainedStr, random_seed: Optional[int]) -> str:
+def handle_constrained_string(field: "ConstrainedStr", random_seed: Optional[int]) -> str:
     """Handles ConstrainedStr and Fields with string constraints"""
     regex_factory = Xeger(seed=random_seed)
     min_length, max_length, lower_case = parse_constrained_string_or_bytes(field)
@@ -48,4 +50,4 @@ def handle_constrained_string(field: ConstrainedStr, random_seed: Optional[int])
             result += regex_factory.xeger(regex)
     if max_length and len(result) > max_length:
         result = result[:max_length]
-    return cast(str, result.lower() if lower_case else result)
+    return cast("str", result.lower() if lower_case else result)

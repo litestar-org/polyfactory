@@ -41,6 +41,16 @@ repos:
       - id: bandit
         exclude: "test_*"
         args: ["-iii", "-ll", "-s=B308,B703"]
+  - repo: https://github.com/igorshubovych/markdownlint-cli
+    rev: v0.32.1
+    hooks:
+      - id: markdownlint
+        args: [--disable=MD013, --disable=MD033, --disable=MD050]
+  - repo: https://github.com/hadialqattan/pycln
+    rev: v2.1.1
+    hooks:
+      - id: pycln
+        args: [--config=pyproject.toml]
   - repo: https://gitlab.com/pycqa/flake8
     rev: 3.9.2
     hooks:
@@ -52,7 +62,15 @@ repos:
             "flake8-mutable",
             "flake8-print",
             "flake8-simplify",
+            "flake8-type-checking",
+            "flake8-pytest-style",
+            "flake8-implicit-str-concat",
+            "flake8-noqa",
           ]
+  - repo: https://github.com/johnfraney/flake8-markdown
+    rev: v0.3.0
+    hooks:
+      - id: flake8-markdown
   - repo: https://github.com/pycqa/pylint
     rev: "v2.14.5"
     hooks:

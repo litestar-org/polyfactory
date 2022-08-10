@@ -1,7 +1,6 @@
-from typing import Any, List, Union
+from typing import TYPE_CHECKING, Any, List, Union
 
 from pydantic import BaseModel
-from pydantic.fields import ModelField
 
 from pydantic_factories.factory import ModelFactory
 from pydantic_factories.protocols import AsyncPersistenceProtocol
@@ -9,9 +8,12 @@ from pydantic_factories.protocols import AsyncPersistenceProtocol
 try:
     from beanie import Document
     from beanie.odm.fields import PydanticObjectId
-except ImportError:  # pragma: no cover
+except ImportError:
     PydanticObjectId = None
     Document = BaseModel
+
+if TYPE_CHECKING:
+    from pydantic.fields import ModelField
 
 
 class BeaniePersistenceHandler(AsyncPersistenceProtocol[Document]):
@@ -47,7 +49,7 @@ class BeanieDocumentFactory(ModelFactory[Document]):
         return super().is_ignored_type(value=value) or value is PydanticObjectId
 
     @classmethod
-    def get_field_value(cls, model_field: ModelField, field_parameters: Union[dict, list, None] = None) -> Any:
+    def get_field_value(cls, model_field: "ModelField", field_parameters: Union[dict, list, None] = None) -> Any:
         """
         Override to handle the fields created by the beanie Indexed helper function
 

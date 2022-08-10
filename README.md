@@ -1,7 +1,10 @@
+<!-- markdownlint-disable -->
 <div align="center">
 
 ![PyPI - Python Version](https://img.shields.io/pypi/pyversions/pydantic-factories)
 
+[![Language grade: Python](https://img.shields.io/lgtm/grade/python/g/Goldziher/pydantic-factories.svg?logo=lgtm&logoWidth=18)](https://lgtm.com/projects/g/Goldziher/pydantic-factories/context:python)
+[![Total alerts](https://img.shields.io/lgtm/alerts/g/Goldziher/pydantic-factories.svg?logo=lgtm&logoWidth=18)](https://lgtm.com/projects/g/Goldziher/pydantic-factories/alerts/)
 [![Coverage](https://sonarcloud.io/api/project_badges/measure?project=Goldziher_pydantic-factories&metric=coverage)](https://sonarcloud.io/summary/new_code?id=Goldziher_pydantic-factories)
 [![Maintainability Rating](https://sonarcloud.io/api/project_badges/measure?project=Goldziher_pydantic-factories&metric=sqale_rating)](https://sonarcloud.io/summary/new_code?id=Goldziher_pydantic-factories)
 [![Reliability Rating](https://sonarcloud.io/api/project_badges/measure?project=Goldziher_pydantic-factories&metric=reliability_rating)](https://sonarcloud.io/summary/new_code?id=Goldziher_pydantic-factories)
@@ -10,6 +13,7 @@
 [![Discord](https://img.shields.io/discord/919193495116337154?color=blue&label=chat%20on%20discord&logo=discord)](https://discord.gg/X3FJqy8d2j)
 
 </div>
+<!-- markdownlint-restore -->
 
 # Pydantic-Factories
 
@@ -136,9 +140,24 @@ The `ModelFactory` class exposes two build methods:
 - `.batch(size: int, **kwargs)` - build a list of size n instances
 
 ```python
-result = PersonFactory.build()  # a single Person instance
+from pydantic import BaseModel
 
-result = PersonFactory.batch(size=5)  # list[Person, Person, Person, Person, Person]
+from pydantic_factories import ModelFactory
+
+
+class Person(BaseModel):
+    ...
+
+
+class PersonFactory(ModelFactory):
+    __model__ = Person
+
+
+single_result = PersonFactory.build()  # a single Person instance
+
+batch_result = PersonFactory.batch(
+    size=5
+)  # list[Person, Person, Person, Person, Person]
 ```
 
 Any `kwargs` you pass to `.build`, `.batch` or any of the [persistence methods](#persistence), will take precedence over
@@ -147,7 +166,20 @@ whatever defaults are defined on the factory class itself.
 By default, when building a pydantic class, kwargs are validated, to avoid input validation you can use the `factory_use_construct` param.
 
 ```python
-result = PersonFactory.build(id=5)  # Raises a validation error
+from pydantic import BaseModel
+
+from pydantic_factories import ModelFactory
+
+
+class Person(BaseModel):
+    ...
+
+
+class PersonFactory(ModelFactory):
+    __model__ = Person
+
+
+PersonFactory.build(id=5)  # Raises a validation error
 
 result = PersonFactory.build(
     factory_use_construct=True, id=5
@@ -314,6 +346,7 @@ from datetime import date, datetime
 from enum import Enum
 from pydantic import BaseModel, UUID4
 from typing import Any, Dict, List, Union
+from pydantic_factories import ModelFactory
 
 
 class Species(str, Enum):
@@ -334,11 +367,8 @@ class Person(BaseModel):
     birthday: Union[datetime, date]
     pets: List[Pet]
     assets: List[Dict[str, Dict[str, Any]]]
-```
 
-One way of defining defaults is to use hardcoded values:
 
-```python
 pet = Pet(name="Roxy", sound="woof woof", species=Species.DOG)
 
 
@@ -357,16 +387,32 @@ This though is often not desirable. We could instead, define a factory for `Pet`
 range we like. For example:
 
 ```python
+from datetime import date, datetime
+from pydantic import BaseModel, UUID4
+from typing import Any, Dict, List, Union
 from enum import Enum
 from pydantic_factories import ModelFactory, Use
 from random import choice
-
-from .models import Pet, Person
 
 
 class Species(str, Enum):
     CAT = "Cat"
     DOG = "Dog"
+
+
+class Pet(BaseModel):
+    name: str
+    species: Species
+
+
+class Person(BaseModel):
+    id: UUID4
+    name: str
+    hobbies: List[str]
+    age: Union[float, int]
+    birthday: Union[datetime, date]
+    pets: List[Pet]
+    assets: List[Dict[str, Dict[str, Any]]]
 
 
 class PetFactory(ModelFactory):
@@ -390,11 +436,27 @@ attribute** directly, and these will be invoked at build-time. Thus, you could f
 above `PetFactory` like so:
 
 ```python
+from enum import Enum
+from pydantic import BaseModel
+from random import choice
+from pydantic_factories import ModelFactory
+
+
+class Species(str, Enum):
+    CAT = "Cat"
+    DOG = "Dog"
+
+
+class Pet(BaseModel):
+    name: str
+    species: Species
+
+
 class PetFactory(ModelFactory):
     __model__ = Pet
 
-    name = lambda: choice(["Ralph", "Roxy"])
-    species = lambda: choice(list(Species))
+    name = lambda: choice(["Ralph", "Roxy"])  # noqa: E731
+    species = lambda: choice(list(Species))  # noqa: E731
 ```
 
 `Use` is merely a semantic abstraction that makes the factory cleaner and simpler to understand.
@@ -408,6 +470,7 @@ cases this pattern is best avoided, but for the few valid cases the `PostGenerat
 from pydantic import BaseModel
 from pydantic_factories import ModelFactory, PostGenerated
 from random import randint
+from datetime import datetime, timedelta
 
 
 def add_timedelta(name: str, values: dict, *args, **kwds):
@@ -499,11 +562,11 @@ If we call `factory.build()` without passing a value for article_id, an error wi
 To use these methods, you must first specify a sync and/or async persistence handlers for the factory:
 
 ```python
-# persistence.py
+from pydantic_factories import ModelFactory
 from typing import TypeVar, List
 
 from pydantic import BaseModel
-from pydantic_factories import SyncPersistenceProtocol
+from pydantic_factories import SyncPersistenceProtocol, AsyncPersistenceProtocol
 
 T = TypeVar("T", bound=BaseModel)
 
@@ -522,30 +585,40 @@ class AsyncPersistenceHandler(AsyncPersistenceProtocol[T]):
 
     async def save_many(self, data: List[T]) -> List[T]:
         ...  # do stuff
-```
-
-You can then specify one or both of these handlers in your factory:
-
-```python
-from pydantic_factories import ModelFactory
-
-from app.models import Person
-from .persistence import AsyncPersistenceHandler, SyncPersistenceHandler
 
 
 class PersonFactory(ModelFactory):
-    __model__ = Person
     __sync_persistence__ = SyncPersistenceHandler
     __async_persistence__ = AsyncPersistenceHandler
+    ...
 ```
 
 Or create your own base factory and reuse it in your various factories:
 
 ```python
 from pydantic_factories import ModelFactory
+from typing import TypeVar, List
 
-from app.models import Person
-from .persistence import AsyncPersistenceHandler, SyncPersistenceHandler
+from pydantic import BaseModel
+from pydantic_factories import SyncPersistenceProtocol, AsyncPersistenceProtocol
+
+T = TypeVar("T", bound=BaseModel)
+
+
+class SyncPersistenceHandler(SyncPersistenceProtocol[T]):
+    def save(self, data: T) -> T:
+        ...  # do stuff
+
+    def save_many(self, data: List[T]) -> List[T]:
+        ...  # do stuff
+
+
+class AsyncPersistenceHandler(AsyncPersistenceProtocol[T]):
+    async def save(self, data: T) -> T:
+        ...  # do stuff
+
+    async def save_many(self, data: List[T]) -> List[T]:
+        ...  # do stuff
 
 
 class BaseModelFactory(ModelFactory):
@@ -554,7 +627,7 @@ class BaseModelFactory(ModelFactory):
 
 
 class PersonFactory(BaseModelFactory):
-    __model__ = Person
+    ...
 ```
 
 With the persistence handlers in place, you can now use all persistence methods. Please note - you do not need to define
@@ -602,7 +675,6 @@ class PetUpdate(PetBase):
 
 
 class PersonBase(BaseModel):
-
     name: str
     hobbies: List[str]
     age: Union[float, int]
@@ -676,7 +748,6 @@ class BUILDPet(BUILDBase[Pet, PetCreate, PetUpdate]):
 
 
 def test_factory_create():
-
     person_factory = BUILDBase(Person, PersonCreate, PersonUpdate)
 
     pet_factory = BUILDPet(Pet, PetCreate, PetUpdate)
@@ -688,8 +759,8 @@ def test_factory_create():
     create_pet = pet_factory.build_create_object()
     update_pet = pet_factory.build_update_object()
 
-    assert create_person != None
-    assert update_person != None
+    assert create_person is not None
+    assert update_person is not None
 
     assert pet.name == "Fido"
     assert create_pet.name == "Rover"
@@ -727,8 +798,10 @@ it depends on third party libraries, you can create your custom extension
 subclassing the `ModelFactory`, and overriding the `get_mock_value` method to
 add your logic.
 
-```
+```python
+from typing import Any
 from pydantic_factories import ModelFactory
+
 
 class CustomFactory(ModelFactory[Any]):
     """Tweak the ModelFactory to add our custom mocks."""
@@ -772,6 +845,25 @@ class PersonFactory(ModelFactory[Person]):
 When building a person without specifying the Person and pets ages, all these age fields are randomly generated:
 
 ```python
+from pydantic_factories import ModelFactory
+from pydantic import BaseModel
+
+
+class Pet(BaseModel):
+    name: str
+    age: int
+
+
+class Person(BaseModel):
+    name: str
+    pets: list[Pet]
+    age: int
+
+
+class PersonFactory(ModelFactory[Person]):
+    __model__ = Person
+
+
 data = {
     "name": "John",
     "pets": [

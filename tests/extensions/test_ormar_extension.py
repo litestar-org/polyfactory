@@ -1,5 +1,5 @@
-from datetime import datetime
 from enum import Enum
+from typing import TYPE_CHECKING
 
 import sqlalchemy
 from databases import Database
@@ -11,6 +11,10 @@ from tests.conftest import postgres_dsn
 
 database = Database(url=postgres_dsn, force_rollback=True)
 metadata = sqlalchemy.MetaData()
+
+
+if TYPE_CHECKING:
+    from datetime import datetime
 
 
 class BaseMeta:
@@ -25,8 +29,8 @@ class Mood(str, Enum):
 
 class Person(Model):
     id: int = Integer(autoincrement=True, primary_key=True)
-    created_at: datetime = DateTime(timezone=True, server_default=func.now())
-    updated_at: datetime = DateTime(timezone=True, server_default=func.now(), onupdate=func.now())
+    created_at: "datetime" = DateTime(timezone=True, server_default=func.now())
+    updated_at: "datetime" = DateTime(timezone=True, server_default=func.now(), onupdate=func.now())
     mood: Mood = String(choices=Mood, max_length=20)
 
     class Meta(BaseMeta):

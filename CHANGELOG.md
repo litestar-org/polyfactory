@@ -1,3 +1,5 @@
+# Changelog
+
 [0.1.0a]
 
 - core functionalities, including build and batch methods
@@ -166,3 +168,4 @@
 [1.5.1]
 
 - Fix error when building with a parameter that is a pydantic model [Issue #53] @phbernardes
+- Update typing and cast calls to use TYPE_CHECKING blocks
