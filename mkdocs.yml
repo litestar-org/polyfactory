@@ -1,7 +1,7 @@
 site_name: Pydantic Factories
 repo_url: https://github.com/Goldziher/pydantic-factories
 repo_name: Goldziher/pydantic-factories
-site_url: https://starlite-api.github.io/starlite
+site_url: https://Goldziher.github.io/pydantic-factories
 theme:
   name: material
   palette:
