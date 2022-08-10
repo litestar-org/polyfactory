@@ -5,16 +5,20 @@ site_url: https://Goldziher.github.io/pydantic-factories
 theme:
   name: material
   palette:
-    - media: "(prefers-color-scheme: dark)"
-      scheme: mirage
+    # Palette toggle for light mode
+    - scheme: default
+      primary: cyan
       toggle:
-        icon: material/toggle-switch
-        name: Switch to light mode
-    - media: "(prefers-color-scheme: light)"
-      scheme: mirage-light
-      toggle:
-        icon: material/toggle-switch-off-outline
+        icon: material/brightness-7
         name: Switch to dark mode
+
+    # Palette toggle for dark mode
+    - scheme: slate
+      primary: cyan
+      toggle:
+        icon: material/brightness-4
+        name: Switch to light mode
+
   icon:
     repo: fontawesome/brands/github
   features:
