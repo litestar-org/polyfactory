@@ -1,4 +1,4 @@
-from pydantic import ConstrainedInt
+from typing import TYPE_CHECKING
 
 from pydantic_factories.value_generators.constrained_number import (
     generate_constrained_number,
@@ -6,8 +6,11 @@ from pydantic_factories.value_generators.constrained_number import (
 )
 from pydantic_factories.value_generators.primitives import create_random_integer
 
+if TYPE_CHECKING:
+    from pydantic import ConstrainedInt
 
-def handle_constrained_int(field: ConstrainedInt) -> int:
+
+def handle_constrained_int(field: "ConstrainedInt") -> int:
     """
     Handles 'ConstrainedInt' instances
     """

@@ -1,7 +1,5 @@
 from decimal import Decimal
-from typing import Optional, cast
-
-from pydantic import ConstrainedDecimal
+from typing import TYPE_CHECKING, Optional, cast
 
 from pydantic_factories.value_generators.constrained_number import (
     generate_constrained_number,
@@ -9,6 +7,9 @@ from pydantic_factories.value_generators.constrained_number import (
     get_increment,
 )
 from pydantic_factories.value_generators.primitives import create_random_decimal
+
+if TYPE_CHECKING:
+    from pydantic import ConstrainedDecimal
 
 
 def validate_max_digits(
@@ -48,21 +49,21 @@ def handle_decimal_length(
     elif max_digits is not None:
         max_decimals = max_digits - len(whole_numbers)
     else:
-        max_decimals = cast(int, decimal_places)
+        max_decimals = cast("int", decimal_places)
 
     if max_decimals < 0:
         # in this case there are fewer digits than the len of whole_numbers
-        return Decimal(f"{sign}{whole_numbers[:max_decimals]}")
+        return Decimal(sign + whole_numbers[:max_decimals])
 
     decimals = decimals[:max_decimals]
-    return Decimal(f"{sign}{whole_numbers}" + f".{decimals[:decimal_places]}")
+    return Decimal(sign + whole_numbers + "." + decimals[:decimal_places])
 
 
-def handle_constrained_decimal(field: ConstrainedDecimal) -> Decimal:
+def handle_constrained_decimal(field: "ConstrainedDecimal") -> Decimal:
     """
     Handles 'ConstrainedDecimal' instances
     """
-    multiple_of = cast(Optional[Decimal], field.multiple_of)
+    multiple_of = cast("Optional[Decimal]", field.multiple_of)
     decimal_places = field.decimal_places
     max_digits = field.max_digits
     if multiple_of == 0:
@@ -71,10 +72,10 @@ def handle_constrained_decimal(field: ConstrainedDecimal) -> Decimal:
         gt=field.gt, ge=field.ge, lt=field.lt, le=field.le, multiple_of=multiple_of, t_type=Decimal  # type: ignore
     )
     if max_digits is not None:
-        validate_max_digits(max_digits=max_digits, minimum=cast(Decimal, minimum), decimal_places=decimal_places)
+        validate_max_digits(max_digits=max_digits, minimum=cast("Decimal", minimum), decimal_places=decimal_places)
     generated_decimal = generate_constrained_number(
-        minimum=cast(Decimal, minimum),
-        maximum=cast(Decimal, maximum),
+        minimum=cast("Decimal", minimum),
+        maximum=cast("Decimal", maximum),
         multiple_of=multiple_of,
         method=create_random_decimal,
     )

@@ -2,15 +2,17 @@ from dataclasses import Field as DataclassField
 from dataclasses import fields as get_dataclass_fields
 from decimal import Decimal
 from inspect import isclass
-from typing import Any, Tuple, Type, TypeVar, cast
+from typing import TYPE_CHECKING, Any, Tuple, Type, TypeVar, cast
 
 from pydantic import BaseModel, create_model
-from pydantic.fields import ModelField
 from pydantic.utils import almost_equal_floats
 
-from pydantic_factories.protocols import DataclassProtocol
-
 T = TypeVar("T", int, float, Decimal)
+
+if TYPE_CHECKING:
+    from pydantic.fields import ModelField
+
+    from pydantic_factories.protocols import DataclassProtocol
 
 
 def passes_pydantic_multiple_validator(value: T, multiple_of: T) -> bool:
@@ -31,7 +33,7 @@ def is_pydantic_model(value: Any) -> bool:
         return False
 
 
-def set_model_field_to_requried(model_field: ModelField) -> ModelField:
+def set_model_field_to_requried(model_field: "ModelField") -> "ModelField":
     """recursively sets the model_field and all sub_fields to required"""
     model_field.required = True
     if model_field.sub_fields:
@@ -41,7 +43,7 @@ def set_model_field_to_requried(model_field: ModelField) -> ModelField:
 
 
 def create_model_from_dataclass(
-    dataclass: Type[DataclassProtocol],
+    dataclass: Type["DataclassProtocol"],
 ) -> Type[BaseModel]:
     """
     Creates a subclass of BaseModel from a given dataclass
@@ -64,17 +66,17 @@ def create_model_from_dataclass(
             model_field.required = True
             model_field.allow_none = False
         setattr(model, field_name, model_field)
-    return cast(Type[BaseModel], model)
+    return cast("Type[BaseModel]", model)
 
 
-def is_union(model_field: ModelField) -> bool:
+def is_union(model_field: "ModelField") -> bool:
     """Determines whether the given model_field is type Union"""
     if (repr(model_field.outer_type_).split("[")[0] == "typing.Union") or ("|" in repr(model_field.outer_type_)):
         return True
     return False
 
 
-def is_any(model_field: ModelField) -> bool:
+def is_any(model_field: "ModelField") -> bool:
     """Determines whether the given model_field is type Any"""
     return model_field.type_ is Any or (
         hasattr(model_field.outer_type_, "_name")
@@ -83,12 +85,12 @@ def is_any(model_field: ModelField) -> bool:
     )
 
 
-def is_optional(model_field: ModelField) -> bool:
+def is_optional(model_field: "ModelField") -> bool:
     """Determines whether the given model_field is type Optional"""
     return model_field.allow_none and not is_any(model_field=model_field) and not model_field.required
 
 
-def is_literal(model_field: ModelField) -> bool:
+def is_literal(model_field: "ModelField") -> bool:
     """Determines whether a given model_field is a Literal type"""
     return "typing.Literal" in repr(model_field.outer_type_) or "typing_extensions.Literal" in repr(
         model_field.outer_type_

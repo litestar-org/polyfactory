@@ -63,14 +63,14 @@ def handle_container_type(
     if value is not None:
         if isinstance(container, dict):
             container[
-                handle_complex_type(model_field=cast(ModelField, model_field.key_field), model_factory=model_factory)
+                handle_complex_type(model_field=cast("ModelField", model_field.key_field), model_factory=model_factory)
             ] = value
         elif isinstance(container, (list, deque)):
             container.append(value)
         else:
             container.add(value)
             if is_frozen_set:
-                container = cast(set, frozenset(*container))
+                container = cast("set", frozenset(*container))
     return container
 
 

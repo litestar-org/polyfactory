@@ -1,4 +1,4 @@
-from pydantic import ConstrainedFloat
+from typing import TYPE_CHECKING
 
 from pydantic_factories.value_generators.constrained_number import (
     generate_constrained_number,
@@ -6,8 +6,11 @@ from pydantic_factories.value_generators.constrained_number import (
 )
 from pydantic_factories.value_generators.primitives import create_random_float
 
+if TYPE_CHECKING:
+    from pydantic import ConstrainedFloat
 
-def handle_constrained_float(field: ConstrainedFloat) -> float:
+
+def handle_constrained_float(field: "ConstrainedFloat") -> float:
     """
     Handles 'ConstrainedFloat' instances
     """

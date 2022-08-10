@@ -18,6 +18,7 @@ from ipaddress import (
 )
 from pathlib import Path
 from typing import (
+    TYPE_CHECKING,
     Any,
     Callable,
     Dict,
@@ -77,7 +78,6 @@ from pydantic import (
     StrictStr,
 )
 from pydantic.color import Color
-from pydantic.fields import ModelField
 from typing_extensions import get_args
 
 from pydantic_factories.constraints.constrained_collection_handler import (
@@ -119,6 +119,9 @@ from pydantic_factories.value_generators.primitives import (
     create_random_bytes,
 )
 
+if TYPE_CHECKING:
+    from pydantic.fields import ModelField
+
 T = TypeVar("T", bound=Union[BaseModel, DataclassProtocol])
 
 default_faker = Faker()
@@ -134,7 +137,7 @@ try:
     )
 
     is_latest_pydantic = True  # pylint: disable=invalid-name
-except ImportError:  # pragma: no cover
+except ImportError:
     AmqpDsn = Any  # type: ignore
     KafkaDsn = Any  # type: ignore
     PastDate = Any  # type: ignore
@@ -201,7 +204,7 @@ class ModelFactory(ABC, Generic[T]):
         model = cls.__model__
         if is_pydantic_model(model):
             with suppress(NameError):
-                cast(BaseModel, model).update_forward_refs()
+                cast("BaseModel", model).update_forward_refs()
         return model
 
     @classmethod
@@ -234,7 +237,7 @@ class ModelFactory(ABC, Generic[T]):
         return default_faker
 
     @classmethod
-    def should_use_alias_name(cls, model_field: ModelField, model: Type[T]) -> bool:
+    def should_use_alias_name(cls, model_field: "ModelField", model: Type[T]) -> bool:
         """Determines whether a given model field should be set by an alias"""
         if not model_field.alias:
             return False
@@ -355,22 +358,22 @@ class ModelFactory(ABC, Generic[T]):
         )
 
     @classmethod
-    def handle_constrained_field(cls, model_field: ModelField) -> Any:
+    def handle_constrained_field(cls, model_field: "ModelField") -> Any:
         """Handle the built-in pydantic constrained value field types"""
         outer_type = model_field.outer_type_
         try:
             if issubclass(outer_type, ConstrainedFloat):
-                return handle_constrained_float(field=cast(ConstrainedFloat, outer_type))
+                return handle_constrained_float(field=cast("ConstrainedFloat", outer_type))
             if issubclass(outer_type, ConstrainedInt):
-                return handle_constrained_int(field=cast(ConstrainedInt, outer_type))
+                return handle_constrained_int(field=cast("ConstrainedInt", outer_type))
             if issubclass(outer_type, ConstrainedDecimal):
-                return handle_constrained_decimal(field=cast(ConstrainedDecimal, outer_type))
+                return handle_constrained_decimal(field=cast("ConstrainedDecimal", outer_type))
             if issubclass(outer_type, ConstrainedStr):
                 return handle_constrained_string(
-                    field=cast(ConstrainedStr, outer_type), random_seed=cls.__random_seed__
+                    field=cast("ConstrainedStr", outer_type), random_seed=cls.__random_seed__
                 )
             if issubclass(outer_type, ConstrainedBytes):
-                return handle_constrained_bytes(field=cast(ConstrainedBytes, outer_type))
+                return handle_constrained_bytes(field=cast("ConstrainedBytes", outer_type))
             if issubclass(outer_type, (ConstrainedSet, ConstrainedList)) or (
                 is_latest_pydantic and issubclass(outer_type, ConstrainedFrozenSet)
             ):
@@ -398,7 +401,7 @@ class ModelFactory(ABC, Generic[T]):
         if isinstance(field_value, Use):
             return field_value.to_value()
         if cls.is_model_factory(field_value):
-            return cast(ModelFactory, field_value).build()
+            return cast("ModelFactory", field_value).build()
         if callable(field_value):
             return field_value()
         return field_value
@@ -418,7 +421,7 @@ class ModelFactory(ABC, Generic[T]):
         kwargs.setdefault("__allow_none_optionals__", cls.__allow_none_optionals__)
         kwargs.setdefault("__random__seed__", cls.__random_seed__)
         return cast(
-            ModelFactory,
+            "ModelFactory",
             type(
                 f"{model.__name__}Factory",
                 (base or cls,),
@@ -427,7 +430,7 @@ class ModelFactory(ABC, Generic[T]):
         )
 
     @classmethod
-    def get_field_value(cls, model_field: ModelField, field_parameters: Union[dict, list, None] = None) -> Any:
+    def get_field_value(cls, model_field: "ModelField", field_parameters: Union[dict, list, None] = None) -> Any:
         """
         Returns a field value on the subclass if existing, otherwise returns a mock value
         """
@@ -459,7 +462,7 @@ class ModelFactory(ABC, Generic[T]):
         return cls.get_mock_value(field_type=field_type)
 
     @classmethod
-    def should_set_none_value(cls, model_field: ModelField) -> bool:
+    def should_set_none_value(cls, model_field: "ModelField") -> bool:
         """
         Determines whether a given model field should be set to None
 
@@ -484,7 +487,7 @@ class ModelFactory(ABC, Generic[T]):
         return bool(pydantic_model_field_names - kwargs_field_names)
 
     @classmethod
-    def _is_pydantic_with_partial_fields(cls, field_name: str, model_field: ModelField, **kwargs: Any) -> bool:
+    def _is_pydantic_with_partial_fields(cls, field_name: str, model_field: "ModelField", **kwargs: Any) -> bool:
         """
         Determines if the field is a pydantic model AND if the kwargs are missing fields that should be defined in the pydantic model
 
@@ -504,7 +507,7 @@ class ModelFactory(ABC, Generic[T]):
         )
 
     @classmethod
-    def should_set_field_value(cls, field_name: str, model_field: ModelField, **kwargs: Dict[str, Any]) -> bool:
+    def should_set_field_value(cls, field_name: str, model_field: "ModelField", **kwargs: Dict[str, Any]) -> bool:
         """
         Ascertain whether to set a value for a given field_name
 
@@ -522,7 +525,7 @@ class ModelFactory(ABC, Generic[T]):
         )
 
     @classmethod
-    def get_model_fields(cls, model: Type[T]) -> ItemsView[str, ModelField]:
+    def get_model_fields(cls, model: Type[T]) -> ItemsView[str, "ModelField"]:
         """
         A function to retrieve the fields of a given model.
 
@@ -565,7 +568,7 @@ class ModelFactory(ABC, Generic[T]):
             if is_pydantic_model(cls.__model__):
                 return cls.__model__.construct(**kwargs)  # type: ignore
             raise ConfigurationError("factory_use_construct requires a pydantic model as the factory's __model__")
-        return cast(T, cls.__model__(**kwargs))
+        return cast("T", cls.__model__(**kwargs))
 
     @classmethod
     def batch(cls, size: int, **kwargs: Any) -> List[T]:
