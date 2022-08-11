@@ -173,3 +173,7 @@
 [1.5.2]
 
 - Fix error when building with a parameter that is a optional pydantic model [Issue #56] @phbernardes
+
+[1.5.3]
+
+- Fix error with decimal validation
