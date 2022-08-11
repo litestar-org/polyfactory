@@ -10,9 +10,11 @@ jobs:
     env:
       SETUPTOOLS_USE_DISTUTILS: stdlib
     steps:
-      - uses: actions/checkout@v2
-      - uses: actions/setup-python@v2
-      - uses: pre-commit/action@v2.0.3
+      - uses: actions/checkout@v3
+      - uses: actions/setup-python@v4
+        with:
+          python-version: "3.10"
+      - uses: pre-commit/action@v3.0.0
   test:
     needs: validate
     runs-on: ubuntu-latest
@@ -34,6 +36,7 @@ jobs:
         with:
           virtualenvs-create: true
           virtualenvs-in-project: true
+          installer-parallel: true
       - name: Load cached venv
         id: cached-poetry-dependencies
         uses: actions/cache@v2
@@ -47,41 +50,50 @@ jobs:
         run: echo "PYTHONPATH=$PWD" >> $GITHUB_ENV
       - name: Test
         run: poetry run pytest
-  coverage:
-    needs: test
-    runs-on: ubuntu-latest
-    services:
-      mongodb:
-        image: mongo:latest
-        ports:
-          - 27017:27017
-    steps:
-      - name: Start MongoDB
-        uses: supercharge/mongodb-github-action@1.7.0
-      - uses: actions/checkout@v2
-      - uses: actions/setup-python@v2
-        with:
-          python-version: "3.10"
-      - name: Install Poetry
-        uses: snok/install-poetry@v1
-        with:
-          virtualenvs-create: true
-          virtualenvs-in-project: true
-      - name: Load cached venv
-        id: cached-poetry-dependencies
-        uses: actions/cache@v2
-        with:
-          path: .venv
-          key: venv-${{ runner.os }}-3.10-${{ hashFiles('**/poetry.lock') }}
-      - name: Install dependencies
-        if: steps.cached-poetry-dependencies.outputs.cache-hit != 'true'
-        run: poetry install --no-interaction --no-root
-      - name: Set pythonpath
-        run: echo "PYTHONPATH=$PWD" >> $GITHUB_ENV
-      - name: Test
+        if: matrix.python-version != '3.10'
+      - name: Test with Coverage
         run: poetry run pytest --cov=. --cov-report=xml
+        if: matrix.python-version == '3.10'
+      - uses: actions/upload-artifact@v3
+        with:
+          name: coverage-xml
+          path: coverage.xml
+        if: matrix.python-version == '3.10'
+  sonar:
+    needs: test
+    if: github.event.pull_request.head.repo.fork == false
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v3
+      - name: Download Artifacts
+        uses: actions/download-artifact@v3
+        with:
+          name: coverage-xml
+      - name: Fix coverage file for sonarcloud
+        run: sed -i "s/home\/runner\/work\/starlite\/starlite/github\/workspace/g" coverage.xml
       - name: SonarCloud Scan
         uses: sonarsource/sonarcloud-github-action@master
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+  codeql:
+    needs: test
+    runs-on: ubuntu-latest
+    permissions:
+      security-events: write
+    steps:
+      - name: Initialize CodeQL
+        uses: github/codeql-action/init@v2
+        with:
+          languages: python
+      - name: Checkout repository
+        uses: actions/checkout@v3
+      - name: Load cached venv
+        id: cached-poetry-dependencies
+        uses: actions/cache@v3
+        with:
+          path: .venv
+          key: venv-${{ runner.os }}-${{ matrix.python-version }}-${{ hashFiles('**/poetry.lock') }}
+      - name: Perform CodeQL Analysis
+        uses: github/codeql-action/analyze@v2
