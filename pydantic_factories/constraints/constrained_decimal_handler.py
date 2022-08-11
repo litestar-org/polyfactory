@@ -4,7 +4,6 @@ from typing import TYPE_CHECKING, Optional, cast
 from pydantic_factories.value_generators.constrained_number import (
     generate_constrained_number,
     get_constrained_number_range,
-    get_increment,
 )
 from pydantic_factories.value_generators.primitives import create_random_decimal
 
@@ -20,10 +19,10 @@ def validate_max_digits(
     """Validates that max digits and other parameters make sense"""
     assert max_digits > 0, "max_digits must be greater than 0"
     if minimum is not None:
-        minimum -= get_increment(Decimal)
-        assert max_digits >= len(str(abs(minimum))), "minimum is greater than max_digits"
+        min_str = str(minimum).split(".")[1] if "." in str(minimum) else str(minimum)
+        assert max_digits >= len(min_str), "minimum is greater than max_digits"
     if decimal_places is not None:
-        assert max_digits > decimal_places, "max_digits must be greater than decimal places"
+        assert max_digits >= decimal_places, "max_digits must be greater than decimal places"
 
 
 def handle_decimal_length(

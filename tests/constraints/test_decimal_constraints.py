@@ -41,7 +41,7 @@ def test_handle_constrained_decimal_without_constraints():
 
 def test_handle_constrained_decimal_length_validation():
     with pytest.raises(AssertionError):
-        handle_constrained_decimal(create_constrained_field(max_digits=2, ge=Decimal("100.00")))
+        handle_constrained_decimal(create_constrained_field(max_digits=2, ge=Decimal("100.000")))
 
 
 @given(integers(min_value=0, max_value=100))
@@ -62,7 +62,7 @@ def test_handle_constrained_decimal_handles_decimal_places(decimal_places):
 
 @given(integers(min_value=0, max_value=100), integers(min_value=1, max_value=100))
 def test_handle_constrained_decimal_handles_max_digits_and_decimal_places(max_digits, decimal_places):
-    if max_digits > 0 and decimal_places < max_digits:
+    if max_digits > 0 and decimal_places <= max_digits:
         result = handle_constrained_decimal(
             create_constrained_field(max_digits=max_digits, decimal_places=decimal_places)
         )
@@ -186,14 +186,14 @@ def test_handle_constrained_decimal_handles_with_ge_and_le_and_lower_multiple_of
 
 def test_max_digits_and_decimal_places():
     class Person(BaseModel):
-        social_score: condecimal(decimal_places=3, max_digits=20, gt=Decimal(0), le=Decimal("999.9999"))
+        social_score: condecimal(decimal_places=4, max_digits=5, gt=Decimal("0.0"), le=Decimal("9.9999"))
 
     class PersonFactory(ModelFactory):
         __model__ = Person
 
     result = PersonFactory.build()
     assert isinstance(result.social_score, Decimal)
-    assert len(str(result.social_score).split(".")[1]) == 3
+    assert len(str(result.social_score).split(".")[1]) == 4
     assert result.social_score > 0
 
 
@@ -244,3 +244,16 @@ def test_handle_decimal_length():
     assert isinstance(result, Decimal)
     assert len(result.as_tuple().digits) == 1
     assert result.as_tuple().exponent == 0
+
+
+def test_zero_to_one_range() -> None:
+    class FractionExample(BaseModel):
+        fraction: condecimal(ge=Decimal("0"), le=Decimal("1"), decimal_places=2, max_digits=3)
+
+    class FractionExampleFactory(ModelFactory):
+        __model__ = FractionExample
+
+    result = FractionExampleFactory.build()
+
+    assert result.fraction >= Decimal("0")
+    assert result.fraction <= Decimal("1")
