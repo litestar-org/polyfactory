@@ -1,4 +1,4 @@
-from typing import List
+from typing import List, Optional
 
 from pydantic import BaseModel
 
@@ -125,6 +125,24 @@ def test_factory_child_pydantic_model():
 
     assert person.address.city == "Paris"
     assert person.address.country == "France"
+
+
+def test_factory_child_none():
+    """
+    Given a Pydantic Factory,
+    When I build a model using the factory passing None as attribute,
+    Then the pydantic model is correctly built.
+    """
+
+    class PersonOptional(BaseModel):
+        name: str
+        address: Optional[Address]
+
+    class PersonOptionalFactory(ModelFactory):
+        __model__ = PersonOptional
+
+    person = PersonOptionalFactory.build(address=None)
+    assert person.address is None
 
 
 class AssertDict:

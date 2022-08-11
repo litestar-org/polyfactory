@@ -169,3 +169,7 @@
 
 - Fix error when building with a parameter that is a pydantic model [Issue #53] @phbernardes
 - Update typing and cast calls to use TYPE_CHECKING blocks
+
+[1.5.2]
+
+- Fix error when building with a parameter that is a optional pydantic model [Issue #56] @phbernardes

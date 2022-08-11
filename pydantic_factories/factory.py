@@ -479,7 +479,7 @@ class ModelFactory(ABC, Generic[T]):
 
         Returns False if all fields of the pydantic model are defined in the kwargs, and True otherwise.
         """
-        if is_pydantic_model(pydantic_model_kwargs.__class__):
+        if is_pydantic_model(pydantic_model_kwargs.__class__) or pydantic_model_kwargs is None:
             return False
         pydantic_model_fields = cls.get_model_fields(pydantic_model)
         pydantic_model_field_names = set(dict(pydantic_model_fields).keys())
