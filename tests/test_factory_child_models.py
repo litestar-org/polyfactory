@@ -1,4 +1,4 @@
-from typing import List, Optional
+from typing import List, Mapping, Optional
 
 from pydantic import BaseModel
 
@@ -168,3 +168,35 @@ class AssertDict:
             assert isinstance(json, str)
         else:
             assert expected_json == json
+
+
+def test_factory_not_ok():
+    """
+    Given a Pydantic Model with nested Mapping field,
+    When I build the model using the factory passing only partial attributes,
+    Then the model is correctly built.
+    """
+
+    class NestedSchema(BaseModel):
+        v: str
+        z: int
+
+    class UpperSchema(BaseModel):
+        a: int
+        b: Mapping[str, str]
+        nested: Mapping[str, NestedSchema]
+
+    class NestedSchemaFactory(ModelFactory):
+        __model__ = NestedSchema
+
+    class UpperSchemaFactory(ModelFactory):
+        __model__ = UpperSchema
+
+    nested = NestedSchema(v="hello", z=0)
+    some_dict = {"test": "fine"}
+    upper = UpperSchemaFactory.build(b=some_dict, nested={"nested_key": nested})
+
+    assert upper.b["test"] == "fine"
+    assert "nested_key" in upper.nested
+    assert upper.nested["nested_key"].v == nested.v
+    assert upper.nested["nested_key"].z == nested.z

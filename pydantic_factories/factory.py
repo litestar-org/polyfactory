@@ -78,6 +78,7 @@ from pydantic import (
     StrictStr,
 )
 from pydantic.color import Color
+from pydantic.fields import SHAPE_MAPPING
 from typing_extensions import get_args
 
 from pydantic_factories.constraints.constrained_collection_handler import (
@@ -494,7 +495,7 @@ class ModelFactory(ABC, Generic[T]):
         Returns False if model_field isn't a Pydantic model OR if all fields of the pydantic model are defined in the kwargs, and True otherwise.
         """
         pydantic_model = model_field.type_
-        if not is_pydantic_model(pydantic_model):
+        if not is_pydantic_model(pydantic_model) or model_field.shape == SHAPE_MAPPING:
             return False
 
         list_of_pydantic_models_kwargs = kwargs[field_name]
