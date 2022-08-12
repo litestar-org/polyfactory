@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "pydantic-factories"
-version = "1.5.3"
+version = "1.5.4"
 description = "Mock data generation for pydantic based models"
 authors = ["Na'aman Hirschfeld <nhirschfeld@gmail.com>"]
 maintainers = ["Na'aman Hirschfeld <nhirschfeld@gmail.com>"]
@@ -58,17 +58,17 @@ xeger = "^0.3.5"
 
 [tool.poetry.dev-dependencies]
 pytest = "*"
-pre-commit = "*"
-hypothesis = "*"
-pytest-cov = "*"
 email-validator = "*"
+hypothesis = "*"
+pre-commit = "*"
 pytest-asyncio = "*"
+pytest-cov = "*"
 # extensions
+asyncpg = "*"
 beanie = "*"
+odmantic = "*"
 ormar = "*"
 sqlmodel = "*"
-odmantic = "*"
-asyncpg = "*"
 
 [build-system]
 requires = ["poetry-core>=1.0.0"]
