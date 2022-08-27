@@ -16,7 +16,7 @@ def validate_max_digits(
     minimum: Optional[Decimal],
     decimal_places: Optional[int],
 ) -> None:
-    """Validates that max digits and other parameters make sense"""
+    """Validates that max digits and other parameters make sense."""
     assert max_digits > 0, "max_digits must be greater than 0"
     if minimum is not None:
         min_str = str(minimum).split(".")[1] if "." in str(minimum) else str(minimum)
@@ -30,9 +30,7 @@ def handle_decimal_length(
     decimal_places: Optional[int],
     max_digits: Optional[int],
 ) -> Decimal:
-    """
-    Handles the length of the decimal
-    """
+    """Handles the length of the decimal."""
     string_number = str(generated_decimal)
     sign = "-" if "-" in string_number else "+"
     string_number = string_number.replace("-", "")
@@ -59,9 +57,7 @@ def handle_decimal_length(
 
 
 def handle_constrained_decimal(field: "ConstrainedDecimal") -> Decimal:
-    """
-    Handles 'ConstrainedDecimal' instances
-    """
+    """Handles 'ConstrainedDecimal' instances."""
     multiple_of = cast("Optional[Decimal]", field.multiple_of)
     decimal_places = field.decimal_places
     max_digits = field.max_digits

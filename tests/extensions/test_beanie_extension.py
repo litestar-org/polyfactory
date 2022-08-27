@@ -1,11 +1,25 @@
 from typing import List
 
-import pymongo
 import pytest
-from beanie import Document, init_beanie
-from beanie.odm.fields import Indexed, PydanticObjectId  # noqa: TC002
 
-from pydantic_factories.extensions import BeanieDocumentFactory
+try:
+    import pymongo
+    from beanie import Document, init_beanie
+    from beanie.odm.fields import Indexed, PydanticObjectId  # noqa: TC002
+    from motor.motor_asyncio import AsyncIOMotorClient
+
+    from pydantic_factories.extensions import BeanieDocumentFactory
+except ImportError:
+    pytest.skip(allow_module_level=True)
+
+# mongo can be run locally or using the docker-compose file at the repository's root
+
+mongo_dsn = "mongodb://localhost:27017"
+
+
+@pytest.fixture()
+def mongo_connection():
+    return AsyncIOMotorClient(mongo_dsn)
 
 
 class MyDocument(Document):

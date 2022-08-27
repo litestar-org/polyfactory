@@ -1,13 +1,19 @@
 from enum import Enum
 from typing import TYPE_CHECKING
 
-import sqlalchemy
-from databases import Database
-from ormar import DateTime, ForeignKey, Integer, Model, String
-from sqlalchemy import func
+import pytest
 
-from pydantic_factories.extensions import OrmarModelFactory
-from tests.conftest import postgres_dsn
+try:
+    import sqlalchemy
+    from databases import Database
+    from ormar import DateTime, ForeignKey, Integer, Model, String
+    from sqlalchemy import func
+
+    from pydantic_factories.extensions import OrmarModelFactory
+except ImportError:
+    pytest.skip(allow_module_level=True)
+
+postgres_dsn = "postgresql+asyncpg://pydantic-factories:pydantic-factories@postgres:5432/pydantic-factories"
 
 database = Database(url=postgres_dsn, force_rollback=True)
 metadata = sqlalchemy.MetaData()

@@ -2,9 +2,13 @@ from typing import List
 from uuid import UUID  # noqa: TC003
 
 import pytest
-from odmantic import AIOEngine, EmbeddedModel, Model
 
-from pydantic_factories.extensions.odmantic_odm import OdmanticModelFactory
+try:
+    from odmantic import AIOEngine, EmbeddedModel, Model
+
+    from pydantic_factories.extensions.odmantic_odm import OdmanticModelFactory
+except ImportError:
+    pytest.skip(allow_module_level=True)
 
 
 class OtherEmbeddedDocument(EmbeddedModel):

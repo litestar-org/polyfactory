@@ -16,7 +16,8 @@ if TYPE_CHECKING:
 
 
 def passes_pydantic_multiple_validator(value: T, multiple_of: T) -> bool:
-    """A function that determines whether a given value passes the pydantic multiple_of validation"""
+    """A function that determines whether a given value passes the pydantic
+    multiple_of validation."""
     if multiple_of == 0:
         return True
     mod = float(value) / float(multiple_of) % 1
@@ -24,7 +25,7 @@ def passes_pydantic_multiple_validator(value: T, multiple_of: T) -> bool:
 
 
 def is_pydantic_model(value: Any) -> bool:
-    """A function to determine if a given value is a subclass of BaseModel"""
+    """A function to determine if a given value is a subclass of BaseModel."""
     try:
         return isclass(value) and issubclass(value, BaseModel)
     except TypeError:  # pragma: no cover
@@ -34,7 +35,7 @@ def is_pydantic_model(value: Any) -> bool:
 
 
 def set_model_field_to_requried(model_field: "ModelField") -> "ModelField":
-    """recursively sets the model_field and all sub_fields to required"""
+    """recursively sets the model_field and all sub_fields to required."""
     model_field.required = True
     if model_field.sub_fields:
         for index, sub_field in enumerate(model_field.sub_fields):
@@ -45,12 +46,12 @@ def set_model_field_to_requried(model_field: "ModelField") -> "ModelField":
 def create_model_from_dataclass(
     dataclass: Type["DataclassProtocol"],
 ) -> Type[BaseModel]:
-    """
-    Creates a subclass of BaseModel from a given dataclass
+    """Creates a subclass of BaseModel from a given dataclass.
 
-    We are limited here because Pydantic does not perform proper field parsing when going this route -
-    which requires we set the fields as required and not required independently.
-    We currently do not handle deeply nested Any and Optional.
+    We are limited here because Pydantic does not perform proper field
+    parsing when going this route - which requires we set the fields as
+    required and not required independently. We currently do not handle
+    deeply nested Any and Optional.
     """
     dataclass_fields: Tuple[DataclassField, ...] = get_dataclass_fields(dataclass)
     model = create_model(dataclass.__name__, **{field.name: (field.type, ...) for field in dataclass_fields})  # type: ignore
@@ -70,14 +71,14 @@ def create_model_from_dataclass(
 
 
 def is_union(model_field: "ModelField") -> bool:
-    """Determines whether the given model_field is type Union"""
+    """Determines whether the given model_field is type Union."""
     if (repr(model_field.outer_type_).split("[")[0] == "typing.Union") or ("|" in repr(model_field.outer_type_)):
         return True
     return False
 
 
 def is_any(model_field: "ModelField") -> bool:
-    """Determines whether the given model_field is type Any"""
+    """Determines whether the given model_field is type Any."""
     return model_field.type_ is Any or (
         hasattr(model_field.outer_type_, "_name")
         and getattr(model_field.outer_type_, "_name")
@@ -86,12 +87,12 @@ def is_any(model_field: "ModelField") -> bool:
 
 
 def is_optional(model_field: "ModelField") -> bool:
-    """Determines whether the given model_field is type Optional"""
+    """Determines whether the given model_field is type Optional."""
     return model_field.allow_none and not is_any(model_field=model_field) and not model_field.required
 
 
 def is_literal(model_field: "ModelField") -> bool:
-    """Determines whether a given model_field is a Literal type"""
+    """Determines whether a given model_field is a Literal type."""
     return "typing.Literal" in repr(model_field.outer_type_) or "typing_extensions.Literal" in repr(
         model_field.outer_type_
     )

@@ -54,7 +54,10 @@ shape_mapping = {
 def handle_container_type(
     model_field: ModelField, container_type: Type[Any], model_factory: Type["ModelFactory"]
 ) -> Any:
-    """Handles generation of container types, e.g. dict, list etc. recursively"""
+    """Handles generation of container types, e.g. dict, list etc.
+
+    recursively
+    """
     is_frozen_set = container_type is frozenset
     container = container_type() if not is_frozen_set else set()
     value = None
@@ -75,7 +78,8 @@ def handle_container_type(
 
 
 def handle_complex_type(model_field: ModelField, model_factory: Type["ModelFactory"]) -> Any:
-    """Recursive type generation based on typing info stored in the graph like structure of pydantic model_fields"""
+    """Recursive type generation based on typing info stored in the graph like
+    structure of pydantic model_fields."""
     container_type: Optional[Type[Any]] = shape_mapping.get(model_field.shape)
     if container_type:
         if container_type is not tuple:

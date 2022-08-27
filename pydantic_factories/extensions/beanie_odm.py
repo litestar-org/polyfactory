@@ -18,14 +18,11 @@ if TYPE_CHECKING:
 
 class BeaniePersistenceHandler(AsyncPersistenceProtocol[Document]):
     async def save(self, data: Document) -> Document:
-        """
-        Persists a single instance in mongoDB
-        """
+        """Persists a single instance in mongoDB."""
         return await data.insert()
 
     async def save_many(self, data: List[Document]) -> List[Document]:
-        """
-        Persists multiple instances in mongoDB
+        """Persists multiple instances in mongoDB.
 
         Note: we cannot use the .insert_many method from Beanie here because it doesn't return the created instances
         """
@@ -36,22 +33,19 @@ class BeaniePersistenceHandler(AsyncPersistenceProtocol[Document]):
 
 
 class BeanieDocumentFactory(ModelFactory[Document]):
-    """Subclass of ModelFactory for Beanie Documents"""
+    """Subclass of ModelFactory for Beanie Documents."""
 
     __async_persistence__ = BeaniePersistenceHandler
 
     @classmethod
     def is_ignored_type(cls, value: Any) -> bool:
-        """
-        Overridden to exclude PydanticObjectId
-
-        """
+        """Overridden to exclude PydanticObjectId."""
         return super().is_ignored_type(value=value) or value is PydanticObjectId
 
     @classmethod
     def get_field_value(cls, model_field: "ModelField", field_parameters: Union[dict, list, None] = None) -> Any:
-        """
-        Override to handle the fields created by the beanie Indexed helper function
+        """Override to handle the fields created by the beanie Indexed helper
+        function.
 
         Note: these fields do not have a class we can use, rather they instantiate a private class inside a closure.
         Hence, the hacky solution of checking the __name__ property

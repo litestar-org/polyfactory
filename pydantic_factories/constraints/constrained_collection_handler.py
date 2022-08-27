@@ -16,7 +16,7 @@ def handle_constrained_collection(
     model_factory: Type["ModelFactory"],
     model_field: "ModelField",
 ) -> Union[list, set]:
-    """Generate a constrained list or set"""
+    """Generate a constrained list or set."""
     constrained_field = cast("Union[ConstrainedList, ConstrainedSet]", model_field.outer_type_)
     min_items = constrained_field.min_items or 0
     max_items = constrained_field.max_items if constrained_field.max_items is not None else min_items + 1

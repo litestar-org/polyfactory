@@ -8,7 +8,8 @@ T = TypeVar("T", Decimal, int, float)
 
 
 def get_increment(t_type: Type[T]) -> T:
-    """gets a small increment base to add to constrained values, i.e. lt/gt entries"""
+    """gets a small increment base to add to constrained values, i.e. lt/gt
+    entries."""
     if t_type == int:
         return t_type(1)
     if t_type == float:
@@ -17,10 +18,9 @@ def get_increment(t_type: Type[T]) -> T:
 
 
 def get_value_or_none(equal_value: Optional[T], constrained: Optional[T], increment: T) -> Optional[T]:
-    """
-    helper function to reduce branching in the get_constrained_number_range method
-    if the ge/le value is available, return that, otherwise return the gt/lt value + an increment or None
-    """
+    """helper function to reduce branching in the get_constrained_number_range
+    method if the ge/le value is available, return that, otherwise return the
+    gt/lt value + an increment or None."""
     if equal_value is not None:
         return equal_value
     if constrained is not None:
@@ -36,7 +36,7 @@ def get_constrained_number_range(
     t_type: Type[T],
     multiple_of: Optional[T] = None,
 ) -> Tuple[Optional[T], Optional[T]]:
-    """Returns the minimum and maximum values given a field's constraints"""
+    """Returns the minimum and maximum values given a field's constraints."""
     seed = t_type(random.random() * 10)
     minimum = get_value_or_none(equal_value=ge, constrained=gt, increment=get_increment(t_type))
     maximum = get_value_or_none(equal_value=le, constrained=lt, increment=-get_increment(t_type))
@@ -60,7 +60,8 @@ def generate_constrained_number(
     multiple_of: Optional[T],
     method: Callable,
 ) -> T:
-    """Generates a constrained number, output depends on the passed in callbacks"""
+    """Generates a constrained number, output depends on the passed in
+    callbacks."""
     if minimum is not None and maximum is not None:
         if multiple_of is None:
             return cast("T", method(minimum, maximum))

@@ -11,9 +11,7 @@ if TYPE_CHECKING:
 
 
 def handle_constrained_int(field: "ConstrainedInt") -> int:
-    """
-    Handles 'ConstrainedInt' instances
-    """
+    """Handles 'ConstrainedInt' instances."""
     multiple_of = field.multiple_of
     if multiple_of == 0:
         return 0

@@ -181,3 +181,8 @@
 [1.5.4]
 
 - Fix error when building with a parameter that is a optional pydantic model [Issue #56] @phbernardes
+
+[1.6.0]
+
+- Updated pydantic version to `1.9.2`
+- Restricted supported pydantic version to `>=1.9.0`

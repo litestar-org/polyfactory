@@ -79,7 +79,6 @@ def test_ignored():
 
 
 def test_post_generation():
-
     random_delta = timedelta(days=random.randint(0, 12), seconds=random.randint(13, 13000))
 
     def add_timedelta(name, values, **kwds):

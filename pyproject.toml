@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "pydantic-factories"
-version = "1.5.4"
+version = "1.6.0"
 description = "Mock data generation for pydantic based models"
 authors = ["Na'aman Hirschfeld <nhirschfeld@gmail.com>"]
 maintainers = ["Na'aman Hirschfeld <nhirschfeld@gmail.com>"]
@@ -10,20 +10,15 @@ homepage = "https://github.com/Goldziher/pydantic-factories"
 repository = "https://github.com/Goldziher/pydantic-factories"
 documentation = "https://github.com/Goldziher/pydantic-factories"
 keywords = [
+    "dataclasses",
+    "factory",
+    "faker",
+    "mock",
     "pydantic",
     "pytest",
-    "factory",
-    "fastapi",
-    "sqlmodel",
-    "ormar",
-    "factory-boy",
-    "testing",
-    "mock",
-    "faker",
-    "dataclasses",
+    "starlite",
     "tdd",
-    "beanie",
-    "odmantic",
+    "testing",
 ]
 classifiers = [
     "Environment :: Web Environment",
@@ -51,10 +46,10 @@ packages = [
 
 [tool.poetry.dependencies]
 python = ">=3.7,<4.0"
-pydantic = "*"
+pydantic = ">=1.9.0"
 faker = "*"
 typing-extensions = "*"
-xeger = "^0.3.5"
+xeger = "*"
 
 [tool.poetry.dev-dependencies]
 pytest = "*"
@@ -63,12 +58,6 @@ hypothesis = "*"
 pre-commit = "*"
 pytest-asyncio = "*"
 pytest-cov = "*"
-# extensions
-asyncpg = "*"
-beanie = "*"
-odmantic = "*"
-ormar = "*"
-sqlmodel = "*"
 
 [build-system]
 requires = ["poetry-core>=1.0.0"]

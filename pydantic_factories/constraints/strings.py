@@ -14,7 +14,7 @@ if TYPE_CHECKING:
 def parse_constrained_string_or_bytes(
     field: Union["ConstrainedStr", "ConstrainedBytes"]
 ) -> Tuple[Optional[int], Optional[int], bool]:
-    """Parses and validates the given field"""
+    """Parses and validates the given field."""
     lower_case = field.to_lower
     min_length = field.min_length
     max_length = field.max_length
@@ -26,7 +26,7 @@ def parse_constrained_string_or_bytes(
 
 
 def handle_constrained_bytes(field: "ConstrainedBytes") -> bytes:
-    """Handles ConstrainedStr and Fields with string constraints"""
+    """Handles ConstrainedStr and Fields with string constraints."""
     min_length, max_length, lower_case = parse_constrained_string_or_bytes(field)
     if max_length == 0:
         return b""
@@ -34,7 +34,7 @@ def handle_constrained_bytes(field: "ConstrainedBytes") -> bytes:
 
 
 def handle_constrained_string(field: "ConstrainedStr", random_seed: Optional[int]) -> str:
-    """Handles ConstrainedStr and Fields with string constraints"""
+    """Handles ConstrainedStr and Fields with string constraints."""
     regex_factory = Xeger(seed=random_seed)
     min_length, max_length, lower_case = parse_constrained_string_or_bytes(field)
     if max_length == 0:
