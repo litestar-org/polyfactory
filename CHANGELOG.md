@@ -186,3 +186,7 @@
 
 - Updated pydantic version to `1.9.2`
 - Restricted supported pydantic version to `>=1.9.0`
+
+[1.6.1]
+
+- Updated pydantic version to `1.10.0`
