@@ -190,3 +190,7 @@
 [1.6.1]
 
 - Updated pydantic version to `1.10.0`
+
+[1.6.2]
+
+- Fix random-seed doesn't affect UUID generation

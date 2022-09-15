@@ -31,7 +31,7 @@ from typing import (
     Union,
     cast,
 )
-from uuid import NAMESPACE_DNS, UUID, uuid1, uuid3, uuid4, uuid5
+from uuid import NAMESPACE_DNS, UUID, uuid1, uuid3, uuid5
 
 from faker import Faker
 from pydantic import (
@@ -258,7 +258,7 @@ class ModelFactory(ABC, Generic[T]):  # noqa: B024
             # standard library objects
             Path: create_path,
             Decimal: faker.pydecimal,
-            UUID: uuid4,
+            UUID: faker.uuid4,
             # datetime
             datetime: faker.date_time_between,
             date: faker.date_this_decade,
@@ -301,7 +301,7 @@ class ModelFactory(ABC, Generic[T]):  # noqa: B024
             RedisDsn: lambda: "redis://localhost:6379",
             UUID1: uuid1,
             UUID3: lambda: uuid3(NAMESPACE_DNS, faker.pystr()),
-            UUID4: uuid4,
+            UUID4: faker.uuid4,
             UUID5: lambda: uuid5(NAMESPACE_DNS, faker.pystr()),
             SecretBytes: create_random_bytes,
             SecretStr: faker.pystr,
