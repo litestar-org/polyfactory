@@ -10,7 +10,7 @@ repos:
         exclude: "\\.idea/(.)*"
       - id: trailing-whitespace
   - repo: https://github.com/asottile/pyupgrade
-    rev: v2.38.0
+    rev: v2.38.2
     hooks:
       - id: pyupgrade
         args: ["--py37-plus"]
@@ -77,14 +77,14 @@ repos:
     hooks:
       - id: flake8-markdown
   - repo: https://github.com/pycqa/pylint
-    rev: "v2.15.2"
+    rev: "v2.15.3"
     hooks:
       - id: pylint
         exclude: "/(test_|conftest.py)"
         args: ["--unsafe-load-any-extension=y"]
         additional_dependencies: [pydantic, faker, pytest, beanie, ormar, xeger]
   - repo: https://github.com/pre-commit/mirrors-mypy
-    rev: "v0.971"
+    rev: "v0.981"
     hooks:
       - id: mypy
         exclude: "/(test_|conftest.py)"
