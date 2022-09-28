@@ -194,3 +194,7 @@
 [1.6.2]
 
 - Fix random-seed doesn't affect UUID generation
+
+[1.7.0]
+
+- Add Python `3.11` support
