@@ -33,7 +33,7 @@ async def odmantic_engine(mongo_connection) -> AIOEngine:
     return AIOEngine(motor_client=mongo_connection, database=mongo_connection.db_name)
 
 
-def test_handles_odmantic_models():
+def test_handles_odmantic_models() -> None:
     class MyFactory(OdmanticModelFactory):
         __model__ = MyModel
 

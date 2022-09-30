@@ -9,7 +9,7 @@ from pydantic_factories.utils import is_pydantic_model, is_union
 try:
     from ormar import Model
 except ImportError:
-    Model = BaseModel
+    Model = BaseModel  # type: ignore
 
 if TYPE_CHECKING:
     from pydantic.fields import ModelField

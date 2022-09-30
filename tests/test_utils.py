@@ -7,7 +7,7 @@ from pydantic_factories.factory import ModelFactory
 from pydantic_factories.utils import is_union
 
 
-def test_is_union():
+def test_is_union() -> None:
     class UnionTest(BaseModel):
         union: Union[int, str]
         no_union: Any
@@ -33,7 +33,7 @@ def test_is_union():
             __model__ = UnionTestWithPipe
 
         for field_name, model_field in UnionTestWithPipeFactory.get_model_fields(UnionTestWithPipeFactory._get_model()):
-            if (field_name == "union_pipe") or (field_name == "union_normal"):
+            if field_name in ("union_pipe", "union_normal"):
                 assert is_union(model_field)
             else:
                 assert not is_union(model_field)

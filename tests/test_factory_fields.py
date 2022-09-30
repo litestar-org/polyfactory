@@ -1,6 +1,6 @@
 import random
 from datetime import datetime, timedelta
-from typing import Optional
+from typing import Any, Optional
 
 import pytest
 from pydantic import BaseModel
@@ -10,7 +10,7 @@ from pydantic_factories.exceptions import MissingBuildKwargError
 from pydantic_factories.fields import Ignore, PostGenerated, Require
 
 
-def test_use():
+def test_use() -> None:
     class MyClass:
         name: str
 
@@ -36,7 +36,7 @@ def test_use():
     assert result.my_class.name == default_name
 
 
-def test_sub_factory():
+def test_sub_factory() -> None:
     default_name = "Moishe Zuchmir"
 
     class FirstModel(BaseModel):
@@ -53,7 +53,7 @@ def test_sub_factory():
     assert result.first_model.name == default_name
 
 
-def test_build_kwarg():
+def test_build_kwarg() -> None:
     class MyModel(BaseModel):
         name: str
 
@@ -67,7 +67,7 @@ def test_build_kwarg():
     assert MyFactory.build(name="moishe").name == "moishe"
 
 
-def test_ignored():
+def test_ignored() -> None:
     class MyModel(BaseModel):
         name: Optional[str]
 
@@ -78,26 +78,26 @@ def test_ignored():
     assert MyFactory.build().name is None
 
 
-def test_post_generation():
+def test_post_generation() -> None:
     random_delta = timedelta(days=random.randint(0, 12), seconds=random.randint(13, 13000))
 
-    def add_timedelta(name, values, **kwds):
+    def add_timedelta(name: str, values: Any, **kwargs: Any) -> datetime:
         assert name == "to_dt"
         assert "from_dt" in values
         assert isinstance(values["from_dt"], datetime)
         return values["from_dt"] + random_delta
 
-    def decide_long(name, values, **kwds):
+    def decide_long(name: str, values: Any, **kwargs: Any) -> bool:
         assert name == "is_long"
         assert "from_dt" in values
         assert "to_dt" in values
-        assert "threshold" in kwds
+        assert "threshold" in kwargs
         assert isinstance(values["from_dt"], datetime)
         assert isinstance(values["to_dt"], datetime)
         difference = values["to_dt"] - values["from_dt"]
-        return difference.days > kwds["threshold"]
+        return difference.days > kwargs["threshold"]  # type: ignore
 
-    def make_caption(name, values, **kwds):
+    def make_caption(name: str, values: Any, **kwargs: Any) -> str:
         assert name == "caption"
         assert "is_long" in values
         return "this was really long for me" if values["is_long"] else "just this"

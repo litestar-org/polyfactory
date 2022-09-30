@@ -37,7 +37,7 @@ class Person(Model):
     id: int = Integer(autoincrement=True, primary_key=True)
     created_at: "datetime" = DateTime(timezone=True, server_default=func.now())
     updated_at: "datetime" = DateTime(timezone=True, server_default=func.now(), onupdate=func.now())
-    mood: Mood = String(choices=Mood, max_length=20)
+    mood: Mood = String(choices=Mood, max_length=20)  # type: ignore
 
     class Meta(BaseMeta):
         pass
@@ -60,7 +60,7 @@ class JobFactory(OrmarModelFactory):
     __model__ = Job
 
 
-def test_person_factory():
+def test_person_factory() -> None:
     result = PersonFactory.build()
 
     assert result.id
@@ -69,7 +69,7 @@ def test_person_factory():
     assert result.mood
 
 
-def test_job_factory():
+def test_job_factory() -> None:
     job_name: str = "Unemployed"
     result = JobFactory.build(name=job_name)
 

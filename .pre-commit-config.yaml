@@ -14,6 +14,11 @@ repos:
     hooks:
       - id: pyupgrade
         args: ["--py37-plus"]
+  - repo: https://github.com/hadialqattan/pycln
+    rev: v2.1.1
+    hooks:
+      - id: pycln
+        args: [--config=pyproject.toml]
   - repo: https://github.com/pycqa/isort
     rev: 5.10.1
     hooks:
@@ -51,11 +56,6 @@ repos:
     hooks:
       - id: markdownlint
         args: [--disable=MD013, --disable=MD033, --disable=MD050]
-  - repo: https://github.com/hadialqattan/pycln
-    rev: v2.1.1
-    hooks:
-      - id: pycln
-        args: [--config=pyproject.toml]
   - repo: https://gitlab.com/pycqa/flake8
     rev: 3.9.2
     hooks:
@@ -76,16 +76,24 @@ repos:
     rev: v0.4.0
     hooks:
       - id: flake8-markdown
+  - repo: https://github.com/dosisod/refurb
+    rev: 66e6874c
+    hooks:
+      - id: refurb
+        additional_dependencies:
+          [pydantic, faker, pytest, hypothesis, odmantic, ormar, beanie, xeger]
   - repo: https://github.com/pycqa/pylint
     rev: "v2.15.3"
     hooks:
       - id: pylint
-        exclude: "/(test_|conftest.py)"
+        exclude: "tests"
         args: ["--unsafe-load-any-extension=y"]
-        additional_dependencies: [pydantic, faker, pytest, beanie, ormar, xeger]
+        additional_dependencies:
+          [pydantic, faker, pytest, hypothesis, odmantic, ormar, beanie, xeger]
   - repo: https://github.com/pre-commit/mirrors-mypy
     rev: "v0.981"
     hooks:
       - id: mypy
-        exclude: "/(test_|conftest.py)"
-        additional_dependencies: [pydantic, faker, xeger]
+        exclude: "_extension"
+        additional_dependencies:
+          [pydantic, faker, pytest, hypothesis, xeger, odmantic, ormar, beanie]

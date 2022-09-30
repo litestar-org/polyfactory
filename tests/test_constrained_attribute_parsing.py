@@ -25,15 +25,15 @@ from tests.models import Person
 pattern = r"(a|b|c)zz"
 
 
-def test_constrained_attribute_parsing():
+def test_constrained_attribute_parsing() -> None:
     class ConstrainedModel(BaseModel):
-        conbytes_field: conbytes()
-        condecimal_field: condecimal()
-        confloat_field: confloat()
-        conint_field: conint()
-        conlist_field: conlist(str)
-        conset_field: conset(str)
-        constr_field: constr(to_lower=True)
+        conbytes_field: conbytes()  # type: ignore[valid-type]
+        condecimal_field: condecimal()  # type: ignore[valid-type]
+        confloat_field: confloat()  # type: ignore[valid-type]
+        conint_field: conint()  # type: ignore[valid-type]
+        conlist_field: conlist(str)  # type: ignore[valid-type]
+        conset_field: conset(str)  # type: ignore[valid-type]
+        constr_field: constr(to_lower=True)  # type: ignore[valid-type]
         str_field1: str = Field(min_length=11)
         str_field2: str = Field(max_length=11)
         str_field3: str = Field(min_length=8, max_length=11, regex=pattern)
@@ -76,10 +76,10 @@ def test_constrained_attribute_parsing():
     assert result.constant_field == 100
 
 
-def test_complex_constrained_attribute_parsing():
+def test_complex_constrained_attribute_parsing() -> None:
     class MyModel(BaseModel):
-        conlist_with_model_field: conlist(Person, min_items=3)
-        conlist_with_complex_type: conlist(Dict[str, Tuple[Person, Person, Person]], min_items=1)
+        conlist_with_model_field: conlist(Person, min_items=3)  # type: ignore[valid-type]
+        conlist_with_complex_type: conlist(Dict[str, Tuple[Person, Person, Person]], min_items=1)  # type: ignore[valid-type]
 
     class MyFactory(ModelFactory):
         __model__ = MyModel
@@ -95,7 +95,7 @@ def test_complex_constrained_attribute_parsing():
     assert all([isinstance(v, Person) for v in list(result.conlist_with_complex_type[0].values())[0]])
 
 
-def test_nested_constrained_attribute_handling():
+def test_nested_constrained_attribute_handling() -> None:
     # subclassing the constrained fields is not documented by pydantic, but is supported apparently
     class MyConstrainedString(ConstrainedStr):
         regex = re.compile("^vpc-.*$")
@@ -113,13 +113,13 @@ def test_nested_constrained_attribute_handling():
         ge = Decimal("11.0")
 
     class MyModel(BaseModel):
-        conbytes_list_field: List[conbytes()]
-        condecimal_list_field: List[condecimal()]
-        confloat_list_field: List[confloat()]
-        conint_list_field: List[conint()]
-        conlist_list_field: List[conlist(str)]
-        conset_list_field: List[conset(str)]
-        constr_list_field: List[constr(to_lower=True)]
+        conbytes_list_field: List[conbytes()]  # type: ignore[valid-type]
+        condecimal_list_field: List[condecimal()]  # type: ignore[valid-type]
+        confloat_list_field: List[confloat()]  # type: ignore[valid-type]
+        conint_list_field: List[conint()]  # type: ignore[valid-type]
+        conlist_list_field: List[conlist(str)]  # type: ignore[valid-type]
+        conset_list_field: List[conset(str)]  # type: ignore[valid-type]
+        constr_list_field: List[constr(to_lower=True)]  # type: ignore[valid-type]
 
         my_bytes_list_field: List[MyConstrainedBytes]
         my_decimal_list_field: List[MyConstrainedDecimal]

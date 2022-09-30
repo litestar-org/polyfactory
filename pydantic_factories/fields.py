@@ -1,4 +1,9 @@
-from typing import Any, Callable, Dict
+from typing import Any, Callable, Dict, TypeVar
+
+from typing_extensions import ParamSpec
+
+T = TypeVar("T")
+P = ParamSpec("P")
 
 
 class Use:
@@ -8,14 +13,14 @@ class Use:
     attribute.
     """
 
-    def __init__(self, cb: Callable, *args: Any, **defaults: Any) -> None:
+    def __init__(self, cb: Callable[P, T], *args: P.args, **kwargs: P.kwargs) -> None:
         self.cb = cb
-        self.defaults = defaults
+        self.kwargs = kwargs
         self.args = args
 
     def to_value(self) -> Any:
         """invokes the callback function."""
-        return self.cb(*self.args, **self.defaults)
+        return self.cb(*self.args, **self.kwargs)
 
 
 class PostGenerated:
@@ -27,14 +32,14 @@ class PostGenerated:
     argument and a dictionary of values as its second argument.
     """
 
-    def __init__(self, cb: Callable, *args: Any, **defaults: Any) -> None:
+    def __init__(self, cb: Callable, *args: Any, **kwargs: Any) -> None:
         self.cb = cb
-        self.defaults = defaults
+        self.kwargs = kwargs
         self.args = args
 
     def to_value(self, name: str, values: Dict[str, Any]) -> Any:
         """invokes the callback function."""
-        return self.cb(name, values, *self.args, **self.defaults)
+        return self.cb(name, values, *self.args, **self.kwargs)
 
 
 class Require:

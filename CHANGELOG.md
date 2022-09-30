@@ -172,7 +172,7 @@
 
 [1.5.2]
 
-- Fix error when building with a parameter that is a optional pydantic model [Issue #56] @phbernardes
+- Fix error when building with a parameter that is an optional pydantic model [Issue #56] @phbernardes
 
 [1.5.3]
 
@@ -180,7 +180,7 @@
 
 [1.5.4]
 
-- Fix error when building with a parameter that is a optional pydantic model [Issue #56] @phbernardes
+- Fix error when building with a parameter that is an optional pydantic model [Issue #56] @phbernardes
 
 [1.6.0]
 

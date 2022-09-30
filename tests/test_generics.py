@@ -46,7 +46,7 @@ class APIResponse(GenericModel, Generic[APIResponseData]):
     data: List[APIResponseData]
 
 
-def test_generic_factory_one_response():
+def test_generic_factory_one_response() -> None:
     class APIResponseFactory(ModelFactory):
         __model__ = APIResponse[OneResponse]
 
@@ -56,7 +56,7 @@ def test_generic_factory_one_response():
     assert isinstance(result.data[0], OneResponse)
 
 
-def test_generic_factory_two_response():
+def test_generic_factory_two_response() -> None:
     class APIResponseFactory(ModelFactory):
         __model__ = APIResponse[TwoResponse]
 
@@ -66,7 +66,7 @@ def test_generic_factory_two_response():
     assert isinstance(result.data[0], TwoResponse)
 
 
-def test_generic_factory_three_response():
+def test_generic_factory_three_response() -> None:
     class APIResponseFactory(ModelFactory):
         __model__ = APIResponse[ThreeResponse]
 
@@ -76,7 +76,7 @@ def test_generic_factory_three_response():
     assert isinstance(result.data[0], ThreeResponse)
 
 
-def test_generic_factory_union_response():
+def test_generic_factory_union_response() -> None:
     class APIResponseFactory(ModelFactory):
         __model__ = APIResponse[Union[OneResponse, TwoResponse, ThreeResponse]]
 

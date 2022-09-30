@@ -9,8 +9,8 @@ try:
     from beanie import Document
     from beanie.odm.fields import PydanticObjectId
 except ImportError:
-    PydanticObjectId = None
-    Document = BaseModel
+    PydanticObjectId = None  # type: ignore
+    Document = BaseModel  # type: ignore
 
 if TYPE_CHECKING:
     from pydantic.fields import ModelField
@@ -19,7 +19,7 @@ if TYPE_CHECKING:
 class BeaniePersistenceHandler(AsyncPersistenceProtocol[Document]):
     async def save(self, data: Document) -> Document:
         """Persists a single instance in mongoDB."""
-        return await data.insert()
+        return await data.insert()  # type: ignore
 
     async def save_many(self, data: List[Document]) -> List[Document]:
         """Persists multiple instances in mongoDB.

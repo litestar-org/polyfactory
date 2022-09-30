@@ -3,7 +3,7 @@ from pydantic import BaseModel, Field
 from pydantic_factories import ModelFactory
 
 
-def test_random_seed():
+def test_random_seed() -> None:
     class MyModel(BaseModel):
         id: int
         special_id: str = Field(regex=r"ID-[1-9]{3}\.[1-9]{3}")

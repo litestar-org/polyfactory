@@ -34,12 +34,12 @@ def is_pydantic_model(value: Any) -> bool:
         return False
 
 
-def set_model_field_to_requried(model_field: "ModelField") -> "ModelField":
-    """recursively sets the model_field and all sub_fields to required."""
+def set_model_field_to_required(model_field: "ModelField") -> "ModelField":
+    """recursively sets the model_field and all sub_fields as required."""
     model_field.required = True
     if model_field.sub_fields:
         for index, sub_field in enumerate(model_field.sub_fields):
-            model_field.sub_fields[index] = set_model_field_to_requried(model_field=sub_field)
+            model_field.sub_fields[index] = set_model_field_to_required(model_field=sub_field)
     return model_field
 
 
@@ -58,7 +58,7 @@ def create_model_from_dataclass(
     for field_name, model_field in model.__fields__.items():
         dataclass_field = [field for field in dataclass_fields if field.name == field_name][0]
         typing_string = repr(dataclass_field.type)
-        model_field = set_model_field_to_requried(model_field=model_field)
+        model_field = set_model_field_to_required(model_field=model_field)
         if typing_string.startswith("typing.Optional") or typing_string == "typing.Any":
             model_field.required = False
             model_field.allow_none = True

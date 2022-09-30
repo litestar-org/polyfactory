@@ -30,7 +30,7 @@ def create_model_field(
     integers(min_value=0, max_value=10),
     integers(min_value=0, max_value=10),
 )
-def test_handle_constrained_list_with_min_items_and_max_items(min_items: int, max_items: int):
+def test_handle_constrained_list_with_min_items_and_max_items(min_items: int, max_items: int) -> None:
     if max_items >= min_items:
         field = create_model_field(str, min_items=min_items, max_items=max_items)
         result = handle_constrained_collection(collection_type=list, model_field=field, model_factory=ModelFactory)
@@ -47,7 +47,7 @@ def test_handle_constrained_list_with_min_items_and_max_items(min_items: int, ma
 )
 def test_handle_constrained_list_with_max_items(
     max_items: int,
-):
+) -> None:
     field = create_model_field(str, max_items=max_items)
     result = handle_constrained_collection(collection_type=list, model_field=field, model_factory=ModelFactory)
     assert len(result) <= max_items
@@ -58,14 +58,14 @@ def test_handle_constrained_list_with_max_items(
 )
 def test_handle_constrained_list_with_min_items(
     min_items: int,
-):
+) -> None:
     field = create_model_field(str, min_items=min_items)
     result = handle_constrained_collection(collection_type=list, model_field=field, model_factory=ModelFactory)
     assert len(result) >= min_items
 
 
-def test_handle_constrained_list_with_different_types():
-    for t_type in ModelFactory.get_provider_map().keys():
+def test_handle_constrained_list_with_different_types() -> None:
+    for t_type in ModelFactory.get_provider_map():
         field = create_model_field(t_type, min_items=1)
         result = handle_constrained_collection(collection_type=list, model_field=field, model_factory=ModelFactory)
         assert len(result) > 0

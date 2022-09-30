@@ -15,22 +15,22 @@ class MyModel(BaseModel):
 
 
 class MySyncPersistenceHandler(SyncPersistenceProtocol):
-    def save(self, data: Any, *args, **kwargs) -> Any:
+    def save(self, data: Any, *args: Any, **kwargs: Any) -> Any:
         return data
 
-    def save_many(self, data: Any, *args, **kwargs) -> Any:
+    def save_many(self, data: Any, *args: Any, **kwargs: Any) -> Any:
         return data
 
 
 class MyAsyncPersistenceHandler(AsyncPersistenceProtocol):
-    async def save(self, data: Any, *args, **kwargs) -> Any:
+    async def save(self, data: Any, *args: Any, **kwargs: Any) -> Any:
         return data
 
-    async def save_many(self, data: Any, *args, **kwargs) -> Any:
+    async def save_many(self, data: Any, *args: Any, **kwargs: Any) -> Any:
         return data
 
 
-def test_sync_persistence_handler_is_set_and_called_with_instance():
+def test_sync_persistence_handler_is_set_and_called_with_instance() -> None:
     class MyFactory(ModelFactory):
         __model__ = MyModel
         __sync_persistence__ = MySyncPersistenceHandler()
@@ -39,7 +39,7 @@ def test_sync_persistence_handler_is_set_and_called_with_instance():
     assert [instance.name for instance in MyFactory.create_batch_sync(size=2)]
 
 
-def test_sync_persistence_handler_is_set_and_called_with_class():
+def test_sync_persistence_handler_is_set_and_called_with_class() -> None:
     class MyFactory(ModelFactory):
         __model__ = MyModel
         __sync_persistence__ = MySyncPersistenceHandler
@@ -49,7 +49,7 @@ def test_sync_persistence_handler_is_set_and_called_with_class():
 
 
 @pytest.mark.asyncio()
-async def test_async_persistence_handler_is_set_and_called_with_instance():
+async def test_async_persistence_handler_is_set_and_called_with_instance() -> None:
     class MyFactory(ModelFactory):
         __model__ = MyModel
         __async_persistence__ = MyAsyncPersistenceHandler()
@@ -59,7 +59,7 @@ async def test_async_persistence_handler_is_set_and_called_with_instance():
 
 
 @pytest.mark.asyncio()
-async def test_async_persistence_handler_is_set_and_called_with_class():
+async def test_async_persistence_handler_is_set_and_called_with_class() -> None:
     class MyFactory(ModelFactory):
         __model__ = MyModel
         __async_persistence__ = MyAsyncPersistenceHandler

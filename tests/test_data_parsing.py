@@ -65,7 +65,7 @@ from pydantic_factories.exceptions import ParameterError
 from tests.models import Person, PersonFactoryWithDefaults, Pet
 
 
-def test_enum_parsing():
+def test_enum_parsing() -> None:
     class MyStrEnum(str, Enum):
         FIRST_NAME = "Moishe Zuchmir"
         SECOND_NAME = "Hannah Arendt"
@@ -87,7 +87,7 @@ def test_enum_parsing():
     assert isinstance(result.worth, MyIntEnum)
 
 
-def test_callback_parsing():
+def test_callback_parsing() -> None:
     today = date.today()
 
     class MyModel(BaseModel):
@@ -108,7 +108,7 @@ def test_callback_parsing():
     assert callable(result.secret)
 
 
-def test_alias_parsing():
+def test_alias_parsing() -> None:
     class MyModel(BaseModel):
         aliased_field: str = Field(alias="special_field")
 
@@ -118,7 +118,7 @@ def test_alias_parsing():
     assert isinstance(MyFactory.build().aliased_field, str)
 
 
-def test_literal_parsing():
+def test_literal_parsing() -> None:
     class MyModel(BaseModel):
         literal_field: "Literal['yoyos']"
         multi_literal_field: "Literal['nolos', 'zozos', 'kokos']"
@@ -132,7 +132,7 @@ def test_literal_parsing():
     assert values == {"nolos", "zozos", "kokos"}
 
 
-def test_embedded_models_parsing():
+def test_embedded_models_parsing() -> None:
     class MyModel(BaseModel):
         pet: Pet
 
@@ -143,7 +143,7 @@ def test_embedded_models_parsing():
     assert isinstance(result.pet, Pet)
 
 
-def test_embedded_factories_parsing():
+def test_embedded_factories_parsing() -> None:
     class MyModel(BaseModel):
         person: Person
 
@@ -155,7 +155,7 @@ def test_embedded_factories_parsing():
     assert isinstance(result.person, Person)
 
 
-def test_type_property_parsing():
+def test_type_property_parsing() -> None:
     class MyModel(BaseModel):
         object_field: object
         float_field: float
@@ -234,7 +234,7 @@ def test_type_property_parsing():
 
     result = MyFactory.build()
 
-    for key in MyFactory.get_provider_map().keys():
+    for key in MyFactory.get_provider_map():
         key_name = key.__name__ if hasattr(key, "__name__") else key._name
         if hasattr(result, f"{key_name}_field"):
             assert isinstance(getattr(result, f"{key_name}_field"), key)
@@ -242,9 +242,9 @@ def test_type_property_parsing():
             assert getattr(result, f"{key_name}_pydantic_type") is not None
 
 
-def test_class_parsing():
+def test_class_parsing() -> None:
     class TestClassWithoutKwargs:
-        def __init__(self):
+        def __init__(self) -> None:
             self.flag = "123"
 
     class MyModel(BaseModel):
@@ -271,17 +271,17 @@ def test_class_parsing():
     assert isinstance(result.runtime_error_field, RuntimeError)
 
     class TestClassWithKwargs:
-        def __init__(self, flag: str):
+        def __init__(self, _: str):
             self.flag = str
 
-    class MyModel(BaseModel):
+    class MyNewModel(BaseModel):
         class Config(BaseConfig):
             arbitrary_types_allowed = True
 
         class_field: TestClassWithKwargs
 
     class MySecondFactory(ModelFactory):
-        __model__ = MyModel
+        __model__ = MyNewModel
 
     with pytest.raises(ParameterError):
         MySecondFactory.build()

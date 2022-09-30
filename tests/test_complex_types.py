@@ -23,7 +23,7 @@ from pydantic_factories.exceptions import ParameterError
 from tests.models import Person  # noqa: TC001
 
 
-def test_handles_complex_typing():
+def test_handles_complex_typing() -> None:
     class MyModel(BaseModel):
         nested_dict: Dict[str, Dict[Union[int, str], Dict[Any, List[Dict[str, str]]]]]
         dict_str_any: Dict[str, Any]
@@ -54,7 +54,7 @@ def test_handles_complex_typing():
     assert result.frozen_set
 
 
-def test_handles_complex_typing_with_embedded_models():
+def test_handles_complex_typing_with_embedded_models() -> None:
     class MyModel(BaseModel):
         person_dict: Dict[str, Person]
         person_list: List[Person]
@@ -68,7 +68,7 @@ def test_handles_complex_typing_with_embedded_models():
     assert result.person_list[0].pets
 
 
-def test_raises_for_user_defined_types():
+def test_raises_for_user_defined_types() -> None:
     class MyClass:
         def __init__(self, value: int):
             self.value = value
@@ -86,7 +86,7 @@ def test_raises_for_user_defined_types():
         MyFactory.build()
 
 
-def test_randomizes_optional_returns():
+def test_randomizes_optional_returns() -> None:
     """this is a flaky test - because it depends on randomness, hence it's been re-ran multiple times."""
 
     class MyModel(BaseModel):
@@ -125,7 +125,7 @@ def test_randomizes_optional_returns():
     assert not failed
 
 
-def test_complex_typing_with_enum():
+def test_complex_typing_with_enum() -> None:
     class Animal(str, Enum):
         DOG = "Dog"
         CAT = "Cat"

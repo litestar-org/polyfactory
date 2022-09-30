@@ -10,7 +10,7 @@ from pydantic_factories import ModelFactory
 from tests.models import Person
 
 
-def test_factory_vanilla_dc():
+def test_factory_vanilla_dc() -> None:
     @vanilla_dataclass
     class VanillaDC:
         id: int
@@ -31,7 +31,7 @@ def test_factory_vanilla_dc():
     assert [isinstance(value, int) for value in result.list_field[0].values()]
 
 
-def test_factory_pydantic_dc():
+def test_factory_pydantic_dc() -> None:
     @pydantic_dataclass
     class PydanticDC:
         id: int
@@ -54,7 +54,7 @@ def test_factory_pydantic_dc():
     assert result.constrained_field >= 100
 
 
-def test_vanilla_dc_with_embedded_model():
+def test_vanilla_dc_with_embedded_model() -> None:
     @vanilla_dataclass
     class VanillaDC:
         people: List[Person]
@@ -68,7 +68,7 @@ def test_vanilla_dc_with_embedded_model():
     assert [isinstance(person, Person) for person in result.people]
 
 
-def test_pydantic_dc_with_embedded_model():
+def test_pydantic_dc_with_embedded_model() -> None:
     @vanilla_dataclass
     class PydanticDC:
         people: List[Person]
@@ -82,7 +82,7 @@ def test_pydantic_dc_with_embedded_model():
     assert [isinstance(person, Person) for person in result.people]
 
 
-def test_model_with_embedded_dataclasses():
+def test_model_with_embedded_dataclasses() -> None:
     @vanilla_dataclass
     class VanillaDC:
         people: List[Person]
@@ -110,7 +110,7 @@ def function_with_kwargs(first: int, second: float, third: str = "moishe") -> No
     pass
 
 
-def test_complex_embedded_dataclass():
+def test_complex_embedded_dataclass() -> None:
     @vanilla_dataclass
     class VanillaDC:
         people: List[Person]

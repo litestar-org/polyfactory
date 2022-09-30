@@ -8,7 +8,7 @@ from pydantic_factories import ConfigurationError, ModelFactory
 from tests.models import Pet
 
 
-def test_allows_user_to_define_faker_instance():
+def test_allows_user_to_define_faker_instance() -> None:
     my_faker = Faker()
     setattr(my_faker, "__test__attr__", None)
 
@@ -19,7 +19,7 @@ def test_allows_user_to_define_faker_instance():
     assert hasattr(MyFactory._get_faker(), "__test__attr__")
 
 
-def test_validates_model_is_set_in_build():
+def test_validates_model_is_set_in_build() -> None:
     class MyFactory(ModelFactory):
         pass
 
@@ -27,7 +27,7 @@ def test_validates_model_is_set_in_build():
         MyFactory.build()
 
 
-def test_validates_model_is_set_in_batch():
+def test_validates_model_is_set_in_batch() -> None:
     class MyFactory(ModelFactory):
         pass
 
@@ -35,7 +35,7 @@ def test_validates_model_is_set_in_batch():
         MyFactory.batch(2)
 
 
-def test_validates_connection_in_create_sync():
+def test_validates_connection_in_create_sync() -> None:
     class MyFactory(ModelFactory):
         pass
 
@@ -43,7 +43,7 @@ def test_validates_connection_in_create_sync():
         MyFactory.create_sync()
 
 
-def test_validates_connection_in_create_batch_sync():
+def test_validates_connection_in_create_batch_sync() -> None:
     class MyFactory(ModelFactory):
         pass
 
@@ -52,7 +52,7 @@ def test_validates_connection_in_create_batch_sync():
 
 
 @pytest.mark.asyncio()
-async def test_validates_connection_in_create_async():
+async def test_validates_connection_in_create_async() -> None:
     class MyFactory(ModelFactory):
         pass
 
@@ -61,7 +61,7 @@ async def test_validates_connection_in_create_async():
 
 
 @pytest.mark.asyncio()
-async def test_validates_connection_in_create_batch_async():
+async def test_validates_connection_in_create_batch_async() -> None:
     class MyFactory(ModelFactory):
         pass
 
@@ -69,7 +69,7 @@ async def test_validates_connection_in_create_batch_async():
         await MyFactory.create_batch_async(2)
 
 
-def test_factory_handling_of_optionals():
+def test_factory_handling_of_optionals() -> None:
     class ModelWithOptionalValues(BaseModel):
         name: Optional[str]
         id: str
@@ -95,7 +95,7 @@ def test_factory_handling_of_optionals():
     assert any(r.complex[0] is not None for r in [FactoryWithoutNoneOptionals.build() for _ in range(10)])
 
 
-def test_determine_results():
+def test_determine_results() -> None:
     class ModelWithOptionalValues(BaseModel):
         name: Optional[str]
 

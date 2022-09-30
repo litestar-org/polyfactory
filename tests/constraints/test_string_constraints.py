@@ -40,7 +40,7 @@ REGEXES = [
 @given(booleans(), integers(min_value=5, max_value=100), integers(min_value=5, max_value=100))
 def test_handle_constrained_string_with_min_length_and_max_length_and_regex(
     to_lower: bool, min_length: int, max_length: int
-):
+) -> None:
     field = create_constrained_field(to_lower=to_lower, min_length=min_length, max_length=max_length)
     if min_length < 0 or max_length < 0 or min_length > max_length:
         with pytest.raises(AssertionError):
@@ -60,7 +60,9 @@ def test_handle_constrained_string_with_min_length_and_max_length_and_regex(
 
 
 @given(booleans(), integers(max_value=10000), integers(max_value=10000))
-def test_handle_constrained_string_with_min_length_and_max_length(to_lower: bool, min_length: int, max_length: int):
+def test_handle_constrained_string_with_min_length_and_max_length(
+    to_lower: bool, min_length: int, max_length: int
+) -> None:
     field = create_constrained_field(to_lower=to_lower, min_length=min_length, max_length=max_length)
     if min_length < 0 or max_length < 0 or min_length > max_length:
         with pytest.raises(AssertionError):
@@ -74,7 +76,7 @@ def test_handle_constrained_string_with_min_length_and_max_length(to_lower: bool
 
 
 @given(booleans(), integers(max_value=10000))
-def test_handle_constrained_string_with_min_length(to_lower: bool, min_length: int):
+def test_handle_constrained_string_with_min_length(to_lower: bool, min_length: int) -> None:
     field = create_constrained_field(to_lower=to_lower, min_length=min_length)
     if min_length < 0:
         with pytest.raises(AssertionError):
@@ -87,7 +89,7 @@ def test_handle_constrained_string_with_min_length(to_lower: bool, min_length: i
 
 
 @given(booleans(), integers(max_value=10000))
-def test_handle_constrained_string_with_max_length(to_lower: bool, max_length: int):
+def test_handle_constrained_string_with_max_length(to_lower: bool, max_length: int) -> None:
     field = create_constrained_field(to_lower=to_lower, max_length=max_length)
     if max_length < 0:
         with pytest.raises(AssertionError):

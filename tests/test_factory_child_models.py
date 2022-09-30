@@ -1,4 +1,4 @@
-from typing import List, Mapping, Optional
+from typing import Any, List, Mapping, Optional
 
 from pydantic import BaseModel
 
@@ -38,7 +38,7 @@ class PersonFactory(ModelFactory):
     __model__ = Person
 
 
-def test_factory_child_model_list():
+def test_factory_child_model_list() -> None:
     """Given a Pydantic model with a list of Pydantic models as attributes,
     When I create a model using the factory passing only part of the attributes
     of these attributes, Then I get the models with the attributes I passed and
@@ -68,7 +68,7 @@ def test_factory_child_model_list():
         },
     }
 
-    person = PersonFactory.build(**data)
+    person = PersonFactory.build(factory_use_construct=False, **data)
     expected_json = {
         "name": "Jean",
         "age": AssertDict.random_int,
@@ -113,7 +113,7 @@ def test_factory_child_model_list():
     AssertDict.assert_dict_expected_shape(expected_json, person.dict())
 
 
-def test_factory_child_pydantic_model():
+def test_factory_child_pydantic_model() -> None:
     """Given a Pydantic Factory, When I build a model using the factory passing
     a Pydantic model as attribute, Then the pydantic model is correctly
     built."""
@@ -124,7 +124,7 @@ def test_factory_child_pydantic_model():
     assert person.address.country == "France"
 
 
-def test_factory_child_none():
+def test_factory_child_none() -> None:
     """Given a Pydantic Factory, When I build a model using the factory passing
     None as attribute, Then the pydantic model is correctly built."""
 
@@ -145,7 +145,7 @@ class AssertDict:
     random_str = "random_str"
 
     @staticmethod
-    def assert_dict_expected_shape(expected_json, json):
+    def assert_dict_expected_shape(expected_json: Any, json: Any) -> None:
         if isinstance(expected_json, list):
             assert len(expected_json) == len(json)
             for expected, actual in zip(expected_json, json):
@@ -164,7 +164,7 @@ class AssertDict:
             assert expected_json == json
 
 
-def test_factory_not_ok():
+def test_factory_not_ok() -> None:
     """Given a Pydantic Model with nested Mapping field, When I build the model
     using the factory passing only partial attributes, Then the model is
     correctly built."""
@@ -177,9 +177,6 @@ def test_factory_not_ok():
         a: int
         b: Mapping[str, str]
         nested: Mapping[str, NestedSchema]
-
-    class NestedSchemaFactory(ModelFactory):
-        __model__ = NestedSchema
 
     class UpperSchemaFactory(ModelFactory):
         __model__ = UpperSchema

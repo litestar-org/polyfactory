@@ -21,6 +21,7 @@ from typing import (
     TYPE_CHECKING,
     Any,
     Callable,
+    ClassVar,
     Dict,
     Generic,
     ItemsView,
@@ -134,12 +135,14 @@ default_faker = Faker()
 
 
 class ModelFactory(ABC, Generic[T]):  # noqa: B024
-    __model__: Type[T]
-    __faker__: Optional[Faker]
-    __sync_persistence__: Optional[Union[Type[SyncPersistenceProtocol[T]], SyncPersistenceProtocol[T]]] = None
-    __async_persistence__: Optional[Union[Type[AsyncPersistenceProtocol[T]], AsyncPersistenceProtocol[T]]] = None
-    __allow_none_optionals__: bool = True
-    __random_seed__: Optional[int] = None
+    __model__: ClassVar[Type[T]]  # type: ignore[misc]
+    __faker__: ClassVar[Optional[Faker]]
+    __sync_persistence__: ClassVar[Optional[Union[Type[SyncPersistenceProtocol[T]], SyncPersistenceProtocol[T]]]] = None  # type: ignore[misc]
+    __async_persistence__: ClassVar[  # type: ignore[misc]
+        Optional[Union[Type[AsyncPersistenceProtocol[T]], AsyncPersistenceProtocol[T]]]
+    ] = None
+    __allow_none_optionals__: ClassVar[bool] = True
+    __random_seed__: ClassVar[Optional[int]] = None
 
     @classmethod
     def seed_random(cls, seed: int) -> None:
@@ -160,7 +163,7 @@ class ModelFactory(ABC, Generic[T]):  # noqa: B024
         Field."""
         return isclass(value) and any(
             issubclass(value, c)
-            for c in [
+            for c in (
                 ConstrainedBytes,
                 ConstrainedDecimal,
                 ConstrainedFloat,
@@ -169,7 +172,7 @@ class ModelFactory(ABC, Generic[T]):  # noqa: B024
                 ConstrainedList,
                 ConstrainedSet,
                 ConstrainedStr,
-            ]
+            )
         )
 
     @classmethod
@@ -330,7 +333,7 @@ class ModelFactory(ABC, Generic[T]):  # noqa: B024
             with suppress(Exception):
                 return field_type()
         raise ParameterError(
-            f"Unsupported type: {repr(field_type)}"
+            f"Unsupported type: {field_type!r}"
             f"\n\nEither extend the providers map or add a factory function for this model field"
         )
 
@@ -351,9 +354,7 @@ class ModelFactory(ABC, Generic[T]):  # noqa: B024
                 )
             if issubclass(outer_type, ConstrainedBytes):
                 return handle_constrained_bytes(field=cast("ConstrainedBytes", outer_type))
-            if issubclass(outer_type, (ConstrainedSet, ConstrainedList)) or (
-                issubclass(outer_type, ConstrainedFrozenSet)
-            ):
+            if issubclass(outer_type, (ConstrainedSet, ConstrainedList, ConstrainedFrozenSet)):
                 collection_type = list if issubclass(outer_type, ConstrainedList) else set
                 result = handle_constrained_collection(
                     collection_type=collection_type, model_field=model_field, model_factory=cls  # type: ignore

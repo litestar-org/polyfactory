@@ -9,7 +9,7 @@ from pydantic_factories.exceptions import ConfigurationError
 from tests.models import PersonFactoryWithDefaults, Pet, PetFactory
 
 
-def test_merges_defaults_with_kwargs():
+def test_merges_defaults_with_kwargs() -> None:
     first_obj = PersonFactoryWithDefaults.build()
     assert first_obj.id == PersonFactoryWithDefaults.id
     assert first_obj.name == PersonFactoryWithDefaults.name
@@ -39,12 +39,12 @@ def test_merges_defaults_with_kwargs():
     assert second_obj.birthday == PersonFactoryWithDefaults.birthday
 
 
-def test_respects_none_overrides():
+def test_respects_none_overrides() -> None:
     result = PersonFactoryWithDefaults.build(hobbies=None)
     assert result.hobbies is None
 
 
-def test_uses_faker_to_set_values_when_none_available_on_class():
+def test_uses_faker_to_set_values_when_none_available_on_class() -> None:
     result = PetFactory.build()
     assert isinstance(result.name, str)
     assert isinstance(result.species, str)
@@ -53,7 +53,7 @@ def test_uses_faker_to_set_values_when_none_available_on_class():
     assert isinstance(result.age, float)
 
 
-def test_builds_batch():
+def test_builds_batch() -> None:
     results = PetFactory.batch(10)
     assert isinstance(results, list)
     assert len(results) == 10
@@ -65,13 +65,13 @@ def test_builds_batch():
         assert isinstance(result.age, float)
 
 
-def test_factory_use_construct():
+def test_factory_use_construct() -> None:
     invalid_age = "non_valid_age"
     non_validated_pet = PetFactory.build(factory_use_construct=True, age=invalid_age)
     assert non_validated_pet.age == invalid_age
 
     with pytest.raises(ValidationError):
-        PetFactory.build(factory_use_construct=False, age=invalid_age)
+        PetFactory.build(age=invalid_age)
 
     with pytest.raises(ValidationError):
         PetFactory.build(age=invalid_age)
@@ -87,7 +87,7 @@ def test_factory_use_construct():
         MyFactory.build(factory_use_construct=True)
 
 
-def test_build_instance_by_field_alias_with_allow_population_by_field_name_flag():
+def test_build_instance_by_field_alias_with_allow_population_by_field_name_flag() -> None:
     class MyModel(BaseModel):
         aliased_field: str = Field(..., alias="special_field")
 
@@ -101,7 +101,7 @@ def test_build_instance_by_field_alias_with_allow_population_by_field_name_flag(
     assert instance.aliased_field == "some"
 
 
-def test_build_instance_by_field_name_with_allow_population_by_field_name_flag():
+def test_build_instance_by_field_name_with_allow_population_by_field_name_flag() -> None:
     class MyModel(BaseModel):
         aliased_field: str = Field(..., alias="special_field")
 

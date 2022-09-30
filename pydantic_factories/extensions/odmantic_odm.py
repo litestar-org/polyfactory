@@ -8,8 +8,8 @@ from pydantic_factories.fields import Ignore
 try:
     from odmantic import EmbeddedModel, Model
 except ImportError:
-    Model = BaseModel
-    EmbeddedModel = BaseModel
+    Model = BaseModel  # type: ignore
+    EmbeddedModel = BaseModel  # type: ignore
 
 
 T = TypeVar("T", Model, EmbeddedModel)
