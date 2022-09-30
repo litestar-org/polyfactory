@@ -28,7 +28,7 @@ class MyDocument(Document):
     siblings: List[PydanticObjectId]
 
 
-class MyFactory(BeanieDocumentFactory[MyDocument]):
+class MyFactory(BeanieDocumentFactory):
     __model__ = MyDocument
 
 
