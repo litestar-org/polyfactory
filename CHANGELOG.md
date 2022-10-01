@@ -198,3 +198,7 @@
 [1.7.0]
 
 - Add Python `3.11` support
+
+[1.7.1]
+
+- Fix passing dictionaries with nested pydantic models

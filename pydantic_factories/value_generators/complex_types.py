@@ -1,6 +1,6 @@
 import random
 from collections import defaultdict, deque
-from typing import TYPE_CHECKING, Any, Optional, Type, cast
+from typing import TYPE_CHECKING, Any, Dict, List, Optional, Type, Union, cast
 
 from pydantic.fields import (
     SHAPE_DEFAULTDICT,
@@ -52,7 +52,10 @@ shape_mapping = {
 
 
 def handle_container_type(
-    model_field: ModelField, container_type: Type[Any], model_factory: Type["ModelFactory"]
+    model_field: ModelField,
+    container_type: Type[Any],
+    model_factory: Type["ModelFactory"],
+    field_parameters: Optional[Union[Dict[Any, Any], List[Any]]] = None,
 ) -> Any:
     """Handles generation of container types, e.g. dict, list etc.
 
@@ -60,14 +63,19 @@ def handle_container_type(
     """
     is_frozen_set = container_type is frozenset
     container = container_type() if not is_frozen_set else set()
+    if field_parameters and isinstance(field_parameters, dict):
+        key, value = list(field_parameters.items())[0]
+        container[key] = value
+        return container
     value = None
     if model_field.sub_fields:
         value = handle_complex_type(model_field=random.choice(model_field.sub_fields), model_factory=model_factory)
     if value is not None:
         if isinstance(container, dict):
-            container[
-                handle_complex_type(model_field=cast("ModelField", model_field.key_field), model_factory=model_factory)
-            ] = value
+            key = handle_complex_type(
+                model_field=cast("ModelField", model_field.key_field), model_factory=model_factory
+            )
+            container[key] = value
         elif isinstance(container, (list, deque)):
             container.append(value)
         else:
@@ -77,14 +85,21 @@ def handle_container_type(
     return container
 
 
-def handle_complex_type(model_field: ModelField, model_factory: Type["ModelFactory"]) -> Any:
+def handle_complex_type(
+    model_field: ModelField,
+    model_factory: Type["ModelFactory"],
+    field_parameters: Optional[Union[Dict[Any, Any], List[Any]]] = None,
+) -> Any:
     """Recursive type generation based on typing info stored in the graph like
     structure of pydantic model_fields."""
     container_type: Optional[Type[Any]] = shape_mapping.get(model_field.shape)
     if container_type:
         if container_type is not tuple:
             return handle_container_type(
-                model_field=model_field, container_type=container_type, model_factory=model_factory
+                model_field=model_field,
+                container_type=container_type,
+                model_factory=model_factory,
+                field_parameters=field_parameters,
             )
         return tuple(
             handle_complex_type(model_field=sub_field, model_factory=model_factory)
