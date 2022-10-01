@@ -409,7 +409,9 @@ class ModelFactory(ABC, Generic[T]):  # noqa: B024
         )
 
     @classmethod
-    def get_field_value(cls, model_field: "ModelField", field_parameters: Union[dict, list, None] = None) -> Any:
+    def get_field_value(
+        cls, model_field: "ModelField", field_parameters: Optional[Union[Dict[Any, Any], List[Any]]] = None
+    ) -> Any:
         """Returns a field value on the subclass if existing, otherwise returns
         a mock value."""
         if model_field.field_info.const:
@@ -429,7 +431,7 @@ class ModelFactory(ABC, Generic[T]):  # noqa: B024
         if cls.is_constrained_field(outer_type):
             return cls.handle_constrained_field(model_field=model_field)
         if model_field.sub_fields:
-            return handle_complex_type(model_field=model_field, model_factory=cls)
+            return handle_complex_type(model_field=model_field, model_factory=cls, field_parameters=field_parameters)
         if is_literal(model_field):
             literal_args = get_args(outer_type)
             return random.choice(literal_args)
@@ -460,7 +462,7 @@ class ModelFactory(ABC, Generic[T]):  # noqa: B024
         if is_pydantic_model(pydantic_model_kwargs.__class__) or pydantic_model_kwargs is None:
             return False
         pydantic_model_fields = cls.get_model_fields(pydantic_model)
-        pydantic_model_field_names = set(dict(pydantic_model_fields).keys())
+        pydantic_model_field_names = {field_name for field_name, _ in pydantic_model_fields}
         kwargs_field_names = set(pydantic_model_kwargs.keys())
         return bool(pydantic_model_field_names - kwargs_field_names)
 
@@ -477,7 +479,7 @@ class ModelFactory(ABC, Generic[T]):  # noqa: B024
         if not is_pydantic_model(pydantic_model) or model_field.shape == SHAPE_MAPPING:
             return False
 
-        list_of_pydantic_models_kwargs = kwargs[field_name]
+        list_of_pydantic_models_kwargs = kwargs.get(field_name)
         if not isinstance(list_of_pydantic_models_kwargs, list):
             return cls._is_kwargs_missing_pydantic_fields(pydantic_model, list_of_pydantic_models_kwargs)
 
@@ -495,14 +497,13 @@ class ModelFactory(ABC, Generic[T]):  # noqa: B024
         """
         is_field_ignored = False
         is_field_in_kwargs = field_name in kwargs
+        is_partial_pydantic_model = cls._is_pydantic_with_partial_fields(field_name, model_field, **kwargs)
         if hasattr(cls, field_name):
             value = getattr(cls, field_name)
             if isinstance(value, Require) and not is_field_in_kwargs:
                 raise MissingBuildKwargError(f"Require kwarg {field_name} is missing")
             is_field_ignored = isinstance(value, Ignore)
-        return not is_field_ignored and (
-            not is_field_in_kwargs or cls._is_pydantic_with_partial_fields(field_name, model_field, **kwargs)
-        )
+        return not is_field_ignored and (not is_field_in_kwargs or is_partial_pydantic_model)
 
     @classmethod
     def get_model_fields(cls, model: Type[T]) -> ItemsView[str, "ModelField"]:
