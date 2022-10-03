@@ -15,15 +15,15 @@ To contribute, please follow these steps:
 **NOTE**: The test suite requires having an instance of MongoDB available. You can launch one using the root level
 docker-compose config with `docker-compose up --detach`, or by any other means you deem.
 
-## Lunching the Docs
+## Launching the Docs
 
-To lunch the docs locally use docker. First pull the image for the [mkdocs material theme](https://squidfunk.github.io/mkdocs-material/getting-started/) with:
+To launch the docs locally use docker. First pull the image for the [mkdocs material theme](https://squidfunk.github.io/mkdocs-material/getting-started/) with:
 
 ```shell
 docker pull squidfunk/mkdocs-material
 ```
 
-And then lunch the docs with:
+And then launch the docs with:
 
 ```shell
 docker run --rm -it -p 8000:8000 -v ${PWD}:/docs squidfunk/mkdocs-material
