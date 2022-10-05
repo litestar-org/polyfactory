@@ -1,19 +1,17 @@
+import inspect
 import re
 from dataclasses import dataclass
-from typing import TYPE_CHECKING, Callable, Optional, Type, TypeVar, Union, overload
+from typing import TYPE_CHECKING, Callable, Optional, Type, Union, overload
 
 import pytest
+
+from pydantic_factories.factory import ModelFactory
 
 if TYPE_CHECKING:
     from _pytest.config import Config
     from _pytest.scope import _ScopeName
-    from pydantic import BaseModel
-
-    from pydantic_factories import ModelFactory
-    from pydantic_factories.protocols import DataclassProtocol
 
     Scope = Union["_ScopeName", Callable[[str, Config], "_ScopeName"]]
-    T = TypeVar("T", bound=Union[BaseModel, DataclassProtocol])
 
 
 def _get_fixture_name(name: str) -> str:
@@ -29,11 +27,16 @@ FixtureFunction = Callable[..., Type["ModelFactory"]]
 
 @dataclass(frozen=True)
 class PydanticFactoryFixtureMarker:
-    scope: Scope
+    scope: "Scope"
     autouse: bool = False
     name: Optional[str] = None
 
     def __call__(self, _class: Type["ModelFactory"]) -> FixtureFunction:
+        if not inspect.isclass(_class):
+            raise ValueError(f"{_class.__name__} is not a class.")
+        if not issubclass(_class, ModelFactory):
+            raise ValueError(f"{_class.__name__} is not a ModelFactory class.")
+
         fixture_name = self.name or _get_fixture_name(_class.__name__)
         fixture_registe = pytest.fixture(scope=self.scope, name=fixture_name, autouse=self.autouse)
 
@@ -46,9 +49,9 @@ class PydanticFactoryFixtureMarker:
 
 @overload
 def register_fixture(
-    _class: None = ...,
+    _class: None = None,
     *,
-    scope: Scope = ...,
+    scope: "Scope" = ...,
     autouse: bool = ...,
     name: Optional[str] = ...,
 ) -> PydanticFactoryFixtureMarker:
@@ -57,9 +60,9 @@ def register_fixture(
 
 @overload
 def register_fixture(
-    _class: Type["ModelFactory"] = ...,
+    _class: Type["ModelFactory"],
     *,
-    scope: Scope = ...,
+    scope: "Scope" = ...,
     autouse: bool = ...,
     name: Optional[str] = ...,
 ) -> FixtureFunction:
@@ -69,7 +72,7 @@ def register_fixture(
 def register_fixture(
     _class: Optional[Type["ModelFactory"]] = None,
     *,
-    scope: Scope = "function",
+    scope: "Scope" = "function",
     autouse: bool = False,
     name: Optional[str] = None,
 ) -> Union[PydanticFactoryFixtureMarker, FixtureFunction]:
