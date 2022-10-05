@@ -809,7 +809,7 @@ returned value.
 
 ### Pytest
 
-Any class from pydantic's `ModelFactory` can use the decorator to register as a fixture easily.
+Any class from `ModelFactory` can use the decorator to register as a fixture easily.
 
 The model factory will be registered as an fixture with camelcase name.
 
