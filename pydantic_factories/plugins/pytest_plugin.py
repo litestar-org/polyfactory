@@ -14,10 +14,14 @@ if TYPE_CHECKING:
     Scope = Union["_ScopeName", Callable[[str, Config], "_ScopeName"]]
 
 
+split_pattern_1 = re.compile(r"([A-Z]+)([A-Z][a-z])")
+split_pattern_2 = re.compile(r"([a-z\d])([A-Z])")
+
+
 def _get_fixture_name(name: str) -> str:
     """from inflection.underscore."""
-    name = re.sub(r"([A-Z]+)([A-Z][a-z])", r"\1_\2", name)
-    name = re.sub(r"([a-z\d])([A-Z])", r"\1_\2", name)
+    name = re.sub(split_pattern_1, r"\1_\2", name)
+    name = re.sub(split_pattern_2, r"\1_\2", name)
     name = name.replace("-", "_")
     return name.lower()
 
