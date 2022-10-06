@@ -811,7 +811,7 @@ returned value.
 
 Any class from `ModelFactory` can use the decorator to register as a fixture easily.
 
-The model factory will be registered as an fixture with camelcase name.
+The model factory will be registered as an fixture with name in snake case.
 
 e.g. `PersonFactory` -> `person_factory`
 
