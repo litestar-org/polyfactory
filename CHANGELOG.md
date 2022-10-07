@@ -207,3 +207,7 @@
 
 - Add support for automatic pytest fixture creation @EltonChou
 - Add support for plugins @EltonChou
+
+[1.8.1]
+
+- Fix recursion exception with discriminated unions
