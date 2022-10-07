@@ -202,3 +202,8 @@
 [1.7.1]
 
 - Fix passing dictionaries with nested pydantic models
+
+[1.8.0]
+
+- Add support for automatic pytest fixture creation @EltonChou
+- Add support for plugins @EltonChou
