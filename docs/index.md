@@ -811,7 +811,7 @@ returned value.
 
 Any class from `ModelFactory` can use the decorator to register as a fixture easily.
 
-The model factory will be registered as an fixture with name in snake case.
+The model factory will be registered as a fixture with the name in snake case.
 
 e.g. `PersonFactory` -> `person_factory`
 
@@ -859,7 +859,7 @@ def test_cool_guy_factory(cool_guy_factory: AnotherPersonFactory) -> None:
     assert isinstance(cool_guy, Person)
 ```
 
-Use `pytest --fixtures` will show some outputs like belowing.
+Use `pytest --fixtures` will show output along these lines:
 
 ```sh
 ------------- fixtures defined from pydantic_factories.plugins.pytest_plugin -------------
