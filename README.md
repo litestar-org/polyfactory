@@ -1,6 +1,11 @@
 <!-- markdownlint-disable -->
+<img alt="Starlite logo" src="./starlite-banner.svg" width="100%" height="auto">
+<!-- markdownlint-restore -->
+
+<!-- markdownlint-disable -->
 <div align="center">
 
+![PyPI - License](https://img.shields.io/pypi/l/pydantic-factories?color=blue)
 ![PyPI - Python Version](https://img.shields.io/pypi/pyversions/pydantic-factories)
 
 [![Language grade: Python](https://img.shields.io/lgtm/grade/python/g/Goldziher/pydantic-factories.svg?logo=lgtm&logoWidth=18)](https://lgtm.com/projects/g/Goldziher/pydantic-factories/context:python)
@@ -20,7 +25,7 @@
 This library offers powerful mock data generation capabilities for [pydantic](https://github.com/samuelcolvin/pydantic)
 based models and `dataclasses`. It can also be used with other libraries that use pydantic as a foundation.
 
-Check out [the documentation 📚](https://goldziher.github.io/pydantic-factories/).
+Check out [the documentation 📚](https://starlite-api.github.io/pydantic-factories/).
 
 ## Installation
 
