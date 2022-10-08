@@ -211,3 +211,7 @@
 [1.8.1]
 
 - Fix recursion exception with discriminated unions
+
+[1.8.2]
+
+- Fix `pytest` being a required dependency

@@ -42,23 +42,26 @@ jobs:
         uses: actions/cache@v3
         with:
           path: .venv
-          key: venv-${{ runner.os }}-${{ matrix.python-version }}-${{ hashFiles('**/poetry.lock') }}
+          key: v1-venv-${{ runner.os }}-${{ matrix.python-version }}-${{ hashFiles('**/poetry.lock') }}
+          restore-keys: |
+            v1-venv-${{ runner.os }}-${{ matrix.python-version }}
+            v1-venv-${{ runner.os }}
       - name: Install dependencies
         if: steps.cached-poetry-dependencies.outputs.cache-hit != 'true'
         run: poetry install --no-interaction --no-root && poetry add asyncpg beanie ormar && pip install odmantic
       - name: Set pythonpath
         run: echo "PYTHONPATH=$PWD" >> $GITHUB_ENV
       - name: Test
-        run: poetry run pytest
         if: matrix.python-version != '3.10'
+        run: poetry run pytest
       - name: Test with Coverage
-        run: poetry run pytest --cov=. --cov-report=xml
         if: matrix.python-version == '3.10'
+        run: poetry run pytest --cov=. --cov-report=xml
       - uses: actions/upload-artifact@v3
+        if: matrix.python-version == '3.10'
         with:
           name: coverage-xml
           path: coverage.xml
-        if: matrix.python-version == '3.10'
   sonar:
     needs: test
     if: github.event.pull_request.head.repo.fork == false

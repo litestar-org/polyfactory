@@ -1,9 +1,9 @@
 [tool.poetry]
 name = "pydantic-factories"
-version = "1.8.1"
+version = "1.8.2"
 description = "Mock data generation for pydantic based models"
 authors = ["Na'aman Hirschfeld <nhirschfeld@gmail.com>"]
-maintainers = ["Na'aman Hirschfeld <nhirschfeld@gmail.com>"]
+maintainers = ["Na'aman Hirschfeld <nhirschfeld@gmail.com>", "Peter Schutt <peter.github@proton.me>", "Cody Fincher <cody.fincher@gmail.com>"]
 license = "MIT"
 readme = "README.md"
 homepage = "https://github.com/Goldziher/pydantic-factories"
@@ -47,16 +47,16 @@ packages = [
 
 [tool.poetry.dependencies]
 python = ">=3.7,<4.0"
-pydantic = ">=1.9.0"
 faker = "*"
+pydantic = ">=1.9.0"
 typing-extensions = "*"
 xeger = "*"
 
-[tool.poetry.dev-dependencies]
-pytest = "*"
+[tool.poetry.group.dev.dependencies]
 email-validator = "*"
 hypothesis = "*"
 pre-commit = "*"
+pytest = "*"
 pytest-asyncio = "*"
 pytest-cov = "*"
 
