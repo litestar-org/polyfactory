@@ -8,7 +8,6 @@ from .extensions import (
 )
 from .factory import ModelFactory
 from .fields import Ignore, PostGenerated, Require, Use
-from .plugins import register_fixture
 from .protocols import AsyncPersistenceProtocol, SyncPersistenceProtocol
 
 __all__ = [
@@ -24,5 +23,4 @@ __all__ = [
     "SyncPersistenceProtocol",
     "Use",
     "PostGenerated",
-    "register_fixture",
 ]
