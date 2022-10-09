@@ -215,3 +215,7 @@
 [1.8.2]
 
 - Fix `pytest` being a required dependency
+
+[1.9.0]
+
+- Expose `get_faker()`
