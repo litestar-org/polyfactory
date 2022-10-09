@@ -797,12 +797,12 @@ class CustomFactory(ModelFactory[Any]):
     def get_mock_value(cls, field_type: Any) -> Any:
         """Add our custom mock value."""
         if str(field_type) == "my_super_rare_datetime_field":
-            return cls._get_faker().date_time_between()
+            return cls.get_faker().date_time_between()
 
         return super().get_mock_value(field_type)
 ```
 
-Where `cls._get_faker()` is a `faker` instance that you can use to build your
+Where `cls.get_faker()` is a `faker` instance that you can use to build your
 returned value.
 
 ## Plugins
