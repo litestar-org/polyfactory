@@ -13,7 +13,7 @@ from pydantic_factories import ModelFactory
     dates(max_value=date.today() - timedelta(days=3)),
     dates(min_value=date.today()),
 )
-@pytest.mark.parametrize("g, l", ((None, None), ("ge", "le"), ("gt", "lt"), ("ge", "lt"), ("gt", "le")))
+@pytest.mark.parametrize("start, end", ((None, None), ("ge", "le"), ("gt", "lt"), ("ge", "lt"), ("gt", "le")))
 def test_handle_constrained_date(
     start: Optional[str],
     end: Optional[str],
