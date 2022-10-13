@@ -7,7 +7,7 @@ from hypothesis.strategies import decimals, integers
 from pydantic import BaseModel, ConstrainedDecimal, condecimal
 
 from pydantic_factories import ModelFactory
-from pydantic_factories.constraints.constrained_decimal_handler import (
+from pydantic_factories.constraints.decimal import (
     handle_constrained_decimal,
     handle_decimal_length,
 )
