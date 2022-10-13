@@ -46,6 +46,7 @@ from pydantic import (
     BaseModel,
     ByteSize,
     ConstrainedBytes,
+    ConstrainedDate,
     ConstrainedDecimal,
     ConstrainedFloat,
     ConstrainedFrozenSet,
@@ -87,18 +88,11 @@ from pydantic.color import Color
 from pydantic.fields import SHAPE_MAPPING
 from typing_extensions import TypeGuard, get_args
 
-from pydantic_factories.constraints.constrained_collection_handler import (
-    handle_constrained_collection,
-)
-from pydantic_factories.constraints.constrained_decimal_handler import (
-    handle_constrained_decimal,
-)
-from pydantic_factories.constraints.constrained_float_handler import (
-    handle_constrained_float,
-)
-from pydantic_factories.constraints.constrained_integer_handler import (
-    handle_constrained_int,
-)
+from pydantic_factories.constraints.collection import handle_constrained_collection
+from pydantic_factories.constraints.date import handle_constrained_date
+from pydantic_factories.constraints.decimal import handle_constrained_decimal
+from pydantic_factories.constraints.float import handle_constrained_float
+from pydantic_factories.constraints.integer import handle_constrained_int
 from pydantic_factories.constraints.strings import (
     handle_constrained_bytes,
     handle_constrained_string,
@@ -247,6 +241,8 @@ class ModelFactory(ABC, Generic[T]):  # noqa: B024
                 if issubclass(outer_type, ConstrainedFrozenSet):  # pragma: no cover
                     return frozenset(*result)
                 return result
+            if issubclass(outer_type, ConstrainedDate):
+                return handle_constrained_date(constrained_date=outer_type, faker=cls.get_faker())
             raise ParameterError(f"Unknown constrained field: {outer_type.__name__}")  # pragma: no cover
         except AssertionError as e:  # pragma: no cover
             raise ParameterError from e
@@ -304,6 +300,7 @@ class ModelFactory(ABC, Generic[T]):  # noqa: B024
     ) -> TypeGuard[
         Union[
             Type[ConstrainedBytes],
+            Type[ConstrainedDate],
             Type[ConstrainedDecimal],
             Type[ConstrainedFloat],
             Type[ConstrainedFrozenSet],
@@ -326,6 +323,7 @@ class ModelFactory(ABC, Generic[T]):  # noqa: B024
             issubclass(value, c)
             for c in (
                 ConstrainedBytes,
+                ConstrainedDate,
                 ConstrainedDecimal,
                 ConstrainedFloat,
                 ConstrainedFrozenSet,

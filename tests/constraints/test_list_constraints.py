@@ -7,9 +7,7 @@ from pydantic import BaseConfig, ConstrainedList
 from pydantic.fields import ModelField
 
 from pydantic_factories import ModelFactory
-from pydantic_factories.constraints.constrained_collection_handler import (
-    handle_constrained_collection,
-)
+from pydantic_factories.constraints.collection import handle_constrained_collection
 
 
 def create_model_field(

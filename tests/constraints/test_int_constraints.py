@@ -5,9 +5,7 @@ from hypothesis import given
 from hypothesis.strategies import integers
 from pydantic import ConstrainedInt
 
-from pydantic_factories.constraints.constrained_integer_handler import (
-    handle_constrained_int,
-)
+from pydantic_factories.constraints.integer import handle_constrained_int
 from pydantic_factories.utils import passes_pydantic_multiple_validator
 
 

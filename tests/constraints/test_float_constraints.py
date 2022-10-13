@@ -6,9 +6,7 @@ from hypothesis import given
 from hypothesis.strategies import floats
 from pydantic import ConstrainedFloat
 
-from pydantic_factories.constraints.constrained_float_handler import (
-    handle_constrained_float,
-)
+from pydantic_factories.constraints.float import handle_constrained_float
 from pydantic_factories.utils import passes_pydantic_multiple_validator
 
 
