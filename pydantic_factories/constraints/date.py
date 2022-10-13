@@ -1,5 +1,5 @@
 from datetime import date, timedelta
-from typing import TYPE_CHECKING, Optional, cast
+from typing import TYPE_CHECKING, cast
 
 if TYPE_CHECKING:
     from faker import Faker
@@ -16,13 +16,13 @@ def handle_constrained_date(constrained_date: "ConstrainedDate", faker: "Faker")
     Returns:
 
     """
-    start_date: Optional[date] = date.today() - timedelta(days=100)
+    start_date = date.today() - timedelta(days=100)
     if constrained_date.ge:
         start_date = constrained_date.ge
     elif constrained_date.gt:
         start_date = constrained_date.gt + timedelta(days=1)
 
-    end_date: Optional[date] = date.today() + timedelta(days=100)
+    end_date = date.today() + timedelta(days=100)
     if constrained_date.le:
         end_date = constrained_date.le
     elif constrained_date.lt:

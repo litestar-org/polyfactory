@@ -33,7 +33,7 @@ class MyFactory(BeanieDocumentFactory):
 
 
 @pytest.fixture()
-async def beanie_init(mongo_connection: AsyncIOMotorClient):  # noqa: PT004
+async def beanie_init(mongo_connection: AsyncIOMotorClient):
     await init_beanie(database=mongo_connection.db_name, document_models=[MyDocument])
 
 
