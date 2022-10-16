@@ -221,3 +221,7 @@
 [1.10.0]
 
 - add support for `ConstrainedDate`.
+
+[1.11.0]
+
+- add `Fixture` field type.

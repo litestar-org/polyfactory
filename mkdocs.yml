@@ -69,19 +69,5 @@ markdown_extensions:
 plugins:
   - search:
       lang: en
-  - mkdocstrings:
-      handlers:
-        python:
-          import:
-            - https://docs.python.org/3/objects.inv
-          options:
-            heading_level: 3
-            members: []
-            show_root_heading: true
-            show_source: false
-            docstring_style: google
-            separate_signature: true
-            show_if_no_docstring: true
-            line_length: 100
 watch:
   - pydantic_factories
