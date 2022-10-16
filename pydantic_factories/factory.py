@@ -1,3 +1,4 @@
+# pylint: disable=ungrouped-imports
 import os
 import random
 from abc import ABC
@@ -82,10 +83,12 @@ from pydantic import (
     StrictFloat,
     StrictInt,
     StrictStr,
+    create_model_from_typeddict,
 )
 from pydantic.color import Color
 from pydantic.fields import SHAPE_MAPPING
-from typing_extensions import TypeGuard, get_args
+from typing_extensions import _TypedDictMeta  # type: ignore
+from typing_extensions import TypeGuard, get_args, is_typeddict
 
 from pydantic_factories.constraints.collection import handle_constrained_collection
 from pydantic_factories.constraints.date import handle_constrained_date
@@ -122,7 +125,14 @@ from pydantic_factories.value_generators.primitives import (
 if TYPE_CHECKING:
     from pydantic.fields import ModelField
 
-T = TypeVar("T", bound=Union[BaseModel, DataclassProtocol])
+try:
+    from typing import _TypedDictMeta as TypingTypedDictMeta  # type: ignore
+except ImportError:
+    TypingTypedDictMeta = _TypedDictMeta
+
+FactoryTypes = Union[BaseModel, DataclassProtocol, TypingTypedDictMeta, _TypedDictMeta]
+
+T = TypeVar("T", bound=FactoryTypes)
 
 default_faker = Faker()
 
@@ -145,8 +155,8 @@ class ModelFactory(ABC, Generic[T]):  # noqa: B024
         model = cls.__model__
         if is_pydantic_model(model):
             with suppress(NameError):
-                cast("BaseModel", model).update_forward_refs()
-        return model
+                model.update_forward_refs()
+        return cast("Type[T]", model)
 
     @classmethod
     def _get_sync_persistence(cls) -> SyncPersistenceProtocol[T]:
@@ -165,22 +175,30 @@ class ModelFactory(ABC, Generic[T]):  # noqa: B024
         raise ConfigurationError("An async_persistence handler must be defined in the factory to use this method")
 
     @classmethod
-    def _is_kwargs_missing_pydantic_fields(cls, pydantic_model: Type[T], pydantic_model_kwargs: Any) -> bool:
+    def _are_model_kwargs_partial(cls, pydantic_model: Type[BaseModel], model_kwargs: Any) -> bool:
         """Determines if the kwargs are missing fields that should be defined
         in the pydantic model.
 
         Returns False if all fields of the pydantic model are defined in
         the kwargs, and True otherwise.
+
+        Args:
+            pydantic_model: A pydantic model class.
+            model_kwargs: Any kwargs.
+
+        Returns:
+            A boolean determining if kwargs are missing.
         """
-        if is_pydantic_model(pydantic_model_kwargs.__class__) or pydantic_model_kwargs is None:
+        if is_pydantic_model(type(model_kwargs)) or not model_kwargs:
             return False
-        pydantic_model_fields = cls.get_model_fields(pydantic_model)
+
+        pydantic_model_fields = cls.get_model_fields(cast("Type[T]", pydantic_model))
         pydantic_model_field_names = {field_name for field_name, _ in pydantic_model_fields}
-        kwargs_field_names = set(pydantic_model_kwargs.keys())
+        kwargs_field_names = set(model_kwargs.keys())
         return bool(pydantic_model_field_names - kwargs_field_names)
 
     @classmethod
-    def _is_pydantic_with_partial_fields(cls, field_name: str, model_field: "ModelField", **kwargs: Any) -> bool:
+    def _is_pydantic_model_with_partial_fields(cls, field_name: str, model_field: "ModelField", **kwargs: Any) -> bool:
         """Determines if the field is a pydantic model AND if the kwargs are
         missing fields that should be defined in the pydantic model.
 
@@ -188,18 +206,20 @@ class ModelFactory(ABC, Generic[T]):  # noqa: B024
         fields of the pydantic model are defined in the kwargs, and True
         otherwise.
         """
-        pydantic_model = model_field.type_
-        if not is_pydantic_model(pydantic_model) or model_field.shape == SHAPE_MAPPING:
+        if model_field.shape == SHAPE_MAPPING:
             return False
 
-        list_of_pydantic_models_kwargs = kwargs.get(field_name)
-        if not isinstance(list_of_pydantic_models_kwargs, list):
-            return cls._is_kwargs_missing_pydantic_fields(pydantic_model, list_of_pydantic_models_kwargs)
+        field_type = model_field.type_
+        if is_pydantic_model(field_type):
+            field_kwargs = kwargs.get(field_name)
+            if not isinstance(field_kwargs, list):
+                return cls._are_model_kwargs_partial(field_type, field_kwargs)
 
-        return any(
-            cls._is_kwargs_missing_pydantic_fields(pydantic_model, pydantic_model_kwargs)
-            for pydantic_model_kwargs in list_of_pydantic_models_kwargs
-        )
+            return any(
+                cls._are_model_kwargs_partial(field_type, pydantic_model_kwargs)
+                for pydantic_model_kwargs in field_kwargs
+            )
+        return False
 
     @classmethod
     def _should_use_alias_name(cls, model_field: "ModelField", model: Type[T]) -> bool:
@@ -475,7 +495,7 @@ class ModelFactory(ABC, Generic[T]):  # noqa: B024
     @classmethod
     def create_factory(
         cls,
-        model: Type[BaseModel],
+        model: Type[FactoryTypes],
         base: Optional[Type["ModelFactory"]] = None,
         **kwargs: Any,
     ) -> "ModelFactory":
@@ -526,7 +546,7 @@ class ModelFactory(ABC, Generic[T]):  # noqa: B024
         outer_type = model_field.outer_type_
         if isinstance(outer_type, EnumMeta):
             return cls._handle_enum(cast("Type[Enum]", outer_type))
-        if is_pydantic_model(outer_type) or is_dataclass(outer_type):
+        if is_pydantic_model(outer_type) or is_dataclass(outer_type) or is_typeddict(outer_type):
             build_kwargs: dict = field_parameters or {}  # type: ignore
             return cls.create_factory(model=outer_type).build(**build_kwargs)
         if isinstance(field_parameters, list) and is_pydantic_model(model_field.type_):
@@ -580,7 +600,7 @@ class ModelFactory(ABC, Generic[T]):  # noqa: B024
         """
         is_field_ignored = False
         is_field_in_kwargs = field_name in kwargs
-        is_partial_pydantic_model = cls._is_pydantic_with_partial_fields(field_name, model_field, **kwargs)
+        is_partial_pydantic_model = cls._is_pydantic_model_with_partial_fields(field_name, model_field, **kwargs)
         if hasattr(cls, field_name):
             value = getattr(cls, field_name)
             if isinstance(value, Require) and not is_field_in_kwargs:
@@ -596,7 +616,7 @@ class ModelFactory(ABC, Generic[T]):  # noqa: B024
         model first.
 
         Args:
-            model: An arbitrary type T.
+            model: A model class of type T.
 
         Notes:
             - This method is distinct to allow overriding.
@@ -604,9 +624,13 @@ class ModelFactory(ABC, Generic[T]):  # noqa: B024
         Returns:
             An 'ItemsView' composed of field names and pydantic 'ModelField' instances.
         """
-        if not is_pydantic_model(model):
-            model = create_model_from_dataclass(dataclass=model)  # type: ignore
-        return model.__fields__.items()  # type: ignore
+        if is_pydantic_model(model):
+            return model.__fields__.items()
+        if is_dataclass(model):
+            return create_model_from_dataclass(dataclass=cast("Type[DataclassProtocol]", model)).__fields__.items()
+        if is_typeddict(model):
+            return create_model_from_typeddict(cast("Any", model)).__fields__.items()
+        raise ConfigurationError("unknown model type passed to 'get_model_fields'")
 
     @classmethod
     def build(cls, factory_use_construct: bool = False, **kwargs: Any) -> T:

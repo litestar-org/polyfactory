@@ -11,6 +11,7 @@ T = TypeVar("T", int, float, Decimal)
 
 if TYPE_CHECKING:
     from pydantic.fields import ModelField
+    from typing_extensions import TypeGuard
 
     from pydantic_factories.protocols import DataclassProtocol
 
@@ -24,7 +25,7 @@ def passes_pydantic_multiple_validator(value: T, multiple_of: T) -> bool:
     return almost_equal_floats(mod, 0.0) or almost_equal_floats(mod, 1.0)
 
 
-def is_pydantic_model(value: Any) -> bool:
+def is_pydantic_model(value: Any) -> "TypeGuard[Type[BaseModel]]":
     """A function to determine if a given value is a subclass of BaseModel."""
     try:
         return isclass(value) and issubclass(value, BaseModel)
