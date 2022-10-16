@@ -1,8 +1,8 @@
-from collections import Counter, deque  # noqa: TC003
+from collections import Counter, deque
 from datetime import date, datetime, time, timedelta
-from decimal import Decimal  # noqa: TC003
+from decimal import Decimal
 from enum import Enum
-from ipaddress import (  # noqa: TC003
+from ipaddress import (
     IPv4Address,
     IPv4Interface,
     IPv4Network,
@@ -10,9 +10,9 @@ from ipaddress import (  # noqa: TC003
     IPv6Interface,
     IPv6Network,
 )
-from pathlib import Path  # noqa: TC003
+from pathlib import Path
 from typing import Callable
-from uuid import UUID  # noqa: TC003
+from uuid import UUID
 
 import pytest
 from pydantic import (
@@ -57,7 +57,7 @@ from pydantic import (
     StrictInt,
     StrictStr,
 )
-from pydantic.color import Color  # noqa: TC002
+from pydantic.color import Color
 from typing_extensions import Literal
 
 from pydantic_factories import ModelFactory

@@ -28,13 +28,8 @@ repos:
     hooks:
       - id: black
         args: [--config=./pyproject.toml]
-  - repo: https://github.com/PyCQA/docformatter
-    rev: v1.5.0
-    hooks:
-      - id: docformatter
-        args: [--in-place]
   - repo: https://github.com/codespell-project/codespell
-    rev: v2.2.1
+    rev: v2.2.2
     hooks:
       - id: codespell
   - repo: https://github.com/asottile/blacken-docs
@@ -42,7 +37,7 @@ repos:
     hooks:
       - id: blacken-docs
   - repo: https://github.com/pre-commit/mirrors-prettier
-    rev: "v3.0.0-alpha.1"
+    rev: "v3.0.0-alpha.2"
     hooks:
       - id: prettier
   - repo: https://github.com/pycqa/bandit
@@ -55,9 +50,15 @@ repos:
     rev: v0.32.2
     hooks:
       - id: markdownlint
-        args: [--disable=MD013, --disable=MD033, --disable=MD050]
-  - repo: https://gitlab.com/pycqa/flake8
-    rev: 3.9.2
+        args:
+          [--disable=MD013, --disable=MD033, --disable=MD050, --disable=MD052]
+  - repo: https://github.com/PyCQA/docformatter
+    rev: v1.5.0
+    hooks:
+      - id: docformatter
+        args: [--in-place]
+  - repo: https://github.com/PyCQA/flake8
+    rev: 5.0.4
     hooks:
       - id: flake8
         additional_dependencies:
@@ -70,22 +71,29 @@ repos:
             "flake8-type-checking",
             "flake8-implicit-str-concat",
             "flake8-noqa",
+            "flake8-return",
+            "flake8-secure-coding-standard",
+            "flake8-eradicate",
+            "flake8-encodings",
+            "flake8-use-fstring",
+            "flake8-use-pathlib",
           ]
   - repo: https://github.com/johnfraney/flake8-markdown
     rev: v0.4.0
     hooks:
       - id: flake8-markdown
   - repo: https://github.com/dosisod/refurb
-    rev: "v1.3.0"
+    rev: v1.3.0
     hooks:
       - id: refurb
+        args: [--ignore, "120", --ignore, "128"]
         additional_dependencies:
           [pydantic, faker, pytest, hypothesis, odmantic, ormar, beanie, xeger]
   - repo: https://github.com/pycqa/pylint
     rev: "v2.15.4"
     hooks:
       - id: pylint
-        exclude: "tests"
+        exclude: "test_*"
         args: ["--unsafe-load-any-extension=y"]
         additional_dependencies:
           [pydantic, faker, pytest, hypothesis, odmantic, ormar, beanie, xeger]
@@ -93,6 +101,13 @@ repos:
     rev: "v0.982"
     hooks:
       - id: mypy
-        exclude: "_extension"
+        exclude: "extension"
+        additional_dependencies:
+          [pydantic, faker, pytest, hypothesis, xeger, odmantic, ormar, beanie]
+  - repo: https://github.com/RobertCraigie/pyright-python
+    rev: v1.1.275
+    hooks:
+      - id: pyright
+        exclude: "extension"
         additional_dependencies:
           [pydantic, faker, pytest, hypothesis, xeger, odmantic, ormar, beanie]

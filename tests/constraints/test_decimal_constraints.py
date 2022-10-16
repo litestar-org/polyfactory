@@ -40,7 +40,7 @@ def test_handle_constrained_decimal_without_constraints() -> None:
 
 
 def test_handle_constrained_decimal_length_validation() -> None:
-    with pytest.raises(AssertionError):
+    with pytest.raises(ValueError):
         handle_constrained_decimal(create_constrained_field(max_digits=2, ge=Decimal("100.000")))
 
 
@@ -50,7 +50,7 @@ def test_handle_constrained_decimal_handles_max_digits(max_digits: int) -> None:
         result = handle_constrained_decimal(create_constrained_field(max_digits=max_digits))
         assert len(result.as_tuple().digits) - abs(result.as_tuple().exponent) <= max_digits
     else:
-        with pytest.raises(AssertionError):
+        with pytest.raises(ValueError):
             handle_constrained_decimal(create_constrained_field(max_digits=max_digits))
 
 
@@ -62,13 +62,13 @@ def test_handle_constrained_decimal_handles_decimal_places(decimal_places: int) 
 
 @given(integers(min_value=0, max_value=100), integers(min_value=1, max_value=100))
 def test_handle_constrained_decimal_handles_max_digits_and_decimal_places(max_digits: int, decimal_places: int) -> None:
-    if max_digits > 0 and decimal_places <= max_digits:
+    if max_digits > 0 and max_digits > decimal_places:
         result = handle_constrained_decimal(
             create_constrained_field(max_digits=max_digits, decimal_places=decimal_places)
         )
         assert len(result.as_tuple().digits) - abs(result.as_tuple().exponent) <= max_digits
     else:
-        with pytest.raises(AssertionError):
+        with pytest.raises(ValueError):
             handle_constrained_decimal(create_constrained_field(max_digits=max_digits, decimal_places=decimal_places))
 
 
@@ -112,7 +112,7 @@ def test_handle_constrained_decimal_handles_multiple_of_with_lt(val1: Decimal, v
         result = handle_constrained_decimal(create_constrained_field(multiple_of=multiple_of, lt=max_value))
         assert passes_pydantic_multiple_validator(result, multiple_of)
     else:
-        with pytest.raises(AssertionError):
+        with pytest.raises(ValueError):
             handle_constrained_decimal(create_constrained_field(multiple_of=multiple_of, lt=max_value))
 
 
@@ -126,7 +126,7 @@ def test_handle_constrained_decimal_handles_multiple_of_with_le(val1: Decimal, v
         result = handle_constrained_decimal(create_constrained_field(multiple_of=multiple_of, le=max_value))
         assert passes_pydantic_multiple_validator(result, multiple_of)
     else:
-        with pytest.raises(AssertionError):
+        with pytest.raises(ValueError):
             handle_constrained_decimal(create_constrained_field(multiple_of=multiple_of, le=max_value))
 
 
@@ -165,7 +165,7 @@ def test_handle_constrained_decimal_handles_multiple_of_with_ge_and_le(
         )
         assert passes_pydantic_multiple_validator(result, multiple_of)
     else:
-        with pytest.raises(AssertionError):
+        with pytest.raises(ValueError):
             handle_constrained_decimal(create_constrained_field(multiple_of=multiple_of, ge=min_value, le=max_value))
 
 
@@ -184,7 +184,7 @@ def test_handle_constrained_decimal_handles_with_ge_and_le_and_lower_multiple_of
         )
         assert passes_pydantic_multiple_validator(result, multiple_of)
     else:
-        with pytest.raises(AssertionError):
+        with pytest.raises(ValueError):
             handle_constrained_decimal(create_constrained_field(multiple_of=multiple_of, ge=min_value, le=max_value))
 
 

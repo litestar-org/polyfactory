@@ -1,7 +1,7 @@
 from typing import Union
 
 from pydantic import BaseModel, Field
-from typing_extensions import Annotated, Literal  # noqa: TC002
+from typing_extensions import Annotated, Literal
 
 from pydantic_factories import ModelFactory
 

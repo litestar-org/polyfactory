@@ -5,7 +5,7 @@ import pytest
 try:
     import pymongo
     from beanie import Document, init_beanie
-    from beanie.odm.fields import Indexed, PydanticObjectId  # noqa: TC002
+    from beanie.odm.fields import Indexed, PydanticObjectId
     from motor.motor_asyncio import AsyncIOMotorClient
 
     from pydantic_factories.extensions import BeanieDocumentFactory

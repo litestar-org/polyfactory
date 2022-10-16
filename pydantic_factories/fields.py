@@ -1,4 +1,4 @@
-from typing import Any, Callable, Dict, TypeVar
+from typing import Any, Callable, Dict, Generic, TypeVar
 
 from typing_extensions import ParamSpec
 
@@ -6,7 +6,7 @@ T = TypeVar("T")
 P = ParamSpec("P")
 
 
-class Use:
+class Use(Generic[P, T]):
     """A class used to wrap a callback function alongside args and kwargs.
 
     The callback will be invoked whenever building the given factory
@@ -18,7 +18,7 @@ class Use:
         self.kwargs = kwargs
         self.args = args
 
-    def to_value(self) -> Any:
+    def to_value(self) -> T:
         """invokes the callback function."""
         return self.cb(*self.args, **self.kwargs)
 

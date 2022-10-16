@@ -6,7 +6,7 @@ from contextlib import suppress
 from dataclasses import is_dataclass
 from datetime import date, datetime, time, timedelta
 from decimal import Decimal
-from enum import EnumMeta
+from enum import Enum, EnumMeta
 from inspect import isclass
 from ipaddress import (
     IPv4Address,
@@ -21,7 +21,6 @@ from typing import (
     TYPE_CHECKING,
     Any,
     Callable,
-    ClassVar,
     Dict,
     Generic,
     ItemsView,
@@ -129,16 +128,12 @@ default_faker = Faker()
 
 
 class ModelFactory(ABC, Generic[T]):  # noqa: B024
-    __model__: ClassVar[Type[T]]  # type: ignore[misc]
-    __faker__: ClassVar[Optional[Faker]]
-    __sync_persistence__: ClassVar[  # type: ignore[misc]
-        Optional[Union[Type[SyncPersistenceProtocol[T]], SyncPersistenceProtocol[T]]]
-    ] = None
-    __async_persistence__: ClassVar[  # type: ignore[misc]
-        Optional[Union[Type[AsyncPersistenceProtocol[T]], AsyncPersistenceProtocol[T]]]
-    ] = None
-    __allow_none_optionals__: ClassVar[bool] = True
-    __random_seed__: ClassVar[Optional[int]] = None
+    __model__: Type[T]
+    __faker__: Optional[Faker]
+    __sync_persistence__: Optional[Union[Type[SyncPersistenceProtocol[T]], SyncPersistenceProtocol[T]]] = None
+    __async_persistence__: Optional[Union[Type[AsyncPersistenceProtocol[T]], AsyncPersistenceProtocol[T]]] = None
+    __allow_none_optionals__: bool = True
+    __random_seed__: Optional[int] = None
 
     # Private Methods
 
@@ -248,7 +243,7 @@ class ModelFactory(ABC, Generic[T]):  # noqa: B024
             raise ParameterError from e
 
     @classmethod
-    def _handle_enum(cls, outer_type: EnumMeta) -> Any:
+    def _handle_enum(cls, outer_type: Type[Enum]) -> Any:
         """Method that converts an enum to a list and picks a random element
         out of it."""
         return random.choice(list(outer_type))
@@ -505,7 +500,7 @@ class ModelFactory(ABC, Generic[T]):  # noqa: B024
             "ModelFactory",
             type(
                 f"{model.__name__}Factory",
-                (base or cls,),
+                (base or cls,),  # pyright: ignore
                 {"__model__": model, **kwargs},
             ),
         )
@@ -530,7 +525,7 @@ class ModelFactory(ABC, Generic[T]):  # noqa: B024
             return None
         outer_type = model_field.outer_type_
         if isinstance(outer_type, EnumMeta):
-            return cls._handle_enum(outer_type)
+            return cls._handle_enum(cast("Type[Enum]", outer_type))
         if is_pydantic_model(outer_type) or is_dataclass(outer_type):
             build_kwargs: dict = field_parameters or {}  # type: ignore
             return cls.create_factory(model=outer_type).build(**build_kwargs)
@@ -648,7 +643,7 @@ class ModelFactory(ABC, Generic[T]):  # noqa: B024
             if is_pydantic_model(cls.__model__):
                 return cls.__model__.construct(**kwargs)  # type: ignore
             raise ConfigurationError("factory_use_construct requires a pydantic model as the factory's __model__")
-        return cast("T", cls.__model__(**kwargs))
+        return cast("T", cls.__model__(**kwargs))  # pyright: ignore
 
     @classmethod
     def batch(cls, size: int, **kwargs: Any) -> List[T]:

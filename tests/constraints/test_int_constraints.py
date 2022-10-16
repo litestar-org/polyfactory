@@ -70,7 +70,7 @@ def test_handle_constrained_int_handles_multiple_of_with_lt(val1: int, val2: int
         result = handle_constrained_int(create_constrained_field(multiple_of=multiple_of, lt=max_value))
         assert passes_pydantic_multiple_validator(result, multiple_of)
     else:
-        with pytest.raises(AssertionError):
+        with pytest.raises(ValueError):
             handle_constrained_int(create_constrained_field(multiple_of=multiple_of, lt=max_value))
 
 
@@ -84,7 +84,7 @@ def test_handle_constrained_int_handles_multiple_of_with_le(val1: int, val2: int
         result = handle_constrained_int(create_constrained_field(multiple_of=multiple_of, le=max_value))
         assert passes_pydantic_multiple_validator(result, multiple_of)
     else:
-        with pytest.raises(AssertionError):
+        with pytest.raises(ValueError):
             handle_constrained_int(create_constrained_field(multiple_of=multiple_of, le=max_value))
 
 
@@ -119,7 +119,7 @@ def test_handle_constrained_int_handles_multiple_of_with_ge_and_le(val1: int, va
         result = handle_constrained_int(create_constrained_field(multiple_of=multiple_of, ge=min_value, le=max_value))
         assert passes_pydantic_multiple_validator(result, multiple_of)
     else:
-        with pytest.raises(AssertionError):
+        with pytest.raises(ValueError):
             handle_constrained_int(create_constrained_field(multiple_of=multiple_of, ge=min_value, le=max_value))
 
 
@@ -134,5 +134,5 @@ def test_handle_constrained_int_handles_ge_and_le_with_lower_multiple_of(val1: i
         result = handle_constrained_int(create_constrained_field(multiple_of=multiple_of, ge=min_value, le=max_value))
         assert passes_pydantic_multiple_validator(result, multiple_of)
     else:
-        with pytest.raises(AssertionError):
+        with pytest.raises(ValueError):
             handle_constrained_int(create_constrained_field(multiple_of=multiple_of, ge=min_value, le=max_value))

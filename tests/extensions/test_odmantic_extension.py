@@ -1,5 +1,5 @@
 from typing import List
-from uuid import UUID  # noqa: TC003
+from uuid import UUID
 
 import pytest
 

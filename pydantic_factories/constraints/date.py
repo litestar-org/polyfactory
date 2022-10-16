@@ -1,12 +1,12 @@
 from datetime import date, timedelta
-from typing import TYPE_CHECKING, cast
+from typing import TYPE_CHECKING, Type, cast
 
 if TYPE_CHECKING:
     from faker import Faker
     from pydantic import ConstrainedDate
 
 
-def handle_constrained_date(constrained_date: "ConstrainedDate", faker: "Faker") -> date:
+def handle_constrained_date(constrained_date: Type["ConstrainedDate"], faker: "Faker") -> date:
     """
     Generates a date value fulfilling the expected constraints.
     Args:
