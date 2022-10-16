@@ -59,3 +59,18 @@ def test_using_a_fixture_as_field_value() -> None:
     result = MyFactory.build()
     assert result.best_friend.name == "mike"
     assert len(result.all_friends) == 5
+
+
+def test_using_non_fixture_with_the_fixture_field_raises() -> None:
+    class MyModel(BaseModel):
+        best_friend: Person
+        all_friends: List[Person]
+
+    class MyFactory(ModelFactory[MyModel]):
+        __model__ = MyModel
+
+        best_friend = Fixture(PersonFactoryFixture, name="mike")
+        all_friends = Fixture(123)  # type: ignore
+
+    with pytest.raises(ValueError):
+        MyFactory.build()

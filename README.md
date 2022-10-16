@@ -1,5 +1,5 @@
 <!-- markdownlint-disable -->
-<img alt="Starlite logo" src="./starlite-banner.svg" width="100%" height="auto">
+<img alt="Starlite logo" src="docs/images/starlite-banner.svg" width="100%" height="auto">
 <!-- markdownlint-restore -->
 
 <!-- markdownlint-disable -->

@@ -5,20 +5,18 @@ site_url: https://starlite-api.github.io/pydantic-factories
 theme:
   name: material
   palette:
-    # Palette toggle for light mode
-    - scheme: default
-      primary: cyan
+    - media: "(prefers-color-scheme: dark)"
+      scheme: mirage
       toggle:
-        icon: material/brightness-7
-        name: Switch to dark mode
-
-    # Palette toggle for dark mode
-    - scheme: slate
-      primary: cyan
-      toggle:
-        icon: material/brightness-4
+        icon: material/toggle-switch
         name: Switch to light mode
-
+    - media: "(prefers-color-scheme: light)"
+      scheme: mirage-light
+      toggle:
+        icon: material/toggle-switch-off-outline
+        name: Switch to dark mode
+  favicon: images/starlite-favicon.ico
+  logo: images/2x/starlite-icon@2x.png
   icon:
     repo: fontawesome/brands/github
   features:
@@ -38,7 +36,26 @@ theme:
           fill: "#1d2433"
           text: "#d6dbe1"
         cards_font: Tahoma
-
+extra_css:
+  - css/extra.css
+nav:
+  - index.md
+  - Usage:
+      - usage/0-build-methods.md
+      - usage/1-nest-models.md
+      - usage/2-dataclasses.md
+      - usage/3-configuration.md
+      - usage/4-defining-factory-fields.md
+      - usage/5-persistence.md
+      - usage/6-extensions.md
+      - usage/7-handling-custom-types.md
+      - usage/8-pytest-fixtures.md
+extra:
+  social:
+    - icon: fontawesome/brands/discord
+      link: https://discord.gg/X3FJqy8d2j
+    - icon: fontawesome/brands/github
+      link: https://github.com/starlite-api/pydantic-factories
 markdown_extensions:
   - admonition
   - attr_list
@@ -52,3 +69,19 @@ markdown_extensions:
 plugins:
   - search:
       lang: en
+  - mkdocstrings:
+      handlers:
+        python:
+          import:
+            - https://docs.python.org/3/objects.inv
+          options:
+            heading_level: 3
+            members: []
+            show_root_heading: true
+            show_source: false
+            docstring_style: google
+            separate_signature: true
+            show_if_no_docstring: true
+            line_length: 100
+watch:
+  - pydantic_factories

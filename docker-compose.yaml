@@ -1,14 +1,13 @@
 version: "3.9"
 services:
-  mongo:
-    image: mongo:latest
+  docs:
+    build:
+      dockerfile: .docker/Dockerfile
+      context: .
     ports:
-      - "27017:27017"
-  postgres:
-    image: postgres:latest
-    ports:
-      - "5434:5432"
-    environment:
-      POSTGRES_DB: "pydantic-factories"
-      POSTGRES_USER: "pydantic-factories"
-      POSTGRES_PASSWORD: "pydantic-factories"
+      - 8000:8000
+    volumes:
+      - .:/docs
+    command:
+      - "serve"
+      - "--dev-addr=0.0.0.0:8000"
