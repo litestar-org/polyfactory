@@ -225,3 +225,7 @@
 [1.11.0]
 
 - add `Fixture` field type.
+
+[1.11.1]
+
+- fix `Any` check

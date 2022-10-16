@@ -80,8 +80,8 @@ def is_union(model_field: "ModelField") -> bool:
 
 def is_any(model_field: "ModelField") -> bool:
     """Determines whether the given model_field is type Any."""
-    type_name = cast("str", getattr(model_field.outer_type_, "_name", ""))
-    return model_field.type_ is Any or "Any" in type_name
+    type_name = cast("Any", getattr(model_field.outer_type_, "_name", None))
+    return model_field.type_ is Any or (type_name is not None and "Any" in type_name)
 
 
 def is_optional(model_field: "ModelField") -> bool:
