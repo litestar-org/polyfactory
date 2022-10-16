@@ -43,7 +43,7 @@ def test_handle_constrained_string_with_min_length_and_max_length_and_regex(
 ) -> None:
     field = create_constrained_field(to_lower=to_lower, min_length=min_length, max_length=max_length)
     if min_length < 0 or max_length < 0 or min_length > max_length:
-        with pytest.raises(AssertionError):
+        with pytest.raises(ValueError):
             handle_constrained_string(field=field, random_seed=None)
     else:
         for regex in REGEXES:
@@ -65,7 +65,7 @@ def test_handle_constrained_string_with_min_length_and_max_length(
 ) -> None:
     field = create_constrained_field(to_lower=to_lower, min_length=min_length, max_length=max_length)
     if min_length < 0 or max_length < 0 or min_length > max_length:
-        with pytest.raises(AssertionError):
+        with pytest.raises(ValueError):
             handle_constrained_string(field=field, random_seed=None)
     else:
         result = handle_constrained_string(field=field, random_seed=None)
@@ -79,7 +79,7 @@ def test_handle_constrained_string_with_min_length_and_max_length(
 def test_handle_constrained_string_with_min_length(to_lower: bool, min_length: int) -> None:
     field = create_constrained_field(to_lower=to_lower, min_length=min_length)
     if min_length < 0:
-        with pytest.raises(AssertionError):
+        with pytest.raises(ValueError):
             handle_constrained_string(field=field, random_seed=None)
     else:
         result = handle_constrained_string(field=field, random_seed=None)
@@ -92,7 +92,7 @@ def test_handle_constrained_string_with_min_length(to_lower: bool, min_length: i
 def test_handle_constrained_string_with_max_length(to_lower: bool, max_length: int) -> None:
     field = create_constrained_field(to_lower=to_lower, max_length=max_length)
     if max_length < 0:
-        with pytest.raises(AssertionError):
+        with pytest.raises(ValueError):
             handle_constrained_string(field=field, random_seed=None)
     else:
         result = handle_constrained_string(field=field, random_seed=None)

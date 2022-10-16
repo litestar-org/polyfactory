@@ -11,20 +11,20 @@ class PersonFactoryFixture(PersonFactoryWithoutDefaults):
     ...
 
 
-@register_fixture(name="another_fixutre")
+@register_fixture(name="another_fixture")
 class AnotherPersonFactoryFixture(PersonFactoryWithoutDefaults):
     """Another Person Factory Fixture."""
 
     ...
 
 
-def test_fixture_register_decorator(person_factory_fixture: PersonFactoryWithoutDefaults) -> None:
+def test_fixture_register_decorator(person_factory_fixture: PersonFactoryFixture) -> None:
     person = person_factory_fixture.build()
     assert isinstance(person, Person)
 
 
-def test_custom_naming_fixture_register_decorator(another_fixutre: AnotherPersonFactoryFixture) -> None:
-    person = another_fixutre.build()
+def test_custom_naming_fixture_register_decorator(another_fixture: AnotherPersonFactoryFixture) -> None:
+    person = another_fixture.build()
     assert isinstance(person, Person)
 
 
@@ -37,7 +37,7 @@ def test_register_with_function_error() -> None:
 
 
 def test_register_with_class_not_model_factory_error() -> None:
-    with pytest.raises(ValueError, match="is not a ModelFactory class"):
+    with pytest.raises(ValueError, match="is not a ModelFactory subclass"):
 
         @register_fixture  # type: ignore
         class Foo:

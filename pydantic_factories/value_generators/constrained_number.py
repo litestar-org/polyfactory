@@ -1,6 +1,6 @@
 import random
 from decimal import Decimal
-from typing import Callable, Optional, Tuple, Type, TypeVar, cast
+from typing import Any, Callable, Dict, Optional, Tuple, Type, TypeVar, cast
 
 from pydantic_factories.utils import passes_pydantic_multiple_validator
 
@@ -8,19 +8,32 @@ T = TypeVar("T", Decimal, int, float)
 
 
 def get_increment(t_type: Type[T]) -> T:
-    """gets a small increment base to add to constrained values, i.e. lt/gt
-    entries."""
-    if t_type == int:
-        return t_type(1)
-    if t_type == float:
-        return t_type(0.001)
-    return t_type("0.001")
+    """Gets a small increment base to add to constrained values, i.e. lt/gt
+    entries.
+
+    Args:
+        t_type: A value of type T.
+
+    Returns:
+        An increment T.
+    """
+    values: Dict[Any, Any] = {int: 1, float: 0.001, Decimal: Decimal("0.001")}
+    return cast("T", values[t_type])
 
 
 def get_value_or_none(equal_value: Optional[T], constrained: Optional[T], increment: T) -> Optional[T]:
     """helper function to reduce branching in the get_constrained_number_range
     method if the ge/le value is available, return that, otherwise return the
-    gt/lt value + an increment or None."""
+    gt/lt value + an increment or None.
+
+    Args:
+        equal_value: An GE/LE value.
+        constrained: An GT/LT value.
+        increment: increment.
+
+    Returns:
+        Optional T.
+    """
     if equal_value is not None:
         return equal_value
     if constrained is not None:
@@ -39,11 +52,11 @@ def get_constrained_number_range(
     """Returns the minimum and maximum values given a field's constraints."""
     seed = t_type(random.random() * 10)
     minimum = get_value_or_none(equal_value=ge, constrained=gt, increment=get_increment(t_type))
-    maximum = get_value_or_none(equal_value=le, constrained=lt, increment=-get_increment(t_type))
-    if minimum is not None and maximum is not None:
-        assert maximum > minimum, "maximum value must be greater than minimum value"
-    if multiple_of is not None and maximum is not None:
-        assert maximum > multiple_of, "maximum value must be greater than multiple_of"
+    maximum = get_value_or_none(equal_value=le, constrained=lt, increment=-get_increment(t_type))  # pyright: ignore
+
+    if minimum is not None and maximum is not None and maximum <= minimum:
+        raise ValueError("maximum value must be greater than minimum value")
+
     if multiple_of is None:
         if minimum is not None and maximum is None:
             if minimum == 0:
@@ -51,6 +64,9 @@ def get_constrained_number_range(
             return minimum, minimum + seed
         if maximum is not None and minimum is None:
             return maximum - seed, maximum
+    elif maximum is not None and multiple_of >= maximum:
+        raise ValueError("maximum value must be greater than multiple_of")
+
     return minimum, maximum
 
 

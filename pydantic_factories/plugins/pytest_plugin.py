@@ -1,17 +1,18 @@
-import inspect
 import re
-from dataclasses import dataclass
-from typing import TYPE_CHECKING, Callable, Optional, Type, Union, overload
+from inspect import isclass
+from typing import Any, Callable, Optional, Type, Union
 
 import pytest
+from _pytest.config import Config
+from pydantic import validate_arguments
+from typing_extensions import Literal
 
 from pydantic_factories.factory import ModelFactory
 
-if TYPE_CHECKING:
-    from _pytest.config import Config
-    from _pytest.scope import _ScopeName
-
-    Scope = Union["_ScopeName", Callable[[str, Config], "_ScopeName"]]
+Scope = Union[
+    Literal["session", "package", "module", "class", "function"],
+    Callable[[str, Config], Literal["session", "package", "module", "class", "function"]],
+]
 
 
 split_pattern_1 = re.compile(r"([A-Z]+)([A-Z][a-z])")
@@ -26,69 +27,53 @@ def _get_fixture_name(name: str) -> str:
     return name.lower()
 
 
-FixtureFunction = Callable[..., Type["ModelFactory"]]
+class FactoryFixture:
+    __slots__ = ("scope", "autouse", "name")
 
+    @validate_arguments
+    def __init__(
+        self,
+        scope: "Scope" = "function",
+        autouse: bool = False,
+        name: Optional[str] = None,
+    ):
+        self.scope = scope
+        self.autouse = autouse
+        self.name = name
 
-@dataclass(frozen=True)
-class PydanticFactoryFixtureMarker:
-    scope: "Scope"
-    autouse: bool = False
-    name: Optional[str] = None
+    def __call__(self, model_factory: Type["ModelFactory"]) -> Any:
+        if not isclass(model_factory):
+            raise ValueError(f"{model_factory.__name__} is not a class.")
+        if not issubclass(model_factory, ModelFactory):
+            raise ValueError(f"{model_factory.__name__} is not a ModelFactory subclass.")
 
-    def __call__(self, _class: Type["ModelFactory"]) -> FixtureFunction:
-        if not inspect.isclass(_class):
-            raise ValueError(f"{_class.__name__} is not a class.")
-        if not issubclass(_class, ModelFactory):
-            raise ValueError(f"{_class.__name__} is not a ModelFactory class.")
-
-        fixture_name = self.name or _get_fixture_name(_class.__name__)
-        fixture_registe = pytest.fixture(scope=self.scope, name=fixture_name, autouse=self.autouse)
+        fixture_name = self.name or _get_fixture_name(model_factory.__name__)
+        fixture_register = pytest.fixture(scope=self.scope, name=fixture_name, autouse=self.autouse)  # pyright: ignore
 
         def factory_fixture() -> Type["ModelFactory"]:
-            return _class
+            return model_factory
 
-        factory_fixture.__doc__ = _class.__doc__
-        return fixture_registe(factory_fixture)
-
-
-@overload
-def register_fixture(
-    _class: None = None,
-    *,
-    scope: "Scope" = ...,
-    autouse: bool = ...,
-    name: Optional[str] = ...,
-) -> PydanticFactoryFixtureMarker:
-    ...
-
-
-@overload
-def register_fixture(
-    _class: Type["ModelFactory"],
-    *,
-    scope: "Scope" = ...,
-    autouse: bool = ...,
-    name: Optional[str] = ...,
-) -> FixtureFunction:
-    ...
+        factory_fixture.__doc__ = model_factory.__doc__
+        return fixture_register(factory_fixture)
 
 
 def register_fixture(
-    _class: Optional[Type["ModelFactory"]] = None,
+    model_factory: Optional[Type["ModelFactory"]] = None,
     *,
     scope: "Scope" = "function",
     autouse: bool = False,
     name: Optional[str] = None,
-) -> Union[PydanticFactoryFixtureMarker, FixtureFunction]:
-    """A decorator to wrap a ModelFactory as a pytest fixture.
+) -> Any:
+    """A decorator that allows registering model factories as fixtures.
 
-    Accept pytest.fixture-like keyword arguments, including `scope`,
-    `autouse`, `name`.
+    Args:
+        model_factory: An optional model factory class to decorate.
+        scope: Pytest scope.
+        autouse: Auto use fixture.
+        name: Fixture name.
+
+    Returns:
+        A fixture factory instance.
     """
-
-    fixture_marker = PydanticFactoryFixtureMarker(scope=scope, autouse=autouse, name=name)
-
-    if _class:
-        return fixture_marker(_class)
-
-    return fixture_marker
+    fixture = FactoryFixture(scope=scope, autouse=autouse, name=name)
+    return fixture(model_factory) if model_factory else fixture

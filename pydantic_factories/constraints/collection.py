@@ -20,14 +20,18 @@ def handle_constrained_collection(
     constrained_field = cast("Union[ConstrainedList, ConstrainedSet]", model_field.outer_type_)
     min_items = constrained_field.min_items or 0
     max_items = constrained_field.max_items if constrained_field.max_items is not None else min_items + 1
-    assert max_items >= min_items, "max_items must be longer or equal to min_items"
+
+    if max_items < min_items:
+        raise ValueError("max_items must be longer or equal to min_items")
+
     if model_field.sub_fields:
         handler = lambda: handle_complex_type(  # noqa: E731
-            model_field=random.choice(model_field.sub_fields), model_factory=model_factory
+            model_field=random.choice(model_field.sub_fields), model_factory=model_factory  # pyright: ignore
         )
     else:
         t_type = constrained_field.item_type if constrained_field.item_type is not Any else str
         handler = lambda: model_factory.get_mock_value(t_type)  # noqa: E731
+
     collection: Union[list, set] = collection_type()
     try:
         while len(collection) < random.randint(min_items, max_items):

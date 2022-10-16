@@ -63,7 +63,7 @@ def handle_container_type(
     """
     is_frozen_set = container_type is frozenset
     container = container_type() if not is_frozen_set else set()
-    if field_parameters and isinstance(field_parameters, dict):
+    if isinstance(container, dict) and field_parameters and isinstance(field_parameters, dict):
         key, value = list(field_parameters.items())[0]
         container[key] = value
         return container
@@ -81,7 +81,7 @@ def handle_container_type(
         else:
             container.add(value)
             if is_frozen_set:
-                container = cast("set", frozenset(*container))
+                return cast("set", frozenset(*container))
     return container
 
 
