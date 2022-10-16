@@ -1,6 +1,6 @@
 import re
 from inspect import isclass
-from typing import Any, Callable, Optional, Type, Union
+from typing import Any, Callable, ClassVar, Dict, Optional, Type, Union
 
 import pytest
 from _pytest.config import Config
@@ -30,6 +30,8 @@ def _get_fixture_name(name: str) -> str:
 class FactoryFixture:
     __slots__ = ("scope", "autouse", "name")
 
+    factory_class_map: ClassVar[Dict[Callable, Type["ModelFactory"]]] = {}
+
     @validate_arguments
     def __init__(
         self,
@@ -54,7 +56,9 @@ class FactoryFixture:
             return model_factory
 
         factory_fixture.__doc__ = model_factory.__doc__
-        return fixture_register(factory_fixture)
+        marker = fixture_register(factory_fixture)
+        self.factory_class_map[marker] = model_factory
+        return marker
 
 
 def register_fixture(

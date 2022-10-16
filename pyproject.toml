@@ -102,7 +102,7 @@ ignored-argument-names = "args|kwargs|_|__"
 no-docstring-rgx = "(__.*__|main|test.*|.*test|.*Test|^_.*)$"
 
 [tool.pylint.BASIC]
-good-names = "_,i,e,l,g,mm,yy,T,lt,le,gt,ge,cb"
+good-names = "_,i,e,l,g,mm,yy,T,lt,le,gt,ge,cb,fn"
 
 [tool.coverage.run]
 omit = ["*/tests/*"]
