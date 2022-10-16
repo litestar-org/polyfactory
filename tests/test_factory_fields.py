@@ -30,7 +30,7 @@ def test_use() -> None:
 
     class MyFactory(ModelFactory):
         __model__ = MyModel
-        my_class = Use(cb=MyClass.builder, name=default_name)
+        my_class = Use(fn=MyClass.builder, name=default_name)
 
     result = MyFactory.build()
     assert result.my_class.name == default_name
@@ -47,7 +47,7 @@ def test_sub_factory() -> None:
 
     class MyFactory(ModelFactory):
         __model__ = SecondModel
-        first_model = Use(cb=ModelFactory.create_factory(FirstModel).build, name=default_name)
+        first_model = Use(fn=ModelFactory.create_factory(FirstModel).build, name=default_name)
 
     result = MyFactory.build()
     assert result.first_model.name == default_name

@@ -1,45 +1,68 @@
-from typing import Any, Callable, Dict, Generic, TypeVar
+from typing import TYPE_CHECKING, Any, Callable, Dict, Generic, Optional, TypeVar, cast
 
 from typing_extensions import ParamSpec
 
 T = TypeVar("T")
 P = ParamSpec("P")
 
+if TYPE_CHECKING:
+    from pydantic_factories.factory import ModelFactory
+
 
 class Use(Generic[P, T]):
-    """A class used to wrap a callback function alongside args and kwargs.
+    __slots__ = ("fn", "kwargs", "args")
 
-    The callback will be invoked whenever building the given factory
-    attribute.
-    """
+    def __init__(self, fn: Callable[P, T], *args: P.args, **kwargs: P.kwargs) -> None:
+        """A class used to wrap a callable alongside any args and kwargs.
 
-    def __init__(self, cb: Callable[P, T], *args: P.args, **kwargs: P.kwargs) -> None:
-        self.cb = cb
+        The callable will be invoked whenever building the given factory
+        attribute.
+
+        Args:
+            fn: A callable.
+            *args: Args for the callable.
+            **kwargs: Kwargs for the callable.
+        """
+        self.fn = fn
         self.kwargs = kwargs
         self.args = args
 
     def to_value(self) -> T:
-        """invokes the callback function."""
-        return self.cb(*self.args, **self.kwargs)
+        """Invokes the callable.
+
+        Returns:
+            The output of the callable.
+        """
+        return self.fn(*self.args, **self.kwargs)
 
 
 class PostGenerated:
-    """A class to allow post generating using already generated values. The
-    callback will be invoked after building all non post generated factory
-    attributes.
+    __slots__ = ("fn", "kwargs", "args")
 
-    Callback should be able to receive the field name as its first
-    argument and a dictionary of values as its second argument.
-    """
+    def __init__(self, fn: Callable, *args: Any, **kwargs: Any) -> None:
+        """A class that allows for generating values after other fields are
+        generated.
 
-    def __init__(self, cb: Callable, *args: Any, **kwargs: Any) -> None:
-        self.cb = cb
+        Args:
+            fn: A callable.
+            *args: Args for the callable.
+            **kwargs: Kwargs for the callable.
+        """
+        self.fn = fn
         self.kwargs = kwargs
         self.args = args
 
     def to_value(self, name: str, values: Dict[str, Any]) -> Any:
-        """invokes the callback function."""
-        return self.cb(name, values, *self.args, **self.kwargs)
+        """Invokes the post generation callback.
+
+        Args:
+            name: Field name.
+            values: Generated values.
+
+        Returns:
+            An arbitrary value.
+        """
+        return self.fn(name, values, *self.args, **self.kwargs)
 
 
 class Require:
@@ -50,3 +73,36 @@ class Require:
 class Ignore:
     """A placeholder class used to mark a given factory attribute as
     ignored."""
+
+
+class Fixture:
+    __slots__ = ("fixture", "size", "kwargs")
+
+    def __init__(self, fixture: Callable, size: Optional[int] = None, **kwargs: Any) -> None:
+        """A class that allows using ModelFactory classes registered as pytest
+        fixtures as factory fields.
+
+        Args:
+            fixture: A factory that was registered as a fixture.
+            size: Optional batch size.
+            **kwargs: Any build kwargs.
+        """
+        self.fixture = fixture
+        self.size = size
+        self.kwargs = kwargs
+
+    def to_value(self) -> Any:
+        """
+        Retries the correct factory for the fixture, calling either its build method - or if size is given, batch.
+
+        Returns:
+            The build result.
+        """
+        from pydantic_factories.plugins.pytest_plugin import FactoryFixture
+
+        factory = cast("Optional[ModelFactory]", FactoryFixture.factory_class_map.get(self.fixture))
+        if not factory:
+            raise ValueError("fixture has not been registered using the register_factory decorator")
+        if self.size:
+            return factory.batch(self.size, **self.kwargs)
+        return factory.build(**self.kwargs)

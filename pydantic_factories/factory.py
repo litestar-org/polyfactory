@@ -251,9 +251,9 @@ class ModelFactory(ABC, Generic[T]):  # noqa: B024
     @classmethod
     def _handle_factory_field(cls, field_value: Any) -> Any:
         """Handles a field defined on the factory class itself."""
-        from pydantic_factories.fields import Use
+        from pydantic_factories.fields import Fixture, Use
 
-        if isinstance(field_value, Use):
+        if isinstance(field_value, (Use, Fixture)):
             return field_value.to_value()
         if cls.is_model_factory(field_value):
             return cast("ModelFactory", field_value).build()
