@@ -1,5 +1,5 @@
 # pylint: disable=unnecessary-ellipsis
-from typing import Any, Dict, List, TypeVar, Union
+from typing import Any, ClassVar, Dict, List, TypeVar, Union
 
 from pydantic import BaseModel
 from typing_extensions import Protocol
@@ -8,7 +8,7 @@ from typing_extensions import Protocol
 # According to https://github.com/python/cpython/blob/main/Lib/dataclasses.py#L1213
 # having __dataclass_fields__ is enough to identity a dataclass.
 class DataclassProtocol(Protocol):
-    __dataclass_fields__: Dict[str, Any]
+    __dataclass_fields__: ClassVar[Dict[str, Any]]
 
 
 T = TypeVar("T", bound=Union[BaseModel, DataclassProtocol])
