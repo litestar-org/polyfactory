@@ -1,8 +1,8 @@
-# Models and Dataclasses
+# Supported Models
 
 This library works with any class that inherits the pydantic `BaseModel` class, including `GenericModel` and classes
 from 3rd party libraries, and also with dataclasses - both those from the python standard library and pydantic's
-dataclasses. In fact, you can use them interchangeably as you like:
+dataclasses. Finally, it also supports `TypedDict` classes. In fact, you can use them interchangeably as you like:
 
 ```python
 import dataclasses

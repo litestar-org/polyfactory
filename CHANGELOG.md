@@ -228,4 +228,8 @@
 
 [1.11.1]
 
-- fix `Any` check
+- fix `Any` check.
+
+[1.12.0]
+
+- add `TypedDict` support.

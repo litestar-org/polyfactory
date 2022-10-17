@@ -15,7 +15,7 @@ if TYPE_CHECKING:
     from pydantic.fields import ModelField
 
 
-class OrmarModelFactory(ModelFactory[Model]):  # pragma: no cover
+class OrmarModelFactory(ModelFactory[Model]):  # pragma: no cover # type: ignore
     @classmethod
     def get_field_value(cls, model_field: "ModelField", field_parameters: Union[dict, list, None] = None) -> Any:
         """We need to handle here both choices and the fact that ormar sets

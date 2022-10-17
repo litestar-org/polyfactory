@@ -2,6 +2,7 @@ import random
 from decimal import Decimal
 from typing import Any, Callable, Dict, Optional, Tuple, Type, TypeVar, cast
 
+from pydantic_factories.exceptions import ParameterError
 from pydantic_factories.utils import passes_pydantic_multiple_validator
 
 T = TypeVar("T", Decimal, int, float)
@@ -55,7 +56,7 @@ def get_constrained_number_range(
     maximum = get_value_or_none(equal_value=le, constrained=lt, increment=-get_increment(t_type))  # pyright: ignore
 
     if minimum is not None and maximum is not None and maximum <= minimum:
-        raise ValueError("maximum value must be greater than minimum value")
+        raise ParameterError("maximum value must be greater than minimum value")
 
     if multiple_of is None:
         if minimum is not None and maximum is None:
@@ -65,7 +66,7 @@ def get_constrained_number_range(
         if maximum is not None and minimum is None:
             return maximum - seed, maximum
     elif maximum is not None and multiple_of >= maximum:
-        raise ValueError("maximum value must be greater than multiple_of")
+        raise ParameterError("maximum value must be greater than multiple_of")
 
     return minimum, maximum
 

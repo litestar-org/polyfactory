@@ -2,6 +2,8 @@ from typing import TYPE_CHECKING, Any, Callable, Dict, Generic, Optional, TypeVa
 
 from typing_extensions import ParamSpec
 
+from pydantic_factories.exceptions import ParameterError
+
 T = TypeVar("T")
 P = ParamSpec("P")
 
@@ -102,7 +104,7 @@ class Fixture:
 
         factory = cast("Optional[ModelFactory]", FactoryFixture.factory_class_map.get(self.fixture))
         if not factory:
-            raise ValueError("fixture has not been registered using the register_factory decorator")
+            raise ParameterError("fixture has not been registered using the register_factory decorator")
         if self.size:
             return factory.batch(self.size, **self.kwargs)
         return factory.build(**self.kwargs)

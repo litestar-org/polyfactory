@@ -7,6 +7,7 @@ from _pytest.config import Config
 from pydantic import validate_arguments
 from typing_extensions import Literal
 
+from pydantic_factories.exceptions import ParameterError
 from pydantic_factories.factory import ModelFactory
 
 Scope = Union[
@@ -45,9 +46,9 @@ class FactoryFixture:
 
     def __call__(self, model_factory: Type["ModelFactory"]) -> Any:
         if not isclass(model_factory):
-            raise ValueError(f"{model_factory.__name__} is not a class.")
+            raise ParameterError(f"{model_factory.__name__} is not a class.")
         if not issubclass(model_factory, ModelFactory):
-            raise ValueError(f"{model_factory.__name__} is not a ModelFactory subclass.")
+            raise ParameterError(f"{model_factory.__name__} is not a ModelFactory subclass.")
 
         fixture_name = self.name or _get_fixture_name(model_factory.__name__)
         fixture_register = pytest.fixture(scope=self.scope, name=fixture_name, autouse=self.autouse)  # pyright: ignore

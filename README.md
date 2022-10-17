@@ -23,7 +23,7 @@
 # Pydantic-Factories
 
 This library offers powerful mock data generation capabilities for [pydantic](https://github.com/samuelcolvin/pydantic)
-based models and `dataclasses`. It can also be used with other libraries that use pydantic as a foundation.
+based models, `dataclasses` and `TypeDict`s. It can also be used with other libraries that use pydantic as a foundation.
 
 Check out [the documentation 📚](https://starlite-api.github.io/pydantic-factories/).
 
