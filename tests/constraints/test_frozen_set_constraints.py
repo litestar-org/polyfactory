@@ -38,7 +38,7 @@ def test_handle_constrained_set_with_min_items_and_max_items(min_items: int, max
         assert len(result) <= max_items
     else:
         field = create_model_field(str, min_items=min_items, max_items=max_items)
-        with pytest.raises(ValueError):
+        with pytest.raises(ParameterError):
             handle_constrained_collection(collection_type=set, model_field=field, model_factory=ModelFactory)
 
 

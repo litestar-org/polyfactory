@@ -1,4 +1,3 @@
-# pylint: disable=ungrouped-imports
 import os
 import random
 from abc import ABC
@@ -134,12 +133,10 @@ FactoryTypes = Union[BaseModel, DataclassProtocol, TypingTypedDictMeta, _TypedDi
 
 T = TypeVar("T", bound=FactoryTypes)
 
-default_faker = Faker()
-
 
 class ModelFactory(ABC, Generic[T]):  # noqa: B024
     __model__: Type[T]
-    __faker__: Optional[Faker]
+    __faker__: Faker = Faker()
     __sync_persistence__: Optional[Union[Type[SyncPersistenceProtocol[T]], SyncPersistenceProtocol[T]]] = None
     __async_persistence__: Optional[Union[Type[AsyncPersistenceProtocol[T]], AsyncPersistenceProtocol[T]]] = None
     __allow_none_optionals__: bool = True
@@ -152,26 +149,29 @@ class ModelFactory(ABC, Generic[T]):  # noqa: B024
         """Returns the factory's model."""
         if not hasattr(cls, "__model__") or not cls.__model__:
             raise ConfigurationError("missing model class in factory Meta")
-        model = cls.__model__
-        if is_pydantic_model(model):
+
+        if is_pydantic_model(cls.__model__):
             with suppress(NameError):
-                model.update_forward_refs()
-        return cast("Type[T]", model)
+                cls.__model__.update_forward_refs()
+
+        return cast("Type[T]", cls.__model__)
 
     @classmethod
     def _get_sync_persistence(cls) -> SyncPersistenceProtocol[T]:
         """Returns a sync_persistence interface if present."""
-        persistence = cls.__sync_persistence__
-        if persistence:
-            return persistence if not callable(persistence) else persistence()  # pylint: disable=not-callable
+        if cls.__sync_persistence__:
+            if callable(cls.__sync_persistence__):
+                return cls.__sync_persistence__()
+            return cls.__sync_persistence__
         raise ConfigurationError("A sync_persistence handler must be defined in the factory to use this method")
 
     @classmethod
     def _get_async_persistence(cls) -> AsyncPersistenceProtocol[T]:
         """Returns an async_persistence interface."""
-        persistence = cls.__async_persistence__
-        if persistence:
-            return persistence if not callable(persistence) else persistence()  # pylint: disable=not-callable
+        if cls.__async_persistence__:
+            if callable(cls.__async_persistence__):
+                return cls.__async_persistence__()
+            return cls.__async_persistence__
         raise ConfigurationError("An async_persistence handler must be defined in the factory to use this method")
 
     @classmethod
@@ -189,12 +189,14 @@ class ModelFactory(ABC, Generic[T]):  # noqa: B024
         Returns:
             A boolean determining if kwargs are missing.
         """
-        if is_pydantic_model(type(model_kwargs)) or not model_kwargs:
+        if not model_kwargs or is_pydantic_model(type(model_kwargs)):
             return False
 
-        pydantic_model_fields = cls.get_model_fields(cast("Type[T]", pydantic_model))
-        pydantic_model_field_names = {field_name for field_name, _ in pydantic_model_fields}
+        pydantic_model_field_names = {
+            field_name for field_name, _ in cls.get_model_fields(cast("Type[T]", pydantic_model))
+        }
         kwargs_field_names = set(model_kwargs.keys())
+
         return bool(pydantic_model_field_names - kwargs_field_names)
 
     @classmethod
@@ -205,80 +207,117 @@ class ModelFactory(ABC, Generic[T]):  # noqa: B024
         Returns False if model_field isn't a Pydantic model OR if all
         fields of the pydantic model are defined in the kwargs, and True
         otherwise.
+
+        Args:
+            field_name: Field name.
+            model_field: A 'ModelField' instance.
+            **kwargs: Any kwargs.
+
+        Returns:
+            A boolean determining whether the given field value is a pydantic model with missing kwargs.
         """
-        if model_field.shape == SHAPE_MAPPING:
-            return False
-
-        field_type = model_field.type_
-        if is_pydantic_model(field_type):
+        if model_field.shape != SHAPE_MAPPING and is_pydantic_model(model_field.type_):
             field_kwargs = kwargs.get(field_name)
-            if not isinstance(field_kwargs, list):
-                return cls._are_model_kwargs_partial(field_type, field_kwargs)
 
-            return any(
-                cls._are_model_kwargs_partial(field_type, pydantic_model_kwargs)
-                for pydantic_model_kwargs in field_kwargs
-            )
+            if isinstance(field_kwargs, list):
+                return any(
+                    cls._are_model_kwargs_partial(model_field.type_, pydantic_model_kwargs)
+                    for pydantic_model_kwargs in field_kwargs
+                )
+
+            return cls._are_model_kwargs_partial(model_field.type_, field_kwargs)
+
         return False
 
     @classmethod
     def _should_use_alias_name(cls, model_field: "ModelField", model: Type[T]) -> bool:
-        """Determines whether a given model field should be set by an alias."""
-        if not model_field.alias:
-            return False
+        """Determines whether a given model field should be set by an alias.
 
-        if issubclass(model, BaseModel) and model.__config__.allow_population_by_field_name:
-            return False
-        return True
+        Args:
+            model_field: A 'ModelField' instance.
+            model: A model class.
+
+        Returns:
+            A boolean determining whether the field alias should be used.
+        """
+        return bool(model_field.alias) and not (
+            issubclass(model, BaseModel) and model.__config__.allow_population_by_field_name
+        )
 
     @classmethod
-    def _handle_constrained_field(cls, model_field: "ModelField") -> Any:
-        """Handle the built-in pydantic constrained value field types."""
+    def _handle_constrained_field(
+        cls, model_field: "ModelField"
+    ) -> Union[float, int, Decimal, date, str, bytes, set, frozenset, list]:
+        """Handle the built-in pydantic constrained value field types.
+
+        Args:
+            model_field: A 'ModelField' instance for a pydantic ConstrainedField type.
+
+        Returns:
+            An appropriate value for the given field type.
+        """
         outer_type = model_field.outer_type_
-        try:
-            if issubclass(outer_type, ConstrainedFloat):
-                return handle_constrained_float(field=cast("ConstrainedFloat", outer_type))
-            if issubclass(outer_type, ConstrainedInt):
-                return handle_constrained_int(field=cast("ConstrainedInt", outer_type))
-            if issubclass(outer_type, ConstrainedDecimal):
-                return handle_constrained_decimal(field=cast("ConstrainedDecimal", outer_type))
-            if issubclass(outer_type, ConstrainedStr):
-                return handle_constrained_string(
-                    field=cast("ConstrainedStr", outer_type), random_seed=cls.__random_seed__
-                )
-            if issubclass(outer_type, ConstrainedBytes):
-                return handle_constrained_bytes(field=cast("ConstrainedBytes", outer_type))
-            if issubclass(outer_type, (ConstrainedSet, ConstrainedList, ConstrainedFrozenSet)):
-                collection_type = list if issubclass(outer_type, ConstrainedList) else set
-                result = handle_constrained_collection(
-                    collection_type=collection_type, model_field=model_field, model_factory=cls  # type: ignore
-                )
-                if issubclass(outer_type, ConstrainedFrozenSet):  # pragma: no cover
-                    return frozenset(*result)
-                return result
-            if issubclass(outer_type, ConstrainedDate):
-                return handle_constrained_date(constrained_date=outer_type, faker=cls.get_faker())
-            raise ParameterError(f"Unknown constrained field: {outer_type.__name__}")  # pragma: no cover
-        except AssertionError as e:  # pragma: no cover
-            raise ParameterError from e
+        if issubclass(outer_type, ConstrainedFloat):
+            return handle_constrained_float(field=cast("ConstrainedFloat", outer_type))
+
+        if issubclass(outer_type, ConstrainedInt):
+            return handle_constrained_int(field=cast("ConstrainedInt", outer_type))
+
+        if issubclass(outer_type, ConstrainedDecimal):
+            return handle_constrained_decimal(field=cast("ConstrainedDecimal", outer_type))
+
+        if issubclass(outer_type, ConstrainedStr):
+            return handle_constrained_string(field=cast("ConstrainedStr", outer_type), random_seed=cls.__random_seed__)
+
+        if issubclass(outer_type, ConstrainedBytes):
+            return handle_constrained_bytes(field=cast("ConstrainedBytes", outer_type))
+
+        if issubclass(outer_type, (ConstrainedSet, ConstrainedList, ConstrainedFrozenSet)):
+            collection_type = list if issubclass(outer_type, ConstrainedList) else set
+            result = handle_constrained_collection(
+                collection_type=collection_type, model_field=model_field, model_factory=cls  # type: ignore
+            )
+            return frozenset(*result) if issubclass(outer_type, ConstrainedFrozenSet) else result
+
+        if issubclass(outer_type, ConstrainedDate):
+            return handle_constrained_date(constrained_date=outer_type, faker=cls.get_faker())
+
+        raise ParameterError(f"Unknown constrained field: {outer_type.__name__}")  # pragma: no cover
 
     @classmethod
     def _handle_enum(cls, outer_type: Type[Enum]) -> Any:
         """Method that converts an enum to a list and picks a random element
-        out of it."""
+        out of it.
+
+        Args:
+            outer_type: An Enum class.
+
+        Returns:
+            A random member value.
+        """
         return random.choice(list(outer_type))
 
     @classmethod
     def _handle_factory_field(cls, field_value: Any) -> Any:
-        """Handles a field defined on the factory class itself."""
+        """Handles a field defined on the factory class itself.
+
+        Args:
+            field_value: A value defined as an attribute on the factory class.
+
+        Returns:
+            An arbitrary value correlating with the given field value.
+        """
         from pydantic_factories.fields import Fixture, Use
 
         if isinstance(field_value, (Use, Fixture)):
             return field_value.to_value()
+
         if cls.is_model_factory(field_value):
             return cast("ModelFactory", field_value).build()
+
         if callable(field_value):
             return field_value()
+
         return field_value
 
     # Public Methods
@@ -371,9 +410,7 @@ class ModelFactory(ABC, Generic[T]):  # noqa: B024
         Returns:
             An instance of 'Faker'
         """
-        if hasattr(cls, "__faker__") and cls.__faker__:
-            return cls.__faker__
-        return default_faker
+        return cls.__faker__
 
     @classmethod
     def get_provider_map(cls) -> Dict[Any, Callable]:
@@ -541,29 +578,43 @@ class ModelFactory(ABC, Generic[T]):  # noqa: B024
         """
         if model_field.field_info.const:
             return model_field.get_default()
+
         if cls.should_set_none_value(model_field=model_field):
             return None
-        outer_type = model_field.outer_type_
-        if isinstance(outer_type, EnumMeta):
-            return cls._handle_enum(cast("Type[Enum]", outer_type))
-        if is_pydantic_model(outer_type) or is_dataclass(outer_type) or is_typeddict(outer_type):
-            build_kwargs: dict = field_parameters or {}  # type: ignore
-            return cls.create_factory(model=outer_type).build(**build_kwargs)
+
+        if isinstance(model_field.outer_type_, EnumMeta):
+            return cls._handle_enum(cast("Type[Enum]", model_field.outer_type_))
+
+        if (
+            is_pydantic_model(model_field.outer_type_)
+            or is_dataclass(model_field.outer_type_)
+            or is_typeddict(model_field.outer_type_)
+        ):
+
+            return cls.create_factory(model=model_field.outer_type_).build(
+                **(field_parameters if isinstance(field_parameters, dict) else {})
+            )
+
         if isinstance(field_parameters, list) and is_pydantic_model(model_field.type_):
             return [
                 cls.create_factory(model=model_field.type_).build(**build_kwargs) for build_kwargs in field_parameters
             ]
-        if cls.is_constrained_field(outer_type):
+
+        if cls.is_constrained_field(model_field.outer_type_):
             return cls._handle_constrained_field(model_field=model_field)
+
         if model_field.sub_fields:
             return handle_complex_type(model_field=model_field, model_factory=cls, field_parameters=field_parameters)
+
         if is_literal(model_field):
-            literal_args = get_args(outer_type)
+            literal_args = get_args(model_field.outer_type_)
             return random.choice(literal_args)
+
         # this is a workaround for the following issue: https://github.com/samuelcolvin/pydantic/issues/3415
-        field_type = model_field.type_ if model_field.type_ is not Any else outer_type
+        field_type = model_field.type_ if model_field.type_ is not Any else model_field.outer_type_
         if cls.is_ignored_type(field_type):
             return None
+
         return cls.get_mock_value(field_type=field_type)
 
     @classmethod
@@ -579,9 +630,7 @@ class ModelFactory(ABC, Generic[T]):  # noqa: B024
         Returns:
             A boolean determining whether 'None' should be set for the given field.
         """
-        if cls.__allow_none_optionals__:
-            return is_optional(model_field=model_field) and not create_random_boolean()
-        return False
+        return cls.__allow_none_optionals__ and (is_optional(model_field=model_field) and not create_random_boolean())
 
     @classmethod
     def should_set_field_value(cls, field_name: str, model_field: "ModelField", **kwargs: Dict[str, Any]) -> bool:
@@ -598,15 +647,15 @@ class ModelFactory(ABC, Generic[T]):  # noqa: B024
         Returns:
             A boolean determining whether a value should be set for the given field.
         """
-        is_field_ignored = False
-        is_field_in_kwargs = field_name in kwargs
-        is_partial_pydantic_model = cls._is_pydantic_model_with_partial_fields(field_name, model_field, **kwargs)
-        if hasattr(cls, field_name):
-            value = getattr(cls, field_name)
-            if isinstance(value, Require) and not is_field_in_kwargs:
-                raise MissingBuildKwargError(f"Require kwarg {field_name} is missing")
-            is_field_ignored = isinstance(value, Ignore)
-        return not is_field_ignored and (not is_field_in_kwargs or is_partial_pydantic_model)
+        value = getattr(cls, field_name, None)
+
+        if isinstance(value, Ignore):
+            return False
+
+        if isinstance(value, Require) and field_name not in kwargs:
+            raise MissingBuildKwargError(f"Require kwarg {field_name} is missing")
+
+        return field_name not in kwargs or cls._is_pydantic_model_with_partial_fields(field_name, model_field, **kwargs)
 
     @classmethod
     def get_model_fields(cls, model: Type[T]) -> ItemsView[str, "ModelField"]:
@@ -626,10 +675,13 @@ class ModelFactory(ABC, Generic[T]):  # noqa: B024
         """
         if is_pydantic_model(model):
             return model.__fields__.items()
+
         if is_dataclass(model):
             return create_model_from_dataclass(dataclass=cast("Type[DataclassProtocol]", model)).__fields__.items()
+
         if is_typeddict(model):
             return create_model_from_typeddict(cast("Any", model)).__fields__.items()
+
         raise ConfigurationError("unknown model type passed to 'get_model_fields'")
 
     @classmethod
@@ -650,8 +702,10 @@ class ModelFactory(ABC, Generic[T]):  # noqa: B024
 
         model = cls._get_model()
         for field_name, model_field in cls.get_model_fields(model):
+
             if cls._should_use_alias_name(model_field, model):
                 field_name = model_field.alias
+
             if cls.should_set_field_value(field_name, model_field, **kwargs):
                 if hasattr(cls, field_name):
                     value = getattr(cls, field_name)
@@ -661,12 +715,15 @@ class ModelFactory(ABC, Generic[T]):  # noqa: B024
                         kwargs[field_name] = cls._handle_factory_field(field_value=value)
                 else:
                     kwargs[field_name] = cls.get_field_value(model_field, field_parameters=kwargs.get(field_name, {}))
+
         for field_name, post_generator in generate_post.items():
             kwargs[field_name] = post_generator.to_value(field_name, kwargs)
+
         if factory_use_construct:
             if is_pydantic_model(cls.__model__):
-                return cls.__model__.construct(**kwargs)  # type: ignore
+                return cast("T", cls.__model__.construct(**kwargs))
             raise ConfigurationError("factory_use_construct requires a pydantic model as the factory's __model__")
+
         return cast("T", cls.__model__(**kwargs))  # pyright: ignore
 
     @classmethod
@@ -692,9 +749,7 @@ class ModelFactory(ABC, Generic[T]):  # noqa: B024
         Returns:
             An instance of type T.
         """
-        sync_persistence_handler = cls._get_sync_persistence()
-        instance = cls.build(**kwargs)
-        return sync_persistence_handler.save(data=instance)
+        return cls._get_sync_persistence().save(data=cls.build(**kwargs))
 
     @classmethod
     def create_batch_sync(cls, size: int, **kwargs: Any) -> List[T]:
@@ -707,9 +762,7 @@ class ModelFactory(ABC, Generic[T]):  # noqa: B024
         Returns:
             A list of instances of type T.
         """
-        sync_persistence_handler = cls._get_sync_persistence()
-        batch = cls.batch(size, **kwargs)
-        return sync_persistence_handler.save_many(data=batch)
+        return cls._get_sync_persistence().save_many(data=cls.batch(size, **kwargs))
 
     @classmethod
     async def create_async(cls, **kwargs: Any) -> T:
@@ -721,9 +774,7 @@ class ModelFactory(ABC, Generic[T]):  # noqa: B024
         Returns:
             An instance of type T.
         """
-        async_persistence_handler = cls._get_async_persistence()
-        instance = cls.build(**kwargs)
-        return await async_persistence_handler.save(data=instance)
+        return await cls._get_async_persistence().save(data=cls.build(**kwargs))
 
     @classmethod
     async def create_batch_async(cls, size: int, **kwargs: Any) -> List[T]:
@@ -737,6 +788,4 @@ class ModelFactory(ABC, Generic[T]):  # noqa: B024
         Returns:
             A list of instances of type T.
         """
-        async_persistence_handler = cls._get_async_persistence()
-        batch = cls.batch(size, **kwargs)
-        return await async_persistence_handler.save_many(data=batch)
+        return await cls._get_async_persistence().save_many(data=cls.batch(size, **kwargs))

@@ -4,6 +4,7 @@ import pytest
 from pydantic import BaseModel
 
 from pydantic_factories import ModelFactory
+from pydantic_factories.exceptions import ParameterError
 from pydantic_factories.fields import Fixture
 from pydantic_factories.plugins.pytest_plugin import register_fixture
 from tests.models import Person, PersonFactoryWithoutDefaults
@@ -30,7 +31,7 @@ def test_custom_naming_fixture_register_decorator(another_fixture: AnotherPerson
 
 
 def test_register_with_function_error() -> None:
-    with pytest.raises(ValueError, match="is not a class"):
+    with pytest.raises(ParameterError):
 
         @register_fixture  # type: ignore
         def foo() -> None:
@@ -38,7 +39,7 @@ def test_register_with_function_error() -> None:
 
 
 def test_register_with_class_not_model_factory_error() -> None:
-    with pytest.raises(ValueError, match="is not a ModelFactory subclass"):
+    with pytest.raises(ParameterError):
 
         @register_fixture  # type: ignore
         class Foo:
@@ -72,5 +73,5 @@ def test_using_non_fixture_with_the_fixture_field_raises() -> None:
         best_friend = Fixture(PersonFactoryFixture, name="mike")
         all_friends = Fixture(123)  # type: ignore
 
-    with pytest.raises(ValueError):
+    with pytest.raises(ParameterError):
         MyFactory.build()

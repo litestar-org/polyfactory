@@ -22,7 +22,7 @@ def handle_constrained_collection(
     max_items = constrained_field.max_items if constrained_field.max_items is not None else min_items + 1
 
     if max_items < min_items:
-        raise ValueError("max_items must be longer or equal to min_items")
+        raise ParameterError("max_items must be longer or equal to min_items")
 
     if model_field.sub_fields:
         handler = lambda: handle_complex_type(  # noqa: E731

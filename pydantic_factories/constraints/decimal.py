@@ -1,6 +1,7 @@
 from decimal import Decimal
 from typing import TYPE_CHECKING, Optional, cast
 
+from pydantic_factories.exceptions import ParameterError
 from pydantic_factories.value_generators.constrained_number import (
     generate_constrained_number,
     get_constrained_number_range,
@@ -27,16 +28,16 @@ def validate_max_digits(
         'None'
     """
     if max_digits <= 0:
-        raise ValueError("max_digits must be greater than 0")
+        raise ParameterError("max_digits must be greater than 0")
 
     if minimum is not None:
         min_str = str(minimum).split(".")[1] if "." in str(minimum) else str(minimum)
 
         if max_digits <= len(min_str):
-            raise ValueError("minimum is greater than max_digits")
+            raise ParameterError("minimum is greater than max_digits")
 
     if decimal_places is not None and max_digits <= decimal_places:
-        raise ValueError("max_digits must be greater than decimal places")
+        raise ParameterError("max_digits must be greater than decimal places")
 
 
 def handle_decimal_length(

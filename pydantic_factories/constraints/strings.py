@@ -2,6 +2,7 @@ from typing import TYPE_CHECKING, Any, Optional, Pattern, Tuple, Union, cast
 
 from xeger import Xeger
 
+from pydantic_factories.exceptions import ParameterError
 from pydantic_factories.value_generators.primitives import (
     create_random_bytes,
     create_random_string,
@@ -20,13 +21,13 @@ def parse_constrained_string_or_bytes(
     max_length = field.max_length
 
     if min_length is not None and min_length < 0:
-        raise ValueError("min_length must be greater or equal to 0")
+        raise ParameterError("min_length must be greater or equal to 0")
 
     if max_length is not None and max_length < 0:
-        raise ValueError("max_length must be greater or equal to 0")
+        raise ParameterError("max_length must be greater or equal to 0")
 
     if max_length is not None and min_length is not None and max_length < min_length:
-        raise ValueError("max_length must be greater than min_length")
+        raise ParameterError("max_length must be greater than min_length")
 
     return min_length, max_length, lower_case
 
