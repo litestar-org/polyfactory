@@ -689,8 +689,8 @@ class ModelFactory(ABC, Generic[T]):  # noqa: B024
         """builds an instance of the factory's __model__
 
         Args:
-            factory_use_construct: A boolea that determines whether validations will be made when instantiating the
-                model. this is supported only for pydantic models.
+            factory_use_construct: A boolean that determines whether validations will be made when instantiating the
+                model. This is supported only for pydantic models.
             **kwargs: Any kwargs. If field names are set in kwargs, their values will be used.
 
         Returns:
