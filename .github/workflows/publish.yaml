@@ -2,21 +2,24 @@ name: Publish package
 
 on:
   release:
-    types: [published, edited]
+    types: [published]
 
 jobs:
-  build-and-publish-test:
+  publish-release:
     runs-on: ubuntu-latest
     steps:
-      - uses: snok/.github/workflows/publish@main
+      - name: Check out repository
+        uses: actions/checkout@v3
+      - name: Set up python 3.11
+        uses: actions/setup-python@v4
         with:
-          overwrite-repository: true
-          repository-url: https://test.pypi.org/legacy/
-          token: ${{ secrets.TEST_PYPI_TOKEN }}
-  build-and-publish:
-    needs: build-and-publish-test
-    runs-on: ubuntu-latest
-    steps:
-      - uses: snok/.github/workflows/publish@main
-        with:
-          token: ${{ secrets.PYPI_TOKEN }}
+          python-version: "3.11"
+      - name: Install Poetry
+        uses: snok/install-poetry@v1
+      - name: Install dependencies
+        run: poetry install --no-interaction --no-root --no-dev
+      - name: publish
+        shell: bash
+        run: |
+          poetry config pypi-token.pypi ${{ secrets.PYPI_TOKEN }}
+          poetry publish --build --no-interaction
