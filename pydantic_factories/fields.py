@@ -1,6 +1,6 @@
 from typing import TYPE_CHECKING, Any, Callable, Dict, Generic, Optional, TypeVar, cast
 
-from typing_extensions import ParamSpec
+from typing_extensions import ParamSpec, TypedDict
 
 from pydantic_factories.exceptions import ParameterError
 
@@ -9,6 +9,10 @@ P = ParamSpec("P")
 
 if TYPE_CHECKING:
     from pydantic_factories.factory import ModelFactory
+
+
+class WrappedCallable(TypedDict):
+    value: Callable
 
 
 class Use(Generic[P, T]):
@@ -25,7 +29,7 @@ class Use(Generic[P, T]):
             *args: Args for the callable.
             **kwargs: Kwargs for the callable.
         """
-        self.fn = fn
+        self.fn: WrappedCallable = {"value": fn}
         self.kwargs = kwargs
         self.args = args
 
@@ -35,7 +39,7 @@ class Use(Generic[P, T]):
         Returns:
             The output of the callable.
         """
-        return self.fn(*self.args, **self.kwargs)
+        return cast("T", self.fn["value"](*self.args, **self.kwargs))
 
 
 class PostGenerated:
@@ -50,7 +54,7 @@ class PostGenerated:
             *args: Args for the callable.
             **kwargs: Kwargs for the callable.
         """
-        self.fn = fn
+        self.fn: WrappedCallable = {"value": fn}
         self.kwargs = kwargs
         self.args = args
 
@@ -64,17 +68,7 @@ class PostGenerated:
         Returns:
             An arbitrary value.
         """
-        return self.fn(name, values, *self.args, **self.kwargs)
-
-
-class Require:
-    """A placeholder class used to mark a given factory attribute as a required
-    build-time kwarg."""
-
-
-class Ignore:
-    """A placeholder class used to mark a given factory attribute as
-    ignored."""
+        return self.fn["value"](name, values, *self.args, **self.kwargs)
 
 
 class Fixture:
@@ -89,7 +83,7 @@ class Fixture:
             size: Optional batch size.
             **kwargs: Any build kwargs.
         """
-        self.fixture = fixture
+        self.fixture: WrappedCallable = {"value": fixture}
         self.size = size
         self.kwargs = kwargs
 
@@ -102,9 +96,19 @@ class Fixture:
         """
         from pydantic_factories.plugins.pytest_plugin import FactoryFixture
 
-        factory = cast("Optional[ModelFactory]", FactoryFixture.factory_class_map.get(self.fixture))
+        factory = cast("Optional[ModelFactory]", FactoryFixture.factory_class_map.get(self.fixture["value"]))
         if not factory:
             raise ParameterError("fixture has not been registered using the register_factory decorator")
         if self.size:
             return factory.batch(self.size, **self.kwargs)
         return factory.build(**self.kwargs)
+
+
+class Require:
+    """A placeholder class used to mark a given factory attribute as a required
+    build-time kwarg."""
+
+
+class Ignore:
+    """A placeholder class used to mark a given factory attribute as
+    ignored."""

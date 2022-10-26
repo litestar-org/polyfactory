@@ -13,7 +13,7 @@ jobs:
       - uses: actions/checkout@v3
       - uses: actions/setup-python@v4
         with:
-          python-version: "3.10"
+          python-version: "3.11"
       - uses: pre-commit/action@v3.0.0
   test:
     needs: validate
@@ -21,7 +21,7 @@ jobs:
     strategy:
       fail-fast: true
       matrix:
-        python-version: ["3.7", "3.8", "3.9", "3.10", "3.11-dev"]
+        python-version: ["3.7", "3.8", "3.9", "3.10", "3.11"]
     steps:
       - name: Start MongoDB
         uses: supercharge/mongodb-github-action@1.8.0
@@ -52,13 +52,13 @@ jobs:
       - name: Set pythonpath
         run: echo "PYTHONPATH=$PWD" >> $GITHUB_ENV
       - name: Test
-        if: matrix.python-version != '3.10'
+        if: matrix.python-version != '3.11'
         run: poetry run pytest
       - name: Test with Coverage
-        if: matrix.python-version == '3.10'
+        if: matrix.python-version == '3.11'
         run: poetry run pytest --cov=. --cov-report=xml
       - uses: actions/upload-artifact@v3
-        if: matrix.python-version == '3.10'
+        if: matrix.python-version == '3.11'
         with:
           name: coverage-xml
           path: coverage.xml
@@ -97,6 +97,9 @@ jobs:
         uses: actions/cache@v3
         with:
           path: .venv
-          key: venv-${{ runner.os }}-${{ matrix.python-version }}-${{ hashFiles('**/poetry.lock') }}
+          key: v1-venv-${{ runner.os }}-${{ matrix.python-version }}-${{ hashFiles('**/poetry.lock') }}
+          restore-keys: |
+            v1-venv-${{ runner.os }}-${{ matrix.python-version }}
+            v1-venv-${{ runner.os }}
       - name: Perform CodeQL Analysis
         uses: github/codeql-action/analyze@v2
