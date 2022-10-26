@@ -1,5 +1,9 @@
 # Changelog
 
+[1.13.0]
+
+- fix `ModelFactory` mistaking model fields with names identical to factory methods to be factory fields.
+
 [1.12.0]
 
 - add `TypedDict` support.
