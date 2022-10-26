@@ -54,7 +54,7 @@ packages = [
 [tool.poetry.dependencies]
 python = ">=3.7,<4.0"
 faker = "*"
-pydantic = ">=1.1.0"
+pydantic = ">=1.10.0"
 typing-extensions = "*"
 xeger = "*"
 
