@@ -1,6 +1,5 @@
 import os
 import random
-from abc import ABC
 from collections import Counter, deque
 from contextlib import suppress
 from dataclasses import is_dataclass
@@ -134,7 +133,7 @@ FactoryTypes = Union[BaseModel, DataclassProtocol, TypingTypedDictMeta, _TypedDi
 T = TypeVar("T", bound=FactoryTypes)
 
 
-class ModelFactory(ABC, Generic[T]):
+class ModelFactory(Generic[T]):
     __model__: Type[T]
     __faker__: Faker = Faker()
     __sync_persistence__: Optional[Union[Type[SyncPersistenceProtocol[T]], SyncPersistenceProtocol[T]]] = None

@@ -1,9 +1,5 @@
 # Changelog
 
-[1.13.1]
-
-- fix pydantic version pin.
-
 [1.13.0]
 
 - fix `ModelFactory` mistaking model fields with names identical to factory methods to be factory fields.

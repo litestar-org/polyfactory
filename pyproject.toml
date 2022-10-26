@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "pydantic-factories"
-version = "1.12.0"
+version = "1.13.0"
 description = "Mock data generation for pydantic based models and python dataclasses"
 authors = ["Na'aman Hirschfeld <nhirschfeld@gmail.com>"]
 maintainers = [
