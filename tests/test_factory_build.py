@@ -113,3 +113,13 @@ def test_build_instance_by_field_name_with_allow_population_by_field_name_flag()
 
     instance = MyFactory.build(special_field="some")
     assert instance.aliased_field == "some"
+
+
+def test_build_model_with_fields_named_like_factory_fields() -> None:
+    class C(BaseModel):
+        batch: int
+
+    class CFactory(ModelFactory):
+        __model__ = C
+
+    assert CFactory.build()
