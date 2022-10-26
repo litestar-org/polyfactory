@@ -134,7 +134,7 @@ FactoryTypes = Union[BaseModel, DataclassProtocol, TypingTypedDictMeta, _TypedDi
 T = TypeVar("T", bound=FactoryTypes)
 
 
-class ModelFactory(ABC, Generic[T]):  # noqa: B024
+class ModelFactory(ABC, Generic[T]):
     __model__: Type[T]
     __faker__: Faker = Faker()
     __sync_persistence__: Optional[Union[Type[SyncPersistenceProtocol[T]], SyncPersistenceProtocol[T]]] = None
