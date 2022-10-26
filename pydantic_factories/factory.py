@@ -707,7 +707,7 @@ class ModelFactory(ABC, Generic[T]):
                 field_name = model_field.alias
 
             if cls.should_set_field_value(field_name, model_field, **kwargs):
-                if hasattr(cls, field_name):
+                if field_name not in dir(ModelFactory) and hasattr(cls, field_name):
                     value = getattr(cls, field_name)
                     if isinstance(value, PostGenerated):
                         generate_post[field_name] = value
