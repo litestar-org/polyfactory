@@ -56,7 +56,6 @@ python = ">=3.7,<4.0"
 faker = "*"
 pydantic = ">=1.10.0"
 typing-extensions = "*"
-xeger = "*"
 
 [tool.poetry.group.dev.dependencies]
 email-validator = "*"

@@ -84,7 +84,7 @@
 
 [1.4.0]
 
-- replace `exrex` with `xeger` due to licensing issues.
+- replace `exrex` with `generate` due to licensing issues.
 
 [1.3.0]
 
