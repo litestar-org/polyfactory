@@ -7,9 +7,7 @@ from pydantic_factories.protocols import AsyncPersistenceProtocol
 
 try:
     from beanie import Document
-    from beanie.odm.fields import PydanticObjectId
 except ImportError:
-    PydanticObjectId = None  # type: ignore
     Document = BaseModel  # type: ignore
 
 if TYPE_CHECKING:
@@ -38,11 +36,6 @@ class BeanieDocumentFactory(ModelFactory[Document]):
     __async_persistence__ = BeaniePersistenceHandler
 
     @classmethod
-    def is_ignored_type(cls, value: Any) -> bool:
-        """Overridden to exclude PydanticObjectId."""
-        return super().is_ignored_type(value=value) or value is PydanticObjectId
-
-    @classmethod
     def get_field_value(cls, model_field: "ModelField", field_parameters: Union[dict, list, None] = None) -> Any:
         """Override to handle the fields created by the beanie Indexed helper
         function.
@@ -54,4 +47,10 @@ class BeanieDocumentFactory(ModelFactory[Document]):
             base_type = model_field.outer_type_.__bases__[0]
             model_field.outer_type_ = base_type
             model_field.type_ = base_type
+
+        if hasattr(model_field.type_, "__name__") and "Link" in model_field.type_.__name__:
+            link_class = model_field.outer_type_.__args__[0]
+            model_field.outer_type_ = link_class
+            model_field.type_ = link_class
+
         return super().get_field_value(model_field=model_field, field_parameters=field_parameters)

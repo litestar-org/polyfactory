@@ -4,7 +4,7 @@ import pytest
 
 try:
     import pymongo
-    from beanie import Document, init_beanie
+    from beanie import Document, Link, init_beanie
     from beanie.odm.fields import Indexed, PydanticObjectId
     from motor.motor_asyncio import AsyncIOMotorClient
 
@@ -23,18 +23,28 @@ def mongo_connection() -> AsyncIOMotorClient:
 
 
 class MyDocument(Document):
+    id: PydanticObjectId
     name: str
     index: Indexed(str, pymongo.DESCENDING)  # type: ignore
     siblings: List[PydanticObjectId]
+
+
+class MyOtherDocument(Document):
+    id: PydanticObjectId
+    document: Link[MyDocument]
 
 
 class MyFactory(BeanieDocumentFactory):
     __model__ = MyDocument
 
 
+class MyOtherFactory(BeanieDocumentFactory):
+    __model__ = MyOtherDocument
+
+
 @pytest.fixture()
 async def beanie_init(mongo_connection: AsyncIOMotorClient):
-    await init_beanie(database=mongo_connection.db_name, document_models=[MyDocument])
+    await init_beanie(database=mongo_connection.db_name, document_models=[MyDocument, MyOtherDocument])
 
 
 @pytest.mark.asyncio()
@@ -63,3 +73,9 @@ async def test_beanie_persistence_of_multiple_instances(beanie_init: Callable) -
         assert instance.name
         assert instance.index
         assert isinstance(instance.index, str)
+
+
+@pytest.mark.asyncio()
+async def test_beanie_links(beanie_init: Callable) -> None:
+    result = await MyOtherFactory.create_async()
+    assert isinstance(result.document, MyDocument)
