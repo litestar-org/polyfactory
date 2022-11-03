@@ -1,5 +1,10 @@
 # Changelog
 
+[1.14.0]
+
+- replace `Xeger` with local port to generate regexes.
+- update `BeaniePlugin` to support ID.
+
 [1.13.0]
 
 - fix `ModelFactory` mistaking model fields with names identical to factory methods to be factory fields.
@@ -84,7 +89,7 @@
 
 [1.4.0]
 
-- replace `exrex` with `generate` due to licensing issues.
+- replace `exrex` with `xeger` due to licensing issues.
 
 [1.3.0]
 
