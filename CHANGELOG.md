@@ -1,5 +1,9 @@
 # Changelog
 
+[1.14.1]
+
+- fix `ModelFactory` build ignore error when specifying an explicit dict for a nested `Dict` field @anthonyh209
+
 [1.14.0]
 
 - replace `Xeger` with local port to generate regexes.
