@@ -127,7 +127,7 @@ class RegexFactory:
 
     def _handle_repeat(self, start_range: int, end_range: Any, value: SubPattern) -> str:
         result: List[str] = []
-        end_range = min((end_range, self._limit))
+        end_range = min(end_range, self._limit)
 
         for i in range(self._random.randint(start_range, max(start_range, end_range))):
             result.append("".join(self._handle_state(i) for i in list(value)))  # type: ignore
