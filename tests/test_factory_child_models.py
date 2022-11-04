@@ -1,4 +1,4 @@
-from typing import Any, List, Mapping, Optional
+from typing import Any, Dict, List, Mapping, Optional
 
 from pydantic import BaseModel
 
@@ -179,9 +179,34 @@ def test_factory_not_ok() -> None:
 
     nested = NestedSchema(v="hello", z=0)
     some_dict = {"test": "fine"}
-    upper = UpperSchemaFactory.build(b=some_dict, nested={"nested_key": nested})
+    upper = UpperSchemaFactory.build(
+        b=some_dict, 
+        nested={"nested_key": nested},
+    )
 
     assert upper.b["test"] == "fine"
     assert "nested_key" in upper.nested
     assert upper.nested["nested_key"].v == nested.v
+    assert upper.nested["nested_key"].z == nested.z
+    assert "nested_dict" in upper.nested
+
+
+def test_factory_with_nested_dict() -> None:
+    """Given a Pydantic Model with nested Dict field, When I build the model
+    using the factory passing only partial attributes, Then the model is
+    correctly built."""
+
+    class NestedSchema(BaseModel):
+        z: int
+
+    class UpperSchema(BaseModel):
+        nested: Dict[str, NestedSchema]
+
+    class UpperSchemaFactory(ModelFactory):
+        __model__ = UpperSchema
+
+    nested = NestedSchema(z=0)
+    upper = UpperSchemaFactory.build(nested={"nested_key": nested})
+
+    assert "nested_key" in upper.nested
     assert upper.nested["nested_key"].z == nested.z

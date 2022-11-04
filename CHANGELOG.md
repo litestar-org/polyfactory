@@ -1,4 +1,7 @@
 # Changelog
+[1.13.1]
+
+- fix `ModelFactory` build ignore error when specifying an explicit dict for a nested `Dict` field. @anthonyh209
 
 [1.14.0]
 

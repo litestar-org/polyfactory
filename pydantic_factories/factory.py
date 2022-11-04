@@ -84,7 +84,7 @@ from pydantic import (
     create_model_from_typeddict,
 )
 from pydantic.color import Color
-from pydantic.fields import SHAPE_MAPPING
+from pydantic.fields import SHAPE_DICT, SHAPE_MAPPING
 from typing_extensions import _TypedDictMeta  # type: ignore
 from typing_extensions import TypeGuard, get_args, is_typeddict
 
@@ -215,7 +215,7 @@ class ModelFactory(Generic[T]):
         Returns:
             A boolean determining whether the given field value is a pydantic model with missing kwargs.
         """
-        if model_field.shape != SHAPE_MAPPING and is_pydantic_model(model_field.type_):
+        if model_field.shape not in (SHAPE_DICT, SHAPE_MAPPING) and is_pydantic_model(model_field.type_):
             field_kwargs = kwargs.get(field_name)
 
             if isinstance(field_kwargs, list):
