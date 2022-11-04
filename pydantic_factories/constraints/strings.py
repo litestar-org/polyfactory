@@ -1,12 +1,11 @@
-from typing import TYPE_CHECKING, Any, Optional, Pattern, Tuple, Union, cast
-
-from xeger import Xeger
+from typing import TYPE_CHECKING, Any, Optional, Pattern, Tuple, Union
 
 from pydantic_factories.exceptions import ParameterError
 from pydantic_factories.value_generators.primitives import (
     create_random_bytes,
     create_random_string,
 )
+from pydantic_factories.value_generators.regex import RegexFactory
 
 if TYPE_CHECKING:
     from pydantic import ConstrainedBytes, ConstrainedStr
@@ -42,7 +41,7 @@ def handle_constrained_bytes(field: "ConstrainedBytes") -> bytes:
 
 def handle_constrained_string(field: "ConstrainedStr", random_seed: Optional[int]) -> str:
     """Handles ConstrainedStr and Fields with string constraints."""
-    regex_factory = Xeger(seed=random_seed)
+    regex_factory = RegexFactory(seed=random_seed)
     min_length, max_length, lower_case = parse_constrained_string_or_bytes(field)
 
     if max_length == 0:
@@ -55,12 +54,12 @@ def handle_constrained_string(field: "ConstrainedStr", random_seed: Optional[int
     if isinstance(regex, Pattern):
         regex = regex.pattern
 
-    result = regex_factory.xeger(regex)
+    result = regex_factory(regex)
     if min_length:
         while len(result) < min_length:
-            result += regex_factory.xeger(regex)
+            result += regex_factory(regex)
 
     if max_length and len(result) > max_length:
         result = result[:max_length]
 
-    return cast("str", result.lower() if lower_case else result)
+    return result.lower() if lower_case else result
