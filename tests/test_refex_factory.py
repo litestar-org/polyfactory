@@ -163,7 +163,7 @@ def test_incoherent_limit_and_qualifier(limit: int) -> None:
 
 
 @pytest.mark.parametrize("seed", [777, 1234, 369, 8031])
-def test_xeger_object_seeding(seed: int) -> None:
+def test_regex_factory_object_seeding(seed: int) -> None:
     xg1 = RegexFactory(seed=seed)
     string1 = xg1(r"\w{3,4}")
 
@@ -173,7 +173,7 @@ def test_xeger_object_seeding(seed: int) -> None:
     assert string1 == string2
 
 
-def test_xeger_random_instance() -> None:
+def test_regex_factorx_random_instance() -> None:
     xg1 = RegexFactory()
     xg_random = xg1._random
 
