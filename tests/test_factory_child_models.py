@@ -185,3 +185,24 @@ def test_factory_not_ok() -> None:
     assert "nested_key" in upper.nested
     assert upper.nested["nested_key"].v == nested.v
     assert upper.nested["nested_key"].z == nested.z
+
+
+def test_factory_with_nested_dict() -> None:
+    """Given a Pydantic Model with nested Dict field, When I build the model
+    using the factory passing only partial attributes, Then the model is
+    correctly built."""
+
+    class NestedSchema(BaseModel):
+        z: int
+
+    class UpperSchema(BaseModel):
+        nested: Mapping[str, NestedSchema]
+
+    class UpperSchemaFactory(ModelFactory):
+        __model__ = UpperSchema
+
+    nested = NestedSchema(z=0)
+    upper = UpperSchemaFactory.build(nested={"nested_dict": nested})
+
+    assert "nested_dict" in upper.nested
+    assert upper.nested["nested_dict"].z == nested.z
