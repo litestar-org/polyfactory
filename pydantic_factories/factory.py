@@ -276,7 +276,7 @@ class ModelFactory(Generic[T]):
             result = handle_constrained_collection(
                 collection_type=collection_type, model_field=model_field, model_factory=cls  # type: ignore
             )
-            return frozenset(*result) if issubclass(outer_type, ConstrainedFrozenSet) else result
+            return frozenset(result) if issubclass(outer_type, ConstrainedFrozenSet) else result
 
         if issubclass(outer_type, ConstrainedDate):
             return handle_constrained_date(constrained_date=outer_type, faker=cls.get_faker())
