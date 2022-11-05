@@ -13,6 +13,7 @@ from pydantic import (
     conbytes,
     condecimal,
     confloat,
+    confrozenset,
     conint,
     conlist,
     conset,
@@ -31,8 +32,9 @@ def test_constrained_attribute_parsing() -> None:
         condecimal_field: condecimal()  # type: ignore[valid-type]
         confloat_field: confloat()  # type: ignore[valid-type]
         conint_field: conint()  # type: ignore[valid-type]
-        conlist_field: conlist(str)  # type: ignore[valid-type]
-        conset_field: conset(str)  # type: ignore[valid-type]
+        conlist_field: conlist(str, min_items=5, max_items=10)  # type: ignore[valid-type]
+        conset_field: conset(str, min_items=5, max_items=10)  # type: ignore[valid-type]
+        confrozenset_field: confrozenset(str, min_items=5, max_items=10)  # type: ignore[valid-type]
         constr_field: constr(to_lower=True)  # type: ignore[valid-type]
         str_field1: str = Field(min_length=11)
         str_field2: str = Field(max_length=11)
@@ -54,8 +56,15 @@ def test_constrained_attribute_parsing() -> None:
     assert isinstance(result.condecimal_field, Decimal)
     assert isinstance(result.conlist_field, list)
     assert isinstance(result.conset_field, set)
+    assert isinstance(result.confrozenset_field, frozenset)
     assert isinstance(result.str_field1, str)
     assert isinstance(result.constr_field, str)
+    assert len(result.conlist_field) >= 5
+    assert len(result.conlist_field) <= 10
+    assert len(result.conset_field) >= 5
+    assert len(result.conset_field) <= 10
+    assert len(result.confrozenset_field) >= 5
+    assert len(result.confrozenset_field) <= 10
     assert result.constr_field.lower() == result.constr_field
     assert len(result.str_field1) >= 11
     assert len(result.str_field2) <= 11
