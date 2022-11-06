@@ -23,6 +23,7 @@ def handle_constrained_collection(
     )  # pragma: no cover
     min_items = constrained_field.min_items or 0
     max_items = constrained_field.max_items if constrained_field.max_items is not None else min_items + 1
+    unique_items = getattr(constrained_field, "unique_items", False)
 
     if max_items < min_items:
         raise ParameterError("max_items must be longer or equal to min_items")
@@ -42,6 +43,8 @@ def handle_constrained_collection(
             if isinstance(collection, set):
                 collection.add(value)
             else:
+                if unique_items and value in collection:
+                    continue
                 collection.append(value)
         return collection
     except TypeError as e:
