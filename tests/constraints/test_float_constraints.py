@@ -136,7 +136,7 @@ def test_handle_constrained_float_handles_ge_and_le_with_lower_multiple_of(
 ) -> None:
     multiple_of, min_value, max_value = sorted([val1, val2, val3])
     if not isinf(multiple_of) and isinf(min_value) and not isinf(max_value):
-        if multiple_of == 0 or max_value > min_value and max_value > multiple_of:
+        if multiple_of == 0 or max_value >= min_value and max_value > multiple_of:
             result = handle_constrained_float(
                 create_constrained_field(multiple_of=multiple_of, ge=min_value, le=max_value)
             )

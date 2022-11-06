@@ -179,7 +179,7 @@ def test_handle_constrained_decimal_handles_with_ge_and_le_and_lower_multiple_of
     val1: Decimal, val2: Decimal, val3: Decimal
 ) -> None:
     multiple_of, min_value, max_value = sorted([val1, val2, val3])
-    if multiple_of == 0 or max_value > min_value and max_value > multiple_of:
+    if multiple_of == 0 or max_value >= min_value and max_value > multiple_of:
         result = handle_constrained_decimal(
             create_constrained_field(multiple_of=multiple_of, ge=min_value, le=max_value)
         )

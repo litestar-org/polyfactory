@@ -116,7 +116,7 @@ def test_handle_constrained_int_handles_multiple_of_with_gt(val1: int, val2: int
 )
 def test_handle_constrained_int_handles_multiple_of_with_ge_and_le(val1: int, val2: int, val3: int) -> None:
     min_value, multiple_of, max_value = sorted([val1, val2, val3])
-    if multiple_of < max_value and min_value < max_value or multiple_of == 0:
+    if multiple_of < max_value and min_value <= max_value or multiple_of == 0:
         result = handle_constrained_int(create_constrained_field(multiple_of=multiple_of, ge=min_value, le=max_value))
         assert passes_pydantic_multiple_validator(result, multiple_of)
     else:
@@ -131,9 +131,26 @@ def test_handle_constrained_int_handles_multiple_of_with_ge_and_le(val1: int, va
 )
 def test_handle_constrained_int_handles_ge_and_le_with_lower_multiple_of(val1: int, val2: int, val3: int) -> None:
     multiple_of, min_value, max_value = sorted([val1, val2, val3])
-    if multiple_of == 0 or multiple_of < max_value and min_value < max_value:
+    if multiple_of == 0 or multiple_of < max_value and min_value <= max_value:
         result = handle_constrained_int(create_constrained_field(multiple_of=multiple_of, ge=min_value, le=max_value))
         assert passes_pydantic_multiple_validator(result, multiple_of)
     else:
         with pytest.raises(ParameterError):
             handle_constrained_int(create_constrained_field(multiple_of=multiple_of, ge=min_value, le=max_value))
+
+
+def test_constraint_bounds_handling() -> None:
+    result = handle_constrained_int(create_constrained_field(ge=100, le=100))
+    assert result == 100
+
+    result = handle_constrained_int(create_constrained_field(gt=100, lt=102))
+    assert result == 101
+
+    result = handle_constrained_int(create_constrained_field(gt=100, le=101))
+    assert result == 101
+
+    with pytest.raises(ParameterError):
+        result = handle_constrained_int(create_constrained_field(gt=100, lt=101))
+
+    with pytest.raises(ParameterError):
+        result = handle_constrained_int(create_constrained_field(ge=100, le=99))
