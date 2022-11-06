@@ -35,7 +35,7 @@ def test_constrained_attribute_parsing() -> None:
         conlist_field: conlist(str, min_items=5, max_items=10)  # type: ignore[valid-type]
         conset_field: conset(str, min_items=5, max_items=10)  # type: ignore[valid-type]
         confrozenset_field: confrozenset(str, min_items=5, max_items=10)  # type: ignore[valid-type]
-        constr_field: constr(to_lower=True)  # type: ignore[valid-type]
+        constr_field: constr(to_lower=True, min_length=10)  # type: ignore[valid-type]
         str_field1: str = Field(min_length=11)
         str_field2: str = Field(max_length=11)
         str_field3: str = Field(min_length=8, max_length=11, regex=pattern)
@@ -66,6 +66,7 @@ def test_constrained_attribute_parsing() -> None:
     assert len(result.confrozenset_field) >= 5
     assert len(result.confrozenset_field) <= 10
     assert result.constr_field.lower() == result.constr_field
+    assert len(result.constr_field) >= 10
     assert len(result.str_field1) >= 11
     assert len(result.str_field2) <= 11
     assert len(result.str_field3) >= 8

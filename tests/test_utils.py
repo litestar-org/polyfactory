@@ -1,10 +1,10 @@
 import sys
-from typing import Any, Union
+from typing import Any, NewType, Union
 
 from pydantic import BaseModel
 
 from pydantic_factories.factory import ModelFactory
-from pydantic_factories.utils import is_union
+from pydantic_factories.utils import is_new_type, is_union, unwrap_new_type_if_needed
 
 
 def test_is_union() -> None:
@@ -37,3 +37,18 @@ def test_is_union() -> None:
                 assert is_union(model_field)
             else:
                 assert not is_union(model_field)
+
+
+def test_is_new_type() -> None:
+    MyInt = NewType("MyInt", int)
+    assert is_new_type(MyInt)
+    assert not is_new_type(int)
+
+
+def test_unwrap_new_type_is_needed() -> None:
+    MyInt = NewType("MyInt", int)
+    WrappedInt = NewType("WrappedInt", MyInt)
+
+    assert unwrap_new_type_if_needed(MyInt) is int
+    assert unwrap_new_type_if_needed(WrappedInt) is int
+    assert unwrap_new_type_if_needed(int) is int
