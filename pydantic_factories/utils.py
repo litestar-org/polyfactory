@@ -10,6 +10,8 @@ from pydantic.utils import almost_equal_floats
 T = TypeVar("T", int, float, Decimal)
 
 if TYPE_CHECKING:
+    from typing import NewType
+
     from pydantic.fields import ModelField
     from typing_extensions import TypeGuard
 
@@ -95,3 +97,21 @@ def is_literal(model_field: "ModelField") -> bool:
     return "typing.Literal" in repr(model_field.outer_type_) or "typing_extensions.Literal" in repr(
         model_field.outer_type_
     )
+
+
+def is_new_type(value: Any) -> "TypeGuard[Type[NewType]]":
+    """A function to determine if a given value is of NewType."""
+    # we have to use hasattr check since in Python 3.9 and below NewType is just a function
+    return hasattr(value, "__supertype__")
+
+
+def unwrap_new_type_if_needed(value: Type[Any]) -> Type[Any]:
+    """Returns base type if given value is a type derived with NewType.
+
+    Otherwise it returns value untouched.
+    """
+    unwrap = value
+    while is_new_type(unwrap):
+        unwrap = unwrap.__supertype__
+
+    return unwrap

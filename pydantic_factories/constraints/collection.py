@@ -2,6 +2,7 @@ import random
 from typing import TYPE_CHECKING, Any, Type, Union, cast
 
 from pydantic_factories.exceptions import ParameterError
+from pydantic_factories.utils import unwrap_new_type_if_needed
 from pydantic_factories.value_generators.complex_types import handle_complex_type
 
 if TYPE_CHECKING:  # pragma: no cover
@@ -17,7 +18,9 @@ def handle_constrained_collection(
     model_field: "ModelField",
 ) -> Union[list, set]:
     """Generate a constrained list or set."""
-    constrained_field = cast("Union[ConstrainedList, ConstrainedSet]", model_field.outer_type_)
+    constrained_field = cast(
+        "Union[ConstrainedList, ConstrainedSet]", unwrap_new_type_if_needed(model_field.outer_type_)
+    )  # pragma: no cover
     min_items = constrained_field.min_items or 0
     max_items = constrained_field.max_items if constrained_field.max_items is not None else min_items + 1
 
