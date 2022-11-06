@@ -41,6 +41,7 @@ def test_is_union() -> None:
 
 def test_is_new_type() -> None:
     MyInt = NewType("MyInt", int)
+
     assert is_new_type(MyInt)
     assert not is_new_type(int)
 

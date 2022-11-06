@@ -1,6 +1,6 @@
 from datetime import date
 from decimal import Decimal
-from typing import List, NewType, Optional, Union
+from typing import Any, Dict, List, NewType, Optional, Tuple, Union
 
 from pydantic import (
     BaseModel,
@@ -48,6 +48,9 @@ def test_complex_new_types() -> None:
         list_int_field: List[MyInt]
         union_field: Union[MyInt, MyStr]
         optional_str_field: Optional[MyStr]
+        tuple_str_str: Tuple[MyStr, MyStr]
+        dict_field: Dict[MyStr, Any]
+        complex_dict_field: Dict[MyStr, Dict[Union[MyInt, MyStr], MyInt]]
         nested_model_field: MyNestedModel
 
     class MyModelFactory(ModelFactory):
@@ -55,11 +58,13 @@ def test_complex_new_types() -> None:
 
     result = MyModelFactory.build()
 
+    assert isinstance(result.list_int_field[0], int)
     assert isinstance(result.union_field, (int, str))
     assert result.optional_str_field is None or isinstance(result.optional_str_field, str)
+    assert isinstance(result.tuple_str_str, tuple)
+    assert isinstance(result.dict_field, dict)
     assert isinstance(result.nested_model_field, NestedModel)
     assert isinstance(result.nested_model_field.nested_int_field, int)
-    assert isinstance(result.list_int_field[0], int)
 
 
 def test_constrained_new_types() -> None:
