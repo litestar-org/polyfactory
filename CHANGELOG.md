@@ -1,8 +1,14 @@
 # Changelog
 
+[1.15.0]
+
+- fix `confrozenset`.
+- add `NewType` support.
+- add unique_items support for `conlist`.
+
 [1.14.1]
 
-- fix `ModelFactory` build ignore error when specifying an explicit dict for a nested `Dict` field @anthonyh209
+- fix `ModelFactory` build ignore error when specifying an explicit dict for a nested `Dict` field @anthonyh209.
 
 [1.14.0]
 
