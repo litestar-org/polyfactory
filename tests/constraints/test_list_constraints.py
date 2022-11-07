@@ -15,11 +15,13 @@ def create_model_field(
     item_type: Any,
     min_items: Optional[int] = None,
     max_items: Optional[int] = None,
+    unique_items: Optional[bool] = None,
 ) -> ModelField:
     field = ConstrainedList()
     field.min_items = min_items
     field.max_items = max_items
     field.item_type = item_type
+    field.unique_items = unique_items
     model_field = ModelField(name="", class_validators={}, model_config=BaseConfig, type_=item_type)
     model_field.outer_type_ = field
     return model_field
@@ -68,3 +70,10 @@ def test_handle_constrained_list_with_different_types() -> None:
         field = create_model_field(t_type, min_items=1)
         result = handle_constrained_collection(collection_type=list, model_field=field, model_factory=ModelFactory)
         assert len(result) > 0
+
+
+def test_handle_unique_items() -> None:
+    field = create_model_field(bool, min_items=2, unique_items=True)
+    result = handle_constrained_collection(collection_type=list, model_field=field, model_factory=ModelFactory)
+    assert len(result) == 2
+    assert len(set(result)) == 2
