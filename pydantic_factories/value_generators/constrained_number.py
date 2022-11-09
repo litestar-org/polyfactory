@@ -1,4 +1,5 @@
 import random
+import sys
 from decimal import Decimal
 from typing import Any, Callable, Dict, Optional, Tuple, Type, TypeVar, cast
 
@@ -18,7 +19,7 @@ def get_increment(t_type: Type[T]) -> T:
     Returns:
         An increment T.
     """
-    values: Dict[Any, Any] = {int: 1, float: 0.001, Decimal: Decimal("0.001")}
+    values: Dict[Any, Any] = {int: 1, float: sys.float_info.epsilon, Decimal: Decimal("0.001")}
     return cast("T", values[t_type])
 
 
@@ -55,7 +56,7 @@ def get_constrained_number_range(
     minimum = get_value_or_none(equal_value=ge, constrained=gt, increment=get_increment(t_type))
     maximum = get_value_or_none(equal_value=le, constrained=lt, increment=-get_increment(t_type))  # pyright: ignore
 
-    if minimum is not None and maximum is not None and maximum <= minimum:
+    if minimum is not None and maximum is not None and maximum < minimum:
         raise ParameterError("maximum value must be greater than minimum value")
 
     if multiple_of is None:
