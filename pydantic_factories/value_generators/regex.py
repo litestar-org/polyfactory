@@ -33,7 +33,6 @@ IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 from itertools import chain
 from random import Random
-from sre_parse import SubPattern, parse  # pylint: disable=W4901,E0611
 from string import (
     ascii_letters,
     ascii_lowercase,
@@ -44,6 +43,11 @@ from string import (
     whitespace,
 )
 from typing import Any, Dict, List, Optional, Pattern, Tuple, Union
+
+try:  # >=3.11
+    from re._parser import SubPattern, parse  # pyright:ignore
+except ImportError:  # < 3.11
+    from sre_parse import SubPattern, parse  # pylint: disable=deprecated-module
 
 _alphabets = {
     "printable": printable,
@@ -106,11 +110,11 @@ class RegexFactory:
         return result  # noqa: R504
 
     def _build_string(self, parsed: SubPattern) -> str:
-        return "".join([self._handle_state(state) for state in parsed])  # type: ignore
+        return "".join([self._handle_state(state) for state in parsed])  # pyright:ignore
 
     def _handle_state(self, state: Tuple[SubPattern, Tuple[Any, ...]]) -> Any:
         opcode, value = state
-        return self._cases[str(opcode).lower()](value)  # type: ignore
+        return self._cases[str(opcode).lower()](value)  # type: ignore[no-untyped-call]
 
     def _handle_group(self, value: Tuple[Any, ...]) -> str:
         result = "".join(self._handle_state(i) for i in value[3])
@@ -130,6 +134,6 @@ class RegexFactory:
         end_range = min(end_range, self._limit)
 
         for i in range(self._random.randint(start_range, max(start_range, end_range))):
-            result.append("".join(self._handle_state(i) for i in list(value)))  # type: ignore
+            result.append("".join(self._handle_state(i) for i in list(value)))  # pyright:ignore
 
         return "".join(result)
