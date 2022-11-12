@@ -1,10 +1,16 @@
 import sys
+from decimal import Decimal
 from typing import Any, NewType, Union
 
 from pydantic import BaseModel
 
 from pydantic_factories.factory import ModelFactory
-from pydantic_factories.utils import is_new_type, is_union, unwrap_new_type_if_needed
+from pydantic_factories.utils import (
+    is_multiply_of_multiple_of_in_range,
+    is_new_type,
+    is_union,
+    unwrap_new_type_if_needed,
+)
 
 
 def test_is_union() -> None:
@@ -53,3 +59,20 @@ def test_unwrap_new_type_is_needed() -> None:
     assert unwrap_new_type_if_needed(MyInt) is int
     assert unwrap_new_type_if_needed(WrappedInt) is int
     assert unwrap_new_type_if_needed(int) is int
+
+
+def test_is_multiply_of_multiple_of_in_range_extreme_cases() -> None:
+    assert is_multiply_of_multiple_of_in_range(minimum=None, maximum=10.0, multiple_of=20.0)
+    assert not is_multiply_of_multiple_of_in_range(minimum=5.0, maximum=10.0, multiple_of=20.0)
+
+    assert is_multiply_of_multiple_of_in_range(minimum=1.0, maximum=1.0, multiple_of=0.33333333333)
+    assert is_multiply_of_multiple_of_in_range(
+        minimum=Decimal(1), maximum=Decimal(1), multiple_of=Decimal("0.33333333333")
+    )
+    assert not is_multiply_of_multiple_of_in_range(minimum=Decimal(1), maximum=Decimal(1), multiple_of=Decimal("0.333"))
+
+    assert is_multiply_of_multiple_of_in_range(minimum=5, maximum=5, multiple_of=5)
+
+    # while multiple_of=0.0 leads to ZeroDivision exception in pydantic
+    # it can handle values close to zero properly so we should support this too
+    assert is_multiply_of_multiple_of_in_range(minimum=10.0, maximum=20.0, multiple_of=1e-10)

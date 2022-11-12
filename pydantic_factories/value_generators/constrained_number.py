@@ -4,7 +4,10 @@ from decimal import Decimal
 from typing import Any, Callable, Dict, Optional, Tuple, Type, TypeVar, cast
 
 from pydantic_factories.exceptions import ParameterError
-from pydantic_factories.utils import passes_pydantic_multiple_validator
+from pydantic_factories.utils import (
+    is_multiply_of_multiple_of_in_range,
+    passes_pydantic_multiple_validator,
+)
 
 T = TypeVar("T", Decimal, int, float)
 
@@ -66,8 +69,10 @@ def get_constrained_number_range(
             return minimum, minimum + seed
         if maximum is not None and minimum is None:
             return maximum - seed, maximum
-    elif maximum is not None and multiple_of >= maximum:
-        raise ParameterError("maximum value must be greater than multiple_of")
+    elif multiple_of == 0.0:  # noqa: R506
+        raise ParameterError("multiple_of can not be zero")
+    elif not is_multiply_of_multiple_of_in_range(minimum=minimum, maximum=maximum, multiple_of=multiple_of):
+        raise ParameterError("given range should include at least one multiply of multiple_of")
 
     return minimum, maximum
 
