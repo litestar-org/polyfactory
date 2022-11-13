@@ -35,6 +35,11 @@ def is_multiply_of_multiple_of_in_range(minimum: Optional[T], maximum: Optional[
     if minimum is None or maximum is None:
         return True
 
+    # if we were given floats and multiple_of is really close to zero then it doesn't make sense
+    # to continue trying to check the range
+    if isinstance(minimum, float) and minimum / multiple_of in [float("+inf"), float("-inf")]:
+        return False
+
     multiplier = round(minimum / multiple_of)
     step = 1 if multiple_of > 0 else -1
     # since rounding can go either up or down we may end up in a situation when

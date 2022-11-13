@@ -76,8 +76,6 @@ def handle_constrained_decimal(field: "ConstrainedDecimal") -> Decimal:
     multiple_of = cast("Optional[Decimal]", field.multiple_of)
     decimal_places = field.decimal_places
     max_digits = field.max_digits
-    if multiple_of == 0:
-        return Decimal(0)
 
     minimum, maximum = get_constrained_number_range(
         gt=field.gt, ge=field.ge, lt=field.lt, le=field.le, multiple_of=multiple_of, t_type=Decimal  # type: ignore

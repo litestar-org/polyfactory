@@ -69,10 +69,11 @@ def get_constrained_number_range(
             return minimum, minimum + seed
         if maximum is not None and minimum is None:
             return maximum - seed, maximum
-    elif multiple_of == 0.0:  # noqa: R506
-        raise ParameterError("multiple_of can not be zero")
-    elif not is_multiply_of_multiple_of_in_range(minimum=minimum, maximum=maximum, multiple_of=multiple_of):
-        raise ParameterError("given range should include at least one multiply of multiple_of")
+    else:
+        if multiple_of == 0.0:
+            raise ParameterError("multiple_of can not be zero")
+        if not is_multiply_of_multiple_of_in_range(minimum=minimum, maximum=maximum, multiple_of=multiple_of):
+            raise ParameterError("given range should include at least one multiply of multiple_of")
 
     return minimum, maximum
 

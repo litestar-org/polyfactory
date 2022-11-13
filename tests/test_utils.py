@@ -1,7 +1,10 @@
+import random
 import sys
 from decimal import Decimal
 from typing import Any, NewType, Union
 
+from hypothesis import given
+from hypothesis.strategies import decimals, floats, integers
 from pydantic import BaseModel
 
 from pydantic_factories.factory import ModelFactory
@@ -76,3 +79,73 @@ def test_is_multiply_of_multiple_of_in_range_extreme_cases() -> None:
     # while multiple_of=0.0 leads to ZeroDivision exception in pydantic
     # it can handle values close to zero properly so we should support this too
     assert is_multiply_of_multiple_of_in_range(minimum=10.0, maximum=20.0, multiple_of=1e-10)
+    # test corner case found by peterschutt
+    assert not is_multiply_of_multiple_of_in_range(
+        minimum=Decimal("999999999.9999999343812775"),
+        maximum=Decimal("999999999.990476"),
+        multiple_of=Decimal("-0.556"),
+    )
+
+
+@given(
+    floats(allow_nan=False, allow_infinity=False, min_value=1e-6, max_value=1000000000),
+    integers(min_value=-100000, max_value=100000),
+)
+def test_is_multiply_of_multiple_of_in_range_for_floats(base_multiple_of: float, multiplier: int) -> None:
+    if multiplier != 0:
+        for multiple_of in [base_multiple_of, -base_multiple_of]:
+            minimum, maximum = sorted(
+                [
+                    multiplier * multiple_of + random.random() * 100,
+                    (multiplier + random.randint(1, 100)) * multiple_of + random.random() * 100,
+                ]
+            )
+            assert is_multiply_of_multiple_of_in_range(minimum=minimum, maximum=maximum, multiple_of=multiple_of)
+
+            minimum, maximum = sorted(
+                [
+                    (multiplier + (random.random() / 2 + 0.01)) * multiple_of,
+                    (multiplier + (random.random() / 2 + 0.45)) * multiple_of,
+                ]
+            )
+            assert not is_multiply_of_multiple_of_in_range(minimum=minimum, maximum=maximum, multiple_of=multiple_of)
+
+
+@given(
+    integers(min_value=-1000000000, max_value=1000000000),
+    integers(min_value=-100000, max_value=100000),
+)
+def test_is_multiply_of_multiple_of_in_range_for_int(base_multiple_of: int, multiplier: int) -> None:
+    if multiplier != 0 and base_multiple_of not in [-1, 0, 1]:
+        for multiple_of in [base_multiple_of, -base_multiple_of]:
+            minimum, maximum = sorted(
+                [
+                    multiplier * multiple_of + random.randint(1, 100),
+                    (multiplier + random.randint(1, 100)) * multiple_of + random.randint(1, 100),
+                ]
+            )
+            assert is_multiply_of_multiple_of_in_range(minimum=minimum, maximum=maximum, multiple_of=multiple_of)
+
+
+@given(
+    decimals(min_value=Decimal("1e-6"), max_value=Decimal("1000000000")),
+    integers(min_value=-100000, max_value=100000),
+)
+def test_is_multiply_of_multiple_of_in_range_for_decimals(base_multiple_of: Decimal, multiplier: int) -> None:
+    if multiplier != 0 and base_multiple_of != 0:
+        for multiple_of in [base_multiple_of, -base_multiple_of]:
+            minimum, maximum = sorted(
+                [
+                    multiplier * multiple_of + Decimal(random.random() * 100),
+                    (multiplier + random.randint(1, 100)) * multiple_of + Decimal(random.random() * 100),
+                ]
+            )
+            assert is_multiply_of_multiple_of_in_range(minimum=minimum, maximum=maximum, multiple_of=multiple_of)
+
+            minimum, maximum = sorted(
+                [
+                    (multiplier + Decimal(random.random() / 2 + 0.01)) * multiple_of,
+                    (multiplier + Decimal(random.random() / 2 + 0.45)) * multiple_of,
+                ]
+            )
+            assert not is_multiply_of_multiple_of_in_range(minimum=minimum, maximum=maximum, multiple_of=multiple_of)
