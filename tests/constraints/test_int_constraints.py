@@ -7,7 +7,10 @@ from pydantic import ConstrainedInt
 
 from pydantic_factories.constraints.integer import handle_constrained_int
 from pydantic_factories.exceptions import ParameterError
-from pydantic_factories.utils import passes_pydantic_multiple_validator
+from pydantic_factories.utils import (
+    is_multiply_of_multiple_of_in_range,
+    passes_pydantic_multiple_validator,
+)
 
 
 def create_constrained_field(
@@ -57,8 +60,12 @@ def test_handle_constrained_int_handles_lt(maximum: int) -> None:
 
 @given(integers(min_value=-1000000000, max_value=1000000000))
 def test_handle_constrained_int_handles_multiple_of(multiple_of: int) -> None:
-    result = handle_constrained_int(create_constrained_field(multiple_of=multiple_of))
-    assert passes_pydantic_multiple_validator(result, multiple_of)
+    if multiple_of != 0:
+        result = handle_constrained_int(create_constrained_field(multiple_of=multiple_of))
+        assert passes_pydantic_multiple_validator(result, multiple_of)
+    else:
+        with pytest.raises(ParameterError):
+            handle_constrained_int(create_constrained_field(multiple_of=multiple_of))
 
 
 @given(
@@ -67,7 +74,7 @@ def test_handle_constrained_int_handles_multiple_of(multiple_of: int) -> None:
 )
 def test_handle_constrained_int_handles_multiple_of_with_lt(val1: int, val2: int) -> None:
     multiple_of, max_value = sorted([val1, val2])
-    if multiple_of < max_value - 1 or multiple_of == 0:
+    if multiple_of != 0:
         result = handle_constrained_int(create_constrained_field(multiple_of=multiple_of, lt=max_value))
         assert passes_pydantic_multiple_validator(result, multiple_of)
     else:
@@ -81,7 +88,7 @@ def test_handle_constrained_int_handles_multiple_of_with_lt(val1: int, val2: int
 )
 def test_handle_constrained_int_handles_multiple_of_with_le(val1: int, val2: int) -> None:
     multiple_of, max_value = sorted([val1, val2])
-    if multiple_of < max_value or multiple_of == 0:
+    if multiple_of != 0:
         result = handle_constrained_int(create_constrained_field(multiple_of=multiple_of, le=max_value))
         assert passes_pydantic_multiple_validator(result, multiple_of)
     else:
@@ -95,8 +102,12 @@ def test_handle_constrained_int_handles_multiple_of_with_le(val1: int, val2: int
 )
 def test_handle_constrained_int_handles_multiple_of_with_ge(val1: int, val2: int) -> None:
     min_value, multiple_of = sorted([val1, val2])
-    result = handle_constrained_int(create_constrained_field(multiple_of=multiple_of, ge=min_value))
-    assert passes_pydantic_multiple_validator(result, multiple_of)
+    if multiple_of != 0:
+        result = handle_constrained_int(create_constrained_field(multiple_of=multiple_of, ge=min_value))
+        assert passes_pydantic_multiple_validator(result, multiple_of)
+    else:
+        with pytest.raises(ParameterError):
+            handle_constrained_int(create_constrained_field(multiple_of=multiple_of, ge=min_value))
 
 
 @given(
@@ -105,8 +116,12 @@ def test_handle_constrained_int_handles_multiple_of_with_ge(val1: int, val2: int
 )
 def test_handle_constrained_int_handles_multiple_of_with_gt(val1: int, val2: int) -> None:
     min_value, multiple_of = sorted([val1, val2])
-    result = handle_constrained_int(create_constrained_field(multiple_of=multiple_of, gt=min_value))
-    assert passes_pydantic_multiple_validator(result, multiple_of)
+    if multiple_of != 0:
+        result = handle_constrained_int(create_constrained_field(multiple_of=multiple_of, gt=min_value))
+        assert passes_pydantic_multiple_validator(result, multiple_of)
+    else:
+        with pytest.raises(ParameterError):
+            handle_constrained_int(create_constrained_field(multiple_of=multiple_of, gt=min_value))
 
 
 @given(
@@ -116,22 +131,9 @@ def test_handle_constrained_int_handles_multiple_of_with_gt(val1: int, val2: int
 )
 def test_handle_constrained_int_handles_multiple_of_with_ge_and_le(val1: int, val2: int, val3: int) -> None:
     min_value, multiple_of, max_value = sorted([val1, val2, val3])
-    if multiple_of < max_value and min_value <= max_value or multiple_of == 0:
-        result = handle_constrained_int(create_constrained_field(multiple_of=multiple_of, ge=min_value, le=max_value))
-        assert passes_pydantic_multiple_validator(result, multiple_of)
-    else:
-        with pytest.raises(ParameterError):
-            handle_constrained_int(create_constrained_field(multiple_of=multiple_of, ge=min_value, le=max_value))
-
-
-@given(
-    integers(min_value=-1000000000, max_value=1000000000),
-    integers(min_value=-1000000000, max_value=1000000000),
-    integers(min_value=-1000000000, max_value=1000000000),
-)
-def test_handle_constrained_int_handles_ge_and_le_with_lower_multiple_of(val1: int, val2: int, val3: int) -> None:
-    multiple_of, min_value, max_value = sorted([val1, val2, val3])
-    if multiple_of == 0 or multiple_of < max_value and min_value <= max_value:
+    if multiple_of != 0 and is_multiply_of_multiple_of_in_range(
+        minimum=min_value, maximum=max_value, multiple_of=multiple_of
+    ):
         result = handle_constrained_int(create_constrained_field(multiple_of=multiple_of, ge=min_value, le=max_value))
         assert passes_pydantic_multiple_validator(result, multiple_of)
     else:

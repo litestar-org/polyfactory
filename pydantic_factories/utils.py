@@ -2,7 +2,7 @@ from dataclasses import Field as DataclassField
 from dataclasses import fields as get_dataclass_fields
 from decimal import Decimal
 from inspect import isclass
-from typing import TYPE_CHECKING, Any, Tuple, Type, TypeVar, cast
+from typing import TYPE_CHECKING, Any, Optional, Tuple, Type, TypeVar, cast
 
 from pydantic import BaseModel, create_model
 from pydantic.utils import almost_equal_floats
@@ -25,6 +25,55 @@ def passes_pydantic_multiple_validator(value: T, multiple_of: T) -> bool:
         return True
     mod = float(value) / float(multiple_of) % 1
     return almost_equal_floats(mod, 0.0) or almost_equal_floats(mod, 1.0)
+
+
+def is_multiply_of_multiple_of_in_range(minimum: Optional[T], maximum: Optional[T], multiple_of: T) -> bool:
+    """Determines if at least one multiply of `multiple_of` lies in the given
+    range."""
+    # if the range has infinity on one of its ends then infinite number of multipliers
+    # can be found within the range
+    if minimum is None or maximum is None:
+        return True
+
+    # if we were given floats and multiple_of is really close to zero then it doesn't make sense
+    # to continue trying to check the range
+    if isinstance(minimum, float) and minimum / multiple_of in [float("+inf"), float("-inf")]:
+        return False
+
+    multiplier = round(minimum / multiple_of)
+    step = 1 if multiple_of > 0 else -1
+    # since rounding can go either up or down we may end up in a situation when
+    # minimum is less or equal to `multiplier * multiple_of`
+    # or when it is greater than `multiplier * multiple_of`
+    # (in this case minimum is less than `(multiplier + 1)* multiple_of`). So we need to check
+    # that any of two values is inside the given range. ASCII graphic below explain this
+    #
+    #                minimum
+    # -----------------+-------+-----------------------------------+----------------------------
+    #             multiplier * multiple_of        (multiplier + 1) * multiple_of
+    #
+    #
+    #                                minimum
+    # -------------------------+--------+--------------------------+----------------------------
+    #             multiplier * multiple_of        (multiplier + 1) * multiple_of
+    #
+    # since `multiple_of` can be a negative number adding +1 to `multiplier` drives `(multiplier + 1) * multiple_of``
+    # away from `minumum` to the -infinity. It looks like this:
+    #                                                                               minimum
+    # -----------------------+--------------------------------+------------------------+--------
+    #       (multiplier + 1) * multiple_of        (multiplier) * multiple_of
+    #
+    # so for negative `multiple_of` we want to subtract 1 from multiplier
+    for multiply in [multiplier * multiple_of, (multiplier + step) * multiple_of]:
+        multiply_float = float(multiply)
+        if (
+            almost_equal_floats(multiply_float, float(minimum))
+            or almost_equal_floats(multiply_float, float(maximum))
+            or minimum < multiply < maximum
+        ):
+            return True
+
+    return False
 
 
 def is_pydantic_model(value: Any) -> "TypeGuard[Type[BaseModel]]":

@@ -13,8 +13,6 @@ if TYPE_CHECKING:
 def handle_constrained_float(field: "ConstrainedFloat") -> float:
     """Handles 'ConstrainedFloat' instances."""
     multiple_of = field.multiple_of
-    if multiple_of == 0:
-        return 0
 
     minimum, maximum = get_constrained_number_range(
         gt=field.gt, ge=field.ge, lt=field.lt, le=field.le, t_type=float, multiple_of=multiple_of
