@@ -206,3 +206,27 @@ def test_factory_with_nested_dict() -> None:
 
     assert "nested_dict" in upper.nested
     assert upper.nested["nested_dict"].z == nested.z
+
+
+def test_factory_with_partial_kwargs_deep_in_tree() -> None:
+    # the code below is a modified copy of the bug reproduction example in
+    # https://github.com/starlite-api/pydantic-factories/issues/115
+    class A(BaseModel):
+        name: str
+        age: int
+
+    class B(BaseModel):
+        a: A
+
+    class C(BaseModel):
+        b: B
+
+    class D(BaseModel):
+        c: C
+
+    class DFactory(ModelFactory):
+        __model__ = D
+
+    build_result = DFactory.build(factory_use_construct=False, **{"c": {"b": {"a": {"name": "test"}}}})
+    assert build_result
+    assert build_result.c.b.a.name == "test"
