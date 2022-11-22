@@ -148,8 +148,8 @@ class ModelFactory(Generic[T]):
 
     # Private Methods
 
-    def __init_subclass__(cls, **kwargs: Any) -> None:
-        super().__init_subclass__(**kwargs)
+    def __init_subclass__(cls) -> None:
+        super().__init_subclass__()
         if cls.__auto_register__:
             cls._register_model_factory()
 
