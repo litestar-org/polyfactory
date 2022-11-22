@@ -347,17 +347,17 @@ class ModelFactory(Generic[T]):
                 Returns:
                     A 'ModelFactory' subclass.
                 """
-        factory = cls._registered_model_factory_map.get(model)
+        factory = cls._get_registered_model_factory(model)
         if factory:
             return factory
         return cls.create_factory(model)
 
     @classmethod
-    def _register_model_factory(cls):
+    def _register_model_factory(cls) -> None:
         cls._registered_model_factory_map[cls._get_model()] = cast("ModelFactory", cls)
 
     @classmethod
-    def _get_registered_model_factory(cls, model: FactoryTypes):
+    def _get_registered_model_factory(cls, model: FactoryTypes) -> Optional["ModelFactory"]:
         return cls._registered_model_factory_map.get(model)
 
     # Public Methods
