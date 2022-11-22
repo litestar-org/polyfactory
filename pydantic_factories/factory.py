@@ -148,8 +148,8 @@ class ModelFactory(Generic[T]):
 
     # Private Methods
 
-    def __init_subclass__(cls) -> None:
-        super().__init_subclass__()
+    def __init_subclass__(cls, *args: Any, **kwargs: Any) -> None:
+        super().__init_subclass__(*args, **kwargs)
         if cls.__auto_register__:
             cls._register_model_factory()
 
@@ -336,17 +336,17 @@ class ModelFactory(Generic[T]):
 
     @classmethod
     def _get_or_create_factory(
-            cls,
-            model: Type[FactoryTypes],
+        cls,
+        model: Type[FactoryTypes],
     ) -> "ModelFactory":
-        """get from registered factories or generate dynamically a 'ModelFactory' for a given pydantic model
-                subclass.
+        """get from registered factories or generate dynamically a
+        'ModelFactory' for a given pydantic model subclass.
 
-                Args:
-                    model: A pydantic model subclass.
-                Returns:
-                    A 'ModelFactory' subclass.
-                """
+        Args:
+            model: A pydantic model subclass.
+        Returns:
+            A 'ModelFactory' subclass.
+        """
         factory = cls._get_registered_model_factory(model)
         if factory:
             return factory
@@ -634,7 +634,8 @@ class ModelFactory(Generic[T]):
 
         if isinstance(field_parameters, list) and is_pydantic_model(model_field.type_):
             return [
-                cls._get_or_create_factory(model=model_field.type_).build(**build_kwargs) for build_kwargs in field_parameters
+                cls._get_or_create_factory(model=model_field.type_).build(**build_kwargs)
+                for build_kwargs in field_parameters
             ]
 
         if cls.is_constrained_field(outer_type):
