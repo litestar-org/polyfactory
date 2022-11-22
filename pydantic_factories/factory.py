@@ -202,9 +202,20 @@ class ModelFactory(Generic[T]):
         if not model_kwargs or is_pydantic_model(type(model_kwargs)):
             return False
 
-        pydantic_model_field_names = {
-            field_name for field_name, _ in cls.get_model_fields(cast("Type[T]", pydantic_model))
-        }
+        if isinstance(model_kwargs, list):
+            return any(
+                cls._are_model_kwargs_partial(pydantic_model, pydantic_model_kwargs)
+                for pydantic_model_kwargs in model_kwargs
+            )
+
+        pydantic_model_field_names = set()
+        for field_name, model_field in cls.get_model_fields(cast("Type[T]", pydantic_model)):
+            field_kwargs = model_kwargs.get(field_name)
+            if is_pydantic_model(model_field.type_) and cls._are_model_kwargs_partial(model_field.type_, field_kwargs):
+                return True
+
+            pydantic_model_field_names.add(field_name)
+
         kwargs_field_names = set(model_kwargs.keys())
 
         return bool(pydantic_model_field_names - kwargs_field_names)
@@ -228,12 +239,6 @@ class ModelFactory(Generic[T]):
         """
         if model_field.shape not in (SHAPE_DICT, SHAPE_MAPPING) and is_pydantic_model(model_field.type_):
             field_kwargs = kwargs.get(field_name)
-
-            if isinstance(field_kwargs, list):
-                return any(
-                    cls._are_model_kwargs_partial(model_field.type_, pydantic_model_kwargs)
-                    for pydantic_model_kwargs in field_kwargs
-                )
 
             return cls._are_model_kwargs_partial(model_field.type_, field_kwargs)
 
