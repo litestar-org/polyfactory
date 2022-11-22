@@ -40,12 +40,13 @@ def test_auto_register_model_factory() -> None:
 
 
 def test_auto_register_model_factory_using_create_factory() -> None:
-    AFactory = ModelFactory.create_factory(model=A, a_text="const value")
-    BFactory = ModelFactory.create_factory(model=B, b_text="const value", __auto_register__=True)
+    const_value = "const value"
+    ModelFactory.create_factory(model=A, a_text=const_value)
+    ModelFactory.create_factory(model=B, b_text=const_value, __auto_register__=True)
     CFactory = ModelFactory.create_factory(model=C)
 
     c = CFactory.build()
 
-    assert c.b.b_text == BFactory.b_text
-    assert c.b_list[0].b_text == BFactory.b_text
-    assert c.b.a.a_text != AFactory.a_text
+    assert c.b.b_text == const_value
+    assert c.b_list[0].b_text == const_value
+    assert c.b.a.a_text != const_value

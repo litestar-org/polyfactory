@@ -27,7 +27,6 @@ from typing import (
     Optional,
     Type,
     TypeVar,
-    TypedDict,
     Union,
     cast,
 )
