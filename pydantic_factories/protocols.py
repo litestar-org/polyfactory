@@ -1,8 +1,7 @@
 # pylint: disable=unnecessary-ellipsis
-from typing import Any, Dict, List, TypeVar, Union
+from typing import Any, Dict, List, Protocol, TypeVar, Union
 
 from pydantic import BaseModel
-from typing_extensions import Protocol
 
 
 # According to https://github.com/python/cpython/blob/main/Lib/dataclasses.py#L1213
