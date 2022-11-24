@@ -11,7 +11,7 @@ from ipaddress import (
     IPv6Network,
 )
 from pathlib import Path
-from typing import Callable
+from typing import Callable, Literal
 from uuid import UUID
 
 import pytest
@@ -58,7 +58,6 @@ from pydantic import (
     StrictStr,
 )
 from pydantic.color import Color
-from typing_extensions import Literal
 
 from pydantic_factories import ModelFactory
 from pydantic_factories.exceptions import ParameterError

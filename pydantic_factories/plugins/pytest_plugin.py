@@ -1,11 +1,10 @@
 import re
 from inspect import isclass
-from typing import Any, Callable, ClassVar, Dict, Optional, Type, Union
+from typing import Any, Callable, ClassVar, Dict, Literal, Optional, Type, Union
 
 import pytest
 from _pytest.config import Config
 from pydantic import validate_arguments
-from typing_extensions import Literal
 
 from pydantic_factories.exceptions import ParameterError
 from pydantic_factories.factory import ModelFactory
