@@ -28,3 +28,15 @@ And then launch the docs with:
 ```shell
 docker run --rm -it -p 8000:8000 -v ${PWD}:/docs squidfunk/mkdocs-material
 ```
+
+## Release workflow (Maintainers only)
+
+1. Update changelog.md
+2. Increment the version in pyproject.toml.
+3. Commit and push.
+4. In GitHub go to the releases tab
+5. Pick "draft a new release"
+6. Give it a title and a tag, both vX.X.X
+7. Fill in the release description, you can let GitHub do it for you and then edit as needed.
+8. Publish the release.
+9. look under the action pane and make sure the release action runs correctly
