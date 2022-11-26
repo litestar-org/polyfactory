@@ -1,5 +1,5 @@
 from decimal import Decimal
-from typing import Optional
+from typing import Optional, cast
 
 import pytest
 from hypothesis import given
@@ -52,7 +52,7 @@ def test_handle_constrained_decimal_length_validation() -> None:
 def test_handle_constrained_decimal_handles_max_digits(max_digits: int) -> None:
     if max_digits > 0:
         result = handle_constrained_decimal(create_constrained_field(max_digits=max_digits))
-        assert len(result.as_tuple().digits) - abs(result.as_tuple().exponent) <= max_digits
+        assert len(result.as_tuple().digits) - abs(cast("int", result.as_tuple().exponent)) <= max_digits  # type: ignore[redundant-cast]
     else:
         with pytest.raises(ParameterError):
             handle_constrained_decimal(create_constrained_field(max_digits=max_digits))
@@ -61,7 +61,7 @@ def test_handle_constrained_decimal_handles_max_digits(max_digits: int) -> None:
 @given(integers(min_value=0, max_value=100))
 def test_handle_constrained_decimal_handles_decimal_places(decimal_places: int) -> None:
     result = handle_constrained_decimal(create_constrained_field(decimal_places=decimal_places))
-    assert abs(result.as_tuple().exponent) <= decimal_places
+    assert abs(cast("int", result.as_tuple().exponent)) <= decimal_places  # type: ignore[redundant-cast]
 
 
 @given(integers(min_value=0, max_value=100), integers(min_value=1, max_value=100))
@@ -70,7 +70,7 @@ def test_handle_constrained_decimal_handles_max_digits_and_decimal_places(max_di
         result = handle_constrained_decimal(
             create_constrained_field(max_digits=max_digits, decimal_places=decimal_places)
         )
-        assert len(result.as_tuple().digits) - abs(result.as_tuple().exponent) <= max_digits
+        assert len(result.as_tuple().digits) - abs(cast("int", result.as_tuple().exponent)) <= max_digits  # type: ignore[redundant-cast]
     else:
         with pytest.raises(ParameterError):
             handle_constrained_decimal(create_constrained_field(max_digits=max_digits, decimal_places=decimal_places))
@@ -211,7 +211,7 @@ def test_handle_decimal_length() -> None:
 
     assert isinstance(result, Decimal)
     assert len(result.as_tuple().digits) == 5
-    assert abs(result.as_tuple().exponent) == 2
+    assert abs(cast("int", result.as_tuple().exponent)) == 2  # type: ignore[redundant-cast]
 
     # here decimal places should determine max length
     max_digits = 10
@@ -220,7 +220,7 @@ def test_handle_decimal_length() -> None:
     result = handle_decimal_length(decimal, decimal_places, max_digits)
     assert isinstance(result, Decimal)
     assert len(result.as_tuple().digits) == 8
-    assert abs(result.as_tuple().exponent) == 5
+    assert abs(cast("int", result.as_tuple().exponent)) == 5  # type: ignore[redundant-cast]
 
     # here digits determine decimal length
     max_digits = 10
@@ -229,7 +229,7 @@ def test_handle_decimal_length() -> None:
     result = handle_decimal_length(decimal, decimal_places, max_digits)
     assert isinstance(result, Decimal)
     assert len(result.as_tuple().digits) == 10
-    assert abs(result.as_tuple().exponent) == 7
+    assert abs(cast("int", result.as_tuple().exponent)) == 7  # type: ignore[redundant-cast]
 
     # here decimal places determine decimal length
     max_digits = None  # type: ignore
@@ -238,7 +238,7 @@ def test_handle_decimal_length() -> None:
     result = handle_decimal_length(decimal, decimal_places, max_digits)
     assert isinstance(result, Decimal)
     assert len(result.as_tuple().digits) == 8
-    assert abs(result.as_tuple().exponent) == 5
+    assert abs(cast("int", result.as_tuple().exponent)) == 5  # type: ignore[redundant-cast]
 
     # here max_decimals is below 0
     decimal = Decimal("99.99")
@@ -246,7 +246,7 @@ def test_handle_decimal_length() -> None:
     result = handle_decimal_length(decimal, decimal_places, max_digits)
     assert isinstance(result, Decimal)
     assert len(result.as_tuple().digits) == 1
-    assert result.as_tuple().exponent == 0
+    assert cast("int", result.as_tuple().exponent) == 0  # type: ignore[redundant-cast]
 
 
 def test_zero_to_one_range() -> None:

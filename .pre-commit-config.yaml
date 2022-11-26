@@ -101,7 +101,7 @@ repos:
         additional_dependencies:
           [pydantic, faker, pytest, hypothesis, odmantic, ormar, beanie]
   - repo: https://github.com/RobertCraigie/pyright-python
-    rev: v1.1.280
+    rev: v1.1.281
     hooks:
       - id: pyright
         exclude: "extension"

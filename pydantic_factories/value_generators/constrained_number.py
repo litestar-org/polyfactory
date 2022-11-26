@@ -1,7 +1,7 @@
 import random
 import sys
 from decimal import Decimal
-from typing import Any, Callable, Dict, Optional, Tuple, Type, TypeVar, cast
+from typing import Any, Dict, Optional, Protocol, Tuple, Type, TypeVar, cast
 
 from pydantic_factories.exceptions import ParameterError
 from pydantic_factories.utils import (
@@ -10,6 +10,11 @@ from pydantic_factories.utils import (
 )
 
 T = TypeVar("T", Decimal, int, float)
+
+
+class NumberGeneratorProtocol(Protocol[T]):
+    def __call__(self, minimum: Optional[T] = None, maximum: Optional[T] = None) -> T:
+        ...
 
 
 def get_increment(t_type: Type[T]) -> T:
@@ -82,13 +87,13 @@ def generate_constrained_number(
     minimum: Optional[T],
     maximum: Optional[T],
     multiple_of: Optional[T],
-    method: Callable,
+    method: NumberGeneratorProtocol[T],
 ) -> T:
     """Generates a constrained number, output depends on the passed in
     callbacks."""
     if minimum is not None and maximum is not None:
         if multiple_of is None:
-            return cast("T", method(minimum, maximum))
+            return method(minimum, maximum)
         if multiple_of >= minimum:
             return multiple_of
         result = minimum
@@ -97,4 +102,4 @@ def generate_constrained_number(
         return result
     if multiple_of is not None:
         return multiple_of
-    return cast("T", method())
+    return method()
