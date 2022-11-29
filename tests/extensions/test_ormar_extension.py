@@ -1,12 +1,16 @@
+from datetime import datetime
 from enum import Enum
-from typing import TYPE_CHECKING
+from uuid import uuid4
 
 import pytest
+from pydantic import UUID4
 
 try:
     import sqlalchemy
     from databases import Database
-    from ormar import DateTime, ForeignKey, Integer, Model, String
+    from ormar import UUID, DateTime
+    from ormar import Enum as OrmarEnum
+    from ormar import ForeignKey, Integer, Model, String, Text
     from sqlalchemy import func
 
     from pydantic_factories.extensions import OrmarModelFactory
@@ -17,10 +21,6 @@ postgres_dsn = "postgresql+asyncpg://pydantic-factories:pydantic-factories@postg
 
 database = Database(url=postgres_dsn, force_rollback=True)
 metadata = sqlalchemy.MetaData()
-
-
-if TYPE_CHECKING:
-    from datetime import datetime
 
 
 class BaseMeta:
@@ -35,8 +35,8 @@ class Mood(str, Enum):
 
 class Person(Model):
     id: int = Integer(autoincrement=True, primary_key=True)
-    created_at: "datetime" = DateTime(timezone=True, server_default=func.now())
-    updated_at: "datetime" = DateTime(timezone=True, server_default=func.now(), onupdate=func.now())
+    created_at: datetime = DateTime(timezone=True, server_default=func.now())
+    updated_at: datetime = DateTime(timezone=True, server_default=func.now(), onupdate=func.now())
     mood: Mood = String(choices=Mood, max_length=20)  # type: ignore
 
     class Meta(BaseMeta):
@@ -75,4 +75,23 @@ def test_job_factory() -> None:
 
     assert result.id
     assert result.name == job_name
-    assert result.person
+    assert result.person is not None
+
+
+def test_model_creation_after_factory_build() -> None:
+    # https://github.com/starlite-api/pydantic-factories/issues/128
+    class TestModel(Model):
+        class Meta(BaseMeta):
+            pass
+
+        id: UUID4 = UUID(primary_key=True, default=uuid4)
+        text: str = Text()
+        text2: str = Text(nullable=True)
+        created_date: datetime = DateTime(default=datetime.now)
+        mood: Mood = OrmarEnum(enum_class=Mood, default=Mood.HAPPY)
+
+    class TestModelFactory(OrmarModelFactory):
+        __model__ = TestModel
+
+    TestModelFactory.build()
+    TestModel(text="qwerty")

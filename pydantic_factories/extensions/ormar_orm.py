@@ -2,6 +2,7 @@ import random
 from typing import TYPE_CHECKING, Any, Union
 
 from pydantic import BaseModel
+from pydantic.utils import smart_deepcopy
 
 from pydantic_factories.factory import ModelFactory
 from pydantic_factories.utils import is_pydantic_model, is_union
@@ -20,7 +21,10 @@ class OrmarModelFactory(ModelFactory[Model]):  # pragma: no cover # type: ignore
     def get_field_value(cls, model_field: "ModelField", field_parameters: Union[dict, list, None] = None) -> Any:
         """We need to handle here both choices and the fact that ormar sets values to be optional."""
 
-        model_field.required = True
+        if not model_field.required:
+            model_field = smart_deepcopy(model_field)
+            model_field.required = True
+
         # check if this is a RelationShip field
         if (
             is_union(model_field=model_field)
