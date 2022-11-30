@@ -170,8 +170,9 @@ class PersonFactory(ModelFactory):
 ```
 
 Here if we call `PersonFactory.build()` the result will be randomly generated except the pet list which will
-contain a dog with the name `Ralph` or `Roxy`. Notice that in this case we didn't have to define  the `pets` attribute
-in the `PersonFactory` because we have registered `PetFactory` as the default factory for the `Pet` model.
+contain a dog with the name `Ralph` or `Roxy`. Notice that in this case we didn't have to define the `pets`
+attribute in the `PersonFactory` because we have registered `PetFactory` as the default factory for the `Pet`
+model.
 
 ## PostGenerated
 
