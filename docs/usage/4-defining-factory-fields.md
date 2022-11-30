@@ -123,6 +123,56 @@ class PetFactory(ModelFactory):
 
 `Use` is merely a semantic abstraction that makes the factory cleaner and simpler to understand.
 
+## Global factory registration
+
+Sometimes you want to alter how model is built by default. It is especially useful for a model that is used a lot across the project. In this case updating attributes to reference specific factory everywhere can be quite cumbersome. Instead
+you can rely on autoregistering models by setting `__auto_register__` attribute`.
+
+```python
+from datetime import date, datetime
+from pydantic import BaseModel, UUID4
+from typing import Any, Dict, List, Union
+from enum import Enum
+from pydantic_factories import ModelFactory
+from random import choice
+
+
+class Species(str, Enum):
+    CAT = "Cat"
+    DOG = "Dog"
+
+
+class Pet(BaseModel):
+    name: str
+    species: Species
+
+
+class Person(BaseModel):
+    id: UUID4
+    name: str
+    hobbies: List[str]
+    age: Union[float, int]
+    birthday: Union[datetime, date]
+    pets: List[Pet]
+    assets: List[Dict[str, Dict[str, Any]]]
+
+
+class PetFactory(ModelFactory):
+    __model__ = Pet
+    __auto_register__ = True
+
+    name = lambda: choice(["Ralph", "Roxy"])  # noqa: E731
+    species = Species.DOG
+
+
+class PersonFactory(ModelFactory):
+    __model__ = Person
+```
+
+Here if we call `PersonFactory.build()` the result will be randomly generated except the pet list which will
+contain a dog with name `Ralph` or `Roxy`. Notice that in this case we didn't have to define `pets` attribute
+in the `PersonFactory` because we have registered `PetFactory` as the default factory for the `Pet` model.
+
 ## PostGenerated
 
 It allows for post generating fields based on already generated values of other (non post generated) fields. In most
