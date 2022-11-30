@@ -126,7 +126,7 @@ class PetFactory(ModelFactory):
 ## Global factory registration
 
 Sometimes you want to alter how model is built by default. It is especially useful for a model that is used a lot across the project. In this case updating attributes to reference specific factory everywhere can be quite cumbersome. Instead
-you can rely on autoregistering models by setting `__auto_register__` attribute`.
+you can rely on auto registering models by setting the `__auto_register__` attribute`.
 
 ```python
 from datetime import date, datetime
