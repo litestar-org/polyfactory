@@ -141,8 +141,17 @@ class ModelFactory(Generic[T]):
     __async_persistence__: Optional[Union[Type[AsyncPersistenceProtocol[T]], AsyncPersistenceProtocol[T]]] = None
     __allow_none_optionals__: bool = True
     __random_seed__: Optional[int] = None
+    __auto_register__: bool = False
+
+    # Private Fields
+    _registered_model_factory_map: Dict[FactoryTypes, "ModelFactory[T]"] = {}
 
     # Private Methods
+
+    def __init_subclass__(cls, *args: Any, **kwargs: Any) -> None:
+        super().__init_subclass__(*args, **kwargs)
+        if cls.__auto_register__:
+            cls._register_model_factory()
 
     @classmethod
     def _get_model(cls) -> Type[T]:
@@ -324,6 +333,32 @@ class ModelFactory(Generic[T]):
             return field_value()
 
         return field_value
+
+    @classmethod
+    def _get_or_create_factory(
+        cls,
+        model: Type[FactoryTypes],
+    ) -> "ModelFactory":
+        """get from registered factories or generate dynamically a
+        'ModelFactory' for a given pydantic model subclass.
+
+        Args:
+            model: A pydantic model subclass.
+        Returns:
+            A 'ModelFactory' subclass.
+        """
+        factory = cls._get_registered_model_factory(model)
+        if factory:
+            return factory
+        return cls.create_factory(model)
+
+    @classmethod
+    def _register_model_factory(cls) -> None:
+        cls._registered_model_factory_map[cls._get_model()] = cast("ModelFactory", cls)
+
+    @classmethod
+    def _get_registered_model_factory(cls, model: FactoryTypes) -> Optional["ModelFactory"]:
+        return cls._registered_model_factory_map.get(model)
 
     # Public Methods
 
@@ -593,13 +628,14 @@ class ModelFactory(Generic[T]):
 
         if is_pydantic_model(outer_type) or is_dataclass(outer_type) or is_typeddict(outer_type):
 
-            return cls.create_factory(model=outer_type).build(
+            return cls._get_or_create_factory(model=outer_type).build(
                 **(field_parameters if isinstance(field_parameters, dict) else {})
             )
 
         if isinstance(field_parameters, list) and is_pydantic_model(model_field.type_):
             return [
-                cls.create_factory(model=model_field.type_).build(**build_kwargs) for build_kwargs in field_parameters
+                cls._get_or_create_factory(model=model_field.type_).build(**build_kwargs)
+                for build_kwargs in field_parameters
             ]
 
         if cls.is_constrained_field(outer_type):
