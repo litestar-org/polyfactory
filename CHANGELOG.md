@@ -1,12 +1,18 @@
 # Changelog
 
+[1.17.0]
+
+- add `GenericModel` to `is_pydantic_model` checks.
+- add auto-registration hook.
+- improve typing of internal number generator.
+
 [1.16.0]
 
 - drop Python 3.7 support.
-- fix partial kwargs detection for deeply nested models.
-- improve invalid range detection when `multiple_of` is included into field params.
 - fix deprecation warning for `sre_parse` on Python 3.11.
 - fix inclusive ranges in `conint`.
+- fix partial kwargs detection for deeply nested models.
+- improve invalid range detection when `multiple_of` is included into field params.
 
 [1.15.0]
 

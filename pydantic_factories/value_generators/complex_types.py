@@ -90,8 +90,7 @@ def handle_complex_type(
     model_factory: Type["ModelFactory"],
     field_parameters: Optional[Union[Dict[Any, Any], List[Any]]] = None,
 ) -> Any:
-    """Recursive type generation based on typing info stored in the graph like
-    structure of pydantic model_fields."""
+    """Recursive type generation based on typing info stored in the graph like structure of pydantic model_fields."""
     container_type: Optional[Type[Any]] = shape_mapping.get(model_field.shape)
     if container_type:
         if container_type is not tuple:

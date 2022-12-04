@@ -5,6 +5,7 @@ from inspect import isclass
 from typing import TYPE_CHECKING, Any, Optional, Tuple, Type, TypeVar, cast
 
 from pydantic import BaseModel, create_model
+from pydantic.generics import GenericModel
 from pydantic.utils import almost_equal_floats
 
 T = TypeVar("T", int, float, Decimal)
@@ -19,8 +20,7 @@ if TYPE_CHECKING:
 
 
 def passes_pydantic_multiple_validator(value: T, multiple_of: T) -> bool:
-    """A function that determines whether a given value passes the pydantic
-    multiple_of validation."""
+    """A function that determines whether a given value passes the pydantic multiple_of validation."""
     if multiple_of == 0:
         return True
     mod = float(value) / float(multiple_of) % 1
@@ -28,8 +28,7 @@ def passes_pydantic_multiple_validator(value: T, multiple_of: T) -> bool:
 
 
 def is_multiply_of_multiple_of_in_range(minimum: Optional[T], maximum: Optional[T], multiple_of: T) -> bool:
-    """Determines if at least one multiply of `multiple_of` lies in the given
-    range."""
+    """Determines if at least one multiply of `multiple_of` lies in the given range."""
     # if the range has infinity on one of its ends then infinite number of multipliers
     # can be found within the range
     if minimum is None or maximum is None:
@@ -79,7 +78,7 @@ def is_multiply_of_multiple_of_in_range(minimum: Optional[T], maximum: Optional[
 def is_pydantic_model(value: Any) -> "TypeGuard[Type[BaseModel]]":
     """A function to determine if a given value is a subclass of BaseModel."""
     try:
-        return isclass(value) and issubclass(value, BaseModel)
+        return isclass(value) and issubclass(value, (BaseModel, GenericModel))
     except TypeError:  # pragma: no cover
         # isclass(value) returns True for python 3.9+ typings such as list[str] etc.
         # this raises a TypeError in issubclass, and so we need to handle it.

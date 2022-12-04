@@ -46,8 +46,7 @@ class PostGenerated:
     __slots__ = ("fn", "kwargs", "args")
 
     def __init__(self, fn: Callable, *args: Any, **kwargs: Any) -> None:
-        """A class that allows for generating values after other fields are
-        generated.
+        """A class that allows for generating values after other fields are generated.
 
         Args:
             fn: A callable.
@@ -75,8 +74,7 @@ class Fixture:
     __slots__ = ("fixture", "size", "kwargs")
 
     def __init__(self, fixture: Callable, size: Optional[int] = None, **kwargs: Any) -> None:
-        """A class that allows using ModelFactory classes registered as pytest
-        fixtures as factory fields.
+        """A class that allows using ModelFactory classes registered as pytest fixtures as factory fields.
 
         Args:
             fixture: A factory that was registered as a fixture.
@@ -105,10 +103,8 @@ class Fixture:
 
 
 class Require:
-    """A placeholder class used to mark a given factory attribute as a required
-    build-time kwarg."""
+    """A placeholder class used to mark a given factory attribute as a required build-time kwarg."""
 
 
 class Ignore:
-    """A placeholder class used to mark a given factory attribute as
-    ignored."""
+    """A placeholder class used to mark a given factory attribute as ignored."""

@@ -110,9 +110,9 @@ def test_factory_child_model_list() -> None:
 
 
 def test_factory_child_pydantic_model() -> None:
-    """Given a Pydantic Factory, When I build a model using the factory passing
-    a Pydantic model as attribute, Then the pydantic model is correctly
-    built."""
+    """Given a Pydantic Factory, When I build a model using the factory passing a Pydantic model as attribute, Then the
+    pydantic model is correctly built.
+    """
     address = Address(city="Paris", country="France")
     person = PersonFactory.build(address=address)
 
@@ -121,8 +121,9 @@ def test_factory_child_pydantic_model() -> None:
 
 
 def test_factory_child_none() -> None:
-    """Given a Pydantic Factory, When I build a model using the factory passing
-    None as attribute, Then the pydantic model is correctly built."""
+    """Given a Pydantic Factory, When I build a model using the factory passing None as attribute, Then the pydantic
+    model is correctly built.
+    """
 
     class PersonOptional(BaseModel):
         name: str
@@ -161,9 +162,9 @@ class AssertDict:
 
 
 def test_factory_not_ok() -> None:
-    """Given a Pydantic Model with nested Mapping field, When I build the model
-    using the factory passing only partial attributes, Then the model is
-    correctly built."""
+    """Given a Pydantic Model with nested Mapping field, When I build the model using the factory passing only partial
+    attributes, Then the model is correctly built.
+    """
 
     class NestedSchema(BaseModel):
         v: str
@@ -188,9 +189,9 @@ def test_factory_not_ok() -> None:
 
 
 def test_factory_with_nested_dict() -> None:
-    """Given a Pydantic Model with nested Dict field, When I build the model
-    using the factory passing only partial attributes, Then the model is
-    correctly built."""
+    """Given a Pydantic Model with nested Dict field, When I build the model using the factory passing only partial
+    attributes, Then the model is correctly built.
+    """
 
     class NestedSchema(BaseModel):
         z: int

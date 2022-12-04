@@ -18,8 +18,7 @@ class NumberGeneratorProtocol(Protocol[T]):
 
 
 def get_increment(t_type: Type[T]) -> T:
-    """Gets a small increment base to add to constrained values, i.e. lt/gt
-    entries.
+    """Gets a small increment base to add to constrained values, i.e. lt/gt entries.
 
     Args:
         t_type: A value of type T.
@@ -32,9 +31,8 @@ def get_increment(t_type: Type[T]) -> T:
 
 
 def get_value_or_none(equal_value: Optional[T], constrained: Optional[T], increment: T) -> Optional[T]:
-    """helper function to reduce branching in the get_constrained_number_range
-    method if the ge/le value is available, return that, otherwise return the
-    gt/lt value + an increment or None.
+    """helper function to reduce branching in the get_constrained_number_range method if the ge/le value is available,
+    return that, otherwise return the gt/lt value + an increment or None.
 
     Args:
         equal_value: An GE/LE value.
@@ -70,7 +68,7 @@ def get_constrained_number_range(
     if multiple_of is None:
         if minimum is not None and maximum is None:
             if minimum == 0:
-                return minimum, seed
+                return minimum, seed  # pyright: ignore
             return minimum, minimum + seed
         if maximum is not None and minimum is None:
             return maximum - seed, maximum
@@ -89,8 +87,7 @@ def generate_constrained_number(
     multiple_of: Optional[T],
     method: NumberGeneratorProtocol[T],
 ) -> T:
-    """Generates a constrained number, output depends on the passed in
-    callbacks."""
+    """Generates a constrained number, output depends on the passed in callbacks."""
     if minimum is not None and maximum is not None:
         if multiple_of is None:
             return method(minimum, maximum)

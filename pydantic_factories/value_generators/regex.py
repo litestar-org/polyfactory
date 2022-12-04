@@ -1,5 +1,4 @@
-"""The code in this files is adapted from
-https://github.com/crdoconnor/xeger/blob/master/xeger/xeger.py Which in turn
+"""The code in this files is adapted from https://github.com/crdoconnor/xeger/blob/master/xeger/xeger.py Which in turn
 adapted it from https://bitbucket.org/leapfrogdevelopment/rstr/
 
 Copyright (C) 2015, Colm O'Connor

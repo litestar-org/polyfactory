@@ -18,8 +18,7 @@ if TYPE_CHECKING:
 class OrmarModelFactory(ModelFactory[Model]):  # pragma: no cover # type: ignore
     @classmethod
     def get_field_value(cls, model_field: "ModelField", field_parameters: Union[dict, list, None] = None) -> Any:
-        """We need to handle here both choices and the fact that ormar sets
-        values to be optional."""
+        """We need to handle here both choices and the fact that ormar sets values to be optional."""
 
         model_field.required = True
         # check if this is a RelationShip field

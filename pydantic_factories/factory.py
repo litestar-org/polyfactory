@@ -185,8 +185,7 @@ class ModelFactory(Generic[T]):
 
     @classmethod
     def _are_model_kwargs_partial(cls, pydantic_model: Type[BaseModel], model_kwargs: Any) -> bool:
-        """Determines if the kwargs are missing fields that should be defined
-        in the pydantic model.
+        """Determines if the kwargs are missing fields that should be defined in the pydantic model.
 
         Returns False if all fields of the pydantic model are defined in
         the kwargs, and True otherwise.
@@ -221,8 +220,8 @@ class ModelFactory(Generic[T]):
 
     @classmethod
     def _is_pydantic_model_with_partial_fields(cls, field_name: str, model_field: "ModelField", **kwargs: Any) -> bool:
-        """Determines if the field is a pydantic model AND if the kwargs are
-        missing fields that should be defined in the pydantic model.
+        """Determines if the field is a pydantic model AND if the kwargs are missing fields that should be defined in
+        the pydantic model.
 
         Returns False if model_field isn't a Pydantic model OR if all
         fields of the pydantic model are defined in the kwargs, and True
@@ -300,8 +299,7 @@ class ModelFactory(Generic[T]):
 
     @classmethod
     def _handle_enum(cls, outer_type: Type[Enum]) -> Any:
-        """Method that converts an enum to a list and picks a random element
-        out of it.
+        """Method that converts an enum to a list and picks a random element out of it.
 
         Args:
             outer_type: An Enum class.
@@ -339,8 +337,7 @@ class ModelFactory(Generic[T]):
         cls,
         model: Type[FactoryTypes],
     ) -> "ModelFactory":
-        """get from registered factories or generate dynamically a
-        'ModelFactory' for a given pydantic model subclass.
+        """get from registered factories or generate dynamically a 'ModelFactory' for a given pydantic model subclass.
 
         Args:
             model: A pydantic model subclass.
@@ -404,8 +401,7 @@ class ModelFactory(Generic[T]):
             Type[ConstrainedStr],
         ]
     ]:
-        """Method to determine if a given value is a pydantic Constrained
-        Field.
+        """Method to determine if a given value is a pydantic Constrained Field.
 
         Args:
             value: An arbitrary value.
@@ -576,8 +572,7 @@ class ModelFactory(Generic[T]):
         base: Optional[Type["ModelFactory"]] = None,
         **kwargs: Any,
     ) -> "ModelFactory":
-        """Dynamically generates a 'ModelFactory' for a given pydantic model
-        subclass.
+        """Dynamically generates a 'ModelFactory' for a given pydantic model subclass.
 
         Args:
             model: A pydantic model subclass.
@@ -606,8 +601,7 @@ class ModelFactory(Generic[T]):
     def get_field_value(
         cls, model_field: "ModelField", field_parameters: Optional[Union[Dict[Any, Any], List[Any]]] = None
     ) -> Any:
-        """Returns a field value on the subclass if existing, otherwise returns
-        a mock value.
+        """Returns a field value on the subclass if existing, otherwise returns a mock value.
 
         Args:
             model_field: A pydantic 'ModelField'.
@@ -816,8 +810,7 @@ class ModelFactory(Generic[T]):
 
     @classmethod
     async def create_batch_async(cls, size: int, **kwargs: Any) -> List[T]:
-        """Builds and persists asynchronously a batch of n size model
-        instances.
+        """Builds and persists asynchronously a batch of n size model instances.
 
         Args:
             size: Size of the batch.

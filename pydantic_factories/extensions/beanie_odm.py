@@ -37,8 +37,7 @@ class BeanieDocumentFactory(ModelFactory[Document]):
 
     @classmethod
     def get_field_value(cls, model_field: "ModelField", field_parameters: Union[dict, list, None] = None) -> Any:
-        """Override to handle the fields created by the beanie Indexed helper
-        function.
+        """Override to handle the fields created by the beanie Indexed helper function.
 
         Note: these fields do not have a class we can use, rather they instantiate a private class inside a closure.
         Hence, the hacky solution of checking the __name__ property
