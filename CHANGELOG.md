@@ -1,5 +1,9 @@
 # Changelog
 
+[1.17.1]
+
+- add `deepcopy` to ormar fields.
+
 [1.17.0]
 
 - add `GenericModel` to `is_pydantic_model` checks.
