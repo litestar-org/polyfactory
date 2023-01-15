@@ -13,7 +13,7 @@ repos:
       - id: mixed-line-ending
       - id: trailing-whitespace
   - repo: https://github.com/asottile/pyupgrade
-    rev: v3.3.0
+    rev: v3.3.1
     hooks:
       - id: pyupgrade
         args: ["--py38-plus"]
@@ -23,11 +23,11 @@ repos:
       - id: pycln
         args: [--config=pyproject.toml]
   - repo: https://github.com/pycqa/isort
-    rev: 5.10.1
+    rev: 5.11.4
     hooks:
       - id: isort
   - repo: https://github.com/psf/black
-    rev: 22.10.0
+    rev: 22.12.0
     hooks:
       - id: black
         args: [--config=./pyproject.toml]
@@ -50,13 +50,13 @@ repos:
         exclude: "test_*"
         args: ["-iii", "-ll", "-s=B308,B703"]
   - repo: https://github.com/igorshubovych/markdownlint-cli
-    rev: v0.32.2
+    rev: v0.33.0
     hooks:
       - id: markdownlint
         args:
           [--disable=MD013, --disable=MD033, --disable=MD050, --disable=MD052]
   - repo: https://github.com/PyCQA/docformatter
-    rev: v1.5.0
+    rev: v1.5.1
     hooks:
       - id: docformatter
         args:
@@ -98,7 +98,7 @@ repos:
     hooks:
       - id: flake8-markdown
   - repo: https://github.com/pycqa/pylint
-    rev: "v2.15.7"
+    rev: "v2.16.0b0"
     hooks:
       - id: pylint
         exclude: "test_*"
@@ -113,7 +113,7 @@ repos:
         additional_dependencies:
           [pydantic, faker, pytest, hypothesis, odmantic, ormar, beanie]
   - repo: https://github.com/RobertCraigie/pyright-python
-    rev: v1.1.282
+    rev: v1.1.289
     hooks:
       - id: pyright
         exclude: "extension"
