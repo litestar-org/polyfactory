@@ -7,6 +7,7 @@ class Person(BaseModel):
     name: str
     age: int
 ```
+
 If we use the factory class:
 
 ```py
@@ -46,14 +47,17 @@ First, we need to make the random part deterministic. We can achieve that like t
 ```py
 import random
 from faker import Faker
+
 Faker.seed(10)
 random.seed(10)
 ```
 
-
 Now let’s make the values logical:
+
 ```py
 my_faker = Faker()
+
+
 class PersonFactory(ModelFactory):
     __faker__ = my_faker
     __model__ = Person
@@ -62,6 +66,7 @@ class PersonFactory(ModelFactory):
 ```
 
 And now it make more sense:<br>
+
 ```json
 {
   "values": [
@@ -80,6 +85,7 @@ And now it make more sense:<br>
   ]
 }
 ```
+
 ## Full Example
 
 ```py
@@ -89,17 +95,24 @@ from random import choice
 from faker import Faker
 from pydantic import BaseModel
 from pydantic_factories import ModelFactory, Use
+
 Faker.seed(10)
 random.seed(10)
 my_faker = Faker()
+
+
 class Person(BaseModel):
     name: str
     age: int
+
+
 class PersonFactory(ModelFactory):
     __faker__ = my_faker
     __model__ = Person
     name = Use(choice, ["Ralph", "Roxy", "Roy", "Ronald", "Rose"])
     age = Use(choice, range(10, 80))
+
+
 if __name__ == '__main__':
     print(PersonFactory.batch(size=5))
 ```
