@@ -50,6 +50,7 @@ nav:
       - usage/6-extensions.md
       - usage/7-handling-custom-types.md
       - usage/8-pytest-fixtures.md
+      - usage/9-getting-deterministic-logical-factories.md
 extra:
   social:
     - icon: fontawesome/brands/discord
