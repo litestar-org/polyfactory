@@ -3,6 +3,9 @@
 In this following example we create a factory for a person model
 
 ```py
+from pydantic import BaseModel
+
+
 class Person(BaseModel):
     name: str
     age: int
@@ -11,6 +14,15 @@ class Person(BaseModel):
 If we use the factory class:
 
 ```py
+from pydantic_factories import ModelFactory
+from pydantic import BaseModel
+
+
+class Person(BaseModel):
+    name: str
+    age: int
+
+
 class PersonFactory(ModelFactory):
     __model__ = Person
 ```
@@ -55,7 +67,17 @@ random.seed(10)
 Now let’s make the values logical:
 
 ```py
+from random import choice
+from faker import Faker
+from pydantic_factories import ModelFactory, Use
+from pydantic import BaseModel
+
 my_faker = Faker()
+
+
+class Person(BaseModel):
+    name: str
+    age: int
 
 
 class PersonFactory(ModelFactory):
