@@ -1,5 +1,9 @@
 # Changelog
 
+[1.17.2]
+
+- update dependencies and code cleanup.
+
 [1.17.1]
 
 - add `deepcopy` to ormar fields.
