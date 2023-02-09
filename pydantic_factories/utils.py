@@ -104,7 +104,7 @@ def create_model_from_dataclass(
     required and not required independently. We currently do not handle
     deeply nested Any and Optional.
     """
-    dataclass_fields: Tuple[DataclassField, ...] = get_dataclass_fields(dataclass)
+    dataclass_fields: Tuple[DataclassField, ...] = get_dataclass_fields(dataclass)  # pyright: ignore
     model = create_model(dataclass.__name__, **{field.name: (field.type, ...) for field in dataclass_fields})  # type: ignore
     for field_name, model_field in model.__fields__.items():
         dataclass_field = [field for field in dataclass_fields if field.name == field_name][0]

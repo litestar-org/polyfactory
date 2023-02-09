@@ -18,16 +18,16 @@ repos:
       - id: pyupgrade
         args: ["--py38-plus"]
   - repo: https://github.com/hadialqattan/pycln
-    rev: v2.1.2
+    rev: v2.1.3
     hooks:
       - id: pycln
         args: [--config=pyproject.toml]
   - repo: https://github.com/pycqa/isort
-    rev: 5.11.4
+    rev: 5.12.0
     hooks:
       - id: isort
   - repo: https://github.com/psf/black
-    rev: 22.12.0
+    rev: 23.1.0
     hooks:
       - id: black
         args: [--config=./pyproject.toml]
@@ -35,10 +35,6 @@ repos:
     rev: v2.2.2
     hooks:
       - id: codespell
-  - repo: https://github.com/asottile/blacken-docs
-    rev: v1.12.1
-    hooks:
-      - id: blacken-docs
   - repo: https://github.com/pre-commit/mirrors-prettier
     rev: "v3.0.0-alpha.4"
     hooks:
@@ -49,30 +45,6 @@ repos:
       - id: bandit
         exclude: "test_*"
         args: ["-iii", "-ll", "-s=B308,B703"]
-  - repo: https://github.com/igorshubovych/markdownlint-cli
-    rev: v0.33.0
-    hooks:
-      - id: markdownlint
-        args:
-          [--disable=MD013, --disable=MD033, --disable=MD050, --disable=MD052]
-  - repo: https://github.com/PyCQA/docformatter
-    rev: v1.5.1
-    hooks:
-      - id: docformatter
-        args:
-          [
-            --in-place,
-            --close-quotes-on-newline,
-            --wrap-descriptions=120,
-            --wrap-summaries=120,
-          ]
-  #  - repo: https://github.com/pycqa/pydocstyle
-  #    rev: 6.1.1
-  #    hooks:
-  #      - id: pydocstyle
-  #        exclude: "test*|examples*"
-  #        additional_dependencies:
-  #          - pydocstyle[toml]
   - repo: https://github.com/PyCQA/flake8
     rev: 6.0.0
     hooks:
@@ -93,12 +65,8 @@ repos:
             "flake8-use-fstring",
             "flake8-use-pathlib",
           ]
-  - repo: https://github.com/johnfraney/flake8-markdown
-    rev: v0.4.0
-    hooks:
-      - id: flake8-markdown
   - repo: https://github.com/pycqa/pylint
-    rev: "v2.16.0b0"
+    rev: "v2.16.1"
     hooks:
       - id: pylint
         exclude: "test_*"
@@ -106,14 +74,14 @@ repos:
         additional_dependencies:
           [pydantic, faker, pytest, hypothesis, odmantic, ormar, beanie]
   - repo: https://github.com/pre-commit/mirrors-mypy
-    rev: "v0.991"
+    rev: "v1.0.0"
     hooks:
       - id: mypy
         exclude: "extension"
         additional_dependencies:
           [pydantic, faker, pytest, hypothesis, odmantic, ormar, beanie]
   - repo: https://github.com/RobertCraigie/pyright-python
-    rev: v1.1.289
+    rev: v1.1.293
     hooks:
       - id: pyright
         exclude: "extension"

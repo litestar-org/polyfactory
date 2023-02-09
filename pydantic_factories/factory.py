@@ -621,7 +621,6 @@ class ModelFactory(Generic[T]):
             return cls._handle_enum(cast("Type[Enum]", outer_type))
 
         if is_pydantic_model(outer_type) or is_dataclass(outer_type) or is_typeddict(outer_type):
-
             return cls._get_or_create_factory(model=outer_type).build(
                 **(field_parameters if isinstance(field_parameters, dict) else {})
             )
@@ -734,7 +733,6 @@ class ModelFactory(Generic[T]):
 
         model = cls._get_model()
         for field_name, model_field in cls.get_model_fields(model):
-
             if cls._should_use_alias_name(model_field, model):
                 field_name = model_field.alias
 
