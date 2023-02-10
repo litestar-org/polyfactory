@@ -1,6 +1,6 @@
 # Getting Deterministic Logical Values
 
-In this following example we create a factory for a person model
+In this following example we create a factory for a `Person` model
 
 ```py
 from pydantic import BaseModel
