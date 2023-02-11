@@ -7,7 +7,6 @@ from typing import (
     FrozenSet,
     Iterable,
     List,
-    Mapping,
     Optional,
     Sequence,
     Set,
@@ -18,8 +17,8 @@ from typing import (
 import pytest
 from pydantic import BaseModel
 
-from pydantic_factories import ModelFactory
-from pydantic_factories.exceptions import ParameterError
+from polyfactory.exceptions import ParameterError
+from polyfactory.factories.pydantic_factory import ModelFactory
 from tests.models import Person
 
 
@@ -90,10 +89,10 @@ def test_randomizes_optional_returns() -> None:
     """this is a flaky test - because it depends on randomness, hence it's been re-ran multiple times."""
 
     class MyModel(BaseModel):
-        optional_1: List[Optional[str]]
-        optional_2: Dict[str, Optional[str]]
-        optional_3: Set[Optional[str]]
-        optional_4: Mapping[int, Optional[str]]
+        optional_1: Optional[List[str]]
+        optional_2: Optional[Dict[str, str]]
+        optional_3: Optional[Set[str]]
+        optional_4: Optional[Dict[int, str]]
 
     class MyFactory(ModelFactory):
         __model__ = MyModel

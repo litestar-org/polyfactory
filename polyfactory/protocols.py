@@ -1,17 +1,29 @@
 # pylint: disable=unnecessary-ellipsis
-from typing import Any, Dict, List, Protocol, TypeVar, Union, runtime_checkable
+from dataclasses import Field
+from typing import (
+    TYPE_CHECKING,
+    Dict,
+    List,
+    Optional,
+    Protocol,
+    TypeVar,
+    runtime_checkable,
+)
 
-from pydantic import BaseModel
+T = TypeVar("T")
+
+if TYPE_CHECKING:
+    from random import Random
 
 
-# According to https://github.com/python/cpython/blob/main/Lib/dataclasses.py#L1213
-# having __dataclass_fields__ is enough to identity a dataclass.
+class NumberGeneratorProtocol(Protocol[T]):
+    def __call__(self, random: "Random", minimum: Optional[T] = None, maximum: Optional[T] = None) -> T:
+        ...
+
+
 @runtime_checkable
 class DataclassProtocol(Protocol):
-    __dataclass_fields__: Dict[str, Any]
-
-
-T = TypeVar("T", bound=Union[BaseModel, DataclassProtocol])
+    __dataclass_fields__: Dict[str, Field]
 
 
 @runtime_checkable

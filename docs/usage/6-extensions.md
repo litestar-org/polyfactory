@@ -16,8 +16,3 @@ with regular instances of pydantic's `BaseModel`.
 This extension includes a class called `BeanieDocumentFactory` as well as an `BeaniePersistenceHandler`. Both of these
 can be imported from `pydantic_factory.extensions`. The `BeanieDocumentFactory` is meant to be used with the
 Beanie `Document` class, and it includes async persistence build in.
-
-## Ormar
-
-This extension includes a class called `OrmarModelFactory`. This class is meant to be used with the `Model` class
-exported by ormar.

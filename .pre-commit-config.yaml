@@ -43,7 +43,6 @@ repos:
     rev: 1.7.4
     hooks:
       - id: bandit
-        exclude: "test_*"
         args: ["-iii", "-ll", "-s=B308,B703"]
   - repo: https://github.com/PyCQA/flake8
     rev: 6.0.0
@@ -66,24 +65,24 @@ repos:
             "flake8-use-pathlib",
           ]
   - repo: https://github.com/pycqa/pylint
-    rev: "v2.16.1"
+    rev: "v2.16.2"
     hooks:
       - id: pylint
-        exclude: "test_*"
+        exclude: "tests"
         args: ["--unsafe-load-any-extension=y"]
         additional_dependencies:
-          [pydantic, faker, pytest, hypothesis, odmantic, ormar, beanie]
+          [pydantic, faker, pytest, hypothesis, odmantic, beanie]
   - repo: https://github.com/pre-commit/mirrors-mypy
-    rev: "v1.0.0"
+    rev: "v1.0.1"
     hooks:
       - id: mypy
-        exclude: "extension"
+        exclude: "test_decimal_constraints"
         additional_dependencies:
-          [pydantic, faker, pytest, hypothesis, odmantic, ormar, beanie]
+          [pydantic, faker, pytest, hypothesis, odmantic, beanie]
   - repo: https://github.com/RobertCraigie/pyright-python
-    rev: v1.1.293
+    rev: v1.1.295
     hooks:
       - id: pyright
-        exclude: "extension"
+        exclude: "test_decimal_constraints"
         additional_dependencies:
-          [pydantic, faker, pytest, hypothesis, odmantic, ormar, beanie]
+          [pydantic, faker, pytest, hypothesis, odmantic, beanie]

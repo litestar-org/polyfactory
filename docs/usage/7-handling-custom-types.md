@@ -1,13 +1,13 @@
 # Handling Custom Types
 
-If your model has an attribute that is not supported by `pydantic-factories` and
+If your model has an attribute that is not supported by `polyfactory` and
 it depends on third party libraries, you can create your custom extension
 subclassing the `ModelFactory`, and overriding the `get_mock_value` method to
 add your logic.
 
 ```python
 from typing import Any
-from pydantic_factories import ModelFactory
+from polyfactory.factories.pydantic_factory import ModelFactory
 
 
 class CustomFactory(ModelFactory[Any]):

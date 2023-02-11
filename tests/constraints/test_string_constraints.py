@@ -1,4 +1,5 @@
 import re
+from random import Random
 from typing import Optional
 
 import pytest
@@ -6,8 +7,10 @@ from hypothesis import given, settings
 from hypothesis.strategies import booleans, integers
 from pydantic import ConstrainedStr
 
-from pydantic_factories.constraints.strings import handle_constrained_string
-from pydantic_factories.exceptions import ParameterError
+from polyfactory.exceptions import ParameterError
+from polyfactory.value_generators.constrainted_strings import (
+    handle_constrained_string_or_bytes,
+)
 
 
 def create_constrained_field(
@@ -45,11 +48,27 @@ def test_handle_constrained_string_with_min_length_and_max_length_and_regex(
     field = create_constrained_field(to_lower=to_lower, min_length=min_length, max_length=max_length)
     if min_length < 0 or max_length < 0 or min_length > max_length:
         with pytest.raises(ParameterError):
-            handle_constrained_string(field=field, random_seed=None)
+            handle_constrained_string_or_bytes(
+                random=Random(),
+                t_type=str,
+                lower_case=field.to_lower,
+                upper_case=field.to_lower,
+                min_length=field.min_length,
+                max_length=field.max_length,
+                pattern=None,
+            )
     else:
         for regex in REGEXES:
             field.regex = regex
-            result = handle_constrained_string(field=field, random_seed=None)
+            result = handle_constrained_string_or_bytes(
+                random=Random(),
+                t_type=str,
+                lower_case=field.to_lower,
+                upper_case=field.to_lower,
+                min_length=field.min_length,
+                max_length=field.max_length,
+                pattern=None,
+            )
             if to_lower:
                 assert result == result.lower()
             match = re.search(regex, result)
@@ -67,9 +86,25 @@ def test_handle_constrained_string_with_min_length_and_max_length(
     field = create_constrained_field(to_lower=to_lower, min_length=min_length, max_length=max_length)
     if min_length < 0 or max_length < 0 or min_length > max_length:
         with pytest.raises(ParameterError):
-            handle_constrained_string(field=field, random_seed=None)
+            handle_constrained_string_or_bytes(
+                random=Random(),
+                t_type=str,
+                lower_case=field.to_lower,
+                upper_case=field.to_lower,
+                min_length=field.min_length,
+                max_length=field.max_length,
+                pattern=None,
+            )
     else:
-        result = handle_constrained_string(field=field, random_seed=None)
+        result = handle_constrained_string_or_bytes(
+            random=Random(),
+            t_type=str,
+            lower_case=field.to_lower,
+            upper_case=field.to_lower,
+            min_length=field.min_length,
+            max_length=field.max_length,
+            pattern=None,
+        )
         if to_lower:
             assert result == result.lower()
         assert len(result) >= min_length
@@ -81,9 +116,25 @@ def test_handle_constrained_string_with_min_length(to_lower: bool, min_length: i
     field = create_constrained_field(to_lower=to_lower, min_length=min_length)
     if min_length < 0:
         with pytest.raises(ParameterError):
-            handle_constrained_string(field=field, random_seed=None)
+            handle_constrained_string_or_bytes(
+                random=Random(),
+                t_type=str,
+                lower_case=field.to_lower,
+                upper_case=field.to_lower,
+                min_length=field.min_length,
+                max_length=field.max_length,
+                pattern=None,
+            )
     else:
-        result = handle_constrained_string(field=field, random_seed=None)
+        result = handle_constrained_string_or_bytes(
+            random=Random(),
+            t_type=str,
+            lower_case=field.to_lower,
+            upper_case=field.to_lower,
+            min_length=field.min_length,
+            max_length=field.max_length,
+            pattern=None,
+        )
         if to_lower:
             assert result == result.lower()
         assert len(result) >= min_length
@@ -94,9 +145,25 @@ def test_handle_constrained_string_with_max_length(to_lower: bool, max_length: i
     field = create_constrained_field(to_lower=to_lower, max_length=max_length)
     if max_length < 0:
         with pytest.raises(ParameterError):
-            handle_constrained_string(field=field, random_seed=None)
+            handle_constrained_string_or_bytes(
+                random=Random(),
+                t_type=str,
+                lower_case=field.to_lower,
+                upper_case=field.to_lower,
+                min_length=field.min_length,
+                max_length=field.max_length,
+                pattern=None,
+            )
     else:
-        result = handle_constrained_string(field=field, random_seed=None)
+        result = handle_constrained_string_or_bytes(
+            random=Random(),
+            t_type=str,
+            lower_case=field.to_lower,
+            upper_case=field.to_lower,
+            min_length=field.min_length,
+            max_length=field.max_length,
+            pattern=None,
+        )
         if to_lower:
             assert result == result.lower()
         assert len(result) <= max_length

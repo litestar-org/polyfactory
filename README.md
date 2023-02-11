@@ -8,30 +8,30 @@
 <!-- markdownlint-disable -->
 <div align="center">
 
-![PyPI - License](https://img.shields.io/pypi/l/pydantic-factories?color=blue)
-![PyPI - Python Version](https://img.shields.io/pypi/pyversions/pydantic-factories)
+![PyPI - License](https://img.shields.io/pypi/l/polyfactory?color=blue)
+![PyPI - Python Version](https://img.shields.io/pypi/pyversions/polyfactory)
 
-[![Coverage](https://sonarcloud.io/api/project_badges/measure?project=starlite-api_pydantic-factories&metric=coverage)](https://sonarcloud.io/summary/new_code?id=starlite-api_pydantic-factories)
-[![Maintainability Rating](https://sonarcloud.io/api/project_badges/measure?project=starlite-api_pydantic-factories&metric=sqale_rating)](https://sonarcloud.io/summary/new_code?id=starlite-api_pydantic-factories)
-[![Reliability Rating](https://sonarcloud.io/api/project_badges/measure?project=starlite-api_pydantic-factories&metric=reliability_rating)](https://sonarcloud.io/summary/new_code?id=starlite-api_pydantic-factories)
-[![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=starlite-api_pydantic-factories&metric=alert_status)](https://sonarcloud.io/summary/new_code?id=starlite-api_pydantic-factories)
+[![Coverage](https://sonarcloud.io/api/project_badges/measure?project=starlite-api_polyfactory&metric=coverage)](https://sonarcloud.io/summary/new_code?id=starlite-api_polyfactory)
+[![Maintainability Rating](https://sonarcloud.io/api/project_badges/measure?project=starlite-api_polyfactory&metric=sqale_rating)](https://sonarcloud.io/summary/new_code?id=starlite-api_polyfactory)
+[![Reliability Rating](https://sonarcloud.io/api/project_badges/measure?project=starlite-api_polyfactory&metric=reliability_rating)](https://sonarcloud.io/summary/new_code?id=starlite-api_polyfactory)
+[![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=starlite-api_polyfactory&metric=alert_status)](https://sonarcloud.io/summary/new_code?id=starlite-api_polyfactory)
 
 [![Discord](https://img.shields.io/discord/919193495116337154?color=202235&label=%20Discord&logo=discord)](https://discord.gg/X3FJqy8d2j) [![Matrix](https://img.shields.io/badge/%5Bm%5D%20Matrix-bridged-blue?color=202235)](https://matrix.to/#/#starlitespace:matrix.org) [![Reddit](https://img.shields.io/reddit/subreddit-subscribers/starlite?label=r%2FStarlite&logo=reddit)](https://reddit.com/r/starlite)
 
 </div>
 <!-- markdownlint-restore -->
 
-# Pydantic-Factories
+# polyfactory
 
 This library offers powerful mock data generation capabilities for [pydantic](https://github.com/samuelcolvin/pydantic)
 based models, `dataclasses` and `TypeDict`s. It can also be used with other libraries that use pydantic as a foundation.
 
-Check out [the documentation 📚](https://starlite-api.github.io/pydantic-factories/).
+Check out [the documentation 📚](https://starlite-api.github.io/polyfactory/).
 
 ## Installation
 
 ```shell
-pip install pydantic-factories
+pip install polyfactory
 ```
 
 ## Example
@@ -42,7 +42,7 @@ from typing import List, Union
 
 from pydantic import BaseModel, UUID4
 
-from pydantic_factories import ModelFactory
+from polyfactory.factories.pydantic_factory import ModelFactory
 
 
 class Person(BaseModel):

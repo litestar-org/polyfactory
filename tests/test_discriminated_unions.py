@@ -3,7 +3,7 @@ from typing import Literal, Union
 from pydantic import BaseModel, Field
 from typing_extensions import Annotated
 
-from pydantic_factories import ModelFactory
+from polyfactory.factories.pydantic_factory import ModelFactory
 
 
 def test_discriminated_unions() -> None:

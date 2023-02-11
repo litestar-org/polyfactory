@@ -16,7 +16,7 @@ from pydantic import (
     constr,
 )
 
-from pydantic_factories import ModelFactory
+from polyfactory.factories.pydantic_factory import ModelFactory
 
 
 def test_new_types() -> None:

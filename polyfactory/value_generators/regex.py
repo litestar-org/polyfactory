@@ -1,5 +1,5 @@
-"""The code in this files is adapted from https://github.com/crdoconnor/xeger/blob/master/xeger/xeger.py Which in turn
-adapted it from https://bitbucket.org/leapfrogdevelopment/rstr/
+"""The code in this files is adapted from https://github.com/crdoconnor/xeger/blob/master/xeger/xeger.py.Which in turn
+adapted it from https://bitbucket.org/leapfrogdevelopment/rstr/.
 
 Copyright (C) 2015, Colm O'Connor
 All rights reserved.
@@ -31,7 +31,6 @@ IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 """
 
 from itertools import chain
-from random import Random
 from string import (
     ascii_letters,
     ascii_lowercase,
@@ -41,12 +40,15 @@ from string import (
     punctuation,
     whitespace,
 )
-from typing import Any, Dict, List, Optional, Pattern, Tuple, Union
+from typing import TYPE_CHECKING, Any, Dict, List, Pattern, Tuple, Union
 
 try:  # >=3.11
     from re._parser import SubPattern, parse  # pyright:ignore
 except ImportError:  # < 3.11
     from sre_parse import SubPattern, parse  # pylint: disable=deprecated-module
+
+if TYPE_CHECKING:
+    from random import Random
 
 _alphabets = {
     "printable": printable,
@@ -78,10 +80,10 @@ _categories = {
 
 
 class RegexFactory:
-    def __init__(self, limit: int = 10, seed: Optional[int] = None) -> None:
+    def __init__(self, random: "Random", limit: int = 10) -> None:
         self._limit = limit
         self._cache: Dict[str, Any] = {}
-        self._random = Random(x=seed)
+        self._random = random
 
         self._cases = {
             "literal": chr,

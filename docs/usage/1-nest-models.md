@@ -9,7 +9,7 @@ from enum import Enum
 from pydantic import BaseModel, UUID4
 from typing import Any, Dict, List, Union
 
-from pydantic_factories import ModelFactory
+from polyfactory.factories.pydantic_factory import ModelFactory
 
 
 class Species(str, Enum):

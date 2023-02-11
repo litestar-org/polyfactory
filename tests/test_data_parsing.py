@@ -59,8 +59,8 @@ from pydantic import (
 )
 from pydantic.color import Color
 
-from pydantic_factories import ModelFactory
-from pydantic_factories.exceptions import ParameterError
+from polyfactory.exceptions import ParameterError
+from polyfactory.factories.pydantic_factory import ModelFactory
 from tests.models import Person, PersonFactoryWithDefaults, Pet
 
 

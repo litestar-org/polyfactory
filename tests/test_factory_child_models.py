@@ -2,7 +2,7 @@ from typing import Any, List, Mapping, Optional
 
 from pydantic import BaseModel
 
-from pydantic_factories import ModelFactory
+from polyfactory.factories.pydantic_factory import ModelFactory
 
 
 class Address(BaseModel):
@@ -162,7 +162,7 @@ class AssertDict:
 
 
 def test_factory_not_ok() -> None:
-    """Given a Pydantic Model with nested Mapping field, When I build the model using the factory passing only partial
+    """Given a Pydantic Model with nested Mapping field_meta, When I build the model using the factory passing only partial
     attributes, Then the model is correctly built.
     """
 
@@ -189,7 +189,7 @@ def test_factory_not_ok() -> None:
 
 
 def test_factory_with_nested_dict() -> None:
-    """Given a Pydantic Model with nested Dict field, When I build the model using the factory passing only partial
+    """Given a Pydantic Model with nested Dict field_meta, When I build the model using the factory passing only partial
     attributes, Then the model is correctly built.
     """
 
@@ -211,7 +211,7 @@ def test_factory_with_nested_dict() -> None:
 
 def test_factory_with_partial_kwargs_deep_in_tree() -> None:
     # the code below is a modified copy of the bug reproduction example in
-    # https://github.com/starlite-api/pydantic-factories/issues/115
+    # https://github.com/starlite-api/polyfactory/issues/115
     class A(BaseModel):
         name: str
         age: int

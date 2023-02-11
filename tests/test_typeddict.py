@@ -1,9 +1,10 @@
+from types import NoneType
 from typing import Dict, List, Optional
 
 from pydantic import BaseModel
 from typing_extensions import TypedDict
 
-from pydantic_factories import ModelFactory
+from polyfactory.factories import ModelFactory, TypedDictFactory
 
 
 class TypedDictModel(TypedDict):
@@ -14,7 +15,7 @@ class TypedDictModel(TypedDict):
 
 
 def test_factory_with_typeddict() -> None:
-    class MyFactory(ModelFactory[TypedDictModel]):
+    class MyFactory(TypedDictFactory[TypedDictModel]):
         __model__ = TypedDictModel
 
     result = MyFactory.build()
@@ -23,7 +24,7 @@ def test_factory_with_typeddict() -> None:
     assert result["id"]
     assert result["name"]
     assert result["list_field"][0]
-    assert result["int_field"]
+    assert type(result["int_field"]) in (NoneType, int)
 
 
 def test_factory_model_with_typeddict_attribute_value() -> None:
@@ -42,4 +43,4 @@ def test_factory_model_with_typeddict_attribute_value() -> None:
     assert result.td["id"]
     assert result.td["name"]
     assert result.td["list_field"][0]
-    assert result.td["int_field"]
+    assert type(result.td["int_field"]) in (NoneType, int)

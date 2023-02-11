@@ -6,7 +6,7 @@ from hypothesis import given
 from hypothesis.strategies import dates
 from pydantic import BaseModel, condate
 
-from pydantic_factories import ModelFactory
+from polyfactory.factories.pydantic_factory import ModelFactory
 
 
 @given(

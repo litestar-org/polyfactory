@@ -22,7 +22,7 @@ Configuration of `ModelFactory` is done using class variables:
 
 ```python
 from faker import Faker
-from pydantic_factories import ModelFactory
+from polyfactory.factories.pydantic_factory import ModelFactory
 
 from app.models import Person
 from .persistence import AsyncPersistenceHandler, SyncPersistenceHandler

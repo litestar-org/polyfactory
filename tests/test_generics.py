@@ -3,7 +3,7 @@ from typing import Generic, List, Optional, TypeVar, Union
 from pydantic import BaseModel
 from pydantic.generics import GenericModel
 
-from pydantic_factories import ModelFactory
+from polyfactory.factories.pydantic_factory import ModelFactory
 
 Inner = TypeVar("Inner")
 APIResponseData = TypeVar("APIResponseData")
@@ -47,7 +47,7 @@ class APIResponse(GenericModel, Generic[APIResponseData]):
 
 
 def test_generic_factory_one_response() -> None:
-    class APIResponseFactory(ModelFactory):
+    class APIResponseFactory(ModelFactory[APIResponse[OneResponse]]):
         __model__ = APIResponse[OneResponse]
 
     result = APIResponseFactory.build()

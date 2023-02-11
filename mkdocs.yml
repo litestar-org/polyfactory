@@ -1,7 +1,7 @@
 site_name: Pydantic Factories
-repo_url: https://github.com/starlite-api/pydantic-factories
-repo_name: starlite-api/pydantic-factories
-site_url: https://starlite-api.github.io/pydantic-factories
+repo_url: https://github.com/starlite-api/polyfactory
+repo_name: starlite-api/polyfactory
+site_url: https://starlite-api.github.io/polyfactory
 theme:
   name: material
   palette:
@@ -55,7 +55,7 @@ extra:
     - icon: fontawesome/brands/discord
       link: https://discord.gg/X3FJqy8d2j
     - icon: fontawesome/brands/github
-      link: https://github.com/starlite-api/pydantic-factories
+      link: https://github.com/starlite-api/polyfactory
 markdown_extensions:
   - admonition
   - attr_list
@@ -70,4 +70,4 @@ plugins:
   - search:
       lang: en
 watch:
-  - pydantic_factories
+  - polyfactory

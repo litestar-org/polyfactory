@@ -8,7 +8,7 @@ from datetime import date, datetime
 from enum import Enum
 from pydantic import BaseModel, UUID4
 from typing import Any, Dict, List, Union
-from pydantic_factories import ModelFactory
+from polyfactory.factories.pydantic_factory import ModelFactory
 
 
 class Species(str, Enum):
@@ -53,7 +53,7 @@ from datetime import date, datetime
 from pydantic import BaseModel, UUID4
 from typing import Any, Dict, List, Union
 from enum import Enum
-from pydantic_factories import ModelFactory, Use
+from polyfactory.factories.pydantic_factory import ModelFactory, Use
 from random import choice
 
 
@@ -101,7 +101,7 @@ above `PetFactory` like so:
 from enum import Enum
 from pydantic import BaseModel
 from random import choice
-from pydantic_factories import ModelFactory
+from polyfactory.factories.pydantic_factory import ModelFactory
 
 
 class Species(str, Enum):
@@ -133,7 +133,7 @@ from datetime import date, datetime
 from pydantic import BaseModel, UUID4
 from typing import Any, Dict, List, Union
 from enum import Enum
-from pydantic_factories import ModelFactory
+from polyfactory.factories.pydantic_factory import ModelFactory
 from random import choice
 
 
@@ -181,7 +181,7 @@ cases this pattern is best avoided, but for the few valid cases the `PostGenerat
 
 ```python
 from pydantic import BaseModel
-from pydantic_factories import ModelFactory, PostGenerated
+from polyfactory.factories.pydantic_factory import ModelFactory, PostGenerated
 from random import randint
 from datetime import datetime, timedelta
 
@@ -215,7 +215,7 @@ as ignored:
 from typing import TypeVar
 
 from odmantic import EmbeddedModel, Model
-from pydantic_factories import ModelFactory, Ignore
+from polyfactory.factories.pydantic_factory import ModelFactory, Ignore
 
 T = TypeVar("T", Model, EmbeddedModel)
 
@@ -224,7 +224,7 @@ class OdmanticModelFactory(ModelFactory[T]):
     id = Ignore()
 ```
 
-The above example is basically the extension included in `pydantic-factories` for the
+The above example is basically the extension included in `polyfactory` for the
 library [ODMantic](https://github.com/art049/odmantic), which is a pydantic based mongo ODM.
 
 For ODMantic models, the `id` attribute should not be set by the factory, but rather handled by the odmantic logic
@@ -246,7 +246,7 @@ to the factory. Thus, we can define this attribute as required:
 
 ```python
 from pydantic import BaseModel
-from pydantic_factories import ModelFactory, Require
+from polyfactory.factories.pydantic_factory import ModelFactory, Require
 from uuid import UUID
 
 
@@ -272,8 +272,8 @@ The `Fixture` field is a special field meant to be used with factories that have
 from typing import Optional, List, Union
 from datetime import datetime, date
 from pydantic import BaseModel, UUID4
-from pydantic_factories import ModelFactory, Fixture
-from pydantic_factories.plugins.pytest_plugin import register_fixture
+from polyfactory.factories.pydantic_factory import ModelFactory, Fixture
+from polyfactory.pytest_plugin import register_fixture
 
 
 class Person(BaseModel):

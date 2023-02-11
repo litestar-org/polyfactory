@@ -14,8 +14,8 @@ from typing import List, Union
 
 from pydantic import UUID4, BaseModel
 
-from pydantic_factories import ModelFactory
-from pydantic_factories.plugins.pytest_plugin import register_fixture
+from polyfactory.factories.pydantic_factory import ModelFactory
+from polyfactory.pytest_plugin import register_fixture
 
 
 class Person(BaseModel):
@@ -53,11 +53,11 @@ def test_cool_guy_factory(cool_guy_factory: AnotherPersonFactory) -> None:
 Use `pytest --fixtures` will show output along these lines:
 
 ```sh
-------------- fixtures defined from pydantic_factories.plugins.pytest_plugin -------------
-cool_guy_factory [session scope] -- pydantic_factories/plugins/pytest_plugin.py:48
+------------- fixtures defined from polyfactory.plugins.pytest_plugin -------------
+cool_guy_factory [session scope] -- polyfactory/plugins/pytest_plugin.py:48
     A cool guy factory
 
-person_factory -- pydantic_factories/plugins/pytest_plugin.py:48
+person_factory -- polyfactory/plugins/pytest_plugin.py:48
     A person factory
 
 ```

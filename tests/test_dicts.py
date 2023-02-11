@@ -2,7 +2,7 @@ from typing import Dict
 
 from pydantic import BaseModel
 
-from pydantic_factories import ModelFactory
+from polyfactory.factories.pydantic_factory import ModelFactory
 
 
 def test_passing_nested_dict() -> None:

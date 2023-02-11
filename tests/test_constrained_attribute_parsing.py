@@ -20,7 +20,7 @@ from pydantic import (
     constr,
 )
 
-from pydantic_factories import ModelFactory
+from polyfactory.factories.pydantic_factory import ModelFactory
 from tests.models import Person
 
 pattern = r"(a|b|c)zz"

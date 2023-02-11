@@ -10,11 +10,11 @@
 To use these methods, you must first specify a sync and/or async persistence handlers for the factory:
 
 ```python
-from pydantic_factories import ModelFactory
+from polyfactory.factories.pydantic_factory import ModelFactory
 from typing import TypeVar, List
 
 from pydantic import BaseModel
-from pydantic_factories import SyncPersistenceProtocol, AsyncPersistenceProtocol
+from polyfactory import SyncPersistenceProtocol, AsyncPersistenceProtocol
 
 T = TypeVar("T", bound=BaseModel)
 
@@ -44,11 +44,11 @@ class PersonFactory(ModelFactory):
 Or create your own base factory and reuse it in your various factories:
 
 ```python
-from pydantic_factories import ModelFactory
+from polyfactory.factories.pydantic_factory import ModelFactory
 from typing import TypeVar, List
 
 from pydantic import BaseModel
-from pydantic_factories import SyncPersistenceProtocol, AsyncPersistenceProtocol
+from polyfactory import SyncPersistenceProtocol, AsyncPersistenceProtocol
 
 T = TypeVar("T", bound=BaseModel)
 
@@ -97,7 +97,7 @@ from datetime import date, datetime
 from enum import Enum
 from pydantic import BaseModel, UUID4
 from typing import Any, Dict, List, TypeVar, Union, Generic, Optional
-from pydantic_factories import ModelFactory
+from polyfactory.factories.pydantic_factory import ModelFactory
 
 
 class Species(str, Enum):
@@ -159,10 +159,10 @@ UpdateSchemaType = TypeVar("UpdateSchemaType", bound=BaseModel)
 
 class BUILDBase(Generic[ModelType, CreateSchemaType, UpdateSchemaType]):
     def __init__(
-        self,
-        model: ModelType = None,
-        create_schema: Optional[CreateSchemaType] = None,
-        update_schema: Optional[UpdateSchemaType] = None,
+            self,
+            model: ModelType = None,
+            create_schema: Optional[CreateSchemaType] = None,
+            update_schema: Optional[UpdateSchemaType] = None,
     ):
         self.model = model
         self.create_model = create_schema

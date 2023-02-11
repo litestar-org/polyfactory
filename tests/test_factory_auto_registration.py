@@ -4,7 +4,7 @@ from typing import List
 from pydantic import BaseModel
 from typing_extensions import TypedDict
 
-from pydantic_factories import ModelFactory
+from polyfactory.factories.pydantic_factory import ModelFactory
 
 
 class A(BaseModel):
@@ -45,9 +45,9 @@ def test_auto_register_model_factory_using_create_factory() -> None:
     const_value = "const value"
     ModelFactory.create_factory(model=A, a_text=const_value)
     ModelFactory.create_factory(model=B, b_text=const_value, __auto_register__=True)
-    CFactory = ModelFactory.create_factory(model=C)
+    factory = ModelFactory.create_factory(model=C)
 
-    c = CFactory.build()
+    c = factory.build()
 
     assert c.b.b_text == const_value
     assert c.b_list[0].b_text == const_value

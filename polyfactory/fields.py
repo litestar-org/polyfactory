@@ -1,14 +1,11 @@
-from typing import TYPE_CHECKING, Any, Callable, Dict, Generic, Optional, TypeVar, cast
+from typing import Any, Callable, Dict, Generic, Optional, TypeVar, cast
 
 from typing_extensions import ParamSpec, TypedDict
 
-from pydantic_factories.exceptions import ParameterError
+from polyfactory.exceptions import ParameterError
 
 T = TypeVar("T")
 P = ParamSpec("P")
-
-if TYPE_CHECKING:
-    from pydantic_factories.factory import ModelFactory
 
 
 class WrappedCallable(TypedDict):
@@ -70,6 +67,14 @@ class PostGenerated:
         return self.fn["value"](name, values, *self.args, **self.kwargs)
 
 
+class Require:
+    """A placeholder class used to mark a given factory attribute as a required build-time kwarg."""
+
+
+class Ignore:
+    """A placeholder class used to mark a given factory attribute as ignored."""
+
+
 class Fixture:
     __slots__ = ("fixture", "size", "kwargs")
 
@@ -92,19 +97,10 @@ class Fixture:
         Returns:
             The build result.
         """
-        from pydantic_factories.plugins.pytest_plugin import FactoryFixture
+        from polyfactory.pytest_plugin import FactoryFixture
 
-        factory = cast("Optional[ModelFactory]", FactoryFixture.factory_class_map.get(self.fixture["value"]))
-        if not factory:
-            raise ParameterError("fixture has not been registered using the register_factory decorator")
-        if self.size:
-            return factory.batch(self.size, **self.kwargs)
-        return factory.build(**self.kwargs)
-
-
-class Require:
-    """A placeholder class used to mark a given factory attribute as a required build-time kwarg."""
-
-
-class Ignore:
-    """A placeholder class used to mark a given factory attribute as ignored."""
+        if factory := FactoryFixture.factory_class_map.get(self.fixture["value"]):
+            if self.size:
+                return factory.batch(self.size, **self.kwargs)
+            return factory.build(**self.kwargs)
+        raise ParameterError("fixture has not been registered using the register_factory decorator")

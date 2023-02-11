@@ -8,7 +8,7 @@ The `ModelFactory` class exposes two build methods:
 ```python
 from pydantic import BaseModel
 
-from pydantic_factories import ModelFactory
+from polyfactory.factories.pydantic_factory import ModelFactory
 
 
 class Person(BaseModel):
@@ -34,7 +34,7 @@ By default, when building a pydantic class, kwargs are validated, to avoid input
 ```python
 from pydantic import BaseModel
 
-from pydantic_factories import ModelFactory
+from polyfactory.factories.pydantic_factory import ModelFactory
 
 
 class Person(BaseModel):
@@ -57,7 +57,7 @@ result = PersonFactory.build(
 Factories can randomly generate missing parameters for child factories. For example:
 
 ```python
-from pydantic_factories import ModelFactory
+from polyfactory.factories.pydantic_factory import ModelFactory
 from pydantic import BaseModel
 
 
@@ -79,7 +79,7 @@ class PersonFactory(ModelFactory[Person]):
 When building a person without specifying the Person and pets ages, all these fields will be randomly generated:
 
 ```python
-from pydantic_factories import ModelFactory
+from polyfactory.factories.pydantic_factory import ModelFactory
 from pydantic import BaseModel
 
 

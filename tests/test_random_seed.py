@@ -1,6 +1,6 @@
 from pydantic import BaseModel, Field
 
-from pydantic_factories import ModelFactory
+from polyfactory.factories.pydantic_factory import ModelFactory
 
 
 def test_random_seed() -> None:

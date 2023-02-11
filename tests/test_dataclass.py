@@ -2,11 +2,10 @@ from dataclasses import dataclass as vanilla_dataclass
 from dataclasses import field
 from typing import Dict, List, Optional
 
-from pydantic import BaseModel
 from pydantic.dataclasses import Field  # type: ignore
 from pydantic.dataclasses import dataclass as pydantic_dataclass
 
-from pydantic_factories import ModelFactory
+from polyfactory.factories.base import DataclassFactory
 from tests.models import Person
 
 
@@ -18,7 +17,7 @@ def test_factory_vanilla_dc() -> None:
         list_field: List[Dict[str, int]]
         field_of_some_value: Optional[int] = field(default_factory=lambda: 0)
 
-    class MyFactory(ModelFactory):
+    class MyFactory(DataclassFactory[VanillaDC]):
         __model__ = VanillaDC
 
     result = MyFactory.build()
@@ -40,7 +39,7 @@ def test_factory_pydantic_dc() -> None:
         field_of_some_value: Optional[int] = field(default_factory=lambda: 0)
         constrained_field: int = Field(ge=100)
 
-    class MyFactory(ModelFactory):
+    class MyFactory(DataclassFactory[PydanticDC]):
         __model__ = PydanticDC
 
     result = MyFactory.build()
@@ -59,7 +58,7 @@ def test_vanilla_dc_with_embedded_model() -> None:
     class VanillaDC:
         people: List[Person]
 
-    class MyFactory(ModelFactory):
+    class MyFactory(DataclassFactory[VanillaDC]):
         __model__ = VanillaDC
 
     result = MyFactory.build()
@@ -73,7 +72,7 @@ def test_pydantic_dc_with_embedded_model() -> None:
     class PydanticDC:
         people: List[Person]
 
-    class MyFactory(ModelFactory):
+    class MyFactory(DataclassFactory):
         __model__ = PydanticDC
 
     result = MyFactory.build()
@@ -91,11 +90,12 @@ def test_model_with_embedded_dataclasses() -> None:
     class PydanticDC:
         people: List[Person]
 
-    class Crowd(BaseModel):
+    @vanilla_dataclass
+    class Crowd:
         west: VanillaDC
         east: PydanticDC
 
-    class MyFactory(ModelFactory):
+    class MyFactory(DataclassFactory):
         __model__ = Crowd
 
     result = MyFactory.build()
@@ -115,10 +115,11 @@ def test_complex_embedded_dataclass() -> None:
     class VanillaDC:
         people: List[Person]
 
-    class MyModel(BaseModel):
+    @vanilla_dataclass
+    class MyModel:
         weirdly_nest_field: List[Dict[str, Dict[str, VanillaDC]]]
 
-    class MyFactory(ModelFactory):
+    class MyFactory(DataclassFactory):
         __model__ = MyModel
 
     result = MyFactory.build()

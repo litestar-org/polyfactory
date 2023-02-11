@@ -9,7 +9,7 @@ import dataclasses
 from typing import Dict, List
 
 import pydantic
-from pydantic_factories import ModelFactory
+from polyfactory.factories.pydantic_factory import ModelFactory
 
 
 @pydantic.dataclasses.dataclass

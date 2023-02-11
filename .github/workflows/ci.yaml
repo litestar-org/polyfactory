@@ -54,7 +54,7 @@ jobs:
             v1-venv-${{ runner.os }}
       - name: Install dependencies
         if: steps.cached-poetry-dependencies.outputs.cache-hit != 'true'
-        run: poetry install --no-interaction --no-root && poetry add asyncpg beanie ormar && pip install odmantic
+        run: poetry install --no-interaction --no-root && poetry add asyncpg beanie && pip install odmantic
       - name: Set pythonpath
         run: echo "PYTHONPATH=$PWD" >> $GITHUB_ENV
       - name: Test

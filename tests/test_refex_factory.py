@@ -4,11 +4,12 @@ https://github.com/crdoconnor/xeger/blob/master/xeger/tests/test_xeger.py
 """
 
 import re
+from random import Random
 from typing import TYPE_CHECKING, Union
 
 import pytest
 
-from pydantic_factories.value_generators.regex import RegexFactory
+from polyfactory.value_generators.regex import RegexFactory
 
 if TYPE_CHECKING:
     from re import Pattern
@@ -16,7 +17,7 @@ if TYPE_CHECKING:
 
 def match(pattern: Union[str, "Pattern"]) -> None:
     for _ in range(100):
-        assert re.match(pattern, RegexFactory()(pattern))
+        assert re.match(pattern, RegexFactory(random=Random())(pattern))
 
 
 def test_single_dot() -> None:
@@ -139,7 +140,7 @@ def test_lookahead() -> None:
 
 def test_lookbehind() -> None:
     pattern = r"(?<=foo)bar"
-    assert re.search(pattern, RegexFactory()(pattern))
+    assert re.search(pattern, RegexFactory(random=Random())(pattern))
 
 
 def test_backreference() -> None:
@@ -157,27 +158,27 @@ def test_zero_or_more_non_greedy() -> None:
 
 @pytest.mark.parametrize("limit", range(5))
 def test_incoherent_limit_and_qualifier(limit: int) -> None:
-    r = RegexFactory(limit=limit)
+    r = RegexFactory(limit=limit, random=Random())
     o = r(r"a{2}")
     assert len(o) == 2
 
 
 @pytest.mark.parametrize("seed", [777, 1234, 369, 8031])
 def test_regex_factory_object_seeding(seed: int) -> None:
-    xg1 = RegexFactory(seed=seed)
+    xg1 = RegexFactory(random=Random(x=seed))
     string1 = xg1(r"\w{3,4}")
 
-    xg2 = RegexFactory(seed=seed)
+    xg2 = RegexFactory(random=Random(x=seed))
     string2 = xg2(r"\w{3,4}")
 
     assert string1 == string2
 
 
 def test_regex_factorx_random_instance() -> None:
-    xg1 = RegexFactory()
+    xg1 = RegexFactory(random=Random())
     xg_random = xg1._random
 
-    xg2 = RegexFactory()
+    xg2 = RegexFactory(random=Random())
     xg2._random = xg_random
 
     assert xg1._random == xg2._random
