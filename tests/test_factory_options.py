@@ -69,8 +69,7 @@ def test_factory_handling_of_optionals() -> None:
 
     class FactoryWithNoneOptionals(ModelFactory):
         __model__ = ModelWithOptionalValues
-
-    FactoryWithNoneOptionals.seed_random(1)
+        __random_seed__ = 1
 
     assert any(r.name is None for r in [FactoryWithNoneOptionals.build() for _ in range(10)])
     assert any(r.name is not None for r in [FactoryWithNoneOptionals.build() for _ in range(10)])

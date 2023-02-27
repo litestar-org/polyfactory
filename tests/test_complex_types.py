@@ -96,6 +96,7 @@ def test_randomizes_optional_returns() -> None:
 
     class MyFactory(ModelFactory):
         __model__ = MyModel
+        __random_seed__ = 1
 
     failed = False
     for _ in range(5):

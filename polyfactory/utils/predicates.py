@@ -18,7 +18,7 @@ if sys.version_info >= (3, 10):
 
     UNION_TYPES = {UnionType, Union}
 else:  # pragma: no cover
-    NoneType = Type[None]
+    NoneType = type(None)
     UNION_TYPES = {Union}
 
 

@@ -1,4 +1,4 @@
-from typing import Dict, List, Optional, Type
+from typing import Dict, List, Optional
 
 from pydantic import BaseModel
 from typing_extensions import TypedDict
@@ -23,7 +23,7 @@ def test_factory_with_typeddict() -> None:
     assert result["id"]
     assert result["name"]
     assert result["list_field"][0]
-    assert type(result["int_field"]) in (Type[None], int)
+    assert type(result["int_field"]) in (type(None), int)
 
 
 def test_factory_model_with_typeddict_attribute_value() -> None:
@@ -42,4 +42,4 @@ def test_factory_model_with_typeddict_attribute_value() -> None:
     assert result.td["id"]
     assert result.td["name"]
     assert result.td["list_field"][0]
-    assert type(result.td["int_field"]) in (Type[None], int)
+    assert type(result.td["int_field"]) in (type(None), int)
