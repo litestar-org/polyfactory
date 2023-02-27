@@ -1,5 +1,4 @@
-from types import NoneType
-from typing import Any, get_args
+from typing import Any, Type, get_args
 
 from polyfactory.utils.predicates import is_new_type, is_optional_union, is_union
 
@@ -35,7 +34,7 @@ def unwrap_optional(value: Any) -> Any:
     """
     while is_optional_union(value):
         args = get_args(value)
-        value = args[0] if args[0] is not NoneType else args[1]
+        value = args[0] if args[0] is not Type[None] else args[1]
     return value
 
 

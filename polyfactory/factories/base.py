@@ -34,12 +34,11 @@ from typing import (
     TypeVar,
     Union,
     cast,
-    is_typeddict,
 )
 from uuid import NAMESPACE_DNS, UUID, uuid1, uuid3, uuid5
 
 from faker import Faker
-from typing_extensions import get_args
+from typing_extensions import get_args, is_typeddict
 
 from polyfactory.exceptions import (
     ConfigurationError,

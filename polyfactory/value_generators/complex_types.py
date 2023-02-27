@@ -1,5 +1,7 @@
 from collections import deque
-from typing import TYPE_CHECKING, Any, MutableMapping, Tuple, Type, is_typeddict
+from typing import TYPE_CHECKING, Any, MutableMapping, Tuple, Type
+
+from typing_extensions import is_typeddict
 
 from polyfactory.constants import TYPE_MAPPING
 from polyfactory.field_meta import FieldMeta
