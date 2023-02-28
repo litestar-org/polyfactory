@@ -109,7 +109,7 @@ class ModelFactory(Generic[T], BaseFactory[T]):
         super().__init_subclass__(*args, **kwargs)
 
         if not cls.__is_base_factory__ and hasattr(cls.__model__, "update_forward_refs"):
-            with suppress(NameError):
+            with suppress(NameError):  # pragma: no cover
                 cls.__model__.update_forward_refs(**cls.__forward_ref_resolution_type_mapping__)
 
     @classmethod
@@ -126,12 +126,6 @@ class ModelFactory(Generic[T], BaseFactory[T]):
         Returns:
             An arbitrary value.
         """
-        if isinstance(field_meta.extra, list) and is_pydantic_model(field_meta.annotation):
-            return [
-                cls._get_or_create_factory(model=field_meta.annotation).build(**build_kwargs)
-                for build_kwargs in field_meta.extra
-            ]
-
         if is_safe_subclass(field_meta.annotation, ConstrainedFloat):
             return handle_constrained_float(
                 random=cls.__random__,
@@ -214,16 +208,13 @@ class ModelFactory(Generic[T], BaseFactory[T]):
             A list of field MetaData instances.
         """
         if not hasattr(cls, "_fields_metadata"):
-            if cls.is_supported_type(cls.__model__):
-                cls._fields_metadata = [
-                    PydanticFieldMeta.from_model_field(
-                        field,
-                        use_alias=not cls.__model__.__config__.allow_population_by_field_name,
-                    )
-                    for field in cls.__model__.__fields__.values()
-                ]
-            else:
-                cls._fields_metadata = super().get_model_fields()
+            cls._fields_metadata = [
+                PydanticFieldMeta.from_model_field(
+                    field,
+                    use_alias=not cls.__model__.__config__.allow_population_by_field_name,
+                )
+                for field in cls.__model__.__fields__.values()
+            ]
         return cls._fields_metadata
 
     @classmethod

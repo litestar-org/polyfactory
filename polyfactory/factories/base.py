@@ -276,13 +276,13 @@ class BaseFactory(ABC, Generic[T]):
             if factory.is_supported_type(model):
                 return factory.create_factory(model)
 
-        raise ParameterError(f"unsupported model type {model.__name__}")
+        raise ParameterError(f"unsupported model type {model.__name__}")  # pragma: no cover
 
     # Public Methods
 
     @classmethod
     @abstractmethod
-    def is_supported_type(cls, value: Any) -> "TypeGuard[Type[T]]":
+    def is_supported_type(cls, value: Any) -> "TypeGuard[Type[T]]":  # pragma: no cover
         """
 
         :param value:
@@ -540,7 +540,7 @@ class BaseFactory(ABC, Generic[T]):
 
     @classmethod
     @abstractmethod
-    def get_model_fields(cls) -> List["FieldMeta"]:
+    def get_model_fields(cls) -> List["FieldMeta"]:  # pragma: no cover
         """
         Retrieve a list of fields from the factory's model.
 
@@ -667,7 +667,7 @@ class DataclassFactory(Generic[T], BaseFactory[T]):
     def is_supported_type(cls, value: Any) -> "TypeGuard[Type[T]]":
         try:
             return isclass(value) and is_dataclass(value)
-        except (TypeError, AttributeError):
+        except (TypeError, AttributeError):  # pragma: no cover
             return False
 
     @classmethod
@@ -697,7 +697,7 @@ class TypedDictFactory(Generic[TypedDictT], BaseFactory[TypedDictT]):
     def is_supported_type(cls, value: Any) -> "TypeGuard[Type[TypedDictT]]":
         try:
             return is_typeddict(value)
-        except (TypeError, AttributeError):
+        except (TypeError, AttributeError):  # pragma: no cover
             return False
 
     @classmethod

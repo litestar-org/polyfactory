@@ -71,18 +71,42 @@ repos:
         exclude: "tests"
         args: ["--unsafe-load-any-extension=y"]
         additional_dependencies:
-          [pydantic, faker, pytest, hypothesis, odmantic, beanie]
+          [
+            beanie,
+            faker,
+            hypothesis,
+            mongomock_motor,
+            odmantic,
+            pydantic,
+            pytest,
+          ]
   - repo: https://github.com/pre-commit/mirrors-mypy
     rev: "v1.0.1"
     hooks:
       - id: mypy
         exclude: "test_decimal_constraints"
         additional_dependencies:
-          [pydantic, faker, pytest, hypothesis, odmantic, beanie]
+          [
+            beanie,
+            faker,
+            hypothesis,
+            mongomock_motor,
+            odmantic,
+            pydantic,
+            pytest,
+          ]
   - repo: https://github.com/RobertCraigie/pyright-python
     rev: v1.1.295
     hooks:
       - id: pyright
         exclude: "test_decimal_constraints"
         additional_dependencies:
-          [pydantic, faker, pytest, hypothesis, odmantic, beanie]
+          [
+            beanie,
+            faker,
+            hypothesis,
+            mongomock_motor,
+            odmantic,
+            pydantic,
+            pytest,
+          ]

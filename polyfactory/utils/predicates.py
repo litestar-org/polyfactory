@@ -13,7 +13,7 @@ from typing_extensions import (
 
 from polyfactory.constants import TYPE_MAPPING
 
-if sys.version_info >= (3, 10):
+if sys.version_info >= (3, 10):  # pragma: no cover
     from types import NoneType, UnionType
 
     UNION_TYPES = {UnionType, Union}

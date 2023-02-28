@@ -29,8 +29,6 @@ jobs:
       matrix:
         python-version: ["3.8", "3.9", "3.10", "3.11"]
     steps:
-      - name: Start MongoDB
-        uses: supercharge/mongodb-github-action@1.9.0
       - name: Check out repository
         uses: actions/checkout@v3
       - name: Set up python ${{ matrix.python-version }}
@@ -54,7 +52,7 @@ jobs:
             v1-venv-${{ runner.os }}
       - name: Install dependencies
         if: steps.cached-poetry-dependencies.outputs.cache-hit != 'true'
-        run: poetry install --no-interaction --no-root && poetry add asyncpg beanie && pip install odmantic
+        run: poetry install --no-interaction --no-root
       - name: Set pythonpath
         run: echo "PYTHONPATH=$PWD" >> $GITHUB_ENV
       - name: Test

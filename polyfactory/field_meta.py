@@ -1,4 +1,4 @@
-from typing import Any, List, Optional, Tuple, Type
+from typing import Any, Dict, List, Optional, Tuple, Type
 
 from typing_extensions import get_args
 
@@ -29,7 +29,7 @@ class FieldMeta:
         default: Any = Null,
         children: Optional[List["FieldMeta"]] = None,
         constant: bool = False,
-        extra: Any,
+        extra: Optional[Dict[str, Any]],
     ):
         self.annotation = annotation
         self.children = children

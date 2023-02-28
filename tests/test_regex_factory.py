@@ -174,7 +174,7 @@ def test_regex_factory_object_seeding(seed: int) -> None:
     assert string1 == string2
 
 
-def test_regex_factorx_random_instance() -> None:
+def test_regex_factory_random_instance() -> None:
     xg1 = RegexFactory(random=Random())
     xg_random = xg1._random
 

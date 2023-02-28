@@ -96,7 +96,11 @@ def get_increment(t_type: Type[T]) -> T:
     Returns:
         An increment T.
     """
-    values: Dict[Any, Any] = {int: 1, float: float_info.epsilon, Decimal: Decimal("0.001")}
+    values: Dict[Any, Any] = {
+        int: 1,
+        float: float_info.epsilon,
+        Decimal: Decimal("0.001"),
+    }
     return cast("T", values[t_type])
 
 
@@ -200,7 +204,11 @@ def handle_constrained_int(
         gt=gt, ge=ge, lt=lt, le=le, t_type=int, multiple_of=multiple_of, random=random
     )
     return generate_constrained_number(
-        random=random, minimum=minimum, maximum=maximum, multiple_of=multiple_of, method=create_random_integer
+        random=random,
+        minimum=minimum,
+        maximum=maximum,
+        multiple_of=multiple_of,
+        method=create_random_integer,
     )
 
 
@@ -317,7 +325,13 @@ def handle_constrained_decimal(
     """
 
     minimum, maximum = get_constrained_number_range(
-        gt=gt, ge=ge, lt=lt, le=le, multiple_of=multiple_of, t_type=Decimal, random=random
+        gt=gt,
+        ge=ge,
+        lt=lt,
+        le=le,
+        multiple_of=multiple_of,
+        t_type=Decimal,
+        random=random,
     )
 
     if max_digits is not None:
@@ -333,7 +347,9 @@ def handle_constrained_decimal(
 
     if max_digits is not None or decimal_places is not None:
         return handle_decimal_length(
-            generated_decimal=generated_decimal, max_digits=max_digits, decimal_places=decimal_places
+            generated_decimal=generated_decimal,
+            max_digits=max_digits,
+            decimal_places=decimal_places,
         )
 
     return generated_decimal

@@ -41,7 +41,11 @@ REGEXES = [
 
 
 @settings(deadline=600)
-@given(booleans(), integers(min_value=5, max_value=100), integers(min_value=5, max_value=100))
+@given(
+    booleans(),
+    integers(min_value=5, max_value=100),
+    integers(min_value=5, max_value=100),
+)
 def test_handle_constrained_string_with_min_length_and_max_length_and_regex(
     to_lower: bool, min_length: int, max_length: int
 ) -> None:
@@ -167,3 +171,31 @@ def test_handle_constrained_string_with_max_length(to_lower: bool, max_length: i
         if to_lower:
             assert result == result.lower()
         assert len(result) <= max_length
+
+
+def test_pattern() -> None:
+    result = handle_constrained_string_or_bytes(
+        random=Random(),
+        t_type=str,
+        lower_case=False,
+        upper_case=True,
+        min_length=6,
+        max_length=10,
+        pattern="abc",
+    )
+    assert len(result) >= 6
+    assert len(result) <= 10
+    assert result.isupper()
+
+    result = handle_constrained_string_or_bytes(
+        random=Random(),
+        t_type=str,
+        lower_case=True,
+        upper_case=False,
+        min_length=6,
+        max_length=10,
+        pattern="abc",
+    )
+    assert len(result) >= 6
+    assert len(result) <= 10
+    assert not result.isupper()

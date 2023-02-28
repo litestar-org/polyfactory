@@ -35,17 +35,15 @@ def _validate_length(
 
 def _generate_pattern(
     random: "Random",
-    t_type: Callable[[], T],
     pattern: Union[str, Pattern],
     lower_case: bool = False,
     upper_case: bool = False,
     min_length: Optional[int] = None,
     max_length: Optional[int] = None,
-) -> T:
+) -> str:
     """
 
     :param random:
-    :param t_type:
     :param pattern:
     :param lower_case:
     :param upper_case:
@@ -68,9 +66,7 @@ def _generate_pattern(
     if upper_case:
         result = result.upper()
 
-    if t_type is str:
-        return cast("T", result)
-    return cast("T", result.encode())
+    return result
 
 
 def handle_constrained_string_or_bytes(
@@ -99,22 +95,35 @@ def handle_constrained_string_or_bytes(
         return t_type()
 
     if pattern:
-        return _generate_pattern(
-            random=random,
-            t_type=t_type,
-            pattern=pattern,
-            lower_case=lower_case,
-            upper_case=upper_case,
-            min_length=min_length,
-            max_length=max_length,
+        return cast(
+            "T",
+            _generate_pattern(
+                random=random,
+                pattern=pattern,
+                lower_case=lower_case,
+                upper_case=upper_case,
+                min_length=min_length,
+                max_length=max_length,
+            ),
         )
 
     if t_type is str:
         return cast(
             "T",
-            create_random_string(min_length=min_length, max_length=max_length, lower_case=lower_case, random=random),
+            create_random_string(
+                min_length=min_length,
+                max_length=max_length,
+                lower_case=lower_case,
+                random=random,
+            ),
         )
 
     return cast(
-        "T", create_random_bytes(min_length=min_length, max_length=max_length, lower_case=lower_case, random=random)
+        "T",
+        create_random_bytes(
+            min_length=min_length,
+            max_length=max_length,
+            lower_case=lower_case,
+            random=random,
+        ),
     )

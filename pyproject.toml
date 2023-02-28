@@ -59,13 +59,16 @@ pydantic = { version = "*", optional = true, extras = ["pydantic", "odmantic", "
 typing-extensions = "*"
 
 [tool.poetry.group.dev.dependencies]
+beanie = "*"
 email-validator = "*"
 hypothesis = "*"
+odmantic = "*"
 pre-commit = "*"
+pydantic = "*"
 pytest = "*"
 pytest-asyncio = "*"
 pytest-cov = "*"
-pydantic = "*"
+mongomock-motor = "^0.0.17"
 
 [tool.poetry.extras]
 pydantic = ["pydantic"]
