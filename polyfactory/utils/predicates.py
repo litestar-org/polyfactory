@@ -26,30 +26,27 @@ P = ParamSpec("P")
 T = TypeVar("T")
 
 
-def is_safe_subclass(value: Any, types: Type[T]) -> TypeGuard[Type[T]]:
-    """
+def is_safe_subclass(annotation: Any, super_class: Type[T]) -> "TypeGuard[Type[T]]":
+    """Determine whether a given annotation is a subclass of a give type
 
-    :param value:
-    :param types:
-    :return:
+    :param annotation: A type annotation.
+    :param super_class: A potential super class.
+    :return: A typeguard
     """
-    origin = get_type_origin(value)
-    if not origin and not isclass(value):
+    origin = get_type_origin(annotation)
+    if not origin and not isclass(annotation):
         return False
     try:
-        return issubclass(origin or value, types)
+        return issubclass(origin or annotation, super_class)
     except TypeError:  # pragma: no cover
         return False
 
 
 def is_any(annotation: Any) -> "TypeGuard[Any]":
-    """Given a type annotation determine if the annotation is Any.
+    """Determine whether a given annotation is 'typing.Any'.
 
-        Args:
-        annotation: A type.
-
-    Returns:
-        A typeguard determining whether the type is :data:`Any <typing.Any>`.
+    :param annotation: A type annotation.
+    :return: A typeguard.
     """
     return (
         annotation is Any
@@ -59,54 +56,60 @@ def is_any(annotation: Any) -> "TypeGuard[Any]":
 
 
 def is_union(annotation: Any) -> "TypeGuard[Union[Any, Any]]":
-    """Given a type annotation determine if the annotation infers an optional union.
+    """Determine whether a given annotation is 'typing.Union'.
 
-    Args:
-        annotation: A type.
-
-    Returns:
-        A typeguard determining whether the type is :data:`Union typing.Union>`.
+    :param annotation: A type annotation.
+    :return: A typeguard.
     """
     return get_type_origin(annotation) in UNION_TYPES
 
 
 def is_optional_union(annotation: Any) -> "TypeGuard[Union[Any, None]]":
-    """Given a type annotation determine if the annotation infers an optional union.
+    """Determine whether a given annotation is 'typing.Optional'.
 
-    Args:
-        annotation: A type.
-
-    Returns:
-        A typeguard determining whether the type is :data:`Union typing.Union>` with a
-            None value or :data:`Optional <typing.Optional>` which is equivalent.
+    :param annotation: A type annotation.
+    :return: A typeguard.
     """
     origin = get_type_origin(annotation)
     return origin is Optional or (get_origin(annotation) in UNION_TYPES and NoneType in get_args(annotation))
 
 
-def is_literal(value: Any) -> bool:
-    """Determines whether a given model_field is a Literal type."""
+def is_literal(annotation: Any) -> bool:
+    """Determine whether a given annotation is 'typing.Literal'.
+
+    :param annotation: A type annotation.
+    :return: A boolean.
+    """
     return (
-        get_type_origin(value) is Literal
-        or repr(value).startswith("typing.Literal")
-        or repr(value).startswith("typing_extensions.Literal")
+        get_type_origin(annotation) is Literal
+        or repr(annotation).startswith("typing.Literal")
+        or repr(annotation).startswith("typing_extensions.Literal")
     )
 
 
-def is_new_type(value: Any) -> "TypeGuard[Type[NewType]]":
-    """
+def is_new_type(annotation: Any) -> "TypeGuard[Type[NewType]]":
+    """Determine whether a given annotation is 'typing.NewType'.
 
-    :param value:
-    :return:
+    :param annotation: A type annotation.
+    :return: A typeguard.
     """
-    return hasattr(value, "__supertype__")
+    return hasattr(annotation, "__supertype__")
+
+
+def is_annotated(annotation: Any) -> bool:
+    """Determine whether a given annotation is 'typing.Annotated'.
+
+    :param annotation: A type annotation.
+    :return: A boolean.
+    """
+    return get_origin(annotation) is Annotated
 
 
 def get_type_origin(annotation: Any) -> Any:
-    """
+    """Get the type origin of an annotation - safely.
 
-    :param annotation:
-    :return:
+    :param annotation: A type annotation.
+    :return: A type annotation.
     """
     origin = get_origin(annotation)
     if origin in (Annotated, Required, NotRequired):

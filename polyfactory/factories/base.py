@@ -537,34 +537,35 @@ class BaseFactory(ABC, Generic[T]):
         if cls.is_ignored_type(field_meta.annotation):
             return None
 
-        if BaseFactory.is_factory_type(annotation=field_meta.annotation):
-            return cls._get_or_create_factory(model=field_meta.annotation).build(
-                **(field_build_parameters if isinstance(field_build_parameters, Mapping) else {})
-            )
-
-        if BaseFactory.is_batch_factory_type(annotation=field_meta.annotation):
-            factory = cls._get_or_create_factory(model=field_meta.type_args[0])
-            if isinstance(field_build_parameters, Sequence):
-                return [factory.build(**field_parameters) for field_parameters in field_build_parameters]
-            return factory.batch(size=randint(1, 10))
-
         if field_meta.constant:
             return field_meta.default
 
         if cls.should_set_none_value(field_meta=field_meta):
             return None
 
+        unwrapped_annotation = unwrap_annotation(field_meta.annotation)
+
+        if is_literal(annotation=unwrapped_annotation) and (literal_args := get_args(unwrapped_annotation)):
+            return choice(literal_args)
+
+        if isinstance(unwrapped_annotation, EnumMeta):
+            return cls._handle_enum(unwrapped_annotation)
+
+        if BaseFactory.is_factory_type(annotation=unwrapped_annotation):
+            return cls._get_or_create_factory(model=unwrapped_annotation).build(
+                **(field_build_parameters if isinstance(field_build_parameters, Mapping) else {})
+            )
+
+        if BaseFactory.is_batch_factory_type(annotation=unwrapped_annotation):
+            factory = cls._get_or_create_factory(model=field_meta.type_args[0])
+            if isinstance(field_build_parameters, Sequence):
+                return [factory.build(**field_parameters) for field_parameters in field_build_parameters]
+            return factory.batch(size=randint(1, 10))
+
         if field_meta.children:
             return handle_complex_type(field_meta=field_meta, factory=cls)
 
-        if is_literal(field_meta.annotation) and (literal_args := get_args(field_meta.annotation)):
-            return choice(literal_args)
-
-        field_type = unwrap_annotation(annotation=field_meta.annotation)
-        if isinstance(field_type, EnumMeta):
-            return cls._handle_enum(field_type)
-
-        return cls.get_mock_value(annotation=field_type)
+        return cls.get_mock_value(annotation=unwrapped_annotation)
 
     @classmethod
     def should_set_none_value(cls, field_meta: "FieldMeta") -> bool:

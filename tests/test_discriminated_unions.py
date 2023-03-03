@@ -1,13 +1,11 @@
 from typing import Literal, Union
 
-import pytest
 from pydantic import BaseModel, Field
 from typing_extensions import Annotated
 
 from polyfactory.factories.pydantic_factory import ModelFactory
 
 
-@pytest.mark.skip(reason="functionality must be re-implemented")
 def test_discriminated_unions() -> None:
     class BasePet(BaseModel):
         name: str

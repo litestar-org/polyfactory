@@ -1,6 +1,11 @@
 from typing import Any, Tuple, get_args
 
-from polyfactory.utils.predicates import is_new_type, is_optional_union, is_union
+from polyfactory.utils.predicates import (
+    is_annotated,
+    is_new_type,
+    is_optional_union,
+    is_union,
+)
 
 
 def unwrap_new_type(annotation: Any) -> Any:
@@ -44,11 +49,13 @@ def unwrap_annotation(annotation: Any) -> Any:
     :param annotation: A type annotation.
     :return: The unwrapped annotation.
     """
-    while is_optional_union(annotation) or is_union(annotation) or is_new_type(annotation):
+    while is_optional_union(annotation) or is_union(annotation) or is_new_type(annotation) or is_annotated(annotation):
         if is_new_type(annotation):
             annotation = unwrap_new_type(annotation)
         elif is_optional_union(annotation):
             annotation = unwrap_optional(annotation)
+        elif is_annotated(annotation):
+            annotation = get_args(annotation)[0]
         else:
             annotation = unwrap_union(annotation)
     return annotation

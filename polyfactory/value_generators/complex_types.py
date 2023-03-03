@@ -5,7 +5,7 @@ from typing_extensions import is_typeddict
 
 from polyfactory.constants import TYPE_MAPPING
 from polyfactory.field_meta import FieldMeta
-from polyfactory.utils.helpers import unwrap_args, unwrap_union
+from polyfactory.utils.helpers import unwrap_annotation, unwrap_args
 from polyfactory.utils.predicates import get_type_origin, is_any, is_union
 from polyfactory.value_generators.primitives import create_random_string
 
@@ -64,13 +64,14 @@ def handle_complex_type(
     :return:
     """
 
-    if origin := get_type_origin(unwrap_union(field_meta.annotation)):
+    if origin := get_type_origin(annotation=unwrap_annotation(field_meta.annotation)):
         if origin not in (tuple, Tuple):
             return handle_container_type(field_meta=field_meta, container_type=origin, factory=factory)
 
         return tuple(
             handle_complex_type(field_meta=sub_field, factory=factory) for sub_field in (field_meta.children or [])
         )
+
     if is_union(field_meta.annotation) and field_meta.children:
         return handle_complex_type(field_meta=factory.__random__.choice(field_meta.children), factory=factory)
 
