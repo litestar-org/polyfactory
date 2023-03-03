@@ -22,16 +22,14 @@ def test_merges_defaults_with_kwargs() -> None:
         sound="",
         age=1,
     )
-    kwarg_id_id = uuid4()
-    kwarg_id_hobbies = ["dancing"]
-    kwarg_id_age = 35
-    kwarg_id_pets = [pet]
-    second_obj = PersonFactoryWithDefaults.build(
-        id=kwarg_id_id, hobbies=kwarg_id_hobbies, age=kwarg_id_age, pets=kwarg_id_pets
-    )
-    assert second_obj.id == kwarg_id_id
-    assert second_obj.hobbies == kwarg_id_hobbies
-    assert second_obj.age == kwarg_id_age
+    id_ = uuid4()
+    hobbies = ["dancing"]
+    age = 35
+    pets = [pet]
+    second_obj = PersonFactoryWithDefaults.build(id=id_, hobbies=hobbies, age=age, pets=pets)
+    assert second_obj.id == id_
+    assert second_obj.hobbies == hobbies
+    assert second_obj.age == age
     assert second_obj.pets == [pet]
     assert second_obj.name == PersonFactoryWithDefaults.name
     assert second_obj.birthday == PersonFactoryWithDefaults.birthday

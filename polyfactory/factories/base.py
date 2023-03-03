@@ -18,7 +18,7 @@ from ipaddress import (
 from math import nan
 from os.path import realpath
 from pathlib import Path
-from random import Random, choice, uniform
+from random import Random, choice, randint, uniform
 from typing import _TypedDictMeta  # type: ignore
 from typing import (
     TYPE_CHECKING,
@@ -28,7 +28,9 @@ from typing import (
     Dict,
     Generic,
     List,
+    Mapping,
     Optional,
+    Sequence,
     Tuple,
     Type,
     TypeVar,
@@ -48,8 +50,13 @@ from polyfactory.exceptions import (
 from polyfactory.field_meta import FieldMeta, Null
 from polyfactory.fields import Fixture, Ignore, PostGenerated, Require, Use
 from polyfactory.protocols import AsyncPersistenceProtocol, SyncPersistenceProtocol
-from polyfactory.utils.helpers import unwrap_new_type, unwrap_optional, unwrap_union
-from polyfactory.utils.predicates import is_literal, is_optional_union
+from polyfactory.utils.helpers import unwrap_annotation, unwrap_args, unwrap_optional
+from polyfactory.utils.predicates import (
+    get_type_origin,
+    is_literal,
+    is_optional_union,
+    is_safe_subclass,
+)
 from polyfactory.value_generators.complex_types import handle_complex_type
 from polyfactory.value_generators.primitives import (
     create_random_boolean,
@@ -236,7 +243,7 @@ class BaseFactory(ABC, Generic[T]):
         return choice(list(annotation))  # pyright: ignore
 
     @classmethod
-    def _handle_factory_field(cls, field_value: Any) -> Any:
+    def _handle_factory_field(cls, field_value: Any, **kwargs: Any) -> Any:
         """Handles a field_meta defined on the factory class itself.
 
         Args:
@@ -246,11 +253,14 @@ class BaseFactory(ABC, Generic[T]):
             An arbitrary value correlating with the given field_meta value.
         """
 
-        if isinstance(field_value, (Use, Fixture)):
+        if isinstance(field_value, Use):
             return field_value.to_value()
 
+        if isinstance(field_value, Fixture):
+            return field_value.to_value(**kwargs)
+
         if is_factory(field_value):
-            return field_value.build()
+            return field_value.build(**kwargs)
 
         if callable(field_value):
             return field_value()
@@ -279,6 +289,52 @@ class BaseFactory(ABC, Generic[T]):
         raise ParameterError(f"unsupported model type {model.__name__}")  # pragma: no cover
 
     # Public Methods
+
+    @classmethod
+    def is_factory_type(cls, annotation: Any) -> bool:
+        """Determine whether a given field is annotated with a type that is supported by a base factory.
+
+        :param annotation: A type annotation.
+        :return: Boolean dictating whether the annotation is a factory type
+        """
+        return any(factory.is_supported_type(annotation) for factory in BaseFactory._base_factories)
+
+    @classmethod
+    def is_batch_factory_type(cls, annotation: Any) -> bool:
+        """Determine whether a given field is annotated with a sequence of supported factory types.
+
+        :param annotation: A type annotation.
+        :return: Boolean dictating whether the annotation is a batch factory type
+        """
+        origin = get_type_origin(annotation) or annotation
+        if is_safe_subclass(origin, Sequence) and (args := unwrap_args(annotation)):  # type: ignore
+            return len(args) == 1 and BaseFactory.is_factory_type(annotation=args[0])
+        return False
+
+    @classmethod
+    def extract_field_build_parameters(cls, field_meta: "FieldMeta", build_args: Dict[str, Any]) -> Any:
+        """Extract from the build kwargs any build parameters passed for a given field meta - if it is a factory type.
+
+        :param field_meta: A field meta instance.
+        :param build_args: Any kwargs passed to the factory.
+        :return: Any values
+        """
+        if build_arg := build_args.get(field_meta.name):
+            annotation = unwrap_optional(field_meta.annotation)
+            if (
+                BaseFactory.is_factory_type(annotation=annotation)
+                and isinstance(build_arg, Mapping)
+                and not BaseFactory.is_factory_type(annotation=type(build_arg))
+            ):
+                return build_args.pop(field_meta.name)
+
+            if (
+                BaseFactory.is_batch_factory_type(annotation=annotation)
+                and isinstance(build_arg, Sequence)
+                and not any(BaseFactory.is_factory_type(annotation=type(value)) for value in build_arg)
+            ):
+                return build_args.pop(field_meta.name)
+        return None
 
     @classmethod
     @abstractmethod
@@ -468,29 +524,35 @@ class BaseFactory(ABC, Generic[T]):
         )
 
     @classmethod
-    def get_field_value(cls, field_meta: "FieldMeta") -> Any:
+    def get_field_value(cls, field_meta: "FieldMeta", field_build_parameters: Optional[Any] = None) -> Any:
         """Returns a field value on the subclass if existing, otherwise returns a mock value.
 
         Args:
             field_meta: FieldMeta instance.
+            field_build_parameters: Any build parameters passed to the factory as kwarg values.
 
         Returns:
             An arbitrary value.
         """
+        if cls.is_ignored_type(field_meta.annotation):
+            return None
+
+        if BaseFactory.is_factory_type(annotation=field_meta.annotation):
+            return cls._get_or_create_factory(model=field_meta.annotation).build(
+                **(field_build_parameters if isinstance(field_build_parameters, Mapping) else {})
+            )
+
+        if BaseFactory.is_batch_factory_type(annotation=field_meta.annotation):
+            factory = cls._get_or_create_factory(model=field_meta.type_args[0])
+            if isinstance(field_build_parameters, Sequence):
+                return [factory.build(**field_parameters) for field_parameters in field_build_parameters]
+            return factory.batch(size=randint(1, 10))
+
         if field_meta.constant:
             return field_meta.default
 
         if cls.should_set_none_value(field_meta=field_meta):
             return None
-
-        field_type = unwrap_new_type(unwrap_optional(field_meta.annotation))
-        if isinstance(field_type, EnumMeta):
-            return cls._handle_enum(field_type)
-
-        if any(factory.is_supported_type(field_meta.annotation) for factory in BaseFactory._base_factories):
-            return cls._get_or_create_factory(model=field_meta.annotation).build(
-                **(field_meta.extra if isinstance(field_meta.extra, dict) else {})
-            )
 
         if field_meta.children:
             return handle_complex_type(field_meta=field_meta, factory=cls)
@@ -498,10 +560,11 @@ class BaseFactory(ABC, Generic[T]):
         if is_literal(field_meta.annotation) and (literal_args := get_args(field_meta.annotation)):
             return choice(literal_args)
 
-        if cls.is_ignored_type(field_meta.annotation):
-            return None
+        field_type = unwrap_annotation(annotation=field_meta.annotation)
+        if isinstance(field_type, EnumMeta):
+            return cls._handle_enum(field_type)
 
-        return cls.get_mock_value(annotation=unwrap_union(field_type))
+        return cls.get_mock_value(annotation=field_type)
 
     @classmethod
     def should_set_none_value(cls, field_meta: "FieldMeta") -> bool:
@@ -560,6 +623,7 @@ class BaseFactory(ABC, Generic[T]):
         generate_post: Dict[str, PostGenerated] = {}
 
         for field_meta in cls.get_model_fields():
+            field_build_parameters = cls.extract_field_build_parameters(field_meta=field_meta, build_args=kwargs)
             if cls.should_set_field_value(field_meta, **kwargs):
                 if hasattr(cls, field_meta.name) and field_meta.name in cls.__dict__:
                     field_value = getattr(cls, field_meta.name)
@@ -573,10 +637,13 @@ class BaseFactory(ABC, Generic[T]):
                         generate_post[field_meta.name] = field_value
                         continue
 
-                    result[field_meta.name] = cls._handle_factory_field(field_value=field_value)
+                    result[field_meta.name] = cls._handle_factory_field(
+                        field_value=field_value,
+                        field_build_parameters=field_build_parameters,
+                    )
                     continue
 
-                result[field_meta.name] = cls.get_field_value(field_meta)
+                result[field_meta.name] = cls.get_field_value(field_meta, field_build_parameters=field_build_parameters)
 
         for field_name, post_generator in generate_post.items():
             result[field_name] = post_generator.to_value(field_name, result)

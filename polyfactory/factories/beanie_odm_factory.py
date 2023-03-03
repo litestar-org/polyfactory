@@ -1,4 +1,4 @@
-from typing import TYPE_CHECKING, Any, Generic, List, Type, TypeVar
+from typing import TYPE_CHECKING, Any, Generic, List, Optional, Type, TypeVar
 
 from typing_extensions import get_args
 
@@ -32,7 +32,7 @@ class BeaniePersistenceHandler(Generic[T], AsyncPersistenceProtocol[T]):
         """
         result = []
         for doc in data:
-            result.append(await doc.insert())
+            result.append(await doc.insert())  # pyright: ignore
         return result
 
 
@@ -47,7 +47,7 @@ class BeanieDocumentFactory(Generic[T], ModelFactory[T]):
         return is_safe_subclass(value, Document)
 
     @classmethod
-    def get_field_value(cls, field_meta: "FieldMeta") -> Any:
+    def get_field_value(cls, field_meta: "FieldMeta", field_build_parameters: Optional[Any] = None) -> Any:
         """Override to handle the fields created by the beanie Indexed helper function.
 
         Note: these fields do not have a class we can use, rather they instantiate a private class inside a closure.
@@ -63,4 +63,4 @@ class BeanieDocumentFactory(Generic[T], ModelFactory[T]):
                 field_meta.annotation = link_class
                 field_meta.annotation = link_class
 
-        return super().get_field_value(field_meta=field_meta)
+        return super().get_field_value(field_meta=field_meta, field_build_parameters=field_build_parameters)

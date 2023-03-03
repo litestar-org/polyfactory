@@ -7,6 +7,7 @@ from typing import (
     Generic,
     List,
     Mapping,
+    Optional,
     Type,
     TypeVar,
     cast,
@@ -50,7 +51,6 @@ except ImportError as e:
 
 if TYPE_CHECKING:
     from decimal import Decimal
-    from typing import Optional
 
     from typing_extensions import TypeGuard
 
@@ -96,7 +96,6 @@ class PydanticFieldMeta(FieldMeta):
             if model_field.sub_fields
             else None,
             default=default_value,
-            extra=model_field.field_info.extra,
             constant=bool(model_field.field_info.const),
         )
 
@@ -117,11 +116,12 @@ class ModelFactory(Generic[T], BaseFactory[T]):
         return is_pydantic_model(value)
 
     @classmethod
-    def get_field_value(cls, field_meta: "FieldMeta") -> Any:
+    def get_field_value(cls, field_meta: "FieldMeta", field_build_parameters: Optional[Any] = None) -> Any:
         """Returns a field value on the subclass if existing, otherwise returns a mock value.
 
         Args:
             field_meta: Field metadata.
+            field_build_parameters: Any build parameters passed to the factory as kwarg values.
 
         Returns:
             An arbitrary value.
@@ -198,7 +198,7 @@ class ModelFactory(Generic[T], BaseFactory[T]):
                 lt=field_meta.annotation.lt,
             )
 
-        return super().get_field_value(field_meta=field_meta)
+        return super().get_field_value(field_meta=field_meta, field_build_parameters=field_build_parameters)
 
     @classmethod
     def get_model_fields(cls) -> List["FieldMeta"]:

@@ -1,8 +1,10 @@
+from copy import copy
 from typing import Any, Callable, Dict, Generic, Optional, TypeVar, cast
 
 from typing_extensions import ParamSpec, TypedDict
 
 from polyfactory.exceptions import ParameterError
+from polyfactory.pytest_plugin import FactoryFixture
 
 T = TypeVar("T")
 P = ParamSpec("P")
@@ -90,17 +92,19 @@ class Fixture:
         self.size = size
         self.kwargs = kwargs
 
-    def to_value(self) -> Any:
+    def to_value(self, **kwargs: Any) -> Any:
         """
         Retries the correct factory for the fixture, calling either its build method - or if size is given, batch.
 
         Returns:
             The build result.
         """
-        from polyfactory.pytest_plugin import FactoryFixture
 
         if factory := FactoryFixture.factory_class_map.get(self.fixture["value"]):
+            kwds = copy(self.kwargs)
+            kwds.update(kwargs)
+
             if self.size:
-                return factory.batch(self.size, **self.kwargs)
-            return factory.build(**self.kwargs)
+                return factory.batch(self.size, **kwds)
+            return factory.build(**kwds)
         raise ParameterError("fixture has not been registered using the register_factory decorator")

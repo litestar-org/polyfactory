@@ -80,4 +80,4 @@ def handle_complex_type(
     if factory.should_set_none_value(field_meta):
         return None
 
-    return factory.get_field_value(field_meta=field_meta)
+    return factory.get_field_value(field_meta=field_meta, field_build_parameters=None)

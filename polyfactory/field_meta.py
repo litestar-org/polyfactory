@@ -1,9 +1,7 @@
-from typing import Any, Dict, List, Optional, Tuple, Type
-
-from typing_extensions import get_args
+from typing import Any, List, Optional, Tuple, Type
 
 from polyfactory.constants import TYPE_MAPPING
-from polyfactory.utils.helpers import unwrap_new_type
+from polyfactory.utils.helpers import unwrap_args, unwrap_new_type
 from polyfactory.utils.predicates import get_type_origin
 
 
@@ -12,13 +10,12 @@ class Null:
 
 
 class FieldMeta:
-    __slots__ = ("name", "annotation", "children", "default", "constant", "extra")
+    __slots__ = ("name", "annotation", "children", "default", "constant")
 
     annotation: Any
     children: Optional[List["FieldMeta"]]
     constant: bool
     default: Any
-    extra: Any
     name: str
 
     def __init__(
@@ -29,14 +26,12 @@ class FieldMeta:
         default: Any = Null,
         children: Optional[List["FieldMeta"]] = None,
         constant: bool = False,
-        extra: Optional[Dict[str, Any]],
     ):
         self.annotation = annotation
         self.children = children
         self.default = default
         self.name = name
         self.constant = constant
-        self.extra = extra
 
     @property
     def origin(self) -> Any:
@@ -52,10 +47,10 @@ class FieldMeta:
 
         :return:
         """
-        return tuple(TYPE_MAPPING[arg] if arg in TYPE_MAPPING else arg for arg in get_args(self.annotation))
+        return tuple(TYPE_MAPPING[arg] if arg in TYPE_MAPPING else arg for arg in unwrap_args(self.annotation))
 
     @classmethod
-    def from_type(cls, annotation: Any, name: str = "", default: Any = Null, **kwargs: Any) -> "FieldMeta":
+    def from_type(cls, annotation: Any, name: str = "", default: Any = Null) -> "FieldMeta":
         """
 
         :param annotation:
@@ -70,7 +65,6 @@ class FieldMeta:
             default=default,
             constant=False,
             children=None,
-            extra=kwargs,
         )
         if field.type_args:
             field.children = [FieldMeta.from_type(annotation=unwrap_new_type(arg)) for arg in field.type_args]
