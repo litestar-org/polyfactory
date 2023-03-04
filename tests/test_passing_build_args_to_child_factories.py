@@ -157,8 +157,6 @@ def test_factory_with_nested_dict() -> None:
 
 
 def test_factory_with_partial_kwargs_deep_in_tree() -> None:
-    # the code below is a modified copy of the bug reproduction example in
-    # https://github.com/starlite-api/polyfactory/issues/115
     class A(BaseModel):
         name: str
         age: int

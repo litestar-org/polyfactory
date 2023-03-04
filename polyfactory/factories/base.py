@@ -165,6 +165,8 @@ def is_factory(value: Any) -> "TypeGuard[Type[BaseFactory]]":
 
 
 class BaseFactory(ABC, Generic[T]):
+    """Base Factory class - this class holds the main logic of the library"""
+
     # configuration attributes
     __allow_none_optionals__: ClassVar[bool] = True
     __async_persistence__: Optional[Union[Type[AsyncPersistenceProtocol[T]], AsyncPersistenceProtocol[T]]] = None
@@ -218,49 +220,49 @@ class BaseFactory(ABC, Generic[T]):
 
     @classmethod
     def _get_sync_persistence(cls) -> SyncPersistenceProtocol[T]:
-        """Returns a sync_persistence interface if present."""
+        """Return a SyncPersistenceHandler if defined for the factory, otherwise raises a ConfigurationError.
+
+        :raises: ConfigurationError
+        :return: SyncPersistenceHandler
+        """
         if cls.__sync_persistence__:
             return cls.__sync_persistence__() if callable(cls.__sync_persistence__) else cls.__sync_persistence__
-        raise ConfigurationError("A sync_persistence handler must be defined in the factory to use this method")
+        raise ConfigurationError("A '__sync_persistence__' handler must be defined in the factory to use this method")
 
     @classmethod
     def _get_async_persistence(cls) -> AsyncPersistenceProtocol[T]:
-        """Returns an async_persistence interface."""
+        """Return a AsyncPersistenceHandler if defined for the factory, otherwise raises a ConfigurationError.
+
+        :raises: ConfigurationError
+        :return: AsyncPersistenceHandler
+        """
         if cls.__async_persistence__:
             return cls.__async_persistence__() if callable(cls.__async_persistence__) else cls.__async_persistence__
-        raise ConfigurationError("An async_persistence handler must be defined in the factory to use this method")
+        raise ConfigurationError("An '__async_persistence__' handler must be defined in the factory to use this method")
 
     @classmethod
-    def _handle_enum(cls, annotation: EnumMeta) -> Any:
-        """Method that converts an enum to a list and picks a random element out of it.
+    def _handle_factory_field(cls, field_value: Any, field_build_parameters: Optional[Any] = None) -> Any:
+        """Handles a value defined on the factory class itself.
 
-        Args:
-            annotation: An Enum class.
+        :param field_value: A value defined as an attribute on the factory class.
+        :param field_build_parameters: Any build parameters passed to the factory as kwarg values.
 
-        Returns:
-            A random member value.
+        :return: An arbitrary value correlating with the given field_meta value.
         """
-        return choice(list(annotation))  # pyright: ignore
+        if is_factory(field_value):
+            if isinstance(field_build_parameters, Mapping):
+                return field_value.build(**field_build_parameters)
 
-    @classmethod
-    def _handle_factory_field(cls, field_value: Any, **kwargs: Any) -> Any:
-        """Handles a field_meta defined on the factory class itself.
+            if isinstance(field_build_parameters, Sequence):
+                return [field_value.build(**parameter) for parameter in field_build_parameters]
 
-        Args:
-            field_value: A value defined as an attribute on the factory class.
-
-        Returns:
-            An arbitrary value correlating with the given field_meta value.
-        """
+            return field_value.build()
 
         if isinstance(field_value, Use):
             return field_value.to_value()
 
         if isinstance(field_value, Fixture):
-            return field_value.to_value(**kwargs)
-
-        if is_factory(field_value):
-            return field_value.build(**kwargs)
+            return field_value.to_value()
 
         if callable(field_value):
             return field_value()
@@ -549,7 +551,7 @@ class BaseFactory(ABC, Generic[T]):
             return choice(literal_args)
 
         if isinstance(unwrapped_annotation, EnumMeta):
-            return cls._handle_enum(unwrapped_annotation)
+            return choice(list(unwrapped_annotation))  # pyright: ignore
 
         if BaseFactory.is_factory_type(annotation=unwrapped_annotation):
             return cls._get_or_create_factory(model=unwrapped_annotation).build(

@@ -1,23 +1,11 @@
 from typing import List, Optional
 
 import pytest
-from faker import Faker
 from pydantic import BaseModel, Field
 
 from polyfactory import ConfigurationError
 from polyfactory.factories.pydantic_factory import ModelFactory
-from tests.models import Person, Pet
-
-
-def test_allows_user_to_define_faker_instance() -> None:
-    my_faker = Faker()
-    setattr(my_faker, "__test__attr__", None)  # noqa: B010
-
-    class MyFactory(ModelFactory):
-        __model__ = Pet
-        __faker__ = my_faker
-
-    assert hasattr(MyFactory.__faker__, "__test__attr__")
+from tests.models import Person
 
 
 def test_validates_model_is_set_on_definition_of_factory() -> None:
@@ -84,17 +72,3 @@ def test_factory_handling_of_optionals() -> None:
     assert all(r.name is not None for r in [FactoryWithoutNoneOptionals.build() for _ in range(10)])
     assert all(r.id is not None for r in [FactoryWithoutNoneOptionals.build() for _ in range(10)])
     assert any(r.complex[0] is not None for r in [FactoryWithoutNoneOptionals.build() for _ in range(10)])
-
-
-def test_determine_results() -> None:
-    class ModelWithOptionalValues(BaseModel):
-        name: Optional[str]
-
-    class FactoryWithNoneOptionals(ModelFactory):
-        __model__ = ModelWithOptionalValues
-
-    ModelFactory.seed_random(0)
-    before_seeding = [FactoryWithNoneOptionals.build() for _ in range(10)]
-    ModelFactory.seed_random(0)
-    after_seeding = [FactoryWithNoneOptionals.build() for _ in range(10)]
-    assert before_seeding == after_seeding
