@@ -4,8 +4,9 @@ import pytest
 from faker import Faker
 from pydantic import BaseModel, Field
 
-from pydantic_factories import ConfigurationError, ModelFactory
-from tests.models import Pet
+from polyfactory import ConfigurationError
+from polyfactory.factories.pydantic_factory import ModelFactory
+from tests.models import Person, Pet
 
 
 def test_allows_user_to_define_faker_instance() -> None:
@@ -16,28 +17,19 @@ def test_allows_user_to_define_faker_instance() -> None:
         __model__ = Pet
         __faker__ = my_faker
 
-    assert hasattr(MyFactory.get_faker(), "__test__attr__")
+    assert hasattr(MyFactory.__faker__, "__test__attr__")
 
 
-def test_validates_model_is_set_in_build() -> None:
-    class MyFactory(ModelFactory):
-        pass
-
+def test_validates_model_is_set_on_definition_of_factory() -> None:
     with pytest.raises(ConfigurationError):
-        MyFactory.build()
 
-
-def test_validates_model_is_set_in_batch() -> None:
-    class MyFactory(ModelFactory):
-        pass
-
-    with pytest.raises(ConfigurationError):
-        MyFactory.batch(2)
+        class MyFactory(ModelFactory):
+            pass
 
 
 def test_validates_connection_in_create_sync() -> None:
     class MyFactory(ModelFactory):
-        pass
+        __model__ = Person
 
     with pytest.raises(ConfigurationError):
         MyFactory.create_sync()
@@ -45,7 +37,7 @@ def test_validates_connection_in_create_sync() -> None:
 
 def test_validates_connection_in_create_batch_sync() -> None:
     class MyFactory(ModelFactory):
-        pass
+        __model__ = Person
 
     with pytest.raises(ConfigurationError):
         MyFactory.create_batch_sync(2)
@@ -54,7 +46,7 @@ def test_validates_connection_in_create_batch_sync() -> None:
 @pytest.mark.asyncio()
 async def test_validates_connection_in_create_async() -> None:
     class MyFactory(ModelFactory):
-        pass
+        __model__ = Person
 
     with pytest.raises(ConfigurationError):
         await MyFactory.create_async()
@@ -63,7 +55,7 @@ async def test_validates_connection_in_create_async() -> None:
 @pytest.mark.asyncio()
 async def test_validates_connection_in_create_batch_async() -> None:
     class MyFactory(ModelFactory):
-        pass
+        __model__ = Person
 
     with pytest.raises(ConfigurationError):
         await MyFactory.create_batch_async(2)
@@ -77,8 +69,7 @@ def test_factory_handling_of_optionals() -> None:
 
     class FactoryWithNoneOptionals(ModelFactory):
         __model__ = ModelWithOptionalValues
-
-    FactoryWithNoneOptionals.seed_random(1)
+        __random_seed__ = 1
 
     assert any(r.name is None for r in [FactoryWithNoneOptionals.build() for _ in range(10)])
     assert any(r.name is not None for r in [FactoryWithNoneOptionals.build() for _ in range(10)])

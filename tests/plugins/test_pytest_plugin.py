@@ -3,10 +3,10 @@ from typing import List
 import pytest
 from pydantic import BaseModel
 
-from pydantic_factories import ModelFactory
-from pydantic_factories.exceptions import ParameterError
-from pydantic_factories.fields import Fixture
-from pydantic_factories.plugins.pytest_plugin import register_fixture
+from polyfactory.exceptions import ParameterError
+from polyfactory.factories.pydantic_factory import ModelFactory
+from polyfactory.fields import Fixture
+from polyfactory.pytest_plugin import register_fixture
 from tests.models import Person, PersonFactoryWithoutDefaults
 
 

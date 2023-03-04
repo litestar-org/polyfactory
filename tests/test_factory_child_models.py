@@ -1,8 +1,8 @@
-from typing import Any, List, Mapping, Optional
+from typing import List, Mapping, Optional
 
 from pydantic import BaseModel
 
-from pydantic_factories import ModelFactory
+from polyfactory.factories.pydantic_factory import ModelFactory
 
 
 class Address(BaseModel):
@@ -63,50 +63,22 @@ def test_factory_child_model_list() -> None:
         },
     }
 
-    person = PersonFactory.build(**data)  # type: ignore
+    person = PersonFactory.build(factory_use_construct=False, **data)
 
-    expected_dict = {
-        "name": "Jean",
-        "age": AssertDict.random_int,
-        "pets": [
-            {
-                "name": "dog",
-                "age": AssertDict.random_int,
-                "toys": [
-                    {
-                        "name": "ball",
-                        "weight": AssertDict.random_float,
-                        "materials": [
-                            {"name": "yarn", "origin": AssertDict.random_str},
-                            {"name": "plastic", "origin": AssertDict.random_str},
-                        ],
-                    },
-                    {
-                        "name": "bone",
-                        "weight": AssertDict.random_float,
-                        "materials": [
-                            {"name": AssertDict.random_str, "origin": AssertDict.random_str},
-                        ],
-                    },
-                ],
-            },
-            {
-                "name": "cat",
-                "age": AssertDict.random_int,
-                "toys": [
-                    {
-                        "name": AssertDict.random_str,
-                        "weight": AssertDict.random_float,
-                        "materials": [
-                            {"name": AssertDict.random_str, "origin": AssertDict.random_str},
-                        ],
-                    }
-                ],
-            },
-        ],
-        "address": {"city": AssertDict.random_str, "country": "France"},
-    }
-    AssertDict.assert_dict_expected_shape(expected_dict, person.dict())
+    assert person.name == "Jean"
+    assert len(person.pets) == 2
+    assert person.pets[0].name == "dog"
+    dog = person.pets[0]
+    assert len(dog.toys) == 2
+    dog_toys = dog.toys
+    assert dog_toys[0].name == "ball"
+    assert len(dog.toys[0].materials) == 2
+    assert dog.toys[0].materials[0].name == "yarn"
+    assert dog.toys[0].materials[1].name == "plastic"
+    assert len(dog.toys[1].materials) > 0
+    assert dog.toys[1].name == "bone"
+    assert person.pets[1].name == "cat"
+    assert person.address.country == "France"
 
 
 def test_factory_child_pydantic_model() -> None:
@@ -136,33 +108,8 @@ def test_factory_child_none() -> None:
     assert person.address is None
 
 
-class AssertDict:
-    random_float = "random_float"
-    random_int = "random_int"
-    random_str = "random_str"
-
-    @staticmethod
-    def assert_dict_expected_shape(expected_json: Any, json: Any) -> None:
-        if isinstance(expected_json, list):
-            assert len(expected_json) == len(json)
-            for expected, actual in zip(expected_json, json):
-                AssertDict.assert_dict_expected_shape(expected, actual)
-        elif isinstance(expected_json, dict):
-            for key, value in expected_json.items():
-                assert key in json
-                AssertDict.assert_dict_expected_shape(value, json[key])
-        elif expected_json == AssertDict.random_float:
-            assert isinstance(json, float)
-        elif expected_json == AssertDict.random_int:
-            assert isinstance(json, int)
-        elif expected_json == AssertDict.random_str:
-            assert isinstance(json, str)
-        else:
-            assert expected_json == json
-
-
-def test_factory_not_ok() -> None:
-    """Given a Pydantic Model with nested Mapping field, When I build the model using the factory passing only partial
+def test_factory_with_partial_fields() -> None:
+    """Given a Pydantic Model with nested Mapping field_meta, When I build the model using the factory passing only partial
     attributes, Then the model is correctly built.
     """
 
@@ -189,7 +136,7 @@ def test_factory_not_ok() -> None:
 
 
 def test_factory_with_nested_dict() -> None:
-    """Given a Pydantic Model with nested Dict field, When I build the model using the factory passing only partial
+    """Given a Pydantic Model with nested Dict field_meta, When I build the model using the factory passing only partial
     attributes, Then the model is correctly built.
     """
 
@@ -211,7 +158,7 @@ def test_factory_with_nested_dict() -> None:
 
 def test_factory_with_partial_kwargs_deep_in_tree() -> None:
     # the code below is a modified copy of the bug reproduction example in
-    # https://github.com/starlite-api/pydantic-factories/issues/115
+    # https://github.com/starlite-api/polyfactory/issues/115
     class A(BaseModel):
         name: str
         age: int

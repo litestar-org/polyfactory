@@ -4,7 +4,8 @@ from typing import List
 from pydantic import BaseModel
 from typing_extensions import TypedDict
 
-from pydantic_factories import ModelFactory
+from polyfactory.factories.base import DataclassFactory, TypedDictFactory
+from polyfactory.factories.pydantic_factory import ModelFactory
 
 
 class A(BaseModel):
@@ -29,7 +30,7 @@ def test_auto_register_model_factory() -> None:
     class BFactory(ModelFactory):
         b_text = "const value"
         __model__ = B
-        __auto_register__ = True
+        __set_as_default_factory_for_type__ = True
 
     class CFactory(ModelFactory):
         __model__ = C
@@ -44,10 +45,10 @@ def test_auto_register_model_factory() -> None:
 def test_auto_register_model_factory_using_create_factory() -> None:
     const_value = "const value"
     ModelFactory.create_factory(model=A, a_text=const_value)
-    ModelFactory.create_factory(model=B, b_text=const_value, __auto_register__=True)
-    CFactory = ModelFactory.create_factory(model=C)
+    ModelFactory.create_factory(model=B, b_text=const_value, __set_as_default_factory_for_type__=True)
+    factory = ModelFactory.create_factory(model=C)
 
-    c = CFactory.build()
+    c = factory.build()
 
     assert c.b.b_text == const_value
     assert c.b_list[0].b_text == const_value
@@ -66,34 +67,34 @@ def test_dataclass_model_factory_auto_registration() -> None:
     class UpperModelFactory(ModelFactory):
         __model__ = UpperModel
 
-    class DataClassFactory(ModelFactory):
+    class DTFactory(DataclassFactory):
         text = "const value"
         __model__ = DataClass
-        __auto_register__ = True
+        __set_as_default_factory_for_type__ = True
 
     upper = UpperModelFactory.build()
 
-    assert upper.nested_field.text == DataClassFactory.text
-    assert upper.nested_list_field[0].text == DataClassFactory.text
+    assert upper.nested_field.text == DTFactory.text
+    assert upper.nested_list_field[0].text == DTFactory.text
 
 
 def test_typeddict_model_factory_auto_registration() -> None:
-    class TypedDictModel(TypedDict):
+    class TD(TypedDict):
         text: str
 
     class UpperSchema(BaseModel):
-        nested_field: TypedDictModel
-        nested_list_field: List[TypedDictModel]
+        nested_field: TD
+        nested_list_field: List[TD]
 
     class UpperModelFactory(ModelFactory):
         __model__ = UpperSchema
 
-    class TypedDictFactory(ModelFactory):
+    class TDFactory(TypedDictFactory):
         text = "const value"
-        __model__ = TypedDictModel
-        __auto_register__ = True
+        __model__ = TD
+        __set_as_default_factory_for_type__ = True
 
     upper = UpperModelFactory.build()
 
-    assert upper.nested_field["text"] == TypedDictFactory.text
-    assert upper.nested_list_field[0]["text"] == TypedDictFactory.text
+    assert upper.nested_field["text"] == TDFactory.text
+    assert upper.nested_list_field[0]["text"] == TDFactory.text

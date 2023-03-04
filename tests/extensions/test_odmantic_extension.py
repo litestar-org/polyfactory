@@ -1,14 +1,10 @@
-from typing import List
+from typing import Any, List
 from uuid import UUID
 
 import pytest
+from odmantic import AIOEngine, EmbeddedModel, Model
 
-try:
-    from odmantic import AIOEngine, EmbeddedModel, Model
-
-    from pydantic_factories.extensions.odmantic_odm import OdmanticModelFactory
-except ImportError:
-    pytest.skip(allow_module_level=True)
+from polyfactory.factories.odmantic_odm_factory import OdmanticModelFactory
 
 
 class OtherEmbeddedDocument(EmbeddedModel):
@@ -29,8 +25,8 @@ class MyModel(Model):
 
 
 @pytest.fixture()
-async def odmantic_engine(mongo_connection) -> AIOEngine:
-    return AIOEngine(motor_client=mongo_connection, database=mongo_connection.db_name)
+async def odmantic_engine(mongo_connection: Any) -> AIOEngine:
+    return AIOEngine(client=mongo_connection, database=mongo_connection.db_name)
 
 
 def test_handles_odmantic_models() -> None:

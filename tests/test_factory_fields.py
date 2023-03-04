@@ -5,9 +5,9 @@ from typing import Any, Optional
 import pytest
 from pydantic import BaseModel
 
-from pydantic_factories import ModelFactory, Use
-from pydantic_factories.exceptions import MissingBuildKwargError
-from pydantic_factories.fields import Ignore, PostGenerated, Require
+from polyfactory.exceptions import MissingBuildKwargError
+from polyfactory.factories.pydantic_factory import ModelFactory
+from polyfactory.fields import Ignore, PostGenerated, Require, Use
 
 
 def test_use() -> None:

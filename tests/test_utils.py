@@ -7,12 +7,11 @@ from hypothesis import given
 from hypothesis.strategies import decimals, floats, integers
 from pydantic import BaseModel
 
-from pydantic_factories.factory import ModelFactory
-from pydantic_factories.utils import (
+from polyfactory.factories.pydantic_factory import ModelFactory
+from polyfactory.utils.helpers import unwrap_new_type
+from polyfactory.utils.predicates import is_new_type, is_union
+from polyfactory.value_generators.constrained_numbers import (
     is_multiply_of_multiple_of_in_range,
-    is_new_type,
-    is_union,
-    unwrap_new_type_if_needed,
 )
 
 
@@ -24,11 +23,11 @@ def test_is_union() -> None:
     class UnionTestFactory(ModelFactory):
         __model__ = UnionTest
 
-    for field_name, model_field in UnionTestFactory.get_model_fields(UnionTestFactory._get_model()):
-        if field_name == "union":
-            assert is_union(model_field)
+    for field_meta in UnionTestFactory.get_model_fields():
+        if field_meta.name == "union":
+            assert is_union(field_meta.annotation)
         else:
-            assert not is_union(model_field)
+            assert not is_union(field_meta.annotation)
 
     # for python 3.10 we need to run the test as well with the union_pipe operator
     if sys.version_info >= (3, 10):
@@ -41,17 +40,15 @@ def test_is_union() -> None:
         class UnionTestWithPipeFactory(ModelFactory):
             __model__ = UnionTestWithPipe
 
-        for field_name, model_field in UnionTestWithPipeFactory.get_model_fields(UnionTestWithPipeFactory._get_model()):
-            if field_name in ("union_pipe", "union_normal"):
-                assert is_union(model_field)
+        for field_meta in UnionTestWithPipeFactory.get_model_fields():
+            if field_meta.name in ("union_pipe", "union_normal"):
+                assert is_union(field_meta.annotation)
             else:
-                assert not is_union(model_field)
+                assert not is_union(field_meta.annotation)
 
 
 def test_is_new_type() -> None:
-    MyInt = NewType("MyInt", int)
-
-    assert is_new_type(MyInt)
+    assert is_new_type(NewType("MyInt", int))
     assert not is_new_type(int)
 
 
@@ -59,13 +56,13 @@ def test_unwrap_new_type_is_needed() -> None:
     MyInt = NewType("MyInt", int)
     WrappedInt = NewType("WrappedInt", MyInt)
 
-    assert unwrap_new_type_if_needed(MyInt) is int
-    assert unwrap_new_type_if_needed(WrappedInt) is int
-    assert unwrap_new_type_if_needed(int) is int
+    assert unwrap_new_type(MyInt) is int
+    assert unwrap_new_type(WrappedInt) is int
+    assert unwrap_new_type(int) is int
 
 
 def test_is_multiply_of_multiple_of_in_range_extreme_cases() -> None:
-    assert is_multiply_of_multiple_of_in_range(minimum=None, maximum=10.0, multiple_of=20.0)
+    assert is_multiply_of_multiple_of_in_range(minimum=0.0, maximum=10.0, multiple_of=20.0)
     assert not is_multiply_of_multiple_of_in_range(minimum=5.0, maximum=10.0, multiple_of=20.0)
 
     assert is_multiply_of_multiple_of_in_range(minimum=1.0, maximum=1.0, multiple_of=0.33333333333)
@@ -77,7 +74,7 @@ def test_is_multiply_of_multiple_of_in_range_extreme_cases() -> None:
     assert is_multiply_of_multiple_of_in_range(minimum=5, maximum=5, multiple_of=5)
 
     # while multiple_of=0.0 leads to ZeroDivision exception in pydantic
-    # it can handle values close to zero properly so we should support this too
+    # it can handle values close to zero properly, so we should support this too
     assert is_multiply_of_multiple_of_in_range(minimum=10.0, maximum=20.0, multiple_of=1e-10)
     # test corner case found by peterschutt
     assert not is_multiply_of_multiple_of_in_range(

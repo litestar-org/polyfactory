@@ -4,7 +4,7 @@ from uuid import uuid4
 
 from pydantic import UUID4, BaseModel
 
-from pydantic_factories import ModelFactory
+from polyfactory.factories.pydantic_factory import ModelFactory
 
 
 class Pet(BaseModel):

@@ -1,20 +1,20 @@
 [tool.poetry]
-name = "pydantic-factories"
+name = "polyfactory"
 version = "1.17.2"
 description = "Mock data generation for pydantic based models and python dataclasses"
 authors = ["Na'aman Hirschfeld <nhirschfeld@gmail.com>"]
 maintainers = [
-  "Na'aman Hirschfeld <nhirschfeld@gmail.com>",
-  "Peter Schutt <peter.github@proton.me>",
-  "Cody Fincher <cody.fincher@gmail.com>",
-  "Janek Nouvertné <provinzkraut@posteo.de>",
-  "Konstantin Mikhailov <konstantin.mikhailov@proton.me>"
+    "Na'aman Hirschfeld <nhirschfeld@gmail.com>",
+    "Peter Schutt <peter.github@proton.me>",
+    "Cody Fincher <cody.fincher@gmail.com>",
+    "Janek Nouvertné <provinzkraut@posteo.de>",
+    "Konstantin Mikhailov <konstantin.mikhailov@proton.me>"
 ]
 license = "MIT"
 readme = "README.md"
-homepage = "https://github.com/starlite-api/pydantic-factories"
-repository = "https://github.com/starlite-api/pydantic-factories"
-documentation = "https://github.com/starlite-api/pydantic-factories"
+homepage = "https://github.com/starlite-api/polyfactory"
+repository = "https://github.com/starlite-api/polyfactory"
+documentation = "https://github.com/starlite-api/polyfactory"
 keywords = [
     "dataclasses",
     "factory",
@@ -47,22 +47,33 @@ classifiers = [
 ]
 include = ["CHANGELOG.md"]
 packages = [
-    { include = "pydantic_factories" },
+    { include = "polyfactory" },
 ]
 
 [tool.poetry.dependencies]
 python = ">=3.8,<4.0"
+beanie = { version = "*", optional = true, extras = ["beanie"] }
 faker = "*"
-pydantic = ">=1.10.0"
+odmantic = { version = "*", optional = true, extras = ["odmantic"] }
+pydantic = { version = "*", optional = true, extras = ["pydantic", "odmantic", "beanie"] }
 typing-extensions = "*"
 
 [tool.poetry.group.dev.dependencies]
+beanie = "*"
 email-validator = "*"
 hypothesis = "*"
+odmantic = "*"
 pre-commit = "*"
+pydantic = "*"
 pytest = "*"
 pytest-asyncio = "*"
 pytest-cov = "*"
+mongomock-motor = "^0.0.17"
+
+[tool.poetry.extras]
+pydantic = ["pydantic"]
+odmantic = ["odmantic", "pydantic"]
+beanie = ["beanie", "pydantic"]
 
 [build-system]
 requires = ["poetry-core>=1.0.0"]
@@ -121,6 +132,7 @@ exclude_lines = [
     'pragma: no cover',
     'if TYPE_CHECKING:',
     'except ImportError:',
+    'except ImportError as e:',
     '\.\.\.'
 ]
 

@@ -3,11 +3,8 @@ from typing import Any
 import pytest
 from pydantic import BaseModel
 
-from pydantic_factories import (
-    AsyncPersistenceProtocol,
-    ModelFactory,
-    SyncPersistenceProtocol,
-)
+from polyfactory import AsyncPersistenceProtocol, SyncPersistenceProtocol
+from polyfactory.factories.pydantic_factory import ModelFactory
 
 
 class MyModel(BaseModel):
