@@ -10,7 +10,7 @@ from typing import (
     Union,
 )
 
-from polyfactory.exceptions import ParameterError
+from polyfactory.exceptions import ParameterException
 
 if TYPE_CHECKING:
     from polyfactory.factories.base import BaseFactory
@@ -43,7 +43,7 @@ def handle_constrained_collection(
     max_items = max_items if max_items is not None else min_items + 1
 
     if max_items < min_items:
-        raise ParameterError("max_items must be larger or equal to min_items")
+        raise ParameterException("max_items must be larger or equal to min_items")
 
     collection: Union[Set[T], List[T]] = set() if collection_type in (frozenset, set) or unique_items else []
 
@@ -56,4 +56,4 @@ def handle_constrained_collection(
                 collection.append(value)
         return collection_type(collection)
     except TypeError as e:
-        raise ParameterError(f"cannot generate a constrained collection of type: {item_type}") from e
+        raise ParameterException(f"cannot generate a constrained collection of type: {item_type}") from e

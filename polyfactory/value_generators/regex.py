@@ -80,6 +80,8 @@ _categories = {
 
 
 class RegexFactory:
+    """Factory for regexes."""
+
     def __init__(self, random: "Random", limit: int = 10) -> None:
         self._limit = limit
         self._cache: Dict[str, Any] = {}

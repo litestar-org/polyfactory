@@ -12,6 +12,7 @@ from typing import (
     Tuple,
 )
 
+# Mapping of type annotations into concrete types. This is used to normalize python <= 3.9 annotations.
 TYPE_MAPPING = {
     DefaultDict: defaultdict,
     Deque: deque,

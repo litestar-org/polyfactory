@@ -13,7 +13,7 @@ from typing import (
     cast,
 )
 
-from polyfactory.exceptions import MissingExtensionDependency
+from polyfactory.exceptions import MissingDependencyException
 from polyfactory.factories.base import BaseFactory
 from polyfactory.field_meta import FieldMeta, Null
 from polyfactory.utils.helpers import unwrap_new_type
@@ -46,7 +46,7 @@ try:
     )
     from pydantic.fields import DeferredType, ModelField, Undefined
 except ImportError as e:
-    raise MissingExtensionDependency("pydantic is not installed") from e
+    raise MissingDependencyException("pydantic is not installed") from e
 
 
 if TYPE_CHECKING:

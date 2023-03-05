@@ -2,7 +2,7 @@ from typing import Any, Callable, Dict, Generic, Optional, TypeVar, cast
 
 from typing_extensions import ParamSpec, TypedDict
 
-from polyfactory.exceptions import ParameterError
+from polyfactory.exceptions import ParameterException
 from polyfactory.pytest_plugin import FactoryFixture
 
 T = TypeVar("T")
@@ -14,18 +14,17 @@ class WrappedCallable(TypedDict):
 
 
 class Require:
-    """A placeholder class used to mark a given factory attribute as a required build-time kwarg."""
+    """A factory field that marks an attribute as a required build-time kwarg."""
 
 
 class Ignore:
-    """A placeholder class used to mark a given factory attribute as ignored."""
+    """A factory field that marks an attribute as ignored."""
 
 
 class Use(Generic[P, T]):
     """Factory field used to wrap a callable.
 
-    The callable will be invoked whenever building the given factory
-        attribute.
+    The callable will be invoked whenever building the given factory attribute.
     """
 
     __slots__ = ("fn", "kwargs", "args")
@@ -95,7 +94,7 @@ class Fixture:
     def to_value(self) -> Any:
         """Calls the factory's build or batch methodsmethod either its build method - or if size is given, batch.
 
-        :raises: ParameterError
+        :raises: ParameterException
         :return: The build result.
         """
 
@@ -104,4 +103,4 @@ class Fixture:
                 return factory.batch(self.size, **self.kwargs)
             return factory.build(**self.kwargs)
 
-        raise ParameterError("fixture has not been registered using the register_factory decorator")
+        raise ParameterException("fixture has not been registered using the register_factory decorator")

@@ -7,7 +7,7 @@ from hypothesis import given
 from hypothesis.strategies import decimals, integers
 from pydantic import BaseModel, ConstrainedDecimal, condecimal
 
-from polyfactory.exceptions import ParameterError
+from polyfactory.exceptions import ParameterException
 from polyfactory.factories.pydantic_factory import ModelFactory
 from polyfactory.value_generators.constrained_numbers import (
     handle_constrained_decimal,
@@ -53,7 +53,7 @@ def test_handle_constrained_decimal_without_constraints() -> None:
 
 
 def test_handle_constrained_decimal_length_validation() -> None:
-    with pytest.raises(ParameterError):
+    with pytest.raises(ParameterException):
         constrained_field = create_constrained_field(max_digits=2, ge=Decimal("100.000"))
         handle_constrained_decimal(
             random=Random(),
@@ -83,7 +83,7 @@ def test_handle_constrained_decimal_handles_max_digits(max_digits: int) -> None:
         )
         assert len(result.as_tuple().digits) - abs(cast("int", result.as_tuple().exponent)) <= max_digits
     else:
-        with pytest.raises(ParameterError):
+        with pytest.raises(ParameterException):
             constrained_field = create_constrained_field(max_digits=max_digits)
             handle_constrained_decimal(
                 random=Random(),
@@ -129,7 +129,7 @@ def test_handle_constrained_decimal_handles_max_digits_and_decimal_places(max_di
         )
         assert len(result.as_tuple().digits) - abs(cast("int", result.as_tuple().exponent)) <= max_digits
     else:
-        with pytest.raises(ParameterError):
+        with pytest.raises(ParameterException):
             constrained_field = create_constrained_field(max_digits=max_digits, decimal_places=decimal_places)
             handle_constrained_decimal(
                 random=Random(),
@@ -143,7 +143,14 @@ def test_handle_constrained_decimal_handles_max_digits_and_decimal_places(max_di
             )
 
 
-@given(decimals(allow_nan=False, allow_infinity=False, min_value=-1000000000, max_value=1000000000))
+@given(
+    decimals(
+        allow_nan=False,
+        allow_infinity=False,
+        min_value=-1000000000,
+        max_value=1000000000,
+    )
+)
 def test_handle_constrained_decimal_handles_ge(minimum: Decimal) -> None:
     constrained_field = create_constrained_field(ge=minimum)
     result = handle_constrained_decimal(
@@ -159,7 +166,14 @@ def test_handle_constrained_decimal_handles_ge(minimum: Decimal) -> None:
     assert result >= minimum
 
 
-@given(decimals(allow_nan=False, allow_infinity=False, min_value=-1000000000, max_value=1000000000))
+@given(
+    decimals(
+        allow_nan=False,
+        allow_infinity=False,
+        min_value=-1000000000,
+        max_value=1000000000,
+    )
+)
 def test_handle_constrained_decimal_handles_gt(minimum: Decimal) -> None:
     constrained_field = create_constrained_field(gt=minimum)
     result = handle_constrained_decimal(
@@ -175,7 +189,14 @@ def test_handle_constrained_decimal_handles_gt(minimum: Decimal) -> None:
     assert result > minimum
 
 
-@given(decimals(allow_nan=False, allow_infinity=False, min_value=-1000000000, max_value=1000000000))
+@given(
+    decimals(
+        allow_nan=False,
+        allow_infinity=False,
+        min_value=-1000000000,
+        max_value=1000000000,
+    )
+)
 def test_handle_constrained_decimal_handles_le(maximum: Decimal) -> None:
     constrained_field = create_constrained_field(le=maximum)
     result = handle_constrained_decimal(
@@ -191,7 +212,14 @@ def test_handle_constrained_decimal_handles_le(maximum: Decimal) -> None:
     assert result <= maximum
 
 
-@given(decimals(allow_nan=False, allow_infinity=False, min_value=-1000000000, max_value=1000000000))
+@given(
+    decimals(
+        allow_nan=False,
+        allow_infinity=False,
+        min_value=-1000000000,
+        max_value=1000000000,
+    )
+)
 def test_handle_constrained_decimal_handles_lt(maximum: Decimal) -> None:
     constrained_field = create_constrained_field(lt=maximum)
     result = handle_constrained_decimal(
@@ -207,7 +235,14 @@ def test_handle_constrained_decimal_handles_lt(maximum: Decimal) -> None:
     assert result < maximum
 
 
-@given(decimals(allow_nan=False, allow_infinity=False, min_value=-1000000000, max_value=1000000000))
+@given(
+    decimals(
+        allow_nan=False,
+        allow_infinity=False,
+        min_value=-1000000000,
+        max_value=1000000000,
+    )
+)
 def test_handle_constrained_decimal_handles_multiple_of(multiple_of: Decimal) -> None:
     if multiple_of != Decimal("0"):
         constrained_field = create_constrained_field(multiple_of=multiple_of)
@@ -223,7 +258,7 @@ def test_handle_constrained_decimal_handles_multiple_of(multiple_of: Decimal) ->
         )
         assert passes_pydantic_multiple_validator(result, multiple_of)
     else:
-        with pytest.raises(ParameterError):
+        with pytest.raises(ParameterException):
             constrained_field = create_constrained_field(multiple_of=multiple_of)
             handle_constrained_decimal(
                 random=Random(),
@@ -238,8 +273,18 @@ def test_handle_constrained_decimal_handles_multiple_of(multiple_of: Decimal) ->
 
 
 @given(
-    decimals(allow_nan=False, allow_infinity=False, min_value=-1000000000, max_value=1000000000),
-    decimals(allow_nan=False, allow_infinity=False, min_value=-1000000000, max_value=1000000000),
+    decimals(
+        allow_nan=False,
+        allow_infinity=False,
+        min_value=-1000000000,
+        max_value=1000000000,
+    ),
+    decimals(
+        allow_nan=False,
+        allow_infinity=False,
+        min_value=-1000000000,
+        max_value=1000000000,
+    ),
 )
 def test_handle_constrained_decimal_handles_multiple_of_with_lt(val1: Decimal, val2: Decimal) -> None:
     multiple_of, max_value = sorted([val1, val2])
@@ -257,7 +302,7 @@ def test_handle_constrained_decimal_handles_multiple_of_with_lt(val1: Decimal, v
         )
         assert passes_pydantic_multiple_validator(result, multiple_of)
     else:
-        with pytest.raises(ParameterError):
+        with pytest.raises(ParameterException):
             constrained_field = create_constrained_field(multiple_of=multiple_of, lt=max_value)
             handle_constrained_decimal(
                 random=Random(),
@@ -272,8 +317,18 @@ def test_handle_constrained_decimal_handles_multiple_of_with_lt(val1: Decimal, v
 
 
 @given(
-    decimals(allow_nan=False, allow_infinity=False, min_value=-1000000000, max_value=1000000000),
-    decimals(allow_nan=False, allow_infinity=False, min_value=-1000000000, max_value=1000000000),
+    decimals(
+        allow_nan=False,
+        allow_infinity=False,
+        min_value=-1000000000,
+        max_value=1000000000,
+    ),
+    decimals(
+        allow_nan=False,
+        allow_infinity=False,
+        min_value=-1000000000,
+        max_value=1000000000,
+    ),
 )
 def test_handle_constrained_decimal_handles_multiple_of_with_le(val1: Decimal, val2: Decimal) -> None:
     multiple_of, max_value = sorted([val1, val2])
@@ -291,7 +346,7 @@ def test_handle_constrained_decimal_handles_multiple_of_with_le(val1: Decimal, v
         )
         assert passes_pydantic_multiple_validator(result, multiple_of)
     else:
-        with pytest.raises(ParameterError):
+        with pytest.raises(ParameterException):
             constrained_field = create_constrained_field(multiple_of=multiple_of, le=max_value)
             handle_constrained_decimal(
                 random=Random(),
@@ -306,8 +361,18 @@ def test_handle_constrained_decimal_handles_multiple_of_with_le(val1: Decimal, v
 
 
 @given(
-    decimals(allow_nan=False, allow_infinity=False, min_value=-1000000000, max_value=1000000000),
-    decimals(allow_nan=False, allow_infinity=False, min_value=-1000000000, max_value=1000000000),
+    decimals(
+        allow_nan=False,
+        allow_infinity=False,
+        min_value=-1000000000,
+        max_value=1000000000,
+    ),
+    decimals(
+        allow_nan=False,
+        allow_infinity=False,
+        min_value=-1000000000,
+        max_value=1000000000,
+    ),
 )
 def test_handle_constrained_decimal_handles_multiple_of_with_ge(val1: Decimal, val2: Decimal) -> None:
     min_value, multiple_of = sorted([val1, val2])
@@ -325,7 +390,7 @@ def test_handle_constrained_decimal_handles_multiple_of_with_ge(val1: Decimal, v
         )
         assert passes_pydantic_multiple_validator(result, multiple_of)
     else:
-        with pytest.raises(ParameterError):
+        with pytest.raises(ParameterException):
             constrained_field = create_constrained_field(multiple_of=multiple_of, ge=min_value)
             handle_constrained_decimal(
                 random=Random(),
@@ -340,8 +405,18 @@ def test_handle_constrained_decimal_handles_multiple_of_with_ge(val1: Decimal, v
 
 
 @given(
-    decimals(allow_nan=False, allow_infinity=False, min_value=-1000000000, max_value=1000000000),
-    decimals(allow_nan=False, allow_infinity=False, min_value=-1000000000, max_value=1000000000),
+    decimals(
+        allow_nan=False,
+        allow_infinity=False,
+        min_value=-1000000000,
+        max_value=1000000000,
+    ),
+    decimals(
+        allow_nan=False,
+        allow_infinity=False,
+        min_value=-1000000000,
+        max_value=1000000000,
+    ),
 )
 def test_handle_constrained_decimal_handles_multiple_of_with_gt(val1: Decimal, val2: Decimal) -> None:
     min_value, multiple_of = sorted([val1, val2])
@@ -359,7 +434,7 @@ def test_handle_constrained_decimal_handles_multiple_of_with_gt(val1: Decimal, v
         )
         assert passes_pydantic_multiple_validator(result, multiple_of)
     else:
-        with pytest.raises(ParameterError):
+        with pytest.raises(ParameterException):
             constrained_field = create_constrained_field(multiple_of=multiple_of, gt=min_value)
             handle_constrained_decimal(
                 random=Random(),
@@ -374,9 +449,24 @@ def test_handle_constrained_decimal_handles_multiple_of_with_gt(val1: Decimal, v
 
 
 @given(
-    decimals(allow_nan=False, allow_infinity=False, min_value=-1000000000, max_value=1000000000),
-    decimals(allow_nan=False, allow_infinity=False, min_value=-1000000000, max_value=1000000000),
-    decimals(allow_nan=False, allow_infinity=False, min_value=-1000000000, max_value=1000000000),
+    decimals(
+        allow_nan=False,
+        allow_infinity=False,
+        min_value=-1000000000,
+        max_value=1000000000,
+    ),
+    decimals(
+        allow_nan=False,
+        allow_infinity=False,
+        min_value=-1000000000,
+        max_value=1000000000,
+    ),
+    decimals(
+        allow_nan=False,
+        allow_infinity=False,
+        min_value=-1000000000,
+        max_value=1000000000,
+    ),
 )
 def test_handle_constrained_decimal_handles_multiple_of_with_ge_and_le(
     val1: Decimal, val2: Decimal, val3: Decimal
@@ -398,7 +488,7 @@ def test_handle_constrained_decimal_handles_multiple_of_with_ge_and_le(
         )
         assert passes_pydantic_multiple_validator(result, multiple_of)
     else:
-        with pytest.raises(ParameterError):
+        with pytest.raises(ParameterException):
             constrained_field = create_constrained_field(multiple_of=multiple_of, ge=min_value, le=max_value)
             handle_constrained_decimal(
                 random=Random(),

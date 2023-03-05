@@ -1,5 +1,4 @@
 import re
-from inspect import isclass
 from typing import (
     TYPE_CHECKING,
     Any,
@@ -14,7 +13,7 @@ from typing import (
 
 from pytest import fixture
 
-from polyfactory.exceptions import ParameterError
+from polyfactory.exceptions import ParameterException
 
 if TYPE_CHECKING:
     from pytest import Config  # nopycln: import
@@ -41,6 +40,8 @@ def _get_fixture_name(name: str) -> str:
 
 
 class FactoryFixture:
+    """Decorator that creates a pytest fixture from a factory"""
+
     __slots__ = ("scope", "autouse", "name")
 
     factory_class_map: ClassVar[Dict[Callable, Type["BaseFactory"]]] = {}
@@ -51,18 +52,21 @@ class FactoryFixture:
         autouse: bool = False,
         name: Optional[str] = None,
     ):
+        """Create a factory fixture decorator
+
+        :param scope: Fixture scope
+        :param autouse: Autouse the fixture
+        :param name: Fixture name
+        """
         self.scope = scope
         self.autouse = autouse
         self.name = name
 
     def __call__(self, factory: Type["BaseFactory"]) -> Any:
-        from polyfactory.factories.base import BaseFactory
+        from polyfactory.factories.base import is_factory
 
-        if not isclass(factory):
-            raise ParameterError(f"{factory.__name__} is not a class.")
-
-        if not issubclass(factory, BaseFactory):
-            raise ParameterError(f"{factory.__name__} is not a BaseFactory subclass.")
+        if not is_factory(factory):
+            raise ParameterException(f"{factory.__name__} is not a BaseFactory subclass.")
 
         fixture_name = self.name or _get_fixture_name(factory.__name__)
         fixture_register = fixture(scope=self.scope, name=fixture_name, autouse=self.autouse)  # pyright: ignore
@@ -85,14 +89,13 @@ def register_fixture(
 ) -> Any:
     """A decorator that allows registering model factories as fixtures.
 
-    Args:
-        factory: An optional factory class to decorate.
-        scope: Pytest scope.
-        autouse: Auto use fixture.
-        name: Fixture name.
 
-    Returns:
-        A fixture factory instance.
+    :param factory: An optional factory class to decorate.
+    :param scope: Pytest scope.
+    :param autouse: Auto use fixture.
+    :param name: Fixture name.
+
+    :return: A fixture factory instance.
     """
     factory_fixture = FactoryFixture(scope=scope, autouse=autouse, name=name)
     return factory_fixture(factory) if factory else factory_fixture

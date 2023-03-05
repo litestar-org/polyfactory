@@ -18,7 +18,7 @@ from ipaddress import (
 from math import nan
 from os.path import realpath
 from pathlib import Path
-from random import Random, choice, randint, uniform
+from random import Random
 from typing import _TypedDictMeta  # type: ignore
 from typing import (
     TYPE_CHECKING,
@@ -43,13 +43,13 @@ from faker import Faker
 from typing_extensions import get_args, is_typeddict
 
 from polyfactory.exceptions import (
-    ConfigurationError,
-    MissingBuildKwargError,
-    ParameterError,
+    ConfigurationException,
+    MissingBuildKwargException,
+    ParameterException,
 )
 from polyfactory.field_meta import FieldMeta, Null
 from polyfactory.fields import Fixture, Ignore, PostGenerated, Require, Use
-from polyfactory.protocols import AsyncPersistenceProtocol, SyncPersistenceProtocol
+from polyfactory.persistence import AsyncPersistenceProtocol, SyncPersistenceProtocol
 from polyfactory.utils.helpers import unwrap_annotation, unwrap_args, unwrap_optional
 from polyfactory.utils.predicates import (
     get_type_origin,
@@ -196,15 +196,17 @@ class BaseFactory(ABC, Generic[T]):
         if "__is_base_factory__" not in cls.__dict__ or not cls.__is_base_factory__:
             model = getattr(cls, "__model__", None)
             if not model:
-                raise ConfigurationError(f"required configuration attribute '__model__' is not set on {cls.__name__}")
+                raise ConfigurationException(
+                    f"required configuration attribute '__model__' is not set on {cls.__name__}"
+                )
             if not cls.is_supported_type(model):
                 for factory in BaseFactory._base_factories:
                     if factory.is_supported_type(model):
-                        raise ConfigurationError(
+                        raise ConfigurationException(
                             f"{cls.__name__} does not support {model.__name__}, but this type is support by the {factory.__name__} base factory class. T"
                             f"o resolve this error, subclass the factory from {factory.__name__} instead of {cls.__name__}"
                         )
-                    raise ConfigurationError(
+                    raise ConfigurationException(
                         "Model type {model.__name__} is not supported. "
                         "To support it, register an appropriate base factory and subclass it for your factory."
                     )
@@ -220,25 +222,29 @@ class BaseFactory(ABC, Generic[T]):
 
     @classmethod
     def _get_sync_persistence(cls) -> SyncPersistenceProtocol[T]:
-        """Return a SyncPersistenceHandler if defined for the factory, otherwise raises a ConfigurationError.
+        """Return a SyncPersistenceHandler if defined for the factory, otherwise raises a ConfigurationException.
 
-        :raises: ConfigurationError
+        :raises: ConfigurationException
         :return: SyncPersistenceHandler
         """
         if cls.__sync_persistence__:
             return cls.__sync_persistence__() if callable(cls.__sync_persistence__) else cls.__sync_persistence__
-        raise ConfigurationError("A '__sync_persistence__' handler must be defined in the factory to use this method")
+        raise ConfigurationException(
+            "A '__sync_persistence__' handler must be defined in the factory to use this method"
+        )
 
     @classmethod
     def _get_async_persistence(cls) -> AsyncPersistenceProtocol[T]:
-        """Return a AsyncPersistenceHandler if defined for the factory, otherwise raises a ConfigurationError.
+        """Return a AsyncPersistenceHandler if defined for the factory, otherwise raises a ConfigurationException.
 
-        :raises: ConfigurationError
+        :raises: ConfigurationException
         :return: AsyncPersistenceHandler
         """
         if cls.__async_persistence__:
             return cls.__async_persistence__() if callable(cls.__async_persistence__) else cls.__async_persistence__
-        raise ConfigurationError("An '__async_persistence__' handler must be defined in the factory to use this method")
+        raise ConfigurationException(
+            "An '__async_persistence__' handler must be defined in the factory to use this method"
+        )
 
     @classmethod
     def _handle_factory_field(cls, field_value: Any, field_build_parameters: Optional[Any] = None) -> Any:
@@ -288,7 +294,7 @@ class BaseFactory(ABC, Generic[T]):
             if factory.is_supported_type(model):
                 return factory.create_factory(model)
 
-        raise ParameterError(f"unsupported model type {model.__name__}")  # pragma: no cover
+        raise ParameterException(f"unsupported model type {model.__name__}")  # pragma: no cover
 
     # Public Methods
 
@@ -432,10 +438,10 @@ class BaseFactory(ABC, Generic[T]):
             ByteSize: faker.pyint,
             PositiveInt: faker.pyint,
             FilePath: create_path,
-            NegativeFloat: lambda: uniform(-100, -1),
+            NegativeFloat: lambda: cls.__random__.uniform(-100, -1),
             NegativeInt: lambda: faker.pyint() * -1,
             PositiveFloat: faker.pyint,
-            NonPositiveFloat: lambda: uniform(-100, 0),
+            NonPositiveFloat: lambda: cls.__random__.uniform(-100, 0),
             NonNegativeInt: faker.pyint,
             StrictInt: faker.pyint,
             StrictBool: faker.pybool,
@@ -490,7 +496,7 @@ class BaseFactory(ABC, Generic[T]):
             with suppress(Exception):
                 return annotation()
 
-        raise ParameterError(
+        raise ParameterException(
             f"Unsupported type: {annotation!r}"
             f"\n\nEither extend the providers map or add a factory function for this type."
         )
@@ -548,10 +554,10 @@ class BaseFactory(ABC, Generic[T]):
         unwrapped_annotation = unwrap_annotation(field_meta.annotation)
 
         if is_literal(annotation=unwrapped_annotation) and (literal_args := get_args(unwrapped_annotation)):
-            return choice(literal_args)
+            return cls.__random__.choice(literal_args)
 
         if isinstance(unwrapped_annotation, EnumMeta):
-            return choice(list(unwrapped_annotation))  # pyright: ignore
+            return cls.__random__.choice(list(unwrapped_annotation))  # pyright: ignore
 
         if BaseFactory.is_factory_type(annotation=unwrapped_annotation):
             return cls._get_or_create_factory(model=unwrapped_annotation).build(
@@ -562,7 +568,7 @@ class BaseFactory(ABC, Generic[T]):
             factory = cls._get_or_create_factory(model=field_meta.type_args[0])
             if isinstance(field_build_parameters, Sequence):
                 return [factory.build(**field_parameters) for field_parameters in field_build_parameters]
-            return factory.batch(size=randint(1, 10))
+            return factory.batch(size=cls.__random__.randint(1, 10))
 
         if field_meta.children:
             return handle_complex_type(field_meta=field_meta, factory=cls)
@@ -634,7 +640,7 @@ class BaseFactory(ABC, Generic[T]):
                         continue
 
                     if isinstance(field_value, Require) and field_meta.name not in kwargs:
-                        raise MissingBuildKwargError(f"Require kwarg {field_meta.name} is missing")
+                        raise MissingBuildKwargException(f"Require kwarg {field_meta.name} is missing")
 
                     if isinstance(field_value, PostGenerated):
                         generate_post[field_meta.name] = field_value
