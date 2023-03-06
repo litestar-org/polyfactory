@@ -45,7 +45,7 @@ class Use(Generic[P, T]):
         self.args = args
 
     def to_value(self) -> T:
-        """Invokes the callable.
+        """Invoke the callable.
 
         :returns: The output of the callable.
 
@@ -98,7 +98,7 @@ class Fixture:
         self.kwargs = kwargs
 
     def to_value(self) -> Any:
-        """Calls the factory's build or batch method.
+        """Call the factory's build or batch method.
 
         :raises: ParameterException
 

@@ -9,7 +9,7 @@ from polyfactory.utils.predicates import (
 
 
 def unwrap_new_type(annotation: Any) -> Any:
-    """Returns base type if given annotation is a type derived with NewType, otherwise annotation.
+    """Return base type if given annotation is a type derived with NewType, otherwise annotation.
 
     :param annotation: A type annotation, possibly one created using 'types.NewType'
 
@@ -66,7 +66,7 @@ def unwrap_annotation(annotation: Any) -> Any:
 
 
 def unwrap_args(annotation: Any) -> Tuple[Any, ...]:
-    """
+    """Unwrap the annotation and return any type args.
 
     :param annotation: A type annotation
 

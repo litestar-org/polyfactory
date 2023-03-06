@@ -58,7 +58,7 @@ T = TypeVar("T", bound=BaseModel)
 
 
 def is_pydantic_model(value: Any) -> "TypeGuard[Type[BaseModel]]":
-    """A function to determine if a given value is a subclass of BaseModel.
+    """Determine whether the given value is a subclass of BaseModel.
 
     :param value: A value to test.
 
@@ -134,7 +134,7 @@ class ModelFactory(Generic[T], BaseFactory[T]):
 
     @classmethod
     def get_field_value(cls, field_meta: "FieldMeta", field_build_parameters: Optional[Any] = None) -> Any:
-        """Returns a field value on the subclass if existing, otherwise returns a mock value.
+        """Return a field value on the subclass if existing, otherwise returns a mock value.
 
         :param field_meta: Field metadata.
         :param field_build_parameters: Any build parameters passed to the factory as kwarg values.
@@ -236,7 +236,7 @@ class ModelFactory(Generic[T], BaseFactory[T]):
 
     @classmethod
     def build(cls, factory_use_construct: bool = False, **kwargs: Any) -> T:
-        """builds an instance of the factory's __model__
+        """Build an instance of the factory's __model__
 
         :param factory_use_construct: A boolean that determines whether validations will be made when instantiating the
                 model. This is supported only for pydantic models.

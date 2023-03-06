@@ -24,11 +24,11 @@ class BeaniePersistenceHandler(Generic[T], AsyncPersistenceProtocol[T]):
     """Persistence Handler using beanie logic"""
 
     async def save(self, data: T) -> T:
-        """Persists a single instance in mongoDB."""
+        """Persist a single instance in mongoDB."""
         return await data.insert()  # type: ignore
 
     async def save_many(self, data: List[T]) -> List[T]:
-        """Persists multiple instances in mongoDB.
+        """Persist multiple instances in mongoDB.
 
         Note: we cannot use the .insert_many method from Beanie here because it doesn't return the created instances
         """
@@ -55,7 +55,7 @@ class BeanieDocumentFactory(Generic[T], ModelFactory[T]):
 
     @classmethod
     def get_field_value(cls, field_meta: "FieldMeta", field_build_parameters: Optional[Any] = None) -> Any:
-        """Returns a field value on the subclass if existing, otherwise returns a mock value.
+        """Return a field value on the subclass if existing, otherwise returns a mock value.
 
         :param field_meta: FieldMeta instance.
         :param field_build_parameters: Any build parameters passed to the factory as kwarg values.

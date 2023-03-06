@@ -1,3 +1,4 @@
+# pylint: disable=unnecessary-ellipsis
 from decimal import Decimal
 from sys import float_info
 from typing import (
@@ -30,6 +31,13 @@ class NumberGeneratorProtocol(Protocol[T]):
     """Protocol for custom callables used to generate numerical values"""
 
     def __call__(self, random: "Random", minimum: Optional[T] = None, maximum: Optional[T] = None) -> T:
+        """Signature of the callable.
+
+        :param random: An instance of random.
+        :param minimum: A minimum value.
+        :param maximum: A maximum value.
+        :return: The generated numeric value.
+        """
         ...
 
 
@@ -50,7 +58,7 @@ def is_multiply_of_multiple_of_in_range(
     maximum: T,
     multiple_of: T,
 ) -> bool:
-    """Determines if at least one multiply of `multiple_of` lies in the given range.
+    """Determine if at least one multiply of `multiple_of` lies in the given range.
 
     :param minimum: T: A minimum value.
     :param maximum: T: A maximum value.
@@ -109,7 +117,7 @@ def is_multiply_of_multiple_of_in_range(
 
 
 def passes_pydantic_multiple_validator(value: T, multiple_of: T) -> bool:
-    """A function that determines whether a given value passes the pydantic multiple_of validation.
+    """Determine whether a given value passes the pydantic multiple_of validation.
 
     :param value: A numeric value.
     :param multiple_of: Another numeric value.
@@ -124,7 +132,7 @@ def passes_pydantic_multiple_validator(value: T, multiple_of: T) -> bool:
 
 
 def get_increment(t_type: Type[T]) -> T:
-    """Gets a small increment base to add to constrained values, i.e. lt/gt entries.
+    """Get a small increment base to add to constrained values, i.e. lt/gt entries.
 
     :param t_type: A value of type T.
 
@@ -139,8 +147,7 @@ def get_increment(t_type: Type[T]) -> T:
 
 
 def get_value_or_none(equal_value: Optional[T], constrained: Optional[T], increment: T) -> Optional[T]:
-    """helper function to reduce branching in the get_constrained_number_range method if the ge/le value is available,
-    return that, otherwise return the gt/lt value + an increment or None.
+    """Return an optional value.
 
     :param equal_value: An GE/LE value.
     :param constrained: An GT/LT value.
@@ -164,7 +171,7 @@ def get_constrained_number_range(
     ge: Optional[T] = None,
     multiple_of: Optional[T] = None,
 ) -> Tuple[Optional[T], Optional[T]]:
-    """Returns the minimum and maximum values given a field_meta's constraints.
+    """Return the minimum and maximum values given a field_meta's constraints.
 
     :param t_type: A primitive constructor - int, float or Decimal.
     :param random: An instance of Random.
@@ -242,7 +249,7 @@ def handle_constrained_int(
     lt: Optional[int] = None,
     le: Optional[int] = None,
 ) -> int:
-    """Handles 'ConstrainedInt' instances.
+    """Handle constrained integers.
 
     :param random: An instance of Random.
     :param lt: Less than value.
@@ -275,7 +282,8 @@ def handle_constrained_float(
     lt: Optional[float] = None,
     le: Optional[float] = None,
 ) -> float:
-    """
+    """Handle constrained floats.
+
     :param random: An instance of Random.
     :param lt: Less than value.
     :param le: Less than or equal value.
@@ -304,7 +312,7 @@ def validate_max_digits(
     minimum: Optional[Decimal],
     decimal_places: Optional[int],
 ) -> None:
-    """Validates that max digits is greater than minimum and decimal places.
+    """Validate that max digits is greater than minimum and decimal places.
 
     :param max_digits: The maximal number of digits for the decimal.
     :param minimum: Minimal value.
@@ -331,7 +339,7 @@ def handle_decimal_length(
     decimal_places: Optional[int],
     max_digits: Optional[int],
 ) -> Decimal:
-    """Handles the length of the decimal.
+    """Handle the length of the decimal.
 
     :param generated_decimal: A decimal value.
     :param decimal_places: Number of decimal places.
@@ -373,7 +381,7 @@ def handle_constrained_decimal(
     lt: Optional[Decimal] = None,
     le: Optional[Decimal] = None,
 ) -> Decimal:
-    """
+    """Handle a constrained decimal.
 
     :param random: An instance of Random.
     :param multiple_of: Multiple of value.

@@ -246,7 +246,7 @@ class BaseFactory(ABC, Generic[T]):
 
     @classmethod
     def _handle_factory_field(cls, field_value: Any, field_build_parameters: Optional[Any] = None) -> Any:
-        """Handles a value defined on the factory class itself.
+        """Handle a value defined on the factory class itself.
 
         :param field_value: A value defined as an attribute on the factory class.
         :param field_build_parameters: Any build parameters passed to the factory as kwarg values.
@@ -353,7 +353,7 @@ class BaseFactory(ABC, Generic[T]):
 
     @classmethod
     def seed_random(cls, seed: int) -> None:
-        """Seeds Fake and random methods with seed.
+        """Seed faker and random with the given integer.
 
         :param seed: An integer to set as seed.
         :returns: 'None'
@@ -364,7 +364,7 @@ class BaseFactory(ABC, Generic[T]):
 
     @classmethod
     def is_ignored_type(cls, value: Any) -> bool:
-        """Checks whether a given value is an ignored type.
+        """Check whether a given value is an ignored type.
 
         :param value: An arbitrary value.
 
@@ -378,7 +378,7 @@ class BaseFactory(ABC, Generic[T]):
 
     @classmethod
     def get_provider_map(cls) -> Dict[Any, Callable[[], Any]]:
-        """Maps types to callables.
+        """Map types to callables.
 
         :notes:
             - This method is distinct to allow overriding.
@@ -388,12 +388,12 @@ class BaseFactory(ABC, Generic[T]):
 
         """
 
-        def create_path() -> Path:
-            """ """
+        def _create_path() -> Path:
+            """Return the path to the current file"""
             return Path(realpath(__file__))
 
-        def create_generic_fn() -> Callable:
-            """ """
+        def _create_generic_fn() -> Callable:
+            """Return a generic lambda"""
             return lambda *args: None
 
         faker = cls.__faker__
@@ -415,7 +415,7 @@ class BaseFactory(ABC, Generic[T]):
             frozenset: lambda: frozenset(faker.pylist()),
             deque: lambda: deque(faker.pylist()),
             # standard library objects
-            Path: create_path,
+            Path: _create_path,
             Decimal: faker.pydecimal,
             UUID: faker.uuid4,
             # datetime
@@ -431,11 +431,11 @@ class BaseFactory(ABC, Generic[T]):
             IPv6Interface: faker.ipv6,
             IPv6Network: lambda: faker.ipv6(network=True),
             # types
-            Callable: create_generic_fn,
+            Callable: _create_generic_fn,
             # pydantic specific
             ByteSize: faker.pyint,
             PositiveInt: faker.pyint,
-            FilePath: create_path,
+            FilePath: _create_path,
             NegativeFloat: lambda: cls.__random__.uniform(-100, -1),
             NegativeInt: lambda: faker.pyint() * -1,
             PositiveFloat: faker.pyint,
@@ -446,7 +446,7 @@ class BaseFactory(ABC, Generic[T]):
             StrictBytes: partial(create_random_bytes, cls.__random__),
             StrictFloat: faker.pyfloat,
             StrictStr: faker.pystr,
-            DirectoryPath: lambda: create_path().parent,
+            DirectoryPath: lambda: _create_path().parent,
             EmailStr: faker.free_email,
             NameEmail: faker.free_email,
             PyObject: lambda: "decimal.Decimal",
@@ -476,7 +476,7 @@ class BaseFactory(ABC, Generic[T]):
 
     @classmethod
     def get_mock_value(cls, annotation: Type) -> Any:
-        """Returns a mock value for a given type.
+        """Return a mock value for a given type.
 
         :param annotation: An arbitrary type.
         :returns: An arbitrary value.
@@ -504,7 +504,7 @@ class BaseFactory(ABC, Generic[T]):
         bases: Optional[Tuple[Type["BaseFactory"], ...]] = None,
         **kwargs: Any,
     ) -> Type["BaseFactory"]:
-        """Dynamically generates a factory for a given type.
+        """Generate a factory for the given type dynamically.
 
         :param model: A type to model.
         :param bases: Base classes to use when generating the new class.
@@ -528,7 +528,7 @@ class BaseFactory(ABC, Generic[T]):
 
     @classmethod
     def get_field_value(cls, field_meta: "FieldMeta", field_build_parameters: Optional[Any] = None) -> Any:
-        """Returns a field value on the subclass if existing, otherwise returns a mock value.
+        """Return a field value on the subclass if existing, otherwise returns a mock value.
 
         :param field_meta: FieldMeta instance.
         :param field_build_parameters: Any build parameters passed to the factory as kwarg values.
@@ -571,7 +571,7 @@ class BaseFactory(ABC, Generic[T]):
 
     @classmethod
     def should_set_none_value(cls, field_meta: "FieldMeta") -> bool:
-        """Determines whether a given model field_meta should be set to None.
+        """Determine whether a given model field_meta should be set to None.
 
         :param field_meta: Field metadata.
 
@@ -615,7 +615,7 @@ class BaseFactory(ABC, Generic[T]):
 
     @classmethod
     def process_kwargs(cls, **kwargs: Any) -> Dict[str, Any]:
-        """
+        """Process the given kwargs and generate values for the factory's model.
 
         :param kwargs: Any build kwargs.
 
@@ -667,7 +667,7 @@ class BaseFactory(ABC, Generic[T]):
 
     @classmethod
     def batch(cls, size: int, **kwargs: Any) -> List[T]:
-        """Builds a batch of size n of the factory's Meta.model.
+        """Build a batch of size n of the factory's Meta.model.
 
         :param size: Size of the batch.
         :param kwargs: Any kwargs. If field_meta names are set in kwargs, their values will be used.
@@ -679,7 +679,7 @@ class BaseFactory(ABC, Generic[T]):
 
     @classmethod
     def create_sync(cls, **kwargs: Any) -> T:
-        """Builds and persists synchronously a single model instance.
+        """Build and persists synchronously a single model instance.
 
         :param kwargs: Any kwargs. If field_meta names are set in kwargs, their values will be used.
 
@@ -690,7 +690,7 @@ class BaseFactory(ABC, Generic[T]):
 
     @classmethod
     def create_batch_sync(cls, size: int, **kwargs: Any) -> List[T]:
-        """Builds and persists synchronously a batch of n size model instances.
+        """Build and persists synchronously a batch of n size model instances.
 
         :param size: Size of the batch.
         :param kwargs: Any kwargs. If field_meta names are set in kwargs, their values will be used.
@@ -702,7 +702,7 @@ class BaseFactory(ABC, Generic[T]):
 
     @classmethod
     async def create_async(cls, **kwargs: Any) -> T:
-        """Builds and persists asynchronously a single model instance.
+        """Build and persists asynchronously a single model instance.
 
         :param kwargs: Any kwargs. If field_meta names are set in kwargs, their values will be used.
 
@@ -712,7 +712,7 @@ class BaseFactory(ABC, Generic[T]):
 
     @classmethod
     async def create_batch_async(cls, size: int, **kwargs: Any) -> List[T]:
-        """Builds and persists asynchronously a batch of n size model instances.
+        """Build and persists asynchronously a batch of n size model instances.
 
 
         :param size: Size of the batch.

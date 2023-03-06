@@ -18,7 +18,7 @@ def handle_container_type(
     factory: Type["BaseFactory"],
     field_meta: "FieldMeta",
 ) -> Any:
-    """Handles generation of container types recursively.
+    """Handle generation of container types recursively.
 
     :param container_type: A type that can accept type arguments.
     :param factory: A factory.
