@@ -281,7 +281,7 @@ class BaseFactory(ABC, Generic[T]):
         """Get a factory from registered factories or generate a factory dynamically.
 
         :param model: A model type.
-        :returns: A Factory subclass.
+        :returns: A Factory sub-class.
 
         """
         if factory := BaseFactory._factory_type_mapping.get(model):
@@ -592,7 +592,7 @@ class BaseFactory(ABC, Generic[T]):
         """Determine whether to set a value for a given field_name.
 
         :param field_meta: FieldMeta instance.
-        :param **kwargs: Any kwargs passed to the factory.
+        :param kwargs: Any kwargs passed to the factory.
 
         :notes:
             - This method is distinct to allow overriding.

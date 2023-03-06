@@ -44,9 +44,9 @@ class NumberGeneratorProtocol(Protocol[T]):
 def almost_equal_floats(value_1: float, value_2: float, *, delta: float = 1e-8) -> bool:
     """Return True if two floats are almost equal
 
-    :param value_1: a float value.
-    :param value_2: a float value.
-    :param delta: a minimal delta.
+    :param value_1: A float value.
+    :param value_2: A float value.
+    :param delta: A minimal delta.
 
     :returns: Boolean dictating whether the floats can be considered equal - given python's problematic comparison of floats.
     """
