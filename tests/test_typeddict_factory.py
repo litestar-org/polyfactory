@@ -3,7 +3,8 @@ from typing import Dict, List, Optional
 from pydantic import BaseModel
 from typing_extensions import TypedDict
 
-from polyfactory.factories import ModelFactory, TypedDictFactory
+from polyfactory.factories.base import TypedDictFactory
+from polyfactory.factories.pydantic_factory import ModelFactory
 
 
 class TypedDictModel(TypedDict):

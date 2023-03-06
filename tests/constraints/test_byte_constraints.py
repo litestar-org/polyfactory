@@ -6,7 +6,7 @@ from hypothesis import given
 from hypothesis.strategies import booleans, integers
 from pydantic import ConstrainedBytes
 
-from polyfactory.exceptions import ParameterError
+from polyfactory.exceptions import ParameterException
 from polyfactory.value_generators.constrainted_strings import (
     handle_constrained_string_or_bytes,
 )
@@ -28,7 +28,7 @@ def test_handle_constrained_bytes_with_min_length_and_max_length(
 ) -> None:
     field = create_constrained_field(to_lower=to_lower, min_length=min_length, max_length=max_length)
     if min_length < 0 or max_length < 0 or min_length > max_length:
-        with pytest.raises(ParameterError):
+        with pytest.raises(ParameterException):
             handle_constrained_string_or_bytes(
                 random=Random(),
                 t_type=bytes,
@@ -58,7 +58,7 @@ def test_handle_constrained_bytes_with_min_length_and_max_length(
 def test_handle_constrained_bytes_with_min_length(to_lower: bool, min_length: int) -> None:
     field = create_constrained_field(to_lower=to_lower, min_length=min_length)
     if min_length < 0:
-        with pytest.raises(ParameterError):
+        with pytest.raises(ParameterException):
             handle_constrained_string_or_bytes(
                 random=Random(),
                 t_type=bytes,
@@ -87,7 +87,7 @@ def test_handle_constrained_bytes_with_min_length(to_lower: bool, min_length: in
 def test_handle_constrained_bytes_with_max_length(to_lower: bool, max_length: int) -> None:
     field = create_constrained_field(to_lower=to_lower, max_length=max_length)
     if max_length < 0:
-        with pytest.raises(ParameterError):
+        with pytest.raises(ParameterException):
             handle_constrained_string_or_bytes(
                 random=Random(),
                 t_type=bytes,

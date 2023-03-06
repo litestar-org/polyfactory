@@ -9,10 +9,11 @@ from polyfactory.utils.predicates import (
 
 
 def unwrap_new_type(annotation: Any) -> Any:
-    """Returns base type if given annotation is a type derived with NewType, otherwise annotation.
+    """Return base type if given annotation is a type derived with NewType, otherwise annotation.
 
-    :param annotation:
-    :return:
+    :param annotation: A type annotation, possibly one created using 'types.NewType'
+
+    :returns: The unwrapped annotation.
     """
     while is_new_type(annotation):
         annotation = annotation.__supertype__
@@ -21,10 +22,10 @@ def unwrap_new_type(annotation: Any) -> Any:
 
 
 def unwrap_union(annotation: Any) -> Any:
-    """
+    """Unwraps union types - recursively.
 
-    :param annotation:
-    :return:
+    :param annotation: A type annotation, possibly a type union.
+    :returns: A type annotation
     """
     while is_union(annotation):
         annotation = get_args(annotation)[0]
@@ -32,10 +33,11 @@ def unwrap_union(annotation: Any) -> Any:
 
 
 def unwrap_optional(annotation: Any) -> Any:
-    """
+    """Unwraps optional union types - recursively.
 
-    :param annotation:
-    :return:
+    :param annotation: A type annotation, possibly an optional union.
+
+    :returns: A type annotation
     """
     while is_optional_union(annotation):
         args = get_args(annotation)
@@ -44,10 +46,12 @@ def unwrap_optional(annotation: Any) -> Any:
 
 
 def unwrap_annotation(annotation: Any) -> Any:
-    """Unwrap an annotation.
+    """Unwraps an annotation.
 
     :param annotation: A type annotation.
-    :return: The unwrapped annotation.
+
+    :returns: The unwrapped annotation.
+
     """
     while is_optional_union(annotation) or is_union(annotation) or is_new_type(annotation) or is_annotated(annotation):
         if is_new_type(annotation):
@@ -62,10 +66,12 @@ def unwrap_annotation(annotation: Any) -> Any:
 
 
 def unwrap_args(annotation: Any) -> Tuple[Any, ...]:
-    """
+    """Unwrap the annotation and return any type args.
 
     :param annotation: A type annotation
-    :return: A tuple of type args.
+
+    :returns: A tuple of type args.
+
     """
 
     return get_args(unwrap_annotation(annotation=annotation))

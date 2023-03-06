@@ -31,7 +31,8 @@ def is_safe_subclass(annotation: Any, super_class: Type[T]) -> "TypeGuard[Type[T
 
     :param annotation: A type annotation.
     :param super_class: A potential super class.
-    :return: A typeguard
+
+    :returns: A typeguard
     """
     origin = get_type_origin(annotation)
     if not origin and not isclass(annotation):
@@ -46,7 +47,8 @@ def is_any(annotation: Any) -> "TypeGuard[Any]":
     """Determine whether a given annotation is 'typing.Any'.
 
     :param annotation: A type annotation.
-    :return: A typeguard.
+
+    :returns: A typeguard.
     """
     return (
         annotation is Any
@@ -59,7 +61,8 @@ def is_union(annotation: Any) -> "TypeGuard[Union[Any, Any]]":
     """Determine whether a given annotation is 'typing.Union'.
 
     :param annotation: A type annotation.
-    :return: A typeguard.
+
+    :returns: A typeguard.
     """
     return get_type_origin(annotation) in UNION_TYPES
 
@@ -68,7 +71,8 @@ def is_optional_union(annotation: Any) -> "TypeGuard[Union[Any, None]]":
     """Determine whether a given annotation is 'typing.Optional'.
 
     :param annotation: A type annotation.
-    :return: A typeguard.
+
+    :returns: A typeguard.
     """
     origin = get_type_origin(annotation)
     return origin is Optional or (get_origin(annotation) in UNION_TYPES and NoneType in get_args(annotation))
@@ -78,7 +82,8 @@ def is_literal(annotation: Any) -> bool:
     """Determine whether a given annotation is 'typing.Literal'.
 
     :param annotation: A type annotation.
-    :return: A boolean.
+
+    :returns: A boolean.
     """
     return (
         get_type_origin(annotation) is Literal
@@ -91,7 +96,8 @@ def is_new_type(annotation: Any) -> "TypeGuard[Type[NewType]]":
     """Determine whether a given annotation is 'typing.NewType'.
 
     :param annotation: A type annotation.
-    :return: A typeguard.
+
+    :returns: A typeguard.
     """
     return hasattr(annotation, "__supertype__")
 
@@ -100,7 +106,8 @@ def is_annotated(annotation: Any) -> bool:
     """Determine whether a given annotation is 'typing.Annotated'.
 
     :param annotation: A type annotation.
-    :return: A boolean.
+
+    :returns: A boolean.
     """
     return get_origin(annotation) is Annotated
 
@@ -109,7 +116,8 @@ def get_type_origin(annotation: Any) -> Any:
     """Get the type origin of an annotation - safely.
 
     :param annotation: A type annotation.
-    :return: A type annotation.
+
+    :returns: A type annotation.
     """
     origin = get_origin(annotation)
     if origin in (Annotated, Required, NotRequired):

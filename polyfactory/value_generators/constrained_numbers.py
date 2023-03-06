@@ -1,8 +1,19 @@
+# pylint: disable=unnecessary-ellipsis
 from decimal import Decimal
 from sys import float_info
-from typing import TYPE_CHECKING, Any, Dict, Optional, Tuple, Type, TypeVar, cast
+from typing import (
+    TYPE_CHECKING,
+    Any,
+    Dict,
+    Optional,
+    Protocol,
+    Tuple,
+    Type,
+    TypeVar,
+    cast,
+)
 
-from polyfactory.exceptions import ParameterError
+from polyfactory.exceptions import ParameterException
 from polyfactory.value_generators.primitives import (
     create_random_decimal,
     create_random_float,
@@ -12,15 +23,32 @@ from polyfactory.value_generators.primitives import (
 if TYPE_CHECKING:
     from random import Random
 
-    from polyfactory.protocols import NumberGeneratorProtocol
 
 T = TypeVar("T", Decimal, int, float)
+
+
+class NumberGeneratorProtocol(Protocol[T]):
+    """Protocol for custom callables used to generate numerical values"""
+
+    def __call__(self, random: "Random", minimum: Optional[T] = None, maximum: Optional[T] = None) -> T:
+        """Signature of the callable.
+
+        :param random: An instance of random.
+        :param minimum: A minimum value.
+        :param maximum: A maximum value.
+        :return: The generated numeric value.
+        """
+        ...
 
 
 def almost_equal_floats(value_1: float, value_2: float, *, delta: float = 1e-8) -> bool:
     """Return True if two floats are almost equal
 
-    Note: this utility is ported from pydantic
+    :param value_1: A float value.
+    :param value_2: A float value.
+    :param delta: A minimal delta.
+
+    :returns: Boolean dictating whether the floats can be considered equal - given python's problematic comparison of floats.
     """
     return abs(value_1 - value_2) <= delta
 
@@ -30,7 +58,15 @@ def is_multiply_of_multiple_of_in_range(
     maximum: T,
     multiple_of: T,
 ) -> bool:
-    """Determines if at least one multiply of `multiple_of` lies in the given range."""
+    """Determine if at least one multiply of `multiple_of` lies in the given range.
+
+    :param minimum: T: A minimum value.
+    :param maximum: T: A maximum value.
+    :param multiple_of: T: A value to use as a base for multiplication.
+
+    :returns: Boolean dictating whether at least one multiply of `multiple_of` lies in the given range between minimum and maximum.
+    """
+
     # if the range has infinity on one of its ends then infinite number of multipliers
     # can be found within the range
 
@@ -45,6 +81,7 @@ def is_multiply_of_multiple_of_in_range(
 
     multiplier = round(minimum / multiple_of)
     step = 1 if multiple_of > 0 else -1
+
     # since rounding can go either up or down we may end up in a situation when
     # minimum is less or equal to `multiplier * multiple_of`
     # or when it is greater than `multiplier * multiple_of`
@@ -80,7 +117,14 @@ def is_multiply_of_multiple_of_in_range(
 
 
 def passes_pydantic_multiple_validator(value: T, multiple_of: T) -> bool:
-    """A function that determines whether a given value passes the pydantic multiple_of validation."""
+    """Determine whether a given value passes the pydantic multiple_of validation.
+
+    :param value: A numeric value.
+    :param multiple_of: Another numeric value.
+
+    :returns: Boolean dictating whether value is a multiple of value.
+
+    """
     if multiple_of == 0:
         return True
     mod = float(value) / float(multiple_of) % 1
@@ -88,13 +132,11 @@ def passes_pydantic_multiple_validator(value: T, multiple_of: T) -> bool:
 
 
 def get_increment(t_type: Type[T]) -> T:
-    """Gets a small increment base to add to constrained values, i.e. lt/gt entries.
+    """Get a small increment base to add to constrained values, i.e. lt/gt entries.
 
-    Args:
-        t_type: A value of type T.
+    :param t_type: A value of type T.
 
-    Returns:
-        An increment T.
+    :returns: An increment T.
     """
     values: Dict[Any, Any] = {
         int: 1,
@@ -105,16 +147,13 @@ def get_increment(t_type: Type[T]) -> T:
 
 
 def get_value_or_none(equal_value: Optional[T], constrained: Optional[T], increment: T) -> Optional[T]:
-    """helper function to reduce branching in the get_constrained_number_range method if the ge/le value is available,
-    return that, otherwise return the gt/lt value + an increment or None.
+    """Return an optional value.
 
-    Args:
-        equal_value: An GE/LE value.
-        constrained: An GT/LT value.
-        increment: increment.
+    :param equal_value: An GE/LE value.
+    :param constrained: An GT/LT value.
+    :param increment: increment
 
-    Returns:
-        Optional T.
+    :returns: Optional T.
     """
     if equal_value is not None:
         return equal_value
@@ -132,13 +171,24 @@ def get_constrained_number_range(
     ge: Optional[T] = None,
     multiple_of: Optional[T] = None,
 ) -> Tuple[Optional[T], Optional[T]]:
-    """Returns the minimum and maximum values given a field_meta's constraints."""
+    """Return the minimum and maximum values given a field_meta's constraints.
+
+    :param t_type: A primitive constructor - int, float or Decimal.
+    :param random: An instance of Random.
+    :param lt: Less than value.
+    :param le: Less than or equal value.
+    :param gt: Greater than value.
+    :param ge: Greater than or equal value.
+    :param multiple_of: Multiple of value.
+
+    :returns: a tuple of optional minimum and maximum values.
+    """
     seed = t_type(random.random() * 10)
     minimum = get_value_or_none(equal_value=ge, constrained=gt, increment=get_increment(t_type))
     maximum = get_value_or_none(equal_value=le, constrained=lt, increment=-get_increment(t_type))  # pyright: ignore
 
     if minimum is not None and maximum is not None and maximum < minimum:
-        raise ParameterError("maximum value must be greater than minimum value")
+        raise ParameterException("maximum value must be greater than minimum value")
 
     if multiple_of is None:
         if minimum is not None and maximum is None:
@@ -149,13 +199,13 @@ def get_constrained_number_range(
             return maximum - seed, maximum
     else:
         if multiple_of == 0.0:
-            raise ParameterError("multiple_of can not be zero")
+            raise ParameterException("multiple_of can not be zero")
         if (
             minimum is not None
             and maximum is not None
             and not is_multiply_of_multiple_of_in_range(minimum=minimum, maximum=maximum, multiple_of=multiple_of)
         ):
-            raise ParameterError("given range should include at least one multiply of multiple_of")
+            raise ParameterException("given range should include at least one multiply of multiple_of")
 
     return minimum, maximum
 
@@ -169,12 +219,13 @@ def generate_constrained_number(
 ) -> T:
     """Generate a constrained number, output depends on the passed in callbacks.
 
-    :param random:
-    :param minimum:
-    :param maximum:
-    :param multiple_of:
-    :param method:
-    :return:
+    :param random: An instance of random.
+    :param minimum: A minimum value.
+    :param maximum: A maximum value.
+    :param multiple_of: A multiple of value.
+    :param method: A function that generates numbers of type T.
+
+    :returns: A value of type T.
     """
     if minimum is not None and maximum is not None:
         if multiple_of is None:
@@ -198,7 +249,18 @@ def handle_constrained_int(
     lt: Optional[int] = None,
     le: Optional[int] = None,
 ) -> int:
-    """Handles 'ConstrainedInt' instances."""
+    """Handle constrained integers.
+
+    :param random: An instance of Random.
+    :param lt: Less than value.
+    :param le: Less than or equal value.
+    :param gt: Greater than value.
+    :param ge: Greater than or equal value.
+    :param multiple_of: Multiple of value.
+
+    :returns: An integer.
+
+    """
 
     minimum, maximum = get_constrained_number_range(
         gt=gt, ge=ge, lt=lt, le=le, t_type=int, multiple_of=multiple_of, random=random
@@ -220,14 +282,16 @@ def handle_constrained_float(
     lt: Optional[float] = None,
     le: Optional[float] = None,
 ) -> float:
-    """
-    :param random:
-    :param multiple_of:
-    :param gt:
-    :param ge:
-    :param lt:
-    :param le:
-    :return:
+    """Handle constrained floats.
+
+    :param random: An instance of Random.
+    :param lt: Less than value.
+    :param le: Less than or equal value.
+    :param gt: Greater than value.
+    :param ge: Greater than or equal value.
+    :param multiple_of: Multiple of value.
+
+    :returns: A float.
     """
 
     minimum, maximum = get_constrained_number_range(
@@ -248,27 +312,26 @@ def validate_max_digits(
     minimum: Optional[Decimal],
     decimal_places: Optional[int],
 ) -> None:
-    """Validates that max digits is greater than minimum and decimal places.
+    """Validate that max digits is greater than minimum and decimal places.
 
-    Args:
-        max_digits: The maximal number of digits for the decimal.
-        minimum: Minimal value.
-        decimal_places: Number of decimal places
+    :param max_digits: The maximal number of digits for the decimal.
+    :param minimum: Minimal value.
+    :param decimal_places: Number of decimal places
 
-    Returns:
-        'None'
+    :returns: 'None'
+
     """
     if max_digits <= 0:
-        raise ParameterError("max_digits must be greater than 0")
+        raise ParameterException("max_digits must be greater than 0")
 
     if minimum is not None:
         min_str = str(minimum).split(".")[1] if "." in str(minimum) else str(minimum)
 
         if max_digits <= len(min_str):
-            raise ParameterError("minimum is greater than max_digits")
+            raise ParameterException("minimum is greater than max_digits")
 
     if decimal_places is not None and max_digits <= decimal_places:
-        raise ParameterError("max_digits must be greater than decimal places")
+        raise ParameterException("max_digits must be greater than decimal places")
 
 
 def handle_decimal_length(
@@ -276,7 +339,13 @@ def handle_decimal_length(
     decimal_places: Optional[int],
     max_digits: Optional[int],
 ) -> Decimal:
-    """Handles the length of the decimal."""
+    """Handle the length of the decimal.
+
+    :param generated_decimal: A decimal value.
+    :param decimal_places: Number of decimal places.
+    :param max_digits: Maximal number of digits.
+
+    """
     string_number = str(generated_decimal)
     sign = "-" if "-" in string_number else "+"
     string_number = string_number.replace("-", "")
@@ -312,16 +381,19 @@ def handle_constrained_decimal(
     lt: Optional[Decimal] = None,
     le: Optional[Decimal] = None,
 ) -> Decimal:
-    """
-    :param random:
-    :param multiple_of:
-    :param decimal_places:
-    :param max_digits:
-    :param gt:
-    :param ge:
-    :param lt:
-    :param le:
-    :return:
+    """Handle a constrained decimal.
+
+    :param random: An instance of Random.
+    :param multiple_of: Multiple of value.
+    :param decimal_places: Number of decimal places.
+    :param max_digits: Maximal number of digits.
+    :param lt: Less than value.
+    :param le: Less than or equal value.
+    :param gt: Greater than value.
+    :param ge: Greater than or equal value.
+
+    :returns: A decimal.
+
     """
 
     minimum, maximum = get_constrained_number_range(

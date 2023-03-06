@@ -1,6 +1,6 @@
 from faker import Faker
 
-from polyfactory.factories import ModelFactory
+from polyfactory.factories.pydantic_factory import ModelFactory
 from tests.models import Pet
 
 

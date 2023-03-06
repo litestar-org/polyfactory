@@ -18,7 +18,7 @@ from ipaddress import (
 from math import nan
 from os.path import realpath
 from pathlib import Path
-from random import Random, choice, randint, uniform
+from random import Random
 from typing import _TypedDictMeta  # type: ignore
 from typing import (
     TYPE_CHECKING,
@@ -43,13 +43,13 @@ from faker import Faker
 from typing_extensions import get_args, is_typeddict
 
 from polyfactory.exceptions import (
-    ConfigurationError,
-    MissingBuildKwargError,
-    ParameterError,
+    ConfigurationException,
+    MissingBuildKwargException,
+    ParameterException,
 )
 from polyfactory.field_meta import FieldMeta, Null
 from polyfactory.fields import Fixture, Ignore, PostGenerated, Require, Use
-from polyfactory.protocols import AsyncPersistenceProtocol, SyncPersistenceProtocol
+from polyfactory.persistence import AsyncPersistenceProtocol, SyncPersistenceProtocol
 from polyfactory.utils.helpers import unwrap_annotation, unwrap_args, unwrap_optional
 from polyfactory.utils.predicates import (
     get_type_origin,
@@ -155,11 +155,9 @@ T = TypeVar("T")
 def is_factory(value: Any) -> "TypeGuard[Type[BaseFactory]]":
     """Determine if a given value is a subclass of ModelFactory.
 
-    Args:
-        value: An arbitrary value.
+    :param value: An arbitrary value.
+    :returns: A boolean typeguard.
 
-    Returns:
-        A boolean typeguard.
     """
     return isclass(value) and issubclass(value, BaseFactory)
 
@@ -196,15 +194,17 @@ class BaseFactory(ABC, Generic[T]):
         if "__is_base_factory__" not in cls.__dict__ or not cls.__is_base_factory__:
             model = getattr(cls, "__model__", None)
             if not model:
-                raise ConfigurationError(f"required configuration attribute '__model__' is not set on {cls.__name__}")
+                raise ConfigurationException(
+                    f"required configuration attribute '__model__' is not set on {cls.__name__}"
+                )
             if not cls.is_supported_type(model):
                 for factory in BaseFactory._base_factories:
                     if factory.is_supported_type(model):
-                        raise ConfigurationError(
+                        raise ConfigurationException(
                             f"{cls.__name__} does not support {model.__name__}, but this type is support by the {factory.__name__} base factory class. T"
                             f"o resolve this error, subclass the factory from {factory.__name__} instead of {cls.__name__}"
                         )
-                    raise ConfigurationError(
+                    raise ConfigurationException(
                         "Model type {model.__name__} is not supported. "
                         "To support it, register an appropriate base factory and subclass it for your factory."
                     )
@@ -220,34 +220,38 @@ class BaseFactory(ABC, Generic[T]):
 
     @classmethod
     def _get_sync_persistence(cls) -> SyncPersistenceProtocol[T]:
-        """Return a SyncPersistenceHandler if defined for the factory, otherwise raises a ConfigurationError.
+        """Return a SyncPersistenceHandler if defined for the factory, otherwise raises a ConfigurationException.
 
-        :raises: ConfigurationError
-        :return: SyncPersistenceHandler
+        :raises: ConfigurationException
+        :returns: SyncPersistenceHandler
         """
         if cls.__sync_persistence__:
             return cls.__sync_persistence__() if callable(cls.__sync_persistence__) else cls.__sync_persistence__
-        raise ConfigurationError("A '__sync_persistence__' handler must be defined in the factory to use this method")
+        raise ConfigurationException(
+            "A '__sync_persistence__' handler must be defined in the factory to use this method"
+        )
 
     @classmethod
     def _get_async_persistence(cls) -> AsyncPersistenceProtocol[T]:
-        """Return a AsyncPersistenceHandler if defined for the factory, otherwise raises a ConfigurationError.
+        """Return a AsyncPersistenceHandler if defined for the factory, otherwise raises a ConfigurationException.
 
-        :raises: ConfigurationError
-        :return: AsyncPersistenceHandler
+        :raises: ConfigurationException
+        :returns: AsyncPersistenceHandler
         """
         if cls.__async_persistence__:
             return cls.__async_persistence__() if callable(cls.__async_persistence__) else cls.__async_persistence__
-        raise ConfigurationError("An '__async_persistence__' handler must be defined in the factory to use this method")
+        raise ConfigurationException(
+            "An '__async_persistence__' handler must be defined in the factory to use this method"
+        )
 
     @classmethod
     def _handle_factory_field(cls, field_value: Any, field_build_parameters: Optional[Any] = None) -> Any:
-        """Handles a value defined on the factory class itself.
+        """Handle a value defined on the factory class itself.
 
         :param field_value: A value defined as an attribute on the factory class.
         :param field_build_parameters: Any build parameters passed to the factory as kwarg values.
 
-        :return: An arbitrary value correlating with the given field_meta value.
+        :returns: An arbitrary value correlating with the given field_meta value.
         """
         if is_factory(field_value):
             if isinstance(field_build_parameters, Mapping):
@@ -276,10 +280,9 @@ class BaseFactory(ABC, Generic[T]):
     ) -> Type["BaseFactory"]:
         """Get a factory from registered factories or generate a factory dynamically.
 
-        Args:
-            model: A type.
-        Returns:
-            A Factory subclass.
+        :param model: A model type.
+        :returns: A Factory sub-class.
+
         """
         if factory := BaseFactory._factory_type_mapping.get(model):
             return factory
@@ -288,7 +291,7 @@ class BaseFactory(ABC, Generic[T]):
             if factory.is_supported_type(model):
                 return factory.create_factory(model)
 
-        raise ParameterError(f"unsupported model type {model.__name__}")  # pragma: no cover
+        raise ParameterException(f"unsupported model type {model.__name__}")  # pragma: no cover
 
     # Public Methods
 
@@ -297,7 +300,7 @@ class BaseFactory(ABC, Generic[T]):
         """Determine whether a given field is annotated with a type that is supported by a base factory.
 
         :param annotation: A type annotation.
-        :return: Boolean dictating whether the annotation is a factory type
+        :returns: Boolean dictating whether the annotation is a factory type
         """
         return any(factory.is_supported_type(annotation) for factory in BaseFactory._base_factories)
 
@@ -306,7 +309,7 @@ class BaseFactory(ABC, Generic[T]):
         """Determine whether a given field is annotated with a sequence of supported factory types.
 
         :param annotation: A type annotation.
-        :return: Boolean dictating whether the annotation is a batch factory type
+        :returns: Boolean dictating whether the annotation is a batch factory type
         """
         origin = get_type_origin(annotation) or annotation
         if is_safe_subclass(origin, Sequence) and (args := unwrap_args(annotation)):  # type: ignore
@@ -319,7 +322,7 @@ class BaseFactory(ABC, Generic[T]):
 
         :param field_meta: A field meta instance.
         :param build_args: Any kwargs passed to the factory.
-        :return: Any values
+        :returns: Any values
         """
         if build_arg := build_args.get(field_meta.name):
             annotation = unwrap_optional(field_meta.annotation)
@@ -341,55 +344,56 @@ class BaseFactory(ABC, Generic[T]):
     @classmethod
     @abstractmethod
     def is_supported_type(cls, value: Any) -> "TypeGuard[Type[T]]":  # pragma: no cover
-        """
+        """Determine whether the given value is supported by the factory.
 
-        :param value:
-        :return:
+        :param value: An arbitrary value.
+        :returns: A typeguard
         """
         raise NotImplementedError
 
     @classmethod
     def seed_random(cls, seed: int) -> None:
-        """Seeds Fake and random methods with seed.
+        """Seed faker and random with the given integer.
 
-        Args:
-            seed: See value.
+        :param seed: An integer to set as seed.
+        :returns: 'None'
 
-        Returns:
-            'None'
         """
         cls.__random__.seed(seed, version=3)
         Faker.seed(seed)
 
     @classmethod
     def is_ignored_type(cls, value: Any) -> bool:
-        """Checks whether a given value is an ignored type.
+        """Check whether a given value is an ignored type.
 
-        Args:
-            value: An arbitrary value.
+        :param value: An arbitrary value.
 
-        Notes:
+        :notes:
             - This method is meant to be overwritten by extension factories and other subclasses
 
-        Returns:
-            A boolean determining whether the value should be ignored.
+        :returns: A boolean determining whether the value should be ignored.
+
         """
         return value is None
 
     @classmethod
     def get_provider_map(cls) -> Dict[Any, Callable[[], Any]]:
-        """
-        Notes:
+        """Map types to callables.
+
+        :notes:
             - This method is distinct to allow overriding.
 
-        Returns:
-            a dictionary mapping types to callables.
+
+        :returns: a dictionary mapping types to callables.
+
         """
 
-        def create_path() -> Path:
+        def _create_path() -> Path:
+            """Return the path to the current file"""
             return Path(realpath(__file__))
 
-        def create_generic_fn() -> Callable:
+        def _create_generic_fn() -> Callable:
+            """Return a generic lambda"""
             return lambda *args: None
 
         faker = cls.__faker__
@@ -411,7 +415,7 @@ class BaseFactory(ABC, Generic[T]):
             frozenset: lambda: frozenset(faker.pylist()),
             deque: lambda: deque(faker.pylist()),
             # standard library objects
-            Path: create_path,
+            Path: _create_path,
             Decimal: faker.pydecimal,
             UUID: faker.uuid4,
             # datetime
@@ -427,22 +431,22 @@ class BaseFactory(ABC, Generic[T]):
             IPv6Interface: faker.ipv6,
             IPv6Network: lambda: faker.ipv6(network=True),
             # types
-            Callable: create_generic_fn,
+            Callable: _create_generic_fn,
             # pydantic specific
             ByteSize: faker.pyint,
             PositiveInt: faker.pyint,
-            FilePath: create_path,
-            NegativeFloat: lambda: uniform(-100, -1),
+            FilePath: _create_path,
+            NegativeFloat: lambda: cls.__random__.uniform(-100, -1),
             NegativeInt: lambda: faker.pyint() * -1,
             PositiveFloat: faker.pyint,
-            NonPositiveFloat: lambda: uniform(-100, 0),
+            NonPositiveFloat: lambda: cls.__random__.uniform(-100, 0),
             NonNegativeInt: faker.pyint,
             StrictInt: faker.pyint,
             StrictBool: faker.pybool,
             StrictBytes: partial(create_random_bytes, cls.__random__),
             StrictFloat: faker.pyfloat,
             StrictStr: faker.pystr,
-            DirectoryPath: lambda: create_path().parent,
+            DirectoryPath: lambda: _create_path().parent,
             EmailStr: faker.free_email,
             NameEmail: faker.free_email,
             PyObject: lambda: "decimal.Decimal",
@@ -472,13 +476,11 @@ class BaseFactory(ABC, Generic[T]):
 
     @classmethod
     def get_mock_value(cls, annotation: Type) -> Any:
-        """Returns a mock value for a given type.
+        """Return a mock value for a given type.
 
-        Args:
-            annotation: An arbitrary type.
+        :param annotation: An arbitrary type.
+        :returns: An arbitrary value.
 
-        Returns:
-            An arbitrary value.
         """
 
         if handler := cls.get_provider_map().get(annotation):
@@ -490,7 +492,7 @@ class BaseFactory(ABC, Generic[T]):
             with suppress(Exception):
                 return annotation()
 
-        raise ParameterError(
+        raise ParameterException(
             f"Unsupported type: {annotation!r}"
             f"\n\nEither extend the providers map or add a factory function for this type."
         )
@@ -502,15 +504,14 @@ class BaseFactory(ABC, Generic[T]):
         bases: Optional[Tuple[Type["BaseFactory"], ...]] = None,
         **kwargs: Any,
     ) -> Type["BaseFactory"]:
-        """Dynamically generates a factory for a given type.
+        """Generate a factory for the given type dynamically.
 
-        Args:
-            model: A type to model.
-            bases: Base classes to use when generating the new class.
-            **kwargs: Any kwargs.
+        :param model: A type to model.
+        :param bases: Base classes to use when generating the new class.
+        :param kwargs: Any kwargs.
 
-        Returns:
-            A 'ModelFactory' subclass.
+        :returns: A 'ModelFactory' subclass.
+
         """
 
         for key in (attr for attr in dir(cls) if attr.startswith("__") and attr != "__model__"):
@@ -527,14 +528,13 @@ class BaseFactory(ABC, Generic[T]):
 
     @classmethod
     def get_field_value(cls, field_meta: "FieldMeta", field_build_parameters: Optional[Any] = None) -> Any:
-        """Returns a field value on the subclass if existing, otherwise returns a mock value.
+        """Return a field value on the subclass if existing, otherwise returns a mock value.
 
-        Args:
-            field_meta: FieldMeta instance.
-            field_build_parameters: Any build parameters passed to the factory as kwarg values.
+        :param field_meta: FieldMeta instance.
+        :param field_build_parameters: Any build parameters passed to the factory as kwarg values.
 
-        Returns:
-            An arbitrary value.
+        :returns: An arbitrary value.
+
         """
         if cls.is_ignored_type(field_meta.annotation):
             return None
@@ -548,10 +548,10 @@ class BaseFactory(ABC, Generic[T]):
         unwrapped_annotation = unwrap_annotation(field_meta.annotation)
 
         if is_literal(annotation=unwrapped_annotation) and (literal_args := get_args(unwrapped_annotation)):
-            return choice(literal_args)
+            return cls.__random__.choice(literal_args)
 
         if isinstance(unwrapped_annotation, EnumMeta):
-            return choice(list(unwrapped_annotation))  # pyright: ignore
+            return cls.__random__.choice(list(unwrapped_annotation))  # pyright: ignore
 
         if BaseFactory.is_factory_type(annotation=unwrapped_annotation):
             return cls._get_or_create_factory(model=unwrapped_annotation).build(
@@ -562,7 +562,7 @@ class BaseFactory(ABC, Generic[T]):
             factory = cls._get_or_create_factory(model=field_meta.type_args[0])
             if isinstance(field_build_parameters, Sequence):
                 return [factory.build(**field_parameters) for field_parameters in field_build_parameters]
-            return factory.batch(size=randint(1, 10))
+            return factory.batch(size=cls.__random__.randint(1, 10))
 
         if field_meta.children:
             return handle_complex_type(field_meta=field_meta, factory=cls)
@@ -571,16 +571,15 @@ class BaseFactory(ABC, Generic[T]):
 
     @classmethod
     def should_set_none_value(cls, field_meta: "FieldMeta") -> bool:
-        """Determines whether a given model field_meta should be set to None.
+        """Determine whether a given model field_meta should be set to None.
 
-        Args:
-            field_meta: Field metadata.
+        :param field_meta: Field metadata.
 
-        Notes:
+        :notes:
             - This method is distinct to allow overriding.
 
-        Returns:
-            A boolean determining whether 'None' should be set for the given field_meta.
+        :returns: A boolean determining whether 'None' should be set for the given field_meta.
+
         """
         return (
             cls.__allow_none_optionals__
@@ -592,35 +591,36 @@ class BaseFactory(ABC, Generic[T]):
     def should_set_field_value(cls, field_meta: "FieldMeta", **kwargs: Any) -> bool:
         """Determine whether to set a value for a given field_name.
 
-        Args:
-            field_meta: FieldMeta instance.
-            **kwargs: Any kwargs passed to the factory.
+        :param field_meta: FieldMeta instance.
+        :param kwargs: Any kwargs passed to the factory.
 
-        Notes:
+        :notes:
             - This method is distinct to allow overriding.
 
-        Returns:
-            A boolean determining whether a value should be set for the given field_meta.
+        :returns: A boolean determining whether a value should be set for the given field_meta.
+
         """
         return not field_meta.name.startswith("_") and field_meta.name not in kwargs
 
     @classmethod
     @abstractmethod
     def get_model_fields(cls) -> List["FieldMeta"]:  # pragma: no cover
-        """
-        Retrieve a list of fields from the factory's model.
+        """Retrieve a list of fields from the factory's model.
 
-        Returns:
-            A list of field MetaData instances.
+
+        :returns: A list of field MetaData instances.
+
         """
         raise NotImplementedError
 
     @classmethod
     def process_kwargs(cls, **kwargs: Any) -> Dict[str, Any]:
-        """
+        """Process the given kwargs and generate values for the factory's model.
 
-        :param kwargs:
-        :return:
+        :param kwargs: Any build kwargs.
+
+        :returns: A dictionary of build results.
+
         """
         result: Dict[str, Any] = {**kwargs}
         generate_post: Dict[str, PostGenerated] = {}
@@ -634,7 +634,7 @@ class BaseFactory(ABC, Generic[T]):
                         continue
 
                     if isinstance(field_value, Require) and field_meta.name not in kwargs:
-                        raise MissingBuildKwargError(f"Require kwarg {field_meta.name} is missing")
+                        raise MissingBuildKwargException(f"Require kwarg {field_meta.name} is missing")
 
                     if isinstance(field_value, PostGenerated):
                         generate_post[field_meta.name] = field_value
@@ -657,84 +657,84 @@ class BaseFactory(ABC, Generic[T]):
     def build(cls, **kwargs: Any) -> T:
         """Build an instance of the factory's __model__
 
-        Args:
-            **kwargs: Any kwargs. If field_meta names are set in kwargs, their values will be used.
+        :param kwargs: Any kwargs. If field names are set in kwargs, their values will be used.
 
-        Returns:
-            An instance of type T.
+        :returns: An instance of type T.
+
         """
 
         return cast("T", cls.__model__(**cls.process_kwargs(**kwargs)))
 
     @classmethod
     def batch(cls, size: int, **kwargs: Any) -> List[T]:
-        """Builds a batch of size n of the factory's Meta.model.
+        """Build a batch of size n of the factory's Meta.model.
 
-        Args:
-            size: Size of the batch.
-            **kwargs: Any kwargs. If field_meta names are set in kwargs, their values will be used.
+        :param size: Size of the batch.
+        :param kwargs: Any kwargs. If field_meta names are set in kwargs, their values will be used.
 
-        Returns:
-            A list of instances of type T.
+        :returns: A list of instances of type T.
+
         """
         return [cls.build(**kwargs) for _ in range(size)]
 
     @classmethod
     def create_sync(cls, **kwargs: Any) -> T:
-        """Builds and persists synchronously a single model instance.
+        """Build and persists synchronously a single model instance.
 
-        Args:
-            **kwargs: Any kwargs. If field_meta names are set in kwargs, their values will be used.
+        :param kwargs: Any kwargs. If field_meta names are set in kwargs, their values will be used.
 
-        Returns:
-            An instance of type T.
+        :returns: An instance of type T.
+
         """
         return cls._get_sync_persistence().save(data=cls.build(**kwargs))
 
     @classmethod
     def create_batch_sync(cls, size: int, **kwargs: Any) -> List[T]:
-        """Builds and persists synchronously a batch of n size model instances.
+        """Build and persists synchronously a batch of n size model instances.
 
-        Args:
-            size: Size of the batch.
-            **kwargs: Any kwargs. If field_meta names are set in kwargs, their values will be used.
+        :param size: Size of the batch.
+        :param kwargs: Any kwargs. If field_meta names are set in kwargs, their values will be used.
 
-        Returns:
-            A list of instances of type T.
+        :returns: A list of instances of type T.
+
         """
         return cls._get_sync_persistence().save_many(data=cls.batch(size, **kwargs))
 
     @classmethod
     async def create_async(cls, **kwargs: Any) -> T:
-        """Builds and persists asynchronously a single model instance.
+        """Build and persists asynchronously a single model instance.
 
-        Args:
-            **kwargs: Any kwargs. If field_meta names are set in kwargs, their values will be used.
+        :param kwargs: Any kwargs. If field_meta names are set in kwargs, their values will be used.
 
-        Returns:
-            An instance of type T.
+        :returns: An instance of type T.
         """
         return await cls._get_async_persistence().save(data=cls.build(**kwargs))
 
     @classmethod
     async def create_batch_async(cls, size: int, **kwargs: Any) -> List[T]:
-        """Builds and persists asynchronously a batch of n size model instances.
+        """Build and persists asynchronously a batch of n size model instances.
 
-        Args:
-            size: Size of the batch.
-            **kwargs: Any kwargs. If field_meta names are set in kwargs, their values will be used.
 
-        Returns:
-            A list of instances of type T.
+        :param size: Size of the batch.
+        :param kwargs: Any kwargs. If field_meta names are set in kwargs, their values will be used.
+
+        :returns: A list of instances of type T.
         """
         return await cls._get_async_persistence().save_many(data=cls.batch(size, **kwargs))
 
 
 class DataclassFactory(Generic[T], BaseFactory[T]):
+    """Dataclass base factory"""
+
     __is_base_factory__ = True
 
     @classmethod
     def is_supported_type(cls, value: Any) -> "TypeGuard[Type[T]]":
+        """Determine whether the given value is supported by the factory.
+
+        :param value: An arbitrary value.
+        :returns: A typeguard
+        """
         try:
             return isclass(value) and is_dataclass(value)
         except (TypeError, AttributeError):  # pragma: no cover
@@ -742,6 +742,12 @@ class DataclassFactory(Generic[T], BaseFactory[T]):
 
     @classmethod
     def get_model_fields(cls) -> List["FieldMeta"]:
+        """Retrieve a list of fields from the factory's model.
+
+
+        :returns: A list of field MetaData instances.
+
+        """
         fields_meta: List["FieldMeta"] = []
 
         for field in fields(cls.__model__):
@@ -761,10 +767,17 @@ TypedDictT = TypeVar("TypedDictT", bound=_TypedDictMeta)
 
 
 class TypedDictFactory(Generic[TypedDictT], BaseFactory[TypedDictT]):
+    """TypedDict base factory"""
+
     __is_base_factory__ = True
 
     @classmethod
     def is_supported_type(cls, value: Any) -> "TypeGuard[Type[TypedDictT]]":
+        """Determine whether the given value is supported by the factory.
+
+        :param value: An arbitrary value.
+        :returns: A typeguard
+        """
         try:
             return is_typeddict(value)
         except (TypeError, AttributeError):  # pragma: no cover
@@ -772,6 +785,12 @@ class TypedDictFactory(Generic[TypedDictT], BaseFactory[TypedDictT]):
 
     @classmethod
     def get_model_fields(cls) -> List["FieldMeta"]:
+        """Retrieve a list of fields from the factory's model.
+
+
+        :returns: A list of field MetaData instances.
+
+        """
         fields_meta: List["FieldMeta"] = []
 
         for field_name, annotation in cls.__model__.__annotations__.items():

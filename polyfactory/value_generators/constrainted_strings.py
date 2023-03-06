@@ -1,6 +1,6 @@
 from typing import TYPE_CHECKING, Callable, Optional, Pattern, TypeVar, Union, cast
 
-from polyfactory.exceptions import ParameterError
+from polyfactory.exceptions import ParameterException
 from polyfactory.value_generators.primitives import (
     create_random_bytes,
     create_random_string,
@@ -17,20 +17,23 @@ def _validate_length(
     min_length: Optional[int] = None,
     max_length: Optional[int] = None,
 ) -> None:
-    """
+    """Validate the length parameters make sense.
 
-    :param min_length:
-    :param max_length:
-    :return:
+    :param min_length: Minimum length.
+    :param max_length: Maximum length.
+
+    :raises: ParameterException.
+
+    :returns: None.
     """
     if min_length is not None and min_length < 0:
-        raise ParameterError("min_length must be greater or equal to 0")
+        raise ParameterException("min_length must be greater or equal to 0")
 
     if max_length is not None and max_length < 0:
-        raise ParameterError("max_length must be greater or equal to 0")
+        raise ParameterException("max_length must be greater or equal to 0")
 
     if max_length is not None and min_length is not None and max_length < min_length:
-        raise ParameterError("max_length must be greater than min_length")
+        raise ParameterException("max_length must be greater than min_length")
 
 
 def _generate_pattern(
@@ -41,15 +44,16 @@ def _generate_pattern(
     min_length: Optional[int] = None,
     max_length: Optional[int] = None,
 ) -> str:
-    """
+    """Generate a regex.
 
-    :param random:
-    :param pattern:
-    :param lower_case:
-    :param upper_case:
-    :param min_length:
-    :param max_length:
-    :return:
+    :param random: An instance of random.
+    :param pattern: A regex or string pattern.
+    :param lower_case: Whether to lowercase the result.
+    :param upper_case: Whether to uppercase the result.
+    :param min_length: A minimum length.
+    :param max_length: A maximum length.
+
+    :returns: A string matching the given pattern.
     """
     regex_factory = RegexFactory(random=random)
     result = regex_factory(pattern)
@@ -78,16 +82,17 @@ def handle_constrained_string_or_bytes(
     max_length: Optional[int] = None,
     pattern: Optional[Union[str, Pattern]] = None,
 ) -> T:
-    """
+    """Handle constrained string or bytes, for example - pydantic `constr` or `conbytes`.
 
-    :param random:
-    :param t_type:
-    :param lower_case:
-    :param upper_case:
-    :param min_length:
-    :param max_length:
-    :param pattern:
-    :return:
+    :param random: An instance of random.
+    :param t_type: A type (str or bytes)
+    :param lower_case: Whether to lowercase the result.
+    :param upper_case: Whether to uppercase the result.
+    :param min_length: A minimum length.
+    :param max_length: A maximum length.
+    :param pattern: A regex or string pattern.
+
+    :returns: A value of type T.
     """
     _validate_length(min_length=min_length, max_length=max_length)
 
@@ -114,6 +119,7 @@ def handle_constrained_string_or_bytes(
                 min_length=min_length,
                 max_length=max_length,
                 lower_case=lower_case,
+                upper_case=upper_case,
                 random=random,
             ),
         )
@@ -124,6 +130,7 @@ def handle_constrained_string_or_bytes(
             min_length=min_length,
             max_length=max_length,
             lower_case=lower_case,
+            upper_case=upper_case,
             random=random,
         ),
     )

@@ -2,14 +2,15 @@ from typing import Any, List, Optional, Tuple, Type
 
 from polyfactory.constants import TYPE_MAPPING
 from polyfactory.utils.helpers import unwrap_args, unwrap_new_type
-from polyfactory.utils.predicates import get_type_origin
 
 
 class Null:
-    pass
+    """Sentinel class for empty values"""
 
 
 class FieldMeta:
+    """Factory field metadata container. This class is used to store the data about a field of a factory's model."""
+
     __slots__ = ("name", "annotation", "children", "default", "constant")
 
     annotation: Any
@@ -27,6 +28,7 @@ class FieldMeta:
         children: Optional[List["FieldMeta"]] = None,
         constant: bool = False,
     ):
+        """Create a factory field metadata instance."""
         self.annotation = annotation
         self.children = children
         self.default = default
@@ -34,30 +36,22 @@ class FieldMeta:
         self.constant = constant
 
     @property
-    def origin(self) -> Any:
-        """
-
-        :return:
-        """
-        return get_type_origin(self.annotation)
-
-    @property
     def type_args(self) -> Tuple[Any, ...]:
-        """
+        """Return the normalized type args of the annotation, if any.
 
-        :return:
+        :returns: a tuple of types.
         """
         return tuple(TYPE_MAPPING[arg] if arg in TYPE_MAPPING else arg for arg in unwrap_args(self.annotation))
 
     @classmethod
     def from_type(cls, annotation: Any, name: str = "", default: Any = Null) -> "FieldMeta":
-        """
+        """Builder method to create a FieldMeta from a type annotation.
 
-        :param annotation:
-        :param name:
-        :param default:
-        :param kwargs:
-        :return:
+        :param annotation: A type annotation.
+        :param name: Field name
+        :param default: Default value, if any.
+
+        :returns: A field meta instance.
         """
         field = FieldMeta(
             annotation=unwrap_new_type(annotation),

@@ -80,7 +80,10 @@ _categories = {
 
 
 class RegexFactory:
+    """Factory for regexes."""
+
     def __init__(self, random: "Random", limit: int = 10) -> None:
+        """Create a RegexFactory"""
         self._limit = limit
         self._cache: Dict[str, Any] = {}
         self._random = random
@@ -104,6 +107,12 @@ class RegexFactory:
         }
 
     def __call__(self, string_or_regex: Union[str, Pattern]) -> str:
+        """Generate a string matching a regex.
+
+        :param string_or_regex: A string or pattern.
+
+        :return: The generated string.
+        """
         pattern = string_or_regex.pattern if isinstance(string_or_regex, Pattern) else string_or_regex
         parsed = parse(pattern)
         result = self._build_string(parsed)

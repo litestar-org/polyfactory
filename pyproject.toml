@@ -143,4 +143,4 @@ all = true
 add-ignore = "D100,D104,D105,D106,D202,D205,D415"
 add-select = "D401,D404,D417"
 convention = "google"
-match_dir = "pydantic_factories"
+match_dir = "polyfactory"

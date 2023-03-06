@@ -44,6 +44,13 @@ repos:
     hooks:
       - id: bandit
         args: ["-iii", "-ll", "-s=B308,B703"]
+  - repo: https://github.com/pycqa/pydocstyle
+    rev: 6.3.0
+    hooks:
+      - id: pydocstyle
+        exclude: "test*"
+        additional_dependencies:
+          - pydocstyle[toml]
   - repo: https://github.com/PyCQA/flake8
     rev: 6.0.0
     hooks:
@@ -52,15 +59,15 @@ repos:
           [
             "flake8-bugbear",
             "flake8-comprehensions",
-            "flake8-mutable",
-            "flake8-print",
-            "flake8-simplify",
-            "flake8-type-checking",
+            "flake8-encodings",
             "flake8-implicit-str-concat",
+            "flake8-mutable",
             "flake8-noqa",
+            "flake8-print",
             "flake8-return",
             "flake8-secure-coding-standard",
-            "flake8-encodings",
+            "flake8-simplify",
+            "flake8-type-checking",
             "flake8-use-fstring",
             "flake8-use-pathlib",
           ]

@@ -2,7 +2,7 @@ from typing import Any, Callable, Dict, Generic, Optional, TypeVar, cast
 
 from typing_extensions import ParamSpec, TypedDict
 
-from polyfactory.exceptions import ParameterError
+from polyfactory.exceptions import ParameterException
 from polyfactory.pytest_plugin import FactoryFixture
 
 T = TypeVar("T")
@@ -10,22 +10,25 @@ P = ParamSpec("P")
 
 
 class WrappedCallable(TypedDict):
+    """A ref storing a callable. This class is a utility meant to prevent binding of methods."""
+
     value: Callable
 
 
 class Require:
-    """A placeholder class used to mark a given factory attribute as a required build-time kwarg."""
+    """A factory field that marks an attribute as a required build-time kwarg."""
 
 
 class Ignore:
-    """A placeholder class used to mark a given factory attribute as ignored."""
+    """A factory field that marks an attribute as ignored."""
 
 
 class Use(Generic[P, T]):
     """Factory field used to wrap a callable.
 
-    The callable will be invoked whenever building the given factory
-        attribute.
+    The callable will be invoked whenever building the given factory attribute.
+
+
     """
 
     __slots__ = ("fn", "kwargs", "args")
@@ -42,9 +45,11 @@ class Use(Generic[P, T]):
         self.args = args
 
     def to_value(self) -> T:
-        """Invokes the callable.
+        """Invoke the callable.
 
-        :return: The output of the callable.
+        :returns: The output of the callable.
+
+
         """
         return cast("T", self.fn["value"](*self.args, **self.kwargs))
 
@@ -71,7 +76,7 @@ class PostGenerated:
         :param name: Field name.
         :param values: Generated values.
 
-        :return: An arbitrary value.
+        :returns: An arbitrary value.
         """
         return self.fn["value"](name, values, *self.args, **self.kwargs)
 
@@ -93,10 +98,11 @@ class Fixture:
         self.kwargs = kwargs
 
     def to_value(self) -> Any:
-        """Calls the factory's build or batch methodsmethod either its build method - or if size is given, batch.
+        """Call the factory's build or batch method.
 
-        :raises: ParameterError
-        :return: The build result.
+        :raises: ParameterException
+
+        :returns: The build result.
         """
 
         if factory := FactoryFixture.factory_class_map.get(self.fixture["value"]):
@@ -104,4 +110,4 @@ class Fixture:
                 return factory.batch(self.size, **self.kwargs)
             return factory.build(**self.kwargs)
 
-        raise ParameterError("fixture has not been registered using the register_factory decorator")
+        raise ParameterException("fixture has not been registered using the register_factory decorator")

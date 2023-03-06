@@ -2,9 +2,9 @@ from typing import TYPE_CHECKING, Any, Generic, List, Optional, Type, TypeVar
 
 from typing_extensions import get_args
 
-from polyfactory.exceptions import MissingExtensionDependency
+from polyfactory.exceptions import MissingDependencyException
 from polyfactory.factories.pydantic_factory import ModelFactory
-from polyfactory.protocols import AsyncPersistenceProtocol
+from polyfactory.persistence import AsyncPersistenceProtocol
 from polyfactory.utils.predicates import is_safe_subclass
 
 if TYPE_CHECKING:
@@ -15,18 +15,20 @@ if TYPE_CHECKING:
 try:
     from beanie import Document
 except ImportError as e:
-    raise MissingExtensionDependency("beanie is not installed") from e
+    raise MissingDependencyException("beanie is not installed") from e
 
 T = TypeVar("T", bound=Document)
 
 
 class BeaniePersistenceHandler(Generic[T], AsyncPersistenceProtocol[T]):
+    """Persistence Handler using beanie logic"""
+
     async def save(self, data: T) -> T:
-        """Persists a single instance in mongoDB."""
+        """Persist a single instance in mongoDB."""
         return await data.insert()  # type: ignore
 
     async def save_many(self, data: List[T]) -> List[T]:
-        """Persists multiple instances in mongoDB.
+        """Persist multiple instances in mongoDB.
 
         Note: we cannot use the .insert_many method from Beanie here because it doesn't return the created instances
         """
@@ -37,21 +39,29 @@ class BeaniePersistenceHandler(Generic[T], AsyncPersistenceProtocol[T]):
 
 
 class BeanieDocumentFactory(Generic[T], ModelFactory[T]):
-    """Subclass of ModelFactory for Beanie Documents."""
+    """Base factory for Beanie Documents"""
 
     __async_persistence__ = BeaniePersistenceHandler
     __is_base_factory__ = True
 
     @classmethod
     def is_supported_type(cls, value: Any) -> "TypeGuard[Type[T]]":
+        """Determine whether the given value is supported by the factory.
+
+        :param value: An arbitrary value.
+        :returns: A typeguard
+        """
         return is_safe_subclass(value, Document)
 
     @classmethod
     def get_field_value(cls, field_meta: "FieldMeta", field_build_parameters: Optional[Any] = None) -> Any:
-        """Override to handle the fields created by the beanie Indexed helper function.
+        """Return a field value on the subclass if existing, otherwise returns a mock value.
 
-        Note: these fields do not have a class we can use, rather they instantiate a private class inside a closure.
-        Hence, the hacky solution of checking the __name__ property
+        :param field_meta: FieldMeta instance.
+        :param field_build_parameters: Any build parameters passed to the factory as kwarg values.
+
+        :returns: An arbitrary value.
+
         """
         if hasattr(field_meta.annotation, "__name__"):
             if "Indexed " in field_meta.annotation.__name__:

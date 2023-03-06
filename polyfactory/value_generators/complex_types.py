@@ -18,12 +18,13 @@ def handle_container_type(
     factory: Type["BaseFactory"],
     field_meta: "FieldMeta",
 ) -> Any:
-    """Handles generation of container types recursively.
+    """Handle generation of container types recursively.
 
-    :param container_type:
-    :param factory:
-    :param field_meta:
-    :return:
+    :param container_type: A type that can accept type arguments.
+    :param factory: A factory.
+    :param field_meta: A field meta instance.
+
+    :returns: A built result.
     """
     if mapped_container_type := TYPE_MAPPING.get(container_type):
         container_type = mapped_container_type
@@ -59,9 +60,11 @@ def handle_complex_type(
     field_meta: "FieldMeta",
 ) -> Any:
     """Recursive type generation based on typing info stored in the graph like structure of pydantic field_metas.
-    :param factory:
-    :param field_meta:
-    :return:
+
+    :param factory: A factory.
+    :param field_meta: A field meta instance.
+
+    :returns: A built result.
     """
 
     if origin := get_type_origin(annotation=unwrap_annotation(field_meta.annotation)):

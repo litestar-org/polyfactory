@@ -1,18 +1,18 @@
-class ModelFactoryError(Exception):
-    pass
+class FactoryException(Exception):
+    """Base Factory error class"""
 
 
-class ConfigurationError(ModelFactoryError):
-    pass
+class ConfigurationException(FactoryException):
+    """Configuration Error class - used for misconfiguration"""
 
 
-class ParameterError(ModelFactoryError):
-    pass
+class ParameterException(FactoryException):
+    """Parameter exception - used when wrong parameters are used"""
 
 
-class MissingBuildKwargError(ModelFactoryError):
-    pass
+class MissingBuildKwargException(FactoryException):
+    """Missing Build Kwarg exception - used when a required build kwarg is not provided"""
 
 
-class MissingExtensionDependency(ModelFactoryError):
-    pass
+class MissingDependencyException(FactoryException):
+    """Missing dependency exception - used when a dependency is not installed"""
