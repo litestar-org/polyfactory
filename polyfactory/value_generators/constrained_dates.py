@@ -13,12 +13,14 @@ def handle_constrained_date(
     lt: Optional[date] = None,
 ) -> date:
     """Generates a date value fulfilling the expected constraints.
-    :param faker:
-    :param ge:
-    :param gt:
-    :param le:
-    :param lt:
-    :return:
+
+    :param faker: An instance of faker.
+    :param lt: Less than value.
+    :param le: Less than or equal value.
+    :param gt: Greater than value.
+    :param ge: Greater than or equal value.
+
+    :returns: A date instance.
     """
     start_date = date.today() - timedelta(days=100)
     if ge:

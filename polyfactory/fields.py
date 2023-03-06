@@ -10,6 +10,8 @@ P = ParamSpec("P")
 
 
 class WrappedCallable(TypedDict):
+    """A ref storing a callable. This class is a utility meant to prevent binding of methods."""
+
     value: Callable
 
 
@@ -25,6 +27,8 @@ class Use(Generic[P, T]):
     """Factory field used to wrap a callable.
 
     The callable will be invoked whenever building the given factory attribute.
+
+
     """
 
     __slots__ = ("fn", "kwargs", "args")
@@ -43,7 +47,9 @@ class Use(Generic[P, T]):
     def to_value(self) -> T:
         """Invokes the callable.
 
-        :return: The output of the callable.
+        :returns: The output of the callable.
+
+
         """
         return cast("T", self.fn["value"](*self.args, **self.kwargs))
 
@@ -70,7 +76,7 @@ class PostGenerated:
         :param name: Field name.
         :param values: Generated values.
 
-        :return: An arbitrary value.
+        :returns: An arbitrary value.
         """
         return self.fn["value"](name, values, *self.args, **self.kwargs)
 
@@ -92,10 +98,11 @@ class Fixture:
         self.kwargs = kwargs
 
     def to_value(self) -> Any:
-        """Calls the factory's build or batch methodsmethod either its build method - or if size is given, batch.
+        """Calls the factory's build or batch method.
 
         :raises: ParameterException
-        :return: The build result.
+
+        :returns: The build result.
         """
 
         if factory := FactoryFixture.factory_class_map.get(self.fixture["value"]):

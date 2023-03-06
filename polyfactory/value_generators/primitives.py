@@ -17,7 +17,8 @@ def create_random_float(
     :param random: An instance of random.
     :param minimum: A minimum value
     :param maximum: A maximum value.
-    :return: A random float.
+
+    :returns: A random float.
     """
     if minimum is None:
         minimum = float(random.randint(0, 100)) if maximum is None else float(maximum) - 100.0
@@ -32,7 +33,8 @@ def create_random_integer(random: "Random", minimum: Optional[int] = None, maxim
     :param random: An instance of random.
     :param minimum: A minimum value
     :param maximum: A maximum value.
-    :return: A random integer.
+
+    :returns: A random integer.
     """
     return int(create_random_float(random=random, minimum=minimum, maximum=maximum))
 
@@ -47,7 +49,8 @@ def create_random_decimal(
     :param random: An instance of random.
     :param minimum: A minimum value
     :param maximum: A maximum value.
-    :return: A random decimal.
+
+    :returns: A random decimal.
     """
     return Decimal(str(create_random_float(random=random, minimum=minimum, maximum=maximum)))
 
@@ -66,7 +69,8 @@ def create_random_bytes(
     :param max_length: A maximum length.
     :param lower_case: Whether to lowercase the result.
     :param upper_case: Whether to uppercase the result.
-    :return: A random byte-string.
+
+    :returns: A random byte-string.
     """
     if min_length is None:
         min_length = 0
@@ -102,7 +106,8 @@ def create_random_string(
     :param max_length: A maximum length.
     :param lower_case: Whether to lowercase the result.
     :param upper_case: Whether to uppercase the result.
-    :return: A random string.
+
+    :returns: A random string.
     """
     return create_random_bytes(
         random=random,
@@ -117,6 +122,7 @@ def create_random_boolean(random: "Random") -> bool:
     """Generate a random boolean value.
 
     :param random: An instance of random.
-    :return: A random boolean.
+
+    :returns: A random boolean.
     """
     return bool(random.getrandbits(1))

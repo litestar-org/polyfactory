@@ -39,7 +39,7 @@ class FieldMeta:
     def type_args(self) -> Tuple[Any, ...]:
         """Return the normalized type args of the annotation, if any.
 
-        :return:
+        :returns: a tuple of types.
         """
         return tuple(TYPE_MAPPING[arg] if arg in TYPE_MAPPING else arg for arg in unwrap_args(self.annotation))
 
@@ -50,7 +50,8 @@ class FieldMeta:
         :param annotation: A type annotation.
         :param name: Field name
         :param default: Default value, if any.
-        :return: A field meta instance.
+
+        :returns: A field meta instance.
         """
         field = FieldMeta(
             annotation=unwrap_new_type(annotation),

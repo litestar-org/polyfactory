@@ -32,7 +32,13 @@ split_pattern_2 = re.compile(r"([a-z\d])([A-Z])")
 
 
 def _get_fixture_name(name: str) -> str:
-    """from inflection.underscore."""
+    """from inflection.underscore.
+
+    :param name: str: A name.
+
+    :returns: Normalized fixture name.
+
+    """
     name = re.sub(split_pattern_1, r"\1_\2", name)
     name = re.sub(split_pattern_2, r"\1_\2", name)
     name = name.replace("-", "_")
@@ -71,11 +77,12 @@ class FactoryFixture:
         fixture_name = self.name or _get_fixture_name(factory.__name__)
         fixture_register = fixture(scope=self.scope, name=fixture_name, autouse=self.autouse)  # pyright: ignore
 
-        def factory_fixture() -> Type["BaseFactory"]:
+        def _factory_fixture() -> Type["BaseFactory"]:
+            """The wrapped factory"""
             return factory
 
-        factory_fixture.__doc__ = factory.__doc__
-        marker = fixture_register(factory_fixture)
+        _factory_fixture.__doc__ = factory.__doc__
+        marker = fixture_register(_factory_fixture)
         self.factory_class_map[marker] = factory
         return marker
 
@@ -95,7 +102,7 @@ def register_fixture(
     :param autouse: Auto use fixture.
     :param name: Fixture name.
 
-    :return: A fixture factory instance.
+    :returns: A fixture factory instance.
     """
     factory_fixture = FactoryFixture(scope=scope, autouse=autouse, name=name)
     return factory_fixture(factory) if factory else factory_fixture

@@ -58,7 +58,13 @@ T = TypeVar("T", bound=BaseModel)
 
 
 def is_pydantic_model(value: Any) -> "TypeGuard[Type[BaseModel]]":
-    """A function to determine if a given value is a subclass of BaseModel."""
+    """A function to determine if a given value is a subclass of BaseModel.
+
+    :param value: A value to test.
+
+    :returns: A type guard.
+
+    """
     try:
         return isclass(value) and issubclass(value, BaseModel)
     except TypeError:  # pragma: no cover
@@ -68,13 +74,17 @@ def is_pydantic_model(value: Any) -> "TypeGuard[Type[BaseModel]]":
 
 
 class PydanticFieldMeta(FieldMeta):
+    """Field meta subclass capable of handling pydantic ModelFields"""
+
     @classmethod
     def from_model_field(cls, model_field: "ModelField", use_alias: bool) -> "PydanticFieldMeta":
-        """
+        """Create an instance from a pydantic model field.
 
-        :param model_field:
-        :param use_alias:
-        :return:
+        :param model_field: A pydantic ModelField.
+        :param use_alias: Whether to use the field alias.
+
+        :returns: A PydanticFieldMeta instance.
+
         """
         if callable(model_field.default_factory):
             default_value = model_field.default_factory()
@@ -101,6 +111,8 @@ class PydanticFieldMeta(FieldMeta):
 
 
 class ModelFactory(Generic[T], BaseFactory[T]):
+    """Base factory for pydantic models"""
+
     __forward_ref_resolution_type_mapping__: ClassVar[Mapping[str, Type]] = {}
     __is_base_factory__ = True
 
@@ -113,18 +125,22 @@ class ModelFactory(Generic[T], BaseFactory[T]):
 
     @classmethod
     def is_supported_type(cls, value: Any) -> "TypeGuard[Type[T]]":
+        """Determine whether the given value is supported by the factory.
+
+        :param value: An arbitrary value.
+        :returns: A typeguard
+        """
         return is_pydantic_model(value)
 
     @classmethod
     def get_field_value(cls, field_meta: "FieldMeta", field_build_parameters: Optional[Any] = None) -> Any:
         """Returns a field value on the subclass if existing, otherwise returns a mock value.
 
-        Args:
-            field_meta: Field metadata.
-            field_build_parameters: Any build parameters passed to the factory as kwarg values.
+        :param field_meta: Field metadata.
+        :param field_build_parameters: Any build parameters passed to the factory as kwarg values.
 
-        Returns:
-            An arbitrary value.
+        :returns: An arbitrary value.
+
         """
         if is_safe_subclass(field_meta.annotation, ConstrainedFloat):
             return handle_constrained_float(
@@ -204,8 +220,9 @@ class ModelFactory(Generic[T], BaseFactory[T]):
     def get_model_fields(cls) -> List["FieldMeta"]:
         """Retrieve a list of fields from the factory's model.
 
-        Returns:
-            A list of field MetaData instances.
+
+        :returns: A list of field MetaData instances.
+
         """
         if not hasattr(cls, "_fields_metadata"):
             cls._fields_metadata = [
@@ -221,13 +238,12 @@ class ModelFactory(Generic[T], BaseFactory[T]):
     def build(cls, factory_use_construct: bool = False, **kwargs: Any) -> T:
         """builds an instance of the factory's __model__
 
-        Args:
-            factory_use_construct: A boolean that determines whether validations will be made when instantiating the
+        :param factory_use_construct: A boolean that determines whether validations will be made when instantiating the
                 model. This is supported only for pydantic models.
-            **kwargs: Any kwargs. If field_meta names are set in kwargs, their values will be used.
+        :param kwargs: Any kwargs. If field_meta names are set in kwargs, their values will be used.
 
-        Returns:
-            An instance of type T.
+        :returns: An instance of type T.
+
         """
         processed_kwargs = cls.process_kwargs(**kwargs)
 

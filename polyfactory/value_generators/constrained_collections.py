@@ -30,14 +30,15 @@ def handle_constrained_collection(
 ) -> T:
     """Generate a constrained list or set.
 
-    :param collection_type:
-    :param factory:
-    :param field_meta:
-    :param item_type:
-    :param max_items:
-    :param min_items:
-    :param unique_items:
-    :return:
+    :param collection_type: A type that can accept type arguments.
+    :param factory: A factory.
+    :param field_meta: A field meta instance.
+    :param item_type: Type of the collection items.
+    :param max_items: Maximal number of items.
+    :param min_items: Minimal number of items.
+    :param unique_items: Whether the items should be unique.
+
+    :returns: A collection value.
     """
     min_items = min_items if min_items is not None else (max_items or 0)
     max_items = max_items if max_items is not None else min_items + 1

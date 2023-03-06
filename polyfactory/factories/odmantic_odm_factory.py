@@ -18,10 +18,17 @@ if TYPE_CHECKING:
 
 
 class OdmanticModelFactory(Generic[T], ModelFactory[T]):
+    """Base factory for odmantic models"""
+
     __is_base_factory__ = True
 
     @classmethod
     def is_supported_type(cls, value: Any) -> "TypeGuard[Type[T]]":
+        """Determine whether the given value is supported by the factory.
+
+        :param value: An arbitrary value.
+        :returns: A typeguard
+        """
         return is_safe_subclass(value, Model) or is_safe_subclass(value, EmbeddedModel)
 
     id = Ignore()

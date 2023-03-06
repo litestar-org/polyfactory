@@ -24,7 +24,7 @@ def _validate_length(
 
     :raises: ParameterException.
 
-    :return: None.
+    :returns: None.
     """
     if min_length is not None and min_length < 0:
         raise ParameterException("min_length must be greater or equal to 0")
@@ -52,7 +52,8 @@ def _generate_pattern(
     :param upper_case: Whether to uppercase the result.
     :param min_length: A minimum length.
     :param max_length: A maximum length.
-    :return: A string matching the given pattern.
+
+    :returns: A string matching the given pattern.
     """
     regex_factory = RegexFactory(random=random)
     result = regex_factory(pattern)
@@ -90,7 +91,8 @@ def handle_constrained_string_or_bytes(
     :param min_length: A minimum length.
     :param max_length: A maximum length.
     :param pattern: A regex or string pattern.
-    :return:
+
+    :returns: A value of type T.
     """
     _validate_length(min_length=min_length, max_length=max_length)
 

@@ -12,15 +12,19 @@ class SyncPersistenceProtocol(Protocol[T]):
         """Persist a single instance synchronously.
 
         :param data: A single instance to persist.
-        :return: The persisted result.
+
+        :returns: The persisted result.
+
         """
         ...
 
     def save_many(self, data: List[T]) -> List[T]:
         """Persist multiple instances synchronously.
 
-        :param data: A sequence of instances to persist.
-        :return: The persisted result
+        :param data: A list of instances to persist.
+
+        :returns: The persisted result
+
         """
         ...
 
@@ -33,14 +37,16 @@ class AsyncPersistenceProtocol(Protocol[T]):
         """Persist a single instance asynchronously.
 
         :param data: A single instance to persist.
-        :return: The persisted result.
+
+        :returns: The persisted result.
         """
         ...
 
     async def save_many(self, data: List[T]) -> List[T]:
         """Persist multiple instances asynchronously.
 
-        :param data: A sequence of instances to persist.
-        :return: The persisted result
+        :param data: A list of instances to persist.
+
+        :returns: The persisted result
         """
         ...
