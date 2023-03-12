@@ -13,7 +13,7 @@ from typing import (
     cast,
 )
 
-from polyfactory.exceptions import ParameterException
+from polyfactory.exceptions import ParameterExceptionError
 from polyfactory.value_generators.primitives import (
     create_random_decimal,
     create_random_float,
@@ -90,18 +90,15 @@ def is_multiply_of_multiple_of_in_range(
     #
     #                minimum
     # -----------------+-------+-----------------------------------+----------------------------
-    #             multiplier * multiple_of        (multiplier + 1) * multiple_of
     #
     #
     #                                minimum
     # -------------------------+--------+--------------------------+----------------------------
-    #             multiplier * multiple_of        (multiplier + 1) * multiple_of
     #
     # since `multiple_of` can be a negative number adding +1 to `multiplier` drives `(multiplier + 1) * multiple_of``
     # away from `minimum` to the -infinity. It looks like this:
     #                                                                               minimum
     # -----------------------+--------------------------------+------------------------+--------
-    #       (multiplier + 1) * multiple_of        (multiplier) * multiple_of
     #
     # so for negative `multiple_of` we want to subtract 1 from multiplier
     for multiply in [multiplier * multiple_of, (multiplier + step) * multiple_of]:
@@ -188,7 +185,7 @@ def get_constrained_number_range(
     maximum = get_value_or_none(equal_value=le, constrained=lt, increment=-get_increment(t_type))  # pyright: ignore
 
     if minimum is not None and maximum is not None and maximum < minimum:
-        raise ParameterException("maximum value must be greater than minimum value")
+        raise ParameterExceptionError("maximum value must be greater than minimum value")
 
     if multiple_of is None:
         if minimum is not None and maximum is None:
@@ -199,13 +196,13 @@ def get_constrained_number_range(
             return maximum - seed, maximum
     else:
         if multiple_of == 0.0:
-            raise ParameterException("multiple_of can not be zero")
+            raise ParameterExceptionError("multiple_of can not be zero")
         if (
             minimum is not None
             and maximum is not None
             and not is_multiply_of_multiple_of_in_range(minimum=minimum, maximum=maximum, multiple_of=multiple_of)
         ):
-            raise ParameterException("given range should include at least one multiply of multiple_of")
+            raise ParameterExceptionError("given range should include at least one multiply of multiple_of")
 
     return minimum, maximum
 
@@ -322,16 +319,16 @@ def validate_max_digits(
 
     """
     if max_digits <= 0:
-        raise ParameterException("max_digits must be greater than 0")
+        raise ParameterExceptionError("max_digits must be greater than 0")
 
     if minimum is not None:
         min_str = str(minimum).split(".")[1] if "." in str(minimum) else str(minimum)
 
         if max_digits <= len(min_str):
-            raise ParameterException("minimum is greater than max_digits")
+            raise ParameterExceptionError("minimum is greater than max_digits")
 
     if decimal_places is not None and max_digits <= decimal_places:
-        raise ParameterException("max_digits must be greater than decimal places")
+        raise ParameterExceptionError("max_digits must be greater than decimal places")
 
 
 def handle_decimal_length(

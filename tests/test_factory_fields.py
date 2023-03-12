@@ -5,7 +5,7 @@ from typing import Any, Optional
 import pytest
 from pydantic import BaseModel
 
-from polyfactory.exceptions import MissingBuildKwargException
+from polyfactory.exceptions import MissingBuildKwargExceptionError
 from polyfactory.factories.pydantic_factory import ModelFactory
 from polyfactory.fields import Ignore, PostGenerated, Require, Use
 
@@ -61,7 +61,7 @@ def test_build_kwarg() -> None:
         __model__ = MyModel
         name = Require()
 
-    with pytest.raises(MissingBuildKwargException):
+    with pytest.raises(MissingBuildKwargExceptionError):
         MyFactory.build()
 
     assert MyFactory.build(name="moishe").name == "moishe"

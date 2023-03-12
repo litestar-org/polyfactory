@@ -2,7 +2,7 @@ from dataclasses import dataclass
 
 import pytest
 
-from polyfactory import ConfigurationException
+from polyfactory import ConfigurationExceptionError
 from polyfactory.factories.base import DataclassFactory
 from polyfactory.factories.pydantic_factory import ModelFactory
 from polyfactory.field_meta import Null
@@ -13,7 +13,7 @@ def test_factory_raises_config_error_for_unsupported_model_with_supported_factor
     class DataclassModel:
         id: int
 
-    with pytest.raises(ConfigurationException):
+    with pytest.raises(ConfigurationExceptionError):
 
         class MyFactory1(ModelFactory):
             __model__ = DataclassModel
@@ -23,7 +23,7 @@ def test_factory_raises_config_error_for_unsupported_model_with_supported_factor
 
 
 def test_factory_raises_config_error_for_unsupported_model() -> None:
-    with pytest.raises(ConfigurationException):
+    with pytest.raises(ConfigurationExceptionError):
 
         class MyFactory(ModelFactory):
             __model__ = Null

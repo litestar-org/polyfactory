@@ -3,13 +3,13 @@ from typing import List, Optional
 import pytest
 from pydantic import BaseModel, Field
 
-from polyfactory import ConfigurationException
+from polyfactory import ConfigurationExceptionError
 from polyfactory.factories.pydantic_factory import ModelFactory
 from tests.models import Person
 
 
 def test_validates_model_is_set_on_definition_of_factory() -> None:
-    with pytest.raises(ConfigurationException):
+    with pytest.raises(ConfigurationExceptionError):
 
         class MyFactory(ModelFactory):
             pass
@@ -19,7 +19,7 @@ def test_validates_connection_in_create_sync() -> None:
     class MyFactory(ModelFactory):
         __model__ = Person
 
-    with pytest.raises(ConfigurationException):
+    with pytest.raises(ConfigurationExceptionError):
         MyFactory.create_sync()
 
 
@@ -27,7 +27,7 @@ def test_validates_connection_in_create_batch_sync() -> None:
     class MyFactory(ModelFactory):
         __model__ = Person
 
-    with pytest.raises(ConfigurationException):
+    with pytest.raises(ConfigurationExceptionError):
         MyFactory.create_batch_sync(2)
 
 
@@ -36,7 +36,7 @@ async def test_validates_connection_in_create_async() -> None:
     class MyFactory(ModelFactory):
         __model__ = Person
 
-    with pytest.raises(ConfigurationException):
+    with pytest.raises(ConfigurationExceptionError):
         await MyFactory.create_async()
 
 
@@ -45,7 +45,7 @@ async def test_validates_connection_in_create_batch_async() -> None:
     class MyFactory(ModelFactory):
         __model__ = Person
 
-    with pytest.raises(ConfigurationException):
+    with pytest.raises(ConfigurationExceptionError):
         await MyFactory.create_batch_async(2)
 
 

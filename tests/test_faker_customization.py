@@ -6,7 +6,7 @@ from tests.models import Pet
 
 def test_allows_user_to_define_faker_instance() -> None:
     my_faker = Faker()
-    setattr(my_faker, "__test__attr__", None)  # noqa: B010
+    setattr(my_faker, "__test__attr__", None)
 
     class MyFactory(ModelFactory):
         __model__ = Pet

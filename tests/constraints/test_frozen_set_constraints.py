@@ -7,7 +7,7 @@ from hypothesis.strategies import integers
 from pydantic import BaseConfig, ConstrainedFrozenSet, confrozenset
 from pydantic.fields import ModelField
 
-from polyfactory.exceptions import ParameterException
+from polyfactory.exceptions import ParameterExceptionError
 from polyfactory.factories.pydantic_factory import ModelFactory, PydanticFieldMeta
 from polyfactory.value_generators.constrained_collections import (
     handle_constrained_collection,
@@ -54,7 +54,7 @@ def test_handle_constrained_set_with_min_items_and_max_items(min_items: int, max
         assert len(result) >= min_items
         assert len(result) <= max_items
     else:
-        with pytest.raises(ParameterException):
+        with pytest.raises(ParameterExceptionError):
             handle_constrained_collection(
                 collection_type=frozenset,
                 factory=ModelFactory,
@@ -104,7 +104,7 @@ def test_handle_constrained_set_with_min_items(
 
 
 def test_handle_constrained_set_with_different_types() -> None:
-    with suppress(ParameterException):
+    with suppress(ParameterExceptionError):
         for t_type in ModelFactory.get_provider_map():
             field = create_model_field(t_type, min_items=1)
             assert issubclass(field.annotation, ConstrainedFrozenSet)

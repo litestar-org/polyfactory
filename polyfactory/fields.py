@@ -2,7 +2,7 @@ from typing import Any, Callable, Dict, Generic, Optional, TypeVar, cast
 
 from typing_extensions import ParamSpec, TypedDict
 
-from polyfactory.exceptions import ParameterException
+from polyfactory.exceptions import ParameterExceptionError
 from polyfactory.pytest_plugin import FactoryFixture
 
 T = TypeVar("T")
@@ -100,7 +100,7 @@ class Fixture:
     def to_value(self) -> Any:
         """Call the factory's build or batch method.
 
-        :raises: ParameterException
+        :raises: ParameterExceptionError
 
         :returns: The build result.
         """
@@ -110,4 +110,4 @@ class Fixture:
                 return factory.batch(self.size, **self.kwargs)
             return factory.build(**self.kwargs)
 
-        raise ParameterException("fixture has not been registered using the register_factory decorator")
+        raise ParameterExceptionError("fixture has not been registered using the register_factory decorator")

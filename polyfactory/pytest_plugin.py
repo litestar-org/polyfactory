@@ -13,7 +13,7 @@ from typing import (
 
 from pytest import fixture
 
-from polyfactory.exceptions import ParameterException
+from polyfactory.exceptions import ParameterExceptionError
 
 if TYPE_CHECKING:
     from pytest import Config  # nopycln: import
@@ -32,11 +32,14 @@ split_pattern_2 = re.compile(r"([a-z\d])([A-Z])")
 
 
 def _get_fixture_name(name: str) -> str:
-    """from inflection.underscore.
+    """Get a fixture name from a factory name and normalize it.
+    from inflection.underscore.
 
-    :param name: str: A name.
+    Args:
+        name: Name of fixture to normalize.
 
-    :returns: Normalized fixture name.
+    Returns:
+        Normalized fixture name.
 
     """
     name = re.sub(split_pattern_1, r"\1_\2", name)
@@ -72,7 +75,7 @@ class FactoryFixture:
         from polyfactory.factories.base import is_factory
 
         if not is_factory(factory):
-            raise ParameterException(f"{factory.__name__} is not a BaseFactory subclass.")
+            raise ParameterExceptionError(f"{factory.__name__} is not a BaseFactory subclass.")
 
         fixture_name = self.name or _get_fixture_name(factory.__name__)
         fixture_register = fixture(scope=self.scope, name=fixture_name, autouse=self.autouse)  # pyright: ignore

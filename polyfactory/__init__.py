@@ -1,4 +1,4 @@
-from .exceptions import ConfigurationException
+from .exceptions import ConfigurationExceptionError
 from .factories import BaseFactory, DataclassFactory, TypedDictFactory
 from .fields import Fixture, Ignore, PostGenerated, Require, Use
 from .persistence import AsyncPersistenceProtocol, SyncPersistenceProtocol
@@ -6,7 +6,7 @@ from .persistence import AsyncPersistenceProtocol, SyncPersistenceProtocol
 __all__ = (
     "AsyncPersistenceProtocol",
     "BaseFactory",
-    "ConfigurationException",
+    "ConfigurationExceptionError",
     "DataclassFactory",
     "Fixture",
     "Ignore",

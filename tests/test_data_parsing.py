@@ -59,7 +59,7 @@ from pydantic import (
 )
 from pydantic.color import Color
 
-from polyfactory.exceptions import ParameterException
+from polyfactory.exceptions import ParameterExceptionError
 from polyfactory.factories.pydantic_factory import ModelFactory
 from tests.models import Person, PersonFactoryWithDefaults, Pet
 
@@ -282,5 +282,5 @@ def test_class_parsing() -> None:
     class MySecondFactory(ModelFactory):
         __model__ = MyNewModel
 
-    with pytest.raises(ParameterException):
+    with pytest.raises(ParameterExceptionError):
         MySecondFactory.build()

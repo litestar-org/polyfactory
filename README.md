@@ -1,7 +1,7 @@
 <!-- markdownlint-disable -->
 <p align="center">
-  <img src="https://github.com/starlite-api/branding/blob/9ab099a2089219c07727baaa29f67e9474ff93c8/assets/Starlite%20Branding%20-%20SVG%20-%20Transparent/Logo%20-%20Banner%20-%20Inline%20-%20Light.svg#gh-light-mode-only" alt="Starlite Logo - Light" width="100%" height="auto" />
-  <img src="https://github.com/starlite-api/branding/blob/9ab099a2089219c07727baaa29f67e9474ff93c8/assets/Starlite%20Branding%20-%20SVG%20-%20Transparent/Logo%20-%20Banner%20-%20Inline%20-%20Dark.svg#gh-dark-mode-only" alt="Starlite Logo - Dark" width="100%" height="auto" />
+  <img src="branding/SVG/logo-banner-inline-light.svg#gh-light-mode-only" alt="Starlite Logo - Light" width="100%" height="auto" />
+  <img src="branding/SVG/logo-banner-inline-dark.svg#gh-dark-mode-only" alt="Starlite Logo - Dark" width="100%" height="auto" />
 </p>
 <!-- markdownlint-restore -->
 

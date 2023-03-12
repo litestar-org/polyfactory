@@ -17,7 +17,7 @@ from typing import (
 import pytest
 from pydantic import BaseModel
 
-from polyfactory.exceptions import ParameterException
+from polyfactory.exceptions import ParameterExceptionError
 from polyfactory.factories.pydantic_factory import ModelFactory
 from tests.models import Person
 
@@ -81,7 +81,7 @@ def test_raises_for_user_defined_types() -> None:
     class MyFactory(ModelFactory):
         __model__ = MyModel
 
-    with pytest.raises(ParameterException):
+    with pytest.raises(ParameterExceptionError):
         MyFactory.build()
 
 
