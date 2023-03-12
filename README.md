@@ -21,7 +21,7 @@
 </div>
 <!-- markdownlint-restore -->
 
-# Pydantic-Factories
+# Polyfactory
 
 This library offers powerful mock data generation capabilities for [pydantic](https://github.com/samuelcolvin/pydantic)
 based models, `dataclasses` and `TypeDict`s. It can also be used with other libraries that use pydantic as a foundation.
@@ -31,7 +31,7 @@ Check out [the documentation 📚](https://starlite-api.github.io/pydantic-facto
 ## Installation
 
 ```shell
-pip install pydantic-factories
+pip install polyfactory
 ```
 
 ## Example
@@ -42,7 +42,7 @@ from typing import List, Union
 
 from pydantic import BaseModel, UUID4
 
-from pydantic_factories import ModelFactory
+from polyfactory import ModelFactory
 
 
 class Person(BaseModel):
