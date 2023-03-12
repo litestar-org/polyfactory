@@ -69,20 +69,19 @@ The factory parses the information stored in the pydantic model and generates a 
 the `Person` class' init method.
 
 ## Features
+#### **Supports**:
+- ✅ built-in and pydantic types
+- ✅ pydantic field constraints
+- ✅ complex field types
+- ✅ custom model fields
+- ✅ dataclasses
+- ✅ TypedDicts
 
-- ✅ supports both built-in and pydantic types
-- ✅ supports pydantic field constraints
-- ✅ supports complex field types
-- ✅ supports custom model fields
-- ✅ supports dataclasses
-- ✅ supports TypedDicts
-
-## Why This Library?
-
-- 💯 powerful
-- 💯 extensible
-- 💯 simple
-- 💯 rigorously tested
+#### Reasons to Choose Polyfactory:
+- Powerful
+- Easily Extensible
+- Simple
+- Rigorously Tested
 
 ## Contributing
 
