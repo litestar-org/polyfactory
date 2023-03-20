@@ -5,4 +5,4 @@ About
     :hidden:
 
     organization
-    starlite-releases
+    releases
