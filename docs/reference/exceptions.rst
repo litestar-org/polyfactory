@@ -1,4 +1,4 @@
-exceptions
+Exceptions
 ==========
 
 .. automodule:: polyfactory.exceptions

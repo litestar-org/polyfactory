@@ -1,4 +1,4 @@
-persistence
+Persistence
 ===========
 
 .. automodule:: polyfactory.persistence

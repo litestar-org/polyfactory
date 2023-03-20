@@ -1,4 +1,4 @@
-pytest_plugin
+Pytest Plugin
 =============
 
 .. automodule:: polyfactory.pytest_plugin

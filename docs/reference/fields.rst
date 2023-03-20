@@ -1,4 +1,4 @@
-fields
+Fields
 ======
 
 .. automodule:: polyfactory.fields

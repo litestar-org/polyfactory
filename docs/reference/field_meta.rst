@@ -1,4 +1,4 @@
-field_meta
+Field Meta
 ==========
 
 .. automodule:: polyfactory.field_meta
