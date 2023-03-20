@@ -2,7 +2,10 @@
 name = "polyfactory"
 version = "1.17.2"
 description = "Mock data generation for pydantic based models and python dataclasses"
-authors = ["Na'aman Hirschfeld <nhirschfeld@gmail.com>"]
+authors = [
+    "Na'aman Hirschfeld <nhirschfeld@gmail.com>",
+    "Jacob Coffee <jacob@z7x.org>"
+]
 maintainers = [
     "Na'aman Hirschfeld <nhirschfeld@gmail.com>",
     "Peter Schutt <peter.github@proton.me>",
