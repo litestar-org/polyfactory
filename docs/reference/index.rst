@@ -1,11 +1,5 @@
-Polyfactory
+Polyfactory API Reference
 =======================================
-
-Polyfactory is a library for generating test data for Python applications.
-
-API reference
-=============
-
 
 .. toctree::
     :titlesonly:
