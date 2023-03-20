@@ -20,7 +20,7 @@ html_show_sourcelink = False
 html_sidebars = {"about/*": []}
 html_title = "Starlite Project | Polyfactory"
 
-html_additional_pages = {"index": "landing-page.html"}
+html_additional_pages = {"index": "landing.html"}
 
 
 html_theme_options = {
@@ -49,15 +49,13 @@ html_theme_options = {
 
 html_context = {
     "navbar_items": {
-        "Documentation": "lib/index",
+        "Documentation": "reference/index",
         "Community": {
             "Contribution guide": "community/contribution-guide/index",
             "Code of Conduct": "https://github.com/starlite-api/.github/blob/main/CODE_OF_CONDUCT.md",
         },
         "About": {
             "Organization": "about/organization",
-            "Releases": "about/starlite-releases",
         },
-        "Release notes": "release-notes/index",
     }
 }

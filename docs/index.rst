@@ -16,4 +16,6 @@ API reference
     :titlesonly:
     :maxdepth: 1
 
+    about/index
+    community/index
     reference/index
