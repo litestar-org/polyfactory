@@ -42,8 +42,7 @@ html_theme_options = {
     "icon_links": [
         {
             "name": "GitHub",
-            "url": "https://github.com/starlite-api/pydantic-factories",
-            # "url": "https://github.com/starlite-api/polyfactory",
+            "url": "https://github.com/starlite-api/polyfactory",
             "icon": "fa-brands fa-github",
             "type": "fontawesome",
         },

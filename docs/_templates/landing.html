@@ -1,10 +1,12 @@
 <!doctype html>
+<!--TODO: DARK MODE-->
 <html>
 <head>
-    <title>Our Funky HTML Page</title>
-    <meta name="description" content="Our first page">
-    <meta name="keywords" content="html tutorial template">
+    <title>Starlite | Polyfactory</title>
+    <meta name="description" content="Starlite Project | Polyfactory Lnading Page">
+    <meta name="keywords" content="">
     <meta charset="utf-8">
+    <!--    TODO: Replace with built twCSS in prod-->
     <script src="https://cdn.tailwindcss.com"></script>
 </head>
 <body>
@@ -14,10 +16,6 @@
             <a href="#" class="-m-1.5 p-1.5">
                 <span class="sr-only">Starlite</span>
                 <img src="../_static/logo.svg" alt="Starlite Logo" class="h-16 w-auto">
-                <!--                <img src="../_static/logo-banner-inline-dark.svg" alt="Starlite Logo - Dark"-->
-                <!--                     class="block dark:hidden h-8 w-auto">-->
-                <!--                <img src="../_static/logo-banner-inline-light.svg" alt="Starlite Logo - Light"-->
-                <!--                     class="hidden dark:block h-8 w-auto">-->
             </a>
         </div>
         <div class="flex lg:hidden">
@@ -31,10 +29,10 @@
             </button>
         </div>
         <div class="hidden lg:flex lg:gap-x-12">
-            <a href="/reference" class="text-sm font-semibold leading-6 text-gray-900">Docs</a>
+            <a href="/reference" class="text-sm font-semibold leading-6 text-gray-900 hover:text-[#EDB641]">Docs</a>
             <div class="relative">
-                <button type="button" class="flex items-center gap-x-1 text-sm font-semibold leading-6 text-gray-900"
-                        aria-expanded="false">
+                <button type="button" class="flex items-center gap-x-1 text-sm font-semibold leading-6 text-gray-900 hover:text-[#EDB641]"
+                        aria-expanded="false" id="btnAbout" onclick="toggleAboutMenu()">
                     About
                     <svg class="h-5 w-5 flex-none text-gray-400" viewBox="0 0 20 20" fill="currentColor"
                          aria-hidden="true">
@@ -44,50 +42,51 @@
                     </svg>
                 </button>
 
-                <div class="absolute -left-8 top-full z-10 mt-3 w-screen max-w-md overflow-hidden rounded-3xl bg-white shadow-lg ring-1 ring-gray-900/5">
+                <div class="absolute -left-8 top-full z-10 mt-3 w-screen max-w-md overflow-hidden rounded-3xl bg-white shadow-lg ring-1 ring-gray-900/5 hidden"
+                     id="aboutMenu">
                     <div class="p-4">
                         <div class="group relative flex items-center gap-x-6 rounded-lg p-4 text-sm leading-6 hover:bg-gray-50">
                             <div class="flex h-11 w-11 flex-none items-center justify-center rounded-lg bg-gray-50 group-hover:bg-white">
-                                <svg class="h-6 w-6 text-gray-600 group-hover:text-indigo-600" fill="none"
-                                     viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" aria-hidden="true">
-                                    <path stroke-linecap="round" stroke-linejoin="round"
-                                          d="M10.5 6a7.5 7.5 0 107.5 7.5h-7.5V6z"/>
-                                    <path stroke-linecap="round" stroke-linejoin="round"
-                                          d="M13.5 10.5H21A7.5 7.5 0 0013.5 3v7.5z"/>
+                                <svg class="h-6 w-6 text-gray-600 group-hover:text-[#EDB641]" aria-hidden="true"
+                                     fill="none" stroke="currentColor" stroke-width="1.5"
+                                     viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                    <path d="M18 18.72a9.094 9.094 0 003.741-.479 3 3 0 00-4.682-2.72m.94 3.198l.001.031c0 .225-.012.447-.037.666A11.944 11.944 0 0112 21c-2.17 0-4.207-.576-5.963-1.584A6.062 6.062 0 016 18.719m12 0a5.971 5.971 0 00-.941-3.197m0 0A5.995 5.995 0 0012 12.75a5.995 5.995 0 00-5.058 2.772m0 0a3 3 0 00-4.681 2.72 8.986 8.986 0 003.74.477m.94-3.197a5.971 5.971 0 00-.94 3.197M15 6.75a3 3 0 11-6 0 3 3 0 016 0zm6 3a2.25 2.25 0 11-4.5 0 2.25 2.25 0 014.5 0zm-13.5 0a2.25 2.25 0 11-4.5 0 2.25 2.25 0 014.5 0z"
+                                          stroke-linecap="round" stroke-linejoin="round"></path>
                                 </svg>
                             </div>
                             <div class="flex-auto">
-                                <a href="#" class="block font-semibold text-gray-900">
-                                    Contributing
+                                <a href="/about/organization.html" class="block font-semibold text-gray-900 hover:text-[#EDB641]">
+                                    Starlite Organization
                                     <span class="absolute inset-0"></span>
                                 </a>
-                                <p class="mt-1 text-gray-600">Learn how to contribute to the Starlite project</p>
+                                <p class="mt-1 text-gray-600">Details about the Starlite organization</p>
                             </div>
                         </div>
 
                         <div class="group relative flex items-center gap-x-6 rounded-lg p-4 text-sm leading-6 hover:bg-gray-50">
                             <div class="flex h-11 w-11 flex-none items-center justify-center rounded-lg bg-gray-50 group-hover:bg-white">
-                                <svg class="h-6 w-6 text-gray-600 group-hover:text-indigo-600" fill="none"
-                                     viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" aria-hidden="true">
-                                    <path stroke-linecap="round" stroke-linejoin="round"
-                                          d="M15.042 21.672L13.684 16.6m0 0l-2.51 2.225.569-9.47 5.227 7.917-3.286-.672zM12 2.25V4.5m5.834.166l-1.591 1.591M20.25 10.5H18M7.757 14.743l-1.59 1.59M6 10.5H3.75m4.007-4.243l-1.59-1.59"/>
+                                <svg class="h-6 w-6 text-gray-600 group-hover:text-[#EDB641]" aria-hidden="true"
+                                     fill="none" stroke="currentColor" stroke-width="1.5"
+                                     viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                    <path d="M9 12.75l3 3m0 0l3-3m-3 3v-7.5M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+                                          stroke-linecap="round" stroke-linejoin="round"></path>
                                 </svg>
                             </div>
                             <div class="flex-auto">
-                                <a href="#" class="block font-semibold text-gray-900">
-                                    Code of Conduct
+                                <a href="/about/releases.html" class="block font-semibold text-gray-900 hover:text-[#EDB641]">
+                                    Releases
                                     <span class="absolute inset-0"></span>
                                 </a>
-                                <p class="mt-1 text-gray-600">Review the etiquette for interacting with the Starlite
-                                    community</p>
+                                <p class="mt-1 text-gray-600">View the release history for Polyfactory</p>
                             </div>
                         </div>
 
                     </div>
                     <div class="grid grid-cols-2 divide-x divide-gray-900/5 bg-gray-50">
                         <a href="#"
-                           class="flex items-center justify-center gap-x-2.5 p-3 text-sm font-semibold leading-6 text-gray-900 hover:bg-gray-100">
-                            <svg class="h-5 w-5 flex-none text-gray-400" viewBox="0 0 20 20" fill="currentColor"
+                           class="flex items-center justify-center gap-x-2.5 p-3 text-sm font-semibold leading-6 text-gray-900 hover:bg-[#EDB641] group-hover:text-[#202235]">
+                            <svg class="h-5 w-5 flex-none text-gray-400 group-hover:text-[#202235]" viewBox="0 0 20 20"
+                                 fill="currentColor"
                                  aria-hidden="true">
                                 <path fill-rule="evenodd"
                                       d="M2 10a8 8 0 1116 0 8 8 0 01-16 0zm6.39-2.908a.75.75 0 01.766.027l3.5 2.25a.75.75 0 010 1.262l-3.5 2.25A.75.75 0 018 12.25v-4.5a.75.75 0 01.39-.658z"
@@ -97,8 +96,9 @@
                         </a>
 
                         <a href="#"
-                           class="flex items-center justify-center gap-x-2.5 p-3 text-sm font-semibold leading-6 text-gray-900 hover:bg-gray-100">
-                            <svg class="h-5 w-5 flex-none text-gray-400" viewBox="0 0 20 20" fill="currentColor"
+                           class="flex items-center justify-center gap-x-2.5 p-3 text-sm font-semibold leading-6 text-gray-900 hover:bg-[#EDB641] group-hover:text-[#202235]">
+                            <svg class="h-5 w-5 flex-none text-gray-400 group-hover:text-[#202235]" viewBox="0 0 20 20"
+                                 fill="currentColor"
                                  aria-hidden="true">
                                 <path fill-rule="evenodd"
                                       d="M2 3.5A1.5 1.5 0 013.5 2h1.148a1.5 1.5 0 011.465 1.175l.716 3.223a1.5 1.5 0 01-1.052 1.767l-.933.267c-.41.117-.643.555-.48.95a11.542 11.542 0 006.254 6.254c.395.163.833-.07.95-.48l.267-.933a1.5 1.5 0 011.767-1.052l3.223.716A1.5 1.5 0 0118 15.352V16.5a1.5 1.5 0 01-1.5 1.5H15c-1.149 0-2.263-.15-3.326-.43A13.022 13.022 0 012.43 8.326 13.019 13.019 0 012 5V3.5z"
@@ -111,9 +111,79 @@
             </div>
 
 
-            <a href="/community" class="text-sm font-semibold leading-6 text-gray-900">Community</a>
-            <a href="https://github.com/orgs/starlite-api/discussions/" class="text-sm font-semibold leading-6 text-gray-900">Help</a>
-            <a href="https://github.com/starlite-api/pydantic-factories" class="text-sm font-semibold leading-6 text-gray-900">Github</a>
+            <div class="relative">
+                <button type="button" class="flex items-center gap-x-1 text-sm font-semibold leading-6 text-gray-900 hover:text-[#EDB641]"
+                        aria-expanded="false" onclick="toggleCommunityMenu()">
+                    Community
+                    <svg class="h-5 w-5 flex-none text-gray-400" viewBox="0 0 20 20" fill="currentColor"
+                         aria-hidden="true">
+                        <path fill-rule="evenodd"
+                              d="M5.23 7.21a.75.75 0 011.06.02L10 11.168l3.71-3.938a.75.75 0 111.08 1.04l-4.25 4.5a.75.75 0 01-1.08 0l-4.25-4.5a.75.75 0 01.02-1.06z"
+                              clip-rule="evenodd"/>
+                    </svg>
+                </button>
+
+                <div class="absolute -left-8 top-full z-10 mt-3 w-screen max-w-md overflow-hidden rounded-3xl bg-white shadow-lg ring-1 ring-gray-900/5 hidden"
+                     id="communityMenu">
+                    <div class="p-4">
+                        <div class="group relative flex items-center gap-x-6 rounded-lg p-4 text-sm leading-6 hover:bg-gray-50">
+                            <div class="flex h-11 w-11 flex-none items-center justify-center rounded-lg bg-gray-50 group-hover:bg-white">
+                                <svg class="h-6 w-6 text-gray-600 group-hover:text-[#EDB641]" fill="none"
+                                     viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" aria-hidden="true">
+                                    <path stroke-linecap="round" stroke-linejoin="round"
+                                          d="M10.5 6a7.5 7.5 0 107.5 7.5h-7.5V6z"/>
+                                    <path stroke-linecap="round" stroke-linejoin="round"
+                                          d="M13.5 10.5H21A7.5 7.5 0 0013.5 3v7.5z"/>
+                                </svg>
+                            </div>
+                            <div class="flex-auto">
+                                <a href="/community/contributing.html" class="block font-semibold text-gray-900 hover:text-[#EDB641]">
+                                    Contributing
+                                    <span class="absolute inset-0"></span>
+                                </a>
+                                <p class="mt-1 text-gray-600">Learn how to contribute to the Starlite project</p>
+                            </div>
+                        </div>
+
+                        <div class="group relative flex items-center gap-x-6 rounded-lg p-4 text-sm leading-6 hover:bg-gray-50">
+                            <div class="flex h-11 w-11 flex-none items-center justify-center rounded-lg bg-gray-50 group-hover:bg-white">
+                                <svg class="h-6 w-6 text-gray-600 group-hover:text-[#EDB641]" fill="none"
+                                     viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" aria-hidden="true">
+                                    <path stroke-linecap="round" stroke-linejoin="round"
+                                          d="M15.042 21.672L13.684 16.6m0 0l-2.51 2.225.569-9.47 5.227 7.917-3.286-.672zM12 2.25V4.5m5.834.166l-1.591 1.591M20.25 10.5H18M7.757 14.743l-1.59 1.59M6 10.5H3.75m4.007-4.243l-1.59-1.59"/>
+                                </svg>
+                            </div>
+                            <div class="flex-auto">
+                                <a href="https://github.com/starlite-api/.github/blob/main/CODE_OF_CONDUCT.md"
+                                   class="block font-semibold text-gray-900">
+                                    Code of Conduct
+                                    <span class="absolute inset-0"></span>
+                                </a>
+                                <p class="mt-1 text-gray-600">Review the etiquette for interacting with the Starlite
+                                    community</p>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+            <a href="https://github.com/orgs/starlite-api/discussions/"
+               class="text-sm font-semibold leading-6 text-gray-900 hover:text-[#EDB641]">Help</a>
+            <a href="#" class="text-gray-400 hover:text-[#EDB641]">
+                <span class="sr-only">Discord</span>
+                <svg width="23" height="24" fill="currentColor">
+                    <path d="M9.555 9.23c-.74 0-1.324.624-1.324 1.385S8.827 12 9.555 12c.739 0 1.323-.624 1.323-1.385.013-.761-.584-1.385-1.323-1.385Zm4.737 0c-.74 0-1.324.624-1.324 1.385S13.564 12 14.292 12c.74 0 1.324-.624 1.324-1.385s-.584-1.385-1.324-1.385Z"></path>
+                    <path d="M20.404 0H3.442c-.342 0-.68.065-.995.19a2.614 2.614 0 0 0-.843.536 2.46 2.46 0 0 0-.562.801c-.13.3-.197.62-.196.944v16.225c0 .324.066.645.196.944.13.3.321.572.562.801.241.23.527.412.843.537.315.124.653.189.995.19h14.354l-.67-2.22 1.62 1.428 1.532 1.344L23 24V2.472c0-.324-.066-.644-.196-.944a2.46 2.46 0 0 0-.562-.8A2.614 2.614 0 0 0 21.4.19a2.726 2.726 0 0 0-.995-.19V0Zm-4.886 15.672s-.456-.516-.836-.972c1.659-.444 2.292-1.428 2.292-1.428a7.38 7.38 0 0 1-1.456.707 8.67 8.67 0 0 1-1.836.517 9.347 9.347 0 0 1-3.279-.012 11.074 11.074 0 0 1-1.86-.516 7.621 7.621 0 0 1-.924-.409c-.039-.023-.076-.035-.113-.06-.027-.011-.04-.023-.052-.035-.228-.12-.354-.204-.354-.204s.608.96 2.215 1.416c-.38.456-.848.996-.848.996-2.797-.084-3.86-1.824-3.86-1.824 0-3.864 1.822-6.996 1.822-6.996 1.823-1.296 3.557-1.26 3.557-1.26l.127.145c-2.278.623-3.33 1.57-3.33 1.57s.279-.143.747-.347c1.355-.564 2.43-.72 2.873-.756.077-.012.14-.024.216-.024a10.804 10.804 0 0 1 6.368 1.129s-1.001-.9-3.153-1.526l.178-.19s1.735-.037 3.557 1.259c0 0 1.823 3.133 1.823 6.996 0 0-1.076 1.74-3.874 1.824Z"></path>
+                </svg>
+            </a>
+            <a href="https://github.com/starlite-api/polyfactory" class="text-gray-400 hover:text-[#EDB641]">
+                <span class="sr-only">GitHub</span>
+                <svg class="h-6 w-6" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                    <path fill-rule="evenodd"
+                          d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.531 1.032 1.531 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0022 12.017C22 6.484 17.522 2 12 2z"
+                          clip-rule="evenodd"/>
+                </svg>
+            </a>
         </div>
     </nav>
     <!-- Mobile menu, show/hide based on menu open state. -->
@@ -142,12 +212,7 @@
                             <button type="button"
                                     class="flex w-full items-center justify-between rounded-lg py-2 pl-3 pr-3.5 text-base font-semibold leading-7 hover:bg-gray-50"
                                     aria-controls="disclosure-1" aria-expanded="false">
-                                Product
-                                <!--
-                                  Expand/collapse icon, toggle classes based on menu open state.
-
-                                  Open: "rotate-180", Closed: ""
-                                -->
+                                Polyfactory
                                 <svg class="h-5 w-5 flex-none" viewBox="0 0 20 20" fill="currentColor"
                                      aria-hidden="true">
                                     <path fill-rule="evenodd"
@@ -157,41 +222,16 @@
                             </button>
                             <!-- 'Product' sub-menu, show/hide based on menu state. -->
                             <div class="mt-2 space-y-2" id="disclosure-1">
-                                <a href="#"
-                                   class="block rounded-lg py-2 pl-6 pr-3 text-sm font-semibold leading-7 text-gray-900 hover:bg-gray-50">Analytics</a>
-
-                                <a href="#"
-                                   class="block rounded-lg py-2 pl-6 pr-3 text-sm font-semibold leading-7 text-gray-900 hover:bg-gray-50">Engagement</a>
-
-                                <a href="#"
-                                   class="block rounded-lg py-2 pl-6 pr-3 text-sm font-semibold leading-7 text-gray-900 hover:bg-gray-50">Security</a>
-
-                                <a href="#"
-                                   class="block rounded-lg py-2 pl-6 pr-3 text-sm font-semibold leading-7 text-gray-900 hover:bg-gray-50">Integrations</a>
-
-                                <a href="#"
-                                   class="block rounded-lg py-2 pl-6 pr-3 text-sm font-semibold leading-7 text-gray-900 hover:bg-gray-50">Automations</a>
-
-                                <a href="#"
-                                   class="block rounded-lg py-2 pl-6 pr-3 text-sm font-semibold leading-7 text-gray-900 hover:bg-gray-50">Watch
-                                    demo</a>
-
-                                <a href="#"
-                                   class="block rounded-lg py-2 pl-6 pr-3 text-sm font-semibold leading-7 text-gray-900 hover:bg-gray-50">Contact
-                                    sales</a>
+                                <a href="/reference"
+                                   class="block rounded-lg py-2 pl-6 pr-3 text-sm font-semibold leading-7 text-gray-900 hover:bg-gray-50">Documentation</a>
                             </div>
                         </div>
+                        <a href="/about/"
+                           class="-mx-3 block rounded-lg py-2 px-3 text-base font-semibold leading-7 text-gray-900 hover:bg-gray-50">About</a>
                         <a href="#"
-                           class="-mx-3 block rounded-lg py-2 px-3 text-base font-semibold leading-7 text-gray-900 hover:bg-gray-50">Features</a>
-                        <a href="#"
-                           class="-mx-3 block rounded-lg py-2 px-3 text-base font-semibold leading-7 text-gray-900 hover:bg-gray-50">Marketplace</a>
-                        <a href="#"
-                           class="-mx-3 block rounded-lg py-2 px-3 text-base font-semibold leading-7 text-gray-900 hover:bg-gray-50">Company</a>
-                    </div>
-                    <div class="py-6">
-                        <a href="#"
-                           class="-mx-3 block rounded-lg py-2.5 px-3 text-base font-semibold leading-7 text-gray-900 hover:bg-gray-50">Log
-                            in</a>
+                           class="-mx-3 block rounded-lg py-2 px-3 text-base font-semibold leading-7 text-gray-900 hover:bg-gray-50">Blog</a>
+                        <a href="/community/contributing/index.html/"
+                           class="-mx-3 block rounded-lg py-2 px-3 text-base font-semibold leading-7 text-gray-900 hover:bg-gray-50">Contribute</a>
                     </div>
                 </div>
             </div>
@@ -214,7 +254,7 @@
                                 <span class="rounded-full bg-[#202235]/10 px-3 py-1 text-sm font-semibold leading-6 text-[#EDB641] ring-1 ring-inset ring-[#FFD480]-600/10">
                                     Latest Changes
                                 </span>
-                                <span class="inline-flex items-center space-x-2 text-sm font-medium leading-6 text-gray-600">
+                                <span class="inline-flex items-center space-x-2 text-sm font-medium leading-6 text-gray-600 hover:text-[#EDB641]">
                                     <span>Just shipped in Polyfactory v2.0.0</span>
                                     <svg class="h-5 w-5 text-gray-400" viewBox="0 0 20 20" fill="currentColor"
                                          aria-hidden="true">
@@ -225,12 +265,15 @@
                                 </span>
                             </a>
                         </div>
-                        <h1 class="mt-10 text-4xl font-bold tracking-tight text-gray-900 sm:text-6xl">Effortlessly generate mock data</h1>
-                        <p class="mt-6 text-xl leading-8 text-gray-600">with Polyfactory</p> A powerful Python library for data modeling and generation
+                        <h1 class="mt-10 text-4xl font-bold tracking-tight text-gray-900 sm:text-6xl">Effortlessly
+                            generate mock data</h1>
+                        <p class="mt-6 text-xl leading-8 text-gray-600">with Polyfactory</p> A powerful Python library
+                        for data modeling and generation
                         <div class="mt-10 flex items-center gap-x-6">
                             <a href="/reference"
-                               class="rounded-md bg-[#EDB641] dark:EDB641 px-3.5 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600">Documentation</a>
-                            <a href="https://github.com/starlite-api/pydantic-factories" class="text-sm font-semibold leading-6 text-gray-900">View on GitHub <span
+                               class="rounded-md bg-[#EDB641] dark:EDB641 px-3.5 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-[#202235] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600">Documentation</a>
+                            <a href="https://github.com/starlite-api/pydantic-factories"
+                               class="text-sm font-semibold leading-6 text-gray-900 hover:text-[#EDB641]">View on GitHub <span
                                     aria-hidden="true">→</span></a>
                         </div>
                     </div>
@@ -255,7 +298,7 @@
                                         </div>
                                     </div>
                                     <div class="px-6 pt-6 pb-14">
-{% include 'code.html' %}
+                                        {% include 'code.html' %}
                                     </div>
                                 </div>
                             </div>
@@ -292,24 +335,24 @@
     <div class="mx-auto max-w-7xl overflow-hidden py-20 px-6 sm:py-24 lg:px-8">
         <nav class="-mb-6 columns-2 sm:flex sm:justify-center sm:space-x-12" aria-label="Footer">
             <div class="pb-6">
-                <a href="#" class="text-sm leading-6 text-gray-600 hover:text-gray-900">About</a>
+                <a href="#" class="text-sm leading-6 text-gray-600 hover:text-[#EDB641]">About</a>
             </div>
 
             <div class="pb-6">
-                <a href="https://medium.com/starlite-api" class="text-sm leading-6 text-gray-600 hover:text-gray-900">Blog</a>
+                <a href="https://medium.com/starlite-api" class="text-sm leading-6 text-gray-600 hover:text-[#EDB641]">Blog</a>
             </div>
 
             <div class="pb-6">
-                <a href="#" class="text-sm leading-6 text-gray-600 hover:text-gray-900">Contribute</a>
+                <a href="#" class="text-sm leading-6 text-gray-600 hover:text-[#EDB641]">Contribute</a>
             </div>
 
             <div class="pb-6">
-                <a href="/reference" class="text-sm leading-6 text-gray-600 hover:text-gray-900">Docs</a>
+                <a href="/reference" class="text-sm leading-6 text-gray-600 hover:text-[#EDB641]">Docs</a>
             </div>
 
         </nav>
         <div class="mt-10 flex justify-center space-x-10">
-            <a href="#" class="text-gray-400 hover:text-gray-500">
+            <a href="#" class="text-gray-400 hover:text-[#EDB641]">
                 <span class="sr-only">Discord</span>
                 <svg width="23" height="24" fill="currentColor">
                     <path d="M9.555 9.23c-.74 0-1.324.624-1.324 1.385S8.827 12 9.555 12c.739 0 1.323-.624 1.323-1.385.013-.761-.584-1.385-1.323-1.385Zm4.737 0c-.74 0-1.324.624-1.324 1.385S13.564 12 14.292 12c.74 0 1.324-.624 1.324-1.385s-.584-1.385-1.324-1.385Z"></path>
@@ -317,14 +360,14 @@
                 </svg>
             </a>
 
-            <a href="#" class="text-gray-400 hover:text-gray-500">
+            <a href="#" class="text-gray-400 hover:text-[#EDB641]">
                 <span class="sr-only">Twitter</span>
                 <svg class="h-6 w-6" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
                     <path d="M8.29 20.251c7.547 0 11.675-6.253 11.675-11.675 0-.178 0-.355-.012-.53A8.348 8.348 0 0022 5.92a8.19 8.19 0 01-2.357.646 4.118 4.118 0 001.804-2.27 8.224 8.224 0 01-2.605.996 4.107 4.107 0 00-6.993 3.743 11.65 11.65 0 01-8.457-4.287 4.106 4.106 0 001.27 5.477A4.072 4.072 0 012.8 9.713v.052a4.105 4.105 0 003.292 4.022 4.095 4.095 0 01-1.853.07 4.108 4.108 0 003.834 2.85A8.233 8.233 0 012 18.407a11.616 11.616 0 006.29 1.84"/>
                 </svg>
             </a>
 
-            <a href="#" class="text-gray-400 hover:text-gray-500">
+            <a href="#" class="text-gray-400 hover:text-[#EDB641]">
                 <span class="sr-only">GitHub</span>
                 <svg class="h-6 w-6" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
                     <path fill-rule="evenodd"
@@ -337,4 +380,36 @@
     </div>
 </footer>
 </body>
+
+<script>
+    function toggleAboutMenu() {
+        let aboutMenu = document.getElementById("aboutMenu");
+
+        let communityMenu = document.getElementById("communityMenu");
+        if (!communityMenu.classList.contains("hidden")) {
+            communityMenu.classList.add("hidden");
+        }
+
+        if (aboutMenu.classList.contains("hidden")) {
+            aboutMenu.classList.remove("hidden");
+        } else {
+            aboutMenu.classList.add("hidden");
+        }
+    }
+
+    function toggleCommunityMenu() {
+        let communityMenu = document.getElementById("communityMenu");
+
+        let aboutMenu = document.getElementById("aboutMenu");
+        if (!aboutMenu.classList.contains("hidden")) {
+            aboutMenu.classList.add("hidden");
+        }
+
+        if (communityMenu.classList.contains("hidden")) {
+            communityMenu.classList.remove("hidden");
+        } else {
+            communityMenu.classList.add("hidden");
+        }
+    }
+</script>
 </html>
