@@ -1,7 +1,7 @@
 Polyfactory
 =======================================
 
-Polyfactory is a library for generating test data for Python applications.
+Polyfactory is a simple and powerful mock data generation using pydantic or dataclasses
 
 
 .. note::
