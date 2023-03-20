@@ -8,7 +8,7 @@ from hypothesis.strategies import booleans, integers
 from pydantic import ConstrainedStr
 
 from polyfactory.exceptions import ParameterExceptionError
-from polyfactory.value_generators.constrainted_strings import (
+from polyfactory.value_generators.constrained_strings import (
     handle_constrained_string_or_bytes,
 )
 
