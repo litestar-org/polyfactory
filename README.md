@@ -85,4 +85,4 @@ the `Person` class' init method.
 
 ## Contributing
 
-This library is open to contributions - in fact we welcome it. [Please see the contribution guide!](CONTRIBUTING.md)
+This library is open to contributions - in fact we welcome it. [Please see the contribution guide!](CONTRIBUTING.rst)

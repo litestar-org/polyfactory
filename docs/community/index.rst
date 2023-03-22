@@ -4,4 +4,4 @@ Community
 .. toctree::
     :hidden:
 
-    contribution-guide
+    contributing

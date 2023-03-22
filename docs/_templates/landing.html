@@ -241,7 +241,7 @@
 
 <div class="bg-[#202235]">
     <div class="relative isolate overflow-hidden bg-gradient-to-b from-indigo-100/20">
-        <div class="mx-auto max-w-7xl pt-10 pb-24 sm:pb-32 lg:grid lg:grid-cols-2 lg:gap-x-8 lg:py-40 lg:px-8">
+        <div class="mx-auto max-w-7xl pt-10 pb-24 sm:pb-32 lg:grid lg:grid-cols-2 lg:gap-x-8 lg:py-10 lg:px-8">
             <div class="px-6 lg:px-0 lg:pt-4">
                 <div class="mx-auto max-w-2xl">
                     <div class="max-w-lg">
@@ -254,10 +254,10 @@
                                 <span class="rounded-full bg-[#202235]/10 px-3 py-1 text-sm font-semibold leading-6 text-[#EDB641] ring-1 ring-inset ring-[#FFD480]-600/10">
                                     Latest Changes
                                 </span>
-                                <span class="inline-flex items-center space-x-2 text-sm font-medium leading-6 text-gray-600 hover:text-[#EDB641]">
+                                <span class="inline-flex items-center space-x-2 text-sm font-medium leading-6 text-gray-600 hover:text-[#EDB641]" id="announcementBanner">
                                     <span>Just shipped in Polyfactory v2.0.0</span>
                                     <svg class="h-5 w-5 text-gray-400" viewBox="0 0 20 20" fill="currentColor"
-                                         aria-hidden="true">
+                                         aria-hidden="true" onclick="document.getElementById('announcementBanner').style.display = 'none';">
                                         <path fill-rule="evenodd"
                                               d="M7.21 14.77a.75.75 0 01.02-1.06L11.168 10 7.23 6.29a.75.75 0 111.04-1.08l4.5 4.25a.75.75 0 010 1.08l-4.5 4.25a.75.75 0 01-1.06-.02z"
                                               clip-rule="evenodd"/>
