@@ -13,3 +13,4 @@ coverage.*
 .python-version
 *.iml
 *.mod
+/docs/_build/
