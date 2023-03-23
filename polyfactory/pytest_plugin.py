@@ -13,7 +13,7 @@ from typing import (
 
 from pytest import fixture
 
-from polyfactory.exceptions import ParameterExceptionError
+from polyfactory.exceptions import ParameterError
 
 if TYPE_CHECKING:
     from pytest import Config  # nopycln: import
@@ -75,7 +75,7 @@ class FactoryFixture:
         from polyfactory.factories.base import is_factory
 
         if not is_factory(factory):
-            raise ParameterExceptionError(f"{factory.__name__} is not a BaseFactory subclass.")
+            raise ParameterError(f"{factory.__name__} is not a BaseFactory subclass.")
 
         fixture_name = self.name or _get_fixture_name(factory.__name__)
         fixture_register = fixture(scope=self.scope, name=fixture_name, autouse=self.autouse)  # pyright: ignore

@@ -6,7 +6,7 @@ from hypothesis import given
 from hypothesis.strategies import floats
 from pydantic import ConstrainedFloat
 
-from polyfactory.exceptions import ParameterExceptionError
+from polyfactory.exceptions import ParameterError
 from polyfactory.value_generators.constrained_numbers import (
     handle_constrained_float,
     is_multiply_of_multiple_of_in_range,
@@ -148,7 +148,7 @@ def test_handle_constrained_float_handles_multiple_of(multiple_of: float) -> Non
         )
         assert passes_pydantic_multiple_validator(result, multiple_of)
     else:
-        with pytest.raises(ParameterExceptionError):
+        with pytest.raises(ParameterError):
             constrained_field = create_constrained_field(multiple_of=multiple_of)
             handle_constrained_float(
                 random=Random(),
@@ -188,7 +188,7 @@ def test_handle_constrained_float_handles_multiple_of_with_lt(val1: float, val2:
         )
         assert passes_pydantic_multiple_validator(result, multiple_of)
     else:
-        with pytest.raises(ParameterExceptionError):
+        with pytest.raises(ParameterError):
             constrained_field = create_constrained_field(multiple_of=multiple_of, lt=max_value)
             handle_constrained_float(
                 random=Random(),
@@ -228,7 +228,7 @@ def test_handle_constrained_float_handles_multiple_of_with_le(val1: float, val2:
         )
         assert passes_pydantic_multiple_validator(result, multiple_of)
     else:
-        with pytest.raises(ParameterExceptionError):
+        with pytest.raises(ParameterError):
             constrained_field = create_constrained_field(multiple_of=multiple_of, le=max_value)
             handle_constrained_float(
                 random=Random(),
@@ -268,7 +268,7 @@ def test_handle_constrained_float_handles_multiple_of_with_ge(val1: float, val2:
         )
         assert passes_pydantic_multiple_validator(result, multiple_of)
     else:
-        with pytest.raises(ParameterExceptionError):
+        with pytest.raises(ParameterError):
             constrained_field = create_constrained_field(multiple_of=multiple_of, ge=min_value)
             handle_constrained_float(
                 random=Random(),
@@ -308,7 +308,7 @@ def test_handle_constrained_float_handles_multiple_of_with_gt(val1: float, val2:
         )
         assert passes_pydantic_multiple_validator(result, multiple_of)
     else:
-        with pytest.raises(ParameterExceptionError):
+        with pytest.raises(ParameterError):
             constrained_field = create_constrained_field(multiple_of=multiple_of, gt=min_value)
             handle_constrained_float(
                 random=Random(),
@@ -356,7 +356,7 @@ def test_handle_constrained_float_handles_multiple_of_with_ge_and_le(val1: float
         )
         assert passes_pydantic_multiple_validator(result, multiple_of)
     else:
-        with pytest.raises(ParameterExceptionError):
+        with pytest.raises(ParameterError):
             constrained_field = create_constrained_field(multiple_of=multiple_of, ge=min_value, le=max_value)
             handle_constrained_float(
                 random=Random(),

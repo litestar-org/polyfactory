@@ -1,6 +1,6 @@
 from typing import TYPE_CHECKING, Any, Generic, Type, TypeVar, Union
 
-from polyfactory.exceptions import MissingDependencyExceptionError
+from polyfactory.exceptions import MissingDependencyError
 from polyfactory.factories.pydantic_factory import ModelFactory
 from polyfactory.fields import Ignore
 from polyfactory.utils.predicates import is_safe_subclass
@@ -9,7 +9,7 @@ try:
     from odmantic import EmbeddedModel, Model
 
 except ImportError as e:
-    raise MissingDependencyExceptionError("odmantic is not installed") from e
+    raise MissingDependencyError("odmantic is not installed") from e
 
 T = TypeVar("T", bound=Union[Model, EmbeddedModel])
 

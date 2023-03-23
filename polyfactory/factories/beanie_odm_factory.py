@@ -2,7 +2,7 @@ from typing import TYPE_CHECKING, Any, Generic, List, Optional, Type, TypeVar
 
 from typing_extensions import get_args
 
-from polyfactory.exceptions import MissingDependencyExceptionError
+from polyfactory.exceptions import MissingDependencyError
 from polyfactory.factories.pydantic_factory import ModelFactory
 from polyfactory.persistence import AsyncPersistenceProtocol
 from polyfactory.utils.predicates import is_safe_subclass
@@ -15,7 +15,7 @@ if TYPE_CHECKING:
 try:
     from beanie import Document
 except ImportError as e:
-    raise MissingDependencyExceptionError("beanie is not installed") from e
+    raise MissingDependencyError("beanie is not installed") from e
 
 T = TypeVar("T", bound=Document)
 

@@ -43,9 +43,9 @@ from faker import Faker
 from typing_extensions import get_args, is_typeddict
 
 from polyfactory.exceptions import (
-    ConfigurationExceptionError,
-    MissingBuildKwargExceptionError,
-    ParameterExceptionError,
+    ConfigurationError,
+    MissingBuildKwargError,
+    ParameterError,
 )
 from polyfactory.field_meta import FieldMeta, Null
 from polyfactory.fields import Fixture, Ignore, PostGenerated, Require, Use
@@ -194,17 +194,17 @@ class BaseFactory(ABC, Generic[T]):
         if "__is_base_factory__" not in cls.__dict__ or not cls.__is_base_factory__:
             model = getattr(cls, "__model__", None)
             if not model:
-                raise ConfigurationExceptionError(
+                raise ConfigurationError(
                     f"required configuration attribute '__model__' is not set on {cls.__name__}"
                 )
             if not cls.is_supported_type(model):
                 for factory in BaseFactory._base_factories:
                     if factory.is_supported_type(model):
-                        raise ConfigurationExceptionError(
+                        raise ConfigurationError(
                             f"{cls.__name__} does not support {model.__name__}, but this type is support by the {factory.__name__} base factory class. T"
                             f"o resolve this error, subclass the factory from {factory.__name__} instead of {cls.__name__}"
                         )
-                    raise ConfigurationExceptionError(
+                    raise ConfigurationError(
                         "Model type {model.__name__} is not supported. "
                         "To support it, register an appropriate base factory and subclass it for your factory."
                     )
@@ -220,27 +220,27 @@ class BaseFactory(ABC, Generic[T]):
 
     @classmethod
     def _get_sync_persistence(cls) -> SyncPersistenceProtocol[T]:
-        """Return a SyncPersistenceHandler if defined for the factory, otherwise raises a ConfigurationExceptionError.
+        """Return a SyncPersistenceHandler if defined for the factory, otherwise raises a ConfigurationError.
 
-        :raises: ConfigurationExceptionError
+        :raises: ConfigurationError
         :returns: SyncPersistenceHandler
         """
         if cls.__sync_persistence__:
             return cls.__sync_persistence__() if callable(cls.__sync_persistence__) else cls.__sync_persistence__
-        raise ConfigurationExceptionError(
+        raise ConfigurationError(
             "A '__sync_persistence__' handler must be defined in the factory to use this method"
         )
 
     @classmethod
     def _get_async_persistence(cls) -> AsyncPersistenceProtocol[T]:
-        """Return a AsyncPersistenceHandler if defined for the factory, otherwise raises a ConfigurationExceptionError.
+        """Return a AsyncPersistenceHandler if defined for the factory, otherwise raises a ConfigurationError.
 
-        :raises: ConfigurationExceptionError
+        :raises: ConfigurationError
         :returns: AsyncPersistenceHandler
         """
         if cls.__async_persistence__:
             return cls.__async_persistence__() if callable(cls.__async_persistence__) else cls.__async_persistence__
-        raise ConfigurationExceptionError(
+        raise ConfigurationError(
             "An '__async_persistence__' handler must be defined in the factory to use this method"
         )
 
@@ -291,7 +291,7 @@ class BaseFactory(ABC, Generic[T]):
             if factory.is_supported_type(model):
                 return factory.create_factory(model)
 
-        raise ParameterExceptionError(f"unsupported model type {model.__name__}")  # pragma: no cover
+        raise ParameterError(f"unsupported model type {model.__name__}")  # pragma: no cover
 
     # Public Methods
 
@@ -492,7 +492,7 @@ class BaseFactory(ABC, Generic[T]):
             with suppress(Exception):
                 return annotation()
 
-        raise ParameterExceptionError(
+        raise ParameterError(
             f"Unsupported type: {annotation!r}"
             f"\n\nEither extend the providers map or add a factory function for this type."
         )
@@ -634,7 +634,7 @@ class BaseFactory(ABC, Generic[T]):
                         continue
 
                     if isinstance(field_value, Require) and field_meta.name not in kwargs:
-                        raise MissingBuildKwargExceptionError(f"Require kwarg {field_meta.name} is missing")
+                        raise MissingBuildKwargError(f"Require kwarg {field_meta.name} is missing")
 
                     if isinstance(field_value, PostGenerated):
                         generate_post[field_meta.name] = field_value

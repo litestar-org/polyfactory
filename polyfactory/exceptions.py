@@ -1,18 +1,18 @@
-class FactoryExceptionError(Exception):
+class FactoryError(Exception):
     """Base Factory error class"""
 
 
-class ConfigurationExceptionError(FactoryExceptionError):
-    """Configuration Error class - used for misconfiguration"""
+class ConfigurationError(FactoryError):
+    """Configuration error - used for misconfiguration"""
 
 
-class ParameterExceptionError(FactoryExceptionError):
-    """Parameter exception - used when wrong parameters are used"""
+class ParameterError(FactoryError):
+    """Parameter error - used when wrong parameters are used"""
 
 
-class MissingBuildKwargExceptionError(FactoryExceptionError):
-    """Missing Build Kwarg exception - used when a required build kwarg is not provided"""
+class MissingBuildKwargError(FactoryError):
+    """Missing Build Kwarg error - used when a required build kwarg is not provided"""
 
 
-class MissingDependencyExceptionError(FactoryExceptionError):
-    """Missing dependency exception - used when a dependency is not installed"""
+class MissingDependencyError(FactoryError):
+    """Missing Dependency error - used when a dependency is not installed"""

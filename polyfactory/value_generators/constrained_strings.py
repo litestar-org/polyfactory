@@ -1,6 +1,6 @@
 from typing import TYPE_CHECKING, Callable, Optional, Pattern, TypeVar, Union, cast
 
-from polyfactory.exceptions import ParameterExceptionError
+from polyfactory.exceptions import ParameterError
 from polyfactory.value_generators.primitives import (
     create_random_bytes,
     create_random_string,
@@ -22,18 +22,18 @@ def _validate_length(
     :param min_length: Minimum length.
     :param max_length: Maximum length.
 
-    :raises: ParameterExceptionError.
+    :raises: ParameterError.
 
     :returns: None.
     """
     if min_length is not None and min_length < 0:
-        raise ParameterExceptionError("min_length must be greater or equal to 0")
+        raise ParameterError("min_length must be greater or equal to 0")
 
     if max_length is not None and max_length < 0:
-        raise ParameterExceptionError("max_length must be greater or equal to 0")
+        raise ParameterError("max_length must be greater or equal to 0")
 
     if max_length is not None and min_length is not None and max_length < min_length:
-        raise ParameterExceptionError("max_length must be greater than min_length")
+        raise ParameterError("max_length must be greater than min_length")
 
 
 def _generate_pattern(

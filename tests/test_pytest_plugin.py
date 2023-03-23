@@ -3,7 +3,7 @@ from typing import List
 import pytest
 from pydantic import BaseModel
 
-from polyfactory.exceptions import ParameterExceptionError
+from polyfactory.exceptions import ParameterError
 from polyfactory.factories.pydantic_factory import ModelFactory
 from polyfactory.fields import Fixture
 from polyfactory.pytest_plugin import register_fixture
@@ -35,7 +35,7 @@ def test_custom_naming_fixture_register_decorator(
 
 
 def test_register_with_function_error() -> None:
-    with pytest.raises(ParameterExceptionError):
+    with pytest.raises(ParameterError):
 
         @register_fixture  # type: ignore
         def foo() -> None:
@@ -43,7 +43,7 @@ def test_register_with_function_error() -> None:
 
 
 def test_register_with_class_not_model_factory_error() -> None:
-    with pytest.raises(ParameterExceptionError):
+    with pytest.raises(ParameterError):
 
         @register_fixture  # type: ignore
         class Foo:
@@ -77,5 +77,5 @@ def test_using_non_fixture_with_the_fixture_field_raises() -> None:
         best_friend = Fixture(PersonFactoryFixture, name="mike")
         all_friends = Fixture(123)  # type: ignore
 
-    with pytest.raises(ParameterExceptionError):
+    with pytest.raises(ParameterError):
         MyFactory.build()

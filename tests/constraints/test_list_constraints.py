@@ -6,7 +6,7 @@ from hypothesis.strategies import integers
 from pydantic import BaseConfig, ConstrainedList, conlist
 from pydantic.fields import ModelField
 
-from polyfactory.exceptions import ParameterExceptionError
+from polyfactory.exceptions import ParameterError
 from polyfactory.factories.pydantic_factory import ModelFactory, PydanticFieldMeta
 from polyfactory.value_generators.constrained_collections import (
     handle_constrained_collection,
@@ -55,7 +55,7 @@ def test_handle_constrained_list_with_min_items_and_max_items(min_items: int, ma
         assert len(result) >= min_items
         assert len(result) <= max_items
     else:
-        with pytest.raises(ParameterExceptionError):
+        with pytest.raises(ParameterError):
             handle_constrained_collection(
                 collection_type=list,
                 factory=ModelFactory,
