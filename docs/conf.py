@@ -1,15 +1,15 @@
-project = 'Polyfactory'
+project = "Polyfactory"
 copyright = "2023, Starlite API"
 author = "Starlite API"
-release = '2.0.0'
+release = "2.0.0"
 
 extensions = [
     "sphinx.ext.autodoc",
-    'sphinx.ext.napoleon',
+    "sphinx.ext.napoleon",
 ]
 
-templates_path = ['_templates']
-exclude_patterns = ['_build', 'Thumbs.db', '.DS_Store']
+templates_path = ["_templates"]
+exclude_patterns = ["_build", "Thumbs.db", ".DS_Store"]
 
 napoleon_google_docstring = True
 napoleon_include_special_with_doc = True
@@ -44,7 +44,7 @@ html_theme_options = {
             "Organization": "about/organization",
             "Releases": "about/releases",
         },
-    }
+    },
 }
 
 html_context = {

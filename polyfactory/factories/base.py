@@ -194,9 +194,7 @@ class BaseFactory(ABC, Generic[T]):
         if "__is_base_factory__" not in cls.__dict__ or not cls.__is_base_factory__:
             model = getattr(cls, "__model__", None)
             if not model:
-                raise ConfigurationError(
-                    f"required configuration attribute '__model__' is not set on {cls.__name__}"
-                )
+                raise ConfigurationError(f"required configuration attribute '__model__' is not set on {cls.__name__}")
             if not cls.is_supported_type(model):
                 for factory in BaseFactory._base_factories:
                     if factory.is_supported_type(model):
@@ -227,9 +225,7 @@ class BaseFactory(ABC, Generic[T]):
         """
         if cls.__sync_persistence__:
             return cls.__sync_persistence__() if callable(cls.__sync_persistence__) else cls.__sync_persistence__
-        raise ConfigurationError(
-            "A '__sync_persistence__' handler must be defined in the factory to use this method"
-        )
+        raise ConfigurationError("A '__sync_persistence__' handler must be defined in the factory to use this method")
 
     @classmethod
     def _get_async_persistence(cls) -> AsyncPersistenceProtocol[T]:
@@ -240,9 +236,7 @@ class BaseFactory(ABC, Generic[T]):
         """
         if cls.__async_persistence__:
             return cls.__async_persistence__() if callable(cls.__async_persistence__) else cls.__async_persistence__
-        raise ConfigurationError(
-            "An '__async_persistence__' handler must be defined in the factory to use this method"
-        )
+        raise ConfigurationError("An '__async_persistence__' handler must be defined in the factory to use this method")
 
     @classmethod
     def _handle_factory_field(cls, field_value: Any, field_build_parameters: Optional[Any] = None) -> Any:

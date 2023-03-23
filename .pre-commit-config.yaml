@@ -13,7 +13,7 @@ repos:
       - id: mixed-line-ending
       - id: trailing-whitespace
   - repo: https://github.com/charliermarsh/ruff-pre-commit
-    rev: "v0.0.254"
+    rev: "v0.0.258"
     hooks:
       - id: ruff
         args: ["--fix"]
@@ -23,7 +23,7 @@ repos:
       - id: black
         args: [--config=./pyproject.toml]
   - repo: https://github.com/codespell-project/codespell
-    rev: v2.2.2
+    rev: v2.2.4
     hooks:
       - id: codespell
   - repo: https://github.com/pre-commit/mirrors-prettier
@@ -31,7 +31,7 @@ repos:
     hooks:
       - id: prettier
   - repo: https://github.com/pre-commit/mirrors-mypy
-    rev: "v1.0.1"
+    rev: "v1.1.1"
     hooks:
       - id: mypy
         exclude: "test_decimal_constraints"
@@ -46,7 +46,7 @@ repos:
             pytest,
           ]
   - repo: https://github.com/RobertCraigie/pyright-python
-    rev: v1.1.296
+    rev: v1.1.300
     hooks:
       - id: pyright
         exclude: "test_decimal_constraints"
