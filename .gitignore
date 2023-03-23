@@ -4,6 +4,8 @@
 .mypy_cache/
 .idea/
 __pycache__/
+.ruff_cache/
+/docs/_build/
 dist/
 
 # files
@@ -13,3 +15,6 @@ coverage.*
 .python-version
 *.iml
 *.mod
+.venv
+.env
+.vscode/

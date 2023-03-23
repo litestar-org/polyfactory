@@ -37,7 +37,7 @@ html_theme_options = {
     "extra_navbar_items": {
         "Documentation": "reference/index",
         "Community": {
-            "Contribution guide": "community/contribution-guide/index",
+            "Contributing": "community/contributing",
             "Code of Conduct": "https://github.com/starlite-api/.github/blob/main/CODE_OF_CONDUCT.md",
         },
         "About": {
@@ -51,7 +51,7 @@ html_context = {
     "navbar_items": {
         "Documentation": "reference/index",
         "Community": {
-            "Contribution guide": "community/contribution-guide/index",
+            "Contributing": "community/contributing",
             "Code of Conduct": "https://github.com/starlite-api/.github/blob/main/CODE_OF_CONDUCT.md",
         },
         "About": {
