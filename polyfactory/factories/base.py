@@ -750,7 +750,7 @@ class DataclassFactory(Generic[T], BaseFactory[T]):
         """
         fields_meta: List["FieldMeta"] = []
 
-        for field in fields(cls.__model__):
+        for field in fields(cls.__model__):  # type: ignore[arg-type]
             if field.default_factory and field.default_factory is not MISSING:
                 default_value = field.default_factory()
             elif field.default is not MISSING:

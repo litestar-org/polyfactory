@@ -1,5 +1,6 @@
-from datetime import date, timedelta
+from datetime import date, timedelta, datetime, timezone
 from typing import TYPE_CHECKING, Optional, cast
+
 
 if TYPE_CHECKING:
     from faker import Faker
@@ -22,13 +23,13 @@ def handle_constrained_date(
 
     :returns: A date instance.
     """
-    start_date = date.today() - timedelta(days=100)
+    start_date = datetime.now(tz=timezone.utc).date() - timedelta(days=100)
     if ge:
         start_date = ge
     elif gt:
         start_date = gt + timedelta(days=1)
 
-    end_date = date.today() + timedelta(days=100)
+    end_date = datetime.now(tz=timezone.utc).date() + timedelta(days=100)
     if le:
         end_date = le
     elif lt:

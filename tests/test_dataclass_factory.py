@@ -36,8 +36,8 @@ def test_factory_pydantic_dc() -> None:
         id: int
         name: str
         list_field: List[Dict[str, int]]
-        field_of_some_value: Optional[int] = field(default_factory=lambda: 0)
         constrained_field: int = Field(ge=100)
+        field_of_some_value: Optional[int] = field(default_factory=lambda: 0)
 
     class MyFactory(DataclassFactory[PydanticDC]):
         __model__ = PydanticDC

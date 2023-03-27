@@ -117,7 +117,7 @@ class RegexFactory:
         parsed = parse(pattern)
         result = self._build_string(parsed)
         self._cache.clear()
-        return result  # noqa: R504
+        return result
 
     def _build_string(self, parsed: SubPattern) -> str:
         return "".join([self._handle_state(state) for state in parsed])  # pyright:ignore

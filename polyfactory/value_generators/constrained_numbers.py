@@ -90,18 +90,15 @@ def is_multiply_of_multiple_of_in_range(
     #
     #                minimum
     # -----------------+-------+-----------------------------------+----------------------------
-    #             multiplier * multiple_of        (multiplier + 1) * multiple_of
     #
     #
     #                                minimum
     # -------------------------+--------+--------------------------+----------------------------
-    #             multiplier * multiple_of        (multiplier + 1) * multiple_of
     #
     # since `multiple_of` can be a negative number adding +1 to `multiplier` drives `(multiplier + 1) * multiple_of``
     # away from `minimum` to the -infinity. It looks like this:
     #                                                                               minimum
     # -----------------------+--------------------------------+------------------------+--------
-    #       (multiplier + 1) * multiple_of        (multiplier) * multiple_of
     #
     # so for negative `multiple_of` we want to subtract 1 from multiplier
     for multiply in [multiplier * multiple_of, (multiplier + step) * multiple_of]:
