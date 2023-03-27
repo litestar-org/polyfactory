@@ -7,9 +7,7 @@ from hypothesis.strategies import booleans, integers
 from pydantic import ConstrainedBytes
 
 from polyfactory.exceptions import ParameterException
-from polyfactory.value_generators.constrainted_strings import (
-    handle_constrained_string_or_bytes,
-)
+from polyfactory.value_generators.constrained_strings import handle_constrained_string_or_bytes
 
 
 def create_constrained_field(
