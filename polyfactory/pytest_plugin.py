@@ -32,7 +32,7 @@ split_pattern_2 = re.compile(r"([a-z\d])([A-Z])")
 
 
 def _get_fixture_name(name: str) -> str:
-    """from inflection.underscore.
+    """From inflection.underscore.
 
     :param name: str: A name.
 
