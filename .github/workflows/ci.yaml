@@ -46,13 +46,13 @@ jobs:
         uses: actions/cache@v3
         with:
           path: .venv
-          key: v1-venv-${{ runner.os }}-${{ matrix.python-version }}-${{ hashFiles('**/poetry.lock') }}
+          key: v2-venv-${{ runner.os }}-${{ matrix.python-version }}-${{ hashFiles('**/poetry.lock') }}
           restore-keys: |
-            v1-venv-${{ runner.os }}-${{ matrix.python-version }}
-            v1-venv-${{ runner.os }}
+            v2-venv-${{ runner.os }}-${{ matrix.python-version }}
+            v2-venv-${{ runner.os }}
       - name: Install dependencies
         if: steps.cached-poetry-dependencies.outputs.cache-hit != 'true'
-        run: poetry install --no-interaction --no-root
+        run: poetry install --no-interaction
       - name: Set pythonpath
         run: echo "PYTHONPATH=$PWD" >> $GITHUB_ENV
       - name: Test
