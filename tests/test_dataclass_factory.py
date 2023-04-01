@@ -5,7 +5,7 @@ from typing import Dict, List, Optional
 from pydantic.dataclasses import Field  # type: ignore
 from pydantic.dataclasses import dataclass as pydantic_dataclass
 
-from polyfactory.factories.base import DataclassFactory
+from polyfactory.factories import DataclassFactory
 from tests.models import Person
 
 

@@ -3,7 +3,7 @@ from dataclasses import dataclass
 import pytest
 
 from polyfactory import ConfigurationException
-from polyfactory.factories.base import DataclassFactory
+from polyfactory.factories import DataclassFactory
 from polyfactory.factories.pydantic_factory import ModelFactory
 from polyfactory.field_meta import Null
 
