@@ -3,15 +3,15 @@
 docs-clean:
 	rm -rf docs/_build
 
-docs-serve:
-	sphinx-autobuild docs docs/_build/ -j auto --watch polyfactory
+docs-serve: docs-clean
+	poetry run sphinx-autobuild docs docs/_build/ -j auto --watch polyfactory
 
 docs: docs-clean
-	sphinx-build -M html docs docs/_build/ -a -j auto -W --keep-going
+	poetry run sphinx-build -M html docs docs/_build/ -a -j auto -W --keep-going
 
 test:
-	pytest tests
+	poetry run pytest tests
 
 coverage:
-	pytest tests --cov=polyfactory
-	coverage html
+	poetry run pytest tests --cov=polyfactory
+	poetry run coverage html

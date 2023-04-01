@@ -27,6 +27,7 @@ to understand, you can in fact use any callable (including classes) as values fo
 these will be invoked at build-time. Thus, you could for example re-write the above PetFactory like so:
 
 .. code-block:: python
+
     class PetFactory(DataclassFactory[Pet]):
     __model__ = Pet
 
@@ -36,6 +37,7 @@ these will be invoked at build-time. Thus, you could for example re-write the ab
 Or you can use a class method, which will give you easy and nice access to the factory itself:
 
 .. code-block:: python
+
     class PetFactory(DataclassFactory[Pet]):
     __model__ = Pet
 

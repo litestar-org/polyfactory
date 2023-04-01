@@ -1,5 +1,5 @@
-field_meta
-==========
+polyfactory.field_meta
+======================
 
 .. automodule:: polyfactory.field_meta
     :members:
