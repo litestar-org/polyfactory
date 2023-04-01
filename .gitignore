@@ -1,16 +1,30 @@
 # folders
-.pytest_cache/
-.hypothesis/
-.mypy_cache/
-.idea/
 __pycache__/
+.auto_pytabs_cache/
+.hypothesis/
+.idea/
+.mypy_cache/
+.pytest_cache/
+.scannerwork/
+.venv/
+.vscode/
+*.egg-info/
+build/
 dist/
+node_modules/
+results/
+site/
+target/
 
 # files
+**/*.so
+**/*.sqlite
+**/*.sqlite*
+*.iml
 .DS_Store
-coverage.*
 .coverage
 .python-version
-*.iml
-*.mod
+.ruff_cache
 /docs/_build/
+coverage.*
+setup.py

@@ -1,14 +1,18 @@
 [tool.poetry]
 name = "polyfactory"
-version = "1.17.2"
+version = "1.0.0alpha0"
 description = "Mock data generation for pydantic based models and python dataclasses"
-authors = ["Na'aman Hirschfeld <nhirschfeld@gmail.com>"]
+authors = [
+    "Na'aman Hirschfeld <nhirschfeld@gmail.com>",
+    "Peter Schutt <peter.github@proton.me>",
+    "Cody Fincher <cody.fincher@gmail.com>",
+    "Janek Nouvertné <provinzkraut@posteo.de>",
+]
 maintainers = [
     "Na'aman Hirschfeld <nhirschfeld@gmail.com>",
     "Peter Schutt <peter.github@proton.me>",
     "Cody Fincher <cody.fincher@gmail.com>",
     "Janek Nouvertné <provinzkraut@posteo.de>",
-    "Konstantin Mikhailov <konstantin.mikhailov@proton.me>"
 ]
 license = "MIT"
 readme = "README.md"
@@ -45,7 +49,6 @@ classifiers = [
     "Topic :: Utilities",
     "Typing :: Typed",
 ]
-include = ["CHANGELOG.md"]
 packages = [
     { include = "polyfactory" },
 ]
@@ -68,7 +71,7 @@ pydantic = "*"
 pytest = "*"
 pytest-asyncio = "*"
 pytest-cov = "*"
-mongomock-motor = "^0.0.17"
+mongomock-motor = "*"
 
 [tool.poetry.extras]
 pydantic = ["pydantic"]
@@ -135,7 +138,8 @@ select = [
     "YTT", # flake8-2020
 ]
 ignore = [
-    "E501", # pycodestyle line too long, handled by black
+    "A003", # flake8-builtins - class attribute {name} is shadowing a python builtin
+    "B010", # flake8-bugbear - do not call setattr with a constant attribute value
     "D100", # pydocstyle - missing docstring in public module
     "D101", # pydocstyle - missing docstring in public class
     "D102", # pydocstyle - missing docstring in public method
@@ -147,10 +151,9 @@ ignore = [
     "D202", # pydocstyle - no blank lines allowed after function docstring
     "D205", # pydocstyle - 1 blank line required between summary line and description
     "D415", # pydocstyle - first line should end with a period, question mark, or exclamation point
+    "E501", # pycodestyle line too long, handled by black
+    "N818", # pep8-naming - exception name should be named with an Error suffix
     "UP037", # pyupgrade - removes quotes from type annotation
-    "A003", # flake8-builtins - class attribute {name} is shadowing a python builtin
-    "B010", # flake8-bugbear - do not call setattr with a constant attribute value
-    "N818" # pep8-naming - exception name should be named with an Error suffix
 ]
 line-length = 120
 src = ["polyfactory", "tests"]

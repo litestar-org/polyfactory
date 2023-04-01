@@ -13,12 +13,12 @@ repos:
       - id: mixed-line-ending
       - id: trailing-whitespace
   - repo: https://github.com/charliermarsh/ruff-pre-commit
-    rev: "v0.0.258"
+    rev: "v0.0.260"
     hooks:
       - id: ruff
         args: ["--fix"]
   - repo: https://github.com/psf/black
-    rev: 23.1.0
+    rev: 23.3.0
     hooks:
       - id: black
         args: [--config=./pyproject.toml]
@@ -46,7 +46,7 @@ repos:
             pytest,
           ]
   - repo: https://github.com/RobertCraigie/pyright-python
-    rev: v1.1.300
+    rev: v1.1.301
     hooks:
       - id: pyright
         exclude: "test_decimal_constraints"
