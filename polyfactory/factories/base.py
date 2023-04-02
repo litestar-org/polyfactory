@@ -132,15 +132,43 @@ class BaseFactory(ABC, Generic[T]):
     """Base Factory class - this class holds the main logic of the library"""
 
     # configuration attributes
-    __allow_none_optionals__: ClassVar[bool] = True
-    __async_persistence__: type[AsyncPersistenceProtocol[T]] | AsyncPersistenceProtocol[T] | None = None
-    __set_as_default_factory_for_type__ = False
-    __is_base_factory__: bool = False
-    __faker__: ClassVar["Faker"] = Faker()
-    __random__: ClassVar["Random"] = Random()
     __model__: type[T]
-    __random_seed__: ClassVar[int]
+    """
+    The model for the factory.
+    This attribute is required for non-base factories and an exception will be raised if its not set.
+    """
+    __allow_none_optionals__: ClassVar[bool] = True
+    """
+    Flag dictating whether to allow 'None' for optional values.
+    If 'True', 'None' will be randomly generated as a value for optional model fields
+    """
     __sync_persistence__: type[SyncPersistenceProtocol[T]] | SyncPersistenceProtocol[T] | None = None
+    """A sync persistence handler. Can be a class or a class instance."""
+    __async_persistence__: type[AsyncPersistenceProtocol[T]] | AsyncPersistenceProtocol[T] | None = None
+    """An async persistence handler. Can be a class or a class instance."""
+    __set_as_default_factory_for_type__ = False
+    """
+    Flag dictating whether to set as the default factory for the given type.
+    If 'True' the factory will be used instead of dynamically generating a factory for the type.
+    """
+    __is_base_factory__: bool = False
+    """
+    Flag dictating whether the factory is a 'base' factory. Base factories are registered globally as handlers for types.
+    For example, the 'DataclassFactory', 'TypedDictFactory' and 'ModelFactory' are all base factories.
+    """
+    __faker__: ClassVar["Faker"] = Faker()
+    """
+    A faker instance to use. Can be a user provided value.
+    """
+    __random__: ClassVar["Random"] = Random()
+    """
+    An instance of 'random.Random' to use.
+    """
+    __random_seed__: ClassVar[int]
+    """
+    An integer to seed the factory's Faker and Random instances with.
+    This attribute can be used to control random generation.
+    """
 
     # cached attributes
     _fields_metadata: list["FieldMeta"]

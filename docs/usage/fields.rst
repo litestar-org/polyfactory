@@ -5,8 +5,8 @@ The factory api is designed to be as semantic and simple as possible, and by def
 mock data. Nonetheless, when you do need to customize and control the data being generated, polyfactory has you covered.
 Lets look at a few examples:
 
-.. literalinclude:: /examples/factory_fields/test_example_1.py
-    :caption: Declaring a PersonFactory with preset pets
+.. literalinclude:: /examples/fields/test_example_1.py
+    :caption: Declaring a PersonFactory with hardcoded pets
     :language: python
 
 In the example above, the call to ``PersonFactory.build()`` results in a ``Person`` where all values are randomly
@@ -18,8 +18,8 @@ The ``Use`` Field
 This though is often not desirable. We could instead, define a factory for Pet where we restrict the choices to a range
 we like. For example:
 
-.. literalinclude:: /examples/factory_fields/test_example_2.py
-    :caption: Using the ``Use`` field with a custom PetFactory to control the generation of a Person's pets list.
+.. literalinclude:: /examples/fields/test_example_2.py
+    :caption: Using the ``Use`` field with a custom PetFactory to control the generation of a Person's pets list
     :language: python
 
 The :class:`Use <polyfactory.Use>` class is merely a semantic abstraction that makes the factory cleaner and simpler
@@ -60,8 +60,8 @@ The ``Ignore`` Field
 :class:`Ignore <polyfactory.Ignore>` is used to designate an attribute as ignored, which means it will be completely
 ignored by the factory:
 
-.. literalinclude:: /examples/factory_fields/test_example_3.py
-    :caption: Using the ``Ignore`` field.
+.. literalinclude:: /examples/fields/test_example_3.py
+    :caption: Using the ``Ignore`` field
     :language: python
 
 
@@ -71,8 +71,8 @@ The ``Require`` Field
 The :class:`Require <polyfactory.Require>` class is used to designate a given attribute as a required kwarg. This means that the
 factory will require passing a value for this attribute as a kwarg to the build method, or an exception will be raised:
 
-.. literalinclude:: /examples/factory_fields/test_example_4.py
-    :caption: Using the ``Require`` field.
+.. literalinclude:: /examples/fields/test_example_4.py
+    :caption: Using the ``Require`` field
     :language: python
 
 
@@ -83,8 +83,8 @@ The :class:`PostGenerated <polyfactory.PostGenerated>` class allows for post gen
 values of other (non post generated) fields. In most cases this pattern is best avoided, but for the few valid cases
 the PostGenerated helper is provided. For example:
 
-.. literalinclude:: /examples/factory_fields/test_example_5.py
-    :caption: Using the ``PostGenerated`` field.
+.. literalinclude:: /examples/fields/test_example_5.py
+    :caption: Using the ``PostGenerated`` field
     :language: python
 
 The signature for use is: ``cb: Callable, *args, **defaults``, it can receive any sync callable. The signature for the
