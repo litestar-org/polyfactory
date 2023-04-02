@@ -1,14 +1,10 @@
-# pylint: disable=unnecessary-ellipsis
+from __future__ import annotations
 from decimal import Decimal
 from sys import float_info
 from typing import (
     TYPE_CHECKING,
     Any,
-    Dict,
-    Optional,
     Protocol,
-    Tuple,
-    Type,
     TypeVar,
     cast,
 )
@@ -30,7 +26,7 @@ T = TypeVar("T", Decimal, int, float)
 class NumberGeneratorProtocol(Protocol[T]):
     """Protocol for custom callables used to generate numerical values"""
 
-    def __call__(self, random: "Random", minimum: Optional[T] = None, maximum: Optional[T] = None) -> T:
+    def __call__(self, random: "Random", minimum: T | None = None, maximum: T | None = None) -> T:
         """Signature of the callable.
 
         :param random: An instance of random.
@@ -128,14 +124,14 @@ def passes_pydantic_multiple_validator(value: T, multiple_of: T) -> bool:
     return almost_equal_floats(mod, 0.0) or almost_equal_floats(mod, 1.0)
 
 
-def get_increment(t_type: Type[T]) -> T:
+def get_increment(t_type: type[T]) -> T:
     """Get a small increment base to add to constrained values, i.e. lt/gt entries.
 
     :param t_type: A value of type T.
 
     :returns: An increment T.
     """
-    values: Dict[Any, Any] = {
+    values: dict[Any, Any] = {
         int: 1,
         float: float_info.epsilon,
         Decimal: Decimal("0.001"),
@@ -143,7 +139,7 @@ def get_increment(t_type: Type[T]) -> T:
     return cast("T", values[t_type])
 
 
-def get_value_or_none(equal_value: Optional[T], constrained: Optional[T], increment: T) -> Optional[T]:
+def get_value_or_none(equal_value: T | None, constrained: T | None, increment: T) -> T | None:
     """Return an optional value.
 
     :param equal_value: An GE/LE value.
@@ -160,14 +156,14 @@ def get_value_or_none(equal_value: Optional[T], constrained: Optional[T], increm
 
 
 def get_constrained_number_range(
-    t_type: Type[T],
+    t_type: type[T],
     random: "Random",
-    lt: Optional[T] = None,
-    le: Optional[T] = None,
-    gt: Optional[T] = None,
-    ge: Optional[T] = None,
-    multiple_of: Optional[T] = None,
-) -> Tuple[Optional[T], Optional[T]]:
+    lt: T | None = None,
+    le: T | None = None,
+    gt: T | None = None,
+    ge: T | None = None,
+    multiple_of: T | None = None,
+) -> tuple[T | None, T | None]:
     """Return the minimum and maximum values given a field_meta's constraints.
 
     :param t_type: A primitive constructor - int, float or Decimal.
@@ -209,9 +205,9 @@ def get_constrained_number_range(
 
 def generate_constrained_number(
     random: "Random",
-    minimum: Optional[T],
-    maximum: Optional[T],
-    multiple_of: Optional[T],
+    minimum: T | None,
+    maximum: T | None,
+    multiple_of: T | None,
     method: "NumberGeneratorProtocol[T]",
 ) -> T:
     """Generate a constrained number, output depends on the passed in callbacks.
@@ -240,11 +236,11 @@ def generate_constrained_number(
 
 def handle_constrained_int(
     random: "Random",
-    multiple_of: Optional[int] = None,
-    gt: Optional[int] = None,
-    ge: Optional[int] = None,
-    lt: Optional[int] = None,
-    le: Optional[int] = None,
+    multiple_of: int | None = None,
+    gt: int | None = None,
+    ge: int | None = None,
+    lt: int | None = None,
+    le: int | None = None,
 ) -> int:
     """Handle constrained integers.
 
@@ -273,11 +269,11 @@ def handle_constrained_int(
 
 def handle_constrained_float(
     random: "Random",
-    multiple_of: Optional[float] = None,
-    gt: Optional[float] = None,
-    ge: Optional[float] = None,
-    lt: Optional[float] = None,
-    le: Optional[float] = None,
+    multiple_of: float | None = None,
+    gt: float | None = None,
+    ge: float | None = None,
+    lt: float | None = None,
+    le: float | None = None,
 ) -> float:
     """Handle constrained floats.
 
@@ -306,8 +302,8 @@ def handle_constrained_float(
 
 def validate_max_digits(
     max_digits: int,
-    minimum: Optional[Decimal],
-    decimal_places: Optional[int],
+    minimum: Decimal | None,
+    decimal_places: int | None,
 ) -> None:
     """Validate that max digits is greater than minimum and decimal places.
 
@@ -333,8 +329,8 @@ def validate_max_digits(
 
 def handle_decimal_length(
     generated_decimal: Decimal,
-    decimal_places: Optional[int],
-    max_digits: Optional[int],
+    decimal_places: int | None,
+    max_digits: int | None,
 ) -> Decimal:
     """Handle the length of the decimal.
 
@@ -370,13 +366,13 @@ def handle_decimal_length(
 
 def handle_constrained_decimal(
     random: "Random",
-    multiple_of: Optional[Decimal] = None,
-    decimal_places: Optional[int] = None,
-    max_digits: Optional[int] = None,
-    gt: Optional[Decimal] = None,
-    ge: Optional[Decimal] = None,
-    lt: Optional[Decimal] = None,
-    le: Optional[Decimal] = None,
+    multiple_of: Decimal | None = None,
+    decimal_places: int | None = None,
+    max_digits: int | None = None,
+    gt: Decimal | None = None,
+    ge: Decimal | None = None,
+    lt: Decimal | None = None,
+    le: Decimal | None = None,
 ) -> Decimal:
     """Handle a constrained decimal.
 

@@ -1,6 +1,7 @@
+from __future__ import annotations
 import sys
 from inspect import isclass
-from typing import Any, Literal, NewType, Optional, Type, TypeVar, Union, get_args
+from typing import Any, Literal, NewType, Optional, TypeVar, Union, get_args
 
 from typing_extensions import (
     Annotated,
@@ -26,7 +27,7 @@ P = ParamSpec("P")
 T = TypeVar("T")
 
 
-def is_safe_subclass(annotation: Any, super_class: Type[T]) -> "TypeGuard[Type[T]]":
+def is_safe_subclass(annotation: Any, super_class: type[T]) -> "TypeGuard[type[T]]":
     """Determine whether a given annotation is a subclass of a give type
 
     :param annotation: A type annotation.
@@ -57,7 +58,7 @@ def is_any(annotation: Any) -> "TypeGuard[Any]":
     )
 
 
-def is_union(annotation: Any) -> "TypeGuard[Union[Any, Any]]":
+def is_union(annotation: Any) -> "TypeGuard[Any | Any]":
     """Determine whether a given annotation is 'typing.Union'.
 
     :param annotation: A type annotation.
@@ -67,7 +68,7 @@ def is_union(annotation: Any) -> "TypeGuard[Union[Any, Any]]":
     return get_type_origin(annotation) in UNION_TYPES
 
 
-def is_optional_union(annotation: Any) -> "TypeGuard[Union[Any, None]]":
+def is_optional_union(annotation: Any) -> "TypeGuard[Any | None]":
     """Determine whether a given annotation is 'typing.Optional'.
 
     :param annotation: A type annotation.
@@ -92,7 +93,7 @@ def is_literal(annotation: Any) -> bool:
     )
 
 
-def is_new_type(annotation: Any) -> "TypeGuard[Type[NewType]]":
+def is_new_type(annotation: Any) -> "TypeGuard[type[NewType]]":
     """Determine whether a given annotation is 'typing.NewType'.
 
     :param annotation: A type annotation.

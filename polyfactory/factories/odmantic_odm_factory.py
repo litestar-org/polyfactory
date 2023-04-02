@@ -1,4 +1,5 @@
-from typing import TYPE_CHECKING, Any, Generic, Type, TypeVar, Union
+from __future__ import annotations
+from typing import TYPE_CHECKING, Any, Generic, TypeVar, Union
 
 from polyfactory.exceptions import MissingDependencyException
 from polyfactory.factories.pydantic_factory import ModelFactory
@@ -23,7 +24,7 @@ class OdmanticModelFactory(Generic[T], ModelFactory[T]):
     __is_base_factory__ = True
 
     @classmethod
-    def is_supported_type(cls, value: Any) -> "TypeGuard[Type[T]]":
+    def is_supported_type(cls, value: Any) -> "TypeGuard[type[T]]":
         """Determine whether the given value is supported by the factory.
 
         :param value: An arbitrary value.

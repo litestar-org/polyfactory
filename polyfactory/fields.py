@@ -1,4 +1,5 @@
-from typing import Any, Callable, Dict, Generic, Optional, TypeVar, cast
+from __future__ import annotations
+from typing import Any, Callable, Generic, TypeVar, cast
 
 from typing_extensions import ParamSpec, TypedDict
 
@@ -70,7 +71,7 @@ class PostGenerated:
         self.kwargs = kwargs
         self.args = args
 
-    def to_value(self, name: str, values: Dict[str, Any]) -> Any:
+    def to_value(self, name: str, values: dict[str, Any]) -> Any:
         """Invoke the post-generation callback passing to it the build results.
 
         :param name: Field name.
@@ -86,7 +87,7 @@ class Fixture:
 
     __slots__ = ("fixture", "size", "kwargs")
 
-    def __init__(self, fixture: Callable, size: Optional[int] = None, **kwargs: Any) -> None:
+    def __init__(self, fixture: Callable, size: int | None = None, **kwargs: Any) -> None:
         """Create a fixture from a factory.
 
         :param fixture: A factory that was registered as a fixture.

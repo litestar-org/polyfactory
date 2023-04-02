@@ -1,11 +1,12 @@
+from __future__ import annotations
 from abc import ABC, abstractmethod
 from collections import Counter, deque
 from contextlib import suppress
-from dataclasses import MISSING, fields, is_dataclass
 from datetime import date, datetime, time, timedelta
 from decimal import Decimal
 from enum import EnumMeta
 from functools import partial
+from importlib import import_module
 from inspect import isclass
 from ipaddress import (
     IPv4Address,
@@ -15,41 +16,33 @@ from ipaddress import (
     IPv6Interface,
     IPv6Network,
 )
-from math import nan
 from os.path import realpath
 from pathlib import Path
 from random import Random
-from typing import _TypedDictMeta  # type: ignore
 from typing import (
     TYPE_CHECKING,
     Any,
     Callable,
     ClassVar,
-    Dict,
     Generic,
-    List,
     Mapping,
-    Optional,
     Sequence,
-    Tuple,
     Type,
     TypeVar,
-    Union,
     cast,
 )
 from uuid import NAMESPACE_DNS, UUID, uuid1, uuid3, uuid5
 
 from faker import Faker
-from typing_extensions import get_args, is_typeddict
+from typing_extensions import get_args
 
 from polyfactory.exceptions import (
     ConfigurationException,
     MissingBuildKwargException,
     ParameterException,
 )
-from polyfactory.field_meta import FieldMeta, Null
 from polyfactory.fields import Fixture, Ignore, PostGenerated, Require, Use
-from polyfactory.persistence import AsyncPersistenceProtocol, SyncPersistenceProtocol
+
 from polyfactory.utils.helpers import unwrap_annotation, unwrap_args, unwrap_optional
 from polyfactory.utils.predicates import (
     get_type_origin,
@@ -64,95 +57,68 @@ from polyfactory.value_generators.primitives import (
 )
 
 if TYPE_CHECKING:
+    from polyfactory.persistence import AsyncPersistenceProtocol, SyncPersistenceProtocol
+    from polyfactory.field_meta import FieldMeta
     from typing_extensions import TypeGuard
 
-try:
-    from pydantic import (
-        UUID1,
-        UUID3,
-        UUID4,
-        UUID5,
-        AmqpDsn,
-        AnyHttpUrl,
-        AnyUrl,
-        ByteSize,
-        DirectoryPath,
-        EmailStr,
-        FilePath,
-        FutureDate,
-        HttpUrl,
-        IPvAnyAddress,
-        IPvAnyInterface,
-        IPvAnyNetwork,
-        Json,
-        KafkaDsn,
-        NameEmail,
-        NegativeFloat,
-        NegativeInt,
-        NonNegativeInt,
-        NonPositiveFloat,
-        PastDate,
-        PaymentCardNumber,
-        PositiveFloat,
-        PositiveInt,
-        PostgresDsn,
-        PyObject,
-        RedisDsn,
-        SecretBytes,
-        SecretStr,
-        StrictBool,
-        StrictBytes,
-        StrictFloat,
-        StrictInt,
-        StrictStr,
-    )
-    from pydantic.color import Color
-except ImportError:
-    # we use the fact that 'nan != nan' to ensure that these types are never matched
-    Color = nan  # type: ignore[misc, assignment]
-    UUID1 = nan  # type: ignore[misc, assignment]
-    UUID3 = nan  # type: ignore[misc, assignment]
-    UUID4 = nan  # type: ignore[misc, assignment]
-    UUID5 = nan  # type: ignore[misc, assignment]
-    AmqpDsn = nan  # type: ignore[misc]
-    AnyHttpUrl = nan  # type: ignore[misc]
-    AnyUrl = nan  # type: ignore[misc]
-    ByteSize = nan  # type: ignore[misc, assignment]
-    DirectoryPath = nan  # type: ignore[misc, assignment]
-    EmailStr = nan  # type: ignore[misc, assignment]
-    FilePath = nan  # type: ignore[misc, assignment]
-    FutureDate = nan  # type: ignore[misc, assignment]
-    HttpUrl = nan  # type: ignore[misc]
-    IPvAnyAddress = nan  # type: ignore[misc, assignment]
-    IPvAnyInterface = nan  # type: ignore[misc, assignment]
-    IPvAnyNetwork = nan  # type: ignore[misc, assignment]
-    Json = nan  # type: ignore[misc]
-    KafkaDsn = nan  # type: ignore[misc]
-    NameEmail = nan  # type: ignore[misc, assignment]
-    NegativeFloat = nan  # type: ignore[misc, assignment]
-    NegativeInt = nan  # type: ignore[misc, assignment]
-    NonNegativeInt = nan  # type: ignore[misc, assignment]
-    NonPositiveFloat = nan  # type: ignore[misc, assignment]
-    PastDate = nan  # type: ignore[misc, assignment]
-    PaymentCardNumber = nan  # type: ignore[misc, assignment]
-    PositiveFloat = nan  # type: ignore[misc, assignment]
-    PositiveInt = nan  # type: ignore[misc, assignment]
-    PostgresDsn = nan  # type: ignore[misc]
-    PyObject = nan  # type: ignore[misc]
-    RedisDsn = nan  # type: ignore[misc]
-    SecretBytes = nan  # type: ignore[misc, assignment]
-    SecretStr = nan  # type: ignore[misc, assignment]
-    StrictBool = nan  # type: ignore[misc, assignment]
-    StrictBytes = nan  # type: ignore[misc, assignment]
-    StrictFloat = nan  # type: ignore[misc, assignment]
-    StrictInt = nan  # type: ignore[misc, assignment]
-    StrictStr = nan  # type: ignore[misc, assignment]
+
+def _create_pydantic_type_map(cls: "type[BaseFactory]") -> dict[type, Callable[[], Any]]:
+    """Creates a mapping of pydantic types to mock data functions.
+
+    :param cls: The base factory class.
+    :return: A dict mapping types to callables.
+    """
+    try:
+        import pydantic
+
+        return {
+            pydantic.ByteSize: cls.__faker__.pyint,
+            pydantic.PositiveInt: cls.__faker__.pyint,
+            pydantic.FilePath: lambda: Path(realpath(__file__)),
+            pydantic.NegativeFloat: lambda: cls.__random__.uniform(-100, -1),
+            pydantic.NegativeInt: lambda: cls.__faker__.pyint() * -1,
+            pydantic.PositiveFloat: cls.__faker__.pyint,
+            pydantic.NonPositiveFloat: lambda: cls.__random__.uniform(-100, 0),
+            pydantic.NonNegativeInt: cls.__faker__.pyint,
+            pydantic.StrictInt: cls.__faker__.pyint,
+            pydantic.StrictBool: cls.__faker__.pybool,
+            pydantic.StrictBytes: partial(create_random_bytes, cls.__random__),
+            pydantic.StrictFloat: cls.__faker__.pyfloat,
+            pydantic.StrictStr: cls.__faker__.pystr,
+            pydantic.DirectoryPath: lambda: Path(realpath(__file__)).parent,
+            pydantic.EmailStr: cls.__faker__.free_email,
+            pydantic.NameEmail: cls.__faker__.free_email,
+            pydantic.PyObject: lambda: "decimal.Decimal",  # type: ignore[dict-item]
+            pydantic.color.Color: cls.__faker__.hex_color,  # pyright: ignore
+            pydantic.Json: cls.__faker__.json,
+            pydantic.PaymentCardNumber: cls.__faker__.credit_card_number,
+            pydantic.AnyUrl: cls.__faker__.url,
+            pydantic.AnyHttpUrl: cls.__faker__.url,
+            pydantic.HttpUrl: cls.__faker__.url,
+            pydantic.PostgresDsn: lambda: "postgresql://user:secret@localhost",
+            pydantic.RedisDsn: lambda: "redis://localhost:6379",
+            pydantic.UUID1: uuid1,
+            pydantic.UUID3: lambda: uuid3(NAMESPACE_DNS, cls.__faker__.pystr()),
+            pydantic.UUID4: cls.__faker__.uuid4,
+            pydantic.UUID5: lambda: uuid5(NAMESPACE_DNS, cls.__faker__.pystr()),
+            pydantic.SecretBytes: partial(create_random_bytes, cls.__random__),
+            pydantic.SecretStr: cls.__faker__.pystr,
+            pydantic.IPvAnyAddress: cls.__faker__.ipv4,
+            pydantic.IPvAnyInterface: cls.__faker__.ipv4,
+            pydantic.IPvAnyNetwork: lambda: cls.__faker__.ipv4(network=True),
+            pydantic.AmqpDsn: lambda: "amqps://",
+            pydantic.KafkaDsn: lambda: "kafka://",
+            pydantic.PastDate: cls.__faker__.past_date,
+            pydantic.FutureDate: cls.__faker__.future_date,
+        }
+    except ImportError:
+        return {}
 
 
 T = TypeVar("T")
 
 
-def is_factory(value: Any) -> "TypeGuard[Type[BaseFactory]]":
+def is_factory(value: Any) -> "TypeGuard[type[BaseFactory]]":
     """Determine if a given value is a subclass of ModelFactory.
 
     :param value: An arbitrary value.
@@ -167,20 +133,20 @@ class BaseFactory(ABC, Generic[T]):
 
     # configuration attributes
     __allow_none_optionals__: ClassVar[bool] = True
-    __async_persistence__: Optional[Union[Type[AsyncPersistenceProtocol[T]], AsyncPersistenceProtocol[T]]] = None
+    __async_persistence__: type[AsyncPersistenceProtocol[T]] | AsyncPersistenceProtocol[T] | None = None
     __set_as_default_factory_for_type__ = False
     __is_base_factory__: bool = False
     __faker__: ClassVar["Faker"] = Faker()
     __random__: ClassVar["Random"] = Random()
-    __model__: Type[T]
+    __model__: type[T]
     __random_seed__: ClassVar[int]
-    __sync_persistence__: Optional[Union[Type[SyncPersistenceProtocol[T]], SyncPersistenceProtocol[T]]] = None
+    __sync_persistence__: type[SyncPersistenceProtocol[T]] | SyncPersistenceProtocol[T] | None = None
 
     # cached attributes
-    _fields_metadata: List["FieldMeta"]
+    _fields_metadata: list["FieldMeta"]
     # BaseFactory only attributes
-    _factory_type_mapping: ClassVar[Dict[Any, Type["BaseFactory"]]]
-    _base_factories: ClassVar[List[Type["BaseFactory"]]]
+    _factory_type_mapping: ClassVar[dict[Any, type["BaseFactory"]]]
+    _base_factories: ClassVar[list[type["BaseFactory"]]]
 
     def __init_subclass__(cls, *args: Any, **kwargs: Any) -> None:
         super().__init_subclass__(*args, **kwargs)
@@ -245,7 +211,7 @@ class BaseFactory(ABC, Generic[T]):
         )
 
     @classmethod
-    def _handle_factory_field(cls, field_value: Any, field_build_parameters: Optional[Any] = None) -> Any:
+    def _handle_factory_field(cls, field_value: Any, field_build_parameters: Any | None = None) -> Any:
         """Handle a value defined on the factory class itself.
 
         :param field_value: A value defined as an attribute on the factory class.
@@ -276,8 +242,8 @@ class BaseFactory(ABC, Generic[T]):
     @classmethod
     def _get_or_create_factory(
         cls,
-        model: Type,
-    ) -> Type["BaseFactory"]:
+        model: type,
+    ) -> type["BaseFactory"]:
         """Get a factory from registered factories or generate a factory dynamically.
 
         :param model: A model type.
@@ -317,7 +283,7 @@ class BaseFactory(ABC, Generic[T]):
         return False
 
     @classmethod
-    def extract_field_build_parameters(cls, field_meta: "FieldMeta", build_args: Dict[str, Any]) -> Any:
+    def extract_field_build_parameters(cls, field_meta: "FieldMeta", build_args: dict[str, Any]) -> Any:
         """Extract from the build kwargs any build parameters passed for a given field meta - if it is a factory type.
 
         :param field_meta: A field meta instance.
@@ -343,7 +309,7 @@ class BaseFactory(ABC, Generic[T]):
 
     @classmethod
     @abstractmethod
-    def is_supported_type(cls, value: Any) -> "TypeGuard[Type[T]]":  # pragma: no cover
+    def is_supported_type(cls, value: Any) -> "TypeGuard[type[T]]":  # pragma: no cover
         """Determine whether the given value is supported by the factory.
 
         :param value: An arbitrary value.
@@ -377,7 +343,7 @@ class BaseFactory(ABC, Generic[T]):
         return value is None
 
     @classmethod
-    def get_provider_map(cls) -> Dict[Any, Callable[[], Any]]:
+    def get_provider_map(cls) -> dict[Any, Callable[[], Any]]:
         """Map types to callables.
 
         :notes:
@@ -388,94 +354,50 @@ class BaseFactory(ABC, Generic[T]):
 
         """
 
-        def _create_path() -> Path:
-            """Return the path to the current file"""
-            return Path(realpath(__file__))
-
         def _create_generic_fn() -> Callable:
             """Return a generic lambda"""
             return lambda *args: None
-
-        faker = cls.__faker__
 
         return {
             Any: lambda: None,
             # primitives
             object: object,
-            float: faker.pyfloat,
-            int: faker.pyint,
-            bool: faker.pybool,
-            str: faker.pystr,
+            float: cls.__faker__.pyfloat,
+            int: cls.__faker__.pyint,
+            bool: cls.__faker__.pybool,
+            str: cls.__faker__.pystr,
             bytes: partial(create_random_bytes, cls.__random__),
             # built-in objects
-            dict: faker.pydict,
-            tuple: faker.pytuple,
-            list: faker.pylist,
-            set: faker.pyset,
-            frozenset: lambda: frozenset(faker.pylist()),
-            deque: lambda: deque(faker.pylist()),
+            dict: cls.__faker__.pydict,
+            tuple: cls.__faker__.pytuple,
+            list: cls.__faker__.pylist,
+            set: cls.__faker__.pyset,
+            frozenset: lambda: frozenset(cls.__faker__.pylist()),
+            deque: lambda: deque(cls.__faker__.pylist()),
             # standard library objects
-            Path: _create_path,
-            Decimal: faker.pydecimal,
-            UUID: faker.uuid4,
+            Path: lambda: Path(realpath(__file__)),
+            Decimal: cls.__faker__.pydecimal,
+            UUID: cls.__faker__.uuid4,
             # datetime
-            datetime: faker.date_time_between,
-            date: faker.date_this_decade,
-            time: faker.time,
-            timedelta: faker.time_delta,
+            datetime: cls.__faker__.date_time_between,
+            date: cls.__faker__.date_this_decade,
+            time: cls.__faker__.time,
+            timedelta: cls.__faker__.time_delta,
             # ip addresses
-            IPv4Address: faker.ipv4,
-            IPv4Interface: faker.ipv4,
-            IPv4Network: lambda: faker.ipv4(network=True),
-            IPv6Address: faker.ipv6,
-            IPv6Interface: faker.ipv6,
-            IPv6Network: lambda: faker.ipv6(network=True),
+            IPv4Address: cls.__faker__.ipv4,
+            IPv4Interface: cls.__faker__.ipv4,
+            IPv4Network: lambda: cls.__faker__.ipv4(network=True),
+            IPv6Address: cls.__faker__.ipv6,
+            IPv6Interface: cls.__faker__.ipv6,
+            IPv6Network: lambda: cls.__faker__.ipv6(network=True),
             # types
             Callable: _create_generic_fn,
-            # pydantic specific
-            ByteSize: faker.pyint,
-            PositiveInt: faker.pyint,
-            FilePath: _create_path,
-            NegativeFloat: lambda: cls.__random__.uniform(-100, -1),
-            NegativeInt: lambda: faker.pyint() * -1,
-            PositiveFloat: faker.pyint,
-            NonPositiveFloat: lambda: cls.__random__.uniform(-100, 0),
-            NonNegativeInt: faker.pyint,
-            StrictInt: faker.pyint,
-            StrictBool: faker.pybool,
-            StrictBytes: partial(create_random_bytes, cls.__random__),
-            StrictFloat: faker.pyfloat,
-            StrictStr: faker.pystr,
-            DirectoryPath: lambda: _create_path().parent,
-            EmailStr: faker.free_email,
-            NameEmail: faker.free_email,
-            PyObject: lambda: "decimal.Decimal",
-            Color: faker.hex_color,
-            Json: faker.json,
-            PaymentCardNumber: faker.credit_card_number,
-            AnyUrl: faker.url,
-            AnyHttpUrl: faker.url,
-            HttpUrl: faker.url,
-            PostgresDsn: lambda: "postgresql://user:secret@localhost",
-            RedisDsn: lambda: "redis://localhost:6379",
-            UUID1: uuid1,
-            UUID3: lambda: uuid3(NAMESPACE_DNS, faker.pystr()),
-            UUID4: faker.uuid4,
-            UUID5: lambda: uuid5(NAMESPACE_DNS, faker.pystr()),
-            SecretBytes: partial(create_random_bytes, cls.__random__),
-            SecretStr: faker.pystr,
-            IPvAnyAddress: faker.ipv4,
-            IPvAnyInterface: faker.ipv4,
-            IPvAnyNetwork: lambda: faker.ipv4(network=True),
-            AmqpDsn: lambda: "amqps://",
-            KafkaDsn: lambda: "kafka://",
-            PastDate: faker.past_date,
-            FutureDate: faker.future_date,
-            Counter: lambda: Counter(faker.pystr()),
+            Counter: lambda: Counter(cls.__faker__.pystr()),
+            **_create_pydantic_type_map(cls),
         }
 
     @classmethod
-    def get_mock_value(cls, annotation: Type) -> Any:
+    def get_mock_value(cls, annotation: type) -> Any:
         """Return a mock value for a given type.
 
         :param annotation: An arbitrary type.
@@ -500,10 +422,10 @@ class BaseFactory(ABC, Generic[T]):
     @classmethod
     def create_factory(
         cls,
-        model: Type,
-        bases: Optional[Tuple[Type["BaseFactory"], ...]] = None,
+        model: type,
+        bases: tuple[type["BaseFactory"], ...] | None = None,
         **kwargs: Any,
-    ) -> Type["BaseFactory"]:
+    ) -> type["BaseFactory"]:
         """Generate a factory for the given type dynamically.
 
         :param model: A type to model.
@@ -527,7 +449,7 @@ class BaseFactory(ABC, Generic[T]):
         )
 
     @classmethod
-    def get_field_value(cls, field_meta: "FieldMeta", field_build_parameters: Optional[Any] = None) -> Any:
+    def get_field_value(cls, field_meta: "FieldMeta", field_build_parameters: Any | None = None) -> Any:
         """Return a field value on the subclass if existing, otherwise returns a mock value.
 
         :param field_meta: FieldMeta instance.
@@ -604,7 +526,7 @@ class BaseFactory(ABC, Generic[T]):
 
     @classmethod
     @abstractmethod
-    def get_model_fields(cls) -> List["FieldMeta"]:  # pragma: no cover
+    def get_model_fields(cls) -> list["FieldMeta"]:  # pragma: no cover
         """Retrieve a list of fields from the factory's model.
 
 
@@ -614,7 +536,7 @@ class BaseFactory(ABC, Generic[T]):
         raise NotImplementedError
 
     @classmethod
-    def process_kwargs(cls, **kwargs: Any) -> Dict[str, Any]:
+    def process_kwargs(cls, **kwargs: Any) -> dict[str, Any]:
         """Process the given kwargs and generate values for the factory's model.
 
         :param kwargs: Any build kwargs.
@@ -622,8 +544,8 @@ class BaseFactory(ABC, Generic[T]):
         :returns: A dictionary of build results.
 
         """
-        result: Dict[str, Any] = {**kwargs}
-        generate_post: Dict[str, PostGenerated] = {}
+        result: dict[str, Any] = {**kwargs}
+        generate_post: dict[str, PostGenerated] = {}
 
         for field_meta in cls.get_model_fields():
             field_build_parameters = cls.extract_field_build_parameters(field_meta=field_meta, build_args=kwargs)
@@ -666,7 +588,7 @@ class BaseFactory(ABC, Generic[T]):
         return cast("T", cls.__model__(**cls.process_kwargs(**kwargs)))
 
     @classmethod
-    def batch(cls, size: int, **kwargs: Any) -> List[T]:
+    def batch(cls, size: int, **kwargs: Any) -> list[T]:
         """Build a batch of size n of the factory's Meta.model.
 
         :param size: Size of the batch.
@@ -689,7 +611,7 @@ class BaseFactory(ABC, Generic[T]):
         return cls._get_sync_persistence().save(data=cls.build(**kwargs))
 
     @classmethod
-    def create_batch_sync(cls, size: int, **kwargs: Any) -> List[T]:
+    def create_batch_sync(cls, size: int, **kwargs: Any) -> list[T]:
         """Build and persists synchronously a batch of n size model instances.
 
         :param size: Size of the batch.
@@ -711,7 +633,7 @@ class BaseFactory(ABC, Generic[T]):
         return await cls._get_async_persistence().save(data=cls.build(**kwargs))
 
     @classmethod
-    async def create_batch_async(cls, size: int, **kwargs: Any) -> List[T]:
+    async def create_batch_async(cls, size: int, **kwargs: Any) -> list[T]:
         """Build and persists asynchronously a batch of n size model instances.
 
 
@@ -723,82 +645,23 @@ class BaseFactory(ABC, Generic[T]):
         return await cls._get_async_persistence().save_many(data=cls.batch(size, **kwargs))
 
 
-class DataclassFactory(Generic[T], BaseFactory[T]):
-    """Dataclass base factory"""
+def _register_builtin_factories() -> None:
+    """This function is used to register the base factories, if present.
 
-    __is_base_factory__ = True
+    :returns: None
+    """
+    import polyfactory.factories.dataclass_factory
+    import polyfactory.factories.typed_dict_factory  # noqa: F401
 
-    @classmethod
-    def is_supported_type(cls, value: Any) -> "TypeGuard[Type[T]]":
-        """Determine whether the given value is supported by the factory.
-
-        :param value: An arbitrary value.
-        :returns: A typeguard
-        """
+    for module in [
+        "polyfactory.factories.pydantic_factory",
+        "polyfactory.factories.beanie_odm_factory",
+        "polyfactory.factories.odmantic_odm_factory",
+    ]:
         try:
-            return isclass(value) and is_dataclass(value)
-        except (TypeError, AttributeError):  # pragma: no cover
-            return False
-
-    @classmethod
-    def get_model_fields(cls) -> List["FieldMeta"]:
-        """Retrieve a list of fields from the factory's model.
+            import_module(module)
+        except ImportError:
+            continue
 
 
-        :returns: A list of field MetaData instances.
-
-        """
-        fields_meta: List["FieldMeta"] = []
-
-        for field in fields(cls.__model__):  # type: ignore[arg-type]
-            if field.default_factory and field.default_factory is not MISSING:
-                default_value = field.default_factory()
-            elif field.default is not MISSING:
-                default_value = field.default
-            else:
-                default_value = Null
-
-            fields_meta.append(FieldMeta.from_type(annotation=field.type, name=field.name, default=default_value))
-
-        return fields_meta
-
-
-TypedDictT = TypeVar("TypedDictT", bound=_TypedDictMeta)
-
-
-class TypedDictFactory(Generic[TypedDictT], BaseFactory[TypedDictT]):
-    """TypedDict base factory"""
-
-    __is_base_factory__ = True
-
-    @classmethod
-    def is_supported_type(cls, value: Any) -> "TypeGuard[Type[TypedDictT]]":
-        """Determine whether the given value is supported by the factory.
-
-        :param value: An arbitrary value.
-        :returns: A typeguard
-        """
-        try:
-            return is_typeddict(value)
-        except (TypeError, AttributeError):  # pragma: no cover
-            return False
-
-    @classmethod
-    def get_model_fields(cls) -> List["FieldMeta"]:
-        """Retrieve a list of fields from the factory's model.
-
-
-        :returns: A list of field MetaData instances.
-
-        """
-        fields_meta: List["FieldMeta"] = []
-
-        for field_name, annotation in cls.__model__.__annotations__.items():
-            fields_meta.append(
-                FieldMeta.from_type(
-                    annotation=annotation,
-                    name=field_name,
-                    default=getattr(cls.__model__, field_name, Null),
-                )
-            )
-        return fields_meta
+_register_builtin_factories()

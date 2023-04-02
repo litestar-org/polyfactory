@@ -1,5 +1,5 @@
-# pylint: disable=unnecessary-ellipsis
-from typing import List, Protocol, TypeVar, runtime_checkable
+from __future__ import annotations
+from typing import Protocol, TypeVar, runtime_checkable
 
 T = TypeVar("T")
 
@@ -18,7 +18,7 @@ class SyncPersistenceProtocol(Protocol[T]):
         """
         ...
 
-    def save_many(self, data: List[T]) -> List[T]:
+    def save_many(self, data: list[T]) -> list[T]:
         """Persist multiple instances synchronously.
 
         :param data: A list of instances to persist.
@@ -42,7 +42,7 @@ class AsyncPersistenceProtocol(Protocol[T]):
         """
         ...
 
-    async def save_many(self, data: List[T]) -> List[T]:
+    async def save_many(self, data: list[T]) -> list[T]:
         """Persist multiple instances asynchronously.
 
         :param data: A list of instances to persist.

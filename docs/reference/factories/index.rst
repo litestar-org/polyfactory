@@ -1,5 +1,5 @@
-Factories
-==========
+polyfactory.factories
+=====================
 
 
 .. toctree::

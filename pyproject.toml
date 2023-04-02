@@ -73,6 +73,16 @@ pytest-asyncio = "*"
 pytest-cov = "*"
 mongomock-motor = "*"
 
+
+[tool.poetry.group.black.dependencies]
+sphinx-autobuild = "*"
+blacken-docs = "*"
+auto-pytabs = "*"
+sphinxcontrib-mermaid = "*"
+sphinx-copybutton = "*"
+sphinx = "*"
+starlite-sphinx-theme = { git = "https://github.com/starlite-api/starlite-sphinx-theme.git" }
+
 [tool.poetry.extras]
 pydantic = ["pydantic"]
 odmantic = ["odmantic", "pydantic"]
@@ -86,6 +96,8 @@ build-backend = "poetry.core.masonry.api"
 line-length = 120
 include = '\.pyi?$'
 
+[tool.pyright]
+include = ["polyfactory", "tests", "examples"]
 
 [tool.coverage.run]
 omit = ["*/tests/*"]
@@ -156,7 +168,7 @@ ignore = [
     "UP037", # pyupgrade - removes quotes from type annotation
 ]
 line-length = 120
-src = ["polyfactory", "tests"]
+src = ["polyfactory", "tests", "docs/examples"]
 target-version = "py38"
 
 [tool.ruff.pydocstyle]

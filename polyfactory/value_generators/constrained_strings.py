@@ -1,4 +1,5 @@
-from typing import TYPE_CHECKING, Callable, Optional, Pattern, TypeVar, Union, cast
+from __future__ import annotations
+from typing import TYPE_CHECKING, Callable, Pattern, TypeVar, Union, cast
 
 from polyfactory.exceptions import ParameterException
 from polyfactory.value_generators.primitives import create_random_bytes, create_random_string
@@ -11,8 +12,8 @@ if TYPE_CHECKING:
 
 
 def _validate_length(
-    min_length: Optional[int] = None,
-    max_length: Optional[int] = None,
+    min_length: int | None = None,
+    max_length: int | None = None,
 ) -> None:
     """Validate the length parameters make sense.
 
@@ -35,11 +36,11 @@ def _validate_length(
 
 def _generate_pattern(
     random: "Random",
-    pattern: Union[str, Pattern],
+    pattern: str | Pattern,
     lower_case: bool = False,
     upper_case: bool = False,
-    min_length: Optional[int] = None,
-    max_length: Optional[int] = None,
+    min_length: int | None = None,
+    max_length: int | None = None,
 ) -> str:
     """Generate a regex.
 
@@ -75,9 +76,9 @@ def handle_constrained_string_or_bytes(
     t_type: Callable[[], T],
     lower_case: bool = False,
     upper_case: bool = False,
-    min_length: Optional[int] = None,
-    max_length: Optional[int] = None,
-    pattern: Optional[Union[str, Pattern]] = None,
+    min_length: int | None = None,
+    max_length: int | None = None,
+    pattern: str | Pattern | None = None,
 ) -> T:
     """Handle constrained string or bytes, for example - pydantic `constr` or `conbytes`.
 

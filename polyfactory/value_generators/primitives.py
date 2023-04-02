@@ -1,7 +1,8 @@
+from __future__ import annotations
 from binascii import hexlify
 from decimal import Decimal
 from os import urandom
-from typing import TYPE_CHECKING, Optional, Union
+from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
     from random import Random
@@ -9,8 +10,8 @@ if TYPE_CHECKING:
 
 def create_random_float(
     random: "Random",
-    minimum: Optional[Union[Decimal, int, float]] = None,
-    maximum: Optional[Union[Decimal, int, float]] = None,
+    minimum: Decimal | int | float | None = None,
+    maximum: Decimal | int | float | None = None,
 ) -> float:
     """Generate a random float given the constraints.
 
@@ -27,7 +28,7 @@ def create_random_float(
     return random.uniform(float(minimum), float(maximum))
 
 
-def create_random_integer(random: "Random", minimum: Optional[int] = None, maximum: Optional[int] = None) -> int:
+def create_random_integer(random: "Random", minimum: int | None = None, maximum: int | None = None) -> int:
     """Generate a random int given the constraints.
 
     :param random: An instance of random.
@@ -41,8 +42,8 @@ def create_random_integer(random: "Random", minimum: Optional[int] = None, maxim
 
 def create_random_decimal(
     random: "Random",
-    minimum: Optional[Decimal] = None,
-    maximum: Optional[Decimal] = None,
+    minimum: Decimal | None = None,
+    maximum: Decimal | None = None,
 ) -> Decimal:
     """Generate a random Decimal given the constraints.
 
@@ -57,8 +58,8 @@ def create_random_decimal(
 
 def create_random_bytes(
     random: "Random",
-    min_length: Optional[int] = None,
-    max_length: Optional[int] = None,
+    min_length: int | None = None,
+    max_length: int | None = None,
     lower_case: bool = False,
     upper_case: bool = False,
 ) -> bytes:
@@ -94,8 +95,8 @@ def create_random_bytes(
 
 def create_random_string(
     random: "Random",
-    min_length: Optional[int] = None,
-    max_length: Optional[int] = None,
+    min_length: int | None = None,
+    max_length: int | None = None,
     lower_case: bool = False,
     upper_case: bool = False,
 ) -> str:

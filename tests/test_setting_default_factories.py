@@ -4,7 +4,7 @@ from typing import List
 from pydantic import BaseModel
 from typing_extensions import TypedDict
 
-from polyfactory.factories.base import DataclassFactory, TypedDictFactory
+from polyfactory.factories import DataclassFactory, TypedDictFactory
 from polyfactory.factories.pydantic_factory import ModelFactory
 
 

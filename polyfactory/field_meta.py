@@ -1,4 +1,5 @@
-from typing import Any, List, Optional, Tuple, Type
+from __future__ import annotations
+from typing import Any
 
 from polyfactory.constants import TYPE_MAPPING
 from polyfactory.utils.helpers import unwrap_args, unwrap_new_type
@@ -14,7 +15,7 @@ class FieldMeta:
     __slots__ = ("name", "annotation", "children", "default", "constant")
 
     annotation: Any
-    children: Optional[List["FieldMeta"]]
+    children: list["FieldMeta"] | None
     constant: bool
     default: Any
     name: str
@@ -23,9 +24,9 @@ class FieldMeta:
         self,
         *,
         name: str,
-        annotation: Type,
+        annotation: type,
         default: Any = Null,
-        children: Optional[List["FieldMeta"]] = None,
+        children: list["FieldMeta"] | None = None,
         constant: bool = False,
     ):
         """Create a factory field metadata instance."""
@@ -36,7 +37,7 @@ class FieldMeta:
         self.constant = constant
 
     @property
-    def type_args(self) -> Tuple[Any, ...]:
+    def type_args(self) -> tuple[Any, ...]:
         """Return the normalized type args of the annotation, if any.
 
         :returns: a tuple of types.

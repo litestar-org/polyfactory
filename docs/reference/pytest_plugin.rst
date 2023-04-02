@@ -1,5 +1,5 @@
-pytest_plugin
-=============
+polyfactory.pytest_plugin
+=========================
 
 .. automodule:: polyfactory.pytest_plugin
     :members:
