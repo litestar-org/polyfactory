@@ -1,4 +1,5 @@
-from typing import TYPE_CHECKING, Any, Generic, List, Optional, Type, TypeVar
+from __future__ import annotations
+from typing import TYPE_CHECKING, Any, Generic, TypeVar
 
 from typing_extensions import get_args
 
@@ -27,7 +28,7 @@ class BeaniePersistenceHandler(Generic[T], AsyncPersistenceProtocol[T]):
         """Persist a single instance in mongoDB."""
         return await data.insert()  # type: ignore
 
-    async def save_many(self, data: List[T]) -> List[T]:
+    async def save_many(self, data: list[T]) -> list[T]:
         """Persist multiple instances in mongoDB.
 
         Note: we cannot use the .insert_many method from Beanie here because it doesn't return the created instances
@@ -45,7 +46,7 @@ class BeanieDocumentFactory(Generic[T], ModelFactory[T]):
     __is_base_factory__ = True
 
     @classmethod
-    def is_supported_type(cls, value: Any) -> "TypeGuard[Type[T]]":
+    def is_supported_type(cls, value: Any) -> "TypeGuard[type[T]]":
         """Determine whether the given value is supported by the factory.
 
         :param value: An arbitrary value.
@@ -54,7 +55,7 @@ class BeanieDocumentFactory(Generic[T], ModelFactory[T]):
         return is_safe_subclass(value, Document)
 
     @classmethod
-    def get_field_value(cls, field_meta: "FieldMeta", field_build_parameters: Optional[Any] = None) -> Any:
+    def get_field_value(cls, field_meta: "FieldMeta", field_build_parameters: Any | None = None) -> Any:
         """Return a field value on the subclass if existing, otherwise returns a mock value.
 
         :param field_meta: FieldMeta instance.

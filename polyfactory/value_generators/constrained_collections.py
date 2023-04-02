@@ -1,13 +1,9 @@
+from __future__ import annotations
 from typing import (
     TYPE_CHECKING,
     Any,
     Callable,
-    List,
-    Optional,
-    Set,
-    Type,
     TypeVar,
-    Union,
 )
 
 from polyfactory.exceptions import ParameterException
@@ -21,11 +17,11 @@ T = TypeVar("T", list, set, frozenset)
 
 def handle_constrained_collection(
     collection_type: Callable[..., T],
-    factory: Type["BaseFactory"],
+    factory: type["BaseFactory"],
     field_meta: "FieldMeta",
     item_type: Any,
-    max_items: Optional[int] = None,
-    min_items: Optional[int] = None,
+    max_items: int | None = None,
+    min_items: int | None = None,
     unique_items: bool = False,
 ) -> T:
     """Generate a constrained list or set.
@@ -46,7 +42,7 @@ def handle_constrained_collection(
     if max_items < min_items:
         raise ParameterException("max_items must be larger or equal to min_items")
 
-    collection: Union[Set[T], List[T]] = set() if collection_type in (frozenset, set) or unique_items else []
+    collection: set[T] | list[T] = set() if collection_type in (frozenset, set) or unique_items else []
 
     try:
         while len(collection) < factory.__random__.randint(min_items, max_items):

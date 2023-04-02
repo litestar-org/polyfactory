@@ -8,3 +8,4 @@ Usage Guide
     factories
     defining_factories
     factory_fields
+    factory_fixtures

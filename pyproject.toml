@@ -75,12 +75,12 @@ mongomock-motor = "*"
 
 
 [tool.poetry.group.black.dependencies]
-sphinx-autobuild = "^2021.3.14"
-blacken-docs = "^1.13.0"
-auto-pytabs = "^0.2.0"
-sphinxcontrib-mermaid = "^0.8.1"
-sphinx-copybutton = "^0.5.1"
-sphinx = "^6.1.3"
+sphinx-autobuild = "*"
+blacken-docs = "*"
+auto-pytabs = "*"
+sphinxcontrib-mermaid = "*"
+sphinx-copybutton = "*"
+sphinx = "*"
 starlite-sphinx-theme = { git = "https://github.com/starlite-api/starlite-sphinx-theme.git" }
 
 [tool.poetry.extras]

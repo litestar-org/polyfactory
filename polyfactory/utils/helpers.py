@@ -1,4 +1,5 @@
-from typing import Any, Tuple, get_args
+from __future__ import annotations
+from typing import Any, get_args
 
 from polyfactory.utils.predicates import (
     is_annotated,
@@ -65,7 +66,7 @@ def unwrap_annotation(annotation: Any) -> Any:
     return annotation
 
 
-def unwrap_args(annotation: Any) -> Tuple[Any, ...]:
+def unwrap_args(annotation: Any) -> tuple[Any, ...]:
     """Unwrap the annotation and return any type args.
 
     :param annotation: A type annotation

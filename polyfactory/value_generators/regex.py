@@ -29,7 +29,7 @@ WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE
 OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN
 IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 """
-
+from __future__ import annotations
 from itertools import chain
 from string import (
     ascii_letters,
@@ -40,7 +40,7 @@ from string import (
     punctuation,
     whitespace,
 )
-from typing import TYPE_CHECKING, Any, Dict, List, Pattern, Tuple, Union
+from typing import TYPE_CHECKING, Any, Pattern
 
 try:  # >=3.11
     from re._parser import SubPattern, parse  # pyright:ignore
@@ -85,7 +85,7 @@ class RegexFactory:
     def __init__(self, random: "Random", limit: int = 10) -> None:
         """Create a RegexFactory"""
         self._limit = limit
-        self._cache: Dict[str, Any] = {}
+        self._cache: dict[str, Any] = {}
         self._random = random
 
         self._cases = {
@@ -106,7 +106,7 @@ class RegexFactory:
             "negate": lambda x: [False],
         }
 
-    def __call__(self, string_or_regex: Union[str, Pattern]) -> str:
+    def __call__(self, string_or_regex: str | Pattern) -> str:
         """Generate a string matching a regex.
 
         :param string_or_regex: A string or pattern.
@@ -122,17 +122,17 @@ class RegexFactory:
     def _build_string(self, parsed: SubPattern) -> str:
         return "".join([self._handle_state(state) for state in parsed])  # pyright:ignore
 
-    def _handle_state(self, state: Tuple[SubPattern, Tuple[Any, ...]]) -> Any:
+    def _handle_state(self, state: tuple[SubPattern, tuple[Any, ...]]) -> Any:
         opcode, value = state
         return self._cases[str(opcode).lower()](value)  # type: ignore[no-untyped-call]
 
-    def _handle_group(self, value: Tuple[Any, ...]) -> str:
+    def _handle_group(self, value: tuple[Any, ...]) -> str:
         result = "".join(self._handle_state(i) for i in value[3])
         if value[0]:
             self._cache[value[0]] = result
         return result
 
-    def _handle_in(self, value: Tuple[Any, ...]) -> Any:
+    def _handle_in(self, value: tuple[Any, ...]) -> Any:
         candidates = list(chain(*(self._handle_state(i) for i in value)))
         if candidates and candidates[0] is False:
             candidates = list(set(printable).difference(candidates[1:]))
@@ -140,7 +140,7 @@ class RegexFactory:
         return self._random.choice(candidates)
 
     def _handle_repeat(self, start_range: int, end_range: Any, value: SubPattern) -> str:
-        result: List[str] = []
+        result: list[str] = []
         end_range = min(end_range, self._limit)
 
         for i in range(self._random.randint(start_range, max(start_range, end_range))):

@@ -1,5 +1,6 @@
+from __future__ import annotations
 from datetime import date, timedelta, datetime, timezone
-from typing import TYPE_CHECKING, Optional, cast
+from typing import TYPE_CHECKING, cast
 
 
 if TYPE_CHECKING:
@@ -8,10 +9,10 @@ if TYPE_CHECKING:
 
 def handle_constrained_date(
     faker: "Faker",
-    ge: Optional[date] = None,
-    gt: Optional[date] = None,
-    le: Optional[date] = None,
-    lt: Optional[date] = None,
+    ge: date | None = None,
+    gt: date | None = None,
+    le: date | None = None,
+    lt: date | None = None,
 ) -> date:
     """Generates a date value fulfilling the expected constraints.
 

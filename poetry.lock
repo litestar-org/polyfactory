@@ -483,14 +483,14 @@ test = ["pytest (>=6)"]
 
 [[package]]
 name = "faker"
-version = "18.3.1"
+version = "18.3.2"
 description = "Faker is a Python package that generates fake data for you."
 category = "main"
 optional = false
 python-versions = ">=3.7"
 files = [
-    {file = "Faker-18.3.1-py3-none-any.whl", hash = "sha256:4c98c42984db54be2246d40e6407cd983db7b1511a70eaff64c3f383a51bace6"},
-    {file = "Faker-18.3.1.tar.gz", hash = "sha256:9bd71833146b844d848791b79720c7806108130c9603c7074123b3f77b4e97a1"},
+    {file = "Faker-18.3.2-py3-none-any.whl", hash = "sha256:f3299679a6b23409cfe69774bbd1148324a05bd38bda041da6c302e618d7d4a0"},
+    {file = "Faker-18.3.2.tar.gz", hash = "sha256:a000bba893ea502cea66d06acf14e01655a2289e4904de80faf9dbe880fa1a39"},
 ]
 
 [package.dependencies]
@@ -743,14 +743,14 @@ sentinels = "*"
 
 [[package]]
 name = "mongomock-motor"
-version = "0.0.17"
+version = "0.0.18"
 description = "Library for mocking AsyncIOMotorClient built on top of mongomock."
 category = "dev"
 optional = false
 python-versions = ">=3.6"
 files = [
-    {file = "mongomock_motor-0.0.17-py3-none-any.whl", hash = "sha256:64d703dd2e652928c2e40f930c1d0aee27aa4d11dcd34f55ac5c6951fec32386"},
-    {file = "mongomock_motor-0.0.17.tar.gz", hash = "sha256:4e7ecd77c65bddf00ee7d46c1e86189aa0c5e6a4885c62e2a7083bf0d7264b16"},
+    {file = "mongomock_motor-0.0.18-py3-none-any.whl", hash = "sha256:87e9678ab459f868d4e4207b631c0abb932e6f33a98f81c516ca0d73a8cb0d2c"},
+    {file = "mongomock_motor-0.0.18.tar.gz", hash = "sha256:5d34aba038f133abd21ba3b4e1bb913aeeb0d7bf96264781c60a51336ee5b841"},
 ]
 
 [package.dependencies]
@@ -1710,4 +1710,4 @@ pydantic = ["pydantic"]
 [metadata]
 lock-version = "2.0"
 python-versions = ">=3.8,<4.0"
-content-hash = "446977475474894a888573a240735c5087e8e9d1998c6f5a27e1e032b41c8bb5"
+content-hash = "618ee2c82d335a69a1c2933b956b45bcf752d198d957151637c19ec8347f8bd5"

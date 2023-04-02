@@ -1,3 +1,4 @@
+from __future__ import annotations
 from contextlib import suppress
 from inspect import isclass
 from typing import (
@@ -5,10 +6,8 @@ from typing import (
     Any,
     ClassVar,
     Generic,
-    List,
     Mapping,
     Optional,
-    Type,
     TypeVar,
     cast,
 )
@@ -55,7 +54,7 @@ if TYPE_CHECKING:
 T = TypeVar("T", bound=BaseModel)
 
 
-def is_pydantic_model(value: Any) -> "TypeGuard[Type[BaseModel]]":
+def is_pydantic_model(value: Any) -> "TypeGuard[type[BaseModel]]":
     """Determine whether the given value is a subclass of BaseModel.
 
     :param value: A value to test.
@@ -111,7 +110,7 @@ class PydanticFieldMeta(FieldMeta):
 class ModelFactory(Generic[T], BaseFactory[T]):
     """Base factory for pydantic models"""
 
-    __forward_ref_resolution_type_mapping__: ClassVar[Mapping[str, Type]] = {}
+    __forward_ref_resolution_type_mapping__: ClassVar[Mapping[str, type]] = {}
     __is_base_factory__ = True
 
     def __init_subclass__(cls, *args: Any, **kwargs: Any) -> None:
@@ -122,7 +121,7 @@ class ModelFactory(Generic[T], BaseFactory[T]):
                 cls.__model__.update_forward_refs(**cls.__forward_ref_resolution_type_mapping__)
 
     @classmethod
-    def is_supported_type(cls, value: Any) -> "TypeGuard[Type[T]]":
+    def is_supported_type(cls, value: Any) -> "TypeGuard[type[T]]":
         """Determine whether the given value is supported by the factory.
 
         :param value: An arbitrary value.
@@ -131,7 +130,7 @@ class ModelFactory(Generic[T], BaseFactory[T]):
         return is_pydantic_model(value)
 
     @classmethod
-    def get_field_value(cls, field_meta: "FieldMeta", field_build_parameters: Optional[Any] = None) -> Any:
+    def get_field_value(cls, field_meta: "FieldMeta", field_build_parameters: Any | None = None) -> Any:
         """Return a field value on the subclass if existing, otherwise returns a mock value.
 
         :param field_meta: Field metadata.
@@ -215,7 +214,7 @@ class ModelFactory(Generic[T], BaseFactory[T]):
         return super().get_field_value(field_meta=field_meta, field_build_parameters=field_build_parameters)
 
     @classmethod
-    def get_model_fields(cls) -> List["FieldMeta"]:
+    def get_model_fields(cls) -> list["FieldMeta"]:
         """Retrieve a list of fields from the factory's model.
 
 
