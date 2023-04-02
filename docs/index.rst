@@ -12,6 +12,11 @@ Installation
 .. code-block:: bash
     pip install polyfactory
 
+
+.. literalinclude:: /examples/defining_factories/test_example_1.py
+    :caption: Minimal example using a dataclass
+    :language: python
+
 Example
 -------
 

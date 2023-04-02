@@ -1,5 +1,5 @@
-Defining Factories
-==================
+Declaring Factories
+===================
 
 Defining factories is done using a declarative syntax. That is - users declare factory classes, which are subclasses of
 base factories.
@@ -27,3 +27,22 @@ Or for pydantic models:
     .. literalinclude:: /examples/defining_factories/test_example_4.py
         :caption: Declaring a factory for a pydantic dataclass
         :language: python
+
+
+Imperative Factory Creation
+---------------------------
+
+Although the definition of factories is primarily meant to be done imperatively, factories expose the
+:method:`create_factory <polyfactory.factories.BaseFactory.create_factory>` method. This method is used internally inside
+factories to dynamically create factories for models. For example, below the ``PersonFactory`` will dynamically create a
+``PetFactory``:
+
+.. literalinclude:: /examples/defining_factories/test_example_5.py
+    :caption: Dynamic factory generation
+    :language: python
+
+You can also use this method to create factories imperatively:
+
+.. literalinclude:: /examples/defining_factories/test_example_6.py
+    :caption: Imperative factory creation
+    :language: python

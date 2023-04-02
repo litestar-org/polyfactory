@@ -5,7 +5,8 @@ Usage Guide
     :titlesonly:
     :maxdepth: 1
 
-    factories
-    defining_factories
-    factory_fields
-    factory_fixtures
+    library_factories
+    declaring_factories
+    configuration
+    fields
+    fixtures

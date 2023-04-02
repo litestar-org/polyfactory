@@ -1,0 +1,81 @@
+Factory Configuration
+=====================
+
+Factories can be configured by setting special dunder (double underscore) class attributes.
+You can read the reference for these in the API reference for :class:`BaseFactory <polyfactory.factories.BaseFactory>`.
+Below we discuss some configuration options in some depth.
+
+Seeding Randomness
+------------------
+
+.. literalinclude:: /examples/configuration/test_example_1.py
+    :caption: Seeding the factory's 'random.Random'
+    :language: python
+
+Seeding randomness allows you to control the random generation of values produced by the factory. This affects all 'random.Random'
+methods as well as faker.
+
+Setting Random
+--------------
+
+.. literalinclude:: /examples/configuration/test_example_2.py
+    :caption: Setting the factory's 'random.Random'
+    :language: python
+
+This configuration option is functionally identical to the previous, with the difference being that here we are setting
+the actual instance of 'random.Random'. This is useful when embedding factories inside more complex logic, such as in
+other libraries, as well as when factories are being dynamically generated.
+
+Setting Faker
+-------------
+
+.. literalinclude:: /examples/configuration/test_example_3.py
+    :caption: Setting the factory's 'Faker'
+    :language: python
+
+In the above example we are setting the factory's instance of ``Faker`` and configure its locale to Spanish. Because
+we are also setting the random seed value, the results of the test are deterministic.
+
+.. note::
+    To understand why we are using a classmethod here, see the documentation about :doc:`factory fields <./fields.rst>`.
+
+Persistence Handlers
+--------------------
+
+Factory classes have four optional persistence methods:
+
+- ``.create_sync(**kwargs)`` - builds and persists a single instance of the factory's model synchronously
+- ``.create_batch_sync(size: int, **kwargs)`` - builds and persists a list of size n instances synchronously
+- ``.create_async(**kwargs)`` - builds and persists a single instance of the factory's model asynchronously
+- ``.create_batch_async(size: int, **kwargs)`` - builds and persists a list of size n instances asynchronously
+
+To use these methods, you must first specify a sync and/or async persistence handlers for the factory:
+
+.. literalinclude:: /examples/configuration/test_example_4.py
+    :caption: Defining and using persistence handlers.
+    :language: python
+
+With the persistence handlers in place, you can now use all persistence methods.
+
+.. note::
+    You do not need to define both persistence handlers. If you will only use sync or async persistence, you only need
+    to define the respective handler to use these methods.
+
+Defining Default Factories
+--------------------------
+
+As explained in the section about dynamic factory generation in :doc:`declaring factories <./declaring_factories.rst>`,
+factories generate new factories for supported types dynamically. This process requires no intervention from the user.
+Once a factory is generated, it is then cached and reused - when the same type is used.
+
+For example, when build is called for the ``PersonFactory`` below, a ``PetFactory`` will be dynamically generated and reused:
+
+.. literalinclude:: /examples/defining_factories/test_example_5.py
+    :caption: Dynamic factory generation
+    :language: python
+
+You can also control the default factory for a type by declaring a factory as the type default:
+
+.. literalinclude:: /examples/configuration/test_example_5.py
+    :caption: Setting a factory as a type default.
+    :language: python
