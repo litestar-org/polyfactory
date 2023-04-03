@@ -9,7 +9,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.19: https://docutils.sourceforge.io/" />
 
-    <title>Polyfactory &#8212; Polyfactory</title>
+    <title>Contributing &#8212; Polyfactory</title>
   
   
   
@@ -46,11 +46,10 @@
     <script src="_static/design-tabs.js"></script>
     <script src="https://unpkg.com/mermaid@9.4.0/dist/mermaid.min.js"></script>
     <script>mermaid.initialize({startOnLoad:true});</script>
-    <script>DOCUMENTATION_OPTIONS.pagename = 'index';</script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'contributing';</script>
     <link rel="icon" href="_static/favicon.png"/>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="next" title="Usage Guide" href="usage/index.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
   </head>
@@ -140,7 +139,7 @@
                 
                     <li class="nav-item">
         <a class="nav-link nav-internal"
-           href="#">Documentation</a>
+           href="index.html">Documentation</a>
     </li>
                 
             
@@ -154,7 +153,7 @@
                             
                                 <li class="nav-item">
         <a class="nav-link nav-internal"
-           href="contributing.html">Contributing</a>
+           href="#">Contributing</a>
     </li>
                             
                                 <li class="nav-item">
@@ -310,7 +309,7 @@ document.write(`
                 
                     <li class="nav-item">
         <a class="nav-link nav-internal"
-           href="#">Documentation</a>
+           href="index.html">Documentation</a>
     </li>
                 
             
@@ -324,7 +323,7 @@ document.write(`
                             
                                 <li class="nav-item">
         <a class="nav-link nav-internal"
-           href="contributing.html">Contributing</a>
+           href="#">Contributing</a>
     </li>
                             
                                 <li class="nav-item">
@@ -461,7 +460,33 @@ document.write(`
           <div class="bd-content">
             <div class="bd-article-container">
               
-              <div class="bd-header-article"></div>
+              <div class="bd-header-article">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item">
+
+
+
+<nav aria-label="Breadcrumbs">
+  <ul class="bd-breadcrumbs" role="navigation" aria-label="Breadcrumb">
+    
+    <li class="breadcrumb-item breadcrumb-home">
+      <a href="index.html" class="nav-link" aria-label="Home">
+        <i class="fa-solid fa-home"></i>
+      </a>
+    </li>
+    <li class="breadcrumb-item active" aria-current="page">Contributing</li>
+  </ul>
+</nav>
+</div>
+      
+    </div>
+  
+  
+</div>
+</div>
               
               
               
@@ -469,62 +494,85 @@ document.write(`
 <div id="searchbox"></div>
                 <article class="bd-article" role="main">
                   
-  <section id="polyfactory">
-<h1>Polyfactory<a class="headerlink" href="#polyfactory" title="Permalink to this heading">#</a></h1>
+  <section id="contributing">
+<h1>Contributing<a class="headerlink" href="#contributing" title="Permalink to this heading">#</a></h1>
+<section id="setting-up-the-environment">
+<h2>Setting up the environment<a class="headerlink" href="#setting-up-the-environment" title="Permalink to this heading">#</a></h2>
+<ol class="arabic simple">
+<li><p>Install <a class="reference external" href="https://python-poetry.org/">poetry</a></p></li>
+<li><p>Run <code class="docutils literal notranslate"><span class="pre">poetry</span> <span class="pre">install</span></code> to create a <a class="reference external" href="https://docs.python.org/3/tutorial/venv.html">virtual environment</a> and install
+the dependencies</p></li>
+<li><p>If you’re working on the documentation and need to build it locally, install the extra dependencies with <code class="docutils literal notranslate"><span class="pre">poetry</span> <span class="pre">install</span> <span class="pre">--with</span> <span class="pre">docs</span></code></p></li>
+<li><p>Install <a class="reference external" href="https://pre-commit.com/">pre-commit</a></p></li>
+<li><p>Run <code class="docutils literal notranslate"><span class="pre">pre-commit</span> <span class="pre">install</span></code> to install pre-commit hooks</p></li>
+</ol>
+</section>
+<section id="code-contributions">
+<h2>Code contributions<a class="headerlink" href="#code-contributions" title="Permalink to this heading">#</a></h2>
+<section id="workflow">
+<h3>Workflow<a class="headerlink" href="#workflow" title="Permalink to this heading">#</a></h3>
+<ol class="arabic simple">
+<li><p><a class="reference external" href="https://github.com/starlite-api/polyfactory/fork">Fork</a> the upstream repository and clone the fork locally.</p></li>
+<li><p>Install <a class="reference external" href="https://python-poetry.org/">poetry</a>, and install the project’s dependencies with <code class="docutils literal notranslate"><span class="pre">poetry</span> <span class="pre">install</span></code>.</p></li>
+<li><p>Install <a class="reference external" href="https://pre-commit.com/">pre-commit</a> by running <code class="docutils literal notranslate"><span class="pre">pre-commit</span> <span class="pre">install</span></code>.</p></li>
+<li><p>Make whatever changes and additions you wish and commit these - please try to keep your commit history clean.
+1. .. note:: 100% tests are mandatory.</p></li>
+<li><p>Once you are ready, add a PR in the main repo.</p></li>
+<li><p>Create a pull request to the main repository with an explanation of your changes.</p></li>
+</ol>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
-<p>This project is under active overhaul and development.</p>
-<p>Polyfactory is a simple and powerful mock data generation library using standard or third party data modeling
-libraries.</p>
-</div>
-<section id="installation">
-<h2>Installation<a class="headerlink" href="#installation" title="Permalink to this heading">#</a></h2>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>pip<span class="w"> </span>install<span class="w"> </span>polyfactory
-</pre></div>
-</div>
-<div class="literal-block-wrapper docutils container" id="id1">
-<div class="code-block-caption"><span class="caption-text">Minimal example using a dataclass</span><a class="headerlink" href="#id1" title="Permalink to this code">#</a></div>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">dataclasses</span> <span class="kn">import</span> <span class="n">dataclass</span>
-
-<span class="kn">from</span> <span class="nn">polyfactory.factories</span> <span class="kn">import</span> <span class="n">DataclassFactory</span>
-
-
-<span class="nd">@dataclass</span>
-<span class="k">class</span> <span class="nc">Person</span><span class="p">:</span>
-    <span class="n">name</span><span class="p">:</span> <span class="nb">str</span>
-    <span class="n">age</span><span class="p">:</span> <span class="nb">float</span>
-    <span class="n">height</span><span class="p">:</span> <span class="nb">float</span>
-    <span class="n">weight</span><span class="p">:</span> <span class="nb">float</span>
-
-
-<span class="k">class</span> <span class="nc">PersonFactory</span><span class="p">(</span><span class="n">DataclassFactory</span><span class="p">[</span><span class="n">Person</span><span class="p">]):</span>
-    <span class="n">__model__</span> <span class="o">=</span> <span class="n">Person</span>
-
-
-<span class="k">def</span> <span class="nf">test_is_person</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-    <span class="n">person_instance</span> <span class="o">=</span> <span class="n">PersonFactory</span><span class="o">.</span><span class="n">build</span><span class="p">()</span>
-    <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">person_instance</span><span class="p">,</span> <span class="n">Person</span><span class="p">)</span>
-    <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">person_instance</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="nb">str</span><span class="p">)</span>
-    <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">person_instance</span><span class="o">.</span><span class="n">age</span><span class="p">,</span> <span class="nb">float</span><span class="p">)</span>
-    <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">person_instance</span><span class="o">.</span><span class="n">height</span><span class="p">,</span> <span class="nb">float</span><span class="p">)</span>
-    <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">person_instance</span><span class="o">.</span><span class="n">weight</span><span class="p">,</span> <span class="nb">float</span><span class="p">)</span>
-</pre></div>
-</div>
+<p>The test suite requires having an instance of MongoDB available. You can launch one using the root level
+docker-compose config with <code class="docutils literal notranslate"><span class="pre">docker-compose</span> <span class="pre">up</span> <span class="pre">--detach</span></code>, or by any other means.</p>
 </div>
 </section>
-<section id="example">
-<h2>Example<a class="headerlink" href="#example" title="Permalink to this heading">#</a></h2>
-<div class="admonition note">
-<p class="admonition-title">Note</p>
-<p>TODO: Update this example for Polyfactory</p>
-</div>
-<p>That’s it - with almost no work, we are able to create a mock data object fitting the Person class model definition.</p>
-<p>This is possible because of the typing information available on the pydantic model and model-fields, which are used as a
-source of truth for data generation.</p>
-<p>The factory parses the information stored in the pydantic model and generates a dictionary of kwargs that are passed to
-the Person class’ init method.</p>
-<div class="toctree-wrapper compound">
-</div>
+</section>
+<section id="project-documentation">
+<h2>Project documentation<a class="headerlink" href="#project-documentation" title="Permalink to this heading">#</a></h2>
+<p>The documentation is located in the <code class="docutils literal notranslate"><span class="pre">/docs</span></code> directory and is built with <a class="reference external" href="https://docutils.sourceforge.io/rst.html">ReST</a>
+and <a class="reference external" href="https://www.sphinx-doc.org/en/master/">Sphinx</a>. If you’re unfamiliar with any of those,
+<a class="reference external" href="https://www.sphinx-doc.org/en/master/lib/usage/restructuredtext/basics.html">ReStructuredText primer</a> and
+<a class="reference external" href="https://www.sphinx-doc.org/en/master/lib/usage/quickstart.html">Sphinx quickstart</a> are recommended reads.</p>
+<section id="docs-theme-and-appearance">
+<h3>Docs theme and appearance<a class="headerlink" href="#docs-theme-and-appearance" title="Permalink to this heading">#</a></h3>
+<p>We welcome contributions that enhance / improve the appearance and usability of the docs. We use a custom theme that
+inherits the <a class="reference external" href="https://pydata-sphinx-theme.readthedocs.io/en/latest/">PyData Sphinx Theme Furo</a> theme, which comes
+with a lot of options out of the box. If you wish to contribute to the docs style / setup, or static site generation,
+you should consult the theme docs as a first step.</p>
+</section>
+<section id="running-the-docs-locally">
+<h3>Running the docs locally<a class="headerlink" href="#running-the-docs-locally" title="Permalink to this heading">#</a></h3>
+<p>To run or build the docs locally, you need to first install the required dependencies:</p>
+<p><code class="docutils literal notranslate"><span class="pre">poetry</span> <span class="pre">install</span> <span class="pre">--with</span> <span class="pre">docs</span></code></p>
+<p>Then you can serve the documentation with <code class="docutils literal notranslate"><span class="pre">make</span> <span class="pre">docs-serve</span></code>, or build them with <code class="docutils literal notranslate"><span class="pre">make</span> <span class="pre">docs</span></code></p>
+</section>
+<section id="writing-and-editing-docs">
+<h3>Writing and editing docs<a class="headerlink" href="#writing-and-editing-docs" title="Permalink to this heading">#</a></h3>
+<p>We welcome contributions that enhance / improve the content of the docs. Feel free to add examples, clarify text,
+restructure the docs etc., but make sure to follow these guidelines:</p>
+<ul class="simple">
+<li><p>Write text in idiomatic english, using simple language</p></li>
+<li><p>Keep examples simple and self contained</p></li>
+<li><p>Provide links where applicable</p></li>
+<li><p>Use <a class="reference external" href="https://www.sphinx-doc.org/en/master/lib/usage/extensions/intersphinx.html">intersphinx</a> wherever possible when
+referencing external libraries</p></li>
+<li><p>Provide diagrams using <a class="reference external" href="https://mermaid.js.org/">mermaidjs</a> where applicable and possible</p></li>
+</ul>
+</section>
+</section>
+<section id="creating-a-new-release">
+<h2>Creating a new release<a class="headerlink" href="#creating-a-new-release" title="Permalink to this heading">#</a></h2>
+<ol class="arabic simple">
+<li><p>Update changelog.md</p></li>
+<li><p>Increment the version in <a class="reference external" href="pyproject.toml">pyproject.toml</a></p></li>
+<li><p>Commit and push.</p></li>
+<li><p>In GitHub go to the <a class="reference external" href="https://github.com/starlite-api/polyfactory/releases">releases tab</a></p></li>
+<li><p>Pick “<a class="reference external" href="https://github.com/starlite-api/polyfactory/releases/new">Draft a new release</a>”</p></li>
+<li><p>Give it a title and a tag, both <code class="docutils literal notranslate"><span class="pre">vX.X.X</span></code></p></li>
+<li><p>Fill in the release description, you can let GitHub do it for you and then edit as needed.</p></li>
+<li><p>Publish the release.</p></li>
+<li><p>Look under the action pane and make sure the release action runs correctly</p></li>
+</ol>
 </section>
 </section>
 
@@ -539,15 +587,6 @@ the Person class’ init method.</p>
   
     <div class="footer-article-item"><!-- Previous / next buttons -->
 <div class="prev-next-area">
-    <a class="right-next"
-       href="usage/index.html"
-       title="next page">
-      <div class="prev-next-info">
-        <p class="prev-next-subtitle">next</p>
-        <p class="prev-next-title">Usage Guide</p>
-      </div>
-      <i class="fa-solid fa-angle-right"></i>
-    </a>
 </div></div>
   
 </div>
@@ -566,8 +605,18 @@ the Person class’ init method.</p>
   </div>
   <nav class="bd-toc-nav page-toc">
     <ul class="visible nav section-nav flex-column">
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#installation">Installation</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#example">Example</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#setting-up-the-environment">Setting up the environment</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#code-contributions">Code contributions</a><ul class="visible nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#workflow">Workflow</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#project-documentation">Project documentation</a><ul class="visible nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#docs-theme-and-appearance">Docs theme and appearance</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#running-the-docs-locally">Running the docs locally</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#writing-and-editing-docs">Writing and editing docs</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#creating-a-new-release">Creating a new release</a></li>
 </ul>
   </nav></div>
 
