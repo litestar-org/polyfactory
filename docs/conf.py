@@ -1,10 +1,12 @@
+from __future__ import annotations
 from functools import partial
-from typing import Any
+from typing import Any, TYPE_CHECKING
 
-# ! TODO: Fix
-# pyright: reportMissingImports=false
-from sphinx.addnodes import document
-from sphinx.application import Sphinx
+
+if TYPE_CHECKING:
+    from sphinx.addnodes import document
+    from sphinx.application import Sphinx
+
 
 project = "Polyfactory"
 copyright = "2023, Starlite API"
@@ -26,6 +28,8 @@ exclude_patterns = ["_build", "Thumbs.db", ".DS_Store"]
 
 intersphinx_mapping = {
     "python": ("https://docs.python.org/3", None),
+    "faker": ("https://faker.readthedocs.io/en/master/", None),
+    "pytest": ("https://docs.pytest.org/en/latest/", None),
 }
 
 napoleon_google_docstring = True
@@ -56,6 +60,23 @@ html_theme = "starlite_sphinx_theme"
 html_static_path = ["_static"]
 html_show_sourcelink = False
 html_title = "Polyfactory"
+
+nitpicky = True
+nitpick_ignore = [
+    ("py:class", "T"),
+    ("py:class", "BaseModel"),
+    ("py:class", "Random"),
+    ("py:class", "Decimal"),
+    ("py:class", "date"),
+    ("py:class", "Scope"),
+    ("py:class", "Faker"),
+    ("py:obj", "polyfactory.fields.P"),
+]
+nitpick_ignore_regex = [
+    (r"py:.*", r"polyfactory.*\.T"),
+    (r"py:.*", r".*TypedDictT"),
+    (r"py:.*", r"pydantic.*"),
+]
 
 html_theme_options = {
     "use_page_nav": False,

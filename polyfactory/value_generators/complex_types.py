@@ -16,8 +16,8 @@ if TYPE_CHECKING:
 
 def handle_container_type(
     container_type: type,
-    factory: type["BaseFactory"],
-    field_meta: "FieldMeta",
+    factory: type[BaseFactory],
+    field_meta: FieldMeta,
 ) -> Any:
     """Handle generation of container types recursively.
 
@@ -57,8 +57,8 @@ def handle_container_type(
 
 
 def handle_complex_type(
-    factory: type["BaseFactory"],
-    field_meta: "FieldMeta",
+    factory: type[BaseFactory],
+    field_meta: FieldMeta,
 ) -> Any:
     """Recursive type generation based on typing info stored in the graph like structure of pydantic field_metas.
 

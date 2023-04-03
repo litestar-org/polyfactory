@@ -74,7 +74,7 @@ pytest-cov = "*"
 mongomock-motor = "*"
 
 
-[tool.poetry.group.black.dependencies]
+[tool.poetry.group.docs.dependencies]
 sphinx-autobuild = "*"
 blacken-docs = "*"
 auto-pytabs = "*"

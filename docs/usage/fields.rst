@@ -22,11 +22,12 @@ we like. For example:
     :caption: Using the ``Use`` field with a custom PetFactory to control the generation of a Person's pets list
     :language: python
 
-The :class:`Use <polyfactory.Use>` class is merely a semantic abstraction that makes the factory cleaner and simpler
+The :class:`Use <polyfactory.fields.Use>` class is merely a semantic abstraction that makes the factory cleaner and simpler
 to understand, you can in fact use any callable (including classes) as values for a factory's attribute directly, and
 these will be invoked at build-time. Thus, you could for example re-write the above PetFactory like so:
 
 .. code-block:: python
+
     class PetFactory(DataclassFactory[Pet]):
     __model__ = Pet
 
@@ -36,6 +37,7 @@ these will be invoked at build-time. Thus, you could for example re-write the ab
 Or you can use a class method, which will give you easy and nice access to the factory itself:
 
 .. code-block:: python
+
     class PetFactory(DataclassFactory[Pet]):
     __model__ = Pet
 
@@ -57,7 +59,7 @@ Or you can use a class method, which will give you easy and nice access to the f
 The ``Ignore`` Field
 --------------------
 
-:class:`Ignore <polyfactory.Ignore>` is used to designate an attribute as ignored, which means it will be completely
+:class:`Ignore <polyfactory.fields.Ignore>` is used to designate an attribute as ignored, which means it will be completely
 ignored by the factory:
 
 .. literalinclude:: /examples/fields/test_example_3.py
@@ -68,7 +70,7 @@ ignored by the factory:
 The ``Require`` Field
 ---------------------
 
-The :class:`Require <polyfactory.Require>` class is used to designate a given attribute as a required kwarg. This means that the
+The :class:`Require <polyfactory.fields.Require>` class is used to designate a given attribute as a required kwarg. This means that the
 factory will require passing a value for this attribute as a kwarg to the build method, or an exception will be raised:
 
 .. literalinclude:: /examples/fields/test_example_4.py
@@ -79,7 +81,7 @@ factory will require passing a value for this attribute as a kwarg to the build 
 The ``PostGenerated`` Field
 ---------------------------
 
-The :class:`PostGenerated <polyfactory.PostGenerated>` class allows for post generating fields based on already generated
+The :class:`PostGenerated <polyfactory.fields.PostGenerated>` class allows for post generating fields based on already generated
 values of other (non post generated) fields. In most cases this pattern is best avoided, but for the few valid cases
 the PostGenerated helper is provided. For example:
 
@@ -87,6 +89,6 @@ the PostGenerated helper is provided. For example:
     :caption: Using the ``PostGenerated`` field
     :language: python
 
-The signature for use is: ``cb: Callable, *args, **defaults``, it can receive any sync callable. The signature for the
-callable should be: name: str, values: dict[str, Any], *args, **defaults. The already generated values are mapped by
+The signature for use is: ``cb: Callable, *args, **defaults``  it can receive any sync callable. The signature for the
+callable should be: ``name: str, values: dict[str, Any], *args, **defaults``. The already generated values are mapped by
 name in the values dictionary.

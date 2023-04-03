@@ -1,5 +1,4 @@
-base
-====
+base_factory
+============
 
 .. automodule:: polyfactory.factories.base
-    :members:

@@ -1,20 +1,10 @@
 from __future__ import annotations
 from decimal import Decimal
 from sys import float_info
-from typing import (
-    TYPE_CHECKING,
-    Any,
-    Protocol,
-    TypeVar,
-    cast,
-)
+from typing import TYPE_CHECKING, Any, Protocol, TypeVar, cast
 
 from polyfactory.exceptions import ParameterException
-from polyfactory.value_generators.primitives import (
-    create_random_decimal,
-    create_random_float,
-    create_random_integer,
-)
+from polyfactory.value_generators.primitives import create_random_decimal, create_random_float, create_random_integer
 
 if TYPE_CHECKING:
     from random import Random
@@ -157,7 +147,7 @@ def get_value_or_none(equal_value: T | None, constrained: T | None, increment: T
 
 def get_constrained_number_range(
     t_type: type[T],
-    random: "Random",
+    random: Random,
     lt: T | None = None,
     le: T | None = None,
     gt: T | None = None,
@@ -204,7 +194,7 @@ def get_constrained_number_range(
 
 
 def generate_constrained_number(
-    random: "Random",
+    random: Random,
     minimum: T | None,
     maximum: T | None,
     multiple_of: T | None,
@@ -235,7 +225,7 @@ def generate_constrained_number(
 
 
 def handle_constrained_int(
-    random: "Random",
+    random: Random,
     multiple_of: int | None = None,
     gt: int | None = None,
     ge: int | None = None,
@@ -268,7 +258,7 @@ def handle_constrained_int(
 
 
 def handle_constrained_float(
-    random: "Random",
+    random: Random,
     multiple_of: float | None = None,
     gt: float | None = None,
     ge: float | None = None,
@@ -365,7 +355,7 @@ def handle_decimal_length(
 
 
 def handle_constrained_decimal(
-    random: "Random",
+    random: Random,
     multiple_of: Decimal | None = None,
     decimal_places: int | None = None,
     max_digits: int | None = None,

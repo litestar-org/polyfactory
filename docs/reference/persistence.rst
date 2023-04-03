@@ -1,5 +1,5 @@
-polyfactory.persistence
-=======================
+persistence
+===========
 
 .. automodule:: polyfactory.persistence
     :members:

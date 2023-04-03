@@ -1,5 +1,5 @@
-polyfactory.exceptions
-======================
+exceptions
+==========
 
 .. automodule:: polyfactory.exceptions
     :members:

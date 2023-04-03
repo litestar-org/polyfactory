@@ -9,7 +9,7 @@ if TYPE_CHECKING:
 
 
 def create_random_float(
-    random: "Random",
+    random: Random,
     minimum: Decimal | int | float | None = None,
     maximum: Decimal | int | float | None = None,
 ) -> float:
@@ -28,7 +28,7 @@ def create_random_float(
     return random.uniform(float(minimum), float(maximum))
 
 
-def create_random_integer(random: "Random", minimum: int | None = None, maximum: int | None = None) -> int:
+def create_random_integer(random: Random, minimum: int | None = None, maximum: int | None = None) -> int:
     """Generate a random int given the constraints.
 
     :param random: An instance of random.
@@ -41,7 +41,7 @@ def create_random_integer(random: "Random", minimum: int | None = None, maximum:
 
 
 def create_random_decimal(
-    random: "Random",
+    random: Random,
     minimum: Decimal | None = None,
     maximum: Decimal | None = None,
 ) -> Decimal:
@@ -57,7 +57,7 @@ def create_random_decimal(
 
 
 def create_random_bytes(
-    random: "Random",
+    random: Random,
     min_length: int | None = None,
     max_length: int | None = None,
     lower_case: bool = False,
@@ -94,7 +94,7 @@ def create_random_bytes(
 
 
 def create_random_string(
-    random: "Random",
+    random: Random,
     min_length: int | None = None,
     max_length: int | None = None,
     lower_case: bool = False,
@@ -119,7 +119,7 @@ def create_random_string(
     ).decode("utf-8")
 
 
-def create_random_boolean(random: "Random") -> bool:
+def create_random_boolean(random: Random) -> bool:
     """Generate a random boolean value.
 
     :param random: An instance of random.

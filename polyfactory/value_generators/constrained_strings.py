@@ -35,7 +35,7 @@ def _validate_length(
 
 
 def _generate_pattern(
-    random: "Random",
+    random: Random,
     pattern: str | Pattern,
     lower_case: bool = False,
     upper_case: bool = False,
@@ -72,7 +72,7 @@ def _generate_pattern(
 
 
 def handle_constrained_string_or_bytes(
-    random: "Random",
+    random: Random,
     t_type: Callable[[], T],
     lower_case: bool = False,
     upper_case: bool = False,
