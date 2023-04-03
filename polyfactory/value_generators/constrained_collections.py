@@ -1,10 +1,5 @@
 from __future__ import annotations
-from typing import (
-    TYPE_CHECKING,
-    Any,
-    Callable,
-    TypeVar,
-)
+from typing import TYPE_CHECKING, Any, Callable, TypeVar
 
 from polyfactory.exceptions import ParameterException
 
@@ -17,8 +12,8 @@ T = TypeVar("T", list, set, frozenset)
 
 def handle_constrained_collection(
     collection_type: Callable[..., T],
-    factory: type["BaseFactory"],
-    field_meta: "FieldMeta",
+    factory: type[BaseFactory],
+    field_meta: FieldMeta,
     item_type: Any,
     max_items: int | None = None,
     min_items: int | None = None,

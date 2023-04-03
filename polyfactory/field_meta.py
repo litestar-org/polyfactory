@@ -15,7 +15,7 @@ class FieldMeta:
     __slots__ = ("name", "annotation", "children", "default", "constant")
 
     annotation: Any
-    children: list["FieldMeta"] | None
+    children: list[FieldMeta] | None
     constant: bool
     default: Any
     name: str
@@ -26,7 +26,7 @@ class FieldMeta:
         name: str,
         annotation: type,
         default: Any = Null,
-        children: list["FieldMeta"] | None = None,
+        children: list[FieldMeta] | None = None,
         constant: bool = False,
     ):
         """Create a factory field metadata instance."""
@@ -45,7 +45,7 @@ class FieldMeta:
         return tuple(TYPE_MAPPING[arg] if arg in TYPE_MAPPING else arg for arg in unwrap_args(self.annotation))
 
     @classmethod
-    def from_type(cls, annotation: Any, name: str = "", default: Any = Null) -> "FieldMeta":
+    def from_type(cls, annotation: Any, name: str = "", default: Any = Null) -> FieldMeta:
         """Builder method to create a FieldMeta from a type annotation.
 
         :param annotation: A type annotation.

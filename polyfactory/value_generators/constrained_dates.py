@@ -8,7 +8,7 @@ if TYPE_CHECKING:
 
 
 def handle_constrained_date(
-    faker: "Faker",
+    faker: Faker,
     ge: date | None = None,
     gt: date | None = None,
     le: date | None = None,

@@ -44,7 +44,7 @@ repos:
             odmantic,
             pydantic,
             pytest,
-            sphinx
+            sphinx,
           ]
   - repo: https://github.com/RobertCraigie/pyright-python
     rev: v1.1.301
@@ -60,5 +60,5 @@ repos:
             odmantic,
             pydantic,
             pytest,
-            sphinx
+            sphinx,
           ]

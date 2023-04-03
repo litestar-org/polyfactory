@@ -28,6 +28,8 @@ exclude_patterns = ["_build", "Thumbs.db", ".DS_Store"]
 
 intersphinx_mapping = {
     "python": ("https://docs.python.org/3", None),
+    "faker": ("https://faker.readthedocs.io/en/master/", None),
+    "pytest": ("https://docs.pytest.org/en/latest/", None),
 }
 
 napoleon_google_docstring = True
@@ -62,7 +64,13 @@ html_title = "Polyfactory"
 nitpicky = True
 nitpick_ignore = [
     ("py:class", "T"),
-    ("py:class", "BaseModel")
+    ("py:class", "BaseModel"),
+    ("py:class", "Random"),
+    ("py:class", "Decimal"),
+    ("py:class", "date"),
+    ("py:class", "Scope"),
+    ("py:class", "Faker"),
+    ("py:obj", "polyfactory.fields.P"),
 ]
 nitpick_ignore_regex = [
     (r"py:.*", r"polyfactory.*\.T"),
