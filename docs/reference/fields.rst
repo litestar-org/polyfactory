@@ -1,5 +1,5 @@
-polyfactory.fields
-==================
+fields
+======
 
 .. automodule:: polyfactory.fields
     :members:

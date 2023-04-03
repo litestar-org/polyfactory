@@ -1,5 +1,5 @@
-polyfactory.value_generators
-=============================
+value_generators
+================
 
 
 .. toctree::
