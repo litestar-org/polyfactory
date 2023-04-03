@@ -1,9 +1,4 @@
-<!-- markdownlint-disable -->
-<p align="center">
-  <img src="https://github.com/starlite-api/branding/blob/9ab099a2089219c07727baaa29f67e9474ff93c8/assets/Starlite%20Branding%20-%20SVG%20-%20Transparent/Logo%20-%20Banner%20-%20Inline%20-%20Light.svg#gh-light-mode-only" alt="Starlite Logo - Light" width="100%" height="auto" />
-  <img src="https://github.com/starlite-api/branding/blob/9ab099a2089219c07727baaa29f67e9474ff93c8/assets/Starlite%20Branding%20-%20SVG%20-%20Transparent/Logo%20-%20Banner%20-%20Inline%20-%20Dark.svg#gh-dark-mode-only" alt="Starlite Logo - Dark" width="100%" height="auto" />
-</p>
-<!-- markdownlint-restore -->
+# Polyfactory
 
 <!-- markdownlint-disable -->
 <div align="center">
@@ -21,12 +16,66 @@
 </div>
 <!-- markdownlint-restore -->
 
-# Polyfactory
+This library offers factories for mock data generation using python type hints. It part of the LiteStar-API project and
+is actively maintained by a community of maintainers and contributors.
 
-This library offers powerful mock data generation capabilities.
+## Example
+
+```python
+from dataclasses import dataclass
+
+from polyfactory.factories import DataclassFactory
+
+
+@dataclass
+class Person:
+    name: str
+    age: float
+    height: float
+    weight: float
+
+
+class PersonFactory(DataclassFactory[Person]):
+    __model__ = Person
+
+
+def test_is_person() -> None:
+    person_instance = PersonFactory.build()
+    assert isinstance(person_instance, Person)
+```
+
+That's it - with almost no work, we are able to create a mock data object fitting the Person class model definition.
+
+This is possible because of the typing information available on the dataclass, which are used as a
+source of truth for data generation.
+
+The factory parses the information stored in the dataclass and generates a dictionary of kwargs that are passed to
+the Person class constructor.
+
+## Documentation
+
+A full API reference and usage documentation is available in
+the [dedicated documentation site](https://polyfactory.litestar.dev/).
 
 ## Installation
 
 ```shell
 pip install polyfactory
 ```
+
+## Relation to Pydantic-Factories
+
+The earlier version of this library was released under the
+name [pydantic-factories](https://pypi.org/project/pydantic-factories/).
+While this library became very popular (above 100K monthly downloads), we decided to rename it because we changed the
+core architecture -
+`polyfactory` is a fitting name because we no longer rely on pydantic, which is now an optional dependency. This library
+is capable of
+generating mock data for dataclasses, typed-dicts and any custom factory using type annotations.
+It also supports using pydantic models - but that is optional.
+
+## Contributing
+
+This library is a community driven open source project. We welcome and encourage contributions. Please checkout the
+GitHub issues, read the contribution guide (at the repository's root), and you're always welcome
+to [join our discord server](https://discord.gg/F4jPQzHpBU).
