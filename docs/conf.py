@@ -1,10 +1,12 @@
+from __future__ import annotations
 from functools import partial
-from typing import Any
+from typing import Any, TYPE_CHECKING
 
-# ! TODO: Fix
-# pyright: reportMissingImports=false
-from sphinx.addnodes import document
-from sphinx.application import Sphinx
+
+if TYPE_CHECKING:
+    from sphinx.addnodes import document
+    from sphinx.application import Sphinx
+
 
 project = "Polyfactory"
 copyright = "2023, Starlite API"
