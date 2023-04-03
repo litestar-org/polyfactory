@@ -2,15 +2,23 @@ Polyfactory Factories
 =====================
 
 The factories exported by this library are classes that extend the
-Abstract Base Class (ABC) :class:`BaseFactory <polyfactory.factories.BaseFactory>`.
+Abstract Base Class (ABC) :class:`BaseFactory <polyfactory.factories.base.BaseFactory>`.
 
 These include:
 
-* :class:`DataclassFactory <polyfactory.factories.DataclassFactory>`, which is a base factory for dataclasses.
-* :class:`TypedDictFactory <polyfactory.factories.TypedDictFactory>`, which is a base factory for typed-dicts.
-* :class:`ModelFactory <polyfactory.factories.pydantic_factory.ModelFactory>`, which is a base factory for `pydantic <https://docs.pydantic.dev/>`_ models.
-* :class:`BeanieDocumentFactory <polyfactory.factories.beanie_odm_factory.BeanieDocumentFactory>`, which is a base factory for `beanie <https://beanie-odm.dev/>`_ documents.
-* :class:`OdmanticModelFactory <polyfactory.factories.odmantic_odm_factory.OdmanticModelFactory>`, which is a base factory for `odmantic <https://art049.github.io/odmantic/>`_ models.
+:class:`DataclassFactory <polyfactory.factories.dataclass_factory.DataclassFactory>`
+    a base factory for dataclasses
+
+:class:`TypedDictFactory <polyfactory.factories.typed_dict_factory.TypedDictFactory>`
+    a base factory for typed-dicts
+:class:`ModelFactory <polyfactory.factories.pydantic_factory.ModelFactory>`
+    a base factory for `pydantic <https://docs.pydantic.dev/>`_ models
+
+:class:`BeanieDocumentFactory <polyfactory.factories.beanie_odm_factory.BeanieDocumentFactory>`
+    a base factory for `beanie <https://beanie-odm.dev/>`_ documents
+
+:class:`OdmanticModelFactory <polyfactory.factories.odmantic_odm_factory.OdmanticModelFactory>`
+    a base factory for `odmantic <https://art049.github.io/odmantic/>`_ models.
 
 .. note::
     All factories exported from ``polyfactory.factories`` do not require any additional dependencies. The other factories,

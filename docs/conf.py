@@ -59,6 +59,17 @@ html_static_path = ["_static"]
 html_show_sourcelink = False
 html_title = "Polyfactory"
 
+nitpicky = True
+nitpick_ignore = [
+    ("py:class", "T"),
+    ("py:class", "BaseModel")
+]
+nitpick_ignore_regex = [
+    (r"py:.*", r"polyfactory.*\.T"),
+    (r"py:.*", r".*TypedDictT"),
+    (r"py:.*", r"pydantic.*"),
+]
+
 html_theme_options = {
     "use_page_nav": False,
     "github_repo_name": "polyfactory",

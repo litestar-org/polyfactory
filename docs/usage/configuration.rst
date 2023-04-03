@@ -2,8 +2,8 @@ Factory Configuration
 =====================
 
 Factories can be configured by setting special dunder (double underscore) class attributes.
-You can read the reference for these in the API reference for :class:`BaseFactory <polyfactory.factories.BaseFactory>`.
-Below we discuss some configuration options in some depth.
+You can read the reference for these in the API reference for
+:class:`BaseFactory <polyfactory.factories.base.BaseFactory>`. Below we discuss some configuration options in some depth.
 
 Seeding Randomness
 ------------------
@@ -37,7 +37,7 @@ In the above example we are setting the factory's instance of ``Faker`` and conf
 we are also setting the random seed value, the results of the test are deterministic.
 
 .. note::
-    To understand why we are using a classmethod here, see the documentation about :doc:`factory fields <./fields.rst>`.
+    To understand why we are using a classmethod here, see the documentation about :doc:`factory fields </usage/fields>`.
 
 Persistence Handlers
 --------------------
@@ -64,13 +64,13 @@ With the persistence handlers in place, you can now use all persistence methods.
 Defining Default Factories
 --------------------------
 
-As explained in the section about dynamic factory generation in :doc:`declaring factories <./declaring_factories.rst>`,
+As explained in the section about dynamic factory generation in :doc:`declaring factories </usage/declaring_factories>`,
 factories generate new factories for supported types dynamically. This process requires no intervention from the user.
 Once a factory is generated, it is then cached and reused - when the same type is used.
 
 For example, when build is called for the ``PersonFactory`` below, a ``PetFactory`` will be dynamically generated and reused:
 
-.. literalinclude:: /examples/defining_factories/test_example_5.py
+.. literalinclude:: /examples/declaring_factories/test_example_5.py
     :caption: Dynamic factory generation
     :language: python
 
