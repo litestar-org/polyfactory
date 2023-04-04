@@ -1,29 +1,56 @@
-import pytest
-from typing_extensions import TypedDict
+from dataclasses import dataclass
+from datetime import date, datetime
+from enum import Enum
+from typing import Any, Dict, List, Union
+from uuid import UUID
 
-from polyfactory import Require
-from polyfactory.exceptions import MissingBuildKwargException
-from polyfactory.factories import TypedDictFactory
+from polyfactory import Use
+from polyfactory.factories import DataclassFactory
 
 
-class Person(TypedDict):
-    id: int
+class Species(str, Enum):
+    CAT = "Cat"
+    DOG = "Dog"
+
+
+@dataclass
+class Pet:
     name: str
+    species: Species
+    sound: str
 
 
-class PersonFactory(TypedDictFactory[Person]):
+@dataclass
+class Person:
+    id: UUID
+    name: str
+    hobbies: List[str]
+    age: Union[float, int]
+    birthday: Union[datetime, date]
+    pets: List[Pet]
+    assets: List[Dict[str, Dict[str, Any]]]
+
+
+class PetFactory(DataclassFactory[Pet]):
+    __model__ = Pet
+
+    @classmethod
+    def name(cls) -> str:
+        return cls.__random__.choice(["Ralph", "Roxy"])
+
+    @classmethod
+    def species(cls) -> str:
+        return cls.__random__.choice(list(Species))
+
+
+class PersonFactory(DataclassFactory[Person]):
     __model__ = Person
 
-    id = Require()
+    pets = Use(PetFactory.batch, size=2)
 
 
-def test_id_is_required() -> None:
-    # this will not raise an exception
-    person_instance = PersonFactory.build(id=1)
+def test_pet_choices() -> None:
+    person_instance = PersonFactory.build()
 
-    assert person_instance.get("name")
-    assert person_instance.get("id") == 1
-
-    # but when no kwarg is passed, an exception will be raised:
-    with pytest.raises(MissingBuildKwargException):
-        PersonFactory.build()
+    assert len(person_instance.pets) == 2
+    assert all(pet.name in ["Ralph", "Roxy"] for pet in person_instance.pets)

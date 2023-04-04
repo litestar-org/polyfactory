@@ -10,3 +10,4 @@ Usage Guide
     configuration
     fields
     fixtures
+    handling_custom_types
