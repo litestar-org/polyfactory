@@ -1,28 +1,22 @@
-from dataclasses import dataclass, field
-from typing import Any, Dict
+from typing_extensions import TypedDict
 
-from polyfactory import PostGenerated
-from polyfactory.factories import DataclassFactory
-from datetime import datetime, timedelta
+from polyfactory import Ignore
+from polyfactory.factories import TypedDictFactory
 
 
-def add_timedelta(name: str, values: Dict[str, datetime], *args: Any, **kwargs: Any) -> datetime:
-    delta = timedelta(days=1)
-    return values["from_dt"] + delta
+class Person(TypedDict):
+    id: int
+    name: str
 
 
-@dataclass
-class DatetimeRange:
-    to_dt: datetime
-    from_dt: datetime = field(default_factory=datetime.now)
+class PersonFactory(TypedDictFactory[Person]):
+    __model__ = Person
+
+    id = Ignore()
 
 
-class DatetimeRangeFactory(DataclassFactory[DatetimeRange]):
-    __model__ = DatetimeRange
+def test_id_is_ignored() -> None:
+    person_instance = PersonFactory.build()
 
-    to_dt = PostGenerated(add_timedelta)
-
-
-def test_post_generated() -> None:
-    date_range_instance = DatetimeRangeFactory.build()
-    assert date_range_instance.to_dt.day == date_range_instance.from_dt.day + 1
+    assert person_instance.get("name")
+    assert person_instance.get("id") is None

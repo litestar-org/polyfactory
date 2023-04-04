@@ -26,28 +26,15 @@ The :class:`Use <polyfactory.fields.Use>` class is merely a semantic abstraction
 to understand, you can in fact use any callable (including classes) as values for a factory's attribute directly, and
 these will be invoked at build-time. Thus, you could for example re-write the above PetFactory like so:
 
-.. code-block:: python
-
-    class PetFactory(DataclassFactory[Pet]):
-    __model__ = Pet
-
-    name = lambda: DataclassFactory.__random__.choice(["Ralph", "Roxy"])
-    species = lambda: DataclassFactory.__random__.choice(list(Species))
+.. literalinclude:: /examples/fields/test_example_3.py
+    :caption: Using simple lambda functions to declare custom fields
+    :language: python
 
 Or you can use a class method, which will give you easy and nice access to the factory itself:
 
-.. code-block:: python
-
-    class PetFactory(DataclassFactory[Pet]):
-    __model__ = Pet
-
-    @classmethod
-    def name() -> str:
-        return cls.__random__.choice(["Ralph", "Roxy"])
-
-    @classmethod
-    def species() -> str:
-        return cls.__random__.choice(list(Species))
+.. literalinclude:: /examples/fields/test_example_4.py
+    :caption: Using class methods to declare custom fields
+    :language: python
 
 .. note::
     All the above examples used ``DataclassFactory.__random__.choice``, and this is intentional. While you can use
@@ -62,10 +49,9 @@ The ``Ignore`` Field
 :class:`Ignore <polyfactory.fields.Ignore>` is used to designate an attribute as ignored, which means it will be completely
 ignored by the factory:
 
-.. literalinclude:: /examples/fields/test_example_3.py
+.. literalinclude:: /examples/fields/test_example_5.py
     :caption: Using the ``Ignore`` field
     :language: python
-
 
 The ``Require`` Field
 ---------------------
@@ -73,10 +59,9 @@ The ``Require`` Field
 The :class:`Require <polyfactory.fields.Require>` class is used to designate a given attribute as a required kwarg. This means that the
 factory will require passing a value for this attribute as a kwarg to the build method, or an exception will be raised:
 
-.. literalinclude:: /examples/fields/test_example_4.py
+.. literalinclude:: /examples/fields/test_example_6.py
     :caption: Using the ``Require`` field
     :language: python
-
 
 The ``PostGenerated`` Field
 ---------------------------
@@ -85,7 +70,7 @@ The :class:`PostGenerated <polyfactory.fields.PostGenerated>` class allows for p
 values of other (non post generated) fields. In most cases this pattern is best avoided, but for the few valid cases
 the PostGenerated helper is provided. For example:
 
-.. literalinclude:: /examples/fields/test_example_5.py
+.. literalinclude:: /examples/fields/test_example_7.py
     :caption: Using the ``PostGenerated`` field
     :language: python
 
