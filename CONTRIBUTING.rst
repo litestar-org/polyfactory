@@ -17,7 +17,7 @@ Code contributions
 Workflow
 ++++++++
 
-1. `Fork <https://github.com/starlite-api/polyfactory/fork>`_ the upstream repository and clone the fork locally.
+1. `Fork <https://github.com/litestar-org/polyfactory/fork>`_ the upstream repository and clone the fork locally.
 2. Install `poetry <https://python-poetry.org/>`_, and install the project's dependencies with ``poetry install``.
 3. Install `pre-commit <https://pre-commit.com/>`_ by running ``pre-commit install``.
 4. Make whatever changes and additions you wish and commit these - please try to keep your commit history clean.
@@ -74,8 +74,8 @@ Creating a new release
 1. Update changelog.md
 2. Increment the version in `pyproject.toml <pyproject.toml>`_
 3. Commit and push.
-4. In GitHub go to the `releases tab <https://github.com/starlite-api/polyfactory/releases>`_
-5. Pick "`Draft a new release <https://github.com/starlite-api/polyfactory/releases/new>`_"
+4. In GitHub go to the `releases tab <https://github.com/litestar-org/polyfactory/releases>`_
+5. Pick "`Draft a new release <https://github.com/litestar-org/polyfactory/releases/new>`_"
 6. Give it a title and a tag, both ``vX.X.X``
 7. Fill in the release description, you can let GitHub do it for you and then edit as needed.
 8. Publish the release.

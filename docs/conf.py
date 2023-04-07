@@ -9,8 +9,8 @@ if TYPE_CHECKING:
 
 
 project = "Polyfactory"
-copyright = "2023, Starlite API"
-author = "Starlite API"
+copyright = "2023, Litestar Org"
+author = "Litestar Org"
 release = "1.0.0"
 
 extensions = [
@@ -56,7 +56,7 @@ suppress_warnings = [
     "ref.python",  # TODO: remove when https://github.com/sphinx-doc/sphinx/issues/4961 is fixed
 ]
 
-html_theme = "starlite_sphinx_theme"
+html_theme = "litestar_sphinx_theme"
 html_static_path = ["_static"]
 html_show_sourcelink = False
 html_title = "Polyfactory"
@@ -82,17 +82,17 @@ html_theme_options = {
     "use_page_nav": False,
     "github_repo_name": "polyfactory",
     "logo": {
-        "link": "https://polyfactory.starliteproject.dev",
+        "link": "https://polyfactory.litestar.dev",
     },
     "extra_navbar_items": {
         "Documentation": "index",
         "Community": {
             "Contributing": "contributing",
-            "Code of Conduct": "https://github.com/starlite-api/.github/blob/main/CODE_OF_CONDUCT.md",
+            "Code of Conduct": "https://github.com/litestar-org/.github/blob/main/CODE_OF_CONDUCT.md",
         },
         "About": {
-            "Organization": "https://starliteproject.dev/about/organization",
-            "Releases": "https://starliteproject.dev/about/starlite-releases",
+            "Organization": "https://litestar.dev/about/organization",
+            "Releases": "https://litestar.dev/about/litestar-releases",
         },
     },
 }
@@ -105,7 +105,7 @@ def update_html_context(
 
 
 def setup(app: Sphinx) -> dict[str, bool]:
-    app.setup_extension("starlite_sphinx_theme")
+    app.setup_extension("litestar_sphinx_theme")
     app.setup_extension("pydata_sphinx_theme")
     app.connect("html-page-context", update_html_context)
 
