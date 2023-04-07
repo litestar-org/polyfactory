@@ -1,7 +1,7 @@
 [tool.poetry]
 name = "polyfactory"
 version = "1.0.0alpha0"
-description = "Mock data generation for pydantic based models and python dataclasses"
+description = "Mock data generation factories"
 authors = [
     "Na'aman Hirschfeld <nhirschfeld@gmail.com>",
     "Peter Schutt <peter.github@proton.me>",
@@ -29,6 +29,7 @@ keywords = [
     "starlite",
     "tdd",
     "testing",
+    "typeddict",
 ]
 classifiers = [
     "Environment :: Web Environment",
