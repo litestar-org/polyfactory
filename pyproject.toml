@@ -16,9 +16,9 @@ maintainers = [
 ]
 license = "MIT"
 readme = "README.md"
-homepage = "https://github.com/starlite-api/polyfactory"
-repository = "https://github.com/starlite-api/polyfactory"
-documentation = "https://github.com/starlite-api/polyfactory"
+homepage = "https://github.com/litestar-org/polyfactory"
+repository = "https://github.com/litestar-org/polyfactory"
+documentation = "https://github.com/litestar-org/polyfactory"
 keywords = [
     "dataclasses",
     "factory",
@@ -26,27 +26,28 @@ keywords = [
     "mock",
     "pydantic",
     "pytest",
-    "starlite",
+    "litestar",
     "tdd",
     "testing",
     "typeddict",
 ]
 classifiers = [
+    "Development Status :: 5 - Production/Stable",
     "Environment :: Web Environment",
     "Framework :: Pytest",
     "Intended Audience :: Developers",
     "License :: OSI Approved :: MIT License",
     "Natural Language :: English",
     "Operating System :: OS Independent",
-    "Programming Language :: Python",
     "Programming Language :: Python :: 3.8",
     "Programming Language :: Python :: 3.9",
     "Programming Language :: Python :: 3.10",
     "Programming Language :: Python :: 3.11",
-    "Topic :: Software Development",
+    "Programming Language :: Python",
     "Topic :: Software Development :: Libraries",
-    "Topic :: Software Development :: Testing",
     "Topic :: Software Development :: Testing :: Unit",
+    "Topic :: Software Development :: Testing",
+    "Topic :: Software Development",
     "Topic :: Utilities",
     "Typing :: Typed",
 ]
@@ -82,7 +83,7 @@ auto-pytabs = "*"
 sphinxcontrib-mermaid = "*"
 sphinx-copybutton = "*"
 sphinx = "*"
-starlite-sphinx-theme = { git = "https://github.com/starlite-api/starlite-sphinx-theme.git" }
+litestar-sphinx-theme = { git = "https://github.com/litestar-org/litestar-sphinx-theme.git" }
 
 [tool.poetry.extras]
 pydantic = ["pydantic"]
