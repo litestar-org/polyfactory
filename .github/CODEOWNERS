@@ -4,7 +4,7 @@
 # For more info about code owners see https://docs.github.com/en/repositories/managing-your-repositorys-settings-and-features/customizing-your-repository/about-code-owners#codeowners-file-example
 
 # Global Assignment
-*      @starlite-api/maintainers
+*      @litestar-org/maintainers
 
 # Documentation
-docs/* @starlite-api/maintainers @JacobCoffee
+docs/* @litestar-org/maintainers @JacobCoffee
