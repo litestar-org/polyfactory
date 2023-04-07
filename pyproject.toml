@@ -65,6 +65,7 @@ faker = "*"
 msgspec = { version = "*", optional = true }
 odmantic = { version = "*", optional = true }
 pydantic = { version = "*", optional = true }
+sqlalchemy = { version = ">=2", optional = true }
 typing-extensions = "*"
 
 [tool.poetry.group.dev.dependencies]
@@ -80,6 +81,7 @@ pytest = "*"
 pytest-asyncio = "*"
 pytest-cov = "*"
 annotated-types = "*"
+sqlalchemy = ">=2"
 
 [tool.poetry.group.docs.dependencies]
 sphinx-autobuild = "*"
@@ -91,6 +93,7 @@ sphinx = "*"
 litestar-sphinx-theme = { git = "https://github.com/litestar-org/litestar-sphinx-theme.git" }
 
 [tool.poetry.extras]
+sqlalchemy = ["sqlalchemy"]
 pydantic = ["pydantic"]
 msgspec = ["msgspec"]
 odmantic = ["odmantic", "pydantic"]
