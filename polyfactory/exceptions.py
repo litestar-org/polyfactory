@@ -14,5 +14,5 @@ class MissingBuildKwargException(FactoryException):
     """Missing Build Kwarg exception - used when a required build kwarg is not provided"""
 
 
-class MissingDependencyException(FactoryException):
+class MissingDependencyException(FactoryException, ImportError):
     """Missing dependency exception - used when a dependency is not installed"""
