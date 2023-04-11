@@ -39,6 +39,7 @@ from typing_extensions import get_args
 from polyfactory.exceptions import (
     ConfigurationException,
     MissingBuildKwargException,
+    MissingDependencyException,
     ParameterException,
 )
 from polyfactory.fields import Fixture, Ignore, PostGenerated, Require, Use
@@ -688,7 +689,7 @@ def _register_builtin_factories() -> None:
     ]:
         try:
             import_module(module)
-        except ImportError:
+        except MissingDependencyException:
             continue
 
 
