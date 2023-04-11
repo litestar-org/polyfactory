@@ -4,7 +4,6 @@ from typing import Any, Callable, Generic, TypeVar, cast
 from typing_extensions import ParamSpec, TypedDict
 
 from polyfactory.exceptions import ParameterException
-from polyfactory.pytest_plugin import FactoryFixture
 
 T = TypeVar("T")
 P = ParamSpec("P")
@@ -105,6 +104,7 @@ class Fixture:
 
         :returns: The build result.
         """
+        from polyfactory.pytest_plugin import FactoryFixture
 
         if factory := FactoryFixture.factory_class_map.get(self.fixture["value"]):
             if self.size:
