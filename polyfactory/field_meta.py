@@ -1,12 +1,15 @@
 from __future__ import annotations
 
-from _pydecimal import Decimal
-from typing import Any, TypedDict, Pattern
 
-from typing_extensions import NotRequired
+from typing import Any, TypedDict, Pattern, TYPE_CHECKING
+
 
 from polyfactory.constants import TYPE_MAPPING
 from polyfactory.utils.helpers import unwrap_args, unwrap_new_type
+
+if TYPE_CHECKING:
+    from _pydecimal import Decimal
+    from typing_extensions import NotRequired
 
 
 class Null:
@@ -54,7 +57,7 @@ class FieldMeta:
         constraints: Constraints | None = None,
     ):
         """Create a factory field metadata instance."""
-        self.annotation = annotation
+        self.annotation = unwrap_new_type(annotation)
         self.children = children
         self.default = default
         self.name = name

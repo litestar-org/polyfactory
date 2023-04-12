@@ -67,14 +67,14 @@ class PydanticFieldMeta(FieldMeta):
 
         name = model_field.alias if model_field.alias and use_alias else model_field.name
 
-        annotation = (
+        annotation = unwrap_new_type(
             model_field.annotation if not isinstance(model_field.annotation, DeferredType) else model_field.outer_type_
         )
 
         constraints = cast(
             "Constraints",
             {
-                "constant": bool(model_field.field_info.const),
+                "constant": bool(model_field.field_info.const) or None,
                 "ge": getattr(annotation, "ge", model_field.field_info.ge),
                 "gt": getattr(annotation, "gt", model_field.field_info.gt),
                 "le": getattr(annotation, "le", model_field.field_info.le),
@@ -96,14 +96,14 @@ class PydanticFieldMeta(FieldMeta):
 
         return PydanticFieldMeta(
             name=name,
-            annotation=unwrap_new_type(annotation),
+            annotation=annotation,
             children=[
                 PydanticFieldMeta.from_model_field(child, use_alias=use_alias) for child in model_field.sub_fields
             ]
             if model_field.sub_fields
             else None,
             default=default_value,
-            constraints={k: v for k,v in constraints.items() if v},
+            constraints=cast("Constraints", {k: v for k, v in constraints.items() if v is not None}) or None,
         )
 
 
