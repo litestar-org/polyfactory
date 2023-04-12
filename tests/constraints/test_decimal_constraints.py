@@ -566,7 +566,7 @@ def test_handle_decimal_length() -> None:
 
 def test_zero_to_one_range() -> None:
     class FractionExample(BaseModel):
-        fraction: condecimal(ge=Decimal("0"), le=Decimal("1"), decimal_places=2, max_digits=3)  # type: ignore
+        fraction: condecimal(ge=Decimal("0.0"), le=Decimal("1.0"), decimal_places=2, max_digits=3)  # type: ignore
 
     class FractionExampleFactory(ModelFactory):
         __model__ = FractionExample

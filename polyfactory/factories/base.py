@@ -51,6 +51,14 @@ from polyfactory.utils.predicates import (
     is_safe_subclass,
 )
 from polyfactory.value_generators.complex_types import handle_complex_type
+from polyfactory.value_generators.constrained_collections import handle_constrained_collection
+from polyfactory.value_generators.constrained_dates import handle_constrained_date
+from polyfactory.value_generators.constrained_numbers import (
+    handle_constrained_float,
+    handle_constrained_int,
+    handle_constrained_decimal,
+)
+from polyfactory.value_generators.constrained_strings import handle_constrained_string_or_bytes
 from polyfactory.value_generators.primitives import (
     create_random_boolean,
     create_random_bytes,
@@ -58,7 +66,7 @@ from polyfactory.value_generators.primitives import (
 
 if TYPE_CHECKING:
     from polyfactory.persistence import AsyncPersistenceProtocol, SyncPersistenceProtocol
-    from polyfactory.field_meta import FieldMeta
+    from polyfactory.field_meta import FieldMeta, Constraints
     from typing_extensions import TypeGuard
 
 
@@ -171,7 +179,7 @@ class BaseFactory(ABC, Generic[T]):
     """
 
     # cached attributes
-    _fields_metadata: list["FieldMeta"]
+    _fields_metadata: list[FieldMeta]
     # BaseFactory only attributes
     _factory_type_mapping: ClassVar[dict[Any, type["BaseFactory"]]]
     _base_factories: ClassVar[list[type["BaseFactory"]]]
@@ -311,7 +319,7 @@ class BaseFactory(ABC, Generic[T]):
         return False
 
     @classmethod
-    def extract_field_build_parameters(cls, field_meta: "FieldMeta", build_args: dict[str, Any]) -> Any:
+    def extract_field_build_parameters(cls, field_meta: FieldMeta, build_args: dict[str, Any]) -> Any:
         """Extract from the build kwargs any build parameters passed for a given field meta - if it is a factory type.
 
         :param field_meta: A field meta instance.
@@ -477,7 +485,80 @@ class BaseFactory(ABC, Generic[T]):
         )
 
     @classmethod
-    def get_field_value(cls, field_meta: "FieldMeta", field_build_parameters: Any | None = None) -> Any:
+    def get_constrained_field_value(cls, annotation: Any, field_meta: FieldMeta) -> Any:
+        constraints = cast("Constraints", field_meta.constraints)
+        if is_safe_subclass(annotation, float):
+            return handle_constrained_float(
+                random=cls.__random__,
+                multiple_of=cast("Any", constraints.get("multiple_of")),
+                gt=cast("Any", constraints.get("gt")),
+                ge=cast("Any", constraints.get("ge")),
+                lt=cast("Any", constraints.get("lt")),
+                le=cast("Any", constraints.get("le")),
+            )
+
+        if is_safe_subclass(annotation, int):
+            return handle_constrained_int(
+                random=cls.__random__,
+                multiple_of=cast("Any", constraints.get("multiple_of")),
+                gt=cast("Any", constraints.get("gt")),
+                ge=cast("Any", constraints.get("ge")),
+                lt=cast("Any", constraints.get("lt")),
+                le=cast("Any", constraints.get("le")),
+            )
+
+        if is_safe_subclass(annotation, Decimal):
+            return handle_constrained_decimal(
+                random=cls.__random__,
+                decimal_places=cast("Any", constraints.get("decimal_places")),
+                max_digits=cast("Any", constraints.get("max_digits")),
+                multiple_of=cast("Any", constraints.get("multiple_of")),
+                gt=cast("Any", constraints.get("gt")),
+                ge=cast("Any", constraints.get("ge")),
+                lt=cast("Any", constraints.get("lt")),
+                le=cast("Any", constraints.get("le")),
+            )
+
+        if is_safe_subclass(annotation, str) or is_safe_subclass(annotation, bytes):
+            return handle_constrained_string_or_bytes(
+                random=cls.__random__,
+                t_type=str if is_safe_subclass(annotation, str) else bytes,
+                lower_case=constraints.get("lower_case") or False,
+                upper_case=constraints.get("upper_case") or False,
+                min_length=constraints.get("min_length"),
+                max_length=constraints.get("max_length"),
+                pattern=constraints.get("pattern"),
+            )
+
+        if (
+            is_safe_subclass(annotation, set)
+            or is_safe_subclass(annotation, list)
+            or is_safe_subclass(annotation, frozenset)
+        ):
+            result = handle_constrained_collection(
+                collection_type=list if is_safe_subclass(annotation, list) else set,  # pyright: ignore
+                factory=cls,
+                field_meta=field_meta.children[0] if field_meta.children else field_meta,
+                item_type=constraints.get("item_type"),
+                max_items=constraints.get("max_length"),
+                min_items=constraints.get("min_length"),
+                unique_items=constraints.get("unique_items", False),
+            )
+            return frozenset(result) if is_safe_subclass(annotation, frozenset) else result
+
+        if is_safe_subclass(annotation, date):
+            return handle_constrained_date(
+                faker=cls.__faker__,
+                ge=cast("Any", constraints.get("ge")),
+                gt=cast("Any", constraints.get("gt")),
+                le=cast("Any", constraints.get("le")),
+                lt=cast("Any", constraints.get("lt")),
+            )
+
+        raise ParameterException(f"received constraints for unsupported type {annotation}")
+
+    @classmethod
+    def get_field_value(cls, field_meta: FieldMeta, field_build_parameters: Any | None = None) -> Any:
         """Return a field value on the subclass if existing, otherwise returns a mock value.
 
         :param field_meta: FieldMeta instance.
@@ -489,7 +570,7 @@ class BaseFactory(ABC, Generic[T]):
         if cls.is_ignored_type(field_meta.annotation):
             return None
 
-        if field_meta.constant:
+        if field_meta.constraints and field_meta.constraints.get("constant", False):
             return field_meta.default
 
         if cls.should_set_none_value(field_meta=field_meta):
@@ -502,6 +583,12 @@ class BaseFactory(ABC, Generic[T]):
 
         if isinstance(unwrapped_annotation, EnumMeta):
             return cls.__random__.choice(list(unwrapped_annotation))  # pyright: ignore
+
+        if field_meta.constraints and (
+            unwrapped_annotation in (float, int, Decimal, str, list, tuple, set, frozenset)
+            or unwrapped_annotation not in cls.get_provider_map()
+        ):
+            return cls.get_constrained_field_value(annotation=unwrapped_annotation, field_meta=field_meta)
 
         if BaseFactory.is_factory_type(annotation=unwrapped_annotation):
             return cls._get_or_create_factory(model=unwrapped_annotation).build(
@@ -520,7 +607,7 @@ class BaseFactory(ABC, Generic[T]):
         return cls.get_mock_value(annotation=unwrapped_annotation)
 
     @classmethod
-    def should_set_none_value(cls, field_meta: "FieldMeta") -> bool:
+    def should_set_none_value(cls, field_meta: FieldMeta) -> bool:
         """Determine whether a given model field_meta should be set to None.
 
         :param field_meta: Field metadata.
@@ -538,7 +625,7 @@ class BaseFactory(ABC, Generic[T]):
         )
 
     @classmethod
-    def should_set_field_value(cls, field_meta: "FieldMeta", **kwargs: Any) -> bool:
+    def should_set_field_value(cls, field_meta: FieldMeta, **kwargs: Any) -> bool:
         """Determine whether to set a value for a given field_name.
 
         :param field_meta: FieldMeta instance.
@@ -554,7 +641,7 @@ class BaseFactory(ABC, Generic[T]):
 
     @classmethod
     @abstractmethod
-    def get_model_fields(cls) -> list["FieldMeta"]:  # pragma: no cover
+    def get_model_fields(cls) -> list[FieldMeta]:  # pragma: no cover
         """Retrieve a list of fields from the factory's model.
 
 
