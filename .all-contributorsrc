@@ -19,6 +19,22 @@
       ]
     },
     {
+      "login": "provinzkraut",
+      "name": "Janek Nouvertné",
+      "avatar_url": "https://avatars.githubusercontent.com/u/25355197?v=4",
+      "profile": "https://github.com/provinzkraut",
+      "contributions": [
+        "infra",
+        "test",
+        "code",
+        "design",
+        "doc",
+        "maintenance",
+        "projectManagement",
+        "review"
+           ]
+    },
+    {
       "login": "Goldziher",
       "name": "Na'aman Hirschfeld",
       "avatar_url": "https://avatars.githubusercontent.com/u/30733348?v=4",
