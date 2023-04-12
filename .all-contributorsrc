@@ -32,6 +32,17 @@
         "maintenance",
         "projectManagement",
         "review"
+           ]
+    },
+    {
+      "login": "Goldziher",
+      "name": "Na'aman Hirschfeld",
+      "avatar_url": "https://avatars.githubusercontent.com/u/30733348?v=4",
+      "profile": "https://github.com/Goldziher",
+      "contributions": [
+        "infra",
+        "test",
+        "code"
       ]
     }
   ],
