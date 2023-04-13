@@ -44,7 +44,7 @@ jobs:
         uses: actions/cache@v3
         with:
           path: .venv
-          key: venv-${{ hashFiles('**/poetry.lock') }}
+          key: venv-docs-${{ hashFiles('**/poetry.lock') }}
       - name: Install docs dependencies
         run: poetry install --no-interaction --with docs
       - name: Build docs
