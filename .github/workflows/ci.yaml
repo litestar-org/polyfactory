@@ -47,9 +47,6 @@ jobs:
         with:
           path: .venv
           key: v2-venv-${{ runner.os }}-${{ matrix.python-version }}-${{ hashFiles('**/poetry.lock') }}
-          restore-keys: |
-            v2-venv-${{ runner.os }}-${{ matrix.python-version }}
-            v2-venv-${{ runner.os }}
       - name: Install dependencies
         if: steps.cached-poetry-dependencies.outputs.cache-hit != 'true'
         run: poetry install --no-interaction
