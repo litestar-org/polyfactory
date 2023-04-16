@@ -33,8 +33,10 @@
 </div>
 <!-- markdownlint-restore -->
 
-This library offers factories for mock data generation using python type hints. It part of the LiteStar-API project and
-is actively maintained by a community of maintainers and contributors.
+Polyfactory is a simple and powerful mock data generation library, based around type
+hints and supporting dataclasses, typed-dicts, Pydantic models and more.
+
+Polyfactory part of the Litestar project and as such actively maintained by a community of maintainers and contributors.
 
 ## Example
 
@@ -61,18 +63,17 @@ def test_is_person() -> None:
     assert isinstance(person_instance, Person)
 ```
 
-That's it - with almost no work, we are able to create a mock data object fitting the Person class model definition.
+That's it - with almost no work, we are able to create a mock data object fitting the `Person` class model definition.
 
 This is possible because of the typing information available on the dataclass, which are used as a
 source of truth for data generation.
 
 The factory parses the information stored in the dataclass and generates a dictionary of kwargs that are passed to
-the Person class constructor.
+`Person`.
 
 ## Documentation
 
-A full API reference and usage documentation is available in
-the [dedicated documentation site](https://polyfactory.litestar.dev/).
+Usage and API reference documentation is available on https://polyfactory.litestar.dev/.
 
 ## Installation
 
@@ -82,14 +83,12 @@ pip install polyfactory
 
 ## Relation to Pydantic-Factories
 
-The earlier version of this library was released under the
-name [pydantic-factories](https://pypi.org/project/pydantic-factories/).
-While this library became very popular (above 100K monthly downloads), we decided to rename it because we changed the
-core architecture -
-`polyfactory` is a fitting name because we no longer rely on pydantic, which is now an optional dependency. This library
-is capable of
-generating mock data for dataclasses, typed-dicts and any custom factory using type annotations.
-It also supports using pydantic models - but that is optional.
+Prior to version 2, this library was known as [pydantic-factories](https://pypi.org/project/pydantic-factories/), a name
+under which it gained quite a bit of popularity.
+A main motivator for the 2.0 release was that we wanted to support more than just Pydantic models, something which also
+required a change to its core architecture. As this library would no longer be directly tied to Pydantic, `polyfactory`
+was chosen as its new name to reflect its capabilities; It can generate mock data for dataclasses, typed-dicts,
+Pydantic, odmantic, and beanie ODM models, as well as custom factories.
 
 ## Contributing
 
