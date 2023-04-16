@@ -41,7 +41,7 @@ Docs theme and appearance
 +++++++++++++++++++++++++
 
 We welcome contributions that enhance / improve the appearance and usability of the docs. We use a custom theme that
-inherits the `PyData Sphinx Theme Furo <https://pydata-sphinx-theme.readthedocs.io/en/latest/>`_ theme, which comes
+inherits the `PyData Sphinx Theme <https://pydata-sphinx-theme.readthedocs.io/en/latest/>`_, which comes
 with a lot of options out of the box. If you wish to contribute to the docs style / setup, or static site generation,
 you should consult the theme docs as a first step.
 
