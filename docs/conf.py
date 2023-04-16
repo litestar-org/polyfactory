@@ -87,12 +87,23 @@ html_theme_options = {
     "extra_navbar_items": {
         "Documentation": "index",
         "Community": {
-            "Contributing": "contributing",
-            "Code of Conduct": "https://github.com/litestar-org/.github/blob/main/CODE_OF_CONDUCT.md",
+            "Contributing": {
+                "description": "Learn how to contribute to Polyfactory",
+                "link": "contributing",
+                "icon": "contributing",
+            },
+            "Code of Conduct": {
+                "description": "Review the etiquette for interacting with the Litestar community",
+                "link": "https://github.com/litestar-org/.github/blob/main/CODE_OF_CONDUCT.md",
+                "icon": "coc",
+            },
         },
         "About": {
-            "Organization": "https://litestar.dev/about/organization",
-            "Releases": "https://litestar.dev/about/litestar-releases",
+            "Litestar Organization": {
+                "description": "About the Litestar organization",
+                "link": "https://litestar.dev/about/organization.html",
+                "icon": "org",
+            },
         },
     },
 }
