@@ -9,7 +9,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.19: https://docutils.sourceforge.io/" />
 
-    <title>typed_dict_factory &#8212; Polyfactory</title>
+    <title>Handling Custom Types &#8212; Polyfactory</title>
   
   
   
@@ -19,43 +19,43 @@
   </script>
   
   <!-- Loaded before other Sphinx assets -->
-  <link href="../../_static/styles/theme.css?digest=e353d410970836974a52" rel="stylesheet" />
-<link href="../../_static/styles/bootstrap.css?digest=e353d410970836974a52" rel="stylesheet" />
-<link href="../../_static/styles/pydata-sphinx-theme.css?digest=e353d410970836974a52" rel="stylesheet" />
+  <link href="../_static/styles/theme.css?digest=e353d410970836974a52" rel="stylesheet" />
+<link href="../_static/styles/bootstrap.css?digest=e353d410970836974a52" rel="stylesheet" />
+<link href="../_static/styles/pydata-sphinx-theme.css?digest=e353d410970836974a52" rel="stylesheet" />
 
   
-  <link href="../../_static/vendor/fontawesome/6.1.2/css/all.min.css?digest=e353d410970836974a52" rel="stylesheet" />
-  <link rel="preload" as="font" type="font/woff2" crossorigin href="../../_static/vendor/fontawesome/6.1.2/webfonts/fa-solid-900.woff2" />
-<link rel="preload" as="font" type="font/woff2" crossorigin href="../../_static/vendor/fontawesome/6.1.2/webfonts/fa-brands-400.woff2" />
-<link rel="preload" as="font" type="font/woff2" crossorigin href="../../_static/vendor/fontawesome/6.1.2/webfonts/fa-regular-400.woff2" />
+  <link href="../_static/vendor/fontawesome/6.1.2/css/all.min.css?digest=e353d410970836974a52" rel="stylesheet" />
+  <link rel="preload" as="font" type="font/woff2" crossorigin href="../_static/vendor/fontawesome/6.1.2/webfonts/fa-solid-900.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../_static/vendor/fontawesome/6.1.2/webfonts/fa-brands-400.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../_static/vendor/fontawesome/6.1.2/webfonts/fa-regular-400.woff2" />
 
-    <link rel="stylesheet" type="text/css" href="../../_static/pygments.css" />
-    <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css" />
-    <link rel="stylesheet" type="text/css" href="../../_static/design-style.4045f2051d55cab465a707391d5b2007.min.css" />
-    <link rel="stylesheet" type="text/css" href="../../_static/litestar-sphinx-theme.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/copybutton.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/design-style.4045f2051d55cab465a707391d5b2007.min.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/litestar-sphinx-theme.css" />
   
   <!-- Pre-loaded scripts that we'll load fully later -->
-  <link rel="preload" as="script" href="../../_static/scripts/bootstrap.js?digest=e353d410970836974a52" />
-<link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=e353d410970836974a52" />
+  <link rel="preload" as="script" href="../_static/scripts/bootstrap.js?digest=e353d410970836974a52" />
+<link rel="preload" as="script" href="../_static/scripts/pydata-sphinx-theme.js?digest=e353d410970836974a52" />
 
-    <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
-    <script src="../../_static/jquery.js"></script>
-    <script src="../../_static/underscore.js"></script>
-    <script src="../../_static/_sphinx_javascript_frameworks_compat.js"></script>
-    <script src="../../_static/doctools.js"></script>
-    <script src="../../_static/sphinx_highlight.js"></script>
-    <script src="../../_static/clipboard.min.js"></script>
-    <script src="../../_static/copybutton.js"></script>
-    <script src="../../_static/litestar-theme.js"></script>
-    <script src="../../_static/design-tabs.js"></script>
+    <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
+    <script src="../_static/jquery.js"></script>
+    <script src="../_static/underscore.js"></script>
+    <script src="../_static/_sphinx_javascript_frameworks_compat.js"></script>
+    <script src="../_static/doctools.js"></script>
+    <script src="../_static/sphinx_highlight.js"></script>
+    <script src="../_static/clipboard.min.js"></script>
+    <script src="../_static/copybutton.js"></script>
+    <script src="../_static/litestar-theme.js"></script>
+    <script src="../_static/design-tabs.js"></script>
     <script src="https://unpkg.com/mermaid@9.4.0/dist/mermaid.min.js"></script>
     <script>mermaid.initialize({startOnLoad:true});</script>
-    <script>DOCUMENTATION_OPTIONS.pagename = 'reference/factories/typed_dict_factory';</script>
-    <link rel="shortcut icon" href="../../_static/favicon.png"/>
-    <link rel="index" title="Index" href="../../genindex.html" />
-    <link rel="search" title="Search" href="../../search.html" />
-    <link rel="next" title="beanie_odm_factory" href="beanie_odm_factory.html" />
-    <link rel="prev" title="dataclass_factory" href="dataclass_factory.html" />
+    <script>DOCUMENTATION_OPTIONS.pagename = 'usage/handling_custom_types';</script>
+    <link rel="shortcut icon" href="../_static/favicon.png"/>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="API Reference" href="../reference/index.html" />
+    <link rel="prev" title="Pytest fixtures" href="fixtures.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
   </head>
@@ -83,7 +83,7 @@
     <div class="search-button__overlay"></div>
     <div class="search-button__search-container">
 <form class="bd-search d-flex align-items-center"
-      action="../../search.html"
+      action="../search.html"
       method="get">
   <i class="fa-solid fa-magnifying-glass"></i>
   <input type="search"
@@ -121,8 +121,8 @@
       
     
     
-    <img src="../../_static/logo.svg" class="logo__image only-light" alt="Logo image"/>
-    <script>document.write(`<img src="../../_static/logo.svg" class="logo__image only-dark" alt="Logo image"/>`);</script>
+    <img src="../_static/logo.svg" class="logo__image only-light" alt="Logo image"/>
+    <script>document.write(`<img src="../_static/logo.svg" class="logo__image only-dark" alt="Logo image"/>`);</script>
   
   
 </a></div>
@@ -143,7 +143,7 @@
         
     
         
-            <a href="../../index.html"
+            <a href="../index.html"
                class="text-sm font-semibold leading-6 text-gray-900 dark:text-gray-100 hover:!text-litestar-gold select-none cursor-pointer">Documentation</a>
         
     
@@ -196,7 +196,7 @@
             </div>
             <div class="flex-auto">
                 
-    <a href="../../contributing.html"
+    <a href="../contributing.html"
        class="block font-semibold text-gray-900 dark:text-gray-200 hover:text-litestar-gold dark:hover:text-litestar-gold !no-underline select-none cursor-pointer">
         Contributing
         <span class="absolute inset-0"></span>
@@ -430,7 +430,7 @@ document.write(`
         
     
         
-            <a href="../../index.html"
+            <a href="../index.html"
                class="text-sm font-semibold leading-6 text-gray-900 dark:text-gray-100 hover:!text-litestar-gold select-none cursor-pointer">Documentation</a>
         
     
@@ -483,7 +483,7 @@ document.write(`
             </div>
             <div class="flex-auto">
                 
-    <a href="../../contributing.html"
+    <a href="../contributing.html"
        class="block font-semibold text-gray-900 dark:text-gray-200 hover:text-litestar-gold dark:hover:text-litestar-gold !no-underline select-none cursor-pointer">
         Contributing
         <span class="absolute inset-0"></span>
@@ -645,38 +645,38 @@ document.write(`
   <p class="bd-links__title" role="heading" aria-level="1">Section Navigation</p>
   <div class="bd-toc-item navbar-nav"><p aria-level="2" class="caption" role="heading"><span class="caption-text">Documentation</span></p>
 <ul class="current nav bd-sidenav">
-<li class="toctree-l1 has-children"><a class="reference internal" href="../../usage/index.html">Usage Guide</a><input class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-1"><i class="fa-solid fa-chevron-down"></i></label><ul>
-<li class="toctree-l2"><a class="reference internal" href="../../usage/library_factories.html">Polyfactory Factories</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../usage/declaring_factories.html">Declaring Factories</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../usage/configuration.html">Factory Configuration</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../usage/fields.html">Factory Fields</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../usage/fixtures.html">Pytest fixtures</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../usage/handling_custom_types.html">Handling Custom Types</a></li>
+<li class="toctree-l1 current active has-children"><a class="reference internal" href="index.html">Usage Guide</a><input checked="" class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-1"><i class="fa-solid fa-chevron-down"></i></label><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="library_factories.html">Polyfactory Factories</a></li>
+<li class="toctree-l2"><a class="reference internal" href="declaring_factories.html">Declaring Factories</a></li>
+<li class="toctree-l2"><a class="reference internal" href="configuration.html">Factory Configuration</a></li>
+<li class="toctree-l2"><a class="reference internal" href="fields.html">Factory Fields</a></li>
+<li class="toctree-l2"><a class="reference internal" href="fixtures.html">Pytest fixtures</a></li>
+<li class="toctree-l2 current active"><a class="current reference internal" href="#">Handling Custom Types</a></li>
 </ul>
 </li>
-<li class="toctree-l1 current active has-children"><a class="reference internal" href="../index.html">API Reference</a><input checked="" class="toctree-checkbox" id="toctree-checkbox-2" name="toctree-checkbox-2" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-2"><i class="fa-solid fa-chevron-down"></i></label><ul class="current">
-<li class="toctree-l2"><a class="reference internal" href="../constants.html">constants</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../exceptions.html">exceptions</a></li>
-<li class="toctree-l2 current active has-children"><a class="reference internal" href="index.html">factories</a><input checked="" class="toctree-checkbox" id="toctree-checkbox-3" name="toctree-checkbox-3" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-3"><i class="fa-solid fa-chevron-down"></i></label><ul class="current">
-<li class="toctree-l3"><a class="reference internal" href="base.html">base_factory</a></li>
-<li class="toctree-l3"><a class="reference internal" href="dataclass_factory.html">dataclass_factory</a></li>
-<li class="toctree-l3 current active"><a class="current reference internal" href="#">typed_dict_factory</a></li>
-<li class="toctree-l3"><a class="reference internal" href="beanie_odm_factory.html">beanie_odm_factory</a></li>
-<li class="toctree-l3"><a class="reference internal" href="odmantic_odm_factory.html">odmantic_odm_factory</a></li>
-<li class="toctree-l3"><a class="reference internal" href="pydantic_factory.html">pydantic_factory</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../reference/index.html">API Reference</a><input class="toctree-checkbox" id="toctree-checkbox-2" name="toctree-checkbox-2" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-2"><i class="fa-solid fa-chevron-down"></i></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="../reference/constants.html">constants</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../reference/exceptions.html">exceptions</a></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../reference/factories/index.html">factories</a><input class="toctree-checkbox" id="toctree-checkbox-3" name="toctree-checkbox-3" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-3"><i class="fa-solid fa-chevron-down"></i></label><ul>
+<li class="toctree-l3"><a class="reference internal" href="../reference/factories/base.html">base_factory</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../reference/factories/dataclass_factory.html">dataclass_factory</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../reference/factories/typed_dict_factory.html">typed_dict_factory</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../reference/factories/beanie_odm_factory.html">beanie_odm_factory</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../reference/factories/odmantic_odm_factory.html">odmantic_odm_factory</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../reference/factories/pydantic_factory.html">pydantic_factory</a></li>
 </ul>
 </li>
-<li class="toctree-l2"><a class="reference internal" href="../field_meta.html">field_meta</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../fields.html">fields</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../persistence.html">persistence</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../pytest_plugin.html">pytest_plugin</a></li>
-<li class="toctree-l2 has-children"><a class="reference internal" href="../value_generators/index.html">value_generators</a><input class="toctree-checkbox" id="toctree-checkbox-4" name="toctree-checkbox-4" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-4"><i class="fa-solid fa-chevron-down"></i></label><ul>
-<li class="toctree-l3"><a class="reference internal" href="../value_generators/complex_types.html">complex_types</a></li>
-<li class="toctree-l3"><a class="reference internal" href="../value_generators/constrained_collections.html">constrained_collections</a></li>
-<li class="toctree-l3"><a class="reference internal" href="../value_generators/constrained_dates.html">constrained_dates</a></li>
-<li class="toctree-l3"><a class="reference internal" href="../value_generators/constrained_numbers.html">constrained_numbers</a></li>
-<li class="toctree-l3"><a class="reference internal" href="../value_generators/constrained_strings.html">constrained_strings</a></li>
-<li class="toctree-l3"><a class="reference internal" href="../value_generators/primitives.html">primitives</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../reference/field_meta.html">field_meta</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../reference/fields.html">fields</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../reference/persistence.html">persistence</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../reference/pytest_plugin.html">pytest_plugin</a></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../reference/value_generators/index.html">value_generators</a><input class="toctree-checkbox" id="toctree-checkbox-4" name="toctree-checkbox-4" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-4"><i class="fa-solid fa-chevron-down"></i></label><ul>
+<li class="toctree-l3"><a class="reference internal" href="../reference/value_generators/complex_types.html">complex_types</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../reference/value_generators/constrained_collections.html">constrained_collections</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../reference/value_generators/constrained_dates.html">constrained_dates</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../reference/value_generators/constrained_numbers.html">constrained_numbers</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../reference/value_generators/constrained_strings.html">constrained_strings</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../reference/value_generators/primitives.html">primitives</a></li>
 </ul>
 </li>
 </ul>
@@ -714,17 +714,14 @@ document.write(`
   <ul class="bd-breadcrumbs" role="navigation" aria-label="Breadcrumb">
     
     <li class="breadcrumb-item breadcrumb-home">
-      <a href="../../index.html" class="nav-link" aria-label="Home">
+      <a href="../index.html" class="nav-link" aria-label="Home">
         <i class="fa-solid fa-home"></i>
       </a>
     </li>
     
-    <li class="breadcrumb-item"><a href="../index.html" class="nav-link">API Reference</a></li>
+    <li class="breadcrumb-item"><a href="index.html" class="nav-link">Usage Guide</a></li>
     
-    
-    <li class="breadcrumb-item"><a href="index.html" class="nav-link">factories</a></li>
-    
-    <li class="breadcrumb-item active" aria-current="page">typed_dict_factory</li>
+    <li class="breadcrumb-item active" aria-current="page">Handling Custom Types</li>
   </ul>
 </nav>
 </div>
@@ -741,40 +738,127 @@ document.write(`
 <div id="searchbox"></div>
                 <article class="bd-article" role="main">
                   
-  <section id="module-polyfactory.factories.typed_dict_factory">
-<span id="typed-dict-factory"></span><h1>typed_dict_factory<a class="headerlink" href="#module-polyfactory.factories.typed_dict_factory" title="Permalink to this heading">#</a></h1>
-<dl class="py class">
-<dt class="sig sig-object py" id="polyfactory.factories.typed_dict_factory.TypedDictFactory">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">polyfactory.factories.typed_dict_factory.</span></span><span class="sig-name descname"><span class="pre">TypedDictFactory</span></span><a class="headerlink" href="#polyfactory.factories.typed_dict_factory.TypedDictFactory" title="Permalink to this definition">#</a></dt>
-<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Generic" title="(in Python v3.11)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Generic</span></code></a>[<code class="xref py py-obj docutils literal notranslate"><span class="pre">TypedDictT</span></code>], <a class="reference internal" href="base.html#polyfactory.factories.base.BaseFactory" title="polyfactory.factories.base.BaseFactory"><code class="xref py py-class docutils literal notranslate"><span class="pre">BaseFactory</span></code></a>[<code class="xref py py-obj docutils literal notranslate"><span class="pre">TypedDictT</span></code>]</p>
-<p>TypedDict base factory</p>
-<dl class="py method">
-<dt class="sig sig-object py" id="polyfactory.factories.typed_dict_factory.TypedDictFactory.is_supported_type">
-<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">is_supported_type</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">value</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Any" title="(in Python v3.11)"><span class="pre">Any</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.TypeGuard" title="(in Python v3.11)"><span class="pre">TypeGuard</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/functions.html#type" title="(in Python v3.11)"><span class="pre">type</span></a><span class="p"><span class="pre">[</span></span><span class="pre">TypedDictT</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#polyfactory.factories.typed_dict_factory.TypedDictFactory.is_supported_type" title="Permalink to this definition">#</a></dt>
-<dd><p>Determine whether the given value is supported by the factory.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>value</strong> – An arbitrary value.</p>
-</dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p>A typeguard</p>
-</dd>
-</dl>
-</dd></dl>
+  <section id="handling-custom-types">
+<h1>Handling Custom Types<a class="headerlink" href="#handling-custom-types" title="Permalink to this heading">#</a></h1>
+<p>Sometimes you need to handle custom types, either from 3rd party libraries or from your own codebase. To achieve this,
+you can extend what’s referred as the <cite>providers_map</cite>:</p>
+<div class="literal-block-wrapper docutils container" id="id1">
+<div class="code-block-caption"><span class="caption-text">Extending the provider map</span><a class="headerlink" href="#id1" title="Permalink to this code">#</a></div>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">dataclasses</span> <span class="kn">import</span> <span class="n">dataclass</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Type</span><span class="p">,</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">Any</span>
+<span class="kn">from</span> <span class="nn">uuid</span> <span class="kn">import</span> <span class="n">UUID</span>
 
-<dl class="py method">
-<dt class="sig sig-object py" id="polyfactory.factories.typed_dict_factory.TypedDictFactory.get_model_fields">
-<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">get_model_fields</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.11)"><span class="pre">list</span></a><span class="p"><span class="pre">[</span></span><a class="reference internal" href="../field_meta.html#polyfactory.field_meta.FieldMeta" title="polyfactory.field_meta.FieldMeta"><span class="pre">polyfactory.field_meta.FieldMeta</span></a><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#polyfactory.factories.typed_dict_factory.TypedDictFactory.get_model_fields" title="Permalink to this definition">#</a></dt>
-<dd><p>Retrieve a list of fields from the factory’s model.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Returns<span class="colon">:</span></dt>
-<dd class="field-odd"><p>A list of field MetaData instances.</p>
-</dd>
-</dl>
-</dd></dl>
+<span class="kn">from</span> <span class="nn">polyfactory.factories</span> <span class="kn">import</span> <span class="n">DataclassFactory</span>
 
-</dd></dl>
 
+<span class="c1"># we created a special class we will use in our code</span>
+<span class="k">class</span> <span class="nc">CustomSecret</span><span class="p">:</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">value</span> <span class="o">=</span> <span class="n">value</span>
+
+    <span class="k">def</span> <span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+        <span class="k">return</span> <span class="s2">&quot;*&quot;</span> <span class="o">*</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">value</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+        <span class="k">return</span> <span class="s2">&quot;*&quot;</span> <span class="o">*</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">value</span><span class="p">)</span>
+
+
+<span class="nd">@dataclass</span>
+<span class="k">class</span> <span class="nc">Person</span><span class="p">:</span>
+    <span class="nb">id</span><span class="p">:</span> <span class="n">UUID</span>
+    <span class="n">secret</span><span class="p">:</span> <span class="n">CustomSecret</span>
+
+
+<span class="c1"># by default the factory class cannot handle unknown types, so we need to override the provider map to add it:</span>
+<span class="k">class</span> <span class="nc">PersonFactory</span><span class="p">(</span><span class="n">DataclassFactory</span><span class="p">[</span><span class="n">Person</span><span class="p">]):</span>
+    <span class="n">__model__</span> <span class="o">=</span> <span class="n">Person</span>
+
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">get_provider_map</span><span class="p">(</span><span class="bp">cls</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="n">Type</span><span class="p">,</span> <span class="n">Any</span><span class="p">]:</span>
+        <span class="n">providers_map</span> <span class="o">=</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">get_provider_map</span><span class="p">()</span>
+
+        <span class="k">return</span> <span class="p">{</span>
+            <span class="n">CustomSecret</span><span class="p">:</span> <span class="k">lambda</span><span class="p">:</span> <span class="n">CustomSecret</span><span class="p">(</span><span class="s2">&quot;jeronimo&quot;</span><span class="p">),</span>
+            <span class="o">**</span><span class="n">providers_map</span><span class="p">,</span>
+        <span class="p">}</span>
+
+
+<span class="k">def</span> <span class="nf">test_custom_secret_creation</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="n">person_instance</span> <span class="o">=</span> <span class="n">PersonFactory</span><span class="o">.</span><span class="n">build</span><span class="p">()</span>
+    <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">person_instance</span><span class="o">.</span><span class="n">secret</span><span class="p">,</span> <span class="n">CustomSecret</span><span class="p">)</span>
+    <span class="k">assert</span> <span class="nb">repr</span><span class="p">(</span><span class="n">person_instance</span><span class="o">.</span><span class="n">secret</span><span class="p">)</span> <span class="o">==</span> <span class="s2">&quot;*&quot;</span> <span class="o">*</span> <span class="nb">len</span><span class="p">(</span><span class="s2">&quot;jeronimo&quot;</span><span class="p">)</span>
+    <span class="k">assert</span> <span class="nb">str</span><span class="p">(</span><span class="n">person_instance</span><span class="o">.</span><span class="n">secret</span><span class="p">)</span> <span class="o">==</span> <span class="s2">&quot;*&quot;</span> <span class="o">*</span> <span class="nb">len</span><span class="p">(</span><span class="s2">&quot;jeronimo&quot;</span><span class="p">)</span>
+    <span class="k">assert</span> <span class="n">person_instance</span><span class="o">.</span><span class="n">secret</span><span class="o">.</span><span class="n">value</span> <span class="o">==</span> <span class="s2">&quot;jeronimo&quot;</span>
+</pre></div>
+</div>
+</div>
+<p>In the above example we override the <cite>get_provider_map</cite> class method, which maps types to callables. Each callable in the map
+returns an appropriate mock value for the type. In the above example, an instance of <cite>CustomSecret</cite> with the hardcoded
+string ‘jeronimo’.</p>
+<section id="creating-custom-base-factories">
+<h2>Creating Custom Base Factories<a class="headerlink" href="#creating-custom-base-factories" title="Permalink to this heading">#</a></h2>
+<p>The above works great when you need to do this in a localised fashion, but if you need to use some custom types in many
+places it will lead to unnecessary duplication. The solution for this is to create a custom base factory, in this case
+for handling dataclasses:</p>
+<div class="literal-block-wrapper docutils container" id="id2">
+<div class="code-block-caption"><span class="caption-text">Creating a custom dataclass factory with extended provider map</span><a class="headerlink" href="#id2" title="Permalink to this code">#</a></div>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">dataclasses</span> <span class="kn">import</span> <span class="n">dataclass</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Type</span><span class="p">,</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">Any</span><span class="p">,</span> <span class="n">TypeVar</span><span class="p">,</span> <span class="n">Generic</span>
+<span class="kn">from</span> <span class="nn">uuid</span> <span class="kn">import</span> <span class="n">UUID</span>
+
+<span class="kn">from</span> <span class="nn">polyfactory.factories</span> <span class="kn">import</span> <span class="n">DataclassFactory</span>
+
+
+<span class="c1"># we created a special class we will use in our code</span>
+<span class="k">class</span> <span class="nc">CustomSecret</span><span class="p">:</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">value</span> <span class="o">=</span> <span class="n">value</span>
+
+    <span class="k">def</span> <span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+        <span class="k">return</span> <span class="s2">&quot;*&quot;</span> <span class="o">*</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">value</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+        <span class="k">return</span> <span class="s2">&quot;*&quot;</span> <span class="o">*</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">value</span><span class="p">)</span>
+
+
+<span class="n">T</span> <span class="o">=</span> <span class="n">TypeVar</span><span class="p">(</span><span class="s2">&quot;T&quot;</span><span class="p">)</span>
+
+
+<span class="c1"># we create a custom base factory to handle dataclasses, with an extended provider map</span>
+<span class="k">class</span> <span class="nc">CustomDataclassFactory</span><span class="p">(</span><span class="n">Generic</span><span class="p">[</span><span class="n">T</span><span class="p">],</span> <span class="n">DataclassFactory</span><span class="p">[</span><span class="n">T</span><span class="p">]):</span>
+    <span class="n">__is_base_factory__</span> <span class="o">=</span> <span class="kc">True</span>
+
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">get_provider_map</span><span class="p">(</span><span class="bp">cls</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="n">Type</span><span class="p">,</span> <span class="n">Any</span><span class="p">]:</span>
+        <span class="n">providers_map</span> <span class="o">=</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">get_provider_map</span><span class="p">()</span>
+
+        <span class="k">return</span> <span class="p">{</span>
+            <span class="n">CustomSecret</span><span class="p">:</span> <span class="k">lambda</span><span class="p">:</span> <span class="n">CustomSecret</span><span class="p">(</span><span class="s2">&quot;jeronimo&quot;</span><span class="p">),</span>
+            <span class="o">**</span><span class="n">providers_map</span><span class="p">,</span>
+        <span class="p">}</span>
+
+
+<span class="nd">@dataclass</span>
+<span class="k">class</span> <span class="nc">Person</span><span class="p">:</span>
+    <span class="nb">id</span><span class="p">:</span> <span class="n">UUID</span>
+    <span class="n">secret</span><span class="p">:</span> <span class="n">CustomSecret</span>
+
+
+<span class="c1"># we use our CustomDataclassFactory as a base for the PersonFactory</span>
+<span class="k">class</span> <span class="nc">PersonFactory</span><span class="p">(</span><span class="n">CustomDataclassFactory</span><span class="p">[</span><span class="n">Person</span><span class="p">]):</span>
+    <span class="n">__model__</span> <span class="o">=</span> <span class="n">Person</span>
+
+
+<span class="k">def</span> <span class="nf">test_custom_dataclass_base_factory</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="n">person_instance</span> <span class="o">=</span> <span class="n">PersonFactory</span><span class="o">.</span><span class="n">build</span><span class="p">()</span>
+    <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">person_instance</span><span class="o">.</span><span class="n">secret</span><span class="p">,</span> <span class="n">CustomSecret</span><span class="p">)</span>
+    <span class="k">assert</span> <span class="nb">repr</span><span class="p">(</span><span class="n">person_instance</span><span class="o">.</span><span class="n">secret</span><span class="p">)</span> <span class="o">==</span> <span class="s2">&quot;*&quot;</span> <span class="o">*</span> <span class="nb">len</span><span class="p">(</span><span class="s2">&quot;jeronimo&quot;</span><span class="p">)</span>
+    <span class="k">assert</span> <span class="nb">str</span><span class="p">(</span><span class="n">person_instance</span><span class="o">.</span><span class="n">secret</span><span class="p">)</span> <span class="o">==</span> <span class="s2">&quot;*&quot;</span> <span class="o">*</span> <span class="nb">len</span><span class="p">(</span><span class="s2">&quot;jeronimo&quot;</span><span class="p">)</span>
+    <span class="k">assert</span> <span class="n">person_instance</span><span class="o">.</span><span class="n">secret</span><span class="o">.</span><span class="n">value</span> <span class="o">==</span> <span class="s2">&quot;jeronimo&quot;</span>
+</pre></div>
+</div>
+</div>
+</section>
 </section>
 
 
@@ -789,20 +873,20 @@ document.write(`
     <div class="footer-article-item"><!-- Previous / next buttons -->
 <div class="prev-next-area">
     <a class="left-prev"
-       href="dataclass_factory.html"
+       href="fixtures.html"
        title="previous page">
       <i class="fa-solid fa-angle-left"></i>
       <div class="prev-next-info">
         <p class="prev-next-subtitle">previous</p>
-        <p class="prev-next-title">dataclass_factory</p>
+        <p class="prev-next-title">Pytest fixtures</p>
       </div>
     </a>
     <a class="right-next"
-       href="beanie_odm_factory.html"
+       href="../reference/index.html"
        title="next page">
       <div class="prev-next-info">
         <p class="prev-next-subtitle">next</p>
-        <p class="prev-next-title">beanie_odm_factory</p>
+        <p class="prev-next-title">API Reference</p>
       </div>
       <i class="fa-solid fa-angle-right"></i>
     </a>
@@ -824,11 +908,7 @@ document.write(`
   </div>
   <nav class="bd-toc-nav page-toc">
     <ul class="visible nav section-nav flex-column">
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#polyfactory.factories.typed_dict_factory.TypedDictFactory"><code class="docutils literal notranslate"><span class="pre">TypedDictFactory</span></code></a><ul class="visible nav section-nav flex-column">
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#polyfactory.factories.typed_dict_factory.TypedDictFactory.is_supported_type"><code class="docutils literal notranslate"><span class="pre">TypedDictFactory.is_supported_type()</span></code></a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#polyfactory.factories.typed_dict_factory.TypedDictFactory.get_model_fields"><code class="docutils literal notranslate"><span class="pre">TypedDictFactory.get_model_fields()</span></code></a></li>
-</ul>
-</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#creating-custom-base-factories">Creating Custom Base Factories</a></li>
 </ul>
   </nav></div>
 
@@ -845,8 +925,8 @@ document.write(`
   </div>
   
   <!-- Scripts loaded after <body> so the DOM is not blocked -->
-  <script src="../../_static/scripts/bootstrap.js?digest=e353d410970836974a52"></script>
-<script src="../../_static/scripts/pydata-sphinx-theme.js?digest=e353d410970836974a52"></script>
+  <script src="../_static/scripts/bootstrap.js?digest=e353d410970836974a52"></script>
+<script src="../_static/scripts/pydata-sphinx-theme.js?digest=e353d410970836974a52"></script>
 
   <footer class="bd-footer">
 <div class="bd-footer__inner bd-page-width">
