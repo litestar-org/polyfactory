@@ -1,10 +1,8 @@
 from __future__ import annotations
 
-
 from typing import Any, TypedDict, Pattern, TYPE_CHECKING
 
-
-from polyfactory.constants import TYPE_MAPPING
+from polyfactory.constants import TYPE_MAPPING, IGNORED_TYPE_ARGS
 from polyfactory.utils.helpers import unwrap_args, unwrap_new_type
 
 if TYPE_CHECKING:
@@ -69,7 +67,11 @@ class FieldMeta:
 
         :returns: a tuple of types.
         """
-        return tuple(TYPE_MAPPING[arg] if arg in TYPE_MAPPING else arg for arg in unwrap_args(self.annotation))
+        return tuple(
+            TYPE_MAPPING[arg] if arg in TYPE_MAPPING else arg
+            for arg in unwrap_args(self.annotation)
+            if arg not in IGNORED_TYPE_ARGS
+        )
 
     @classmethod
     def from_type(

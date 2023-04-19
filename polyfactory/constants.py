@@ -29,3 +29,5 @@ TYPE_MAPPING = {
     abc.Sequence: list,
     abc.Set: set,
 }
+
+IGNORED_TYPE_ARGS: Set = {Ellipsis}
