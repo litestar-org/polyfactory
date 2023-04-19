@@ -1,6 +1,6 @@
 from dataclasses import dataclass as vanilla_dataclass
 from dataclasses import field
-from typing import Dict, List, Optional
+from typing import Dict, List, Optional, Tuple
 
 from pydantic.dataclasses import Field  # type: ignore
 from pydantic.dataclasses import dataclass as pydantic_dataclass
@@ -129,3 +129,17 @@ def test_complex_embedded_dataclass() -> None:
     assert list(result.weirdly_nest_field[0].values())[0].values()
     assert list(list(result.weirdly_nest_field[0].values())[0].values())[0]
     assert isinstance(list(list(result.weirdly_nest_field[0].values())[0].values())[0], VanillaDC)
+
+
+def test_tuple_ellipsis_in_vanilla_dc() -> None:
+    @vanilla_dataclass
+    class VanillaDC:
+        ids: Tuple[int, ...]
+
+    class MyFactory(DataclassFactory[VanillaDC]):
+        __model__ = VanillaDC
+
+    result = MyFactory.build()
+
+    assert result
+    assert result.ids
