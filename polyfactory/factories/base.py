@@ -207,7 +207,7 @@ class BaseFactory(ABC, Generic[T]):
                             f"o resolve this error, subclass the factory from {factory.__name__} instead of {cls.__name__}"
                         )
                     raise ConfigurationException(
-                        "Model type {model.__name__} is not supported. "
+                        f"Model type {model.__name__} is not supported. "
                         "To support it, register an appropriate base factory and subclass it for your factory."
                     )
 
