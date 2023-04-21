@@ -1,7 +1,9 @@
+import random
 from dataclasses import dataclass as vanilla_dataclass
 from dataclasses import field
 from typing import Dict, List, Optional, Tuple
 
+from _pytest.monkeypatch import MonkeyPatch
 from pydantic.dataclasses import Field  # type: ignore
 from pydantic.dataclasses import dataclass as pydantic_dataclass
 
@@ -143,3 +145,21 @@ def test_tuple_ellipsis_in_vanilla_dc() -> None:
 
     assert result
     assert result.ids
+
+
+def test_variable_length_tuple_generation(monkeypatch: MonkeyPatch) -> None:
+    @vanilla_dataclass
+    class VanillaDC:
+        ids: Tuple[int, ...]
+
+    class MyFactory(DataclassFactory[VanillaDC]):
+        __model__ = VanillaDC
+
+    number_of_args = 3
+
+    result = MyFactory.build(ids=(1, 2, 3))
+    monkeypatch.setattr(random, random.randint.__name__, lambda _, __: number_of_args)
+
+    assert result
+    assert result.ids
+    assert len(result.ids) == number_of_args

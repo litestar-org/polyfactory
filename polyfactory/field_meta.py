@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import random
 from typing import Any, TypedDict, Pattern, TYPE_CHECKING
 
 from polyfactory.collection_extender import CollectionExtender
@@ -86,7 +87,7 @@ class FieldMeta:
             annotation=unwrap_new_type(annotation), name=name, default=default, children=None, constraints=constraints
         )
         if field.type_args:
-            number_of_args = 3
+            number_of_args = random.randint(0, 5)  # noqa: S311
             extended_type_args = CollectionExtender.extend_type_args(field.annotation, field.type_args, number_of_args)
             field.children = [FieldMeta.from_type(annotation=unwrap_new_type(arg)) for arg in extended_type_args]
         return field
