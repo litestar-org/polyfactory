@@ -2,7 +2,8 @@ from __future__ import annotations
 
 from typing import Any, TypedDict, Pattern, TYPE_CHECKING
 
-from polyfactory.constants import TYPE_MAPPING, IGNORED_TYPE_ARGS
+from polyfactory.collection_extender import CollectionExtender
+from polyfactory.constants import TYPE_MAPPING
 from polyfactory.utils.helpers import unwrap_args, unwrap_new_type
 
 if TYPE_CHECKING:
@@ -67,11 +68,7 @@ class FieldMeta:
 
         :returns: a tuple of types.
         """
-        return tuple(
-            TYPE_MAPPING[arg] if arg in TYPE_MAPPING else arg
-            for arg in unwrap_args(self.annotation)
-            if arg not in IGNORED_TYPE_ARGS
-        )
+        return tuple(TYPE_MAPPING[arg] if arg in TYPE_MAPPING else arg for arg in unwrap_args(self.annotation))
 
     @classmethod
     def from_type(
@@ -89,5 +86,7 @@ class FieldMeta:
             annotation=unwrap_new_type(annotation), name=name, default=default, children=None, constraints=constraints
         )
         if field.type_args:
-            field.children = [FieldMeta.from_type(annotation=unwrap_new_type(arg)) for arg in field.type_args]
+            number_of_args = 3
+            extended_type_args = CollectionExtender.extend_type_args(field.annotation, field.type_args, number_of_args)
+            field.children = [FieldMeta.from_type(annotation=unwrap_new_type(arg)) for arg in extended_type_args]
         return field
