@@ -7,6 +7,7 @@ from typing import (
     FrozenSet,
     Iterable,
     List,
+    Literal,
     Optional,
     Sequence,
     Set,
@@ -27,6 +28,7 @@ def test_handles_complex_typing() -> None:
         nested_dict: Dict[str, Dict[Union[int, str], Dict[Any, List[Dict[str, str]]]]]
         dict_str_any: Dict[str, Any]
         nested_list: List[List[List[Dict[str, List[Any]]]]]
+        literal_list: List[Literal[1, 2, 3]]
         sequence_dict: Sequence[Dict]
         iterable_float: Iterable[float]
         tuple_ellipsis: Tuple[int, ...]
@@ -43,6 +45,7 @@ def test_handles_complex_typing() -> None:
     assert result.nested_dict
     assert result.dict_str_any
     assert result.nested_list
+    assert result.literal_list
     assert result.sequence_dict
     assert result.iterable_float
     assert result.tuple_ellipsis
@@ -57,6 +60,7 @@ def test_handles_complex_typing_with_embedded_models() -> None:
     class MyModel(BaseModel):
         person_dict: Dict[str, Person]
         person_list: List[Person]
+        person_literal_list: List[Literal["Person"]]
 
     class MyFactory(ModelFactory):
         __model__ = MyModel
@@ -65,6 +69,8 @@ def test_handles_complex_typing_with_embedded_models() -> None:
 
     assert result.person_dict
     assert result.person_list[0].pets
+    assert isinstance(result.person_literal_list[0], str)
+    assert result.person_literal_list[0] == "Person"
 
 
 def test_raises_for_user_defined_types() -> None:
