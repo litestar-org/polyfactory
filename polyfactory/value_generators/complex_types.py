@@ -40,10 +40,10 @@ def handle_container_type(
     elif field_meta.children:
         if isinstance(container, (list, deque)):
             container.append(
-    factory.get_field_value(
-        field_meta=factory.__random__.choice(
-            field_meta.children),
-             field_build_parameters=None) )
+                factory.get_field_value(
+                    field_meta=factory.__random__.choice(field_meta.children), field_build_parameters=None
+                )
+            )
         else:
             container.add(
                 handle_complex_type(
