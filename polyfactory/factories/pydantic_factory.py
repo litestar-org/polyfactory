@@ -93,15 +93,18 @@ class PydanticFieldMeta(FieldMeta):
                 "item_type": getattr(annotation, "item_type", None),
             },
         )
+        children: list[FieldMeta] = []
+        if model_field.key_field is not None:
+            children.append(PydanticFieldMeta.from_model_field(model_field.key_field, use_alias=use_alias))
+        if model_field.sub_fields:
+            children.extend(
+                PydanticFieldMeta.from_model_field(child, use_alias=use_alias) for child in model_field.sub_fields
+            )
 
         return PydanticFieldMeta(
             name=name,
             annotation=annotation,
-            children=[
-                PydanticFieldMeta.from_model_field(child, use_alias=use_alias) for child in model_field.sub_fields
-            ]
-            if model_field.sub_fields
-            else None,
+            children=children or None,
             default=default_value,
             constraints=cast("Constraints", {k: v for k, v in constraints.items() if v is not None}) or None,
         )

@@ -76,4 +76,4 @@ def test_dict_extender(number_of_args: int) -> None:
 
     extended_type_args = CollectionExtender.extend_type_args(annotation_alias, type_args, number_of_args)
 
-    assert extended_type_args == (str, int)
+    assert extended_type_args == (str, int) * number_of_args

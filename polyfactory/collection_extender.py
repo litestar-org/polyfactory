@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import random
 from abc import ABC, abstractmethod
+from collections import deque
 from typing import Any
 
 from polyfactory.utils.predicates import is_safe_subclass
@@ -42,8 +43,8 @@ class TupleExtender(CollectionExtender):
         return type_args[:-2] + (type_to_extend,) * number_of_args
 
 
-class ListExtender(CollectionExtender):
-    __types__ = (list,)
+class ListLikeExtender(CollectionExtender):
+    __types__ = (list, deque)
 
     @staticmethod
     def _extend_type_args(type_args: tuple[Any, ...], number_of_args: int) -> tuple[Any, ...]:
