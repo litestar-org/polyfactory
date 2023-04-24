@@ -1,4 +1,4 @@
-from typing import Tuple, TYPE_CHECKING
+from typing import Tuple, TYPE_CHECKING, List, Set, FrozenSet, Dict
 
 import pytest
 
@@ -38,7 +38,7 @@ def test_tuple_extender__not_typed(number_of_args: int) -> None:
 
 
 def test_list_extender(number_of_args: int) -> None:
-    annotation_alias: Any = list[int]
+    annotation_alias: Any = List[int]
     type_args = (int,)
 
     extended_type_args = CollectionExtender.extend_type_args(annotation_alias, type_args, number_of_args)
@@ -50,7 +50,7 @@ def test_set_extender(number_of_args: int) -> None:
     class Dummy:
         ...
 
-    annotation_alias: Any = set[Dummy]
+    annotation_alias: Any = Set[Dummy]
     type_args = (Dummy,)
 
     extended_type_args = CollectionExtender.extend_type_args(annotation_alias, type_args, number_of_args)
@@ -62,7 +62,7 @@ def test_frozen_set_extender(number_of_args: int) -> None:
     class Dummy:
         ...
 
-    annotation_alias: Any = set[Dummy]
+    annotation_alias: Any = FrozenSet[Dummy]
     type_args = (Dummy,)
 
     extended_type_args = CollectionExtender.extend_type_args(annotation_alias, type_args, number_of_args)
@@ -71,7 +71,7 @@ def test_frozen_set_extender(number_of_args: int) -> None:
 
 
 def test_dict_extender(number_of_args: int) -> None:
-    annotation_alias: Any = dict[str, int]
+    annotation_alias: Any = Dict[str, int]
     type_args = (str, int)
 
     extended_type_args = CollectionExtender.extend_type_args(annotation_alias, type_args, number_of_args)
