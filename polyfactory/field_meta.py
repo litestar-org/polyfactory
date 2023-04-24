@@ -87,7 +87,7 @@ class FieldMeta:
             annotation=unwrap_new_type(annotation), name=name, default=default, children=None, constraints=constraints
         )
         if field.type_args:
-            number_of_args = random.randint(0, 5)  # noqa: S311
+            number_of_args = random.randint(0, 5)
             extended_type_args = CollectionExtender.extend_type_args(field.annotation, field.type_args, number_of_args)
             field.children = [FieldMeta.from_type(annotation=unwrap_new_type(arg)) for arg in extended_type_args]
         return field

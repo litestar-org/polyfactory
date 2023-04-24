@@ -51,7 +51,7 @@ class ListExtender(CollectionExtender):
     def _extend_type_args(type_args: tuple[Any, ...], number_of_args: int) -> tuple[Any, ...]:
         if not type_args:
             return type_args
-        return tuple(random.choice(type_args) for _ in range(number_of_args))  # noqa: S311
+        return tuple(random.choice(type_args) for _ in range(number_of_args))
 
 
 class SetExtender(CollectionExtender):
@@ -61,7 +61,7 @@ class SetExtender(CollectionExtender):
     def _extend_type_args(type_args: tuple[Any, ...], number_of_args: int) -> tuple[Any, ...]:
         if not type_args:
             return type_args
-        return tuple(random.choice(type_args) for _ in range(number_of_args))  # noqa: S311
+        return tuple(random.choice(type_args) for _ in range(number_of_args))
 
 
 class FallbackExtender(CollectionExtender):

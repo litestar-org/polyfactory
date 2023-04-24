@@ -601,7 +601,7 @@ class BaseFactory(ABC, Generic[T]):
                 return [factory.build(**field_parameters) for field_parameters in field_build_parameters]
             return factory.batch(size=cls.__random__.randint(1, 10))
 
-        if field_meta.children:
+        if field_meta.children is not None:
             return handle_complex_type(field_meta=field_meta, factory=cls)
 
         return cls.get_mock_value(annotation=unwrapped_annotation)

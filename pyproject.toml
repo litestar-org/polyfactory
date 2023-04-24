@@ -167,6 +167,7 @@ ignore = [
     "D415", # pydocstyle - first line should end with a period, question mark, or exclamation point
     "E501", # pycodestyle line too long, handled by black
     "N818", # pep8-naming - exception name should be named with an Error suffix
+    "S311", # flake8-bandit - Standard pseudo-random generators are not suitable for security/cryptographic purposes
     "UP037", # pyupgrade - removes quotes from type annotation
 ]
 line-length = 120
