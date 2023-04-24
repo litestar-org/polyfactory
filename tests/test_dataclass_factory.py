@@ -157,7 +157,7 @@ def test_variable_length_tuple_generation(monkeypatch: MonkeyPatch) -> None:
 
     number_of_args = 3
 
-    result = MyFactory.build(ids=(1, 2, 3))
+    result = MyFactory.build()
     monkeypatch.setattr(random, random.randint.__name__, lambda _, __: number_of_args)
 
     assert result
