@@ -106,6 +106,9 @@ omit = ["*/tests/*"]
 
 [tool.pytest.ini_options]
 asyncio_mode = "auto"
+markers = [
+    "enable_randint: enables random.randint, by default it returns 1"
+]
 
 [tool.coverage.report]
 exclude_lines = [

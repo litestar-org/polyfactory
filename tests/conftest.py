@@ -10,5 +10,5 @@ def constant_length_type_args(request: FixtureRequest, monkeypatch: MonkeyPatch)
     """
     Make sure that the length of the type_args tuple is always 1.
     """
-    if "extend_collections" not in request.keywords:
+    if "enable_randint" not in request.keywords:
         monkeypatch.setattr(random, random.randint.__name__, lambda _, __: 1)
