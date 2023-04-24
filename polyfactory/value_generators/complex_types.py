@@ -7,7 +7,7 @@ from typing_extensions import is_typeddict
 
 from polyfactory.constants import TYPE_MAPPING
 from polyfactory.utils.helpers import unwrap_annotation
-from polyfactory.utils.predicates import get_type_origin, is_any, is_union
+from polyfactory.utils.predicates import get_type_origin, is_any, is_union, is_dict_key_or_value_type
 from polyfactory.value_generators.primitives import create_random_string
 
 if TYPE_CHECKING:
@@ -82,7 +82,7 @@ def handle_complex_type(
     if is_union(field_meta.annotation) and field_meta.children:
         return handle_complex_type(field_meta=factory.__random__.choice(field_meta.children), factory=factory)
 
-    if is_any(field_meta.annotation):
+    if is_any(field_meta.annotation) or is_dict_key_or_value_type(field_meta.annotation):
         return create_random_string(random=factory.__random__, min_length=1, max_length=10)
 
     if factory.should_set_none_value(field_meta):

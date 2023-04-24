@@ -1,3 +1,4 @@
+import dataclasses
 from enum import Enum
 from typing import (
     Any,
@@ -18,6 +19,7 @@ import pytest
 from pydantic import BaseModel
 
 from polyfactory.exceptions import ParameterException
+from polyfactory.factories import DataclassFactory
 from polyfactory.factories.pydantic_factory import ModelFactory
 from tests.models import Person
 
@@ -139,3 +141,16 @@ def test_complex_typing_with_enum() -> None:
 
     result = MyFactory.build()
     assert result.animal_list
+
+
+def test_sequence_dict() -> None:
+    @dataclasses.dataclass
+    class MyModel:
+        sequence_dict: Sequence[Dict]
+
+    class MyFactory(DataclassFactory):
+        __model__ = MyModel
+
+    result = MyFactory.build()
+
+    assert result.sequence_dict
