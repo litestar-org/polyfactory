@@ -147,7 +147,7 @@ def test_tuple_ellipsis_in_vanilla_dc() -> None:
     assert result.ids
 
 
-def test_variable_length_tuple_generation(monkeypatch: MonkeyPatch) -> None:
+def test_variable_length_tuple_generation__many_type_args(monkeypatch: MonkeyPatch) -> None:
     @vanilla_dataclass
     class VanillaDC:
         ids: Tuple[int, ...]

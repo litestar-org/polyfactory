@@ -4,6 +4,8 @@ import random
 from abc import ABC, abstractmethod
 from typing import Any
 
+from polyfactory.utils.predicates import is_safe_subclass
+
 
 class CollectionExtender(ABC):
     __types__: tuple[type, ...]
@@ -16,12 +18,8 @@ class CollectionExtender(ABC):
     @classmethod
     def _subclass_for_type(cls, annotation_alias: Any) -> type[CollectionExtender]:
         for subclass in cls.__subclasses__():
-            try:
-                if issubclass(annotation_alias.__origin__, subclass.__types__):
-                    return subclass
-            except TypeError:
-                # e.g., Union, or other non-class types
-                pass
+            if any(is_safe_subclass(annotation_alias, t) for t in subclass.__types__):
+                return subclass
         return FallbackExtender
 
     @classmethod
