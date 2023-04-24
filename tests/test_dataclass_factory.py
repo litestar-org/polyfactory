@@ -163,3 +163,21 @@ def test_variable_length_tuple_generation__many_type_args(monkeypatch: MonkeyPat
     assert result
     assert result.ids
     assert len(result.ids) == number_of_args
+
+
+def test_variable_length_dict_generation__many_type_args(monkeypatch: MonkeyPatch) -> None:
+    @vanilla_dataclass
+    class VanillaDC:
+        ids: Dict[str, int]
+
+    class MyFactory(DataclassFactory[VanillaDC]):
+        __model__ = VanillaDC
+
+    number_of_args = 3
+    monkeypatch.setattr(random, "randint", lambda _, __: number_of_args)
+
+    result = MyFactory.build()
+
+    assert result
+    assert result.ids
+    assert len(result.ids) == number_of_args

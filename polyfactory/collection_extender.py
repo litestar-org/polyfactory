@@ -62,6 +62,19 @@ class SetExtender(CollectionExtender):
         return tuple(random.choice(type_args) for _ in range(number_of_args))
 
 
+class DictExtender(CollectionExtender):
+    __types__ = (dict,)
+
+    @staticmethod
+    def _extend_type_args(type_args: tuple[Any, ...], number_of_args: int) -> tuple[Any, ...]:
+        if not type_args:
+            return type_args
+        return type_args * number_of_args
+
+
+# TODO: Add support for Deque
+
+
 class FallbackExtender(CollectionExtender):
     __types__ = ()
 

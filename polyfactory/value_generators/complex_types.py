@@ -1,17 +1,18 @@
 from __future__ import annotations
+
 from collections import deque
 from typing import TYPE_CHECKING, Any, MutableMapping, Tuple
 
 from typing_extensions import is_typeddict
 
 from polyfactory.constants import TYPE_MAPPING
-from polyfactory.field_meta import FieldMeta
-from polyfactory.utils.helpers import unwrap_annotation, unwrap_args
+from polyfactory.utils.helpers import unwrap_annotation
 from polyfactory.utils.predicates import get_type_origin, is_any, is_union
 from polyfactory.value_generators.primitives import create_random_string
 
 if TYPE_CHECKING:
     from polyfactory.factories.base import BaseFactory
+    from polyfactory.field_meta import FieldMeta
 
 
 def handle_container_type(
@@ -30,15 +31,17 @@ def handle_container_type(
     if mapped_container_type := TYPE_MAPPING.get(container_type):
         container_type = mapped_container_type
 
-    container = container_type() if container_type is not frozenset else set()
+    container: Any = container_type() if container_type is not frozenset else set()
 
-    if isinstance(container, MutableMapping) or is_typeddict(container):
-        key_type, value_type = unwrap_args(field_meta.annotation) or (str, str)
-        key = handle_complex_type(field_meta=FieldMeta.from_type(annotation=key_type), factory=factory)
-        value = handle_complex_type(field_meta=FieldMeta.from_type(annotation=value_type), factory=factory)
-        container[key] = value  # pyright: ignore
-    elif field_meta.children:
-        if isinstance(container, (list, deque)):
+    if field_meta.children:
+        if isinstance(container, MutableMapping) or is_typeddict(container):
+            key_field_meta: FieldMeta
+            value_field_meta: FieldMeta
+            for key_field_meta, value_field_meta in zip(field_meta.children[::2], field_meta.children[1::2]):
+                key = handle_complex_type(field_meta=key_field_meta, factory=factory)
+                value = handle_complex_type(field_meta=value_field_meta, factory=factory)
+                container[key] = value
+        elif isinstance(container, (list, deque)):
             container.append(
                 handle_complex_type(
                     field_meta=factory.__random__.choice(field_meta.children),
