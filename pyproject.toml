@@ -7,12 +7,14 @@ authors = [
     "Peter Schutt <peter.github@proton.me>",
     "Cody Fincher <cody.fincher@gmail.com>",
     "Janek Nouvertné <provinzkraut@posteo.de>",
+    "Marek Czaplicki <marek@czaplicki.it>",
 ]
 maintainers = [
     "Na'aman Hirschfeld <nhirschfeld@gmail.com>",
     "Peter Schutt <peter.github@proton.me>",
     "Cody Fincher <cody.fincher@gmail.com>",
     "Janek Nouvertné <provinzkraut@posteo.de>",
+    "Marek Czaplicki <marek@czaplicki.it>",
 ]
 license = "MIT"
 readme = "README.md"
@@ -108,6 +110,12 @@ omit = ["*/tests/*"]
 asyncio_mode = "auto"
 markers = [
     "enable_randint: enables random.randint, by default it returns 1"
+]
+filterwarnings = [
+    "ignore:.*pkg_resources.declare_namespace\\('sphinxcontrib'\\).*:DeprecationWarning",
+    "ignore:pkg_resources is deprecated as an API:DeprecationWarning",
+    # Get rid those above once sphinxcontrib-mermaid doesn't use pkg_resources anymore
+    # https://github.com/mgaitan/sphinxcontrib-mermaid/issues/119
 ]
 
 [tool.coverage.report]
