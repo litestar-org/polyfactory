@@ -7,14 +7,12 @@ authors = [
     "Peter Schutt <peter.github@proton.me>",
     "Cody Fincher <cody.fincher@gmail.com>",
     "Janek Nouvertné <provinzkraut@posteo.de>",
-    "Marek Czaplicki <marek@czaplicki.it>",
 ]
 maintainers = [
     "Na'aman Hirschfeld <nhirschfeld@gmail.com>",
     "Peter Schutt <peter.github@proton.me>",
     "Cody Fincher <cody.fincher@gmail.com>",
     "Janek Nouvertné <provinzkraut@posteo.de>",
-    "Marek Czaplicki <marek@czaplicki.it>",
 ]
 license = "MIT"
 readme = "README.md"
