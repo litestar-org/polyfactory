@@ -1,6 +1,8 @@
+from datetime import datetime
 from typing import Any, List
 from uuid import UUID
 
+import bson
 import pytest
 from odmantic import AIOEngine, EmbeddedModel, Model
 
@@ -19,6 +21,11 @@ class MyEmbeddedDocument(EmbeddedModel):
 
 
 class MyModel(Model):
+    created_on: datetime
+    bson_id: bson.ObjectId
+    bson_int64: bson.Int64
+    bson_dec128: bson.Decimal128
+    bson_binary: bson.Binary
     name: str
     embedded: MyEmbeddedDocument
     embedded_list: List[MyEmbeddedDocument]
@@ -35,6 +42,16 @@ def test_handles_odmantic_models() -> None:
 
     result = MyFactory.build()
 
-    assert result.name
-    assert result.embedded
-    assert result.embedded_list
+    assert isinstance(result.created_on, datetime)
+    assert isinstance(result.bson_id, bson.ObjectId)
+    assert isinstance(result.bson_int64, bson.Int64)
+    assert isinstance(result.bson_dec128, bson.Decimal128)
+    assert isinstance(result.bson_binary, bson.Binary)
+    assert isinstance(result.name, str)
+    assert isinstance(result.embedded, MyEmbeddedDocument)
+    assert isinstance(result.embedded_list, list)
+    for item in result.embedded_list:
+        assert isinstance(item, MyEmbeddedDocument)
+        assert isinstance(item.name, str)
+        assert isinstance(item.serial, UUID)
+        assert isinstance(item.other_embedded_document, OtherEmbeddedDocument)
