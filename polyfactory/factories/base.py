@@ -31,7 +31,7 @@ from typing import (
     TypeVar,
     cast,
 )
-from uuid import UUID
+from uuid import NAMESPACE_DNS, UUID, uuid1, uuid3, uuid5
 
 from faker import Faker
 from typing_extensions import get_args
@@ -68,6 +68,59 @@ if TYPE_CHECKING:
     from polyfactory.persistence import AsyncPersistenceProtocol, SyncPersistenceProtocol
     from polyfactory.field_meta import FieldMeta, Constraints
     from typing_extensions import TypeGuard
+
+
+def _create_pydantic_type_map(cls: "type[BaseFactory]") -> dict[type, Callable[[], Any]]:
+    """Creates a mapping of pydantic types to mock data functions.
+
+    :param cls: The base factory class.
+    :return: A dict mapping types to callables.
+    """
+    try:
+        import pydantic
+
+        return {
+            pydantic.ByteSize: cls.__faker__.pyint,
+            pydantic.PositiveInt: cls.__faker__.pyint,
+            pydantic.FilePath: lambda: Path(realpath(__file__)),
+            pydantic.NegativeFloat: lambda: cls.__random__.uniform(-100, -1),
+            pydantic.NegativeInt: lambda: cls.__faker__.pyint() * -1,
+            pydantic.PositiveFloat: cls.__faker__.pyint,
+            pydantic.NonPositiveFloat: lambda: cls.__random__.uniform(-100, 0),
+            pydantic.NonNegativeInt: cls.__faker__.pyint,
+            pydantic.StrictInt: cls.__faker__.pyint,
+            pydantic.StrictBool: cls.__faker__.pybool,
+            pydantic.StrictBytes: partial(create_random_bytes, cls.__random__),
+            pydantic.StrictFloat: cls.__faker__.pyfloat,
+            pydantic.StrictStr: cls.__faker__.pystr,
+            pydantic.DirectoryPath: lambda: Path(realpath(__file__)).parent,
+            pydantic.EmailStr: cls.__faker__.free_email,
+            pydantic.NameEmail: cls.__faker__.free_email,
+            pydantic.PyObject: lambda: "decimal.Decimal",  # type: ignore[dict-item]
+            pydantic.color.Color: cls.__faker__.hex_color,  # pyright: ignore
+            pydantic.Json: cls.__faker__.json,
+            pydantic.PaymentCardNumber: cls.__faker__.credit_card_number,
+            pydantic.AnyUrl: cls.__faker__.url,
+            pydantic.AnyHttpUrl: cls.__faker__.url,
+            pydantic.HttpUrl: cls.__faker__.url,
+            pydantic.PostgresDsn: lambda: "postgresql://user:secret@localhost",
+            pydantic.RedisDsn: lambda: "redis://localhost:6379",
+            pydantic.UUID1: uuid1,
+            pydantic.UUID3: lambda: uuid3(NAMESPACE_DNS, cls.__faker__.pystr()),
+            pydantic.UUID4: cls.__faker__.uuid4,
+            pydantic.UUID5: lambda: uuid5(NAMESPACE_DNS, cls.__faker__.pystr()),
+            pydantic.SecretBytes: partial(create_random_bytes, cls.__random__),
+            pydantic.SecretStr: cls.__faker__.pystr,
+            pydantic.IPvAnyAddress: cls.__faker__.ipv4,
+            pydantic.IPvAnyInterface: cls.__faker__.ipv4,
+            pydantic.IPvAnyNetwork: lambda: cls.__faker__.ipv4(network=True),
+            pydantic.AmqpDsn: lambda: "amqps://",
+            pydantic.KafkaDsn: lambda: "kafka://",
+            pydantic.PastDate: cls.__faker__.past_date,
+            pydantic.FutureDate: cls.__faker__.future_date,
+        }
+    except ImportError:
+        return {}
 
 
 T = TypeVar("T")
@@ -375,6 +428,7 @@ class BaseFactory(ABC, Generic[T]):
             # types
             Callable: _create_generic_fn,
             Counter: lambda: Counter(cls.__faker__.pystr()),
+            **_create_pydantic_type_map(cls),
         }
 
     @classmethod
