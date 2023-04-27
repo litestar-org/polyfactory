@@ -12,12 +12,22 @@ from polyfactory.factories.odmantic_odm_factory import OdmanticModelFactory
 class OtherEmbeddedDocument(EmbeddedModel):
     name: str
     serial: UUID
+    created_on: datetime
+    bson_id: bson.ObjectId
+    bson_int64: bson.Int64
+    bson_dec128: bson.Decimal128
+    bson_binary: bson.Binary
 
 
 class MyEmbeddedDocument(EmbeddedModel):
     name: str
     serial: UUID
     other_embedded_document: OtherEmbeddedDocument
+    created_on: datetime
+    bson_id: bson.ObjectId
+    bson_int64: bson.Int64
+    bson_dec128: bson.Decimal128
+    bson_binary: bson.Binary
 
 
 class MyModel(Model):
@@ -54,4 +64,18 @@ def test_handles_odmantic_models() -> None:
         assert isinstance(item, MyEmbeddedDocument)
         assert isinstance(item.name, str)
         assert isinstance(item.serial, UUID)
-        assert isinstance(item.other_embedded_document, OtherEmbeddedDocument)
+        assert isinstance(item.created_on, datetime)
+        assert isinstance(item.bson_id, bson.ObjectId)
+        assert isinstance(item.bson_int64, bson.Int64)
+        assert isinstance(item.bson_dec128, bson.Decimal128)
+        assert isinstance(item.bson_binary, bson.Binary)
+
+        other = item.other_embedded_document
+        assert isinstance(other, OtherEmbeddedDocument)
+        assert isinstance(other.name, str)
+        assert isinstance(other.serial, UUID)
+        assert isinstance(other.created_on, datetime)
+        assert isinstance(other.bson_id, bson.ObjectId)
+        assert isinstance(other.bson_int64, bson.Int64)
+        assert isinstance(other.bson_dec128, bson.Decimal128)
+        assert isinstance(other.bson_binary, bson.Binary)
