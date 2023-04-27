@@ -157,12 +157,11 @@ class BaseFactory(ABC, Generic[T]):
                         f"Model type {model.__name__} is not supported. "
                         "To support it, register an appropriate base factory and subclass it for your factory."
                     )
+        else:
+            BaseFactory._base_factories.append(cls)
 
         if random_seed := getattr(cls, "__random_seed__", None) is not None:
             cls.seed_random(random_seed)
-
-        if cls.__is_base_factory__:
-            BaseFactory._base_factories.append(cls)
 
         if cls.__set_as_default_factory_for_type__:
             BaseFactory._factory_type_mapping[cls.__model__] = cls
@@ -236,7 +235,7 @@ class BaseFactory(ABC, Generic[T]):
         if factory := BaseFactory._factory_type_mapping.get(model):
             return factory
 
-        for factory in BaseFactory._base_factories:
+        for factory in reversed(BaseFactory._base_factories):
             if factory.is_supported_type(model):
                 return factory.create_factory(model)
 
@@ -417,10 +416,6 @@ class BaseFactory(ABC, Generic[T]):
         :returns: A 'ModelFactory' subclass.
 
         """
-
-        for key in (attr for attr in dir(cls) if attr.startswith("__") and attr != "__model__"):
-            kwargs.setdefault(key, getattr(cls, key, None))
-
         return cast(
             "Type[BaseFactory]",
             type(
