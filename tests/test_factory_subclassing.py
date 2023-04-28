@@ -23,7 +23,7 @@ def test_factory_raises_config_error_for_unsupported_model_with_supported_factor
 
 
 def test_factory_raises_config_error_for_unsupported_model() -> None:
-    with pytest.raises(ConfigurationException):
+    with pytest.raises(ConfigurationException, match="Model type Null is not supported"):
 
         class MyFactory(ModelFactory):
             __model__ = Null
