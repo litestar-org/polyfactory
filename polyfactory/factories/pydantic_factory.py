@@ -142,7 +142,7 @@ class ModelFactory(Generic[T], BaseFactory[T]):
         :returns: A list of field MetaData instances.
 
         """
-        if not hasattr(cls, "_fields_metadata"):
+        if "_fields_metadata" not in cls.__dict__:
             cls._fields_metadata = [
                 PydanticFieldMeta.from_model_field(
                     field,
