@@ -200,7 +200,7 @@ class BaseFactory(ABC, Generic[T]):
                         f"Model type {model.__name__} is not supported. "
                         "To support it, register an appropriate base factory and subclass it for your factory."
                     )
-        else:
+        elif cls.__module__.split(".", 1)[0] == "polyfactory":
             BaseFactory._base_factories.append(cls)
 
         if random_seed := getattr(cls, "__random_seed__", None) is not None:

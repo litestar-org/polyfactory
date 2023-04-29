@@ -7,6 +7,7 @@ import pytest
 from odmantic import AIOEngine, EmbeddedModel, Model
 
 from polyfactory.factories.odmantic_odm_factory import OdmanticModelFactory
+from polyfactory.factories.pydantic_factory import ModelFactory
 
 
 class OtherEmbeddedDocument(EmbeddedModel):
@@ -79,3 +80,19 @@ def test_handles_odmantic_models() -> None:
         assert isinstance(other.bson_int64, bson.Int64)
         assert isinstance(other.bson_dec128, bson.Decimal128)
         assert isinstance(other.bson_binary, bson.Binary)
+
+
+def test_base_pydantic_factory() -> None:
+    class MyEmbeddedModel(EmbeddedModel):
+        timestamp: datetime
+
+    class MyOdmanticModel(Model):
+        embedded: MyEmbeddedModel
+
+    class MyBaseFactory(ModelFactory):
+        pass
+
+    class MyOdmanticFactory(OdmanticModelFactory):
+        __model__ = MyOdmanticModel
+
+    MyOdmanticFactory.build()
