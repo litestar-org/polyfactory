@@ -35,6 +35,9 @@ def test_handles_complex_typing() -> None:
         deque: Deque[List[Dict[str, int]]]
         set_union: Set[Union[str, int]]
         frozen_set: FrozenSet[str]
+        plain_list: List
+        plain_set: Set
+        plain_dict: Dict
 
     class MyFactory(ModelFactory):
         __model__ = MyModel
@@ -51,6 +54,9 @@ def test_handles_complex_typing() -> None:
     assert result.deque
     assert result.set_union
     assert result.frozen_set
+    assert result.plain_list
+    assert result.plain_set
+    assert result.plain_dict
 
 
 def test_handles_complex_typing_with_embedded_models() -> None:
