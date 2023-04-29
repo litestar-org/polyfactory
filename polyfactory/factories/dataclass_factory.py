@@ -15,8 +15,6 @@ if TYPE_CHECKING:
 class DataclassFactory(Generic[T], BaseFactory[T]):
     """Dataclass base factory"""
 
-    __is_base_factory__ = True
-
     @classmethod
     def is_supported_type(cls, value: Any) -> "TypeGuard[type[T]]":
         """Determine whether the given value is supported by the factory.

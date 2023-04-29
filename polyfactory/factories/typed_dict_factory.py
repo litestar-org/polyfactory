@@ -11,8 +11,6 @@ TypedDictT = TypeVar("TypedDictT", bound=_TypedDictMeta)
 class TypedDictFactory(Generic[TypedDictT], BaseFactory[TypedDictT]):
     """TypedDict base factory"""
 
-    __is_base_factory__ = True
-
     @classmethod
     def is_supported_type(cls, value: Any) -> "TypeGuard[type[TypedDictT]]":
         """Determine whether the given value is supported by the factory.

@@ -43,7 +43,6 @@ class BeanieDocumentFactory(Generic[T], ModelFactory[T]):
     """Base factory for Beanie Documents"""
 
     __async_persistence__ = BeaniePersistenceHandler
-    __is_base_factory__ = True
 
     @classmethod
     def is_supported_type(cls, value: Any) -> "TypeGuard[type[T]]":

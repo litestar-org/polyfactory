@@ -111,12 +111,11 @@ class ModelFactory(Generic[T], BaseFactory[T]):
     """Base factory for pydantic models"""
 
     __forward_ref_resolution_type_mapping__: ClassVar[Mapping[str, type]] = {}
-    __is_base_factory__ = True
 
     def __init_subclass__(cls, *args: Any, **kwargs: Any) -> None:
         super().__init_subclass__(*args, **kwargs)
 
-        if not cls.__is_base_factory__ and hasattr(cls.__model__, "update_forward_refs"):
+        if hasattr(cls, "__model__") and hasattr(cls.__model__, "update_forward_refs"):
             with suppress(NameError):  # pragma: no cover
                 cls.__model__.update_forward_refs(**cls.__forward_ref_resolution_type_mapping__)
 

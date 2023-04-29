@@ -8,13 +8,6 @@ from polyfactory.factories.pydantic_factory import ModelFactory
 from tests.models import Person
 
 
-def test_validates_model_is_set_on_definition_of_factory() -> None:
-    with pytest.raises(ConfigurationException):
-
-        class MyFactory(ModelFactory):
-            pass
-
-
 def test_validates_connection_in_create_sync() -> None:
     class MyFactory(ModelFactory):
         __model__ = Person

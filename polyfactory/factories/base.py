@@ -159,11 +159,6 @@ class BaseFactory(ABC, Generic[T]):
     Flag dictating whether to set as the default factory for the given type.
     If 'True' the factory will be used instead of dynamically generating a factory for the type.
     """
-    __is_base_factory__: bool = False
-    """
-    Flag dictating whether the factory is a 'base' factory. Base factories are registered globally as handlers for types.
-    For example, the 'DataclassFactory', 'TypedDictFactory' and 'ModelFactory' are all base factories.
-    """
     __faker__: ClassVar["Faker"] = Faker()
     """
     A faker instance to use. Can be a user provided value.
@@ -193,12 +188,7 @@ class BaseFactory(ABC, Generic[T]):
         if not hasattr(BaseFactory, "_factory_type_mapping"):
             BaseFactory._factory_type_mapping = {}
 
-        if "__is_base_factory__" not in cls.__dict__ or not cls.__is_base_factory__:
-            model = getattr(cls, "__model__", None)
-            if not model:
-                raise ConfigurationException(
-                    f"required configuration attribute '__model__' is not set on {cls.__name__}"
-                )
+        if model := getattr(cls, "__model__", None):
             if not cls.is_supported_type(model):
                 for factory in BaseFactory._base_factories:
                     if factory.is_supported_type(model):

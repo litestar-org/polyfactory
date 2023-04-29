@@ -22,8 +22,6 @@ T = TypeVar("T")
 
 # we create a custom base factory to handle dataclasses, with an extended provider map
 class CustomDataclassFactory(Generic[T], DataclassFactory[T]):
-    __is_base_factory__ = True
-
     @classmethod
     def get_provider_map(cls) -> Dict[Type, Any]:
         providers_map = super().get_provider_map()
