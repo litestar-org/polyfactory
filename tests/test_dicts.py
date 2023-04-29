@@ -21,8 +21,7 @@ def test_passing_nested_dict() -> None:
         my_mapping_obj={"baz": MyMappedClass(val="bar")},
     )
 
-    assert obj.dict() == {"my_mapping_obj": {"baz": {"val": "bar"}},
-                          "my_mapping_str": {"foo": "bar"}}
+    assert obj.dict() == {"my_mapping_obj": {"baz": {"val": "bar"}}, "my_mapping_str": {"foo": "bar"}}
 
 
 def test_dict_with_union_random_types() -> None:
@@ -36,13 +35,8 @@ def test_dict_with_union_random_types() -> None:
     str_generated = False
     for _ in range(20):
         obj = MyClassFactory.build()
-        int_generated = True if isinstance(
-            list(obj.val.values())[0], int
-        ) else int_generated
-        str_generated = True if isinstance(
-            list(obj.val.values())[0], str
-        ) else str_generated
-        print(obj)
+        int_generated = True if isinstance(list(obj.val.values())[0], int) else int_generated
+        str_generated = True if isinstance(list(obj.val.values())[0], str) else str_generated
 
     assert int_generated is True
     assert str_generated is True
