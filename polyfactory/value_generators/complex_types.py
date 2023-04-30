@@ -36,8 +36,8 @@ def handle_container_type(
         key_type, value_type = unwrap_args(field_meta.annotation) or (str, str)
         key = handle_complex_type(field_meta=FieldMeta.from_type(annotation=key_type), factory=factory)
 
-        if is_union(value_type) and field_meta.children and field_meta.children[0].children:
-            value_field_meta = factory.__random__.choice(field_meta.children[0].children)
+        if is_union(value_type) and field_meta.children:
+            value_field_meta = factory.__random__.choice(field_meta.children)
             value = handle_complex_type(field_meta=value_field_meta, factory=factory)
         else:
             value = handle_complex_type(field_meta=FieldMeta.from_type(annotation=value_type), factory=factory)
