@@ -35,7 +35,13 @@ def handle_container_type(
     if isinstance(container, MutableMapping) or is_typeddict(container):
         key_type, value_type = unwrap_args(field_meta.annotation) or (str, str)
         key = handle_complex_type(field_meta=FieldMeta.from_type(annotation=key_type), factory=factory)
-        value = handle_complex_type(field_meta=FieldMeta.from_type(annotation=value_type), factory=factory)
+
+        if is_union(value_type) and field_meta.children and field_meta.children[0].children:
+            value_field_meta = factory.__random__.choice(field_meta.children[0].children)
+            value = handle_complex_type(field_meta=value_field_meta, factory=factory)
+        else:
+            value = handle_complex_type(field_meta=FieldMeta.from_type(annotation=value_type), factory=factory)
+
         container[key] = value  # pyright: ignore
     elif field_meta.children:
         if isinstance(container, (list, deque)):
