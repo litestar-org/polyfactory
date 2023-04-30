@@ -25,4 +25,4 @@ class DatetimeRangeFactory(DataclassFactory[DatetimeRange]):
 
 def test_post_generated() -> None:
     date_range_instance = DatetimeRangeFactory.build()
-    assert date_range_instance.to_dt.day == date_range_instance.from_dt.day + 1
+    assert date_range_instance.to_dt == date_range_instance.from_dt + timedelta(days=1)
