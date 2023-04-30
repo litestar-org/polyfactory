@@ -31,12 +31,10 @@ def test_dict_with_union_random_types() -> None:
     class MyClassFactory(ModelFactory[MyClass]):
         __model__ = MyClass
 
-    int_generated = False
-    str_generated = False
-    for _ in range(20):
-        obj = MyClassFactory.build()
-        int_generated = True if isinstance(list(obj.val.values())[0], int) else int_generated
-        str_generated = True if isinstance(list(obj.val.values())[0], str) else str_generated
+    MyClassFactory.seed_random(2)
 
-    assert int_generated is True
-    assert str_generated is True
+    test_obj_1 = MyClassFactory.build()
+    test_obj_2 = MyClassFactory.build()
+
+    assert isinstance(list(test_obj_1.val.values())[0], int)
+    assert isinstance(list(test_obj_2.val.values())[0], str)
