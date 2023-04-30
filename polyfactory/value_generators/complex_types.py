@@ -4,13 +4,13 @@ from typing import TYPE_CHECKING, AbstractSet, Any, MutableMapping, MutableSeque
 
 from typing_extensions import is_typeddict
 
-from polyfactory.field_meta import FieldMeta
-from polyfactory.utils.helpers import unwrap_annotation, unwrap_args
+from polyfactory.utils.helpers import unwrap_annotation
 from polyfactory.utils.predicates import get_type_origin, is_any, is_union
 from polyfactory.value_generators.primitives import create_random_string
 
 if TYPE_CHECKING:
     from polyfactory.factories.base import BaseFactory
+    from polyfactory.field_meta import FieldMeta
 
 
 def handle_collection_type(field_meta: FieldMeta, container_type: type, factory: type[BaseFactory]) -> Any:
@@ -27,13 +27,8 @@ def handle_collection_type(field_meta: FieldMeta, container_type: type, factory:
         return container
 
     if issubclass(container_type, MutableMapping) or is_typeddict(container_type):
-        key_type, value_type = unwrap_args(field_meta.annotation) or (str, str)
-        key = handle_complex_type(FieldMeta.from_type(key_type), factory)
-        if is_union(value_type) and field_meta.children:
-            value_field_meta = factory.__random__.choice(field_meta.children)
-            value = handle_complex_type(value_field_meta, factory)
-        else:
-            value = handle_complex_type(FieldMeta.from_type(value_type), factory)
+        key = handle_complex_type(field_meta.children[0], factory)
+        value = handle_complex_type(field_meta.children[1], factory)
         container[key] = value
 
     elif issubclass(container_type, MutableSequence):

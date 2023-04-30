@@ -31,7 +31,7 @@ def test_dict_with_union_random_types() -> None:
     class MyClassFactory(ModelFactory[MyClass]):
         __model__ = MyClass
 
-    MyClassFactory.seed_random(2)
+    MyClassFactory.seed_random(4)
 
     test_obj_1 = MyClassFactory.build()
     test_obj_2 = MyClassFactory.build()

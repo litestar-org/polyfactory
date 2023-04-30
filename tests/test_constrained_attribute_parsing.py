@@ -136,6 +136,12 @@ def test_nested_constrained_attribute_handling() -> None:
         my_int_list_field: List[MyConstrainedInt]
         my_str_list_field: List[MyConstrainedString]
 
+        my_bytes_dict_field: Dict[str, MyConstrainedBytes]
+        my_decimal_dict_field: Dict[str, MyConstrainedDecimal]
+        my_float_dict_field: Dict[str, MyConstrainedFloat]
+        my_int_dict_field: Dict[str, MyConstrainedInt]
+        my_str_dict_field: Dict[str, MyConstrainedString]
+
     class MyFactory(ModelFactory):
         __model__ = MyModel
 
@@ -154,3 +160,9 @@ def test_nested_constrained_attribute_handling() -> None:
     assert result.my_float_list_field
     assert result.my_int_list_field
     assert result.my_str_list_field
+
+    assert result.my_bytes_dict_field
+    assert result.my_decimal_dict_field
+    assert result.my_float_dict_field
+    assert result.my_int_dict_field
+    assert result.my_str_dict_field
