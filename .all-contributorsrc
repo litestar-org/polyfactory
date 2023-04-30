@@ -62,6 +62,16 @@
       "contributions": [
         "code"
       ]
+    },
+    {
+      "login": "sygutss",
+      "name": "sygutss",
+      "avatar_url": "https://avatars.githubusercontent.com/u/48909366?v=4",
+      "profile": "https://github.com/sygutss",
+      "contributions": [
+        "bug",
+        "code"
+      ]
     }
   ],
   "contributorsPerLine": 7,
