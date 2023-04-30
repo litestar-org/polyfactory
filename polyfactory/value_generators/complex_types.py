@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from typing import TYPE_CHECKING, AbstractSet, Any, MutableMapping, MutableSequence, Set, TypeVar
+from typing import TYPE_CHECKING, AbstractSet, Any, Collection, MutableMapping, MutableSequence, Set, TypeVar
 
 from typing_extensions import is_typeddict
 
@@ -59,7 +59,9 @@ def handle_complex_type(field_meta: FieldMeta, factory: type[BaseFactory]) -> An
     :returns: A built result.
     """
     if origin := get_type_origin(unwrap_annotation(field_meta.annotation)):
-        return handle_collection_type(field_meta, origin, factory)
+        if issubclass(origin, Collection):
+            return handle_collection_type(field_meta, origin, factory)
+        return factory.get_mock_value(origin)
 
     if is_union(field_meta.annotation) and field_meta.children:
         return handle_complex_type(factory.__random__.choice(field_meta.children), factory)
