@@ -81,7 +81,7 @@ def test_constrained_attribute_parsing() -> None:
     assert result.decimal_field < 1000
     assert len(result.list_field) >= 1
     assert len(result.list_field) <= 10
-    assert all([isinstance(r, str) for r in result.list_field])
+    assert all(isinstance(r, str) for r in result.list_field)
     assert result.constant_field == 100
 
 
@@ -96,12 +96,12 @@ def test_complex_constrained_attribute_parsing() -> None:
     result = MyFactory.build()
 
     assert len(result.conlist_with_model_field) >= 3
-    assert all([isinstance(v, Person) for v in result.conlist_with_model_field])
+    assert all(isinstance(v, Person) for v in result.conlist_with_model_field)
     assert result.conlist_with_complex_type
     assert isinstance(result.conlist_with_complex_type[0], dict)
     assert isinstance(list(result.conlist_with_complex_type[0].values())[0], tuple)
     assert len(list(result.conlist_with_complex_type[0].values())[0]) == 3
-    assert all([isinstance(v, Person) for v in list(result.conlist_with_complex_type[0].values())[0]])
+    assert all(isinstance(v, Person) for v in list(result.conlist_with_complex_type[0].values())[0])
 
 
 def test_nested_constrained_attribute_handling() -> None:
