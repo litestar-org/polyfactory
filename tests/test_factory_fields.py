@@ -121,3 +121,41 @@ def test_post_generation() -> None:
         assert result.caption == "this was really long for me"
     else:
         assert result.caption == "just this"
+
+
+def test_post_generation_classmethod() -> None:
+    class MyModel(BaseModel):
+        from_dt: datetime
+        to_dt: datetime
+        is_long: bool
+        caption: str
+
+    class MyFactory(ModelFactory):
+        __model__ = MyModel
+
+        random_delta: timedelta
+
+        @PostGenerated
+        @classmethod
+        def to_dt(cls, from_dt: datetime) -> datetime:
+            # save it to cls for test purposes only
+            cls.random_delta = timedelta(days=cls.__random__.randint(0, 12), seconds=cls.__random__.randint(13, 13000))
+            return from_dt + cls.random_delta
+
+        @PostGenerated
+        @classmethod
+        def is_long(cls, from_dt: datetime, to_dt: datetime) -> bool:
+            return (to_dt - from_dt).days > 1
+
+        @PostGenerated
+        @classmethod
+        def caption(cls, is_long: bool) -> str:
+            return "this was really long for me" if is_long else "just this"
+
+    result = MyFactory.build()
+    assert result.to_dt - result.from_dt == MyFactory.random_delta
+    assert result.is_long == (MyFactory.random_delta.days > 1)
+    if result.is_long:
+        assert result.caption == "this was really long for me"
+    else:
+        assert result.caption == "just this"
