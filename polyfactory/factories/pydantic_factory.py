@@ -1,4 +1,5 @@
 from __future__ import annotations
+
 from contextlib import suppress
 from inspect import isclass
 from typing import (
@@ -13,7 +14,7 @@ from typing import (
 
 from polyfactory.exceptions import MissingDependencyException
 from polyfactory.factories.base import BaseFactory
-from polyfactory.field_meta import FieldMeta, Null, Constraints
+from polyfactory.field_meta import Constraints, FieldMeta, Null
 from polyfactory.utils.helpers import unwrap_new_type
 
 try:
@@ -94,14 +95,18 @@ class PydanticFieldMeta(FieldMeta):
             },
         )
 
+        children: list[FieldMeta] = []
+        if model_field.key_field:
+            children.append(PydanticFieldMeta.from_model_field(model_field.key_field, use_alias))
+        if model_field.sub_fields:
+            children.extend(
+                PydanticFieldMeta.from_model_field(sub_field, use_alias) for sub_field in model_field.sub_fields
+            )
+
         return PydanticFieldMeta(
             name=name,
             annotation=annotation,
-            children=[
-                PydanticFieldMeta.from_model_field(child, use_alias=use_alias) for child in model_field.sub_fields
-            ]
-            if model_field.sub_fields
-            else None,
+            children=children,
             default=default_value,
             constraints=cast("Constraints", {k: v for k, v in constraints.items() if v is not None}) or None,
         )

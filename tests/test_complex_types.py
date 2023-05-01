@@ -1,16 +1,20 @@
+from dataclasses import dataclass
 from enum import Enum
 from typing import (
     Any,
+    Callable,
     DefaultDict,
     Deque,
     Dict,
     FrozenSet,
+    Generic,
     Iterable,
     List,
     Optional,
     Sequence,
     Set,
     Tuple,
+    TypeVar,
     Union,
 )
 
@@ -18,6 +22,7 @@ import pytest
 from pydantic import BaseModel
 
 from polyfactory.exceptions import ParameterException
+from polyfactory.factories import DataclassFactory
 from polyfactory.factories.pydantic_factory import ModelFactory
 from tests.models import Person
 
@@ -35,6 +40,9 @@ def test_handles_complex_typing() -> None:
         deque: Deque[List[Dict[str, int]]]
         set_union: Set[Union[str, int]]
         frozen_set: FrozenSet[str]
+        plain_list: List
+        plain_set: Set
+        plain_dict: Dict
 
     class MyFactory(ModelFactory):
         __model__ = MyModel
@@ -51,6 +59,9 @@ def test_handles_complex_typing() -> None:
     assert result.deque
     assert result.set_union
     assert result.frozen_set
+    assert result.plain_list
+    assert result.plain_set
+    assert result.plain_dict
 
 
 def test_handles_complex_typing_with_embedded_models() -> None:
@@ -139,3 +150,30 @@ def test_complex_typing_with_enum() -> None:
 
     result = MyFactory.build()
     assert result.animal_list
+
+
+def test_non_collection_generic() -> None:
+    T = TypeVar("T")
+
+    class LoggedVar(Generic[T]):
+        def __init__(self, name: str = "", log: Callable[[str], None] = print):
+            self.__name = name
+            self.__log = log
+
+        def set(self, value: T) -> None:
+            self.__log(f"Set {self.__name} to {value}")
+            self.__value = value
+
+        def get(self) -> T:
+            self.__log(f"Get {self.__name} = {self.__value}")
+            return self.__value
+
+    @dataclass
+    class MyModel:
+        x: LoggedVar[int]
+
+    class MyFactory(DataclassFactory):
+        __model__ = MyModel
+
+    result = MyFactory.build()
+    assert isinstance(result.x, LoggedVar)
