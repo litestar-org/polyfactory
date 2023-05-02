@@ -7,7 +7,7 @@ from pydantic import BaseModel
 
 from polyfactory.exceptions import MissingBuildKwargException
 from polyfactory.factories.pydantic_factory import ModelFactory
-from polyfactory.fields import Ignore, PostGenerated, Require, Use
+from polyfactory.fields import Ignore, PostGenerated, Require, Use, post_generated
 
 
 def test_use() -> None:
@@ -135,19 +135,19 @@ def test_post_generation_classmethod() -> None:
 
         random_delta: timedelta
 
-        @PostGenerated
+        @post_generated
         @classmethod
         def to_dt(cls, from_dt: datetime) -> datetime:
             # save it to cls for test purposes only
             cls.random_delta = timedelta(days=cls.__random__.randint(0, 12), seconds=cls.__random__.randint(13, 13000))
             return from_dt + cls.random_delta
 
-        @PostGenerated
+        @post_generated
         @classmethod
         def is_long(cls, from_dt: datetime, to_dt: datetime) -> bool:
             return (to_dt - from_dt).days > 1
 
-        @PostGenerated
+        @post_generated
         @classmethod
         def caption(cls, is_long: bool) -> str:
             return "this was really long for me" if is_long else "just this"
