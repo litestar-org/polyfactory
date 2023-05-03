@@ -77,16 +77,3 @@ the PostGenerated helper is provided. For example:
 The signature for use is: ``cb: Callable, *args, **defaults``  it can receive any sync callable. The signature for the
 callable should be: ``name: str, values: dict[str, Any], *args, **defaults``. The already generated values are mapped by
 name in the values dictionary.
-
-The ``post_generated`` Decorator
---------------------------------
-
-The :class:`post_generated <polyfactory.decorators.post_generated>` decorator wraps a ``classmethod`` into a
-:class:`PostGenerated <polyfactory.fields.PostGenerated>` field. This is useful when the post generated field depends
-on the current factory, usually its ``__faker__`` and/or ``__random__`` attribute. For example:
-
-.. literalinclude:: /examples/fields/test_example_8.py
-    :caption: Using the ``post_generated`` decorator
-    :language: python
-
-All classmethod parameters after ``cls`` must be named as the fields this post generated field depends on.
