@@ -5,9 +5,10 @@ from typing import Any, Optional
 import pytest
 from pydantic import BaseModel
 
+from polyfactory.decorators import post_generated
 from polyfactory.exceptions import MissingBuildKwargException
 from polyfactory.factories.pydantic_factory import ModelFactory
-from polyfactory.fields import Ignore, PostGenerated, Require, Use, post_generated
+from polyfactory.fields import Ignore, PostGenerated, Require, Use
 
 
 def test_use() -> None:

@@ -81,7 +81,7 @@ name in the values dictionary.
 The ``post_generated`` Decorator
 --------------------------------
 
-The :class:`post_generated <polyfactory.fields.post_generated>` decorator wraps a ``classmethod`` into a
+The :class:`post_generated <polyfactory.decorators.post_generated>` decorator wraps a ``classmethod`` into a
 :class:`PostGenerated <polyfactory.fields.PostGenerated>` field. This is useful when the post generated field depends
 on the current factory, usually its ``__faker__`` and/or ``__random__`` attribute. For example:
 

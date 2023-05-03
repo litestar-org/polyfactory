@@ -1,9 +1,9 @@
 from dataclasses import dataclass, field
+from datetime import datetime, timedelta
 from typing import cast
 
-from polyfactory import post_generated
+from polyfactory.decorators import post_generated
 from polyfactory.factories import DataclassFactory
-from datetime import datetime, timedelta
 
 
 @dataclass
