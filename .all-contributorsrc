@@ -72,6 +72,15 @@
         "bug",
         "code"
       ]
+    },
+    {
+      "login": "chrisbeardy",
+      "name": "chrisbeardy",
+      "avatar_url": "https://avatars.githubusercontent.com/u/20585410?v=4",
+      "profile": "https://github.com/chrisbeardy",
+      "contributions": [
+        "doc"
+      ]
     }
   ],
   "contributorsPerLine": 7,
