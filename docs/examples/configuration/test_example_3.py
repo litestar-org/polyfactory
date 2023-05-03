@@ -25,5 +25,5 @@ class PersonFactory(DataclassFactory[Person]):
 
 
 def test_setting_faker() -> None:
-    # the outcome of faker deterministic because we seeded random, and it uses a german locale.
+    # the outcome of faker deterministic because we seeded random, and it uses a spanish locale.
     assert PersonFactory.build().name == "Asunción Céspedes"
