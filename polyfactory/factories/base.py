@@ -660,7 +660,7 @@ class BaseFactory(ABC, Generic[T]):
         for field_meta in cls.get_model_fields():
             field_build_parameters = cls.extract_field_build_parameters(field_meta=field_meta, build_args=kwargs)
             if cls.should_set_field_value(field_meta, **kwargs):
-                if hasattr(cls, field_meta.name) and field_meta.name in cls.__dict__:
+                if hasattr(cls, field_meta.name) and not hasattr(BaseFactory, field_meta.name):
                     field_value = getattr(cls, field_meta.name)
                     if isinstance(field_value, Ignore):
                         continue
