@@ -169,3 +169,29 @@ class ModelFactory(Generic[T], BaseFactory[T]):
             return cls.__model__.construct(**processed_kwargs)
 
         return cls.__model__(**processed_kwargs)
+
+    @classmethod
+    def is_custom_root_field(cls, field_meta: FieldMeta) -> bool:
+        """Determine whether the field is a custom root field.
+
+        :param field_meta: FieldMeta instance.
+
+        :returns: A boolean determining whether the field is a custom root.
+
+        """
+        return field_meta.name == "__root__"
+
+    @classmethod
+    def should_set_field_value(cls, field_meta: FieldMeta, **kwargs: Any) -> bool:
+        """Determine whether to set a value for a given field_name.
+        This is an override of BaseFactory.should_set_field_value.
+
+        :param field_meta: FieldMeta instance.
+        :param kwargs: Any kwargs passed to the factory.
+
+        :returns: A boolean determining whether a value should be set for the given field_meta.
+
+        """
+        return field_meta.name not in kwargs and (
+            not field_meta.name.startswith("_") or cls.is_custom_root_field(field_meta)
+        )
