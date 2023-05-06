@@ -4,8 +4,10 @@ from uuid import UUID
 
 import bson
 import pytest
+from bson import ObjectId
 from odmantic import AIOEngine, EmbeddedModel, Model
 
+from polyfactory.decorators import post_generated
 from polyfactory.factories.odmantic_odm_factory import OdmanticModelFactory
 
 
@@ -52,6 +54,8 @@ def test_handles_odmantic_models() -> None:
 
     result = MyFactory.build()
 
+    assert isinstance(result, MyModel)
+    assert isinstance(result.id, bson.ObjectId)
     assert isinstance(result.created_on, datetime)
     assert isinstance(result.bson_id, bson.ObjectId)
     assert isinstance(result.bson_int64, bson.Int64)
@@ -79,3 +83,15 @@ def test_handles_odmantic_models() -> None:
         assert isinstance(other.bson_int64, bson.Int64)
         assert isinstance(other.bson_dec128, bson.Decimal128)
         assert isinstance(other.bson_binary, bson.Binary)
+
+
+def test_post_generated_from_id() -> None:
+    class MyFactory(OdmanticModelFactory):
+        __model__ = MyModel
+
+        @post_generated
+        @classmethod
+        def name(cls, id: ObjectId) -> str:
+            return f"{cls.__faker__.name()} [{id.generation_time}]"
+
+    MyFactory.build()

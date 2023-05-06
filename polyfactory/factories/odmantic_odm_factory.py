@@ -5,7 +5,6 @@ from typing import TYPE_CHECKING, Any, Callable, Generic, TypeVar, Union
 
 from polyfactory.exceptions import MissingDependencyException
 from polyfactory.factories.pydantic_factory import ModelFactory
-from polyfactory.fields import Ignore
 from polyfactory.utils.predicates import is_safe_subclass
 from polyfactory.value_generators.primitives import create_random_bytes
 
@@ -35,8 +34,6 @@ class OdmanticModelFactory(Generic[T], ModelFactory[T]):
         :returns: A typeguard
         """
         return is_safe_subclass(value, Model) or is_safe_subclass(value, EmbeddedModel)
-
-    id = Ignore()
 
     @classmethod
     def get_provider_map(cls) -> dict[Any, Callable[[], Any]]:
