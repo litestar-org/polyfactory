@@ -78,6 +78,19 @@ def test_handles_complex_typing_with_embedded_models() -> None:
     assert result.person_list[0].pets
 
 
+def test_handles_complex_typing_with_custom_root_type() -> None:
+    class MyModel(BaseModel):
+        __root__: List[int]
+
+    class MyFactory(ModelFactory[MyModel]):
+        __model__ = MyModel
+
+    result = MyFactory.build()
+
+    assert result.__root__
+    assert isinstance(result.__root__, list)
+
+
 def test_raises_for_user_defined_types() -> None:
     class MyClass:
         def __init__(self, value: int):
