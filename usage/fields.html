@@ -54,7 +54,7 @@
     <link rel="shortcut icon" href="../_static/favicon.png"/>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="next" title="Pytest fixtures" href="fixtures.html" />
+    <link rel="next" title="The post_generated decorator" href="decorators.html" />
     <link rel="prev" title="Factory Configuration" href="configuration.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
@@ -650,6 +650,7 @@ document.write(`
 <li class="toctree-l2"><a class="reference internal" href="declaring_factories.html">Declaring Factories</a></li>
 <li class="toctree-l2"><a class="reference internal" href="configuration.html">Factory Configuration</a></li>
 <li class="toctree-l2 current active"><a class="current reference internal" href="#">Factory Fields</a></li>
+<li class="toctree-l2"><a class="reference internal" href="decorators.html">The <code class="docutils literal notranslate"><span class="pre">post_generated</span></code> decorator</a></li>
 <li class="toctree-l2"><a class="reference internal" href="fixtures.html">Pytest fixtures</a></li>
 <li class="toctree-l2"><a class="reference internal" href="handling_custom_types.html">Handling Custom Types</a></li>
 </ul>
@@ -668,6 +669,7 @@ document.write(`
 </li>
 <li class="toctree-l2"><a class="reference internal" href="../reference/field_meta.html">field_meta</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../reference/fields.html">fields</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../reference/decorators.html">decorators</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../reference/persistence.html">persistence</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../reference/pytest_plugin.html">pytest_plugin</a></li>
 <li class="toctree-l2 has-children"><a class="reference internal" href="../reference/value_generators/index.html">value_generators</a><input class="toctree-checkbox" id="toctree-checkbox-4" name="toctree-checkbox-4" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-4"><i class="fa-solid fa-chevron-down"></i></label><ul>
@@ -1090,7 +1092,7 @@ the PostGenerated helper is provided. For example:</p>
 
 <span class="k">def</span> <span class="nf">test_post_generated</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
     <span class="n">date_range_instance</span> <span class="o">=</span> <span class="n">DatetimeRangeFactory</span><span class="o">.</span><span class="n">build</span><span class="p">()</span>
-    <span class="k">assert</span> <span class="n">date_range_instance</span><span class="o">.</span><span class="n">to_dt</span><span class="o">.</span><span class="n">day</span> <span class="o">==</span> <span class="n">date_range_instance</span><span class="o">.</span><span class="n">from_dt</span><span class="o">.</span><span class="n">day</span> <span class="o">+</span> <span class="mi">1</span>
+    <span class="k">assert</span> <span class="n">date_range_instance</span><span class="o">.</span><span class="n">to_dt</span> <span class="o">==</span> <span class="n">date_range_instance</span><span class="o">.</span><span class="n">from_dt</span> <span class="o">+</span> <span class="n">timedelta</span><span class="p">(</span><span class="n">days</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
@@ -1121,11 +1123,11 @@ name in the values dictionary.</p>
       </div>
     </a>
     <a class="right-next"
-       href="fixtures.html"
+       href="decorators.html"
        title="next page">
       <div class="prev-next-info">
         <p class="prev-next-subtitle">next</p>
-        <p class="prev-next-title">Pytest fixtures</p>
+        <p class="prev-next-title">The <code class="docutils literal notranslate"><span class="pre">post_generated</span></code> decorator</p>
       </div>
       <i class="fa-solid fa-angle-right"></i>
     </a>

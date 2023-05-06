@@ -9,5 +9,6 @@ Usage Guide
     declaring_factories
     configuration
     fields
+    decorators
     fixtures
     handling_custom_types

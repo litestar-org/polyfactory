@@ -650,6 +650,7 @@ document.write(`
 <li class="toctree-l2"><a class="reference internal" href="../../usage/declaring_factories.html">Declaring Factories</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../usage/configuration.html">Factory Configuration</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../usage/fields.html">Factory Fields</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../usage/decorators.html">The <code class="docutils literal notranslate"><span class="pre">post_generated</span></code> decorator</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../usage/fixtures.html">Pytest fixtures</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../usage/handling_custom_types.html">Handling Custom Types</a></li>
 </ul>
@@ -668,6 +669,7 @@ document.write(`
 </li>
 <li class="toctree-l2"><a class="reference internal" href="../field_meta.html">field_meta</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../fields.html">fields</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../decorators.html">decorators</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../persistence.html">persistence</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../pytest_plugin.html">pytest_plugin</a></li>
 <li class="toctree-l2 has-children"><a class="reference internal" href="../value_generators/index.html">value_generators</a><input class="toctree-checkbox" id="toctree-checkbox-4" name="toctree-checkbox-4" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-4"><i class="fa-solid fa-chevron-down"></i></label><ul>
@@ -829,6 +831,38 @@ model. This is supported only for pydantic models.</p></li>
 </dl>
 </dd></dl>
 
+<dl class="py method">
+<dt class="sig sig-object py" id="polyfactory.factories.pydantic_factory.ModelFactory.is_custom_root_field">
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">is_custom_root_field</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">field_meta</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="../field_meta.html#polyfactory.field_meta.FieldMeta" title="polyfactory.field_meta.FieldMeta"><span class="pre">FieldMeta</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.11)"><span class="pre">bool</span></a></span></span><a class="headerlink" href="#polyfactory.factories.pydantic_factory.ModelFactory.is_custom_root_field" title="Permalink to this definition">#</a></dt>
+<dd><p>Determine whether the field is a custom root field.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>field_meta</strong> – FieldMeta instance.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>A boolean determining whether the field is a custom root.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="polyfactory.factories.pydantic_factory.ModelFactory.should_set_field_value">
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">should_set_field_value</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">field_meta</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="../field_meta.html#polyfactory.field_meta.FieldMeta" title="polyfactory.field_meta.FieldMeta"><span class="pre">FieldMeta</span></a></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Any" title="(in Python v3.11)"><span class="pre">Any</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.11)"><span class="pre">bool</span></a></span></span><a class="headerlink" href="#polyfactory.factories.pydantic_factory.ModelFactory.should_set_field_value" title="Permalink to this definition">#</a></dt>
+<dd><p>Determine whether to set a value for a given field_name.
+This is an override of BaseFactory.should_set_field_value.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>field_meta</strong> – FieldMeta instance.</p></li>
+<li><p><strong>kwargs</strong> – Any kwargs passed to the factory.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>A boolean determining whether a value should be set for the given field_meta.</p>
+</dd>
+</dl>
+</dd></dl>
+
 </dd></dl>
 
 </section>
@@ -889,6 +923,8 @@ model. This is supported only for pydantic models.</p></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#polyfactory.factories.pydantic_factory.ModelFactory.is_supported_type"><code class="docutils literal notranslate"><span class="pre">ModelFactory.is_supported_type()</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#polyfactory.factories.pydantic_factory.ModelFactory.get_model_fields"><code class="docutils literal notranslate"><span class="pre">ModelFactory.get_model_fields()</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#polyfactory.factories.pydantic_factory.ModelFactory.build"><code class="docutils literal notranslate"><span class="pre">ModelFactory.build()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#polyfactory.factories.pydantic_factory.ModelFactory.is_custom_root_field"><code class="docutils literal notranslate"><span class="pre">ModelFactory.is_custom_root_field()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#polyfactory.factories.pydantic_factory.ModelFactory.should_set_field_value"><code class="docutils literal notranslate"><span class="pre">ModelFactory.should_set_field_value()</span></code></a></li>
 </ul>
 </li>
 </ul>

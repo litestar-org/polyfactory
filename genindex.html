@@ -643,6 +643,7 @@ document.write(`
 <li class="toctree-l2"><a class="reference internal" href="usage/declaring_factories.html">Declaring Factories</a></li>
 <li class="toctree-l2"><a class="reference internal" href="usage/configuration.html">Factory Configuration</a></li>
 <li class="toctree-l2"><a class="reference internal" href="usage/fields.html">Factory Fields</a></li>
+<li class="toctree-l2"><a class="reference internal" href="usage/decorators.html">The <code class="docutils literal notranslate"><span class="pre">post_generated</span></code> decorator</a></li>
 <li class="toctree-l2"><a class="reference internal" href="usage/fixtures.html">Pytest fixtures</a></li>
 <li class="toctree-l2"><a class="reference internal" href="usage/handling_custom_types.html">Handling Custom Types</a></li>
 </ul>
@@ -661,6 +662,7 @@ document.write(`
 </li>
 <li class="toctree-l2"><a class="reference internal" href="reference/field_meta.html">field_meta</a></li>
 <li class="toctree-l2"><a class="reference internal" href="reference/fields.html">fields</a></li>
+<li class="toctree-l2"><a class="reference internal" href="reference/decorators.html">decorators</a></li>
 <li class="toctree-l2"><a class="reference internal" href="reference/persistence.html">persistence</a></li>
 <li class="toctree-l2"><a class="reference internal" href="reference/pytest_plugin.html">pytest_plugin</a></li>
 <li class="toctree-l2 has-children"><a class="reference internal" href="reference/value_generators/index.html">value_generators</a><input class="toctree-checkbox" id="toctree-checkbox-4" name="toctree-checkbox-4" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-4"><i class="fa-solid fa-chevron-down"></i></label><ul>
@@ -733,9 +735,11 @@ document.write(`
   <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="reference/value_generators/constrained_numbers.html#polyfactory.value_generators.constrained_numbers.NumberGeneratorProtocol.__call__">__call__() (polyfactory.value_generators.constrained_numbers.NumberGeneratorProtocol method)</a>
 </li>
-      <li><a href="reference/field_meta.html#polyfactory.field_meta.FieldMeta.__init__">__init__() (polyfactory.field_meta.FieldMeta method)</a>
+      <li><a href="reference/decorators.html#polyfactory.decorators.post_generated.__init__">__init__() (polyfactory.decorators.post_generated method)</a>
 
       <ul>
+        <li><a href="reference/field_meta.html#polyfactory.field_meta.FieldMeta.__init__">(polyfactory.field_meta.FieldMeta method)</a>
+</li>
         <li><a href="reference/fields.html#polyfactory.fields.Fixture.__init__">(polyfactory.fields.Fixture method)</a>
 </li>
         <li><a href="reference/fields.html#polyfactory.fields.PostGenerated.__init__">(polyfactory.fields.PostGenerated method)</a>
@@ -901,23 +905,23 @@ document.write(`
 <h2 id="H">H</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="reference/value_generators/complex_types.html#polyfactory.value_generators.complex_types.handle_collection_type">handle_collection_type() (in module polyfactory.value_generators.complex_types)</a>
+</li>
       <li><a href="reference/value_generators/complex_types.html#polyfactory.value_generators.complex_types.handle_complex_type">handle_complex_type() (in module polyfactory.value_generators.complex_types)</a>
 </li>
       <li><a href="reference/value_generators/constrained_collections.html#polyfactory.value_generators.constrained_collections.handle_constrained_collection">handle_constrained_collection() (in module polyfactory.value_generators.constrained_collections)</a>
 </li>
       <li><a href="reference/value_generators/constrained_dates.html#polyfactory.value_generators.constrained_dates.handle_constrained_date">handle_constrained_date() (in module polyfactory.value_generators.constrained_dates)</a>
 </li>
-      <li><a href="reference/value_generators/constrained_numbers.html#polyfactory.value_generators.constrained_numbers.handle_constrained_decimal">handle_constrained_decimal() (in module polyfactory.value_generators.constrained_numbers)</a>
-</li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="reference/value_generators/constrained_numbers.html#polyfactory.value_generators.constrained_numbers.handle_constrained_decimal">handle_constrained_decimal() (in module polyfactory.value_generators.constrained_numbers)</a>
+</li>
       <li><a href="reference/value_generators/constrained_numbers.html#polyfactory.value_generators.constrained_numbers.handle_constrained_float">handle_constrained_float() (in module polyfactory.value_generators.constrained_numbers)</a>
 </li>
       <li><a href="reference/value_generators/constrained_numbers.html#polyfactory.value_generators.constrained_numbers.handle_constrained_int">handle_constrained_int() (in module polyfactory.value_generators.constrained_numbers)</a>
 </li>
       <li><a href="reference/value_generators/constrained_strings.html#polyfactory.value_generators.constrained_strings.handle_constrained_string_or_bytes">handle_constrained_string_or_bytes() (in module polyfactory.value_generators.constrained_strings)</a>
-</li>
-      <li><a href="reference/value_generators/complex_types.html#polyfactory.value_generators.complex_types.handle_container_type">handle_container_type() (in module polyfactory.value_generators.complex_types)</a>
 </li>
       <li><a href="reference/value_generators/constrained_numbers.html#polyfactory.value_generators.constrained_numbers.handle_decimal_length">handle_decimal_length() (in module polyfactory.value_generators.constrained_numbers)</a>
 </li>
@@ -930,6 +934,8 @@ document.write(`
       <li><a href="reference/fields.html#polyfactory.fields.Ignore">Ignore (class in polyfactory.fields)</a>
 </li>
       <li><a href="reference/factories/base.html#polyfactory.factories.base.BaseFactory.is_batch_factory_type">is_batch_factory_type() (polyfactory.factories.base.BaseFactory class method)</a>
+</li>
+      <li><a href="reference/factories/pydantic_factory.html#polyfactory.factories.pydantic_factory.ModelFactory.is_custom_root_field">is_custom_root_field() (polyfactory.factories.pydantic_factory.ModelFactory class method)</a>
 </li>
       <li><a href="reference/factories/base.html#polyfactory.factories.base.is_factory">is_factory() (in module polyfactory.factories.base)</a>
 </li>
@@ -974,6 +980,8 @@ document.write(`
 
       <ul>
         <li><a href="reference/constants.html#module-polyfactory.constants">polyfactory.constants</a>
+</li>
+        <li><a href="reference/decorators.html#module-polyfactory.decorators">polyfactory.decorators</a>
 </li>
         <li><a href="reference/exceptions.html#module-polyfactory.exceptions">polyfactory.exceptions</a>
 </li>
@@ -1045,6 +1053,13 @@ document.write(`
 
       <ul>
         <li><a href="reference/constants.html#module-polyfactory.constants">module</a>
+</li>
+      </ul></li>
+      <li>
+    polyfactory.decorators
+
+      <ul>
+        <li><a href="reference/decorators.html#module-polyfactory.decorators">module</a>
 </li>
       </ul></li>
       <li>
@@ -1168,6 +1183,8 @@ document.write(`
         <li><a href="reference/value_generators/primitives.html#module-polyfactory.value_generators.primitives">module</a>
 </li>
       </ul></li>
+      <li><a href="reference/decorators.html#polyfactory.decorators.post_generated">post_generated (class in polyfactory.decorators)</a>
+</li>
       <li><a href="reference/fields.html#polyfactory.fields.PostGenerated">PostGenerated (class in polyfactory.fields)</a>
 </li>
       <li><a href="reference/factories/base.html#polyfactory.factories.base.BaseFactory.process_kwargs">process_kwargs() (polyfactory.factories.base.BaseFactory class method)</a>
@@ -1213,7 +1230,11 @@ document.write(`
       <li><a href="reference/factories/base.html#polyfactory.factories.base.BaseFactory.seed_random">seed_random() (polyfactory.factories.base.BaseFactory class method)</a>
 </li>
       <li><a href="reference/factories/base.html#polyfactory.factories.base.BaseFactory.should_set_field_value">should_set_field_value() (polyfactory.factories.base.BaseFactory class method)</a>
+
+      <ul>
+        <li><a href="reference/factories/pydantic_factory.html#polyfactory.factories.pydantic_factory.ModelFactory.should_set_field_value">(polyfactory.factories.pydantic_factory.ModelFactory class method)</a>
 </li>
+      </ul></li>
       <li><a href="reference/factories/base.html#polyfactory.factories.base.BaseFactory.should_set_none_value">should_set_none_value() (polyfactory.factories.base.BaseFactory class method)</a>
 </li>
       <li><a href="reference/persistence.html#polyfactory.persistence.SyncPersistenceProtocol">SyncPersistenceProtocol (class in polyfactory.persistence)</a>
