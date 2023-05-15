@@ -64,7 +64,7 @@ def handle_complex_type(field_meta: FieldMeta, factory: type[BaseFactory]) -> An
         return factory.get_mock_value(origin)
 
     if is_union(field_meta.annotation) and field_meta.children:
-        return handle_complex_type(factory.__random__.choice(field_meta.children), factory)
+        return factory.get_field_value(factory.__random__.choice(field_meta.children))
 
     if is_any(field_meta.annotation) or isinstance(field_meta.annotation, TypeVar):
         return create_random_string(factory.__random__, min_length=1, max_length=10)
