@@ -491,29 +491,6 @@ class BaseFactory(ABC, Generic[T]):
         }
 
     @classmethod
-    def get_mock_value(cls, annotation: type) -> Any:
-        """Return a mock value for a given type.
-
-        :param annotation: An arbitrary type.
-        :returns: An arbitrary value.
-
-        """
-
-        if handler := cls.get_provider_map().get(annotation):
-            return handler()
-
-        if callable(annotation):
-            # if value is a callable we can try to naively call it.
-            # this will work for callables that do not require any parameters passed
-            with suppress(Exception):
-                return annotation()
-
-        raise ParameterException(
-            f"Unsupported type: {annotation!r}"
-            f"\n\nEither extend the providers map or add a factory function for this type."
-        )
-
-    @classmethod
     def create_factory(
         cls,
         model: type,
@@ -687,7 +664,19 @@ class BaseFactory(ABC, Generic[T]):
         if is_any(unwrapped_annotation) or isinstance(unwrapped_annotation, TypeVar):
             return create_random_string(cls.__random__, min_length=1, max_length=10)
 
-        return cls.get_mock_value(annotation=unwrapped_annotation)
+        if provider := cls.get_provider_map().get(unwrapped_annotation):
+            return provider()
+
+        if callable(unwrapped_annotation):
+            # if value is a callable we can try to naively call it.
+            # this will work for callables that do not require any parameters passed
+            with suppress(Exception):
+                return unwrapped_annotation()
+
+        raise ParameterException(
+            f"Unsupported type: {unwrapped_annotation!r}"
+            f"\n\nEither extend the providers map or add a factory function for this type."
+        )
 
     @classmethod
     def should_set_none_value(cls, field_meta: FieldMeta) -> bool:
