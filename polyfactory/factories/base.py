@@ -28,6 +28,7 @@ from typing import (
     Any,
     Callable,
     ClassVar,
+    Collection,
     Generic,
     Mapping,
     Sequence,
@@ -49,11 +50,13 @@ from polyfactory.fields import Fixture, Ignore, PostGenerated, Require, Use
 from polyfactory.utils.helpers import unwrap_annotation, unwrap_args, unwrap_optional
 from polyfactory.utils.predicates import (
     get_type_origin,
+    is_any,
     is_literal,
     is_optional_union,
     is_safe_subclass,
+    is_union,
 )
-from polyfactory.value_generators.complex_types import handle_complex_type
+from polyfactory.value_generators.complex_types import handle_collection_type
 from polyfactory.value_generators.constrained_collections import handle_constrained_collection
 from polyfactory.value_generators.constrained_dates import handle_constrained_date
 from polyfactory.value_generators.constrained_numbers import (
@@ -68,6 +71,7 @@ from polyfactory.value_generators.constrained_uuid import handle_constrained_uui
 from polyfactory.value_generators.primitives import (
     create_random_boolean,
     create_random_bytes,
+    create_random_string,
 )
 
 if TYPE_CHECKING:
@@ -498,9 +502,9 @@ class BaseFactory(ABC, Generic[T]):
         if handler := cls.get_provider_map().get(annotation):
             return handler()
 
-        if isclass(annotation):
-            # if value is a class we can try to naively instantiate it.
-            # this will work for classes that do not require any parameters passed to __init__
+        if callable(annotation):
+            # if value is a callable we can try to naively call it.
+            # this will work for callables that do not require any parameters passed
             with suppress(Exception):
                 return annotation()
 
@@ -674,8 +678,14 @@ class BaseFactory(ABC, Generic[T]):
                 return [factory.build(**field_parameters) for field_parameters in field_build_parameters]
             return factory.batch(size=cls.__random__.randint(1, 10))
 
-        if field_meta.children:
-            return handle_complex_type(field_meta=field_meta, factory=cls)
+        if (origin := get_type_origin(unwrapped_annotation)) and issubclass(origin, Collection):
+            return handle_collection_type(field_meta, origin, cls)
+
+        if is_union(field_meta.annotation) and field_meta.children:
+            return cls.get_field_value(cls.__random__.choice(field_meta.children))
+
+        if is_any(unwrapped_annotation) or isinstance(unwrapped_annotation, TypeVar):
+            return create_random_string(cls.__random__, min_length=1, max_length=10)
 
         return cls.get_mock_value(annotation=unwrapped_annotation)
 
