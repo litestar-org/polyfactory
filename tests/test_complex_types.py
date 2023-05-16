@@ -10,6 +10,7 @@ from typing import (
     Generic,
     Iterable,
     List,
+    Literal,
     Optional,
     Sequence,
     Set,
@@ -163,6 +164,16 @@ def test_complex_typing_with_enum() -> None:
 
     result = MyFactory.build()
     assert result.animal_list
+
+
+def test_union_literal() -> None:
+    class MyModel(BaseModel):
+        x: Union[int, Literal["a", "b", "c"]]
+
+    class MyFactory(ModelFactory):
+        __model__ = MyModel
+
+    MyFactory.build()
 
 
 def test_non_collection_generic() -> None:
