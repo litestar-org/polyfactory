@@ -2,7 +2,7 @@ from random import Random
 from typing import Optional
 
 import pytest
-from hypothesis import given
+from hypothesis import assume, given
 from hypothesis.strategies import integers
 from pydantic import ConstrainedInt
 
@@ -97,6 +97,25 @@ def test_handle_constrained_int_handles_lt(maximum: int) -> None:
         le=constrained_field.le,
     )
     assert result < maximum
+
+
+@given(
+    integers(min_value=1, max_value=10),
+    integers(min_value=1, max_value=10),
+)
+def test_handle_constrained_int_handles_ge_with_le(val1: int, val2: int) -> None:
+    min_value, max_value = sorted([val1, val2])
+    constrained_field = create_constrained_field(ge=min_value, le=max_value)
+    result = handle_constrained_int(
+        random=Random(),
+        multiple_of=constrained_field.multiple_of,
+        gt=constrained_field.gt,
+        ge=constrained_field.ge,
+        lt=constrained_field.lt,
+        le=constrained_field.le,
+    )
+    assert min_value <= result <= max_value
+    assume(result == max_value)
 
 
 @given(integers(min_value=-1000000000, max_value=1000000000))
