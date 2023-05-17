@@ -68,30 +68,37 @@ class PydanticFieldMeta(FieldMeta):
 
         name = model_field.alias if model_field.alias and use_alias else model_field.name
 
-        annotation = unwrap_new_type(
-            model_field.annotation if not isinstance(model_field.annotation, DeferredType) else model_field.outer_type_
+        outer_type = unwrap_new_type(model_field.outer_type_)
+        annotation = (
+            unwrap_new_type(model_field.annotation)
+            if not isinstance(model_field.annotation, DeferredType)
+            else outer_type
         )
 
         constraints = cast(
             "Constraints",
             {
                 "constant": bool(model_field.field_info.const) or None,
-                "ge": getattr(annotation, "ge", model_field.field_info.ge),
-                "gt": getattr(annotation, "gt", model_field.field_info.gt),
-                "le": getattr(annotation, "le", model_field.field_info.le),
-                "lt": getattr(annotation, "lt", model_field.field_info.lt),
-                "min_length": getattr(annotation, "min_length", model_field.field_info.min_length)
-                or getattr(annotation, "min_items", model_field.field_info.min_items),
-                "max_length": getattr(annotation, "max_length", model_field.field_info.max_length)
-                or getattr(annotation, "max_items", model_field.field_info.max_items),
-                "pattern": getattr(annotation, "regex", model_field.field_info.regex),
-                "unique_items": getattr(annotation, "unique_items", model_field.field_info.unique_items),
-                "decimal_places": getattr(annotation, "decimal_places", None),
-                "max_digits": getattr(annotation, "max_digits", None),
-                "multiple_of": getattr(annotation, "multiple_of", None),
-                "upper_case": getattr(annotation, "to_upper", None),
-                "lower_case": getattr(annotation, "to_lower", None),
-                "item_type": getattr(annotation, "item_type", None),
+                "ge": getattr(outer_type, "ge", model_field.field_info.ge),
+                "gt": getattr(outer_type, "gt", model_field.field_info.gt),
+                "le": getattr(outer_type, "le", model_field.field_info.le),
+                "lt": getattr(outer_type, "lt", model_field.field_info.lt),
+                "min_length": (
+                    getattr(outer_type, "min_length", model_field.field_info.min_length)
+                    or getattr(outer_type, "min_items", model_field.field_info.min_items)
+                ),
+                "max_length": (
+                    getattr(outer_type, "max_length", model_field.field_info.max_length)
+                    or getattr(outer_type, "max_items", model_field.field_info.max_items)
+                ),
+                "pattern": getattr(outer_type, "regex", model_field.field_info.regex),
+                "unique_items": getattr(outer_type, "unique_items", model_field.field_info.unique_items),
+                "decimal_places": getattr(outer_type, "decimal_places", None),
+                "max_digits": getattr(outer_type, "max_digits", None),
+                "multiple_of": getattr(outer_type, "multiple_of", None),
+                "upper_case": getattr(outer_type, "to_upper", None),
+                "lower_case": getattr(outer_type, "to_lower", None),
+                "item_type": getattr(outer_type, "item_type", None),
             },
         )
 

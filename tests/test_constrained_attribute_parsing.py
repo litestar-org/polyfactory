@@ -1,6 +1,6 @@
 import re
 from decimal import Decimal
-from typing import Dict, List, Tuple
+from typing import Dict, List, Optional, Tuple
 
 from pydantic import (
     BaseModel,
@@ -44,6 +44,7 @@ def test_constrained_attribute_parsing() -> None:
         decimal_field: Decimal = Field(ge=100, le=1000)
         list_field: List[str] = Field(min_items=1, max_items=10)
         constant_field: int = Field(const=True, default=100)
+        optional_field: Optional[constr(min_length=1)]  # type: ignore[valid-type]
 
     class MyFactory(ModelFactory):
         __model__ = ConstrainedModel
@@ -83,6 +84,7 @@ def test_constrained_attribute_parsing() -> None:
     assert len(result.list_field) <= 10
     assert all(isinstance(r, str) for r in result.list_field)
     assert result.constant_field == 100
+    assert result.optional_field is None or len(result.optional_field) >= 1
 
 
 def test_complex_constrained_attribute_parsing() -> None:
