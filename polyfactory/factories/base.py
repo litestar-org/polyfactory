@@ -529,9 +529,20 @@ class BaseFactory(ABC, Generic[T]):
             is_safe_subclass(annotation, set)
             or is_safe_subclass(annotation, list)
             or is_safe_subclass(annotation, frozenset)
+            or is_safe_subclass(annotation, tuple)
         ):
-            result = handle_constrained_collection(
-                collection_type=list if is_safe_subclass(annotation, list) else set,  # pyright: ignore
+            collection_type: type[list] | type[set] | type[tuple] | type[frozenset]
+            if is_safe_subclass(annotation, list):
+                collection_type = list
+            elif is_safe_subclass(annotation, set):
+                collection_type = set
+            elif is_safe_subclass(annotation, tuple):
+                collection_type = tuple
+            else:
+                collection_type = frozenset
+
+            return handle_constrained_collection(
+                collection_type=collection_type,  # type: ignore
                 factory=cls,
                 field_meta=field_meta.children[0] if field_meta.children else field_meta,
                 item_type=constraints.get("item_type"),
@@ -539,7 +550,6 @@ class BaseFactory(ABC, Generic[T]):
                 min_items=constraints.get("min_length"),
                 unique_items=constraints.get("unique_items", False),
             )
-            return frozenset(result) if is_safe_subclass(annotation, frozenset) else result
 
         if is_safe_subclass(annotation, date):
             return handle_constrained_date(
