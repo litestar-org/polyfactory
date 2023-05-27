@@ -15,6 +15,9 @@ from ipaddress import (
     IPv6Address,
     IPv6Interface,
     IPv6Network,
+    ip_address,
+    ip_network,
+    ip_interface,
 )
 from os.path import realpath
 from pathlib import Path
@@ -412,19 +415,19 @@ class BaseFactory(ABC, Generic[T]):
             # standard library objects
             Path: lambda: Path(realpath(__file__)),
             Decimal: cls.__faker__.pydecimal,
-            UUID: cls.__faker__.uuid4,
+            UUID: lambda: UUID(cls.__faker__.uuid4()),
             # datetime
             datetime: cls.__faker__.date_time_between,
             date: cls.__faker__.date_this_decade,
-            time: cls.__faker__.time,
+            time: cls.__faker__.time_object,
             timedelta: cls.__faker__.time_delta,
             # ip addresses
-            IPv4Address: cls.__faker__.ipv4,
-            IPv4Interface: cls.__faker__.ipv4,
-            IPv4Network: lambda: cls.__faker__.ipv4(network=True),
-            IPv6Address: cls.__faker__.ipv6,
-            IPv6Interface: cls.__faker__.ipv6,
-            IPv6Network: lambda: cls.__faker__.ipv6(network=True),
+            IPv4Address: lambda: ip_address(cls.__faker__.ipv4()),
+            IPv4Interface: lambda: ip_interface(cls.__faker__.ipv4()),
+            IPv4Network: lambda: ip_network(cls.__faker__.ipv4(network=True)),
+            IPv6Address: lambda: ip_address(cls.__faker__.ipv6()),
+            IPv6Interface: lambda: ip_interface(cls.__faker__.ipv6()),
+            IPv6Network: lambda: ip_network(cls.__faker__.ipv6(network=True)),
             # types
             Callable: _create_generic_fn,
             Counter: lambda: Counter(cls.__faker__.pystr()),
