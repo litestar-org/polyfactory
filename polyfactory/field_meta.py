@@ -46,13 +46,13 @@ class FieldMeta:
     constraints: Constraints | None
 
     def __init__(
-        self,
-        *,
-        name: str,
-        annotation: type,
-        default: Any = Null,
-        children: list[FieldMeta] | None = None,
-        constraints: Constraints | None = None,
+            self,
+            *,
+            name: str,
+            annotation: type,
+            default: Any = Null,
+            children: list[FieldMeta] | None = None,
+            constraints: Constraints | None = None,
     ):
         """Create a factory field metadata instance."""
         self.annotation = unwrap_new_type(annotation)
@@ -75,18 +75,22 @@ class FieldMeta:
 
     @classmethod
     def from_type(
-        cls, annotation: Any, name: str = "", default: Any = Null, constraints: Constraints | None = None
+            cls, annotation: Any, name: str = "", default: Any = Null, constraints: Constraints | None = None
     ) -> FieldMeta:
         """Builder method to create a FieldMeta from a type annotation.
 
         :param annotation: A type annotation.
         :param name: Field name
         :param default: Default value, if any.
+        :param constraints: A dictionary of constraints, if any.
 
         :returns: A field meta instance.
         """
-        field = FieldMeta(
-            annotation=unwrap_new_type(annotation), name=name, default=default, children=None, constraints=constraints
+
+        field = cls(
+            annotation=TYPE_MAPPING[unwrap_new_type(annotation)] if unwrap_new_type(
+                annotation) in TYPE_MAPPING else unwrap_new_type(annotation), name=name, default=default, children=None,
+            constraints=constraints
         )
         if field.type_args:
             field.children = [FieldMeta.from_type(annotation=unwrap_new_type(arg)) for arg in field.type_args]

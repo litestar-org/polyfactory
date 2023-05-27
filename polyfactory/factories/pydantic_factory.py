@@ -10,18 +10,19 @@ from typing import (
     Mapping,
     TypeVar,
     cast,
+    Literal,
 )
 
 from polyfactory.exceptions import MissingDependencyException
 from polyfactory.factories.base import BaseFactory
-from polyfactory.field_meta import Constraints, FieldMeta, Null
+from polyfactory.field_meta import FieldMeta, Null, Constraints
 from polyfactory.utils.helpers import unwrap_new_type
 
 try:
     from pydantic import (
         BaseModel,
     )
-    from pydantic.fields import Undefined
+    from pydantic.fields import Undefined, FieldInfo
 
 except ImportError as e:
     raise MissingDependencyException("pydantic is not installed") from e
@@ -36,10 +37,8 @@ except ImportError:
     ModelField = Any  # type: ignore
     DeferredType = Any  # type: ignore
 
-
 if TYPE_CHECKING:
     from typing_extensions import TypeGuard
-    from typing import Literal
 
 T = TypeVar("T", bound=BaseModel)
 
@@ -62,6 +61,68 @@ def is_pydantic_model(value: Any) -> "TypeGuard[type[BaseModel]]":
 
 class PydanticFieldMeta(FieldMeta):
     """Field meta subclass capable of handling pydantic ModelFields"""
+
+    @classmethod
+    def from_field_info(cls, field_name: str, field_info: FieldInfo, use_alias: bool) -> PydanticFieldMeta:
+        import annotated_types
+        from pydantic._internal._fields import PydanticGeneralMetadata
+
+        if callable(field_info.default_factory):
+            default_value = field_info.default_factory()
+        else:
+            default_value = field_info.default if field_info.default is not Undefined else Null
+
+        name = field_info.alias if field_info.alias and use_alias else field_name
+
+        annotation = unwrap_new_type(field_info.annotation)
+
+        constraints = {}
+
+        for key, annotated_type in [
+            ("ge", annotated_types.Ge),
+            ("le", annotated_types.Le),
+            ("lt", annotated_types.Lt),
+            ("gt", annotated_types.Gt),
+            ("min_length", (annotated_types.MinLen, annotated_types.Len)),
+            ("max_length", (annotated_types.MaxLen, annotated_types.Len)),
+            ("multiple_of", annotated_types.MultipleOf),
+            ("pattern", PydanticGeneralMetadata),
+            ("max_digits", PydanticGeneralMetadata),
+            ("decimal_places", PydanticGeneralMetadata),
+            # deprecated
+            ("min_items", (annotated_types.MinLen, annotated_types.Len)),
+            ("max_items", (annotated_types.MaxLen, annotated_types.Len)),
+            # pydantic 2 only constraints
+            ("strict", PydanticGeneralMetadata),
+            ("allow_inf_nan", PydanticGeneralMetadata),
+        ]:
+            if metadata := [v for v in field_info.metadata if isinstance(v, annotated_type)]:
+                constraint = metadata[0]
+                if isinstance(metadata[0], PydanticGeneralMetadata):
+                    constraints[key] = constraint.__dict__.get(key, None)
+                elif key not in ["min_items", "max_items"]:
+                    constraints[key] = getattr(constraint, key)
+                else:
+                    constraints[key] = getattr(constraint, "min_length" if key == "min_items" else "max_length")
+
+        constraints = cast(
+            "Constraints",
+            {
+                **constraints,
+                "constant": None,
+                "unique_items": None,
+                "upper_case": None,
+                "lower_case": None,
+                "item_type": None,
+            },
+        )
+
+        return PydanticFieldMeta.from_type(
+            name=name,
+            annotation=annotation,
+            default=default_value,
+            constraints=cast("Constraints", {k: v for k, v in constraints.items() if v is not None}) or None,
+        )
 
     @classmethod
     def from_model_field(cls, model_field: ModelField, use_alias: bool) -> PydanticFieldMeta:
@@ -171,7 +232,14 @@ class ModelFactory(Generic[T], BaseFactory[T]):
                     for field in cls.__model__.__fields__.values()
                 ]
             else:
-                cls._fields_metadata = []
+                cls._fields_metadata = [
+                    PydanticFieldMeta.from_field_info(
+                        field_name=field_name,
+                        field_info=field_info,
+                        use_alias=not cls.__model__.model_config.get("populate_by_name", False),
+                    )
+                    for field_name, field_info in cls.__model__.model_fields.items()
+                ]
         return cls._fields_metadata
 
     @classmethod
@@ -188,7 +256,7 @@ class ModelFactory(Generic[T], BaseFactory[T]):
         processed_kwargs = cls.process_kwargs(**kwargs)
 
         if factory_use_construct:
-            return cls.__model__.construct(**processed_kwargs)
+            return cls.__model__.model_construct(**processed_kwargs) if hasattr(cls.__model__, "model_construct") else cls.__model__.constuct(**processed_kwargs)
 
         return cls.__model__(**processed_kwargs)
 

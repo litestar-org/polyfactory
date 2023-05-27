@@ -82,7 +82,7 @@ def _create_pydantic_type_map(cls: "type[BaseFactory]") -> dict[type, Callable[[
     try:
         import pydantic
 
-        return {
+        mapping = {
             pydantic.ByteSize: cls.__faker__.pyint,
             pydantic.PositiveInt: cls.__faker__.pyint,
             pydantic.FilePath: lambda: Path(realpath(__file__)),
@@ -99,8 +99,7 @@ def _create_pydantic_type_map(cls: "type[BaseFactory]") -> dict[type, Callable[[
             pydantic.DirectoryPath: lambda: Path(realpath(__file__)).parent,
             pydantic.EmailStr: cls.__faker__.free_email,
             pydantic.NameEmail: cls.__faker__.free_email,
-            pydantic.PyObject: lambda: "decimal.Decimal",  # type: ignore[dict-item]
-            pydantic.color.Color: cls.__faker__.hex_color,  # pyright: ignore
+            pydantic.color.Color: cls.__faker__.hex_color,
             pydantic.Json: cls.__faker__.json,
             pydantic.PaymentCardNumber: cls.__faker__.credit_card_number,
             pydantic.AnyUrl: cls.__faker__.url,
@@ -123,7 +122,18 @@ def _create_pydantic_type_map(cls: "type[BaseFactory]") -> dict[type, Callable[[
             pydantic.FutureDate: cls.__faker__.future_date,
         }
     except ImportError:
-        return {}
+        mapping = {}
+
+    try:
+        from pydantic import PyObject
+
+        mapping[PyObject] = lambda: "decimal.Decimal"
+    except ImportError:
+        from pydantic_core import MultiHostUrl
+
+        mapping[MultiHostUrl] = cls.__faker__.url
+
+    return mapping
 
 
 T = TypeVar("T")
