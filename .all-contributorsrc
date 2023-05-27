@@ -81,6 +81,15 @@
       "contributions": [
         "doc"
       ]
+    },
+    {
+      "login": "guacs",
+      "name": "guacs",
+      "avatar_url": "https://avatars.githubusercontent.com/u/126393040?v=4",
+      "profile": "https://github.com/guacs",
+      "contributions": [
+        "code"
+      ]
     }
   ],
   "contributorsPerLine": 7,
@@ -88,5 +97,6 @@
   "repoType": "github",
   "repoHost": "https://github.com",
   "projectName": "polyfactory",
-  "projectOwner": "litestar-org"
+  "projectOwner": "litestar-org",
+  "commitType": "docs"
 }
