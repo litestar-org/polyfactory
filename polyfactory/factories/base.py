@@ -580,7 +580,7 @@ class BaseFactory(ABC, Generic[T]):
             return cls.__random__.choice(list(unwrapped_annotation))  # pyright: ignore
 
         if field_meta.constraints and (
-            unwrapped_annotation in (float, int, Decimal, str, list, tuple, set, frozenset)
+            unwrapped_annotation in (float, int, Decimal, bytes, str, list, tuple, set, frozenset, date)
             or unwrapped_annotation not in cls.get_provider_map()
         ):
             return cls.get_constrained_field_value(annotation=unwrapped_annotation, field_meta=field_meta)
