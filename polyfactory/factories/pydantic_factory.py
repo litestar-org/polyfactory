@@ -21,13 +21,25 @@ try:
     from pydantic import (
         BaseModel,
     )
-    from pydantic.fields import DeferredType, ModelField, Undefined
+    from pydantic.fields import Undefined
+
 except ImportError as e:
     raise MissingDependencyException("pydantic is not installed") from e
+
+try:
+    from pydantic.fields import DeferredType, ModelField
+
+    pydantic_version: Literal[1, 2] = 1
+except ImportError:
+    pydantic_version = 2
+
+    ModelField = Any  # type: ignore
+    DeferredType = Any  # type: ignore
 
 
 if TYPE_CHECKING:
     from typing_extensions import TypeGuard
+    from typing import Literal
 
 T = TypeVar("T", bound=BaseModel)
 
@@ -150,13 +162,16 @@ class ModelFactory(Generic[T], BaseFactory[T]):
 
         """
         if "_fields_metadata" not in cls.__dict__:
-            cls._fields_metadata = [
-                PydanticFieldMeta.from_model_field(
-                    field,
-                    use_alias=not cls.__model__.__config__.allow_population_by_field_name,
-                )
-                for field in cls.__model__.__fields__.values()
-            ]
+            if pydantic_version == 1:
+                cls._fields_metadata = [
+                    PydanticFieldMeta.from_model_field(
+                        field,
+                        use_alias=not cls.__model__.__config__.allow_population_by_field_name,
+                    )
+                    for field in cls.__model__.__fields__.values()
+                ]
+            else:
+                cls._fields_metadata = []
         return cls._fields_metadata
 
     @classmethod
