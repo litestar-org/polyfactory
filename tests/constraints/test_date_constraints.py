@@ -2,11 +2,21 @@ from datetime import date, timedelta
 from typing import Dict, Optional
 
 import pytest
-from hypothesis import given
-from hypothesis.strategies import dates
+
 from pydantic import BaseModel, condate
 
 from polyfactory.factories.pydantic_factory import ModelFactory
+
+# FIXME: issue due to pydantic v2 removing the hypothesis plugin.
+try:
+    from hypothesis import given
+    from hypothesis.strategies import dates
+
+except ImportError:
+    given = None  # type: ignore
+    dates = None  # type: ignore
+
+    pytest.importorskip("hypothesis")
 
 
 @given(

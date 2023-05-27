@@ -1,9 +1,15 @@
 from typing import Generic, List, Optional, TypeVar, Union
 
 from pydantic import BaseModel
-from pydantic.generics import GenericModel
+
 
 from polyfactory.factories.pydantic_factory import ModelFactory
+
+try:
+    from pydantic.generics import GenericModel
+except ImportError:
+    GenericModel = BaseModel  # type: ignore
+
 
 Inner = TypeVar("Inner")
 APIResponseData = TypeVar("APIResponseData")

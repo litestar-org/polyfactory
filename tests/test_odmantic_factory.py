@@ -5,10 +5,15 @@ from uuid import UUID
 import bson
 import pytest
 from bson import ObjectId
-from odmantic import AIOEngine, EmbeddedModel, Model
 
 from polyfactory.decorators import post_generated
-from polyfactory.factories.odmantic_odm_factory import OdmanticModelFactory
+
+try:
+    from odmantic import AIOEngine, EmbeddedModel, Model
+    from polyfactory.factories.odmantic_odm_factory import OdmanticModelFactory
+except ImportError:
+    AIOEngine, EmbeddedModel, Model, OdmanticModelFactory = None, None, None, None  # type: ignore
+    pytest.importorskip("odmantic")
 
 
 class OtherEmbeddedDocument(EmbeddedModel):

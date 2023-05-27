@@ -3,8 +3,7 @@ import sys
 from decimal import Decimal
 from typing import Any, NewType, Union
 
-from hypothesis import given
-from hypothesis.strategies import decimals, floats, integers
+
 from pydantic import BaseModel
 
 from polyfactory.factories.pydantic_factory import ModelFactory
@@ -13,6 +12,20 @@ from polyfactory.utils.predicates import is_new_type, is_union
 from polyfactory.value_generators.constrained_numbers import (
     is_multiply_of_multiple_of_in_range,
 )
+
+# FIXME: issue due to pydantic v2 removing the hypothesis plugin.
+try:
+    from hypothesis import given
+    from hypothesis.strategies import decimals, floats, integers
+
+    allow_hypothesis = True
+except ImportError:
+    given = None  # type: ignore
+    decimals = None  # type: ignore
+    floats = None  # type: ignore
+    integers = None  # type: ignore
+
+    allow_hypothesis = False
 
 
 def test_is_union() -> None:
@@ -84,65 +97,69 @@ def test_is_multiply_of_multiple_of_in_range_extreme_cases() -> None:
     )
 
 
-@given(
-    floats(allow_nan=False, allow_infinity=False, min_value=1e-6, max_value=1000000000),
-    integers(min_value=-100000, max_value=100000),
-)
-def test_is_multiply_of_multiple_of_in_range_for_floats(base_multiple_of: float, multiplier: int) -> None:
-    if multiplier != 0:
-        for multiple_of in [base_multiple_of, -base_multiple_of]:
-            minimum, maximum = sorted(
-                [
-                    multiplier * multiple_of + random.random() * 100,
-                    (multiplier + random.randint(1, 100)) * multiple_of + random.random() * 100,
-                ]
-            )
-            assert is_multiply_of_multiple_of_in_range(minimum=minimum, maximum=maximum, multiple_of=multiple_of)
+if allow_hypothesis:
 
-            minimum, maximum = sorted(
-                [
-                    (multiplier + (random.random() / 2 + 0.01)) * multiple_of,
-                    (multiplier + (random.random() / 2 + 0.45)) * multiple_of,
-                ]
-            )
-            assert not is_multiply_of_multiple_of_in_range(minimum=minimum, maximum=maximum, multiple_of=multiple_of)
+    @given(
+        floats(allow_nan=False, allow_infinity=False, min_value=1e-6, max_value=1000000000),
+        integers(min_value=-100000, max_value=100000),
+    )
+    def test_is_multiply_of_multiple_of_in_range_for_floats(base_multiple_of: float, multiplier: int) -> None:
+        if multiplier != 0:
+            for multiple_of in [base_multiple_of, -base_multiple_of]:
+                minimum, maximum = sorted(
+                    [
+                        multiplier * multiple_of + random.random() * 100,
+                        (multiplier + random.randint(1, 100)) * multiple_of + random.random() * 100,
+                    ]
+                )
+                assert is_multiply_of_multiple_of_in_range(minimum=minimum, maximum=maximum, multiple_of=multiple_of)
 
+                minimum, maximum = sorted(
+                    [
+                        (multiplier + (random.random() / 2 + 0.01)) * multiple_of,
+                        (multiplier + (random.random() / 2 + 0.45)) * multiple_of,
+                    ]
+                )
+                assert not is_multiply_of_multiple_of_in_range(
+                    minimum=minimum, maximum=maximum, multiple_of=multiple_of
+                )
 
-@given(
-    integers(min_value=-1000000000, max_value=1000000000),
-    integers(min_value=-100000, max_value=100000),
-)
-def test_is_multiply_of_multiple_of_in_range_for_int(base_multiple_of: int, multiplier: int) -> None:
-    if multiplier != 0 and base_multiple_of not in [-1, 0, 1]:
-        for multiple_of in [base_multiple_of, -base_multiple_of]:
-            minimum, maximum = sorted(
-                [
-                    multiplier * multiple_of + random.randint(1, 100),
-                    (multiplier + random.randint(1, 100)) * multiple_of + random.randint(1, 100),
-                ]
-            )
-            assert is_multiply_of_multiple_of_in_range(minimum=minimum, maximum=maximum, multiple_of=multiple_of)
+    @given(
+        integers(min_value=-1000000000, max_value=1000000000),
+        integers(min_value=-100000, max_value=100000),
+    )
+    def test_is_multiply_of_multiple_of_in_range_for_int(base_multiple_of: int, multiplier: int) -> None:
+        if multiplier != 0 and base_multiple_of not in [-1, 0, 1]:
+            for multiple_of in [base_multiple_of, -base_multiple_of]:
+                minimum, maximum = sorted(
+                    [
+                        multiplier * multiple_of + random.randint(1, 100),
+                        (multiplier + random.randint(1, 100)) * multiple_of + random.randint(1, 100),
+                    ]
+                )
+                assert is_multiply_of_multiple_of_in_range(minimum=minimum, maximum=maximum, multiple_of=multiple_of)
 
+    @given(
+        decimals(min_value=Decimal("1e-6"), max_value=Decimal("1000000000")),
+        integers(min_value=-100000, max_value=100000),
+    )
+    def test_is_multiply_of_multiple_of_in_range_for_decimals(base_multiple_of: Decimal, multiplier: int) -> None:
+        if multiplier != 0 and base_multiple_of != 0:
+            for multiple_of in [base_multiple_of, -base_multiple_of]:
+                minimum, maximum = sorted(
+                    [
+                        multiplier * multiple_of + Decimal(random.random() * 100),
+                        (multiplier + random.randint(1, 100)) * multiple_of + Decimal(random.random() * 100),
+                    ]
+                )
+                assert is_multiply_of_multiple_of_in_range(minimum=minimum, maximum=maximum, multiple_of=multiple_of)
 
-@given(
-    decimals(min_value=Decimal("1e-6"), max_value=Decimal("1000000000")),
-    integers(min_value=-100000, max_value=100000),
-)
-def test_is_multiply_of_multiple_of_in_range_for_decimals(base_multiple_of: Decimal, multiplier: int) -> None:
-    if multiplier != 0 and base_multiple_of != 0:
-        for multiple_of in [base_multiple_of, -base_multiple_of]:
-            minimum, maximum = sorted(
-                [
-                    multiplier * multiple_of + Decimal(random.random() * 100),
-                    (multiplier + random.randint(1, 100)) * multiple_of + Decimal(random.random() * 100),
-                ]
-            )
-            assert is_multiply_of_multiple_of_in_range(minimum=minimum, maximum=maximum, multiple_of=multiple_of)
-
-            minimum, maximum = sorted(
-                [
-                    (multiplier + Decimal(random.random() / 2 + 0.01)) * multiple_of,
-                    (multiplier + Decimal(random.random() / 2 + 0.45)) * multiple_of,
-                ]
-            )
-            assert not is_multiply_of_multiple_of_in_range(minimum=minimum, maximum=maximum, multiple_of=multiple_of)
+                minimum, maximum = sorted(
+                    [
+                        (multiplier + Decimal(random.random() / 2 + 0.01)) * multiple_of,
+                        (multiplier + Decimal(random.random() / 2 + 0.45)) * multiple_of,
+                    ]
+                )
+                assert not is_multiply_of_multiple_of_in_range(
+                    minimum=minimum, maximum=maximum, multiple_of=multiple_of
+                )

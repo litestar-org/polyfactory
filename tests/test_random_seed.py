@@ -9,7 +9,7 @@ from polyfactory.factories.pydantic_factory import ModelFactory
 def test_random_seed() -> None:
     class MyModel(BaseModel):
         id: int
-        special_id: str = Field(regex=r"ID-[1-9]{3}\.[1-9]{3}")
+        special_id: str = Field(pattern=r"ID-[1-9]{3}\.[1-9]{3}")
 
     class MyModelFactory(ModelFactory):
         __model__ = MyModel

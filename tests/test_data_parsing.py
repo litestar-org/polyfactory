@@ -47,7 +47,6 @@ from pydantic import (
     PositiveFloat,
     PositiveInt,
     PostgresDsn,
-    PyObject,
     RedisDsn,
     SecretBytes,
     SecretStr,
@@ -204,7 +203,6 @@ def test_type_property_parsing() -> None:
         DirectoryPath_pydantic_type: DirectoryPath
         EmailStr_pydantic_type: EmailStr
         NameEmail_pydantic_type: NameEmail
-        PyObject_pydantic_type: PyObject
         Color_pydantic_type: Color
         Json_pydantic_type: Json
         PaymentCardNumber_pydantic_type: PaymentCardNumber

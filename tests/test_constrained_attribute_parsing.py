@@ -2,13 +2,9 @@ import re
 from decimal import Decimal
 from typing import Dict, List, Optional, Tuple
 
+import pytest
 from pydantic import (
     BaseModel,
-    ConstrainedBytes,
-    ConstrainedDecimal,
-    ConstrainedFloat,
-    ConstrainedInt,
-    ConstrainedStr,
     Field,
     conbytes,
     condecimal,
@@ -20,7 +16,7 @@ from pydantic import (
     constr,
 )
 
-from polyfactory.factories.pydantic_factory import ModelFactory
+from polyfactory.factories.pydantic_factory import ModelFactory, pydantic_version
 from tests.models import Person
 
 pattern = r"(a|b|c)zz"
@@ -90,7 +86,9 @@ def test_constrained_attribute_parsing() -> None:
 def test_complex_constrained_attribute_parsing() -> None:
     class MyModel(BaseModel):
         conlist_with_model_field: conlist(Person, min_items=3)  # type: ignore[valid-type]
-        conlist_with_complex_type: conlist(Dict[str, Tuple[Person, Person, Person]], min_items=1)  # type: ignore[valid-type]
+        conlist_with_complex_type: conlist(  # type: ignore[valid-type]
+            Dict[str, Tuple[Person, Person, Person]], min_items=1
+        )
 
     class MyFactory(ModelFactory):
         __model__ = MyModel
@@ -106,8 +104,18 @@ def test_complex_constrained_attribute_parsing() -> None:
     assert all(isinstance(v, Person) for v in list(result.conlist_with_complex_type[0].values())[0])
 
 
-def test_nested_constrained_attribute_handling() -> None:
+@pytest.mark.skipif(pydantic_version == 2, "pydantic 1 only test")
+def test_nested_constrained_attribute_handling_pydantic_1() -> None:
     # subclassing the constrained fields is not documented by pydantic, but is supported apparently
+
+    from pydantic import (
+        ConstrainedBytes,
+        ConstrainedDecimal,
+        ConstrainedFloat,
+        ConstrainedInt,
+        ConstrainedStr,
+    )
+
     class MyConstrainedString(ConstrainedStr):
         regex = re.compile("^vpc-.*$")
 
@@ -144,6 +152,19 @@ def test_nested_constrained_attribute_handling() -> None:
         my_int_dict_field: Dict[str, MyConstrainedInt]
         my_str_dict_field: Dict[str, MyConstrainedString]
 
+
+def test_nested_constrained_attribute_handling_pydantic_2() -> None:
+    # subclassing the constrained fields is not documented by pydantic, but is supported apparently
+
+    class MyModel(BaseModel):
+        conbytes_list_field: List[conbytes()]  # type: ignore[valid-type]
+        condecimal_list_field: List[condecimal()]  # type: ignore[valid-type]
+        confloat_list_field: List[confloat()]  # type: ignore[valid-type]
+        conint_list_field: List[conint()]  # type: ignore[valid-type]
+        conlist_list_field: List[conlist(str)]  # type: ignore[valid-type]
+        conset_list_field: List[conset(str)]  # type: ignore[valid-type]
+        constr_list_field: List[constr(to_lower=True)]  # type: ignore[valid-type]
+
     class MyFactory(ModelFactory):
         __model__ = MyModel
 
@@ -156,15 +177,3 @@ def test_nested_constrained_attribute_handling() -> None:
     assert result.conlist_list_field
     assert result.conset_list_field
     assert result.constr_list_field
-
-    assert result.my_bytes_list_field
-    assert result.my_decimal_list_field
-    assert result.my_float_list_field
-    assert result.my_int_list_field
-    assert result.my_str_list_field
-
-    assert result.my_bytes_dict_field
-    assert result.my_decimal_dict_field
-    assert result.my_float_dict_field
-    assert result.my_int_dict_field
-    assert result.my_str_dict_field
