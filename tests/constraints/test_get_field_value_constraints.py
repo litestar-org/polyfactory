@@ -1,6 +1,6 @@
 from datetime import date, datetime, timedelta
 from decimal import Decimal
-from typing import Type, Union, cast
+from typing import Type, Union, cast, List, Set, FrozenSet, Tuple
 
 import pytest
 
@@ -28,8 +28,8 @@ def test_str_and_bytes(t: Type[Union[str, bytes]]) -> None:
     assert len(value) <= constraints["max_length"]
 
 
-@pytest.mark.parametrize("t", (list[int], set[int], tuple[int], frozenset[int]))
-def test_collections(t: Type[Union[tuple, list, set, frozenset]]) -> None:
+@pytest.mark.parametrize("t", (List[int], Set[int], Tuple[int], FrozenSet[int]))
+def test_collections(t: Type[Union[Tuple, List, Set, FrozenSet]]) -> None:
     constraints: Constraints = {
         "min_length": 2,
         "max_length": 10,
