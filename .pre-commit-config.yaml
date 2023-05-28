@@ -45,6 +45,7 @@ repos:
             pydantic,
             pytest,
             sphinx,
+            msgspec,
           ]
   - repo: https://github.com/RobertCraigie/pyright-python
     rev: v1.1.310
@@ -61,4 +62,5 @@ repos:
             pydantic,
             pytest,
             sphinx,
+            msgspec,
           ]
