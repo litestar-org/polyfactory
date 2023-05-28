@@ -1,7 +1,7 @@
 import datetime as dt
 from decimal import Decimal
 from inspect import isclass
-from typing import Any, Callable, Dict, FrozenSet, Generic, Iterable, List, Set, Tuple, Type, TypeVar, cast
+from typing import Any, Callable, Dict, FrozenSet, Generic, Iterable, List, Set, Tuple, TypeVar, Type, cast
 from uuid import UUID
 
 from typing_extensions import TypeGuard
@@ -24,7 +24,7 @@ T = TypeVar("T", bound=Struct)
 
 _NoneType = None.__class__
 
-_MSGSPEC_TYPE_TO_ANNOTATION_MAP: dict[Type[MsgspecType], Type] = {
+_MSGSPEC_TYPE_TO_ANNOTATION_MAP: Dict[Type[MsgspecType], Type] = {
     inspect.AnyType: _NoneType,
     inspect.NoneType: _NoneType,
     inspect.BoolType: bool,
@@ -103,7 +103,7 @@ def get_annotation(t: MsgspecType) -> Type:
         return Dict[key_annot, val_annot]  # type: ignore[valid-type]
     if isinstance(t, inspect.TupleType):
         val_types: list[Type] = [get_annotation(v) for v in t.item_types]
-        return Tuple[*val_types]  # type: ignore[return-value]
+        return Tuple[tuple(val_types)]  # type: ignore[return-value]
     if isinstance(
         t,
         (
@@ -152,7 +152,7 @@ class MsgspecFactory(Generic[T], BaseFactory[T]):
     __is_base_factory__ = True
 
     @classmethod
-    def get_provider_map(cls) -> dict[Any, Callable[[], Any]]:
+    def get_provider_map(cls) -> Dict[Any, Callable[[], Any]]:
         def get_msgpack_ext() -> msgspec.msgpack.Ext:
             code = handle_constrained_int(cls.__random__, ge=-128, le=127)
             data = create_random_bytes(cls.__random__)
@@ -170,7 +170,7 @@ class MsgspecFactory(Generic[T], BaseFactory[T]):
         return isclass(value) and hasattr(value, "__struct_fields__")
 
     @classmethod
-    def get_model_fields(cls) -> list[FieldMeta]:
+    def get_model_fields(cls) -> List[FieldMeta]:
         type_info = cast(inspect.StructType, inspect.type_info(cls.__model__))
 
         return [parse_field(f) for f in type_info.fields]
