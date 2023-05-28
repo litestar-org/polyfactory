@@ -46,66 +46,65 @@ _MSGSPEC_TYPE_TO_ANNOTATION_MAP: Dict[Type[MsgspecType], Type] = {
 def get_constraints(field_type: inspect.Type, names: Iterable[str]) -> Constraints:
     """Get the constraints on a field type.
 
-    :param t: A msgspec CollectionType.
+    :param field_type: A msgspec Type instance.
     :param names: The constraint names.
 
     :returns: The constraints on the given field type.
 
     """
     constraints = {}
-    for k in names:
-        constraint = getattr(field_type, k)
+    for name in names:
+        constraint = getattr(field_type, name)
         if constraint is not None:
-            constraints[k] = constraint
+            constraints[name] = constraint
 
     return cast(Constraints, constraints)
 
 
-def get_collection_type_annotation(t: inspect.CollectionType) -> Type:
+def get_collection_type_annotation(msgspec_collection_type: inspect.CollectionType) -> Type:
     """Return the annotation for a msgspec collection type.
 
-    :param t: A msgspec CollectionType.
+    :param msgspec_collection_type: A msgspec CollectionType instance.
 
     :returns: The annotation of the given msgspec type.
     """
-    annot = get_annotation(t.item_type)
-    if isinstance(t, inspect.ListType):
+    annot = get_annotation(msgspec_collection_type.item_type)
+    if isinstance(msgspec_collection_type, inspect.ListType):
         return List[annot]  # type: ignore[valid-type]
-    if isinstance(t, inspect.SetType):
+    if isinstance(msgspec_collection_type, inspect.SetType):
         return Set[annot]  # type: ignore[valid-type]
-    if isinstance(t, inspect.VarTupleType):
+    if isinstance(msgspec_collection_type, inspect.VarTupleType):
         return Tuple[annot, ...]  # type: ignore[return-value]
-    if isinstance(t, inspect.FrozenSetType):
+    if isinstance(msgspec_collection_type, inspect.FrozenSetType):
         return FrozenSet[annot]  # type: ignore[valid-type]
 
-    msg = f"{type(t)} is an unsupported CollectionType"
-    raise ParameterException(msg)
+    raise ParameterException(f"{type(msgspec_collection_type)} is an unsupported CollectionType")
 
 
-def get_annotation(t: MsgspecType) -> Type:
+def get_annotation(msgspec_type: MsgspecType) -> Type:
     """Return the annotation given a msgspec type.
 
-    :param t: A msgspec CollectionType.
+    :param msgspec_type: A msgspec Type instance.
 
     :returns: The annotation of the given msgspec type.
 
     """
     try:
-        return _MSGSPEC_TYPE_TO_ANNOTATION_MAP[type(t)]
+        return _MSGSPEC_TYPE_TO_ANNOTATION_MAP[type(msgspec_type)]
     except KeyError:
         pass
 
-    if isinstance(t, inspect.CollectionType):
-        return get_collection_type_annotation(t)
-    if isinstance(t, inspect.DictType):
-        key_annot = get_annotation(t.key_type)
-        val_annot = get_annotation(t.value_type)
-        return Dict[key_annot, val_annot]  # type: ignore[valid-type]
-    if isinstance(t, inspect.TupleType):
-        val_types: list[Type] = [get_annotation(v) for v in t.item_types]
+    if isinstance(msgspec_type, inspect.CollectionType):
+        return get_collection_type_annotation(msgspec_type)
+    if isinstance(msgspec_type, inspect.DictType):
+        key_annotation = get_annotation(msgspec_type.key_type)
+        val_annotation = get_annotation(msgspec_type.value_type)
+        return Dict[key_annotation, val_annotation]  # type: ignore[valid-type]
+    if isinstance(msgspec_type, inspect.TupleType):
+        val_types: list[Type] = [get_annotation(v) for v in msgspec_type.item_types]
         return Tuple[tuple(val_types)]  # type: ignore[return-value]
     if isinstance(
-        t,
+        msgspec_type,
         (
             inspect.EnumType,
             inspect.TypedDictType,
@@ -114,21 +113,20 @@ def get_annotation(t: MsgspecType) -> Type:
             inspect.CustomType,
         ),
     ):
-        return t.cls
+        return msgspec_type.cls
 
-    msg = f"{type(t)!r} is an unsupported msgspec type"
-    raise ParameterException(msg)
+    raise ParameterException(f"{type(msgspec_type)!r} is an unsupported msgspec type")
 
 
 def parse_field(field: Field) -> FieldMeta:
-    """Parse the given msgpec field.
+    """Parse the given msgspec field.
 
     :param field: A msgspec Field instance.
 
     :returns: A FieldMeta instance.
 
     """
-    annot = get_annotation(field.type)
+    annotation = get_annotation(field.type)
     field_type = field.type
     constraints: Constraints | None = None
 
@@ -143,9 +141,9 @@ def parse_field(field: Field) -> FieldMeta:
         constraints = get_constraints(field_type, constraint_names)
 
     if isinstance(field_type, (inspect.DateTimeType, inspect.TimeType)) and field_type.tz is not None:
-        raise ParameterException(f"received constraints for unsupported type {annot}")
+        raise ParameterException(f"received constraints for unsupported type {annotation}")
 
-    return FieldMeta.from_type(annot, field.name, constraints=constraints)
+    return FieldMeta.from_type(annotation, field.name, constraints=constraints)
 
 
 class MsgspecFactory(Generic[T], BaseFactory[T]):
