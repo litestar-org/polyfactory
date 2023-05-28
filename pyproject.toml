@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "polyfactory"
-version = "2.1.1"
+version = "2.1.2"
 description = "Mock data generation factories"
 authors = [
     "Na'aman Hirschfeld <nhirschfeld@gmail.com>",
