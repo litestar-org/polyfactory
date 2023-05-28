@@ -2,7 +2,7 @@ from dataclasses import dataclass as vanilla_dataclass
 from typing import List
 
 from pydantic import BaseModel
-from typing import TypedDict
+from typing_extensions import TypedDict
 
 from polyfactory.factories import DataclassFactory, TypedDictFactory
 from polyfactory.factories.pydantic_factory import ModelFactory
