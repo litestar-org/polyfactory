@@ -993,7 +993,7 @@ randomness, its important to use the factory <code class="docutils literal notra
 ignored by the factory:</p>
 <div class="literal-block-wrapper docutils container" id="id5">
 <div class="code-block-caption"><span class="caption-text">Using the <code class="docutils literal notranslate"><span class="pre">Ignore</span></code> field</span><a class="headerlink" href="#id5" title="Permalink to this code">#</a></div>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">typing_extensions</span> <span class="kn">import</span> <span class="n">TypedDict</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">TypedDict</span>
 
 <span class="kn">from</span> <span class="nn">polyfactory</span> <span class="kn">import</span> <span class="n">Ignore</span>
 <span class="kn">from</span> <span class="nn">polyfactory.factories</span> <span class="kn">import</span> <span class="n">TypedDictFactory</span>
@@ -1026,7 +1026,7 @@ factory will require passing a value for this attribute as a kwarg to the build 
 <div class="literal-block-wrapper docutils container" id="id6">
 <div class="code-block-caption"><span class="caption-text">Using the <code class="docutils literal notranslate"><span class="pre">Require</span></code> field</span><a class="headerlink" href="#id6" title="Permalink to this code">#</a></div>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">pytest</span>
-<span class="kn">from</span> <span class="nn">typing_extensions</span> <span class="kn">import</span> <span class="n">TypedDict</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">TypedDict</span>
 
 <span class="kn">from</span> <span class="nn">polyfactory</span> <span class="kn">import</span> <span class="n">Require</span>
 <span class="kn">from</span> <span class="nn">polyfactory.exceptions</span> <span class="kn">import</span> <span class="n">MissingBuildKwargException</span>
