@@ -1,7 +1,7 @@
 from __future__ import annotations
-from typing import Any, Callable, Generic, TypeVar, cast
+from typing import Any, Callable, Generic, TypeVar, cast, TypedDict
 
-from typing_extensions import ParamSpec, TypedDict
+from typing_extensions import ParamSpec
 
 from polyfactory.exceptions import ParameterException
 

@@ -1,5 +1,5 @@
 import pytest
-from typing_extensions import TypedDict
+from typing import TypedDict
 
 from polyfactory import Require
 from polyfactory.exceptions import MissingBuildKwargException
