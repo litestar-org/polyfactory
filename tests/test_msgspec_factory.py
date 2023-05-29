@@ -1,0 +1,174 @@
+import datetime as dt
+from decimal import Decimal
+from enum import Enum
+from typing import Any, Dict, FrozenSet, List, NewType, Set, Tuple, Type, Union
+from uuid import UUID
+
+from typing_extensions import Annotated
+
+import msgspec
+import pytest
+from msgspec import Struct, structs
+
+from polyfactory.exceptions import ParameterException
+from polyfactory.factories.msgspec_factory import MsgspecFactory
+
+
+def test_is_supported_type() -> None:
+    class Foo(Struct):
+        ...
+
+    assert MsgspecFactory.is_supported_type(Foo) is True
+
+
+def test_is_supported_type_without_struct() -> None:
+    class Foo:
+        ...
+
+    assert MsgspecFactory.is_supported_type(Foo) is False
+
+
+def test_with_basic_types_without_constraints() -> None:
+    class Foo(Struct):
+        bool_field: bool
+        int_field: int
+        float_field: float
+        str_field: str
+        bytse_field: bytes
+        bytearray_field: bytearray
+        tuple_field: Tuple[int, str]
+        tuple_with_variadic_args: Tuple[int, ...]
+        list_field: List[int]
+        dict_field: Dict[str, int]
+        datetime_field: dt.datetime
+        date_field: dt.date
+        time_field: dt.time
+        uuid_field: UUID
+        decimal_field: Decimal
+        any_type: Any
+
+    class FooFactory(MsgspecFactory[Foo]):
+        __model__ = Foo
+
+    foo = FooFactory.build()
+    foo_dict = structs.asdict(foo)
+
+    validated_foo = msgspec.from_builtins(foo_dict, type=Foo)
+    assert foo == validated_foo
+
+
+def test_other_basic_types() -> None:
+    # These types are tested separately since they can't be validated
+    # using `from_builtins`.
+    # REFERENCE: https://github.com/jcrist/msgspec/issues/417
+
+    class SampleEnum(Enum):
+        FOO = "foo"
+        BAR = "bar"
+
+    class Foo(Struct):
+        set_field: Set[int]
+        frozenset_field: FrozenSet[int]
+        enum_type: SampleEnum
+
+    class FooFactory(MsgspecFactory[Foo]):
+        __model__ = Foo
+
+    foo = FooFactory.build()
+
+    assert isinstance(foo.set_field, set)
+    assert isinstance(foo.frozenset_field, frozenset)
+    assert isinstance(foo.enum_type, SampleEnum)
+
+
+def test_with_nested_struct() -> None:
+    class Foo(Struct):
+        int_field: int
+
+    class Bar(Struct):
+        int_field: int
+        foo_field: Foo
+
+    class BarFactory(MsgspecFactory[Bar]):
+        __model__ = Bar
+
+    bar = BarFactory.build()
+    bar_dict = structs.asdict(bar)
+    bar_dict["foo_field"] = structs.asdict(bar_dict["foo_field"])
+
+    validated_bar = msgspec.from_builtins(bar_dict, type=Bar)
+    assert validated_bar == bar
+
+
+def test_with_new_type() -> None:
+    UnixName = NewType("UnixName", str)
+
+    class User(Struct):
+        name: UnixName
+        groups: List[UnixName]
+
+    class UserFactory(MsgspecFactory[User]):
+        __model__ = User
+
+    user = UserFactory.build()
+    user_dict = structs.asdict(user)
+
+    validated_user = msgspec.from_builtins(user_dict, type=User)
+    assert user == validated_user
+
+
+def test_msgspec_types() -> None:
+    class Foo(Struct):
+        unset: msgspec.UnsetType
+        ext: msgspec.msgpack.Ext
+        raw: msgspec.Raw
+
+    class FooFactory(MsgspecFactory[Foo]):
+        __model__ = Foo
+
+    foo = FooFactory.build()
+
+    assert foo.unset == msgspec.UNSET
+    assert isinstance(foo.ext, msgspec.msgpack.Ext)
+
+
+def test_with_constraints() -> None:
+    class Foo(Struct):
+        int_field: Annotated[int, msgspec.Meta(ge=10, le=500, multiple_of=2)]
+        float_field: Annotated[float, msgspec.Meta(ge=10, le=500, multiple_of=2)]
+        str_field: Annotated[str, msgspec.Meta(min_length=100, max_length=500, pattern=r"\w")]
+        bytes_field: Annotated[bytes, msgspec.Meta(min_length=100, max_length=500)]
+        tuple_field: Annotated[Tuple[int, ...], msgspec.Meta(min_length=10, max_length=100)]
+        list_field: Annotated[List[int], msgspec.Meta(min_length=10, max_length=100)]
+
+    class FooFactory(MsgspecFactory[Foo]):
+        __model__ = Foo
+
+    foo = FooFactory.build()
+    foo_dict = structs.asdict(foo)
+
+    validated_foo = msgspec.from_builtins(foo_dict, type=Foo)
+    assert foo == validated_foo
+
+
+def test_dict_constraints() -> None:
+    class Foo(Struct):
+        dict_field: Annotated[Dict[str, int], msgspec.Meta(min_length=1)]
+
+    class FooFactory(MsgspecFactory[Foo]):
+        __model__ = Foo
+
+    with pytest.raises(ParameterException):
+        _ = FooFactory.build()
+
+
+@pytest.mark.parametrize("t", (dt.datetime, dt.time))
+def test_datetime_constraints(t: Union[Type[dt.datetime], Type[dt.time]]) -> None:
+    class Foo(Struct):
+        date_field: Annotated[t, msgspec.Meta(tz=True)]  # type: ignore[valid-type]
+
+    class FooFactory(MsgspecFactory[Foo]):
+        __model__ = Foo
+
+    with pytest.raises(ParameterException):
+        _ = FooFactory.build()

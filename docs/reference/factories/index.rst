@@ -13,3 +13,4 @@ factories
     beanie_odm_factory
     odmantic_odm_factory
     pydantic_factory
+    msgspec_factory

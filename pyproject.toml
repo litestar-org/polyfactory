@@ -64,6 +64,7 @@ faker = "*"
 odmantic = { version = "*", optional = true, extras = ["odmantic"] }
 pydantic = { version = "*", optional = true, extras = ["pydantic", "odmantic", "beanie"] }
 typing-extensions = "*"
+msgspec = {version = "*", optional = true}
 
 [tool.poetry.group.dev.dependencies]
 beanie = "*"
@@ -76,6 +77,7 @@ pytest = "*"
 pytest-asyncio = "*"
 pytest-cov = "*"
 mongomock-motor = "*"
+msgspec = "*"
 
 
 [tool.poetry.group.docs.dependencies]
