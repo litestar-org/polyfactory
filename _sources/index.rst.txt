@@ -2,7 +2,7 @@ Polyfactory
 ===========
 
 Polyfactory is a simple and powerful mock data generation library, based around type
-hints and supporting dataclasses, typed-dicts, Pydantic models and more.
+hints and supporting dataclasses, typed-dicts, pydantic models, msgspec structs and more.
 
 Installation
 ------------
