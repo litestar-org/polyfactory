@@ -76,6 +76,7 @@ nitpick_ignore_regex = [
     (r"py:.*", r"polyfactory.*\.T"),
     (r"py:.*", r".*TypedDictT"),
     (r"py:.*", r"pydantic.*"),
+    (r"py:.*", r"msgspec.*"),
 ]
 
 html_theme_options = {
