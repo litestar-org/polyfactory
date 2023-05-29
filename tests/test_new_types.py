@@ -79,13 +79,13 @@ def test_constrained_new_types() -> None:
     ConMyPositiveFloat = NewType("ConMyPositiveFloat", PositiveFloat)
 
     if pydantic_version == 1:
-        ConList = NewType("ConList", conlist(item_type=int, min_length=3))  # type: ignore[misc]
-        ConSet = NewType("ConSet", conset(item_type=int, min_length=4))  # type: ignore[misc]
-        ConFrozenSet = NewType("ConFrozenSet", confrozenset(item_type=str, min_length=5))  # type: ignore[misc]
+        ConList = NewType("ConList", conlist(item_type=int, min_length=3))  # type: ignore
+        ConSet = NewType("ConSet", conset(item_type=int, min_length=4))  # type: ignore
+        ConFrozenSet = NewType("ConFrozenSet", confrozenset(item_type=str, min_length=5))  # type: ignore
     else:
-        ConList = NewType("ConList", conlist(item_type=int, min_length=3))  # type: ignore[misc]
-        ConSet = NewType("ConSet", conset(item_type=int, min_length=4))  # type: ignore[misc]
-        ConFrozenSet = NewType("ConFrozenSet", confrozenset(item_type=str, min_length=5))  # type: ignore[misc]
+        ConList = NewType("ConList", conlist(item_type=int, min_length=3))  # type: ignore
+        ConSet = NewType("ConSet", conset(item_type=int, min_length=4))  # type: ignore
+        ConFrozenSet = NewType("ConFrozenSet", confrozenset(item_type=str, min_length=5))  # type: ignore
 
     class ConstrainedModel(BaseModel):
         conbytes_field: ConBytes

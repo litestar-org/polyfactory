@@ -42,7 +42,7 @@ repos:
             hypothesis,
             mongomock_motor,
             odmantic,
-            pydantic,
+            "pydantic==2.0a4",
             pytest,
             sphinx,
             msgspec,
@@ -51,7 +51,7 @@ repos:
     rev: v1.1.310
     hooks:
       - id: pyright
-        exclude: "test_decimal_constraints"
+        exclude: "tests"
         additional_dependencies:
           [
             beanie,
@@ -59,7 +59,7 @@ repos:
             hypothesis,
             mongomock_motor,
             odmantic,
-            pydantic,
+            "pydantic==2.0a4",
             pytest,
             sphinx,
             msgspec,

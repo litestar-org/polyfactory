@@ -118,19 +118,19 @@ def test_nested_constrained_attribute_handling_pydantic_1() -> None:
         ConstrainedStr,
     )
 
-    class MyConstrainedString(ConstrainedStr):
+    class MyConstrainedString(ConstrainedStr):  # type: ignore[misc]
         regex = re.compile("^vpc-.*$")
 
-    class MyConstrainedBytes(ConstrainedBytes):
+    class MyConstrainedBytes(ConstrainedBytes):  # type: ignore[misc]
         min_length = 11
 
-    class MyConstrainedInt(ConstrainedInt):
+    class MyConstrainedInt(ConstrainedInt):  # type: ignore[misc]
         ge = 11
 
-    class MyConstrainedFloat(ConstrainedFloat):
+    class MyConstrainedFloat(ConstrainedFloat):  # type: ignore[misc]
         ge = 11.0
 
-    class MyConstrainedDecimal(ConstrainedDecimal):
+    class MyConstrainedDecimal(ConstrainedDecimal):  # type: ignore[misc]
         ge = Decimal("11.0")
 
     class MyModel(BaseModel):
@@ -153,6 +153,29 @@ def test_nested_constrained_attribute_handling_pydantic_1() -> None:
         my_float_dict_field: Dict[str, MyConstrainedFloat]
         my_int_dict_field: Dict[str, MyConstrainedInt]
         my_str_dict_field: Dict[str, MyConstrainedString]
+
+    class MyFactory(ModelFactory):
+        __model__ = MyModel
+
+    result = MyFactory.build()
+
+    assert result.conbytes_list_field
+    assert result.condecimal_list_field
+    assert result.confloat_list_field
+    assert result.conint_list_field
+    assert result.conlist_list_field
+    assert result.conset_list_field
+    assert result.constr_list_field
+    assert result.my_bytes_list_field
+    assert result.my_decimal_list_field
+    assert result.my_float_list_field
+    assert result.my_int_list_field
+    assert result.my_str_list_field
+    assert result.my_bytes_dict_field
+    assert result.my_decimal_dict_field
+    assert result.my_float_dict_field
+    assert result.my_int_dict_field
+    assert result.my_str_dict_field
 
 
 @pytest.mark.skipif(pydantic_version == 1, reason="pydantic 2 only test")

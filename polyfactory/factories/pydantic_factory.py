@@ -22,20 +22,20 @@ try:
     from pydantic import (
         BaseModel,
     )
-    from pydantic.fields import Undefined, FieldInfo
+    from pydantic.fields import Undefined, FieldInfo  # type: ignore[attr-defined]
 
 except ImportError as e:
     raise MissingDependencyException("pydantic is not installed") from e
 
 try:
-    from pydantic.fields import DeferredType, ModelField
+    from pydantic.fields import DeferredType, ModelField  # type: ignore[attr-defined]
 
     pydantic_version: Literal[1, 2] = 1
 except ImportError:
     pydantic_version = 2
 
-    ModelField = Any  # type: ignore
-    DeferredType = Any  # type: ignore
+    ModelField = Any
+    DeferredType = Any
 
 if TYPE_CHECKING:
     from typing_extensions import TypeGuard
@@ -96,7 +96,7 @@ class PydanticFieldMeta(FieldMeta):
             ("strict", PydanticGeneralMetadata),
             ("allow_inf_nan", PydanticGeneralMetadata),
         ]:
-            if metadata := [v for v in field_info.metadata if isinstance(v, annotated_type)]:
+            if metadata := [v for v in field_info.metadata if isinstance(v, annotated_type)]:  # type: ignore[arg-type]
                 constraint = metadata[0]
                 if isinstance(metadata[0], PydanticGeneralMetadata):
                     constraints[key] = constraint.__dict__.get(key, None)
@@ -105,17 +105,14 @@ class PydanticFieldMeta(FieldMeta):
                 else:
                     constraints[key] = getattr(constraint, "min_length" if key == "min_items" else "max_length")
 
-        constraints = cast(
-            "Constraints",
-            {
-                **constraints,
-                "constant": None,
-                "unique_items": None,
-                "upper_case": None,
-                "lower_case": None,
-                "item_type": None,
-            },
-        )
+        constraints = {
+            **constraints,
+            "constant": None,
+            "unique_items": None,
+            "upper_case": None,
+            "lower_case": None,
+            "item_type": None,
+        }
 
         return PydanticFieldMeta.from_type(
             name=name,
@@ -125,7 +122,7 @@ class PydanticFieldMeta(FieldMeta):
         )
 
     @classmethod
-    def from_model_field(cls, model_field: ModelField, use_alias: bool) -> PydanticFieldMeta:
+    def from_model_field(cls, model_field: ModelField, use_alias: bool) -> PydanticFieldMeta:  # pyright: ignore
         """Create an instance from a pydantic model field.
 
         :param model_field: A pydantic ModelField.
@@ -227,9 +224,9 @@ class ModelFactory(Generic[T], BaseFactory[T]):
                 cls._fields_metadata = [
                     PydanticFieldMeta.from_model_field(
                         field,
-                        use_alias=not cls.__model__.__config__.allow_population_by_field_name,
+                        use_alias=not cls.__model__.__config__.allow_population_by_field_name,  # type: ignore[attr-defined]
                     )
-                    for field in cls.__model__.__fields__.values()
+                    for field in cls.__model__.__fields__.values()  # type: ignore[attr-defined]
                 ]
             else:
                 cls._fields_metadata = [
@@ -256,7 +253,11 @@ class ModelFactory(Generic[T], BaseFactory[T]):
         processed_kwargs = cls.process_kwargs(**kwargs)
 
         if factory_use_construct:
-            return cls.__model__.model_construct(**processed_kwargs) if hasattr(cls.__model__, "model_construct") else cls.__model__.constuct(**processed_kwargs)
+            return (
+                cls.__model__.model_construct(**processed_kwargs)
+                if hasattr(cls.__model__, "model_construct")
+                else cls.__model__.construct(**processed_kwargs)
+            )
 
         return cls.__model__(**processed_kwargs)
 
