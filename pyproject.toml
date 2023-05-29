@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "polyfactory"
-version = "2.1.2"
+version = "2.2.0"
 description = "Mock data generation factories"
 authors = [
     "Na'aman Hirschfeld <nhirschfeld@gmail.com>",
@@ -22,13 +22,16 @@ homepage = "https://github.com/litestar-org/polyfactory"
 repository = "https://github.com/litestar-org/polyfactory"
 documentation = "https://github.com/litestar-org/polyfactory"
 keywords = [
+    "beanie",
     "dataclasses",
     "factory",
     "faker",
+    "litestar",
     "mock",
+    "msgspec",
+    "odmantic",
     "pydantic",
     "pytest",
-    "litestar",
     "tdd",
     "testing",
     "typeddict",
@@ -61,24 +64,23 @@ packages = [
 python = ">=3.8,<4.0"
 beanie = { version = "*", optional = true, extras = ["beanie"] }
 faker = "*"
+msgspec = { version = "*", optional = true, extras = ["msgspec"] }
 odmantic = { version = "*", optional = true, extras = ["odmantic"] }
 pydantic = { version = "*", optional = true, extras = ["pydantic", "odmantic", "beanie"] }
 typing-extensions = "*"
-msgspec = {version = "*", optional = true}
 
 [tool.poetry.group.dev.dependencies]
 beanie = "*"
 email-validator = "*"
 hypothesis = "*"
+mongomock-motor = "*"
+msgspec = "*"
 odmantic = "*"
 pre-commit = "*"
 pydantic = "*"
 pytest = "*"
 pytest-asyncio = "*"
 pytest-cov = "*"
-mongomock-motor = "*"
-msgspec = "*"
-
 
 [tool.poetry.group.docs.dependencies]
 sphinx-autobuild = "*"
@@ -91,6 +93,7 @@ litestar-sphinx-theme = { git = "https://github.com/litestar-org/litestar-sphinx
 
 [tool.poetry.extras]
 pydantic = ["pydantic"]
+msgspec = ["msgspec"]
 odmantic = ["odmantic", "pydantic"]
 beanie = ["beanie", "pydantic"]
 
