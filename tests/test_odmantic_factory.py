@@ -16,7 +16,7 @@ except ImportError:
     pytest.importorskip("odmantic")
 
 
-class OtherEmbeddedDocument(EmbeddedModel):
+class OtherEmbeddedDocument(EmbeddedModel):  # type: ignore
     name: str
     serial: UUID
     created_on: datetime
@@ -26,7 +26,7 @@ class OtherEmbeddedDocument(EmbeddedModel):
     bson_binary: bson.Binary
 
 
-class MyEmbeddedDocument(EmbeddedModel):
+class MyEmbeddedDocument(EmbeddedModel):  # type: ignore
     name: str
     serial: UUID
     other_embedded_document: OtherEmbeddedDocument
@@ -37,7 +37,7 @@ class MyEmbeddedDocument(EmbeddedModel):
     bson_binary: bson.Binary
 
 
-class MyModel(Model):
+class MyModel(Model):  # type: ignore
     created_on: datetime
     bson_id: bson.ObjectId
     bson_int64: bson.Int64

@@ -42,13 +42,13 @@ repos:
             hypothesis,
             mongomock_motor,
             odmantic,
-            "pydantic==2.0a4",
+            "pydantic>=2.0b1",
             pytest,
             sphinx,
             msgspec,
           ]
   - repo: https://github.com/RobertCraigie/pyright-python
-    rev: v1.1.310
+    rev: v1.1.311
     hooks:
       - id: pyright
         exclude: "tests"
@@ -59,7 +59,7 @@ repos:
             hypothesis,
             mongomock_motor,
             odmantic,
-            "pydantic==2.0a4",
+            "pydantic>=2.0b1",
             pytest,
             sphinx,
             msgspec,

@@ -19,16 +19,13 @@ from polyfactory.field_meta import FieldMeta, Null, Constraints
 from polyfactory.utils.helpers import unwrap_new_type
 
 try:
-    from pydantic import (
-        BaseModel,
-    )
-    from pydantic.fields import Undefined, FieldInfo  # type: ignore[attr-defined]
+    from pydantic import BaseModel
 
 except ImportError as e:
     raise MissingDependencyException("pydantic is not installed") from e
 
 try:
-    from pydantic.fields import DeferredType, ModelField  # type: ignore[attr-defined]
+    from pydantic.fields import DeferredType, ModelField, Undefined  # type: ignore[attr-defined]
 
     pydantic_version: Literal[1, 2] = 1
 except ImportError:
@@ -36,9 +33,11 @@ except ImportError:
 
     ModelField = Any
     DeferredType = Any
+    from pydantic._internal._fields import Undefined
 
 if TYPE_CHECKING:
     from typing_extensions import TypeGuard
+    from pydantic.fields import FieldInfo
 
 T = TypeVar("T", bound=BaseModel)
 
@@ -224,7 +223,7 @@ class ModelFactory(Generic[T], BaseFactory[T]):
                 cls._fields_metadata = [
                     PydanticFieldMeta.from_model_field(
                         field,
-                        use_alias=not cls.__model__.__config__.allow_population_by_field_name,  # type: ignore[attr-defined]
+                        use_alias=not cls.__model__.__config__.allow_population_by_field_name,
                     )
                     for field in cls.__model__.__fields__.values()  # type: ignore[attr-defined]
                 ]
