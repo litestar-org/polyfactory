@@ -1,6 +1,8 @@
 from dataclasses import dataclass as vanilla_dataclass
 from dataclasses import field
-from typing import Dict, List, Optional, Tuple
+from types import ModuleType
+from typing import Callable, Dict, List, Optional, Tuple
+from unittest.mock import ANY
 
 from pydantic.dataclasses import Field  # type: ignore
 from pydantic.dataclasses import dataclass as pydantic_dataclass
@@ -143,3 +145,24 @@ def test_tuple_ellipsis_in_vanilla_dc() -> None:
 
     assert result
     assert result.ids
+
+
+def test_dataclass_factory_with_future_annotations(create_module: Callable[[str], ModuleType]) -> None:
+    module = create_module(
+        """
+from __future__ import annotations
+
+from dataclasses import dataclass
+
+@dataclass
+class example:
+    foo: str
+"""
+    )
+    example: type = module.example
+    assert example.__annotations__ == {"foo": "str"}
+
+    class MyFactory(DataclassFactory[example]):  # type:ignore[valid-type]
+        __model__ = example
+
+    assert MyFactory.process_kwargs() == {"foo": ANY}

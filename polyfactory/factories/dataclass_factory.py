@@ -3,6 +3,7 @@ from dataclasses import is_dataclass, fields, MISSING
 from inspect import isclass
 from typing import Generic, Any, TYPE_CHECKING
 
+from typing_extensions import get_type_hints
 
 from polyfactory.factories.base import T, BaseFactory
 from polyfactory.field_meta import FieldMeta, Null
@@ -39,6 +40,8 @@ class DataclassFactory(Generic[T], BaseFactory[T]):
         """
         fields_meta: list["FieldMeta"] = []
 
+        model_type_hints = get_type_hints(cls.__model__)
+
         for field in fields(cls.__model__):  # type: ignore[arg-type]
             if field.default_factory and field.default_factory is not MISSING:
                 default_value = field.default_factory()
@@ -47,6 +50,8 @@ class DataclassFactory(Generic[T], BaseFactory[T]):
             else:
                 default_value = Null
 
-            fields_meta.append(FieldMeta.from_type(annotation=field.type, name=field.name, default=default_value))
+            fields_meta.append(
+                FieldMeta.from_type(annotation=model_type_hints[field.name], name=field.name, default=default_value)
+            )
 
         return fields_meta
