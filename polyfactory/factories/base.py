@@ -34,7 +34,7 @@ from typing import (
     TypeVar,
     cast,
 )
-from uuid import NAMESPACE_DNS, UUID, uuid1, uuid3, uuid5
+from uuid import UUID, NAMESPACE_DNS, uuid3, uuid5, uuid1
 
 from faker import Faker
 from typing_extensions import get_args
@@ -61,7 +61,10 @@ from polyfactory.value_generators.constrained_numbers import (
     handle_constrained_int,
     handle_constrained_decimal,
 )
+from polyfactory.value_generators.constrained_path import handle_constrained_path
 from polyfactory.value_generators.constrained_strings import handle_constrained_string_or_bytes
+from polyfactory.value_generators.constrained_url import handle_constrained_url
+from polyfactory.value_generators.constrained_uuid import handle_constrained_uuid
 from polyfactory.value_generators.primitives import (
     create_random_boolean,
     create_random_bytes,
@@ -85,7 +88,6 @@ def _create_pydantic_type_map(cls: "type[BaseFactory]") -> dict[type, Callable[[
         mapping = {
             pydantic.ByteSize: cls.__faker__.pyint,
             pydantic.PositiveInt: cls.__faker__.pyint,
-            pydantic.FilePath: lambda: Path(realpath(__file__)),
             pydantic.NegativeFloat: lambda: cls.__random__.uniform(-100, -1),
             pydantic.NegativeInt: lambda: cls.__faker__.pyint() * -1,
             pydantic.PositiveFloat: cls.__faker__.pyint,
@@ -96,7 +98,6 @@ def _create_pydantic_type_map(cls: "type[BaseFactory]") -> dict[type, Callable[[
             pydantic.StrictBytes: partial(create_random_bytes, cls.__random__),
             pydantic.StrictFloat: cls.__faker__.pyfloat,
             pydantic.StrictStr: cls.__faker__.pystr,
-            pydantic.DirectoryPath: lambda: Path(realpath(__file__)).parent,
             pydantic.EmailStr: cls.__faker__.free_email,
             pydantic.NameEmail: cls.__faker__.free_email,
             pydantic.color.Color: cls.__faker__.hex_color,
@@ -105,33 +106,53 @@ def _create_pydantic_type_map(cls: "type[BaseFactory]") -> dict[type, Callable[[
             pydantic.AnyUrl: cls.__faker__.url,
             pydantic.AnyHttpUrl: cls.__faker__.url,
             pydantic.HttpUrl: cls.__faker__.url,
-            pydantic.PostgresDsn: lambda: "postgresql://user:secret@localhost",
-            pydantic.RedisDsn: lambda: "redis://localhost:6379",
-            pydantic.UUID1: uuid1,
-            pydantic.UUID3: lambda: uuid3(NAMESPACE_DNS, cls.__faker__.pystr()),
-            pydantic.UUID4: cls.__faker__.uuid4,
-            pydantic.UUID5: lambda: uuid5(NAMESPACE_DNS, cls.__faker__.pystr()),
             pydantic.SecretBytes: partial(create_random_bytes, cls.__random__),
             pydantic.SecretStr: cls.__faker__.pystr,
             pydantic.IPvAnyAddress: cls.__faker__.ipv4,
             pydantic.IPvAnyInterface: cls.__faker__.ipv4,
             pydantic.IPvAnyNetwork: lambda: cls.__faker__.ipv4(network=True),
-            pydantic.AmqpDsn: lambda: "amqps://",
-            pydantic.KafkaDsn: lambda: "kafka://",
             pydantic.PastDate: cls.__faker__.past_date,
             pydantic.FutureDate: cls.__faker__.future_date,
         }
+
     except ImportError:
         mapping = {}
 
     try:
-        from pydantic import PyObject
+        from pydantic import (
+            PyObject,
+            AmqpDsn,
+            KafkaDsn,
+            PostgresDsn,
+            RedisDsn,
+            UUID1,
+            UUID3,
+            UUID4,
+            UUID5,
+            FilePath,
+            DirectoryPath,
+        )
 
-        mapping[PyObject] = lambda: "decimal.Decimal"
+        mapping.update(
+            {
+                PyObject: lambda: "decimal.Decimal",
+                # in pydantic v2 these are all aliases for Annotated, and hence they are parsed using a different
+                # mechanism.
+                AmqpDsn: lambda: "amqps://example.com",
+                KafkaDsn: lambda: "kafka://localhost:9092",
+                PostgresDsn: lambda: "postgresql://user:secret@localhost",
+                RedisDsn: lambda: "redis://localhost:6379/0",
+                FilePath: lambda: Path(realpath(__file__)),
+                DirectoryPath: lambda: Path(realpath(__file__)).parent,
+                UUID1: uuid1,
+                UUID3: lambda: uuid3(NAMESPACE_DNS, cls.__faker__.pystr()),
+                UUID4: cls.__faker__.uuid4,
+                UUID5: lambda: uuid5(NAMESPACE_DNS, cls.__faker__.pystr()),
+            }
+        )
+
     except ImportError:
-        from pydantic_core import MultiHostUrl
-
-        mapping[MultiHostUrl] = cls.__faker__.url
+        pass
 
     return mapping
 
@@ -528,6 +549,9 @@ class BaseFactory(ABC, Generic[T]):
             )
 
         if is_safe_subclass(annotation, str) or is_safe_subclass(annotation, bytes):
+            if url_constraints := constraints.get("url"):
+                return handle_constrained_url(constraints=url_constraints)
+
             return handle_constrained_string_or_bytes(
                 random=cls.__random__,
                 t_type=str if is_safe_subclass(annotation, str) else bytes,
@@ -573,6 +597,15 @@ class BaseFactory(ABC, Generic[T]):
                 lt=cast("Any", constraints.get("lt")),
             )
 
+        if is_safe_subclass(annotation, UUID) and (uuid_version := constraints.get("uuid_version")):
+            return handle_constrained_uuid(
+                uuid_version=uuid_version,
+                faker=cls.__faker__,
+            )
+
+        if is_safe_subclass(annotation, Path) and (path_constraint := constraints.get("path_type")):
+            return handle_constrained_path(constraint=path_constraint, faker=cls.__faker__)
+
         raise ParameterException(f"received constraints for unsupported type {annotation}")
 
     @classmethod
@@ -602,10 +635,7 @@ class BaseFactory(ABC, Generic[T]):
         if isinstance(unwrapped_annotation, EnumMeta):
             return cls.__random__.choice(list(unwrapped_annotation))  # pyright: ignore
 
-        if field_meta.constraints and (
-            unwrapped_annotation in (float, int, Decimal, bytes, str, list, tuple, set, frozenset, date)
-            or unwrapped_annotation not in cls.get_provider_map()
-        ):
+        if field_meta.constraints:
             return cls.get_constrained_field_value(annotation=unwrapped_annotation, field_meta=field_meta)
 
         if BaseFactory.is_factory_type(annotation=unwrapped_annotation):

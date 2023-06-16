@@ -154,7 +154,22 @@ def test_embedded_factories_parsing() -> None:
 
 
 def test_type_property_parsing() -> None:
-    class MyModel(BaseModel):
+    try:
+        # pydantic only types
+        from pydantic.networks import MongoDsn, MariaDBDsn, CockroachDsn, MySQLDsn
+
+        class Base(BaseModel):
+            MongoDsn_pydantic_type: MongoDsn
+            MariaDBDsn_pydantic_type: MariaDBDsn
+            CockroachDsn_pydantic_type: CockroachDsn
+            MySQLDsn_pydantic_type: MySQLDsn
+
+    except ImportError:
+
+        class Base(BaseModel):  # type: ignore[no-redef]
+            pass
+
+    class MyModel(Base):
         object_field: object
         float_field: float
         int_field: int
@@ -187,9 +202,11 @@ def test_type_property_parsing() -> None:
         # types
         Callable_field: Callable
         # pydantic specific
+        DirectoryPath_pydantic_type: DirectoryPath
+        FilePath_pydantic_type: FilePath
+
         ByteSize_pydantic_type: ByteSize
         PositiveInt_pydantic_type: PositiveInt
-        FilePath_pydantic_type: FilePath
         NegativeFloat_pydantic_type: NegativeFloat
         NegativeInt_pydantic_type: NegativeInt
         PositiveFloat_pydantic_type: PositiveFloat
@@ -200,7 +217,6 @@ def test_type_property_parsing() -> None:
         StrictBytes_pydantic_type: StrictBytes
         StrictFloat_pydantic_type: StrictFloat
         StrictStr_pydantic_type: StrictStr
-        DirectoryPath_pydantic_type: DirectoryPath
         EmailStr_pydantic_type: EmailStr
         NameEmail_pydantic_type: NameEmail
         Color_pydantic_type: Color

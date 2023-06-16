@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from typing import Any, TypedDict, Pattern, TYPE_CHECKING
+from typing import Any, TypedDict, Pattern, TYPE_CHECKING, Literal
 
 from polyfactory.constants import TYPE_MAPPING, IGNORED_TYPE_ARGS
 from polyfactory.utils.helpers import unwrap_args, unwrap_new_type
@@ -12,6 +12,15 @@ if TYPE_CHECKING:
 
 class Null:
     """Sentinel class for empty values"""
+
+
+class UrlConstraints(TypedDict):
+    max_length: NotRequired[int]
+    allowed_schemes: NotRequired[list[str]]
+    host_required: NotRequired[bool]
+    default_host: NotRequired[str]
+    default_port: NotRequired[int]
+    default_path: NotRequired[str]
 
 
 class Constraints(TypedDict):
@@ -32,6 +41,9 @@ class Constraints(TypedDict):
     unique_items: NotRequired[bool]
     upper_case: NotRequired[bool]
     item_type: NotRequired[Any]
+    url: NotRequired[UrlConstraints]
+    uuid_version: NotRequired[Literal[1, 3, 4, 5]]
+    path_type: NotRequired[Literal["file", "dir", "new"]]
 
 
 class FieldMeta:

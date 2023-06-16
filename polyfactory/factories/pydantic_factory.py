@@ -64,6 +64,8 @@ class PydanticFieldMeta(FieldMeta):
     @classmethod
     def from_field_info(cls, field_name: str, field_info: FieldInfo, use_alias: bool) -> PydanticFieldMeta:
         import annotated_types
+        from pydantic import UrlConstraints
+        from pydantic.types import UuidVersion, PathType
         from pydantic._internal._fields import PydanticGeneralMetadata
 
         if callable(field_info.default_factory):
@@ -94,11 +96,22 @@ class PydanticFieldMeta(FieldMeta):
             # pydantic 2 only constraints
             ("strict", PydanticGeneralMetadata),
             ("allow_inf_nan", PydanticGeneralMetadata),
+            ("url", UrlConstraints),
+            ("uuid_version", UuidVersion),
+            ("path_type", PathType),
         ]:
             if metadata := [v for v in field_info.metadata if isinstance(v, annotated_type)]:  # type: ignore[arg-type]
                 constraint = metadata[0]
-                if isinstance(metadata[0], PydanticGeneralMetadata):
+                if isinstance(constraint, PydanticGeneralMetadata):
                     constraints[key] = constraint.__dict__.get(key, None)
+                elif isinstance(constraint, UrlConstraints):
+                    constraints[key] = dict(constraint.__dict__)
+                    # pydantic is using sentinel types for urls, which causes issues for us.
+                    annotation = str
+                elif isinstance(constraint, UuidVersion):
+                    constraints[key] = constraint.uuid_version
+                elif isinstance(constraint, PathType):
+                    constraints[key] = constraint.path_type
                 elif key not in ["min_items", "max_items"]:
                     constraints[key] = getattr(constraint, key)
                 else:
