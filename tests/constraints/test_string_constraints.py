@@ -6,18 +6,8 @@ import pytest
 from polyfactory.exceptions import ParameterException
 from polyfactory.value_generators.constrained_strings import handle_constrained_string_or_bytes
 
-# FIXME: issue due to pydantic v2 removing the hypothesis plugin.
-try:
-    from hypothesis import given, settings
-    from hypothesis.strategies import integers, booleans
-
-except ImportError:
-    given = None  # type: ignore
-    integers = None  # type: ignore
-    booleans = None  # type: ignore
-    settings = None  # type: ignore
-
-    pytest.importorskip("hypothesis")
+from hypothesis import given, settings
+from hypothesis.strategies import integers, booleans
 
 REGEXES = [
     r"(a|b|c)xz",

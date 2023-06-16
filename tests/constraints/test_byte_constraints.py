@@ -5,17 +5,9 @@ import pytest
 from polyfactory.exceptions import ParameterException
 from polyfactory.value_generators.constrained_strings import handle_constrained_string_or_bytes
 
-# FIXME: issue due to pydantic v2 removing the hypothesis plugin.
-try:
-    from hypothesis import given
-    from hypothesis.strategies import booleans, integers
 
-except ImportError:
-    given = None  # type: ignore
-    booleans = None  # type: ignore
-    integers = None  # type: ignore
-
-    pytest.importorskip("hypothesis")
+from hypothesis import given
+from hypothesis.strategies import booleans, integers
 
 
 @given(booleans(), integers(max_value=10000), integers(max_value=10000))

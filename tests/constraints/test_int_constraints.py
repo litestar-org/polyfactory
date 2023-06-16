@@ -9,17 +9,8 @@ from polyfactory.value_generators.constrained_numbers import (
     passes_pydantic_multiple_validator,
 )
 
-# FIXME: issue due to pydantic v2 removing the hypothesis plugin.
-try:
-    from hypothesis import given, assume
-    from hypothesis.strategies import integers
-
-except ImportError:
-    assume = None  # type: ignore
-    given = None  # type: ignore
-    integers = None  # type: ignore
-
-    pytest.importorskip("hypothesis")
+from hypothesis import given, assume
+from hypothesis.strategies import integers
 
 
 def test_handle_constrained_int_without_constraints() -> None:

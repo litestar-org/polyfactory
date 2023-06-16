@@ -9,16 +9,9 @@ from polyfactory.value_generators.constrained_collections import (
     handle_constrained_collection,
 )
 
-# FIXME: issue due to pydantic v2 removing the hypothesis plugin.
-try:
-    from hypothesis import given
-    from hypothesis.strategies import integers
 
-except ImportError:
-    given = None  # type: ignore
-    integers = None  # type: ignore
-
-    pytest.importorskip("hypothesis")
+from hypothesis import given
+from hypothesis.strategies import integers
 
 
 @given(
