@@ -1,11 +1,14 @@
 from __future__ import annotations
 
-from typing import Any, TypedDict, Pattern, TYPE_CHECKING, Literal
+
+from typing import Any, TypedDict, Pattern, TYPE_CHECKING, Literal, cast
 
 from polyfactory.constants import TYPE_MAPPING, IGNORED_TYPE_ARGS
-from polyfactory.utils.helpers import unwrap_args, unwrap_new_type
+from polyfactory.utils.helpers import unwrap_args, unwrap_new_type, unwrap_annotated
+from polyfactory.utils.predicates import is_annotated
 
 if TYPE_CHECKING:
+    from random import Random
     from _pydecimal import Decimal
     from typing_extensions import NotRequired, Self
 
@@ -49,9 +52,10 @@ class Constraints(TypedDict):
 class FieldMeta:
     """Factory field metadata container. This class is used to store the data about a field of a factory's model."""
 
-    __slots__ = ("name", "annotation", "children", "default", "constraints")
+    __slots__ = ("name", "annotation", "random", "children", "default", "constraints")
 
     annotation: Any
+    random: Random
     children: list[FieldMeta] | None
     default: Any
     name: str
@@ -62,12 +66,14 @@ class FieldMeta:
         *,
         name: str,
         annotation: type,
+        random: Random,
         default: Any = Null,
         children: list[FieldMeta] | None = None,
         constraints: Constraints | None = None,
     ):
         """Create a factory field metadata instance."""
         self.annotation = unwrap_new_type(annotation)
+        self.random = random
         self.children = children
         self.default = default
         self.name = name
@@ -77,37 +83,112 @@ class FieldMeta:
     def type_args(self) -> tuple[Any, ...]:
         """Return the normalized type args of the annotation, if any.
 
+        :param random: An instance of random.Random.
         :returns: a tuple of types.
         """
         return tuple(
             TYPE_MAPPING[arg] if arg in TYPE_MAPPING else arg
-            for arg in unwrap_args(self.annotation)
+            for arg in unwrap_args(self.annotation, random=self.random)
             if arg not in IGNORED_TYPE_ARGS
         )
 
     @classmethod
     def from_type(
-        cls, annotation: Any, name: str = "", default: Any = Null, constraints: Constraints | None = None
+        cls,
+        annotation: Any,
+        random: Random,
+        name: str = "",
+        default: Any = Null,
+        constraints: Constraints | None = None,
     ) -> Self:
         """Builder method to create a FieldMeta from a type annotation.
 
         :param annotation: A type annotation.
+        :param random: An instance of random.Random.
         :param name: Field name
         :param default: Default value, if any.
         :param constraints: A dictionary of constraints, if any.
 
         :returns: A field meta instance.
         """
+        field_type = unwrap_new_type(annotation)
+
+        if not constraints and is_annotated(field_type):
+            field_type, metadata = unwrap_annotated(field_type, random=random)
+            constraints = cls.parse_constraints(metadata)
 
         field = cls(
-            annotation=TYPE_MAPPING[unwrap_new_type(annotation)]
-            if unwrap_new_type(annotation) in TYPE_MAPPING
-            else unwrap_new_type(annotation),
+            annotation=TYPE_MAPPING[field_type] if field_type in TYPE_MAPPING else field_type,
+            random=random,
             name=name,
             default=default,
             children=None,
             constraints=constraints,
         )
         if field.type_args:
-            field.children = [FieldMeta.from_type(annotation=unwrap_new_type(arg)) for arg in field.type_args]
+            field.children = [
+                FieldMeta.from_type(annotation=unwrap_new_type(arg), random=random) for arg in field.type_args
+            ]
         return field
+
+    @classmethod
+    def parse_constraints(cls, metadata: list[Any]) -> "Constraints":
+        try:
+            import annotated_types
+
+            annotated_types_meta_data = [
+                ("ge", (annotated_types.Ge, annotated_types.Interval)),
+                ("le", (annotated_types.Le, annotated_types.Interval)),
+                ("lt", (annotated_types.Lt, annotated_types.Interval)),
+                ("gt", (annotated_types.Gt, annotated_types.Interval)),
+                ("min_length", (annotated_types.MinLen, annotated_types.Len)),
+                ("max_length", (annotated_types.MaxLen, annotated_types.Len)),
+                ("multiple_of", annotated_types.MultipleOf),
+                # deprecated by pydantic v2
+                ("min_items", (annotated_types.MinLen, annotated_types.Len)),
+                ("max_items", (annotated_types.MaxLen, annotated_types.Len)),
+            ]
+        except ImportError:
+            annotated_types_meta_data = []
+
+        try:
+            from pydantic import UrlConstraints
+            from pydantic.types import UuidVersion, PathType
+            from pydantic._internal._fields import PydanticGeneralMetadata
+
+            pydantic_annotated_meta_data = [
+                ("pattern", PydanticGeneralMetadata),
+                ("max_digits", PydanticGeneralMetadata),
+                ("decimal_places", PydanticGeneralMetadata),
+                # pydantic 2 only constraints
+                ("strict", PydanticGeneralMetadata),
+                ("allow_inf_nan", PydanticGeneralMetadata),
+                ("url", UrlConstraints),
+                ("uuid_version", UuidVersion),
+                ("path_type", PathType),
+            ]
+        except ImportError:
+            PydanticGeneralMetadata = Null  # type: ignore
+            UrlConstraints = Null  # type: ignore
+            UuidVersion = Null  # type: ignore
+            PathType = Null  # type: ignore
+            pydantic_annotated_meta_data = []
+
+        constraints = {}
+
+        for key, annotated_type in [*annotated_types_meta_data, *pydantic_annotated_meta_data]:
+            for constraint in metadata:
+                if isinstance(constraint, annotated_type):  # type: ignore[arg-type]
+                    if isinstance(constraint, PydanticGeneralMetadata):
+                        constraints[key] = constraint.__dict__.get(key, None)
+                    elif isinstance(constraint, UrlConstraints):
+                        constraints[key] = dict(constraint.__dict__)
+                    elif isinstance(constraint, UuidVersion):
+                        constraints[key] = constraint.uuid_version
+                    elif isinstance(constraint, PathType):
+                        constraints[key] = constraint.path_type
+                    elif key not in ["min_items", "max_items"]:
+                        constraints[key] = getattr(constraint, key)
+                    else:
+                        constraints[key] = getattr(constraint, "min_length" if key == "min_items" else "max_length")
+        return cast("Constraints", constraints)

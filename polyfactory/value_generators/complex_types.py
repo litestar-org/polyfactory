@@ -58,7 +58,7 @@ def handle_complex_type(field_meta: FieldMeta, factory: type[BaseFactory]) -> An
 
     :returns: A built result.
     """
-    if origin := get_type_origin(unwrap_annotation(field_meta.annotation)):
+    if origin := get_type_origin(unwrap_annotation(field_meta.annotation, random=factory.__random__)):
         if issubclass(origin, Collection):
             return handle_collection_type(field_meta, origin, factory)
         return factory.get_mock_value(origin)

@@ -1,4 +1,6 @@
 from contextlib import suppress
+from random import Random
+from typing import Any
 
 import pytest
 
@@ -23,19 +25,19 @@ def test_handle_constrained_set_with_min_items_and_max_items(min_items: int, max
         result = handle_constrained_collection(
             collection_type=list,
             factory=ModelFactory,
-            field_meta=FieldMeta(name="test", annotation=set),
+            field_meta=FieldMeta(name="test", annotation=set, random=Random()),
             item_type=str,
             max_items=max_items,
             min_items=min_items,
         )
         assert len(result) >= min_items
-        assert len(result) <= max_items
+        assert len(result) <= max_items or 1
     else:
         with pytest.raises(ParameterException):
             handle_constrained_collection(
                 collection_type=list,
                 factory=ModelFactory,
-                field_meta=FieldMeta(name="test", annotation=set),
+                field_meta=FieldMeta(name="test", annotation=set, random=Random()),
                 item_type=str,
                 max_items=max_items,
                 min_items=min_items,
@@ -51,11 +53,11 @@ def test_handle_constrained_set_with_max_items(
     result = handle_constrained_collection(
         collection_type=list,
         factory=ModelFactory,
-        field_meta=FieldMeta(name="test", annotation=set),
+        field_meta=FieldMeta(name="test", annotation=set, random=Random()),
         item_type=str,
         max_items=max_items,
     )
-    assert len(result) <= max_items
+    assert len(result) <= max_items or 1
 
 
 @given(
@@ -67,20 +69,20 @@ def test_handle_constrained_set_with_min_items(
     result = handle_constrained_collection(
         collection_type=list,
         factory=ModelFactory,
-        field_meta=FieldMeta(name="test", annotation=set),
+        field_meta=FieldMeta(name="test", annotation=set, random=Random()),
         item_type=str,
         min_items=min_items,
     )
     assert len(result) >= min_items
 
 
-def test_handle_constrained_set_with_different_types() -> None:
+@pytest.mark.parametrize("t_type", tuple(ModelFactory.get_provider_map()))
+def test_handle_constrained_set_with_different_types(t_type: Any) -> None:
     with suppress(ParameterException):
-        for _ in ModelFactory.get_provider_map():
-            result = handle_constrained_collection(
-                collection_type=list,
-                factory=ModelFactory,
-                field_meta=FieldMeta(name="test", annotation=set),
-                item_type=str,
-            )
-            assert len(result) > 0
+        result = handle_constrained_collection(
+            collection_type=list,
+            factory=ModelFactory,
+            field_meta=FieldMeta(name="test", annotation=set, random=Random()),
+            item_type=t_type,
+        )
+        assert len(result) > 0

@@ -1,5 +1,6 @@
 from __future__ import annotations
-from typing import Any, get_args
+
+from typing import Any, get_args, TYPE_CHECKING
 
 from polyfactory.utils.predicates import (
     is_annotated,
@@ -7,6 +8,9 @@ from polyfactory.utils.predicates import (
     is_optional_union,
     is_union,
 )
+
+if TYPE_CHECKING:
+    from random import Random
 
 
 def unwrap_new_type(annotation: Any) -> Any:
@@ -22,14 +26,15 @@ def unwrap_new_type(annotation: Any) -> Any:
     return annotation
 
 
-def unwrap_union(annotation: Any) -> Any:
+def unwrap_union(annotation: Any, random: Random) -> Any:
     """Unwraps union types - recursively.
 
     :param annotation: A type annotation, possibly a type union.
+    :param random: An instance of random.Random.
     :returns: A type annotation
     """
     while is_union(annotation):
-        annotation = get_args(annotation)[0]
+        annotation = random.choice(get_args(annotation))
     return annotation
 
 
@@ -41,15 +46,15 @@ def unwrap_optional(annotation: Any) -> Any:
     :returns: A type annotation
     """
     while is_optional_union(annotation):
-        args = get_args(annotation)
-        annotation = args[0] if args[0] not in (type(None), None) else args[1]
+        annotation = [arg for arg in get_args(annotation) if arg not in (type(None), None)][0]
     return annotation
 
 
-def unwrap_annotation(annotation: Any) -> Any:
+def unwrap_annotation(annotation: Any, random: Random) -> Any:
     """Unwraps an annotation.
 
     :param annotation: A type annotation.
+    :param random: An instance of random.Random.
 
     :returns: The unwrapped annotation.
 
@@ -60,19 +65,33 @@ def unwrap_annotation(annotation: Any) -> Any:
         elif is_optional_union(annotation):
             annotation = unwrap_optional(annotation)
         elif is_annotated(annotation):
-            annotation = get_args(annotation)[0]
+            annotation = unwrap_annotated(annotation, random=random)[0]
         else:
-            annotation = unwrap_union(annotation)
+            annotation = unwrap_union(annotation, random=random)
     return annotation
 
 
-def unwrap_args(annotation: Any) -> tuple[Any, ...]:
+def unwrap_args(annotation: Any, random: Random) -> tuple[Any, ...]:
     """Unwrap the annotation and return any type args.
 
     :param annotation: A type annotation
+    :param random: An instance of random.Random.
 
     :returns: A tuple of type args.
 
     """
 
-    return get_args(unwrap_annotation(annotation=annotation))
+    return get_args(unwrap_annotation(annotation=annotation, random=random))
+
+
+def unwrap_annotated(annotation: Any, random: Random) -> tuple[Any, list[Any]]:
+    """Unwrap an annotated type and return a tuple of type args and optional metadata.
+
+    :param annotation: An annotated type annotation
+    :param random: An instance of random.Random.
+
+    :returns: A tuple of type args.
+
+    """
+    args = [arg for arg in get_args(annotation) if arg is not None]
+    return unwrap_annotation(args[0], random=random), args[1:]

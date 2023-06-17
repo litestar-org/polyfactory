@@ -1,6 +1,6 @@
 from __future__ import annotations
 from abc import ABC, abstractmethod
-from collections import Counter, deque
+from collections import Counter, deque, abc
 from contextlib import suppress
 from datetime import date, datetime, time, timedelta
 from decimal import Decimal
@@ -100,7 +100,6 @@ def _create_pydantic_type_map(cls: "type[BaseFactory]") -> dict[type, Callable[[
             pydantic.StrictStr: cls.__faker__.pystr,
             pydantic.EmailStr: cls.__faker__.free_email,
             pydantic.NameEmail: cls.__faker__.free_email,
-            pydantic.color.Color: cls.__faker__.hex_color,
             pydantic.Json: cls.__faker__.json,
             pydantic.PaymentCardNumber: cls.__faker__.credit_card_number,
             pydantic.AnyUrl: cls.__faker__.url,
@@ -119,8 +118,14 @@ def _create_pydantic_type_map(cls: "type[BaseFactory]") -> dict[type, Callable[[
         mapping = {}
 
     try:
+        # v1 only values - these will raise an exception in v2
         from pydantic import (
             PyObject,
+        )
+
+        # in pydantic v2 these are all aliases for Annotated with a constraint.
+        # we therefore do not need them in v2
+        from pydantic import (
             AmqpDsn,
             KafkaDsn,
             PostgresDsn,
@@ -134,10 +139,8 @@ def _create_pydantic_type_map(cls: "type[BaseFactory]") -> dict[type, Callable[[
         )
 
         mapping.update(
-            {
+            {  # pyright: ignore
                 PyObject: lambda: "decimal.Decimal",
-                # in pydantic v2 these are all aliases for Annotated, and hence they are parsed using a different
-                # mechanism.
                 AmqpDsn: lambda: "amqps://example.com",
                 KafkaDsn: lambda: "kafka://localhost:9092",
                 PostgresDsn: lambda: "postgresql://user:secret@localhost",
@@ -151,6 +154,14 @@ def _create_pydantic_type_map(cls: "type[BaseFactory]") -> dict[type, Callable[[
             }
         )
 
+    except ImportError:
+        pass
+
+    try:
+        # this might be removed by pydantic 2
+        from pydantic import color
+
+        mapping[color.Color] = cls.__faker__.hex_color  # pyright: ignore
     except ImportError:
         pass
 
@@ -347,7 +358,7 @@ class BaseFactory(ABC, Generic[T]):
         :returns: Boolean dictating whether the annotation is a batch factory type
         """
         origin = get_type_origin(annotation) or annotation
-        if is_safe_subclass(origin, Sequence) and (args := unwrap_args(annotation)):  # type: ignore
+        if is_safe_subclass(origin, Sequence) and (args := unwrap_args(annotation, random=cls.__random__)):  # type: ignore
             return len(args) == 1 and BaseFactory.is_factory_type(annotation=args[0])
         return False
 
@@ -461,6 +472,7 @@ class BaseFactory(ABC, Generic[T]):
             IPv6Network: lambda: ip_network(cls.__faker__.ipv6(network=True)),
             # types
             Callable: _create_generic_fn,
+            abc.Callable: _create_generic_fn,
             Counter: lambda: Counter(cls.__faker__.pystr()),
             **_create_pydantic_type_map(cls),
         }
@@ -548,10 +560,10 @@ class BaseFactory(ABC, Generic[T]):
                 le=cast("Any", constraints.get("le")),
             )
 
-        if is_safe_subclass(annotation, str) or is_safe_subclass(annotation, bytes):
-            if url_constraints := constraints.get("url"):
-                return handle_constrained_url(constraints=url_constraints)
+        if url_constraints := constraints.get("url"):
+            return handle_constrained_url(constraints=url_constraints)
 
+        if is_safe_subclass(annotation, str) or is_safe_subclass(annotation, bytes):
             return handle_constrained_string_or_bytes(
                 random=cls.__random__,
                 t_type=str if is_safe_subclass(annotation, str) else bytes,
@@ -627,7 +639,7 @@ class BaseFactory(ABC, Generic[T]):
         if cls.should_set_none_value(field_meta=field_meta):
             return None
 
-        unwrapped_annotation = unwrap_annotation(field_meta.annotation)
+        unwrapped_annotation = unwrap_annotation(field_meta.annotation, random=cls.__random__)
 
         if is_literal(annotation=unwrapped_annotation) and (literal_args := get_args(unwrapped_annotation)):
             return cls.__random__.choice(literal_args)

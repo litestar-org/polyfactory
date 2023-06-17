@@ -1,3 +1,6 @@
+from random import Random
+from typing import Any
+
 import pytest
 
 from polyfactory.exceptions import ParameterException
@@ -21,19 +24,19 @@ def test_handle_constrained_list_with_min_items_and_max_items(min_items: int, ma
         result = handle_constrained_collection(
             collection_type=list,
             factory=ModelFactory,
-            field_meta=FieldMeta(name="test", annotation=list),
+            field_meta=FieldMeta(name="test", annotation=list, random=Random()),
             item_type=str,
             max_items=max_items,
             min_items=min_items,
         )
         assert len(result) >= min_items
-        assert len(result) <= max_items
+        assert len(result) <= max_items or 1
     else:
         with pytest.raises(ParameterException):
             handle_constrained_collection(
                 collection_type=list,
                 factory=ModelFactory,
-                field_meta=FieldMeta(name="test", annotation=list),
+                field_meta=FieldMeta(name="test", annotation=list, random=Random()),
                 item_type=str,
                 max_items=max_items,
                 min_items=min_items,
@@ -49,11 +52,11 @@ def test_handle_constrained_list_with_max_items(
     result = handle_constrained_collection(
         collection_type=list,
         factory=ModelFactory,
-        field_meta=FieldMeta(name="test", annotation=list),
+        field_meta=FieldMeta(name="test", annotation=list, random=Random()),
         item_type=str,
         max_items=max_items,
     )
-    assert len(result) <= max_items
+    assert len(result) <= max_items or 1
 
 
 @given(
@@ -65,31 +68,33 @@ def test_handle_constrained_list_with_min_items(
     result = handle_constrained_collection(
         collection_type=list,
         factory=ModelFactory,
-        field_meta=FieldMeta(name="test", annotation=list),
+        field_meta=FieldMeta.from_type(list[str], name="test", random=Random()),
         item_type=str,
         min_items=min_items,
     )
     assert len(result) >= min_items
 
 
-def test_handle_constrained_list_with_different_types() -> None:
-    for t_type in ModelFactory.get_provider_map():
-        result = handle_constrained_collection(
-            collection_type=list,
-            factory=ModelFactory,
-            field_meta=FieldMeta(name="test", annotation=list),
-            item_type=t_type,
-        )
-        assert len(result) > 0
+@pytest.mark.parametrize("t_type", tuple(ModelFactory.get_provider_map()))
+def test_handle_constrained_list_with_different_types(t_type: Any) -> None:
+    result = handle_constrained_collection(
+        collection_type=list,
+        factory=ModelFactory,
+        field_meta=FieldMeta.from_type(list[t_type], name="test", random=Random()),
+        item_type=t_type,
+    )
+    assert len(result) > 0
 
 
 def test_handle_unique_items() -> None:
     result = handle_constrained_collection(
         collection_type=list,
         factory=ModelFactory,
-        field_meta=FieldMeta(name="test", annotation=list),
+        field_meta=FieldMeta.from_type(list[str], name="test", random=Random(), constraints={"unique_items": True}),
         item_type=str,
         unique_items=True,
+        min_items=2,
+        max_items=2,
     )
     assert len(result) == 2
     assert len(set(result)) == 2

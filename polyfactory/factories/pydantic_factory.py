@@ -36,6 +36,7 @@ except ImportError:
     from pydantic._internal._fields import Undefined
 
 if TYPE_CHECKING:
+    from random import Random
     from typing_extensions import TypeGuard
     from pydantic.fields import FieldInfo
 
@@ -62,12 +63,18 @@ class PydanticFieldMeta(FieldMeta):
     """Field meta subclass capable of handling pydantic ModelFields"""
 
     @classmethod
-    def from_field_info(cls, field_name: str, field_info: FieldInfo, use_alias: bool) -> PydanticFieldMeta:
-        import annotated_types
-        from pydantic import UrlConstraints
-        from pydantic.types import UuidVersion, PathType
-        from pydantic._internal._fields import PydanticGeneralMetadata
+    def from_field_info(
+        cls, field_name: str, field_info: FieldInfo, use_alias: bool, random: Random
+    ) -> PydanticFieldMeta:
+        """Create an instance from a pydantic field info.
 
+        :param field_name: The name of the field.
+        :param field_info: A pydantic FieldInfo instance.
+        :param use_alias: Whether to use the field alias.
+        :param random: A random.Random instance.
+
+        :returns: A PydanticFieldMeta instance.
+        """
         if callable(field_info.default_factory):
             default_value = field_info.default_factory()
         else:
@@ -77,48 +84,17 @@ class PydanticFieldMeta(FieldMeta):
 
         annotation = unwrap_new_type(field_info.annotation)
 
-        constraints = {}
+        if metadata := [v for v in field_info.metadata if v is not None]:
+            constraints = cls.parse_constraints(metadata=metadata)
+        else:
+            constraints = {}
 
-        for key, annotated_type in [
-            ("ge", (annotated_types.Ge, annotated_types.Interval)),
-            ("le", (annotated_types.Le, annotated_types.Interval)),
-            ("lt", (annotated_types.Lt, annotated_types.Interval)),
-            ("gt", (annotated_types.Gt, annotated_types.Interval)),
-            ("min_length", (annotated_types.MinLen, annotated_types.Len)),
-            ("max_length", (annotated_types.MaxLen, annotated_types.Len)),
-            ("multiple_of", annotated_types.MultipleOf),
-            ("pattern", PydanticGeneralMetadata),
-            ("max_digits", PydanticGeneralMetadata),
-            ("decimal_places", PydanticGeneralMetadata),
-            # deprecated
-            ("min_items", (annotated_types.MinLen, annotated_types.Len)),
-            ("max_items", (annotated_types.MaxLen, annotated_types.Len)),
-            # pydantic 2 only constraints
-            ("strict", PydanticGeneralMetadata),
-            ("allow_inf_nan", PydanticGeneralMetadata),
-            ("url", UrlConstraints),
-            ("uuid_version", UuidVersion),
-            ("path_type", PathType),
-        ]:
-            if metadata := [v for v in field_info.metadata if isinstance(v, annotated_type)]:  # type: ignore[arg-type]
-                constraint = metadata[0]
-                if isinstance(constraint, PydanticGeneralMetadata):
-                    constraints[key] = constraint.__dict__.get(key, None)
-                elif isinstance(constraint, UrlConstraints):
-                    constraints[key] = dict(constraint.__dict__)
-                    # pydantic is using sentinel types for urls, which causes issues for us.
-                    annotation = str
-                elif isinstance(constraint, UuidVersion):
-                    constraints[key] = constraint.uuid_version
-                elif isinstance(constraint, PathType):
-                    constraints[key] = constraint.path_type
-                elif key not in ["min_items", "max_items"]:
-                    constraints[key] = getattr(constraint, key)
-                else:
-                    constraints[key] = getattr(constraint, "min_length" if key == "min_items" else "max_length")
+        if "url" in constraints:
+            # pydantic uses a sentinel value for url constraints
+            annotation = str
 
         constraints = {
-            **constraints,
+            **constraints,  # type: ignore[misc]
             "constant": None,
             "unique_items": None,
             "upper_case": None,
@@ -128,6 +104,7 @@ class PydanticFieldMeta(FieldMeta):
 
         return PydanticFieldMeta.from_type(
             name=name,
+            random=random,
             annotation=annotation,
             default=default_value,
             constraints=cast("Constraints", {k: v for k, v in constraints.items() if v is not None}) or None,
@@ -194,6 +171,7 @@ class PydanticFieldMeta(FieldMeta):
 
         return PydanticFieldMeta(
             name=name,
+            random=cls.random,
             annotation=annotation,
             children=children,
             default=default_value,
@@ -243,8 +221,9 @@ class ModelFactory(Generic[T], BaseFactory[T]):
             else:
                 cls._fields_metadata = [
                     PydanticFieldMeta.from_field_info(
-                        field_name=field_name,
                         field_info=field_info,
+                        field_name=field_name,
+                        random=cls.__random__,
                         use_alias=not cls.__model__.model_config.get("populate_by_name", False),
                     )
                     for field_name, field_info in cls.__model__.model_fields.items()

@@ -1,5 +1,6 @@
 from datetime import date, datetime, timedelta
 from decimal import Decimal
+from random import Random
 from typing import Type, Union, cast, List, Set, FrozenSet, Tuple
 
 import pytest
@@ -11,7 +12,7 @@ from polyfactory.field_meta import Constraints, FieldMeta
 @pytest.mark.parametrize("t", (int, float, Decimal))
 def test_numbers(t: Type[Union[int, float, Decimal]]) -> None:
     constraints: Constraints = {"ge": 1, "le": 20}
-    field_meta = FieldMeta.from_type(t, "foo", constraints=constraints)
+    field_meta = FieldMeta.from_type(annotation=t, name="foo", constraints=constraints, random=Random())
     value = BaseFactory.get_field_value(field_meta)
 
     assert value >= constraints["ge"]
@@ -21,7 +22,7 @@ def test_numbers(t: Type[Union[int, float, Decimal]]) -> None:
 @pytest.mark.parametrize("t", (str, bytes))
 def test_str_and_bytes(t: Type[Union[str, bytes]]) -> None:
     constraints: Constraints = {"min_length": 20, "max_length": 45}
-    field_meta = FieldMeta.from_type(t, "foo", constraints=constraints)
+    field_meta = FieldMeta.from_type(annotation=t, name="foo", constraints=constraints, random=Random())
     value = BaseFactory.get_field_value(field_meta)
 
     assert len(value) >= constraints["min_length"]
@@ -34,7 +35,7 @@ def test_collections(t: Type[Union[Tuple, List, Set, FrozenSet]]) -> None:
         "min_length": 2,
         "max_length": 10,
     }
-    field_meta = FieldMeta.from_type(t, "foo", constraints=constraints)
+    field_meta = FieldMeta.from_type(annotation=t, name="foo", constraints=constraints, random=Random())
     value = BaseFactory.get_field_value(field_meta)
 
     assert len(value) >= constraints["min_length"]
@@ -46,7 +47,9 @@ def test_date() -> None:
     le_date = ge_date + timedelta(days=10)
     constraints = {"ge": ge_date, "le": le_date}
 
-    field_meta = FieldMeta.from_type(date, "foo", constraints=cast(Constraints, constraints))
+    field_meta = FieldMeta.from_type(
+        annotation=date, name="foo", constraints=cast(Constraints, constraints), random=Random()
+    )
     value = BaseFactory.get_field_value(field_meta)
 
     assert value >= ge_date
