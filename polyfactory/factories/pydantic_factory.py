@@ -80,10 +80,10 @@ class PydanticFieldMeta(FieldMeta):
         constraints = {}
 
         for key, annotated_type in [
-            ("ge", annotated_types.Ge),
-            ("le", annotated_types.Le),
-            ("lt", annotated_types.Lt),
-            ("gt", annotated_types.Gt),
+            ("ge", (annotated_types.Ge, annotated_types.Interval)),
+            ("le", (annotated_types.Le, annotated_types.Interval)),
+            ("lt", (annotated_types.Lt, annotated_types.Interval)),
+            ("gt", (annotated_types.Gt, annotated_types.Interval)),
             ("min_length", (annotated_types.MinLen, annotated_types.Len)),
             ("max_length", (annotated_types.MaxLen, annotated_types.Len)),
             ("multiple_of", annotated_types.MultipleOf),

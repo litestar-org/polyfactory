@@ -30,6 +30,7 @@ class Constraints(TypedDict):
     decimal_places: NotRequired[int]
     ge: NotRequired[int | float | Decimal]
     gt: NotRequired[int | float | Decimal]
+    item_type: NotRequired[Any]
     le: NotRequired[int | float | Decimal]
     lower_case: NotRequired[bool]
     lt: NotRequired[int | float | Decimal]
@@ -37,13 +38,12 @@ class Constraints(TypedDict):
     max_length: NotRequired[int]
     min_length: NotRequired[int]
     multiple_of: NotRequired[int | float | Decimal]
+    path_type: NotRequired[Literal["file", "dir", "new"]]
     pattern: NotRequired[str | Pattern]
     unique_items: NotRequired[bool]
     upper_case: NotRequired[bool]
-    item_type: NotRequired[Any]
     url: NotRequired[UrlConstraints]
     uuid_version: NotRequired[Literal[1, 3, 4, 5]]
-    path_type: NotRequired[Literal["file", "dir", "new"]]
 
 
 class FieldMeta:
