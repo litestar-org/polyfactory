@@ -1,7 +1,7 @@
 from __future__ import annotations
 
-from typing import Any, get_args, TYPE_CHECKING
-from typing_extensions import get_origin
+import sys
+from typing import Any, get_args, TYPE_CHECKING, get_origin
 from polyfactory.constants import TYPE_MAPPING
 from polyfactory.utils.predicates import (
     is_annotated,
@@ -112,6 +112,10 @@ def normalize_annotation(annotation: Any, random: Random) -> Any:
     if is_annotated(annotation):
         annotation = unwrap_annotated(annotation, random=random)[0]
 
+    # we have to maintain compatibility with the older non-subscriptable typings.
+    if sys.version_info <= (3, 9):  # pragma: no cover
+        return annotation
+
     origin = get_origin(annotation) or annotation
 
     if origin in TYPE_MAPPING:
@@ -119,6 +123,6 @@ def normalize_annotation(annotation: Any, random: Random) -> Any:
 
     if args := get_args(annotation):
         args = tuple(normalize_annotation(arg, random=random) for arg in args)
-        return origin[args]
+        return origin[args] if origin is not type else annotation
 
     return origin

@@ -1,5 +1,5 @@
 from random import Random
-from typing import Any
+from typing import Any, List
 
 import pytest
 
@@ -68,7 +68,7 @@ def test_handle_constrained_list_with_min_items(
     result = handle_constrained_collection(
         collection_type=list,
         factory=ModelFactory,
-        field_meta=FieldMeta.from_type(list[str], name="test", random=Random()),
+        field_meta=FieldMeta.from_type(List[str], name="test", random=Random()),
         item_type=str,
         min_items=min_items,
     )
@@ -77,7 +77,7 @@ def test_handle_constrained_list_with_min_items(
 
 @pytest.mark.parametrize("t_type", tuple(ModelFactory.get_provider_map()))
 def test_handle_constrained_list_with_different_types(t_type: Any) -> None:
-    field_meta = FieldMeta.from_type(list[t_type], name="test", random=Random())
+    field_meta = FieldMeta.from_type(List[t_type], name="test", random=Random())
     result = handle_constrained_collection(
         collection_type=list,
         factory=ModelFactory,
@@ -88,7 +88,7 @@ def test_handle_constrained_list_with_different_types(t_type: Any) -> None:
 
 
 def test_handle_unique_items() -> None:
-    field_meta = FieldMeta.from_type(list[str], name="test", random=Random(), constraints={"unique_items": True})
+    field_meta = FieldMeta.from_type(List[str], name="test", random=Random(), constraints={"unique_items": True})
     result = handle_constrained_collection(
         collection_type=list,
         factory=ModelFactory,
