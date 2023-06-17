@@ -179,7 +179,9 @@ def test_nested_constrained_attribute_handling_pydantic_1() -> None:
     assert result.my_str_dict_field
 
 
-@pytest.mark.skipif(pydantic_version == 1, reason="pydantic 2 only test")
+@pytest.mark.skipif(
+    pydantic_version == 1 or sys.version_info < (3, 9), reason="pydantic 2 only test, does not work correctly in py 3.8"
+)
 def test_nested_constrained_attribute_handling_pydantic_2() -> None:
     # subclassing the constrained fields is not documented by pydantic, but is supported apparently
 
@@ -207,7 +209,7 @@ def test_nested_constrained_attribute_handling_pydantic_2() -> None:
 
 
 @pytest.mark.skipif(
-    pydantic_version == 1 or sys.version_info < (3, 9), reason="pydantic 2 only test, do not work correctly in py 3.8"
+    pydantic_version == 1 or sys.version_info < (3, 9), reason="pydantic 2 only test, does not work correctly in py 3.8"
 )
 def test_constrained_attribute_parsing_pydantic_v2() -> None:
     class ConstrainedModel(BaseModel):
