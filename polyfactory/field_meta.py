@@ -4,7 +4,7 @@ from __future__ import annotations
 from typing import Any, TypedDict, Pattern, TYPE_CHECKING, Literal, cast
 
 from polyfactory.constants import TYPE_MAPPING, IGNORED_TYPE_ARGS
-from polyfactory.utils.helpers import unwrap_args, unwrap_new_type, unwrap_annotated
+from polyfactory.utils.helpers import unwrap_args, unwrap_new_type, unwrap_annotated, normalize_annotation
 from polyfactory.utils.predicates import is_annotated
 
 if TYPE_CHECKING:
@@ -72,7 +72,7 @@ class FieldMeta:
         constraints: Constraints | None = None,
     ):
         """Create a factory field metadata instance."""
-        self.annotation = unwrap_new_type(annotation)
+        self.annotation = annotation
         self.random = random
         self.children = children
         self.default = default
@@ -86,11 +86,7 @@ class FieldMeta:
         :param random: An instance of random.Random.
         :returns: a tuple of types.
         """
-        return tuple(
-            TYPE_MAPPING[arg] if arg in TYPE_MAPPING else arg
-            for arg in unwrap_args(self.annotation, random=self.random)
-            if arg not in IGNORED_TYPE_ARGS
-        )
+        return tuple(arg for arg in unwrap_args(self.annotation, random=self.random) if arg not in IGNORED_TYPE_ARGS)
 
     @classmethod
     def from_type(
@@ -111,10 +107,10 @@ class FieldMeta:
 
         :returns: A field meta instance.
         """
-        field_type = unwrap_new_type(annotation)
+        field_type = normalize_annotation(annotation, random=random)
 
-        if not constraints and is_annotated(field_type):
-            field_type, metadata = unwrap_annotated(field_type, random=random)
+        if not constraints and is_annotated(annotation):
+            _, metadata = unwrap_annotated(field_type, random=random)
             constraints = cls.parse_constraints(metadata)
 
         field = cls(
@@ -184,9 +180,9 @@ class FieldMeta:
                     elif isinstance(constraint, UrlConstraints):
                         constraints[key] = dict(constraint.__dict__)
                     elif isinstance(constraint, UuidVersion):
-                        constraints[key] = constraint.uuid_version
+                        constraints[key] = constraint.uuid_version  # pyright: ignore
                     elif isinstance(constraint, PathType):
-                        constraints[key] = constraint.path_type
+                        constraints[key] = constraint.path_type  # pyright: ignore
                     elif key not in ["min_items", "max_items"]:
                         constraints[key] = getattr(constraint, key)
                     else:

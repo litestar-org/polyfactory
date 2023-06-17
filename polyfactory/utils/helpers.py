@@ -1,7 +1,8 @@
 from __future__ import annotations
 
-from typing import Any, get_args, TYPE_CHECKING
+from typing import Any, get_args, TYPE_CHECKING, get_origin
 
+from polyfactory.constants import TYPE_MAPPING
 from polyfactory.utils.predicates import (
     is_annotated,
     is_new_type,
@@ -95,3 +96,29 @@ def unwrap_annotated(annotation: Any, random: Random) -> tuple[Any, list[Any]]:
     """
     args = [arg for arg in get_args(annotation) if arg is not None]
     return unwrap_annotation(args[0], random=random), args[1:]
+
+
+def normalize_annotation(annotation: Any, random: Random) -> Any:
+    """Normalize an annotation.
+
+    :param annotation: A type annotation.
+
+    :returns: A normalized type annotation.
+
+    """
+    if is_new_type(annotation):
+        annotation = unwrap_new_type(annotation)
+
+    if is_annotated(annotation):
+        annotation = unwrap_annotated(annotation, random=random)[0]
+
+    origin = get_origin(annotation) or annotation
+
+    if origin in TYPE_MAPPING:
+        origin = TYPE_MAPPING[origin]
+
+    if args := get_args(annotation):
+        args = tuple(normalize_annotation(arg, random=random) for arg in args)
+        return origin[args]
+
+    return origin

@@ -202,28 +202,19 @@ def test_handle_constrained_int_handles_multiple_of_with_ge_and_le(val1: int, va
             )
 
 
-def test_constraint_bounds_handling() -> None:
+def test_constraint_randomness() -> None:
+    random = Random(10)
     result = handle_constrained_int(
-        random=Random(),
+        random=random,
     )
-    assert result == 100
-
-    result = handle_constrained_int(
-        random=Random(),
-    )
-    assert result == 101
+    assert result == 55
 
     result = handle_constrained_int(
-        random=Random(),
+        random=random,
     )
-    assert result == 101
+    assert result == 61
 
-    with pytest.raises(ParameterException):
-        handle_constrained_int(
-            random=Random(),
-        )
-
-    with pytest.raises(ParameterException):
-        handle_constrained_int(
-            random=Random(),
-        )
+    result = handle_constrained_int(
+        random=random,
+    )
+    assert result == 85

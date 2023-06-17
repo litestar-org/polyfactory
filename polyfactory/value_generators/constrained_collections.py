@@ -42,7 +42,7 @@ def handle_constrained_collection(
     try:
         length = factory.__random__.randint(min_items, max_items) or 1
         while len(collection) < length:
-            value = factory.get_field_value(field_meta.children[0] if field_meta.children else field_meta)
+            value = factory.get_field_value(field_meta)
             if isinstance(collection, set):
                 collection.add(value)
             else:

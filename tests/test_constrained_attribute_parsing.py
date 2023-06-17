@@ -118,19 +118,19 @@ def test_nested_constrained_attribute_handling_pydantic_1() -> None:
         ConstrainedStr,
     )
 
-    class MyConstrainedString(ConstrainedStr):  # type: ignore[misc]
+    class MyConstrainedString(ConstrainedStr):  # type: ignore[misc,valid-type]
         regex = re.compile("^vpc-.*$")
 
-    class MyConstrainedBytes(ConstrainedBytes):  # type: ignore[misc]
+    class MyConstrainedBytes(ConstrainedBytes):  # type: ignore[misc,valid-type]
         min_length = 11
 
-    class MyConstrainedInt(ConstrainedInt):  # type: ignore[misc]
+    class MyConstrainedInt(ConstrainedInt):  # type: ignore[misc,valid-type]
         ge = 11
 
-    class MyConstrainedFloat(ConstrainedFloat):  # type: ignore[misc]
+    class MyConstrainedFloat(ConstrainedFloat):  # type: ignore[misc,valid-type]
         ge = 11.0
 
-    class MyConstrainedDecimal(ConstrainedDecimal):  # type: ignore[misc]
+    class MyConstrainedDecimal(ConstrainedDecimal):  # type: ignore[misc,valid-type]
         ge = Decimal("11.0")
 
     class MyModel(BaseModel):
