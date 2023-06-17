@@ -47,19 +47,20 @@ jobs:
         uses: actions/cache@v3
         with:
           path: .venv
-          key: v2-venv-${{ runner.os }}-${{ matrix.python-version }}-${{ hashFiles('**/poetry.lock') }}
+          key: v1-venv-${{ runner.os }}-${{ matrix.python-version }}-${{ matrix.pydantic-version}}-${{ hashFiles('**/poetry.lock') }}
       - name: Install dependencies
         if: steps.cached-poetry-dependencies.outputs.cache-hit != 'true'
         run: poetry install --no-interaction
       - name: Install pydantic
-        run: poetry add "pydantic==${{ matrix.pydantic-version }}"
+        if: matrix.pydantic-version == '2.0b3'
+        run: source .venv/bin/activate && pip install "pydantic==2.0b3"
       - name: Set pythonpath
         run: echo "PYTHONPATH=$PWD" >> $GITHUB_ENV
       - name: Test
-        if: matrix.python-version != '3.11'
+        if: matrix.python-version != '3.11' || matrix.pydantic-version != '1.10.9'
         run: poetry run pytest
       - name: Test with Coverage
-        if: matrix.python-version == '3.11'
+        if: matrix.python-version == '3.11' && matrix.pydantic-version == '1.10.9'
         run: poetry run pytest --cov=. --cov-report=xml
       - uses: actions/upload-artifact@v3
         if: matrix.python-version == '3.11'

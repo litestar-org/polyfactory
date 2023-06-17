@@ -1,4 +1,3 @@
-import sys
 from collections import abc, defaultdict, deque
 from typing import (
     DefaultDict,
@@ -14,10 +13,10 @@ from typing import (
     Union,
 )
 
-if sys.version_info >= (3, 10):  # pragma: no cover
+try:
     from types import UnionType
-else:  # pragma: no cover
-    UNION_TYPES = Union
+except ImportError:
+    UnionType = Union  # type: ignore
 
 
 # Mapping of type annotations into concrete types. This is used to normalize python <= 3.9 annotations.

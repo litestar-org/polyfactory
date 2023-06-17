@@ -1,8 +1,9 @@
 from typing import Dict, Union
 
+import pytest
 from pydantic import BaseModel
 
-from polyfactory.factories.pydantic_factory import ModelFactory
+from polyfactory.factories.pydantic_factory import ModelFactory, pydantic_version
 
 
 def test_passing_nested_dict() -> None:
@@ -24,6 +25,10 @@ def test_passing_nested_dict() -> None:
     assert obj.dict() == {"my_mapping_obj": {"baz": {"val": "bar"}}, "my_mapping_str": {"foo": "bar"}}
 
 
+@pytest.mark.skipif(
+    pydantic_version == 2,
+    reason="indeterminate behaviour in pydantic 2.0",
+)
 def test_dict_with_union_random_types() -> None:
     class MyClass(BaseModel):
         val: Dict[str, Union[int, str]]

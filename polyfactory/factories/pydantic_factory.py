@@ -119,7 +119,7 @@ class PydanticFieldMeta(FieldMeta):
         :returns: A PydanticFieldMeta instance.
 
         """
-        from pydantic.fields import DeferredType, Undefined
+        from pydantic.fields import DeferredType, Undefined  # type: ignore
         from pydantic import AnyUrl, HttpUrl, KafkaDsn, PostgresDsn, RedisDsn, AmqpDsn, AnyHttpUrl
 
         if callable(model_field.default_factory):
