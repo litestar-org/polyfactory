@@ -1,4 +1,5 @@
 import re
+import sys
 from decimal import Decimal
 from typing import Dict, List, Optional, Tuple
 
@@ -205,7 +206,9 @@ def test_nested_constrained_attribute_handling_pydantic_2() -> None:
     assert result.constr_list_field
 
 
-@pytest.mark.skipif(pydantic_version == 1, reason="pydantic 2 only test")
+@pytest.mark.skipif(
+    pydantic_version == 1 or sys.version_info < (3, 9), reason="pydantic 2 only test, do not work correctly in py 3.8"
+)
 def test_constrained_attribute_parsing_pydantic_v2() -> None:
     class ConstrainedModel(BaseModel):
         conbytes_field: conbytes()  # type: ignore[valid-type]
