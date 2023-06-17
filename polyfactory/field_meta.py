@@ -109,7 +109,8 @@ class FieldMeta:
         """
         field_type = normalize_annotation(annotation, random=random)
 
-        if not constraints and is_annotated(annotation):
+        # FIXME: remove the pragma when switching to pydantic v2 permanently
+        if not constraints and is_annotated(annotation):  # pragma: no cover
             _, metadata = unwrap_annotated(field_type, random=random)
             constraints = cls.parse_constraints(metadata)
 
@@ -127,8 +128,9 @@ class FieldMeta:
             ]
         return field
 
+    # FIXME: remove the pragma when switching to pydantic v2 permanently
     @classmethod
-    def parse_constraints(cls, metadata: list[Any]) -> "Constraints":
+    def parse_constraints(cls, metadata: list[Any]) -> "Constraints":  # pragma: no cover
         try:
             import annotated_types
 

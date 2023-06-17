@@ -61,10 +61,11 @@ def is_pydantic_model(value: Any) -> "TypeGuard[type[BaseModel]]":
 class PydanticFieldMeta(FieldMeta):
     """Field meta subclass capable of handling pydantic ModelFields"""
 
+    # FIXME: remove the pragma when switching to pydantic v2 permanently
     @classmethod
     def from_field_info(
         cls, field_name: str, field_info: FieldInfo, use_alias: bool, random: Random
-    ) -> PydanticFieldMeta:
+    ) -> PydanticFieldMeta:  # pragma: no cover
         """Create an instance from a pydantic field info.
 
         :param field_name: The name of the field.
@@ -224,7 +225,8 @@ class ModelFactory(Generic[T], BaseFactory[T]):
                     )
                     for field in cls.__model__.__fields__.values()  # type: ignore[attr-defined]
                 ]
-            else:
+            # FIXME: remove the pragma when switching to pydantic v2 permanently
+            else:  # pragma: no cover
                 cls._fields_metadata = [
                     PydanticFieldMeta.from_field_info(
                         field_info=field_info,
