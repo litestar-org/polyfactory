@@ -829,7 +829,7 @@ setuptools = "*"
 name = "odmantic"
 version = "0.9.2"
 description = "ODMantic, an AsyncIO MongoDB Object Document Mapper for Python using type hints "
-optional = true
+optional = false
 python-versions = ">=3.7"
 files = [
     {file = "odmantic-0.9.2-py3-none-any.whl", hash = "sha256:a82f4fe6a6face24cf0cd0738c9bb32564219cb5a5ed6b0a58e92a4c2048e4d8"},
@@ -1662,4 +1662,4 @@ pydantic = ["pydantic"]
 [metadata]
 lock-version = "2.0"
 python-versions = ">=3.8,<4.0"
-content-hash = "1d47abc7d4177a3bd864396f3081f59bc0b89cabf2ae5655df51e5d7628fe743"
+content-hash = "73bdb9ecc2c7160198bc24411cae60b9bbba2b8335a39456bbcaa49a79b2002d"

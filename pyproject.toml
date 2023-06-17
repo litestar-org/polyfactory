@@ -75,11 +75,12 @@ email-validator = "*"
 hypothesis = "*"
 mongomock-motor = "*"
 msgspec = "*"
+odmantic = "*"
 pre-commit = "*"
+pydantic = "*"
 pytest = "*"
 pytest-asyncio = "*"
 pytest-cov = "*"
-pydantic = "*"
 
 [tool.poetry.group.docs.dependencies]
 sphinx-autobuild = "*"

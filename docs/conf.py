@@ -70,11 +70,17 @@ nitpick_ignore = [
     ("py:class", "Random"),
     ("py:class", "Scope"),
     ("py:class", "T"),
+    ("py:class", "P"),
+    ("py:class", "P.args"),
+    ("py:class", "P.kwargs"),
+    ("py:class", "Self"),
+    ("py:class", "TypeGuard"),
     ("py:class", "date"),
-    ("py:obj", "polyfactory.fields.P"),
 ]
 nitpick_ignore_regex = [
+    (r"py:.*", r"typing_extensions.*"),
     (r"py:.*", r"polyfactory.*\.T"),
+    (r"py:.*", r"polyfactory.*\.P"),
     (r"py:.*", r".*TypedDictT"),
     (r"py:.*", r"pydantic.*"),
     (r"py:.*", r"msgspec.*"),
