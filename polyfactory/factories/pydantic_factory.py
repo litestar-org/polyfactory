@@ -25,14 +25,13 @@ except ImportError as e:
     raise MissingDependencyException("pydantic is not installed") from e
 
 try:
-    from pydantic.fields import DeferredType, ModelField, Undefined  # type: ignore[attr-defined]
+    from pydantic.fields import ModelField  # type: ignore[attr-defined]
 
     pydantic_version: Literal[1, 2] = 1
 except ImportError:
     pydantic_version = 2
 
     ModelField = Any
-    DeferredType = Any
     from pydantic._internal._fields import Undefined
 
 if TYPE_CHECKING:
@@ -120,6 +119,9 @@ class PydanticFieldMeta(FieldMeta):
         :returns: A PydanticFieldMeta instance.
 
         """
+        from pydantic.fields import DeferredType, Undefined
+        from pydantic import AnyUrl, HttpUrl, KafkaDsn, PostgresDsn, RedisDsn, AmqpDsn, AnyHttpUrl
+
         if callable(model_field.default_factory):
             default_value = model_field.default_factory()
         else:
@@ -131,7 +133,7 @@ class PydanticFieldMeta(FieldMeta):
         annotation = (
             unwrap_new_type(model_field.annotation)
             if not isinstance(model_field.annotation, DeferredType)
-            else outer_type
+            else model_field.outer_type_
         )
 
         constraints = cast(
@@ -160,6 +162,10 @@ class PydanticFieldMeta(FieldMeta):
                 "item_type": getattr(outer_type, "item_type", None),
             },
         )
+
+        # pydantic v1 has constraints set for these values, but we generate them using faker
+        if annotation in (AnyUrl, HttpUrl, KafkaDsn, PostgresDsn, RedisDsn, AmqpDsn, AnyHttpUrl):
+            constraints = {}
 
         children: list[FieldMeta] = []
         if model_field.key_field:

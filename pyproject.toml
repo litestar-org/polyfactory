@@ -66,7 +66,7 @@ beanie = { version = "*", optional = true, extras = ["beanie"] }
 faker = "*"
 msgspec = { version = "*", optional = true, extras = ["msgspec"] }
 odmantic = { version = "*", optional = true, extras = ["odmantic"] }
-pydantic = { version = ">=1.10.0, >=2.0b3", optional = true, extras = ["pydantic", "odmantic", "beanie"] }
+pydantic = { version = "*", optional = true, extras = ["pydantic", "odmantic", "beanie"] }
 typing-extensions = "*"
 
 [tool.poetry.group.dev.dependencies]
@@ -75,12 +75,11 @@ email-validator = "*"
 hypothesis = "*"
 mongomock-motor = "*"
 msgspec = "*"
-odmantic = "*"
 pre-commit = "*"
-pydantic = "2.0b3"
 pytest = "*"
 pytest-asyncio = "*"
 pytest-cov = "*"
+pydantic = "*"
 
 [tool.poetry.group.docs.dependencies]
 sphinx-autobuild = "*"

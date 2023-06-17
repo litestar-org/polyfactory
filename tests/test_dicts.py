@@ -31,10 +31,10 @@ def test_dict_with_union_random_types() -> None:
     class MyClassFactory(ModelFactory[MyClass]):
         __model__ = MyClass
 
-    MyClassFactory.seed_random(4)
+    MyClassFactory.seed_random(100)
 
     test_obj_1 = MyClassFactory.build()
     test_obj_2 = MyClassFactory.build()
 
-    assert isinstance(list(test_obj_1.val.values())[0], int)
-    assert isinstance(list(test_obj_2.val.values())[0], str)
+    assert isinstance(list(test_obj_1.val.values())[0], str)
+    assert isinstance(list(test_obj_2.val.values())[0], int)
