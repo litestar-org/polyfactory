@@ -1,4 +1,5 @@
 from collections import abc, defaultdict, deque
+from random import Random
 from typing import (
     DefaultDict,
     Deque,
@@ -39,3 +40,5 @@ TYPE_MAPPING = {
 }
 
 IGNORED_TYPE_ARGS: Set = {Ellipsis}
+
+DEFAULT_RANDOM = Random()

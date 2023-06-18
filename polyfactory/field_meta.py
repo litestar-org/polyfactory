@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING, Any, Literal, Pattern, TypedDict, cast
 
-from polyfactory.constants import IGNORED_TYPE_ARGS, TYPE_MAPPING
+from polyfactory.constants import DEFAULT_RANDOM, IGNORED_TYPE_ARGS, TYPE_MAPPING
 from polyfactory.utils.helpers import normalize_annotation, unwrap_annotated, unwrap_args, unwrap_new_type
 from polyfactory.utils.predicates import is_annotated
 
@@ -66,7 +66,7 @@ class FieldMeta:
         *,
         name: str,
         annotation: type,
-        random: Random,
+        random: Random = DEFAULT_RANDOM,
         default: Any = Null,
         children: list[FieldMeta] | None = None,
         constraints: Constraints | None = None,
@@ -83,7 +83,6 @@ class FieldMeta:
     def type_args(self) -> tuple[Any, ...]:
         """Return the normalized type args of the annotation, if any.
 
-        :param random: An instance of random.Random.
         :returns: a tuple of types.
         """
         return tuple(arg for arg in unwrap_args(self.annotation, random=self.random) if arg not in IGNORED_TYPE_ARGS)
@@ -92,7 +91,7 @@ class FieldMeta:
     def from_type(
         cls,
         annotation: Any,
-        random: Random,
+        random: Random = DEFAULT_RANDOM,
         name: str = "",
         default: Any = Null,
         constraints: Constraints | None = None,
