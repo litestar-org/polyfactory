@@ -631,7 +631,7 @@ class BaseFactory(ABC, Generic[T]):
         if cls.is_ignored_type(field_meta.annotation):
             return None
 
-        if field_meta.constraints and field_meta.constraints.get("constant", False):
+        if field_meta.constraints and field_meta.constraints.pop("constant", False):
             return field_meta.default
 
         if cls.should_set_none_value(field_meta=field_meta):
