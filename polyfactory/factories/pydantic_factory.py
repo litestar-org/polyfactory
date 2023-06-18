@@ -7,15 +7,15 @@ from typing import (
     Any,
     ClassVar,
     Generic,
+    Literal,
     Mapping,
     TypeVar,
     cast,
-    Literal,
 )
 
 from polyfactory.exceptions import MissingDependencyException
 from polyfactory.factories.base import BaseFactory
-from polyfactory.field_meta import FieldMeta, Null, Constraints
+from polyfactory.field_meta import Constraints, FieldMeta, Null
 from polyfactory.utils.helpers import unwrap_new_type
 
 try:
@@ -36,8 +36,9 @@ except ImportError:
 
 if TYPE_CHECKING:
     from random import Random
-    from typing_extensions import TypeGuard
+
     from pydantic.fields import FieldInfo
+    from typing_extensions import TypeGuard
 
 T = TypeVar("T", bound=BaseModel)
 
@@ -120,8 +121,8 @@ class PydanticFieldMeta(FieldMeta):
         :returns: A PydanticFieldMeta instance.
 
         """
+        from pydantic import AmqpDsn, AnyHttpUrl, AnyUrl, HttpUrl, KafkaDsn, PostgresDsn, RedisDsn
         from pydantic.fields import DeferredType, Undefined  # type: ignore
-        from pydantic import AnyUrl, HttpUrl, KafkaDsn, PostgresDsn, RedisDsn, AmqpDsn, AnyHttpUrl
 
         if callable(model_field.default_factory):
             default_value = model_field.default_factory()

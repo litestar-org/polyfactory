@@ -10,6 +10,7 @@ from polyfactory.decorators import post_generated
 
 try:
     from odmantic import AIOEngine, EmbeddedModel, Model
+
     from polyfactory.factories.odmantic_odm_factory import OdmanticModelFactory
 except ImportError:
     AIOEngine, EmbeddedModel, Model, OdmanticModelFactory = None, None, None, None  # type: ignore

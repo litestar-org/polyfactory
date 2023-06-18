@@ -5,10 +5,11 @@ import pymongo
 import pytest
 
 try:
-    from mongomock_motor import AsyncMongoMockClient
-    from polyfactory.factories.beanie_odm_factory import BeanieDocumentFactory
     from beanie import Document, Link, init_beanie
     from beanie.odm.fields import Indexed, PydanticObjectId
+    from mongomock_motor import AsyncMongoMockClient
+
+    from polyfactory.factories.beanie_odm_factory import BeanieDocumentFactory
 except ImportError:
     pytest.importorskip("beanie")
 

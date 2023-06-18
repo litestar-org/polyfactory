@@ -2,12 +2,11 @@ import re
 from random import Random
 
 import pytest
+from hypothesis import given, settings
+from hypothesis.strategies import booleans, integers
 
 from polyfactory.exceptions import ParameterException
 from polyfactory.value_generators.constrained_strings import handle_constrained_string_or_bytes
-
-from hypothesis import given, settings
-from hypothesis.strategies import integers, booleans
 
 REGEXES = [
     r"(a|b|c)xz",

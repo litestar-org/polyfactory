@@ -4,6 +4,8 @@ from decimal import Decimal
 from typing import Any, NewType, Union
 
 import pytest
+from hypothesis import given
+from hypothesis.strategies import decimals, floats, integers
 from pydantic import BaseModel
 
 from polyfactory.factories.pydantic_factory import ModelFactory
@@ -12,10 +14,6 @@ from polyfactory.utils.predicates import is_new_type, is_union
 from polyfactory.value_generators.constrained_numbers import (
     is_multiply_of_multiple_of_in_range,
 )
-
-
-from hypothesis import given
-from hypothesis.strategies import decimals, floats, integers
 
 
 def test_is_union() -> None:

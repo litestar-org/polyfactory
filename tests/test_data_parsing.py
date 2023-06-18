@@ -126,7 +126,7 @@ def test_embedded_factories_parsing() -> None:
 def test_type_property_parsing() -> None:
     try:
         # pydantic v2 only types
-        from pydantic.networks import MongoDsn, MariaDBDsn, CockroachDsn, MySQLDsn
+        from pydantic.networks import CockroachDsn, MariaDBDsn, MongoDsn, MySQLDsn
 
         class Base(BaseModel):
             MongoDsn_pydantic_type: MongoDsn

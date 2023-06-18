@@ -1,13 +1,13 @@
 from __future__ import annotations
-from dataclasses import is_dataclass, fields, MISSING
+
+from dataclasses import MISSING, fields, is_dataclass
 from inspect import isclass
-from typing import Generic, Any, TYPE_CHECKING
+from typing import TYPE_CHECKING, Any, Generic
 
 from typing_extensions import get_type_hints
 
-from polyfactory.factories.base import T, BaseFactory
+from polyfactory.factories.base import BaseFactory, T
 from polyfactory.field_meta import FieldMeta, Null
-
 
 if TYPE_CHECKING:
     from typing_extensions import TypeGuard

@@ -2,7 +2,6 @@ from typing import Generic, List, Optional, TypeVar, Union
 
 from pydantic import BaseModel
 
-
 from polyfactory.factories.pydantic_factory import ModelFactory
 
 try:

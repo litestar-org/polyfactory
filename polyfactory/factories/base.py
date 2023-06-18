@@ -1,6 +1,7 @@
 from __future__ import annotations
+
 from abc import ABC, abstractmethod
-from collections import Counter, deque, abc
+from collections import Counter, abc, deque
 from contextlib import suppress
 from datetime import date, datetime, time, timedelta
 from decimal import Decimal
@@ -16,8 +17,8 @@ from ipaddress import (
     IPv6Interface,
     IPv6Network,
     ip_address,
-    ip_network,
     ip_interface,
+    ip_network,
 )
 from os.path import realpath
 from pathlib import Path
@@ -34,7 +35,7 @@ from typing import (
     TypeVar,
     cast,
 )
-from uuid import UUID, NAMESPACE_DNS, uuid3, uuid5, uuid1
+from uuid import NAMESPACE_DNS, UUID, uuid1, uuid3, uuid5
 
 from faker import Faker
 from typing_extensions import get_args
@@ -45,7 +46,6 @@ from polyfactory.exceptions import (
     ParameterException,
 )
 from polyfactory.fields import Fixture, Ignore, PostGenerated, Require, Use
-
 from polyfactory.utils.helpers import unwrap_annotation, unwrap_args, unwrap_optional
 from polyfactory.utils.predicates import (
     get_type_origin,
@@ -57,9 +57,9 @@ from polyfactory.value_generators.complex_types import handle_complex_type
 from polyfactory.value_generators.constrained_collections import handle_constrained_collection
 from polyfactory.value_generators.constrained_dates import handle_constrained_date
 from polyfactory.value_generators.constrained_numbers import (
+    handle_constrained_decimal,
     handle_constrained_float,
     handle_constrained_int,
-    handle_constrained_decimal,
 )
 from polyfactory.value_generators.constrained_path import handle_constrained_path
 from polyfactory.value_generators.constrained_strings import handle_constrained_string_or_bytes
@@ -71,9 +71,10 @@ from polyfactory.value_generators.primitives import (
 )
 
 if TYPE_CHECKING:
-    from polyfactory.persistence import AsyncPersistenceProtocol, SyncPersistenceProtocol
-    from polyfactory.field_meta import FieldMeta, Constraints
     from typing_extensions import TypeGuard
+
+    from polyfactory.field_meta import Constraints, FieldMeta
+    from polyfactory.persistence import AsyncPersistenceProtocol, SyncPersistenceProtocol
 
 
 def _create_pydantic_type_map(cls: "type[BaseFactory]") -> dict[type, Callable[[], Any]]:
@@ -119,23 +120,20 @@ def _create_pydantic_type_map(cls: "type[BaseFactory]") -> dict[type, Callable[[
 
     try:
         # v1 only values - these will raise an exception in v2
-        from pydantic import (
-            PyObject,
-        )
-
         # in pydantic v2 these are all aliases for Annotated with a constraint.
         # we therefore do not need them in v2
         from pydantic import (
-            AmqpDsn,
-            KafkaDsn,
-            PostgresDsn,
-            RedisDsn,
             UUID1,
             UUID3,
             UUID4,
             UUID5,
-            FilePath,
+            AmqpDsn,
             DirectoryPath,
+            FilePath,
+            KafkaDsn,
+            PostgresDsn,
+            PyObject,
+            RedisDsn,
         )
 
         mapping.update(

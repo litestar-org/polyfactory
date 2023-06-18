@@ -1,7 +1,8 @@
 from dataclasses import dataclass
-from typing import Optional, List, Union
-from datetime import datetime, date
+from datetime import date, datetime
+from typing import List, Optional, Union
 from uuid import UUID
+
 from polyfactory import Fixture
 from polyfactory.factories import DataclassFactory
 from polyfactory.pytest_plugin import register_fixture

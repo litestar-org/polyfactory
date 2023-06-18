@@ -1,7 +1,7 @@
 import datetime as dt
 from decimal import Decimal
 from inspect import isclass
-from typing import Any, Callable, Dict, FrozenSet, Generic, Iterable, List, Set, Tuple, TypeVar, Type, cast
+from typing import Any, Callable, Dict, FrozenSet, Generic, Iterable, List, Set, Tuple, Type, TypeVar, cast
 from uuid import UUID
 
 from typing_extensions import TypeGuard

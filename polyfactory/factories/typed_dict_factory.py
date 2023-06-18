@@ -1,6 +1,8 @@
 from __future__ import annotations
-from typing import TypeVar, Generic, Any
-from typing_extensions import TypeGuard, is_typeddict, _TypedDictMeta  # type: ignore[attr-defined]
+
+from typing import Any, Generic, TypeVar
+
+from typing_extensions import TypeGuard, _TypedDictMeta, is_typeddict  # type: ignore[attr-defined]
 
 from polyfactory.factories.base import BaseFactory
 from polyfactory.field_meta import FieldMeta, Null

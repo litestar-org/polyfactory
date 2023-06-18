@@ -1,7 +1,8 @@
 from __future__ import annotations
 
 import sys
-from typing import Any, get_args, TYPE_CHECKING, get_origin
+from typing import TYPE_CHECKING, Any, get_args, get_origin
+
 from polyfactory.constants import TYPE_MAPPING
 from polyfactory.utils.predicates import (
     is_annotated,

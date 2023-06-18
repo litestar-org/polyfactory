@@ -1,5 +1,5 @@
 from dataclasses import dataclass
-from typing import Type, Dict, Any, TypeVar, Generic
+from typing import Any, Dict, Generic, Type, TypeVar
 from uuid import UUID
 
 from polyfactory.factories import DataclassFactory

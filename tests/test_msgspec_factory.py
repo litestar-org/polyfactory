@@ -4,11 +4,10 @@ from enum import Enum
 from typing import Any, Dict, FrozenSet, List, NewType, Set, Tuple, Type, Union
 from uuid import UUID
 
-from typing_extensions import Annotated
-
 import msgspec
 import pytest
 from msgspec import Struct, structs
+from typing_extensions import Annotated
 
 from polyfactory.exceptions import ParameterException
 from polyfactory.factories.msgspec_factory import MsgspecFactory

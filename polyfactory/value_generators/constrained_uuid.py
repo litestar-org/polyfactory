@@ -1,5 +1,5 @@
 from typing import Literal, cast
-from uuid import uuid1, uuid3, NAMESPACE_DNS, uuid5, UUID
+from uuid import NAMESPACE_DNS, UUID, uuid1, uuid3, uuid5
 
 from faker import Faker
 

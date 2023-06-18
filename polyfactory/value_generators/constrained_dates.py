@@ -1,7 +1,7 @@
 from __future__ import annotations
-from datetime import date, timedelta, datetime, timezone
-from typing import TYPE_CHECKING, cast
 
+from datetime import date, datetime, timedelta, timezone
+from typing import TYPE_CHECKING, cast
 
 if TYPE_CHECKING:
     from faker import Faker

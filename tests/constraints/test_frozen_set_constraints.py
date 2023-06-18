@@ -3,6 +3,8 @@ from random import Random
 from typing import Any
 
 import pytest
+from hypothesis import given
+from hypothesis.strategies import integers
 
 from polyfactory.exceptions import ParameterException
 from polyfactory.factories.pydantic_factory import ModelFactory
@@ -10,10 +12,6 @@ from polyfactory.field_meta import FieldMeta
 from polyfactory.value_generators.constrained_collections import (
     handle_constrained_collection,
 )
-
-
-from hypothesis import given
-from hypothesis.strategies import integers
 
 
 @given(

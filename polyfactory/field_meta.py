@@ -1,14 +1,14 @@
 from __future__ import annotations
 
+from typing import TYPE_CHECKING, Any, Literal, Pattern, TypedDict, cast
 
-from typing import Any, TypedDict, Pattern, TYPE_CHECKING, Literal, cast
-
-from polyfactory.constants import TYPE_MAPPING, IGNORED_TYPE_ARGS
-from polyfactory.utils.helpers import unwrap_args, unwrap_new_type, unwrap_annotated, normalize_annotation
+from polyfactory.constants import IGNORED_TYPE_ARGS, TYPE_MAPPING
+from polyfactory.utils.helpers import normalize_annotation, unwrap_annotated, unwrap_args, unwrap_new_type
 from polyfactory.utils.predicates import is_annotated
 
 if TYPE_CHECKING:
     from random import Random
+
     from _pydecimal import Decimal
     from typing_extensions import NotRequired, Self
 
@@ -151,8 +151,8 @@ class FieldMeta:
 
         try:
             from pydantic import UrlConstraints
-            from pydantic.types import UuidVersion, PathType
             from pydantic._internal._fields import PydanticGeneralMetadata
+            from pydantic.types import PathType, UuidVersion
 
             pydantic_annotated_meta_data = [
                 ("pattern", PydanticGeneralMetadata),

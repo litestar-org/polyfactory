@@ -1,4 +1,5 @@
 from __future__ import annotations
+
 from typing import TYPE_CHECKING, Callable, Pattern, TypeVar, Union, cast
 
 from polyfactory.exceptions import ParameterException

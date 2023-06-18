@@ -4,7 +4,6 @@ import importlib.util
 import random
 import string
 import sys
-
 from typing import TYPE_CHECKING, TypeVar
 
 import pytest

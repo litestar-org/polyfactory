@@ -1,6 +1,8 @@
 from random import Random
 
 import pytest
+from hypothesis import given
+from hypothesis.strategies import floats
 
 from polyfactory.exceptions import ParameterException
 from polyfactory.value_generators.constrained_numbers import (
@@ -8,10 +10,6 @@ from polyfactory.value_generators.constrained_numbers import (
     is_multiply_of_multiple_of_in_range,
     passes_pydantic_multiple_validator,
 )
-
-
-from hypothesis import given
-from hypothesis.strategies import floats
 
 
 def test_handle_constrained_float_without_constraints() -> None:

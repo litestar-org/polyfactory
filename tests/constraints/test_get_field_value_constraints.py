@@ -1,7 +1,7 @@
 from datetime import date, datetime, timedelta
 from decimal import Decimal
 from random import Random
-from typing import Type, Union, cast, List, Set, FrozenSet, Tuple
+from typing import FrozenSet, List, Set, Tuple, Type, Union, cast
 
 import pytest
 

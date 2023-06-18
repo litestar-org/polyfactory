@@ -1,4 +1,5 @@
 from __future__ import annotations
+
 import sys
 from inspect import isclass
 from typing import Any, Literal, NewType, Optional, TypeVar, Union, get_args

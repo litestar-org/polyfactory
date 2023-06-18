@@ -1,9 +1,9 @@
 from asyncio import sleep
 from dataclasses import dataclass
-from typing import List, Dict
+from typing import Dict, List
 from uuid import UUID
 
-from polyfactory import SyncPersistenceProtocol, AsyncPersistenceProtocol
+from polyfactory import AsyncPersistenceProtocol, SyncPersistenceProtocol
 from polyfactory.factories import DataclassFactory
 
 

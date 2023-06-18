@@ -10,7 +10,8 @@ from polyfactory.value_generators.primitives import create_random_bytes
 
 try:
     from bson.decimal128 import Decimal128, create_decimal128_context
-    from odmantic import EmbeddedModel, Model, bson as odbson
+    from odmantic import EmbeddedModel, Model
+    from odmantic import bson as odbson
 
 except ImportError as e:
     raise MissingDependencyException("odmantic is not installed") from e

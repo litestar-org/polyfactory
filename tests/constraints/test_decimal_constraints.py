@@ -3,6 +3,8 @@ from random import Random
 from typing import Optional, cast
 
 import pytest
+from hypothesis import given
+from hypothesis.strategies import decimals, integers
 from pydantic import BaseModel, condecimal
 
 from polyfactory.exceptions import ParameterException
@@ -13,9 +15,6 @@ from polyfactory.value_generators.constrained_numbers import (
     is_multiply_of_multiple_of_in_range,
     passes_pydantic_multiple_validator,
 )
-
-from hypothesis import given
-from hypothesis.strategies import decimals, integers
 
 
 def test_handle_constrained_decimal_without_constraints() -> None:

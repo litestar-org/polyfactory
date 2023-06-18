@@ -1,4 +1,5 @@
 from __future__ import annotations
+
 from binascii import hexlify
 from decimal import Decimal
 from os import urandom

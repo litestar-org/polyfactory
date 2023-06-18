@@ -1,7 +1,6 @@
 from typing import Any
 
-from polyfactory.factories.base import BaseFactory
-from polyfactory.factories.base import _create_pydantic_type_map
+from polyfactory.factories.base import BaseFactory, _create_pydantic_type_map
 
 
 def test_provider_map() -> None:
