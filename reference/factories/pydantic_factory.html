@@ -764,6 +764,25 @@ document.write(`
 <dd><p>Bases: <a class="reference internal" href="../field_meta.html#polyfactory.field_meta.FieldMeta" title="polyfactory.field_meta.FieldMeta"><code class="xref py py-class docutils literal notranslate"><span class="pre">FieldMeta</span></code></a></p>
 <p>Field meta subclass capable of handling pydantic ModelFields</p>
 <dl class="py method">
+<dt class="sig sig-object py" id="polyfactory.factories.pydantic_factory.PydanticFieldMeta.from_field_info">
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">from_field_info</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">field_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.11)"><span class="pre">str</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">field_info</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">FieldInfo</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">use_alias</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.11)"><span class="pre">bool</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">random</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Random</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#polyfactory.factories.pydantic_factory.PydanticFieldMeta" title="polyfactory.factories.pydantic_factory.PydanticFieldMeta"><span class="pre">PydanticFieldMeta</span></a></span></span><a class="headerlink" href="#polyfactory.factories.pydantic_factory.PydanticFieldMeta.from_field_info" title="Permalink to this definition">#</a></dt>
+<dd><p>Create an instance from a pydantic field info.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>field_name</strong> – The name of the field.</p></li>
+<li><p><strong>field_info</strong> – A pydantic FieldInfo instance.</p></li>
+<li><p><strong>use_alias</strong> – Whether to use the field alias.</p></li>
+<li><p><strong>random</strong> – A random.Random instance.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>A PydanticFieldMeta instance.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
 <dt class="sig sig-object py" id="polyfactory.factories.pydantic_factory.PydanticFieldMeta.from_model_field">
 <em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">from_model_field</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model_field</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ModelField</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">use_alias</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.11)"><span class="pre">bool</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#polyfactory.factories.pydantic_factory.PydanticFieldMeta" title="polyfactory.factories.pydantic_factory.PydanticFieldMeta"><span class="pre">PydanticFieldMeta</span></a></span></span><a class="headerlink" href="#polyfactory.factories.pydantic_factory.PydanticFieldMeta.from_model_field" title="Permalink to this definition">#</a></dt>
 <dd><p>Create an instance from a pydantic model field.</p>
@@ -915,6 +934,7 @@ This is an override of BaseFactory.should_set_field_value.</p>
     <ul class="visible nav section-nav flex-column">
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#polyfactory.factories.pydantic_factory.is_pydantic_model"><code class="docutils literal notranslate"><span class="pre">is_pydantic_model()</span></code></a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#polyfactory.factories.pydantic_factory.PydanticFieldMeta"><code class="docutils literal notranslate"><span class="pre">PydanticFieldMeta</span></code></a><ul class="visible nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#polyfactory.factories.pydantic_factory.PydanticFieldMeta.from_field_info"><code class="docutils literal notranslate"><span class="pre">PydanticFieldMeta.from_field_info()</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#polyfactory.factories.pydantic_factory.PydanticFieldMeta.from_model_field"><code class="docutils literal notranslate"><span class="pre">PydanticFieldMeta.from_model_field()</span></code></a></li>
 </ul>
 </li>
