@@ -1,15 +1,21 @@
 from typing import Generic, List, Optional, TypeVar, Union
 
 from pydantic import BaseModel
-from pydantic.generics import GenericModel
+
 
 from polyfactory.factories.pydantic_factory import ModelFactory
+
+try:
+    from pydantic.generics import GenericModel
+except ImportError:
+    GenericModel = BaseModel
+
 
 Inner = TypeVar("Inner")
 APIResponseData = TypeVar("APIResponseData")
 
 
-class Attributes(GenericModel, Generic[Inner]):
+class Attributes(GenericModel, Generic[Inner]):  # type: ignore
     attributes: Inner
 
 
@@ -42,7 +48,7 @@ class ThreeResponse(BaseModel):
     three: Attributes[ThreeInner]
 
 
-class APIResponse(GenericModel, Generic[APIResponseData]):
+class APIResponse(GenericModel, Generic[APIResponseData]):  # type: ignore
     data: List[APIResponseData]
 
 

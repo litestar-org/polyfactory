@@ -63,17 +63,24 @@ html_title = "Polyfactory"
 
 nitpicky = True
 nitpick_ignore = [
-    ("py:class", "T"),
     ("py:class", "BaseModel"),
-    ("py:class", "Random"),
     ("py:class", "Decimal"),
-    ("py:class", "date"),
-    ("py:class", "Scope"),
     ("py:class", "Faker"),
-    ("py:obj", "polyfactory.fields.P"),
+    ("py:class", "FieldInfo"),
+    ("py:class", "Random"),
+    ("py:class", "Scope"),
+    ("py:class", "T"),
+    ("py:class", "P"),
+    ("py:class", "P.args"),
+    ("py:class", "P.kwargs"),
+    ("py:class", "Self"),
+    ("py:class", "TypeGuard"),
+    ("py:class", "date"),
 ]
 nitpick_ignore_regex = [
+    (r"py:.*", r"typing_extensions.*"),
     (r"py:.*", r"polyfactory.*\.T"),
+    (r"py:.*", r"polyfactory.*\.P"),
     (r"py:.*", r".*TypedDictT"),
     (r"py:.*", r"pydantic.*"),
     (r"py:.*", r"msgspec.*"),

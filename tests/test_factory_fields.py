@@ -70,10 +70,11 @@ def test_build_kwarg() -> None:
 
 def test_ignored() -> None:
     class MyModel(BaseModel):
-        name: Optional[str]
+        name: Optional[str] = None
 
     class MyFactory(ModelFactory):
         __model__ = MyModel
+
         name = Ignore()
 
     assert MyFactory.build().name is None

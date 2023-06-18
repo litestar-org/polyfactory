@@ -1,18 +1,7 @@
-from collections import Counter, deque
-from datetime import date, datetime, time, timedelta
-from decimal import Decimal
+from collections import Counter
+from datetime import date
 from enum import Enum
-from ipaddress import (
-    IPv4Address,
-    IPv4Interface,
-    IPv4Network,
-    IPv6Address,
-    IPv6Interface,
-    IPv6Network,
-)
-from pathlib import Path
 from typing import Callable, Literal
-from uuid import UUID
 
 import pytest
 from pydantic import (
@@ -25,39 +14,19 @@ from pydantic import (
     AnyUrl,
     BaseConfig,
     BaseModel,
-    ByteSize,
-    DirectoryPath,
-    EmailStr,
     Field,
-    FilePath,
     FutureDate,
     HttpUrl,
     IPvAnyAddress,
     IPvAnyInterface,
     IPvAnyNetwork,
-    Json,
     KafkaDsn,
-    NameEmail,
-    NegativeFloat,
-    NegativeInt,
-    NonNegativeInt,
-    NonPositiveFloat,
     PastDate,
-    PaymentCardNumber,
-    PositiveFloat,
-    PositiveInt,
     PostgresDsn,
-    PyObject,
     RedisDsn,
     SecretBytes,
     SecretStr,
-    StrictBool,
-    StrictBytes,
-    StrictFloat,
-    StrictInt,
-    StrictStr,
 )
-from pydantic.color import Color
 
 from polyfactory.exceptions import ParameterException
 from polyfactory.factories.pydantic_factory import ModelFactory
@@ -155,59 +124,29 @@ def test_embedded_factories_parsing() -> None:
 
 
 def test_type_property_parsing() -> None:
-    class MyModel(BaseModel):
-        object_field: object
-        float_field: float
-        int_field: int
-        bool_field: bool
-        str_field: str
-        bytes_field: bytes
-        # built-in objects
-        dict_field: dict
-        tuple_field: tuple
-        list_field: list
-        set_field: set
-        frozenset_field: frozenset
-        deque_field: deque
-        # standard library objects
-        Path_field: Path
-        Decimal_field: Decimal
-        UUID_field: UUID
-        # datetime
-        datetime_field: datetime
-        date_field: date
-        time_field: time
-        timedelta_field: timedelta
-        # ip addresses
-        IPv4Address_field: IPv4Address
-        IPv4Interface_field: IPv4Interface
-        IPv4Network_field: IPv4Network
-        IPv6Address_field: IPv6Address
-        IPv6Interface_field: IPv6Interface
-        IPv6Network_field: IPv6Network
-        # types
-        Callable_field: Callable
-        # pydantic specific
-        ByteSize_pydantic_type: ByteSize
-        PositiveInt_pydantic_type: PositiveInt
-        FilePath_pydantic_type: FilePath
-        NegativeFloat_pydantic_type: NegativeFloat
-        NegativeInt_pydantic_type: NegativeInt
-        PositiveFloat_pydantic_type: PositiveFloat
-        NonPositiveFloat_pydantic_type: NonPositiveFloat
-        NonNegativeInt_pydantic_type: NonNegativeInt
-        StrictInt_pydantic_type: StrictInt
-        StrictBool_pydantic_type: StrictBool
-        StrictBytes_pydantic_type: StrictBytes
-        StrictFloat_pydantic_type: StrictFloat
-        StrictStr_pydantic_type: StrictStr
-        DirectoryPath_pydantic_type: DirectoryPath
-        EmailStr_pydantic_type: EmailStr
-        NameEmail_pydantic_type: NameEmail
-        PyObject_pydantic_type: PyObject
-        Color_pydantic_type: Color
-        Json_pydantic_type: Json
-        PaymentCardNumber_pydantic_type: PaymentCardNumber
+    try:
+        # pydantic v2 only types
+        from pydantic.networks import MongoDsn, MariaDBDsn, CockroachDsn, MySQLDsn
+
+        class Base(BaseModel):
+            MongoDsn_pydantic_type: MongoDsn
+            MariaDBDsn_pydantic_type: MariaDBDsn
+            CockroachDsn_pydantic_type: CockroachDsn
+            MySQLDsn_pydantic_type: MySQLDsn
+
+    except ImportError:
+
+        class Base(BaseModel):  # type: ignore[no-redef]
+            pass
+
+    class MyModel(Base):
+        # # built-in objects
+        # # standard library objects
+        # # datetime
+        # # ip addresses
+        # # types
+        # # pydantic specific
+        #
         AnyUrl_pydantic_type: AnyUrl
         AnyHttpUrl_pydantic_type: AnyHttpUrl
         HttpUrl_pydantic_type: HttpUrl

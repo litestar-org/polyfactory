@@ -1,4 +1,5 @@
 from __future__ import annotations
+
 from decimal import Decimal
 from sys import float_info
 from typing import TYPE_CHECKING, Any, Protocol, TypeVar, cast
@@ -8,7 +9,6 @@ from polyfactory.value_generators.primitives import create_random_decimal, creat
 
 if TYPE_CHECKING:
     from random import Random
-
 
 T = TypeVar("T", Decimal, int, float)
 
@@ -129,7 +129,13 @@ def get_increment(t_type: type[T]) -> T:
     return cast("T", values[t_type])
 
 
-def get_value_or_none(equal_value: T | None, constrained: T | None, increment: T) -> T | None:
+def get_value_or_none(
+    t_type: type[T],
+    lt: T | None = None,
+    le: T | None = None,
+    gt: T | None = None,
+    ge: T | None = None,
+) -> tuple[T | None, T | None]:
     """Return an optional value.
 
     :param equal_value: An GE/LE value.
@@ -138,11 +144,20 @@ def get_value_or_none(equal_value: T | None, constrained: T | None, increment: T
 
     :returns: Optional T.
     """
-    if equal_value is not None:
-        return equal_value
-    if constrained is not None:
-        return constrained + increment
-    return None
+    if ge is not None:
+        minimum_value = ge
+    elif gt is not None:
+        minimum_value = gt + get_increment(t_type)
+    else:
+        minimum_value = None
+
+    if le is not None:
+        maximum_value = le
+    elif lt is not None:
+        maximum_value = lt - get_increment(t_type)
+    else:
+        maximum_value = None
+    return minimum_value, maximum_value
 
 
 def get_constrained_number_range(
@@ -167,8 +182,7 @@ def get_constrained_number_range(
     :returns: a tuple of optional minimum and maximum values.
     """
     seed = t_type(random.random() * 10)
-    minimum = get_value_or_none(equal_value=ge, constrained=gt, increment=get_increment(t_type))
-    maximum = get_value_or_none(equal_value=le, constrained=lt, increment=-get_increment(t_type))  # pyright: ignore
+    minimum, maximum = get_value_or_none(lt=lt, le=le, gt=gt, ge=ge, t_type=t_type)
 
     if minimum is not None and maximum is not None and maximum < minimum:
         raise ParameterException("maximum value must be greater than minimum value")

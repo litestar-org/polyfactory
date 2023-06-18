@@ -39,6 +39,7 @@ class TypedDictFactory(Generic[TypedDictT], BaseFactory[TypedDictT]):
             fields_meta.append(
                 FieldMeta.from_type(
                     annotation=annotation,
+                    random=cls.__random__,
                     name=field_name,
                     default=getattr(cls.__model__, field_name, Null),
                 )

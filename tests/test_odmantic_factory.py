@@ -5,13 +5,18 @@ from uuid import UUID
 import bson
 import pytest
 from bson import ObjectId
-from odmantic import AIOEngine, EmbeddedModel, Model
 
 from polyfactory.decorators import post_generated
-from polyfactory.factories.odmantic_odm_factory import OdmanticModelFactory
+
+try:
+    from odmantic import AIOEngine, EmbeddedModel, Model
+    from polyfactory.factories.odmantic_odm_factory import OdmanticModelFactory
+except ImportError:
+    AIOEngine, EmbeddedModel, Model, OdmanticModelFactory = None, None, None, None  # type: ignore
+    pytest.importorskip("odmantic")
 
 
-class OtherEmbeddedDocument(EmbeddedModel):
+class OtherEmbeddedDocument(EmbeddedModel):  # type: ignore
     name: str
     serial: UUID
     created_on: datetime
@@ -21,7 +26,7 @@ class OtherEmbeddedDocument(EmbeddedModel):
     bson_binary: bson.Binary
 
 
-class MyEmbeddedDocument(EmbeddedModel):
+class MyEmbeddedDocument(EmbeddedModel):  # type: ignore
     name: str
     serial: UUID
     other_embedded_document: OtherEmbeddedDocument
@@ -32,7 +37,7 @@ class MyEmbeddedDocument(EmbeddedModel):
     bson_binary: bson.Binary
 
 
-class MyModel(Model):
+class MyModel(Model):  # type: ignore
     created_on: datetime
     bson_id: bson.ObjectId
     bson_int64: bson.Int64

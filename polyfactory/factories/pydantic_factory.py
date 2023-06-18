@@ -10,24 +10,34 @@ from typing import (
     Mapping,
     TypeVar,
     cast,
+    Literal,
 )
 
 from polyfactory.exceptions import MissingDependencyException
 from polyfactory.factories.base import BaseFactory
-from polyfactory.field_meta import Constraints, FieldMeta, Null
+from polyfactory.field_meta import FieldMeta, Null, Constraints
 from polyfactory.utils.helpers import unwrap_new_type
 
 try:
-    from pydantic import (
-        BaseModel,
-    )
-    from pydantic.fields import DeferredType, ModelField, Undefined
+    from pydantic import BaseModel
+
 except ImportError as e:
     raise MissingDependencyException("pydantic is not installed") from e
 
+try:
+    from pydantic.fields import ModelField  # type: ignore[attr-defined]
+
+    pydantic_version: Literal[1, 2] = 1
+except ImportError:
+    pydantic_version = 2
+
+    ModelField = Any
+    from pydantic._internal._fields import Undefined
 
 if TYPE_CHECKING:
+    from random import Random
     from typing_extensions import TypeGuard
+    from pydantic.fields import FieldInfo
 
 T = TypeVar("T", bound=BaseModel)
 
@@ -51,8 +61,57 @@ def is_pydantic_model(value: Any) -> "TypeGuard[type[BaseModel]]":
 class PydanticFieldMeta(FieldMeta):
     """Field meta subclass capable of handling pydantic ModelFields"""
 
+    # FIXME: remove the pragma when switching to pydantic v2 permanently
     @classmethod
-    def from_model_field(cls, model_field: ModelField, use_alias: bool) -> PydanticFieldMeta:
+    def from_field_info(
+        cls, field_name: str, field_info: FieldInfo, use_alias: bool, random: Random
+    ) -> PydanticFieldMeta:  # pragma: no cover
+        """Create an instance from a pydantic field info.
+
+        :param field_name: The name of the field.
+        :param field_info: A pydantic FieldInfo instance.
+        :param use_alias: Whether to use the field alias.
+        :param random: A random.Random instance.
+
+        :returns: A PydanticFieldMeta instance.
+        """
+        if callable(field_info.default_factory):
+            default_value = field_info.default_factory()
+        else:
+            default_value = field_info.default if field_info.default is not Undefined else Null
+
+        name = field_info.alias if field_info.alias and use_alias else field_name
+
+        annotation = unwrap_new_type(field_info.annotation)
+
+        if metadata := [v for v in field_info.metadata if v is not None]:
+            constraints = cls.parse_constraints(metadata=metadata)
+        else:
+            constraints = {}
+
+        if "url" in constraints:
+            # pydantic uses a sentinel value for url constraints
+            annotation = str
+
+        constraints = {
+            **constraints,  # type: ignore[misc]
+            "constant": None,
+            "unique_items": None,
+            "upper_case": None,
+            "lower_case": None,
+            "item_type": None,
+        }
+
+        return PydanticFieldMeta.from_type(
+            name=name,
+            random=random,
+            annotation=annotation,
+            default=default_value,
+            constraints=cast("Constraints", {k: v for k, v in constraints.items() if v is not None}) or None,
+        )
+
+    @classmethod
+    def from_model_field(cls, model_field: ModelField, use_alias: bool) -> PydanticFieldMeta:  # pyright: ignore
         """Create an instance from a pydantic model field.
 
         :param model_field: A pydantic ModelField.
@@ -61,6 +120,9 @@ class PydanticFieldMeta(FieldMeta):
         :returns: A PydanticFieldMeta instance.
 
         """
+        from pydantic.fields import DeferredType, Undefined  # type: ignore
+        from pydantic import AnyUrl, HttpUrl, KafkaDsn, PostgresDsn, RedisDsn, AmqpDsn, AnyHttpUrl
+
         if callable(model_field.default_factory):
             default_value = model_field.default_factory()
         else:
@@ -72,7 +134,7 @@ class PydanticFieldMeta(FieldMeta):
         annotation = (
             unwrap_new_type(model_field.annotation)
             if not isinstance(model_field.annotation, DeferredType)
-            else outer_type
+            else model_field.outer_type_
         )
 
         constraints = cast(
@@ -102,6 +164,10 @@ class PydanticFieldMeta(FieldMeta):
             },
         )
 
+        # pydantic v1 has constraints set for these values, but we generate them using faker
+        if annotation in (AnyUrl, HttpUrl, KafkaDsn, PostgresDsn, RedisDsn, AmqpDsn, AnyHttpUrl):
+            constraints = {}
+
         children: list[FieldMeta] = []
         if model_field.key_field:
             children.append(PydanticFieldMeta.from_model_field(model_field.key_field, use_alias))
@@ -112,6 +178,7 @@ class PydanticFieldMeta(FieldMeta):
 
         return PydanticFieldMeta(
             name=name,
+            random=cls.random,
             annotation=annotation,
             children=children,
             default=default_value,
@@ -150,13 +217,25 @@ class ModelFactory(Generic[T], BaseFactory[T]):
 
         """
         if "_fields_metadata" not in cls.__dict__:
-            cls._fields_metadata = [
-                PydanticFieldMeta.from_model_field(
-                    field,
-                    use_alias=not cls.__model__.__config__.allow_population_by_field_name,
-                )
-                for field in cls.__model__.__fields__.values()
-            ]
+            if pydantic_version == 1:
+                cls._fields_metadata = [
+                    PydanticFieldMeta.from_model_field(
+                        field,
+                        use_alias=not cls.__model__.__config__.allow_population_by_field_name,
+                    )
+                    for field in cls.__model__.__fields__.values()  # type: ignore[attr-defined]
+                ]
+            # FIXME: remove the pragma when switching to pydantic v2 permanently
+            else:  # pragma: no cover
+                cls._fields_metadata = [
+                    PydanticFieldMeta.from_field_info(
+                        field_info=field_info,
+                        field_name=field_name,
+                        random=cls.__random__,
+                        use_alias=not cls.__model__.model_config.get("populate_by_name", False),
+                    )
+                    for field_name, field_info in cls.__model__.model_fields.items()
+                ]
         return cls._fields_metadata
 
     @classmethod
@@ -173,7 +252,11 @@ class ModelFactory(Generic[T], BaseFactory[T]):
         processed_kwargs = cls.process_kwargs(**kwargs)
 
         if factory_use_construct:
-            return cls.__model__.construct(**processed_kwargs)
+            return (
+                cls.__model__.model_construct(**processed_kwargs)
+                if hasattr(cls.__model__, "model_construct")
+                else cls.__model__.construct(**processed_kwargs)
+            )
 
         return cls.__model__(**processed_kwargs)
 

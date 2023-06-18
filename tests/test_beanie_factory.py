@@ -3,11 +3,21 @@ from typing import Callable, List
 
 import pymongo
 import pytest
-from beanie import Document, Link, init_beanie
-from beanie.odm.fields import Indexed, PydanticObjectId
-from mongomock_motor import AsyncMongoMockClient
 
-from polyfactory.factories.beanie_odm_factory import BeanieDocumentFactory
+try:
+    from mongomock_motor import AsyncMongoMockClient
+    from polyfactory.factories.beanie_odm_factory import BeanieDocumentFactory
+    from beanie import Document, Link, init_beanie
+    from beanie.odm.fields import Indexed, PydanticObjectId
+except ImportError:
+    pytest.importorskip("beanie")
+
+    BeanieDocumentFactory = None  # type: ignore
+    Document = None  # type: ignore
+    Link = None  # type: ignore
+    init_beanie = None  # type: ignore
+    Indexed = None  # type: ignore
+    PydanticObjectId = None  # type: ignore
 
 
 @pytest.fixture()

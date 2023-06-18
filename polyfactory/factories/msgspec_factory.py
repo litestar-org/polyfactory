@@ -149,7 +149,9 @@ class MsgspecFactory(Generic[T], BaseFactory[T]):
         if isinstance(field_type, (inspect.DateTimeType, inspect.TimeType)) and field_type.tz is not None:
             raise ParameterException(f"received constraints for unsupported type {annotation}")
 
-        return FieldMeta.from_type(annotation, field.name, constraints=constraints)
+        return FieldMeta.from_type(
+            annotation=annotation, name=field.name, constraints=constraints, random=cls.__random__
+        )
 
     @classmethod
     def get_provider_map(cls) -> Dict[Any, Callable[[], Any]]:

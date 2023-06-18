@@ -195,6 +195,7 @@ classmethod-decorators = [
 known-first-party = ["polyfactory", "tests"]
 
 [tool.ruff.per-file-ignores]
+"polyfactory/field_meta.py" = ["N806"]
 "tests/**/*.*" = ["S101", "D", "ARG", "PGH", "B", "FBT", "PTH", "A", "TCH", "DTZ", "TRY", "EM", "S", "N", "SIM", "PLR", "BLE", "RSE", "C901", "PLW", "G", "PIE"]
 "docs/examples/tests/**/*.*" = ["S101", "D", "ARG", "PGH", "B", "FBT", "PTH", "A", "TCH", "DTZ", "TRY", "EM", "S", "N", "SIM", "PLR", "BLE", "RSE", "C901", "PLW", "G", "PIE"]
 "docs/**/*.*" = ["S", "B", "DTZ", "A", "TCH", "ERA", "D", "RET", "E731"]
