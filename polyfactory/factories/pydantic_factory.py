@@ -16,7 +16,7 @@ from typing import (
 from polyfactory.exceptions import MissingDependencyException
 from polyfactory.factories.base import BaseFactory
 from polyfactory.field_meta import Constraints, FieldMeta, Null
-from polyfactory.utils.helpers import unwrap_new_type
+from polyfactory.utils.helpers import unwrap_new_type, unwrap_optional
 
 try:
     from pydantic import BaseModel
@@ -166,7 +166,7 @@ class PydanticFieldMeta(FieldMeta):
         )
 
         # pydantic v1 has constraints set for these values, but we generate them using faker
-        if annotation in (AnyUrl, HttpUrl, KafkaDsn, PostgresDsn, RedisDsn, AmqpDsn, AnyHttpUrl):
+        if unwrap_optional(annotation) in (AnyUrl, HttpUrl, KafkaDsn, PostgresDsn, RedisDsn, AmqpDsn, AnyHttpUrl):
             constraints = {}
 
         children: list[FieldMeta] = []

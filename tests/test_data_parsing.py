@@ -1,7 +1,7 @@
 from collections import Counter
 from datetime import date
 from enum import Enum
-from typing import Callable, Literal
+from typing import Callable, Literal, Optional
 
 import pytest
 from pydantic import (
@@ -27,6 +27,7 @@ from pydantic import (
     SecretBytes,
     SecretStr,
 )
+from typing_extensions import TypeAlias
 
 from polyfactory.exceptions import ParameterException
 from polyfactory.factories.pydantic_factory import ModelFactory
@@ -223,3 +224,20 @@ def test_class_parsing() -> None:
 
     with pytest.raises(ParameterException):
         MySecondFactory.build()
+
+
+@pytest.mark.parametrize(
+    "type_",
+    [AnyUrl, HttpUrl, KafkaDsn, PostgresDsn, RedisDsn, AmqpDsn, AnyHttpUrl],
+)
+def test_optional_url_field_parsed_correctly(type_: TypeAlias) -> None:
+    class MyModel(BaseModel):
+        url: Optional[type_]
+
+    class MyFactory(ModelFactory[MyModel]):
+        __model__ = MyModel
+
+    while not (url := MyFactory.build().url):
+        assert not url
+
+    assert MyModel(url=url)  # no validation error raised
