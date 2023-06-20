@@ -454,13 +454,13 @@ test = ["pytest (>=6)"]
 
 [[package]]
 name = "faker"
-version = "18.10.1"
+version = "18.11.0"
 description = "Faker is a Python package that generates fake data for you."
 optional = false
 python-versions = ">=3.7"
 files = [
-    {file = "Faker-18.10.1-py3-none-any.whl", hash = "sha256:633b278caa3ec239463f9139c74da2607c8da5710e56d5d7d30fc8a7440104c4"},
-    {file = "Faker-18.10.1.tar.gz", hash = "sha256:d9f363720c4a6cf9884c6c3e26e2ce26266ffe5d741a9bc7cb9256779bc62190"},
+    {file = "Faker-18.11.0-py3-none-any.whl", hash = "sha256:e7f36a4c5d5e6d4346497769ded2cd6ad50732173dedf9ffa12c360d44c59203"},
+    {file = "Faker-18.11.0.tar.gz", hash = "sha256:d204daba384e9789f80bd9de9d50a9eec01dad880509e14c2ae9ac01392addc2"},
 ]
 
 [package.dependencies]
@@ -483,13 +483,13 @@ testing = ["covdefaults (>=2.3)", "coverage (>=7.2.7)", "diff-cover (>=7.5)", "p
 
 [[package]]
 name = "hypothesis"
-version = "6.79.0"
+version = "6.79.1"
 description = "A library for property-based testing"
 optional = false
 python-versions = ">=3.7"
 files = [
-    {file = "hypothesis-6.79.0-py3-none-any.whl", hash = "sha256:19546f8e82744110867f033170f19253df01f2bef5cea8c9147cc85de36428c7"},
-    {file = "hypothesis-6.79.0.tar.gz", hash = "sha256:a9a114c4cb1fded1c5fe3b1390b98bec927b082059677df81239b6a1657e46b1"},
+    {file = "hypothesis-6.79.1-py3-none-any.whl", hash = "sha256:7a0b8ca178f16720e96f11e96b71b6139db0e30727e9cf8bd8e3059710393fc7"},
+    {file = "hypothesis-6.79.1.tar.gz", hash = "sha256:de8fb599fc855d3006236ab58cd0edafd099d63837225aad848dac22e239475b"},
 ]
 
 [package.dependencies]
@@ -551,13 +551,13 @@ files = [
 
 [[package]]
 name = "importlib-metadata"
-version = "6.6.0"
+version = "6.7.0"
 description = "Read metadata from Python packages"
 optional = false
 python-versions = ">=3.7"
 files = [
-    {file = "importlib_metadata-6.6.0-py3-none-any.whl", hash = "sha256:43dd286a2cd8995d5eaef7fee2066340423b818ed3fd70adf0bad5f1fac53fed"},
-    {file = "importlib_metadata-6.6.0.tar.gz", hash = "sha256:92501cdf9cc66ebd3e612f1b4f0c0765dfa42f0fa38ffb319b6bd84dd675d705"},
+    {file = "importlib_metadata-6.7.0-py3-none-any.whl", hash = "sha256:cb52082e659e97afc5dac71e79de97d8681de3aa07ff18578330904a9d18e5b5"},
+    {file = "importlib_metadata-6.7.0.tar.gz", hash = "sha256:1aaf550d4f73e5d6783e7acb77aec43d49da8017410afae93822cc9cca98c4d4"},
 ]
 
 [package.dependencies]
@@ -566,7 +566,7 @@ zipp = ">=0.5"
 [package.extras]
 docs = ["furo", "jaraco.packaging (>=9)", "jaraco.tidelift (>=1.4)", "rst.linker (>=1.9)", "sphinx (>=3.5)", "sphinx-lint"]
 perf = ["ipython"]
-testing = ["flake8 (<5)", "flufl.flake8", "importlib-resources (>=1.3)", "packaging", "pyfakefs", "pytest (>=6)", "pytest-black (>=0.3.7)", "pytest-checkdocs (>=2.4)", "pytest-cov", "pytest-enabler (>=1.3)", "pytest-flake8", "pytest-mypy (>=0.9.1)", "pytest-perf (>=0.9.2)"]
+testing = ["flufl.flake8", "importlib-resources (>=1.3)", "packaging", "pyfakefs", "pytest (>=6)", "pytest-black (>=0.3.7)", "pytest-checkdocs (>=2.4)", "pytest-cov", "pytest-enabler (>=1.3)", "pytest-mypy (>=0.9.1)", "pytest-perf (>=0.9.2)", "pytest-ruff"]
 
 [[package]]
 name = "iniconfig"
@@ -1295,13 +1295,13 @@ files = [
 
 [[package]]
 name = "setuptools"
-version = "67.8.0"
+version = "68.0.0"
 description = "Easily download, build, install, upgrade, and uninstall Python packages"
 optional = false
 python-versions = ">=3.7"
 files = [
-    {file = "setuptools-67.8.0-py3-none-any.whl", hash = "sha256:5df61bf30bb10c6f756eb19e7c9f3b473051f48db77fddbe06ff2ca307df9a6f"},
-    {file = "setuptools-67.8.0.tar.gz", hash = "sha256:62642358adc77ffa87233bc4d2354c4b2682d214048f500964dbe760ccedf102"},
+    {file = "setuptools-68.0.0-py3-none-any.whl", hash = "sha256:11e52c67415a381d10d6b462ced9cfb97066179f0e871399e006c4ab101fc85f"},
+    {file = "setuptools-68.0.0.tar.gz", hash = "sha256:baf1fdb41c6da4cd2eae722e135500da913332ab3f2f5c7d33af9b492acb5235"},
 ]
 
 [package.extras]

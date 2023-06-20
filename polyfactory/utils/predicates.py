@@ -10,6 +10,7 @@ from typing_extensions import (
     ParamSpec,
     Required,
     TypeGuard,
+    _AnnotatedAlias,
     get_origin,
 )
 
@@ -111,7 +112,9 @@ def is_annotated(annotation: Any) -> bool:
 
     :returns: A boolean.
     """
-    return get_origin(annotation) is Annotated
+    return get_origin(annotation) is Annotated or (
+        isinstance(annotation, _AnnotatedAlias) and getattr(annotation, "__args__", None) is not None
+    )
 
 
 def get_type_origin(annotation: Any) -> Any:
