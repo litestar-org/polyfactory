@@ -7,6 +7,7 @@ from polyfactory.utils.helpers import normalize_annotation, unwrap_annotated, un
 from polyfactory.utils.predicates import is_annotated
 
 if TYPE_CHECKING:
+    import datetime
     from random import Random
 
     from _pydecimal import Decimal
@@ -29,6 +30,7 @@ class UrlConstraints(TypedDict):
 class Constraints(TypedDict):
     """Metadata regarding a type constraints, if any"""
 
+    allow_inf_nan: NotRequired[bool]
     constant: NotRequired[bool]
     decimal_places: NotRequired[int]
     ge: NotRequired[int | float | Decimal]
@@ -43,12 +45,12 @@ class Constraints(TypedDict):
     multiple_of: NotRequired[int | float | Decimal]
     path_type: NotRequired[Literal["file", "dir", "new"]]
     pattern: NotRequired[str | Pattern]
+    strict: NotRequired[bool]
+    tz: NotRequired[datetime.tzinfo]
     unique_items: NotRequired[bool]
     upper_case: NotRequired[bool]
     url: NotRequired[UrlConstraints]
     uuid_version: NotRequired[Literal[1, 3, 4, 5]]
-    allow_inf_nan: NotRequired[bool]
-    strict: NotRequired[bool]
 
 
 class FieldMeta:
@@ -112,7 +114,7 @@ class FieldMeta:
 
         # FIXME: remove the pragma when switching to pydantic v2 permanently
         if not constraints and is_annotated(annotation):  # pragma: no cover
-            _, metadata = unwrap_annotated(field_type, random=random)
+            _, metadata = unwrap_annotated(annotation, random=random)
             constraints = cls.parse_constraints(metadata)
 
         field = cls(
@@ -169,25 +171,26 @@ class FieldMeta:
                     {
                         k: v
                         for k, v in {
-                            "decimal_places": getattr(value, "decimal_places", None),
-                            "item_type": getattr(value, "item_type", None),
-                            "max_digits": getattr(value, "max_digits", None),
-                            "path_type": getattr(value, "path_type", None),
-                            "unique_items": getattr(value, "unique_items", None),
-                            "uuid_version": getattr(value, "uuid_version", None),
                             "allow_inf_nan": getattr(value, "allow_inf_nan", None),
-                            "strict": getattr(value, "strict", None),
-                            "gt": getattr(value, "gt", None),
-                            "ge": getattr(value, "ge", None),
-                            "lt": getattr(value, "lt", None),
-                            "le": getattr(value, "le", None),
-                            "multiple_of": getattr(value, "multiple_of", None),
-                            "min_length": getattr(value, "min_length", getattr(value, "min_items", None)),
-                            "max_length": getattr(value, "max_length", getattr(value, "max_length", None)),
-                            "lower_case": getattr(value, "to_lower", None),
-                            "upper_case": getattr(value, "to_upper", None),
-                            "pattern": getattr(value, "regex", getattr(value, "pattern", None)),
                             "constant": getattr(value, "const", None) is not None,
+                            "decimal_places": getattr(value, "decimal_places", None),
+                            "ge": getattr(value, "ge", None),
+                            "gt": getattr(value, "gt", None),
+                            "item_type": getattr(value, "item_type", None),
+                            "le": getattr(value, "le", None),
+                            "lower_case": getattr(value, "to_lower", None),
+                            "lt": getattr(value, "lt", None),
+                            "max_digits": getattr(value, "max_digits", None),
+                            "max_length": getattr(value, "max_length", getattr(value, "max_length", None)),
+                            "min_length": getattr(value, "min_length", getattr(value, "min_items", None)),
+                            "multiple_of": getattr(value, "multiple_of", None),
+                            "path_type": getattr(value, "path_type", None),
+                            "pattern": getattr(value, "regex", getattr(value, "pattern", None)),
+                            "strict": getattr(value, "strict", None),
+                            "tz": getattr(value, "tz", None),
+                            "unique_items": getattr(value, "unique_items", None),
+                            "upper_case": getattr(value, "to_upper", None),
+                            "uuid_version": getattr(value, "uuid_version", None),
                         }.items()
                         if v is not None
                     }
