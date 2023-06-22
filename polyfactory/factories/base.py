@@ -525,96 +525,100 @@ class BaseFactory(ABC, Generic[T]):
 
     @classmethod
     def get_constrained_field_value(cls, annotation: Any, field_meta: FieldMeta) -> Any:
-        constraints = cast("Constraints", field_meta.constraints)
-        if is_safe_subclass(annotation, float):
-            return handle_constrained_float(
-                random=cls.__random__,
-                multiple_of=cast("Any", constraints.get("multiple_of")),
-                gt=cast("Any", constraints.get("gt")),
-                ge=cast("Any", constraints.get("ge")),
-                lt=cast("Any", constraints.get("lt")),
-                le=cast("Any", constraints.get("le")),
-            )
+        try:
+            constraints = cast("Constraints", field_meta.constraints)
+            if is_safe_subclass(annotation, float):
+                return handle_constrained_float(
+                    random=cls.__random__,
+                    multiple_of=cast("Any", constraints.get("multiple_of")),
+                    gt=cast("Any", constraints.get("gt")),
+                    ge=cast("Any", constraints.get("ge")),
+                    lt=cast("Any", constraints.get("lt")),
+                    le=cast("Any", constraints.get("le")),
+                )
 
-        if is_safe_subclass(annotation, int):
-            return handle_constrained_int(
-                random=cls.__random__,
-                multiple_of=cast("Any", constraints.get("multiple_of")),
-                gt=cast("Any", constraints.get("gt")),
-                ge=cast("Any", constraints.get("ge")),
-                lt=cast("Any", constraints.get("lt")),
-                le=cast("Any", constraints.get("le")),
-            )
+            if is_safe_subclass(annotation, int):
+                return handle_constrained_int(
+                    random=cls.__random__,
+                    multiple_of=cast("Any", constraints.get("multiple_of")),
+                    gt=cast("Any", constraints.get("gt")),
+                    ge=cast("Any", constraints.get("ge")),
+                    lt=cast("Any", constraints.get("lt")),
+                    le=cast("Any", constraints.get("le")),
+                )
 
-        if is_safe_subclass(annotation, Decimal):
-            return handle_constrained_decimal(
-                random=cls.__random__,
-                decimal_places=cast("Any", constraints.get("decimal_places")),
-                max_digits=cast("Any", constraints.get("max_digits")),
-                multiple_of=cast("Any", constraints.get("multiple_of")),
-                gt=cast("Any", constraints.get("gt")),
-                ge=cast("Any", constraints.get("ge")),
-                lt=cast("Any", constraints.get("lt")),
-                le=cast("Any", constraints.get("le")),
-            )
+            if is_safe_subclass(annotation, Decimal):
+                return handle_constrained_decimal(
+                    random=cls.__random__,
+                    decimal_places=cast("Any", constraints.get("decimal_places")),
+                    max_digits=cast("Any", constraints.get("max_digits")),
+                    multiple_of=cast("Any", constraints.get("multiple_of")),
+                    gt=cast("Any", constraints.get("gt")),
+                    ge=cast("Any", constraints.get("ge")),
+                    lt=cast("Any", constraints.get("lt")),
+                    le=cast("Any", constraints.get("le")),
+                )
 
-        if url_constraints := constraints.get("url"):
-            return handle_constrained_url(constraints=url_constraints)
+            if url_constraints := constraints.get("url"):
+                return handle_constrained_url(constraints=url_constraints)
 
-        if is_safe_subclass(annotation, str) or is_safe_subclass(annotation, bytes):
-            return handle_constrained_string_or_bytes(
-                random=cls.__random__,
-                t_type=str if is_safe_subclass(annotation, str) else bytes,
-                lower_case=constraints.get("lower_case") or False,
-                upper_case=constraints.get("upper_case") or False,
-                min_length=constraints.get("min_length"),
-                max_length=constraints.get("max_length"),
-                pattern=constraints.get("pattern"),
-            )
+            if is_safe_subclass(annotation, str) or is_safe_subclass(annotation, bytes):
+                return handle_constrained_string_or_bytes(
+                    random=cls.__random__,
+                    t_type=str if is_safe_subclass(annotation, str) else bytes,
+                    lower_case=constraints.get("lower_case") or False,
+                    upper_case=constraints.get("upper_case") or False,
+                    min_length=constraints.get("min_length"),
+                    max_length=constraints.get("max_length"),
+                    pattern=constraints.get("pattern"),
+                )
 
-        if (
-            is_safe_subclass(annotation, set)
-            or is_safe_subclass(annotation, list)
-            or is_safe_subclass(annotation, frozenset)
-            or is_safe_subclass(annotation, tuple)
-        ):
-            collection_type: type[list] | type[set] | type[tuple] | type[frozenset]
-            if is_safe_subclass(annotation, list):
-                collection_type = list
-            elif is_safe_subclass(annotation, set):
-                collection_type = set
-            elif is_safe_subclass(annotation, tuple):
-                collection_type = tuple
-            else:
-                collection_type = frozenset
+            if (
+                is_safe_subclass(annotation, set)
+                or is_safe_subclass(annotation, list)
+                or is_safe_subclass(annotation, frozenset)
+                or is_safe_subclass(annotation, tuple)
+            ):
+                collection_type: type[list] | type[set] | type[tuple] | type[frozenset]
+                if is_safe_subclass(annotation, list):
+                    collection_type = list
+                elif is_safe_subclass(annotation, set):
+                    collection_type = set
+                elif is_safe_subclass(annotation, tuple):
+                    collection_type = tuple
+                else:
+                    collection_type = frozenset
 
-            return handle_constrained_collection(
-                collection_type=collection_type,  # type: ignore
-                factory=cls,
-                field_meta=field_meta.children[0] if field_meta.children else field_meta,
-                item_type=constraints.get("item_type"),
-                max_items=constraints.get("max_length"),
-                min_items=constraints.get("min_length"),
-                unique_items=constraints.get("unique_items", False),
-            )
+                return handle_constrained_collection(
+                    collection_type=collection_type,  # type: ignore
+                    factory=cls,
+                    field_meta=field_meta.children[0] if field_meta.children else field_meta,
+                    item_type=constraints.get("item_type"),
+                    max_items=constraints.get("max_length"),
+                    min_items=constraints.get("min_length"),
+                    unique_items=constraints.get("unique_items", False),
+                )
 
-        if is_safe_subclass(annotation, date):
-            return handle_constrained_date(
-                faker=cls.__faker__,
-                ge=cast("Any", constraints.get("ge")),
-                gt=cast("Any", constraints.get("gt")),
-                le=cast("Any", constraints.get("le")),
-                lt=cast("Any", constraints.get("lt")),
-            )
+            if is_safe_subclass(annotation, date):
+                return handle_constrained_date(
+                    faker=cls.__faker__,
+                    ge=cast("Any", constraints.get("ge")),
+                    gt=cast("Any", constraints.get("gt")),
+                    le=cast("Any", constraints.get("le")),
+                    lt=cast("Any", constraints.get("lt")),
+                    tz=cast("Any", constraints.get("tz")),
+                )
 
-        if is_safe_subclass(annotation, UUID) and (uuid_version := constraints.get("uuid_version")):
-            return handle_constrained_uuid(
-                uuid_version=uuid_version,
-                faker=cls.__faker__,
-            )
+            if is_safe_subclass(annotation, UUID) and (uuid_version := constraints.get("uuid_version")):
+                return handle_constrained_uuid(
+                    uuid_version=uuid_version,
+                    faker=cls.__faker__,
+                )
 
-        if is_safe_subclass(annotation, Path) and (path_constraint := constraints.get("path_type")):
-            return handle_constrained_path(constraint=path_constraint, faker=cls.__faker__)
+            if is_safe_subclass(annotation, Path) and (path_constraint := constraints.get("path_type")):
+                return handle_constrained_path(constraint=path_constraint, faker=cls.__faker__)
+        except TypeError as e:
+            raise ParameterException from e
 
         raise ParameterException(f"received constraints for unsupported type {annotation}")
 
