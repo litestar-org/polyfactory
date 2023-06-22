@@ -16,7 +16,8 @@ from typing import (
 from polyfactory.exceptions import MissingDependencyException
 from polyfactory.factories.base import BaseFactory
 from polyfactory.field_meta import Constraints, FieldMeta, Null
-from polyfactory.utils.helpers import unwrap_new_type
+from polyfactory.utils.helpers import unwrap_new_type, unwrap_optional
+from polyfactory.utils.predicates import is_optional_union
 
 try:
     from pydantic import BaseModel
@@ -84,6 +85,13 @@ class PydanticFieldMeta(FieldMeta):
         name = field_info.alias if field_info.alias and use_alias else field_name
 
         annotation = unwrap_new_type(field_info.annotation)
+
+        if is_optional_union(field_info.annotation):
+            # pydantic v2 do not propagate metadata for Union types #[?]
+            # hence we cannot acquire any constraints w/ straightforward approach
+            from pydantic.fields import FieldInfo
+
+            field_info = FieldInfo.from_annotation(unwrap_optional(annotation))
 
         if metadata := [v for v in field_info.metadata if v is not None]:
             constraints = cls.parse_constraints(metadata=metadata)
@@ -166,7 +174,7 @@ class PydanticFieldMeta(FieldMeta):
         )
 
         # pydantic v1 has constraints set for these values, but we generate them using faker
-        if annotation in (AnyUrl, HttpUrl, KafkaDsn, PostgresDsn, RedisDsn, AmqpDsn, AnyHttpUrl):
+        if unwrap_optional(annotation) in (AnyUrl, HttpUrl, KafkaDsn, PostgresDsn, RedisDsn, AmqpDsn, AnyHttpUrl):
             constraints = {}
 
         children: list[FieldMeta] = []
