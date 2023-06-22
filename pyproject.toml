@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "polyfactory"
-version = "2.3.2"
+version = "2.3.3"
 description = "Mock data generation factories"
 authors = [
     "Na'aman Hirschfeld <nhirschfeld@gmail.com>",
@@ -56,9 +56,7 @@ classifiers = [
     "Topic :: Utilities",
     "Typing :: Typed",
 ]
-packages = [
-    { include = "polyfactory" },
-]
+packages = [{ include = "polyfactory" }]
 
 [tool.poetry.dependencies]
 python = ">=3.8,<4.0"
@@ -66,7 +64,11 @@ beanie = { version = "*", optional = true, extras = ["beanie"] }
 faker = "*"
 msgspec = { version = "*", optional = true, extras = ["msgspec"] }
 odmantic = { version = "*", optional = true, extras = ["odmantic"] }
-pydantic = { version = "*", optional = true, extras = ["pydantic", "odmantic", "beanie"] }
+pydantic = { version = "*", optional = true, extras = [
+    "pydantic",
+    "odmantic",
+    "beanie",
+] }
 typing-extensions = "*"
 
 [tool.poetry.group.dev.dependencies]
@@ -81,7 +83,7 @@ pydantic = "*"
 pytest = "*"
 pytest-asyncio = "*"
 pytest-cov = "*"
-annotated-types = "^0.5.0"
+annotated-types = ">=0.5.0"
 
 [tool.poetry.group.docs.dependencies]
 sphinx-autobuild = "*"
@@ -121,12 +123,12 @@ exclude_lines = [
     'if TYPE_CHECKING:',
     'except ImportError:',
     'except ImportError as e:',
-    '\.\.\.'
+    '\.\.\.',
 ]
 
 [tool.ruff]
 select = [
-    "A", # flake8-builtins
+    "A",   # flake8-builtins
     "B",   # flake8-bugbear
     "BLE", # flake8-blind-except
     "C4",  # flake8-comprehensions
@@ -162,21 +164,21 @@ select = [
 ]
 
 ignore = [
-    "A003", # flake8-builtins - class attribute {name} is shadowing a python builtin
-    "B010", # flake8-bugbear - do not call setattr with a constant attribute value
-    "D100", # pydocstyle - missing docstring in public module
-    "D101", # pydocstyle - missing docstring in public class
-    "D102", # pydocstyle - missing docstring in public method
-    "D103", # pydocstyle - missing docstring in public function
-    "D104", # pydocstyle - missing docstring in public package
-    "D105", # pydocstyle - missing docstring in magic method
-    "D106", # pydocstyle - missing docstring in public nested class
-    "D107", # pydocstyle - missing docstring in __init__
-    "D202", # pydocstyle - no blank lines allowed after function docstring
-    "D205", # pydocstyle - 1 blank line required between summary line and description
-    "D415", # pydocstyle - first line should end with a period, question mark, or exclamation point
-    "E501", # pycodestyle line too long, handled by black
-    "N818", # pep8-naming - exception name should be named with an Error suffix
+    "A003",  # flake8-builtins - class attribute {name} is shadowing a python builtin
+    "B010",  # flake8-bugbear - do not call setattr with a constant attribute value
+    "D100",  # pydocstyle - missing docstring in public module
+    "D101",  # pydocstyle - missing docstring in public class
+    "D102",  # pydocstyle - missing docstring in public method
+    "D103",  # pydocstyle - missing docstring in public function
+    "D104",  # pydocstyle - missing docstring in public package
+    "D105",  # pydocstyle - missing docstring in magic method
+    "D106",  # pydocstyle - missing docstring in public nested class
+    "D107",  # pydocstyle - missing docstring in __init__
+    "D202",  # pydocstyle - no blank lines allowed after function docstring
+    "D205",  # pydocstyle - 1 blank line required between summary line and description
+    "D415",  # pydocstyle - first line should end with a period, question mark, or exclamation point
+    "E501",  # pycodestyle line too long, handled by black
+    "N818",  # pep8-naming - exception name should be named with an Error suffix
     "UP037", # pyupgrade - removes quotes from type annotation
 ]
 line-length = 120
@@ -199,6 +201,64 @@ known-first-party = ["polyfactory", "tests"]
 
 [tool.ruff.per-file-ignores]
 "polyfactory/field_meta.py" = ["N806"]
-"tests/**/*.*" = ["S101", "D", "ARG", "PGH", "B", "FBT", "PTH", "A", "TCH", "DTZ", "TRY", "EM", "S", "N", "SIM", "PLR", "BLE", "RSE", "C901", "PLW", "G", "PIE", "RUF012"]
-"docs/examples/tests/**/*.*" = ["S101", "D", "ARG", "PGH", "B", "FBT", "PTH", "A", "TCH", "DTZ", "TRY", "EM", "S", "N", "SIM", "PLR", "BLE", "RSE", "C901", "PLW", "G", "PIE"]
-"docs/**/*.*" = ["S", "B", "DTZ", "A", "TCH", "ERA", "D", "RET", "E731", "RUF012"]
+"tests/**/*.*" = [
+    "S101",
+    "D",
+    "ARG",
+    "PGH",
+    "B",
+    "FBT",
+    "PTH",
+    "A",
+    "TCH",
+    "DTZ",
+    "TRY",
+    "EM",
+    "S",
+    "N",
+    "SIM",
+    "PLR",
+    "BLE",
+    "RSE",
+    "C901",
+    "PLW",
+    "G",
+    "PIE",
+    "RUF012",
+]
+"docs/examples/tests/**/*.*" = [
+    "S101",
+    "D",
+    "ARG",
+    "PGH",
+    "B",
+    "FBT",
+    "PTH",
+    "A",
+    "TCH",
+    "DTZ",
+    "TRY",
+    "EM",
+    "S",
+    "N",
+    "SIM",
+    "PLR",
+    "BLE",
+    "RSE",
+    "C901",
+    "PLW",
+    "G",
+    "PIE",
+]
+"docs/**/*.*" = [
+    "S",
+    "B",
+    "DTZ",
+    "A",
+    "TCH",
+    "ERA",
+    "D",
+    "RET",
+    "E731",
+    "RUF012",
+]
