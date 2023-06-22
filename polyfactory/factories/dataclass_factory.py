@@ -40,7 +40,7 @@ class DataclassFactory(Generic[T], BaseFactory[T]):
         """
         fields_meta: list["FieldMeta"] = []
 
-        model_type_hints = get_type_hints(cls.__model__)
+        model_type_hints = get_type_hints(cls.__model__, include_extras=True)
 
         for field in fields(cls.__model__):  # type: ignore[arg-type]
             if field.default_factory and field.default_factory is not MISSING:

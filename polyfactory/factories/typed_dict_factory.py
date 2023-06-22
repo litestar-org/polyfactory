@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from typing import Any, Generic, TypeVar
 
-from typing_extensions import TypeGuard, _TypedDictMeta, is_typeddict  # type: ignore[attr-defined]
+from typing_extensions import TypeGuard, _TypedDictMeta, get_type_hints, is_typeddict  # type: ignore[attr-defined]
 
 from polyfactory.factories.base import BaseFactory
 from polyfactory.field_meta import FieldMeta, Null
@@ -37,7 +37,9 @@ class TypedDictFactory(Generic[TypedDictT], BaseFactory[TypedDictT]):
         """
         fields_meta: list["FieldMeta"] = []
 
-        for field_name, annotation in cls.__model__.__annotations__.items():
+        model_type_hints = get_type_hints(cls.__model__, include_extras=True)
+
+        for field_name, annotation in model_type_hints.items():
             fields_meta.append(
                 FieldMeta.from_type(
                     annotation=annotation,

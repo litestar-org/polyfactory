@@ -141,13 +141,13 @@ class FieldMeta:
                 _, inner_metadata = unwrap_annotated(value, random=DEFAULT_RANDOM)
                 constraints.update(cast("dict[str, Any]", cls.parse_constraints(metadata=inner_metadata)))
             elif func := getattr(value, "func", None):
-                if func == str.islower:
+                if func is str.islower:
                     constraints.update({"lower_case": True})
-                if func == str.isupper:
+                if func is str.isupper:
                     constraints.update({"upper_case": True})
-                if func == str.isascii:
+                if func is str.isascii:
                     constraints.update({"pattern": "[[:ascii:]]"})
-                if func == str.isdigit:
+                if func is str.isdigit:
                     constraints.update({"pattern": "[[:digit:]]"})
             elif allowed_schemas := getattr(value, "allowed_schemas", None):
                 constraints.update(

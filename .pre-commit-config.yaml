@@ -13,7 +13,7 @@ repos:
       - id: mixed-line-ending
       - id: trailing-whitespace
   - repo: https://github.com/charliermarsh/ruff-pre-commit
-    rev: "v0.0.272"
+    rev: "v0.0.274"
     hooks:
       - id: ruff
         args: ["--fix"]
@@ -31,7 +31,7 @@ repos:
     hooks:
       - id: prettier
   - repo: https://github.com/pre-commit/mirrors-mypy
-    rev: "v1.3.0"
+    rev: "v1.4.0"
     hooks:
       - id: mypy
         exclude: "test_decimal_constraints|examples/fields/test_example_2|examples/configuration"
@@ -48,7 +48,7 @@ repos:
             msgspec,
           ]
   - repo: https://github.com/RobertCraigie/pyright-python
-    rev: v1.1.314
+    rev: v1.1.315
     hooks:
       - id: pyright
         exclude: "tests"
