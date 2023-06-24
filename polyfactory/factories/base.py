@@ -207,6 +207,12 @@ class BaseFactory(ABC, Generic[T]):
     Flag dictating whether the factory is a 'base' factory. Base factories are registered globally as handlers for types.
     For example, the 'DataclassFactory', 'TypedDictFactory' and 'ModelFactory' are all base factories.
     """
+    __base_factory_overrides__: dict[Any, type[BaseFactory]] | None = None
+    """
+    A base factory to override with this factory. If this value is set, the given factory will replace the given base factory.
+
+    Note: this value can only be set when '__is_base_factory__' is 'True'.
+    """
     __faker__: ClassVar["Faker"] = Faker()
     """
     A faker instance to use. Can be a user provided value.
@@ -224,8 +230,8 @@ class BaseFactory(ABC, Generic[T]):
     # cached attributes
     _fields_metadata: list[FieldMeta]
     # BaseFactory only attributes
-    _factory_type_mapping: ClassVar[dict[Any, type["BaseFactory"]]]
-    _base_factories: ClassVar[list[type["BaseFactory"]]]
+    _factory_type_mapping: ClassVar[dict[Any, type[BaseFactory]]]
+    _base_factories: ClassVar[list[type[BaseFactory]]]
 
     def __init_subclass__(cls, *args: Any, **kwargs: Any) -> None:
         super().__init_subclass__(*args, **kwargs)
@@ -321,13 +327,18 @@ class BaseFactory(ABC, Generic[T]):
     def _get_or_create_factory(
         cls,
         model: type,
-    ) -> type["BaseFactory"]:
+    ) -> type[BaseFactory]:
         """Get a factory from registered factories or generate a factory dynamically.
 
         :param model: A model type.
         :returns: A Factory sub-class.
 
         """
+        if cls.__base_factory_overrides__ and (
+            factory := cls.__base_factory_overrides__.get(model, cls.__base_factory_overrides__.get(type(model)))
+        ):
+            return factory.create_factory(model)
+
         if factory := BaseFactory._factory_type_mapping.get(model):
             return factory
 
@@ -502,9 +513,9 @@ class BaseFactory(ABC, Generic[T]):
     def create_factory(
         cls,
         model: type,
-        bases: tuple[type["BaseFactory"], ...] | None = None,
+        bases: tuple[type[BaseFactory], ...] | None = None,
         **kwargs: Any,
-    ) -> type["BaseFactory"]:
+    ) -> type[BaseFactory]:
         """Generate a factory for the given type dynamically.
 
         :param model: A type to model.
