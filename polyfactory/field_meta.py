@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+from dataclasses import asdict, is_dataclass
 from typing import TYPE_CHECKING, Any, Literal, Pattern, TypedDict, cast
 
 from polyfactory.constants import DEFAULT_RANDOM, IGNORED_TYPE_ARGS, TYPE_MAPPING
@@ -143,29 +144,14 @@ class FieldMeta:
             elif func := getattr(value, "func", None):
                 if func is str.islower:
                     constraints.update({"lower_case": True})
-                if func is str.isupper:
+                elif func is str.isupper:
                     constraints.update({"upper_case": True})
-                if func is str.isascii:
+                elif func is str.isascii:
                     constraints.update({"pattern": "[[:ascii:]]"})
-                if func is str.isdigit:
+                elif func is str.isdigit:
                     constraints.update({"pattern": "[[:digit:]]"})
-            elif allowed_schemas := getattr(value, "allowed_schemas", None):
-                constraints.update(
-                    {
-                        "url": {
-                            k: v
-                            for k, v in {
-                                "max_length": getattr(value, "max_length", None),
-                                "allowed_schemes": allowed_schemas,
-                                "host_required": getattr(value, "host_required", None),
-                                "default_host": getattr(value, "default_host", None),
-                                "default_port": getattr(value, "default_port", None),
-                                "default_path": getattr(value, "default_path", None),
-                            }.items()
-                            if v is not None
-                        }
-                    }
-                )
+            elif is_dataclass(value) and (value_dict := asdict(value)) and ("allowed_schemes" in value_dict):
+                constraints.update({"url": {k: v for k, v in value_dict.items() if v is not None}})
             else:
                 constraints.update(
                     {

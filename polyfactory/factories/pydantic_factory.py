@@ -174,7 +174,15 @@ class PydanticFieldMeta(FieldMeta):
         )
 
         # pydantic v1 has constraints set for these values, but we generate them using faker
-        if unwrap_optional(annotation) in (AnyUrl, HttpUrl, KafkaDsn, PostgresDsn, RedisDsn, AmqpDsn, AnyHttpUrl):
+        if pydantic_version == 1 and unwrap_optional(annotation) in (
+            AnyUrl,
+            HttpUrl,
+            KafkaDsn,
+            PostgresDsn,
+            RedisDsn,
+            AmqpDsn,
+            AnyHttpUrl,
+        ):
             constraints = {}
 
         children: list[FieldMeta] = []
