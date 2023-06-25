@@ -108,6 +108,15 @@
       "contributions": [
         "code"
       ]
+    },
+    {
+      "login": "gegnew",
+      "name": "Gerrit Egnew",
+      "avatar_url": "https://avatars.githubusercontent.com/u/35822787?v=4",
+      "profile": "https://gerritegnew.info/",
+      "contributions": [
+        "code"
+      ]
     }
   ],
   "contributorsPerLine": 7,
