@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+from dataclasses import asdict, is_dataclass
 from typing import TYPE_CHECKING, Any, Literal, Pattern, TypedDict, cast
 
 from polyfactory.constants import DEFAULT_RANDOM, IGNORED_TYPE_ARGS, TYPE_MAPPING
@@ -45,7 +46,6 @@ class Constraints(TypedDict):
     multiple_of: NotRequired[int | float | Decimal]
     path_type: NotRequired[Literal["file", "dir", "new"]]
     pattern: NotRequired[str | Pattern]
-    strict: NotRequired[bool]
     tz: NotRequired[datetime.tzinfo]
     unique_items: NotRequired[bool]
     upper_case: NotRequired[bool]
@@ -74,7 +74,7 @@ class FieldMeta:
         default: Any = Null,
         children: list[FieldMeta] | None = None,
         constraints: Constraints | None = None,
-    ):
+    ) -> None:
         """Create a factory field metadata instance."""
         self.annotation = annotation
         self.random = random
@@ -143,29 +143,14 @@ class FieldMeta:
             elif func := getattr(value, "func", None):
                 if func is str.islower:
                     constraints.update({"lower_case": True})
-                if func is str.isupper:
+                elif func is str.isupper:
                     constraints.update({"upper_case": True})
-                if func is str.isascii:
+                elif func is str.isascii:
                     constraints.update({"pattern": "[[:ascii:]]"})
-                if func is str.isdigit:
+                elif func is str.isdigit:
                     constraints.update({"pattern": "[[:digit:]]"})
-            elif allowed_schemas := getattr(value, "allowed_schemas", None):
-                constraints.update(
-                    {
-                        "url": {
-                            k: v
-                            for k, v in {
-                                "max_length": getattr(value, "max_length", None),
-                                "allowed_schemes": allowed_schemas,
-                                "host_required": getattr(value, "host_required", None),
-                                "default_host": getattr(value, "default_host", None),
-                                "default_port": getattr(value, "default_port", None),
-                                "default_path": getattr(value, "default_path", None),
-                            }.items()
-                            if v is not None
-                        }
-                    }
-                )
+            elif is_dataclass(value) and (value_dict := asdict(value)) and ("allowed_schemes" in value_dict):
+                constraints.update({"url": {k: v for k, v in value_dict.items() if v is not None}})
             else:
                 constraints.update(
                     {
@@ -186,7 +171,6 @@ class FieldMeta:
                             "multiple_of": getattr(value, "multiple_of", None),
                             "path_type": getattr(value, "path_type", None),
                             "pattern": getattr(value, "regex", getattr(value, "pattern", None)),
-                            "strict": getattr(value, "strict", None),
                             "tz": getattr(value, "tz", None),
                             "unique_items": getattr(value, "unique_items", None),
                             "upper_case": getattr(value, "to_upper", None),

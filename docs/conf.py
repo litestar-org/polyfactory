@@ -7,6 +7,8 @@ if TYPE_CHECKING:
     from sphinx.addnodes import document
     from sphinx.application import Sphinx
 
+PY_CLASS = "py:class"
+PY_RE = r"py:.*"
 
 project = "Polyfactory"
 copyright = "2023, Litestar Org"
@@ -63,27 +65,28 @@ html_title = "Polyfactory"
 
 nitpicky = True
 nitpick_ignore = [
-    ("py:class", "BaseModel"),
-    ("py:class", "Decimal"),
-    ("py:class", "Faker"),
-    ("py:class", "FieldInfo"),
-    ("py:class", "Random"),
-    ("py:class", "Scope"),
-    ("py:class", "T"),
-    ("py:class", "P"),
-    ("py:class", "P.args"),
-    ("py:class", "P.kwargs"),
-    ("py:class", "Self"),
-    ("py:class", "TypeGuard"),
-    ("py:class", "date"),
+    (PY_CLASS, "BaseModel"),
+    (PY_CLASS, "Decimal"),
+    (PY_CLASS, "Faker"),
+    (PY_CLASS, "FieldInfo"),
+    (PY_CLASS, "Random"),
+    (PY_CLASS, "Scope"),
+    (PY_CLASS, "T"),
+    (PY_CLASS, "P"),
+    (PY_CLASS, "P.args"),
+    (PY_CLASS, "P.kwargs"),
+    (PY_CLASS, "Self"),
+    (PY_CLASS, "TypeGuard"),
+    (PY_CLASS, "date"),
+    (PY_CLASS, "tzinfo"),
 ]
 nitpick_ignore_regex = [
-    (r"py:.*", r"typing_extensions.*"),
-    (r"py:.*", r"polyfactory.*\.T"),
-    (r"py:.*", r"polyfactory.*\.P"),
-    (r"py:.*", r".*TypedDictT"),
-    (r"py:.*", r"pydantic.*"),
-    (r"py:.*", r"msgspec.*"),
+    (PY_RE, r"typing_extensions.*"),
+    (PY_RE, r"polyfactory.*\.T"),
+    (PY_RE, r"polyfactory.*\.P"),
+    (PY_RE, r".*TypedDictT"),
+    (PY_RE, r"pydantic.*"),
+    (PY_RE, r"msgspec.*"),
 ]
 
 html_theme_options = {

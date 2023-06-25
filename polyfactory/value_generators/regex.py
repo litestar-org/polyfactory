@@ -144,7 +144,7 @@ class RegexFactory:
         result: list[str] = []
         end_range = min(end_range, self._limit)
 
-        for i in range(self._random.randint(start_range, max(start_range, end_range))):
-            result.append("".join(self._handle_state(i) for i in list(value)))  # pyright:ignore
+        for _ in range(self._random.randint(start_range, max(start_range, end_range))):
+            result.append("".join(self._handle_state(v) for v in list(value)))  # pyright:ignore
 
         return "".join(result)

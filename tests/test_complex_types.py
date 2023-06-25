@@ -34,7 +34,7 @@ def test_handles_complex_typing() -> None:
         dict_str_any: Dict[str, Any]
         nested_list: List[List[List[Dict[str, List[Any]]]]]
         sequence_literal: Sequence[Literal[1, 2, 3]]
-        sequence_dict: Sequence[Dict]
+        sequence_dict: Sequence[Dict[str, Any]]
         iterable_float: Iterable[float]
         tuple_ellipsis: Tuple[int, ...]
         tuple_str_str: Tuple[str, str]
@@ -42,9 +42,9 @@ def test_handles_complex_typing() -> None:
         deque: Deque[List[Dict[str, int]]]
         set_union: Set[Union[str, int]]
         frozen_set: FrozenSet[str]
-        plain_list: List
-        plain_set: Set
-        plain_dict: Dict
+        plain_list: List[Any]
+        plain_set: Set[Any]
+        plain_dict: Dict[str, Any]
 
     class MyFactory(ModelFactory):
         __model__ = MyModel
@@ -96,7 +96,7 @@ def test_handles_complex_typing_with_custom_root_type() -> None:
 
 def test_raises_for_user_defined_types() -> None:
     class MyClass:
-        def __init__(self, value: int):
+        def __init__(self, value: int) -> None:
             self.value = value
 
     class MyModel(BaseModel):
@@ -182,7 +182,7 @@ def test_non_collection_generic() -> None:
     T = TypeVar("T")
 
     class LoggedVar(Generic[T]):
-        def __init__(self, name: str = "", log: Callable[[str], None] = print):
+        def __init__(self, name: str = "", log: Callable[[str], None] = print) -> None:
             self.__name = name
             self.__log = log
 

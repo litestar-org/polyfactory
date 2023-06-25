@@ -85,7 +85,7 @@ class PostGenerated:
 class Fixture:
     """Factory field to create a pytest fixture from a factory."""
 
-    __slots__ = ("fixture", "size", "kwargs")
+    __slots__ = ("ref", "size", "kwargs")
 
     def __init__(self, fixture: Callable, size: int | None = None, **kwargs: Any) -> None:
         """Create a fixture from a factory.
@@ -94,7 +94,7 @@ class Fixture:
         :param size: Optional batch size.
         :param kwargs: Any build kwargs.
         """
-        self.fixture: WrappedCallable = {"value": fixture}
+        self.ref: WrappedCallable = {"value": fixture}
         self.size = size
         self.kwargs = kwargs
 
@@ -107,7 +107,7 @@ class Fixture:
         """
         from polyfactory.pytest_plugin import FactoryFixture
 
-        if factory := FactoryFixture.factory_class_map.get(self.fixture["value"]):
+        if factory := FactoryFixture.factory_class_map.get(self.ref["value"]):
             if self.size:
                 return factory.batch(self.size, **self.kwargs)
             return factory.build(**self.kwargs)

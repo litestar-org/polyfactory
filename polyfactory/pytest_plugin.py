@@ -49,14 +49,14 @@ class FactoryFixture:
 
     __slots__ = ("scope", "autouse", "name")
 
-    factory_class_map: ClassVar[dict[Callable, type[BaseFactory]]] = {}
+    factory_class_map: ClassVar[dict[Callable, type[BaseFactory[Any]]]] = {}
 
     def __init__(
         self,
         scope: Scope = "function",
         autouse: bool = False,
         name: str | None = None,
-    ):
+    ) -> None:
         """Create a factory fixture decorator
 
         :param scope: Fixture scope
@@ -67,7 +67,7 @@ class FactoryFixture:
         self.autouse = autouse
         self.name = name
 
-    def __call__(self, factory: type[BaseFactory]) -> Any:
+    def __call__(self, factory: type[BaseFactory[Any]]) -> Any:
         from polyfactory.factories.base import is_factory
 
         if not is_factory(factory):
@@ -76,7 +76,7 @@ class FactoryFixture:
         fixture_name = self.name or _get_fixture_name(factory.__name__)
         fixture_register = fixture(scope=self.scope, name=fixture_name, autouse=self.autouse)  # pyright: ignore
 
-        def _factory_fixture() -> type[BaseFactory]:
+        def _factory_fixture() -> type[BaseFactory[Any]]:
             """The wrapped factory"""
             return factory
 
@@ -87,7 +87,7 @@ class FactoryFixture:
 
 
 def register_fixture(
-    factory: type[BaseFactory] | None = None,
+    factory: type[BaseFactory[Any]] | None = None,
     *,
     scope: Scope = "function",
     autouse: bool = False,

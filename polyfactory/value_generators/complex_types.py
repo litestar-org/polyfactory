@@ -22,7 +22,7 @@ if TYPE_CHECKING:
     from polyfactory.field_meta import FieldMeta
 
 
-def handle_collection_type(field_meta: FieldMeta, container_type: type, factory: type[BaseFactory]) -> Any:
+def handle_collection_type(field_meta: FieldMeta, container_type: type, factory: type[BaseFactory[Any]]) -> Any:
     """Handle generation of container types recursively.
 
     :param container_type: A type that can accept type arguments.
@@ -58,7 +58,7 @@ def handle_collection_type(field_meta: FieldMeta, container_type: type, factory:
     return container
 
 
-def handle_complex_type(field_meta: FieldMeta, factory: type[BaseFactory]) -> Any:
+def handle_complex_type(field_meta: FieldMeta, factory: type[BaseFactory[Any]]) -> Any:
     """Recursive type generation based on typing info stored in the graph like structure
     of pydantic field_metas.
 

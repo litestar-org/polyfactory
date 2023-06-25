@@ -83,7 +83,7 @@ pydantic = "*"
 pytest = "*"
 pytest-asyncio = "*"
 pytest-cov = "*"
-annotated-types = ">=0.5.0"
+annotated-types = "*"
 
 [tool.poetry.group.docs.dependencies]
 sphinx-autobuild = "*"

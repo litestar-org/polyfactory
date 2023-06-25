@@ -1,4 +1,5 @@
 import datetime as dt
+import sys
 from decimal import Decimal
 from enum import Enum
 from typing import Any, Dict, FrozenSet, List, NewType, Set, Tuple, Type, Union
@@ -52,13 +53,13 @@ def test_with_basic_types_without_constraints() -> None:
     foo = FooFactory.build()
     foo_dict = structs.asdict(foo)
 
-    validated_foo = msgspec.from_builtins(foo_dict, type=Foo)
+    validated_foo = msgspec.convert(foo_dict, type=Foo)
     assert foo == validated_foo
 
 
 def test_other_basic_types() -> None:
     # These types are tested separately since they can't be validated
-    # using `from_builtins`.
+    # using `convert`.
     # REFERENCE: https://github.com/jcrist/msgspec/issues/417
 
     class SampleEnum(Enum):
@@ -95,7 +96,7 @@ def test_with_nested_struct() -> None:
     bar_dict = structs.asdict(bar)
     bar_dict["foo_field"] = structs.asdict(bar_dict["foo_field"])
 
-    validated_bar = msgspec.from_builtins(bar_dict, type=Bar)
+    validated_bar = msgspec.convert(bar_dict, type=Bar)
     assert validated_bar == bar
 
 
@@ -112,7 +113,7 @@ def test_with_new_type() -> None:
     user = UserFactory.build()
     user_dict = structs.asdict(user)
 
-    validated_user = msgspec.from_builtins(user_dict, type=User)
+    validated_user = msgspec.convert(user_dict, type=User)
     assert user == validated_user
 
 
@@ -131,6 +132,7 @@ def test_msgspec_types() -> None:
     assert isinstance(foo.ext, msgspec.msgpack.Ext)
 
 
+@pytest.mark.skipif(sys.version_info < (3, 9), reason="flaky in 3.8")
 def test_with_constraints() -> None:
     class Foo(Struct):
         int_field: Annotated[int, msgspec.Meta(ge=10, le=500, multiple_of=2)]
@@ -146,10 +148,11 @@ def test_with_constraints() -> None:
     foo = FooFactory.build()
     foo_dict = structs.asdict(foo)
 
-    validated_foo = msgspec.from_builtins(foo_dict, type=Foo)
+    validated_foo = msgspec.convert(foo_dict, type=Foo)
     assert foo == validated_foo
 
 
+@pytest.mark.skipif(sys.version_info < (3, 9), reason="flaky in 3.8")
 def test_dict_constraints() -> None:
     class Foo(Struct):
         dict_field: Annotated[Dict[str, int], msgspec.Meta(min_length=1)]
@@ -161,6 +164,7 @@ def test_dict_constraints() -> None:
         _ = FooFactory.build()
 
 
+@pytest.mark.skipif(sys.version_info < (3, 9), reason="flaky in 3.8")
 @pytest.mark.parametrize("t", (dt.datetime, dt.time))
 def test_datetime_constraints(t: Union[Type[dt.datetime], Type[dt.time]]) -> None:
     class Foo(Struct):

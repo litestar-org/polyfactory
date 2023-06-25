@@ -20,6 +20,7 @@ def test_multiple_base_factories() -> None:
         def get_provider_map(cls) -> Dict[Any, Any]:
             return {Foo: lambda: Foo("foo"), **super().get_provider_map()}
 
+    # noinspection PyUnusedLocal
     class DummyDataclassFactory(DataclassFactory):
         __is_base_factory__ = True
 
