@@ -1,7 +1,5 @@
 {
-  "files": [
-    "README.md"
-  ],
+  "files": ["README.md"],
   "imageSize": 100,
   "commit": false,
   "commitConvention": "angular",
@@ -11,12 +9,7 @@
       "name": "Jacob Coffee",
       "avatar_url": "https://avatars.githubusercontent.com/u/45884264?v=4",
       "profile": "https://scriptr.dev/",
-      "contributions": [
-        "infra",
-        "test",
-        "code",
-        "doc"
-      ]
+      "contributions": ["infra", "test", "code", "doc"]
     },
     {
       "login": "provinzkraut",
@@ -39,76 +32,105 @@
       "name": "Na'aman Hirschfeld",
       "avatar_url": "https://avatars.githubusercontent.com/u/30733348?v=4",
       "profile": "https://github.com/Goldziher",
-      "contributions": [
-        "infra",
-        "test",
-        "code"
-      ]
+      "contributions": ["infra", "test", "code"]
     },
     {
       "login": "mdczaplicki",
       "name": "Marek Czaplicki",
       "avatar_url": "https://avatars.githubusercontent.com/u/9108586?v=4",
       "profile": "https://czaplicki.it/",
-      "contributions": [
-        "code"
-      ]
+      "contributions": ["code"]
     },
     {
       "login": "przybylop",
       "name": "Piotr Przybyło",
       "avatar_url": "https://avatars.githubusercontent.com/u/82805821?v=4",
       "profile": "https://github.com/przybylop",
-      "contributions": [
-        "code",
-        "doc"
-      ]
+      "contributions": ["code"]
     },
     {
       "login": "sygutss",
       "name": "sygutss",
       "avatar_url": "https://avatars.githubusercontent.com/u/48909366?v=4",
       "profile": "https://github.com/sygutss",
-      "contributions": [
-        "bug",
-        "code"
-      ]
+      "contributions": ["bug", "code"]
     },
     {
       "login": "chrisbeardy",
       "name": "chrisbeardy",
       "avatar_url": "https://avatars.githubusercontent.com/u/20585410?v=4",
       "profile": "https://github.com/chrisbeardy",
-      "contributions": [
-        "doc"
-      ]
+      "contributions": ["doc"]
     },
     {
       "login": "guacs",
       "name": "guacs",
       "avatar_url": "https://avatars.githubusercontent.com/u/126393040?v=4",
       "profile": "https://github.com/guacs",
-      "contributions": [
-        "code"
-      ]
+      "contributions": ["code"]
     },
     {
       "login": "VSHUMILIN97",
       "name": "Vadim",
       "avatar_url": "https://avatars.githubusercontent.com/u/27234763?v=4",
       "profile": "https://github.com/VSHUMILIN97",
-      "contributions": [
-        "code"
-      ]
+      "contributions": ["code"]
     },
     {
       "login": "Simske",
       "name": "Simske",
       "avatar_url": "https://avatars.githubusercontent.com/u/2445660?v=4",
       "profile": "https://github.com/Simske",
-      "contributions": [
-        "code"
-      ]
+      "contributions": ["code"]
+    },
+    {
+      "login": "avihai-yosef",
+      "name": "avihai-yosef",
+      "avatar_url": "https://avatars.githubusercontent.com/u/79567307?v=4",
+      "profile": "https://github.com/avihai-yosef",
+      "contributions": ["code"]
+    },
+    {
+      "login": "anthonyh209",
+      "name": "anthonyh209",
+      "avatar_url": "https://avatars.githubusercontent.com/u/33107540?v=4",
+      "profile": "https://github.com/anthonyh209",
+      "contributions": ["code"]
+    },
+    {
+      "login": "ReznikovRoman",
+      "name": "Roman Reznikov",
+      "avatar_url": "https://avatars.githubusercontent.com/u/44291988?v=4",
+      "profile": "http://linkedin.com/in/roman-reznikov",
+      "contributions": ["code"]
+    },
+    {
+      "login": "gigelu",
+      "name": "gigelu",
+      "avatar_url": "https://avatars.githubusercontent.com/u/270697?v=4",
+      "profile": "https://github.com/gigelu",
+      "contributions": ["code"]
+    },
+    {
+      "login": "roeeyn",
+      "name": "Rodrigo Medina",
+      "avatar_url": "https://avatars.githubusercontent.com/u/13385000?v=4",
+      "profile": "https://github.com/roeeyn",
+      "contributions": ["code"]
+    },
+    {
+      "login": "gegnew",
+      "name": "Gerrit Egnew",
+      "avatar_url": "https://avatars.githubusercontent.com/u/35822787?v=4",
+      "profile": "https://gerritegnew.info/",
+      "contributions": ["code"]
+    },
+    {
+      "login": "danielkatzan",
+      "name": "danielkatzan",
+      "avatar_url": "https://avatars.githubusercontent.com/u/9249066?v=4",
+      "profile": "https://github.com/danielkatzan",
+      "contributions": ["doc"]
     }
   ],
   "contributorsPerLine": 7,
