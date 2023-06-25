@@ -110,14 +110,30 @@
       ]
     },
     {
+      "login": "ReznikovRoman",
+      "name": "Roman Reznikov",
+      "avatar_url": "https://avatars.githubusercontent.com/u/44291988?v=4",
+      "profile": "http://linkedin.com/in/roman-reznikov",
+      "contributions": [
+        "code"
+      ]
+    }, {
       "login": "gigelu",
       "name": "gigelu",
       "avatar_url": "https://avatars.githubusercontent.com/u/270697?v=4",
       "profile": "https://github.com/gigelu",
+       "contributions": [
+        "code"
+      ]
+    }, {
       "login": "roeeyn",
       "name": "Rodrigo Medina",
       "avatar_url": "https://avatars.githubusercontent.com/u/13385000?v=4",
       "profile": "https://github.com/roeeyn",
+       "contributions": [
+        "code"
+      ]
+    }, {
       "login": "gegnew",
       "name": "Gerrit Egnew",
       "avatar_url": "https://avatars.githubusercontent.com/u/35822787?v=4",
