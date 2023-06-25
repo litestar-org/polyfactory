@@ -108,6 +108,15 @@
       "contributions": [
         "code"
       ]
+    },
+    {
+      "login": "mciszczon",
+      "name": "Mateusz Ciszczoń",
+      "avatar_url": "https://avatars.githubusercontent.com/u/1078369?v=4",
+      "profile": "https://mciszczon.pl/",
+      "contributions": [
+        "code"
+      ]
     }
   ],
   "contributorsPerLine": 7,
