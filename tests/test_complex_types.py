@@ -33,6 +33,7 @@ def test_handles_complex_typing() -> None:
         nested_dict: Dict[str, Dict[Union[int, str], Dict[Any, List[Dict[str, str]]]]]
         dict_str_any: Dict[str, Any]
         nested_list: List[List[List[Dict[str, List[Any]]]]]
+        sequence_literal: Sequence[Literal[1, 2, 3]]
         sequence_dict: Sequence[Dict]
         iterable_float: Iterable[float]
         tuple_ellipsis: Tuple[int, ...]
