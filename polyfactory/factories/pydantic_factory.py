@@ -102,15 +102,6 @@ class PydanticFieldMeta(FieldMeta):
             # pydantic uses a sentinel value for url constraints
             annotation = str
 
-        constraints = {
-            **constraints,  # type: ignore[misc]
-            "constant": None,
-            "unique_items": None,
-            "upper_case": None,
-            "lower_case": None,
-            "item_type": None,
-        }
-
         return PydanticFieldMeta.from_type(
             name=name,
             random=random,

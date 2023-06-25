@@ -172,7 +172,6 @@ class FieldMeta:
                             "multiple_of": getattr(value, "multiple_of", None),
                             "path_type": getattr(value, "path_type", None),
                             "pattern": getattr(value, "regex", getattr(value, "pattern", None)),
-                            "strict": getattr(value, "strict", None),
                             "tz": getattr(value, "tz", None),
                             "unique_items": getattr(value, "unique_items", None),
                             "upper_case": getattr(value, "to_upper", None),
