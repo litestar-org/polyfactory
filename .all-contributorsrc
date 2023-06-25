@@ -108,6 +108,15 @@
       "contributions": [
         "code"
       ]
+    },
+    {
+      "login": "lyz-code",
+      "name": "Lyz",
+      "avatar_url": "https://avatars.githubusercontent.com/u/24810987?v=4",
+      "profile": "https://lyz-code.github.io/blue-book/",
+      "contributions": [
+        "code"
+      ]
     }
   ],
   "contributorsPerLine": 7,
