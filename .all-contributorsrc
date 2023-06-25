@@ -108,6 +108,15 @@
       "contributions": [
         "code"
       ]
+    },
+    {
+      "login": "danielkatzan",
+      "name": "danielkatzan",
+      "avatar_url": "https://avatars.githubusercontent.com/u/9249066?v=4",
+      "profile": "https://github.com/danielkatzan",
+      "contributions": [
+        "doc"
+      ]
     }
   ],
   "contributorsPerLine": 7,
