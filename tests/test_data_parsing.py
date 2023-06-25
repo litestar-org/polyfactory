@@ -43,7 +43,6 @@ from pydantic import (
     NonNegativeInt,
     NonPositiveFloat,
     PastDate,
-    PaymentCardNumber,
     PositiveFloat,
     PositiveInt,
     PostgresDsn,
@@ -222,7 +221,6 @@ def test_type_property_parsing() -> None:
         NameEmail_pydantic_type: NameEmail
         Color_pydantic_type: Color
         Json_pydantic_type: Json
-        PaymentCardNumber_pydantic_type: PaymentCardNumber
         AnyUrl_pydantic_type: AnyUrl
         AnyHttpUrl_pydantic_type: AnyHttpUrl
         HttpUrl_pydantic_type: HttpUrl
