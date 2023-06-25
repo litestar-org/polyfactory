@@ -77,7 +77,7 @@ if TYPE_CHECKING:
     from polyfactory.persistence import AsyncPersistenceProtocol, SyncPersistenceProtocol
 
 
-def _create_pydantic_type_map(cls: "type[BaseFactory]") -> dict[type, Callable[[], Any]]:
+def _create_pydantic_type_map(cls: type[BaseFactory[Any]]) -> dict[type, Callable[[], Any]]:
     """Creates a mapping of pydantic types to mock data functions.
 
     :param cls: The base factory class.
@@ -169,7 +169,7 @@ def _create_pydantic_type_map(cls: "type[BaseFactory]") -> dict[type, Callable[[
 T = TypeVar("T")
 
 
-def is_factory(value: Any) -> "TypeGuard[type[BaseFactory]]":
+def is_factory(value: Any) -> "TypeGuard[type[BaseFactory[Any]]]":
     """Determine if a given value is a subclass of ModelFactory.
 
     :param value: An arbitrary value.
@@ -207,7 +207,7 @@ class BaseFactory(ABC, Generic[T]):
     Flag dictating whether the factory is a 'base' factory. Base factories are registered globally as handlers for types.
     For example, the 'DataclassFactory', 'TypedDictFactory' and 'ModelFactory' are all base factories.
     """
-    __base_factory_overrides__: dict[Any, type[BaseFactory]] | None = None
+    __base_factory_overrides__: dict[Any, type[BaseFactory[Any]]] | None = None
     """
     A base factory to override with this factory. If this value is set, the given factory will replace the given base factory.
 
@@ -230,8 +230,8 @@ class BaseFactory(ABC, Generic[T]):
     # cached attributes
     _fields_metadata: list[FieldMeta]
     # BaseFactory only attributes
-    _factory_type_mapping: ClassVar[dict[Any, type[BaseFactory]]]
-    _base_factories: ClassVar[list[type[BaseFactory]]]
+    _factory_type_mapping: ClassVar[dict[Any, type[BaseFactory[Any]]]]
+    _base_factories: ClassVar[list[type[BaseFactory[Any]]]]
 
     def __init_subclass__(cls, *args: Any, **kwargs: Any) -> None:
         super().__init_subclass__(*args, **kwargs)
@@ -327,7 +327,7 @@ class BaseFactory(ABC, Generic[T]):
     def _get_or_create_factory(
         cls,
         model: type,
-    ) -> type[BaseFactory]:
+    ) -> type[BaseFactory[Any]]:
         """Get a factory from registered factories or generate a factory dynamically.
 
         :param model: A model type.
@@ -513,9 +513,9 @@ class BaseFactory(ABC, Generic[T]):
     def create_factory(
         cls,
         model: type,
-        bases: tuple[type[BaseFactory], ...] | None = None,
+        bases: tuple[type[BaseFactory[Any]], ...] | None = None,
         **kwargs: Any,
-    ) -> type[BaseFactory]:
+    ) -> type[BaseFactory[Any]]:
         """Generate a factory for the given type dynamically.
 
         :param model: A type to model.
@@ -526,7 +526,7 @@ class BaseFactory(ABC, Generic[T]):
 
         """
         return cast(
-            "Type[BaseFactory]",
+            "Type[BaseFactory[Any]]",
             type(
                 f"{model.__name__}Factory",
                 (*(bases or ()), cls),

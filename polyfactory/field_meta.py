@@ -74,7 +74,7 @@ class FieldMeta:
         default: Any = Null,
         children: list[FieldMeta] | None = None,
         constraints: Constraints | None = None,
-    ):
+    ) -> None:
         """Create a factory field metadata instance."""
         self.annotation = annotation
         self.random = random

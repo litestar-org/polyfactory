@@ -13,7 +13,7 @@ T = TypeVar("T", list, set, frozenset)
 
 def handle_constrained_collection(
     collection_type: Callable[..., T],
-    factory: type[BaseFactory],
+    factory: type[BaseFactory[Any]],
     field_meta: FieldMeta,
     item_type: Any,
     max_items: int | None = None,

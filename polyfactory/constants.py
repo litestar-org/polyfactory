@@ -1,6 +1,9 @@
+from __future__ import annotations
+
 from collections import abc, defaultdict, deque
 from random import Random
 from typing import (
+    Any,
     DefaultDict,
     Deque,
     Dict,
@@ -39,6 +42,6 @@ TYPE_MAPPING = {
     UnionType: Union,
 }
 
-IGNORED_TYPE_ARGS: Set = {Ellipsis}
+IGNORED_TYPE_ARGS: set[Any] = {Ellipsis}
 
 DEFAULT_RANDOM = Random()

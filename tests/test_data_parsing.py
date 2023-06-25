@@ -283,7 +283,7 @@ def test_class_parsing() -> None:
     assert isinstance(result.runtime_error_field, RuntimeError)
 
     class TestClassWithKwargs:
-        def __init__(self, _: str):
+        def __init__(self, _: str) -> None:
             self.flag = str
 
     class MyNewModel(BaseModel):
