@@ -25,7 +25,9 @@
 [![Medium](https://img.shields.io/badge/Medium-12100E?style=flat&logo=medium&logoColor=white)](https://blog.litestar.dev)
 
 <!-- ALL-CONTRIBUTORS-BADGE:START - Do not remove or modify this section -->
+
 [![All Contributors](https://img.shields.io/badge/all_contributors-11-orange.svg?style=flat-square)](#contributors-)
+
 <!-- ALL-CONTRIBUTORS-BADGE:END -->
 
 </div>
@@ -120,6 +122,8 @@ Thanks goes to these wonderful people ([emoji key](https://allcontributors.org/d
       <td align="center" valign="top" width="14.28%"><a href="https://github.com/anthonyh209"><img src="https://avatars.githubusercontent.com/u/33107540?v=4?s=100" width="100px;" alt="anthonyh209"/><br /><sub><b>anthonyh209</b></sub></a><br /><a href="https://github.com/litestar-org/polyfactory/commits?author=anthonyh209" title="Code">💻</a></td>
       <td align="center" valign="top" width="14.28%"><a href="http://linkedin.com/in/roman-reznikov"><img src="https://avatars.githubusercontent.com/u/44291988?v=4?s=100" width="100px;" alt="Roman Reznikov"/><br /><sub><b>Roman Reznikov</b></sub></a><br /><a href="https://github.com/litestar-org/polyfactory/commits?author=ReznikovRoman" title="Code">💻</a></td>
       <td align="center" valign="top" width="14.28%"><a href="https://github.com/gigelu"><img src="https://avatars.githubusercontent.com/u/270697?v=4?s=100" width="100px;" alt="gigelu"/><br /><sub><b>gigelu</b></sub></a><br /><a href="https://github.com/litestar-org/polyfactory/commits?author=gigelu" title="Documentation">📖</a></td>
+    </tr>
+    <tr>
       <td align="center" valign="top" width="14.28%"><a href="https://github.com/roeeyn"><img src="https://avatars.githubusercontent.com/u/13385000?v=4?s=100" width="100px;" alt="Rodrigo Medina"/><br /><sub><b>Rodrigo Medina</b></sub></a><br /><a href="https://github.com/litestar-org/polyfactory/commits?author=roeeyn" title="Documentation">📖</a></td>
       <td align="center" valign="top" width="14.28%"><a href="https://gerritegnew.info/"><img src="https://avatars.githubusercontent.com/u/35822787?v=4?s=100" width="100px;" alt="Gerrit Egnew"/><br /><sub><b>Gerrit Egnew</b></sub></a><br /><a href="https://github.com/litestar-org/polyfactory/commits?author=gegnew" title="Code">💻</a></td>
       <td align="center" valign="top" width="14.28%"><a href="https://github.com/danielkatzan"><img src="https://avatars.githubusercontent.com/u/9249066?v=4?s=100" width="100px;" alt="danielkatzan"/><br /><sub><b>danielkatzan</b></sub></a><br /><a href="https://github.com/litestar-org/polyfactory/commits?author=danielkatzan" title="Documentation">📖</a></td>
