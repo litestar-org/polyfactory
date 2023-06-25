@@ -4,14 +4,12 @@
   "commit": false,
   "commitConvention": "angular",
   "contributors": [
-      {
+    {
       "login": "Goldziher",
       "name": "Na'aman Hirschfeld",
       "avatar_url": "https://avatars.githubusercontent.com/u/30733348?v=4",
       "profile": "https://github.com/Goldziher",
-      "contributions": [        "maintenance",
-"infra", "test", "code",         "doc",
-]
+      "contributions": ["maintenance", "infra", "test", "code", "doc"]
     },
     {
       "login": "JacobCoffee",
@@ -32,7 +30,7 @@
       "name": "Peter Schutt",
       "avatar_url": "https://avatars.githubusercontent.com/u/20659309?v=4",
       "profile": "https://schutt.io",
-      "contributions":["maintenance" "test", "code"]
+      "contributions": ["maintenance", "test", "code"]
     },
 
     {
@@ -82,90 +80,77 @@
       "name": "Simske",
       "avatar_url": "https://avatars.githubusercontent.com/u/2445660?v=4",
       "profile": "https://github.com/Simske",
-      "contributions": [
-        "code"
-      ]
+      "contributions": ["code"]
     },
     {
       "login": "sondrelg",
       "name": "Sondre Lillebø Gundersen",
       "avatar_url": "https://avatars.githubusercontent.com/u/25310870?v=4",
       "profile": "https://github.com/sondrelg",
-      "contributions": [
-        "code"
-      ]
-    },{
+      "contributions": ["code"]
+    },
+    {
       "login": "mciszczon",
       "name": "Mateusz Ciszczoń",
       "avatar_url": "https://avatars.githubusercontent.com/u/1078369?v=4",
       "profile": "https://mciszczon.pl/",
-      "contributions": [
-        "code"
-      ]
-    },{
+      "contributions": ["code"]
+    },
+    {
       "login": "phbernardes",
       "name": "Pedro Bernardes",
       "avatar_url": "https://avatars.githubusercontent.com/u/18899993?v=4",
       "profile": "https://www.linkedin.com/in/pedro-bernardes/",
-      "contributions": [
-        "code"
-      ]
-    },{
+      "contributions": ["code"]
+    },
+    {
       "login": "lindycoder",
       "name": "Martin Roy",
       "avatar_url": "https://avatars.githubusercontent.com/u/12926519?v=4",
       "profile": "https://github.com/lindycoder",
-      "contributions": [
-        "code"
-      ]
-    },{
+      "contributions": ["code"]
+    },
+    {
       "login": "Butch78",
       "name": "Matthew Aylward ",
       "avatar_url": "https://avatars.githubusercontent.com/u/19205392?v=4",
       "profile": "http://matthewtyleraylward.com",
-      "contributions": [
-        "code"
-      ]
-    },{
+      "contributions": ["code"]
+    },
+    {
       "login": "EltonChou",
       "name": "Elton H.Y. Chou",
       "avatar_url": "https://avatars.githubusercontent.com/u/12560310?v=4",
       "profile": "https://github.com/EltonChou",
-      "contributions": [
-        "code"
-      ]
-    },{
+      "contributions": ["code"]
+    },
+    {
       "login": "nguyent",
       "name": "Thang",
       "avatar_url": "https://avatars.githubusercontent.com/u/576848?v=4",
       "profile": "https://github.com/nguyent",
-      "contributions": [
-        "code"
-      ]
-    },{
+      "contributions": ["code"]
+    },
+    {
       "login": "DaanRademaker",
       "name": "Daan",
       "avatar_url": "https://avatars.githubusercontent.com/u/29598493?v=4",
       "profile": "https://github.com/DaanRademaker",
-      "contributions": [
-        "code"
-      ]
-    },{
+      "contributions": ["code"]
+    },
+    {
       "login": "lyz-code",
       "name": "Lyz",
       "avatar_url": "https://avatars.githubusercontent.com/u/24810987?v=4",
       "profile": "https://lyz-code.github.io/blue-book/",
-      "contributions": [
-        "code"
-      ]
-    }, {
+      "contributions": ["code"]
+    },
+    {
       "login": "thorin-schiffer",
       "name": "Thorin Schiffer",
       "avatar_url": "https://avatars.githubusercontent.com/u/3502492?v=4",
       "profile": "https://portfolio.schiffer.pro/",
-      "contributions": [
-        "code"
-      ]
+      "contributions": ["code"]
     },
     {
       "login": "Iipin",
