@@ -4,36 +4,37 @@
   "commit": false,
   "commitConvention": "angular",
   "contributors": [
+      {
+      "login": "Goldziher",
+      "name": "Na'aman Hirschfeld",
+      "avatar_url": "https://avatars.githubusercontent.com/u/30733348?v=4",
+      "profile": "https://github.com/Goldziher",
+      "contributions": [        "maintenance",
+"infra", "test", "code",         "doc",
+]
+    },
     {
       "login": "JacobCoffee",
       "name": "Jacob Coffee",
       "avatar_url": "https://avatars.githubusercontent.com/u/45884264?v=4",
       "profile": "https://scriptr.dev/",
-      "contributions": ["infra", "test", "code", "doc"]
+      "contributions": ["maintenance", "doc", "test"]
     },
     {
       "login": "provinzkraut",
       "name": "Janek Nouvertné",
       "avatar_url": "https://avatars.githubusercontent.com/u/25355197?v=4",
       "profile": "https://github.com/provinzkraut",
-      "contributions": [
-        "infra",
-        "test",
-        "code",
-        "design",
-        "doc",
-        "maintenance",
-        "projectManagement",
-        "review"
-      ]
+      "contributions": ["maintenance", "doc", "test", "code"]
     },
     {
-      "login": "Goldziher",
-      "name": "Na'aman Hirschfeld",
-      "avatar_url": "https://avatars.githubusercontent.com/u/30733348?v=4",
-      "profile": "https://github.com/Goldziher",
-      "contributions": ["infra", "test", "code"]
+      "login": "peterschutt",
+      "name": "Peter Schutt",
+      "avatar_url": "https://avatars.githubusercontent.com/u/20659309?v=4",
+      "profile": "https://schutt.io",
+      "contributions":["maintenance" "test", "code"]
     },
+
     {
       "login": "mdczaplicki",
       "name": "Marek Czaplicki",
