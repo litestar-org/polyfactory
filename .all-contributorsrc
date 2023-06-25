@@ -108,6 +108,15 @@
       "contributions": [
         "code"
       ]
+    },
+    {
+      "login": "thorin-schiffer",
+      "name": "Thorin Schiffer",
+      "avatar_url": "https://avatars.githubusercontent.com/u/3502492?v=4",
+      "profile": "https://portfolio.schiffer.pro/",
+      "contributions": [
+        "code"
+      ]
     }
   ],
   "contributorsPerLine": 7,
