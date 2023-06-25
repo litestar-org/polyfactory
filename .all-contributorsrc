@@ -108,6 +108,15 @@
       "contributions": [
         "code"
       ]
+    },
+    {
+      "login": "peterschutt",
+      "name": "Peter Schutt",
+      "avatar_url": "https://avatars.githubusercontent.com/u/20659309?v=4",
+      "profile": "https://schutt.io",
+      "contributions": [
+        "code"
+      ]
     }
   ],
   "contributorsPerLine": 7,
