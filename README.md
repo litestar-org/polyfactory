@@ -25,9 +25,7 @@
 [![Medium](https://img.shields.io/badge/Medium-12100E?style=flat&logo=medium&logoColor=white)](https://blog.litestar.dev)
 
 <!-- ALL-CONTRIBUTORS-BADGE:START - Do not remove or modify this section -->
-
-[![All Contributors](https://img.shields.io/badge/all_contributors-9-orange.svg?style=flat-square)](#contributors-)
-
+[![All Contributors](https://img.shields.io/badge/all_contributors-10-orange.svg?style=flat-square)](#contributors-)
 <!-- ALL-CONTRIBUTORS-BADGE:END -->
 
 </div>
@@ -117,6 +115,7 @@ Thanks goes to these wonderful people ([emoji key](https://allcontributors.org/d
     <tr>
       <td align="center" valign="top" width="14.28%"><a href="https://github.com/guacs"><img src="https://avatars.githubusercontent.com/u/126393040?v=4?s=100" width="100px;" alt="guacs"/><br /><sub><b>guacs</b></sub></a><br /><a href="https://github.com/litestar-org/polyfactory/commits?author=guacs" title="Code">💻</a></td>
       <td align="center" valign="top" width="14.28%"><a href="https://github.com/VSHUMILIN97"><img src="https://avatars.githubusercontent.com/u/27234763?v=4?s=100" width="100px;" alt="Vadim"/><br /><sub><b>Vadim</b></sub></a><br /><a href="https://github.com/litestar-org/polyfactory/commits?author=VSHUMILIN97" title="Code">💻</a></td>
+      <td align="center" valign="top" width="14.28%"><a href="https://github.com/Simske"><img src="https://avatars.githubusercontent.com/u/2445660?v=4?s=100" width="100px;" alt="Simske"/><br /><sub><b>Simske</b></sub></a><br /><a href="https://github.com/litestar-org/polyfactory/commits?author=Simske" title="Code">💻</a></td>
     </tr>
   </tbody>
 </table>
