@@ -1,11 +1,20 @@
 from __future__ import annotations
 
-from typing import TYPE_CHECKING, AbstractSet, Any, Collection, MutableMapping, MutableSequence, Set, TypeVar
+from typing import (
+    TYPE_CHECKING,
+    AbstractSet,
+    Any,
+    Collection,
+    MutableMapping,
+    MutableSequence,
+    Set,
+    TypeVar,
+)
 
-from typing_extensions import is_typeddict
+from typing_extensions import get_args, is_typeddict
 
 from polyfactory.utils.helpers import unwrap_annotation
-from polyfactory.utils.predicates import get_type_origin, is_any, is_union
+from polyfactory.utils.predicates import get_type_origin, is_any, is_literal, is_union
 from polyfactory.value_generators.primitives import create_random_string
 
 if TYPE_CHECKING:
@@ -58,7 +67,12 @@ def handle_complex_type(field_meta: FieldMeta, factory: type[BaseFactory]) -> An
 
     :returns: A built result.
     """
-    if origin := get_type_origin(unwrap_annotation(field_meta.annotation, random=factory.__random__)):
+    unwrapped_annotation = unwrap_annotation(field_meta.annotation, random=factory.__random__)
+
+    if is_literal(annotation=unwrapped_annotation) and (literal_args := get_args(unwrapped_annotation)):
+        return factory.__random__.choice(literal_args)
+
+    if origin := get_type_origin(unwrapped_annotation):
         if issubclass(origin, Collection):
             return handle_collection_type(field_meta, origin, factory)
         return factory.get_mock_value(origin)
