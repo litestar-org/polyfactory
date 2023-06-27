@@ -324,23 +324,20 @@ class BaseFactory(ABC, Generic[T]):
         return field_value
 
     @classmethod
-    def _get_or_create_factory(
-        cls,
-        model: type,
-    ) -> type[BaseFactory[Any]]:
+    def _get_or_create_factory(cls, model: type) -> type[BaseFactory[Any]]:
         """Get a factory from registered factories or generate a factory dynamically.
 
         :param model: A model type.
         :returns: A Factory sub-class.
 
         """
-        if cls.__base_factory_overrides__ and (
-            factory := cls.__base_factory_overrides__.get(model, cls.__base_factory_overrides__.get(type(model)))
-        ):
-            return factory.create_factory(model)
-
         if factory := BaseFactory._factory_type_mapping.get(model):
             return factory
+
+        if cls.__base_factory_overrides__:
+            for model_ancestor in model.mro():
+                if factory := cls.__base_factory_overrides__.get(model_ancestor):
+                    return factory.create_factory(model)
 
         for factory in reversed(BaseFactory._base_factories):
             if factory.is_supported_type(model):
