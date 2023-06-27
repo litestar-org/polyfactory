@@ -4,7 +4,6 @@ from types import ModuleType
 from typing import Callable, Dict, List, Optional, Tuple
 from unittest.mock import ANY
 
-import pytest
 from _pytest.monkeypatch import MonkeyPatch
 from pydantic.dataclasses import Field  # type: ignore
 from pydantic.dataclasses import dataclass as pydantic_dataclass
@@ -170,17 +169,19 @@ class example:
     assert MyFactory.process_kwargs() == {"foo": ANY}
 
 
-@pytest.mark.enable_randint
 def test_variable_length_tuple_generation__many_type_args(monkeypatch: MonkeyPatch) -> None:
     @vanilla_dataclass
     class VanillaDC:
         ids: Tuple[int, ...]
 
+    number_of_args = 3
+
     class MyFactory(DataclassFactory[VanillaDC]):
         __model__ = VanillaDC
 
-    number_of_args = 3
-    monkeypatch.setattr(MyFactory.__random__, MyFactory.__random__.randint.__name__, lambda _, __: number_of_args)
+        __randomize_collection_length__ = True
+        __min_collection_length__ = number_of_args
+        __max_collection_length__ = number_of_args
 
     result = MyFactory.build()
 
@@ -189,17 +190,19 @@ def test_variable_length_tuple_generation__many_type_args(monkeypatch: MonkeyPat
     assert len(result.ids) == number_of_args
 
 
-@pytest.mark.enable_randint
 def test_variable_length_dict_generation__many_type_args(monkeypatch: MonkeyPatch) -> None:
     @vanilla_dataclass
     class VanillaDC:
         ids: Dict[str, int]
 
+    number_of_args = 3
+
     class MyFactory(DataclassFactory[VanillaDC]):
         __model__ = VanillaDC
 
-    number_of_args = 3
-    monkeypatch.setattr(MyFactory.__random__, MyFactory.__random__.randint.__name__, lambda _, __: number_of_args)
+        __randomize_collection_length__ = True
+        __min_collection_length__ = number_of_args
+        __max_collection_length__ = number_of_args
 
     result = MyFactory.build()
 
