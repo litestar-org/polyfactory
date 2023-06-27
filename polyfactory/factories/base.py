@@ -118,7 +118,7 @@ def _create_pydantic_type_map(cls: type[BaseFactory[Any]]) -> dict[type, Callabl
     except ImportError:
         mapping = {}
 
-    try:
+    with suppress(ImportError):
         # v1 only values - these will raise an exception in v2
         # in pydantic v2 these are all aliases for Annotated with a constraint.
         # we therefore do not need them in v2
@@ -136,33 +136,25 @@ def _create_pydantic_type_map(cls: type[BaseFactory[Any]]) -> dict[type, Callabl
             RedisDsn,
         )
 
-        mapping.update(
-            {  # pyright: ignore
-                PyObject: lambda: "decimal.Decimal",
-                AmqpDsn: lambda: "amqps://example.com",
-                KafkaDsn: lambda: "kafka://localhost:9092",
-                PostgresDsn: lambda: "postgresql://user:secret@localhost",
-                RedisDsn: lambda: "redis://localhost:6379/0",
-                FilePath: lambda: Path(realpath(__file__)),
-                DirectoryPath: lambda: Path(realpath(__file__)).parent,
-                UUID1: uuid1,
-                UUID3: lambda: uuid3(NAMESPACE_DNS, cls.__faker__.pystr()),
-                UUID4: cls.__faker__.uuid4,
-                UUID5: lambda: uuid5(NAMESPACE_DNS, cls.__faker__.pystr()),
-            }
-        )
+        mapping |= {  # pyright: ignore
+            PyObject: lambda: "decimal.Decimal",
+            AmqpDsn: lambda: "amqps://example.com",
+            KafkaDsn: lambda: "kafka://localhost:9092",
+            PostgresDsn: lambda: "postgresql://user:secret@localhost",
+            RedisDsn: lambda: "redis://localhost:6379/0",
+            FilePath: lambda: Path(realpath(__file__)),
+            DirectoryPath: lambda: Path(realpath(__file__)).parent,
+            UUID1: uuid1,
+            UUID3: lambda: uuid3(NAMESPACE_DNS, cls.__faker__.pystr()),
+            UUID4: cls.__faker__.uuid4,
+            UUID5: lambda: uuid5(NAMESPACE_DNS, cls.__faker__.pystr()),
+        }
 
-    except ImportError:
-        pass
-
-    try:
+    with suppress(ImportError):
         # this might be removed by pydantic 2
         from pydantic import color
 
         mapping[color.Color] = cls.__faker__.hex_color  # pyright: ignore
-    except ImportError:
-        pass
-
     return mapping
 
 
@@ -318,10 +310,7 @@ class BaseFactory(ABC, Generic[T]):
         if isinstance(field_value, Fixture):
             return field_value.to_value()
 
-        if callable(field_value):
-            return field_value()
-
-        return field_value
+        return field_value() if callable(field_value) else field_value
 
     @classmethod
     def _get_or_create_factory(cls, model: type) -> type[BaseFactory[Any]]:
