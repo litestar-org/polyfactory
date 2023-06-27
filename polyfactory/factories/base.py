@@ -40,6 +40,7 @@ from uuid import NAMESPACE_DNS, UUID, uuid1, uuid3, uuid5
 from faker import Faker
 from typing_extensions import get_args
 
+from polyfactory.constants import MAX_COLLECTION_LENGTH, MIN_COLLECTION_LENGTH, RANDOMIZE_COLLECTION_LENGTH
 from polyfactory.exceptions import (
     ConfigurationException,
     MissingBuildKwargException,
@@ -226,17 +227,17 @@ class BaseFactory(ABC, Generic[T]):
     An integer to seed the factory's Faker and Random instances with.
     This attribute can be used to control random generation.
     """
-    __randomize_collection_length__: ClassVar[bool] = False
+    __randomize_collection_length__: ClassVar[bool] = RANDOMIZE_COLLECTION_LENGTH
     """
     Flag dictating whether to randomize collections lengths.
     """
-    __max_collection_length__: ClassVar[int] = 5
-    """
-    An integer value that defines maximum length of a collection.
-    """
-    __min_collection_length__: ClassVar[int] = 0
+    __min_collection_length__: ClassVar[int] = MIN_COLLECTION_LENGTH
     """
     An integer value that defines minimum length of a collection.
+    """
+    __max_collection_length__: ClassVar[int] = MAX_COLLECTION_LENGTH
+    """
+    An integer value that defines maximum length of a collection.
     """
 
     # cached attributes

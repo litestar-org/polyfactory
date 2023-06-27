@@ -13,6 +13,7 @@ from typing import (
     cast,
 )
 
+from polyfactory.constants import MAX_COLLECTION_LENGTH, MIN_COLLECTION_LENGTH, RANDOMIZE_COLLECTION_LENGTH
 from polyfactory.exceptions import MissingDependencyException
 from polyfactory.factories.base import BaseFactory
 from polyfactory.field_meta import Constraints, FieldMeta, Null
@@ -66,7 +67,14 @@ class PydanticFieldMeta(FieldMeta):
     # FIXME: remove the pragma when switching to pydantic v2 permanently
     @classmethod
     def from_field_info(
-        cls, field_name: str, field_info: FieldInfo, use_alias: bool, random: Random
+        cls,
+        field_name: str,
+        field_info: FieldInfo,
+        use_alias: bool,
+        random: Random,
+        randomize_collection_length: bool = RANDOMIZE_COLLECTION_LENGTH,
+        min_collection_length: int = MIN_COLLECTION_LENGTH,
+        max_collection_length: int = MAX_COLLECTION_LENGTH,
     ) -> PydanticFieldMeta:  # pragma: no cover
         """Create an instance from a pydantic field info.
 
@@ -108,6 +116,9 @@ class PydanticFieldMeta(FieldMeta):
             annotation=annotation,
             default=default_value,
             constraints=cast("Constraints", {k: v for k, v in constraints.items() if v is not None}) or None,
+            randomize_collection_length=randomize_collection_length,
+            min_collection_length=min_collection_length,
+            max_collection_length=max_collection_length,
         )
 
     @classmethod
@@ -241,6 +252,9 @@ class ModelFactory(Generic[T], BaseFactory[T]):
                         field_name=field_name,
                         random=cls.__random__,
                         use_alias=not cls.__model__.model_config.get("populate_by_name", False),
+                        randomize_collection_length=cls.__randomize_collection_length__,
+                        min_collection_length=cls.__min_collection_length__,
+                        max_collection_length=cls.__max_collection_length__,
                     )
                     for field_name, field_info in cls.__model__.model_fields.items()
                 ]
