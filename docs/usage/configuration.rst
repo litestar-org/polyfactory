@@ -79,3 +79,14 @@ You can also control the default factory for a type by declaring a factory as th
 .. literalinclude:: /examples/configuration/test_example_5.py
     :caption: Setting a factory as a type default.
     :language: python
+
+
+Randomized Collection Length
+----------------------------
+
+Set of fields that allow you to generate collection with random length. By default - 1 item is generated.
+
+
+.. literalinclude:: /examples/declaring_factories/test_example_6.py
+    :caption: Randomized collection length
+    :language: python
