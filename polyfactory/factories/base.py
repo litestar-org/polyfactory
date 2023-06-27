@@ -255,6 +255,9 @@ class BaseFactory(ABC, Generic[T]):
         if not hasattr(BaseFactory, "_factory_type_mapping"):
             BaseFactory._factory_type_mapping = {}
 
+        if cls.__min_collection_length__ > cls.__max_collection_length__:
+            raise ConfigurationException("Minimum collection length shouldn't be higher than maximum collection length")
+
         if "__is_base_factory__" not in cls.__dict__ or not cls.__is_base_factory__:
             model = getattr(cls, "__model__", None)
             if not model:
