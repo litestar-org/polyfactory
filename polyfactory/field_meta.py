@@ -75,6 +75,7 @@ class FieldMeta:
     def from_type(
         cls,
         annotation: Any,
+        *,
         random_: random.Random,
         name: str = "",
         default: Any = Null,

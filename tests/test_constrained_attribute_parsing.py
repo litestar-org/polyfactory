@@ -22,12 +22,8 @@ from pydantic import (
 
 from polyfactory.factories.pydantic_factory import ModelFactory
 from tests.models import Person
-import pytest
 
 pattern = r"(a|b|c)zz"
-
-
-pytestmark = pytest.mark.enable_randint
 
 
 def test_constrained_attribute_parsing() -> None:

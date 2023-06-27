@@ -1,16 +1,29 @@
-import random
+from typing import Any
 
 import pytest
 from _pytest.fixtures import FixtureRequest
 from _pytest.monkeypatch import MonkeyPatch
 
-from polyfactory import BaseFactory
+from polyfactory.field_meta import FieldMeta
 
 
 @pytest.fixture(autouse=True)
-def constant_length_type_args(request: FixtureRequest, monkeypatch: MonkeyPatch) -> None:
+def mock_random_in_field_meta(request: FixtureRequest, monkeypatch: MonkeyPatch) -> None:
     """
-    Make sure that the length of the type_args tuple is always 1.
+    Mock randint only in FieldMeta.from_type
     """
-    if "enable_randint" not in request.keywords:
-        monkeypatch.setattr(BaseFactory.__random__, random.randint.__name__, lambda _, __: 1)
+    if "enable_randint" in request.keywords:
+        return
+
+    class NotSoRandom:
+        @staticmethod
+        def randint(_: int, __: int) -> int:
+            return 1
+
+    original_from_type = FieldMeta.from_type
+
+    def from_type_mock(*args: Any, **kwargs: Any) -> FieldMeta:
+        kwargs["random_"] = NotSoRandom
+        return original_from_type(*args, **kwargs)
+
+    monkeypatch.setattr(FieldMeta, FieldMeta.from_type.__name__, from_type_mock)

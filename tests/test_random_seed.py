@@ -2,11 +2,7 @@ from random import randint
 from typing import Optional
 
 from pydantic import BaseModel, Field
-import pytest
 from polyfactory.factories.pydantic_factory import ModelFactory
-
-
-pytestmark = pytest.mark.enable_randint
 
 
 def test_random_seed() -> None:
