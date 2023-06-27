@@ -226,6 +226,18 @@ class BaseFactory(ABC, Generic[T]):
     An integer to seed the factory's Faker and Random instances with.
     This attribute can be used to control random generation.
     """
+    __randomize_collection_length__: ClassVar[bool] = False
+    """
+    Flag dictating whether to randomize collections lengths.
+    """
+    __max_collection_length__: ClassVar[int] = 5
+    """
+    An integer value that defines maximum length of a collection.
+    """
+    __min_collection_length__: ClassVar[int] = 0
+    """
+    An integer value that defines minimum length of a collection.
+    """
 
     # cached attributes
     _fields_metadata: list[FieldMeta]
