@@ -1,6 +1,7 @@
 from __future__ import annotations
+
 from abc import ABC, abstractmethod
-from collections import Counter, deque
+from collections import Counter, abc, deque
 from contextlib import suppress
 from datetime import date, datetime, time, timedelta
 from decimal import Decimal
@@ -15,6 +16,9 @@ from ipaddress import (
     IPv6Address,
     IPv6Interface,
     IPv6Network,
+    ip_address,
+    ip_interface,
+    ip_network,
 )
 from os.path import realpath
 from pathlib import Path
@@ -42,7 +46,6 @@ from polyfactory.exceptions import (
     ParameterException,
 )
 from polyfactory.fields import Fixture, Ignore, PostGenerated, Require, Use
-
 from polyfactory.utils.helpers import unwrap_annotation, unwrap_args, unwrap_optional
 from polyfactory.utils.predicates import (
     get_type_origin,
@@ -54,23 +57,27 @@ from polyfactory.value_generators.complex_types import handle_complex_type
 from polyfactory.value_generators.constrained_collections import handle_constrained_collection
 from polyfactory.value_generators.constrained_dates import handle_constrained_date
 from polyfactory.value_generators.constrained_numbers import (
+    handle_constrained_decimal,
     handle_constrained_float,
     handle_constrained_int,
-    handle_constrained_decimal,
 )
+from polyfactory.value_generators.constrained_path import handle_constrained_path
 from polyfactory.value_generators.constrained_strings import handle_constrained_string_or_bytes
+from polyfactory.value_generators.constrained_url import handle_constrained_url
+from polyfactory.value_generators.constrained_uuid import handle_constrained_uuid
 from polyfactory.value_generators.primitives import (
     create_random_boolean,
     create_random_bytes,
 )
 
 if TYPE_CHECKING:
-    from polyfactory.persistence import AsyncPersistenceProtocol, SyncPersistenceProtocol
-    from polyfactory.field_meta import FieldMeta, Constraints
     from typing_extensions import TypeGuard
 
+    from polyfactory.field_meta import Constraints, FieldMeta
+    from polyfactory.persistence import AsyncPersistenceProtocol, SyncPersistenceProtocol
 
-def _create_pydantic_type_map(cls: "type[BaseFactory]") -> dict[type, Callable[[], Any]]:
+
+def _create_pydantic_type_map(cls: type[BaseFactory[Any]]) -> dict[type, Callable[[], Any]]:
     """Creates a mapping of pydantic types to mock data functions.
 
     :param cls: The base factory class.
@@ -79,10 +86,9 @@ def _create_pydantic_type_map(cls: "type[BaseFactory]") -> dict[type, Callable[[
     try:
         import pydantic
 
-        return {
+        mapping = {
             pydantic.ByteSize: cls.__faker__.pyint,
             pydantic.PositiveInt: cls.__faker__.pyint,
-            pydantic.FilePath: lambda: Path(realpath(__file__)),
             pydantic.NegativeFloat: lambda: cls.__random__.uniform(-100, -1),
             pydantic.NegativeInt: lambda: cls.__faker__.pyint() * -1,
             pydantic.PositiveFloat: cls.__faker__.pyint,
@@ -93,40 +99,77 @@ def _create_pydantic_type_map(cls: "type[BaseFactory]") -> dict[type, Callable[[
             pydantic.StrictBytes: partial(create_random_bytes, cls.__random__),
             pydantic.StrictFloat: cls.__faker__.pyfloat,
             pydantic.StrictStr: cls.__faker__.pystr,
-            pydantic.DirectoryPath: lambda: Path(realpath(__file__)).parent,
             pydantic.EmailStr: cls.__faker__.free_email,
             pydantic.NameEmail: cls.__faker__.free_email,
-            pydantic.PyObject: lambda: "decimal.Decimal",  # type: ignore[dict-item]
-            pydantic.color.Color: cls.__faker__.hex_color,  # pyright: ignore
             pydantic.Json: cls.__faker__.json,
             pydantic.PaymentCardNumber: cls.__faker__.credit_card_number,
             pydantic.AnyUrl: cls.__faker__.url,
             pydantic.AnyHttpUrl: cls.__faker__.url,
             pydantic.HttpUrl: cls.__faker__.url,
-            pydantic.PostgresDsn: lambda: "postgresql://user:secret@localhost",
-            pydantic.RedisDsn: lambda: "redis://localhost:6379",
-            pydantic.UUID1: uuid1,
-            pydantic.UUID3: lambda: uuid3(NAMESPACE_DNS, cls.__faker__.pystr()),
-            pydantic.UUID4: cls.__faker__.uuid4,
-            pydantic.UUID5: lambda: uuid5(NAMESPACE_DNS, cls.__faker__.pystr()),
             pydantic.SecretBytes: partial(create_random_bytes, cls.__random__),
             pydantic.SecretStr: cls.__faker__.pystr,
             pydantic.IPvAnyAddress: cls.__faker__.ipv4,
             pydantic.IPvAnyInterface: cls.__faker__.ipv4,
             pydantic.IPvAnyNetwork: lambda: cls.__faker__.ipv4(network=True),
-            pydantic.AmqpDsn: lambda: "amqps://",
-            pydantic.KafkaDsn: lambda: "kafka://",
             pydantic.PastDate: cls.__faker__.past_date,
             pydantic.FutureDate: cls.__faker__.future_date,
         }
+
     except ImportError:
-        return {}
+        mapping = {}
+
+    try:
+        # v1 only values - these will raise an exception in v2
+        # in pydantic v2 these are all aliases for Annotated with a constraint.
+        # we therefore do not need them in v2
+        from pydantic import (
+            UUID1,
+            UUID3,
+            UUID4,
+            UUID5,
+            AmqpDsn,
+            DirectoryPath,
+            FilePath,
+            KafkaDsn,
+            PostgresDsn,
+            PyObject,
+            RedisDsn,
+        )
+
+        mapping.update(
+            {  # pyright: ignore
+                PyObject: lambda: "decimal.Decimal",
+                AmqpDsn: lambda: "amqps://example.com",
+                KafkaDsn: lambda: "kafka://localhost:9092",
+                PostgresDsn: lambda: "postgresql://user:secret@localhost",
+                RedisDsn: lambda: "redis://localhost:6379/0",
+                FilePath: lambda: Path(realpath(__file__)),
+                DirectoryPath: lambda: Path(realpath(__file__)).parent,
+                UUID1: uuid1,
+                UUID3: lambda: uuid3(NAMESPACE_DNS, cls.__faker__.pystr()),
+                UUID4: cls.__faker__.uuid4,
+                UUID5: lambda: uuid5(NAMESPACE_DNS, cls.__faker__.pystr()),
+            }
+        )
+
+    except ImportError:
+        pass
+
+    try:
+        # this might be removed by pydantic 2
+        from pydantic import color
+
+        mapping[color.Color] = cls.__faker__.hex_color  # pyright: ignore
+    except ImportError:
+        pass
+
+    return mapping
 
 
 T = TypeVar("T")
 
 
-def is_factory(value: Any) -> "TypeGuard[type[BaseFactory]]":
+def is_factory(value: Any) -> "TypeGuard[type[BaseFactory[Any]]]":
     """Determine if a given value is a subclass of ModelFactory.
 
     :param value: An arbitrary value.
@@ -164,6 +207,12 @@ class BaseFactory(ABC, Generic[T]):
     Flag dictating whether the factory is a 'base' factory. Base factories are registered globally as handlers for types.
     For example, the 'DataclassFactory', 'TypedDictFactory' and 'ModelFactory' are all base factories.
     """
+    __base_factory_overrides__: dict[Any, type[BaseFactory[Any]]] | None = None
+    """
+    A base factory to override with this factory. If this value is set, the given factory will replace the given base factory.
+
+    Note: this value can only be set when '__is_base_factory__' is 'True'.
+    """
     __faker__: ClassVar["Faker"] = Faker()
     """
     A faker instance to use. Can be a user provided value.
@@ -181,8 +230,8 @@ class BaseFactory(ABC, Generic[T]):
     # cached attributes
     _fields_metadata: list[FieldMeta]
     # BaseFactory only attributes
-    _factory_type_mapping: ClassVar[dict[Any, type["BaseFactory"]]]
-    _base_factories: ClassVar[list[type["BaseFactory"]]]
+    _factory_type_mapping: ClassVar[dict[Any, type[BaseFactory[Any]]]]
+    _base_factories: ClassVar[list[type[BaseFactory[Any]]]]
 
     def __init_subclass__(cls, *args: Any, **kwargs: Any) -> None:
         super().__init_subclass__(*args, **kwargs)
@@ -210,12 +259,11 @@ class BaseFactory(ABC, Generic[T]):
                         f"Model type {model.__name__} is not supported. "
                         "To support it, register an appropriate base factory and subclass it for your factory."
                     )
+        else:
+            BaseFactory._base_factories.append(cls)
 
         if random_seed := getattr(cls, "__random_seed__", None) is not None:
             cls.seed_random(random_seed)
-
-        if cls.__is_base_factory__:
-            BaseFactory._base_factories.append(cls)
 
         if cls.__set_as_default_factory_for_type__:
             BaseFactory._factory_type_mapping[cls.__model__] = cls
@@ -279,17 +327,22 @@ class BaseFactory(ABC, Generic[T]):
     def _get_or_create_factory(
         cls,
         model: type,
-    ) -> type["BaseFactory"]:
+    ) -> type[BaseFactory[Any]]:
         """Get a factory from registered factories or generate a factory dynamically.
 
         :param model: A model type.
         :returns: A Factory sub-class.
 
         """
+        if cls.__base_factory_overrides__ and (
+            factory := cls.__base_factory_overrides__.get(model, cls.__base_factory_overrides__.get(type(model)))
+        ):
+            return factory.create_factory(model)
+
         if factory := BaseFactory._factory_type_mapping.get(model):
             return factory
 
-        for factory in BaseFactory._base_factories:
+        for factory in reversed(BaseFactory._base_factories):
             if factory.is_supported_type(model):
                 return factory.create_factory(model)
 
@@ -314,7 +367,7 @@ class BaseFactory(ABC, Generic[T]):
         :returns: Boolean dictating whether the annotation is a batch factory type
         """
         origin = get_type_origin(annotation) or annotation
-        if is_safe_subclass(origin, Sequence) and (args := unwrap_args(annotation)):  # type: ignore
+        if is_safe_subclass(origin, Sequence) and (args := unwrap_args(annotation, random=cls.__random__)):  # type: ignore
             return len(args) == 1 and BaseFactory.is_factory_type(annotation=args[0])
         return False
 
@@ -413,21 +466,22 @@ class BaseFactory(ABC, Generic[T]):
             # standard library objects
             Path: lambda: Path(realpath(__file__)),
             Decimal: cls.__faker__.pydecimal,
-            UUID: cls.__faker__.uuid4,
+            UUID: lambda: UUID(cls.__faker__.uuid4()),
             # datetime
             datetime: cls.__faker__.date_time_between,
             date: cls.__faker__.date_this_decade,
-            time: cls.__faker__.time,
+            time: cls.__faker__.time_object,
             timedelta: cls.__faker__.time_delta,
             # ip addresses
-            IPv4Address: cls.__faker__.ipv4,
-            IPv4Interface: cls.__faker__.ipv4,
-            IPv4Network: lambda: cls.__faker__.ipv4(network=True),
-            IPv6Address: cls.__faker__.ipv6,
-            IPv6Interface: cls.__faker__.ipv6,
-            IPv6Network: lambda: cls.__faker__.ipv6(network=True),
+            IPv4Address: lambda: ip_address(cls.__faker__.ipv4()),
+            IPv4Interface: lambda: ip_interface(cls.__faker__.ipv4()),
+            IPv4Network: lambda: ip_network(cls.__faker__.ipv4(network=True)),
+            IPv6Address: lambda: ip_address(cls.__faker__.ipv6()),
+            IPv6Interface: lambda: ip_interface(cls.__faker__.ipv6()),
+            IPv6Network: lambda: ip_network(cls.__faker__.ipv6(network=True)),
             # types
             Callable: _create_generic_fn,
+            abc.Callable: _create_generic_fn,
             Counter: lambda: Counter(cls.__faker__.pystr()),
             **_create_pydantic_type_map(cls),
         }
@@ -459,9 +513,9 @@ class BaseFactory(ABC, Generic[T]):
     def create_factory(
         cls,
         model: type,
-        bases: tuple[type["BaseFactory"], ...] | None = None,
+        bases: tuple[type[BaseFactory[Any]], ...] | None = None,
         **kwargs: Any,
-    ) -> type["BaseFactory"]:
+    ) -> type[BaseFactory[Any]]:
         """Generate a factory for the given type dynamically.
 
         :param model: A type to model.
@@ -471,12 +525,8 @@ class BaseFactory(ABC, Generic[T]):
         :returns: A 'ModelFactory' subclass.
 
         """
-
-        for key in (attr for attr in dir(cls) if attr.startswith("__") and attr != "__model__"):
-            kwargs.setdefault(key, getattr(cls, key, None))
-
         return cast(
-            "Type[BaseFactory]",
+            "Type[BaseFactory[Any]]",
             type(
                 f"{model.__name__}Factory",
                 (*(bases or ()), cls),
@@ -486,74 +536,100 @@ class BaseFactory(ABC, Generic[T]):
 
     @classmethod
     def get_constrained_field_value(cls, annotation: Any, field_meta: FieldMeta) -> Any:
-        constraints = cast("Constraints", field_meta.constraints)
-        if is_safe_subclass(annotation, float):
-            return handle_constrained_float(
-                random=cls.__random__,
-                multiple_of=cast("Any", constraints.get("multiple_of")),
-                gt=cast("Any", constraints.get("gt")),
-                ge=cast("Any", constraints.get("ge")),
-                lt=cast("Any", constraints.get("lt")),
-                le=cast("Any", constraints.get("le")),
-            )
+        try:
+            constraints = cast("Constraints", field_meta.constraints)
+            if is_safe_subclass(annotation, float):
+                return handle_constrained_float(
+                    random=cls.__random__,
+                    multiple_of=cast("Any", constraints.get("multiple_of")),
+                    gt=cast("Any", constraints.get("gt")),
+                    ge=cast("Any", constraints.get("ge")),
+                    lt=cast("Any", constraints.get("lt")),
+                    le=cast("Any", constraints.get("le")),
+                )
 
-        if is_safe_subclass(annotation, int):
-            return handle_constrained_int(
-                random=cls.__random__,
-                multiple_of=cast("Any", constraints.get("multiple_of")),
-                gt=cast("Any", constraints.get("gt")),
-                ge=cast("Any", constraints.get("ge")),
-                lt=cast("Any", constraints.get("lt")),
-                le=cast("Any", constraints.get("le")),
-            )
+            if is_safe_subclass(annotation, int):
+                return handle_constrained_int(
+                    random=cls.__random__,
+                    multiple_of=cast("Any", constraints.get("multiple_of")),
+                    gt=cast("Any", constraints.get("gt")),
+                    ge=cast("Any", constraints.get("ge")),
+                    lt=cast("Any", constraints.get("lt")),
+                    le=cast("Any", constraints.get("le")),
+                )
 
-        if is_safe_subclass(annotation, Decimal):
-            return handle_constrained_decimal(
-                random=cls.__random__,
-                decimal_places=cast("Any", constraints.get("decimal_places")),
-                max_digits=cast("Any", constraints.get("max_digits")),
-                multiple_of=cast("Any", constraints.get("multiple_of")),
-                gt=cast("Any", constraints.get("gt")),
-                ge=cast("Any", constraints.get("ge")),
-                lt=cast("Any", constraints.get("lt")),
-                le=cast("Any", constraints.get("le")),
-            )
+            if is_safe_subclass(annotation, Decimal):
+                return handle_constrained_decimal(
+                    random=cls.__random__,
+                    decimal_places=cast("Any", constraints.get("decimal_places")),
+                    max_digits=cast("Any", constraints.get("max_digits")),
+                    multiple_of=cast("Any", constraints.get("multiple_of")),
+                    gt=cast("Any", constraints.get("gt")),
+                    ge=cast("Any", constraints.get("ge")),
+                    lt=cast("Any", constraints.get("lt")),
+                    le=cast("Any", constraints.get("le")),
+                )
 
-        if is_safe_subclass(annotation, str) or is_safe_subclass(annotation, bytes):
-            return handle_constrained_string_or_bytes(
-                random=cls.__random__,
-                t_type=str if is_safe_subclass(annotation, str) else bytes,
-                lower_case=constraints.get("lower_case") or False,
-                upper_case=constraints.get("upper_case") or False,
-                min_length=constraints.get("min_length"),
-                max_length=constraints.get("max_length"),
-                pattern=constraints.get("pattern"),
-            )
+            if url_constraints := constraints.get("url"):
+                return handle_constrained_url(constraints=url_constraints)
 
-        if (
-            is_safe_subclass(annotation, set)
-            or is_safe_subclass(annotation, list)
-            or is_safe_subclass(annotation, frozenset)
-        ):
-            result = handle_constrained_collection(
-                collection_type=list if is_safe_subclass(annotation, list) else set,  # pyright: ignore
-                factory=cls,
-                field_meta=field_meta.children[0] if field_meta.children else field_meta,
-                item_type=constraints.get("item_type"),
-                max_items=constraints.get("max_length"),
-                min_items=constraints.get("min_length"),
-                unique_items=constraints.get("unique_items", False),
-            )
-            return frozenset(result) if is_safe_subclass(annotation, frozenset) else result
+            if is_safe_subclass(annotation, str) or is_safe_subclass(annotation, bytes):
+                return handle_constrained_string_or_bytes(
+                    random=cls.__random__,
+                    t_type=str if is_safe_subclass(annotation, str) else bytes,
+                    lower_case=constraints.get("lower_case") or False,
+                    upper_case=constraints.get("upper_case") or False,
+                    min_length=constraints.get("min_length"),
+                    max_length=constraints.get("max_length"),
+                    pattern=constraints.get("pattern"),
+                )
 
-        if is_safe_subclass(annotation, date):
-            return handle_constrained_date(
-                faker=cls.__faker__,
-                ge=cast("Any", constraints.get("ge")),
-                gt=cast("Any", constraints.get("gt")),
-                le=cast("Any", constraints.get("le")),
-                lt=cast("Any", constraints.get("lt")),
-            )
+            if (
+                is_safe_subclass(annotation, set)
+                or is_safe_subclass(annotation, list)
+                or is_safe_subclass(annotation, frozenset)
+                or is_safe_subclass(annotation, tuple)
+            ):
+                collection_type: type[list] | type[set] | type[tuple] | type[frozenset]
+                if is_safe_subclass(annotation, list):
+                    collection_type = list
+                elif is_safe_subclass(annotation, set):
+                    collection_type = set
+                elif is_safe_subclass(annotation, tuple):
+                    collection_type = tuple
+                else:
+                    collection_type = frozenset
+
+                return handle_constrained_collection(
+                    collection_type=collection_type,  # type: ignore
+                    factory=cls,
+                    field_meta=field_meta.children[0] if field_meta.children else field_meta,
+                    item_type=constraints.get("item_type"),
+                    max_items=constraints.get("max_length"),
+                    min_items=constraints.get("min_length"),
+                    unique_items=constraints.get("unique_items", False),
+                )
+
+            if is_safe_subclass(annotation, date):
+                return handle_constrained_date(
+                    faker=cls.__faker__,
+                    ge=cast("Any", constraints.get("ge")),
+                    gt=cast("Any", constraints.get("gt")),
+                    le=cast("Any", constraints.get("le")),
+                    lt=cast("Any", constraints.get("lt")),
+                    tz=cast("Any", constraints.get("tz")),
+                )
+
+            if is_safe_subclass(annotation, UUID) and (uuid_version := constraints.get("uuid_version")):
+                return handle_constrained_uuid(
+                    uuid_version=uuid_version,
+                    faker=cls.__faker__,
+                )
+
+            if is_safe_subclass(annotation, Path) and (path_constraint := constraints.get("path_type")):
+                return handle_constrained_path(constraint=path_constraint, faker=cls.__faker__)
+        except TypeError as e:
+            raise ParameterException from e
 
         raise ParameterException(f"received constraints for unsupported type {annotation}")
 
@@ -570,13 +646,13 @@ class BaseFactory(ABC, Generic[T]):
         if cls.is_ignored_type(field_meta.annotation):
             return None
 
-        if field_meta.constraints and field_meta.constraints.get("constant", False):
+        if field_meta.constraints and field_meta.constraints.pop("constant", False):
             return field_meta.default
 
         if cls.should_set_none_value(field_meta=field_meta):
             return None
 
-        unwrapped_annotation = unwrap_annotation(field_meta.annotation)
+        unwrapped_annotation = unwrap_annotation(field_meta.annotation, random=cls.__random__)
 
         if is_literal(annotation=unwrapped_annotation) and (literal_args := get_args(unwrapped_annotation)):
             return cls.__random__.choice(literal_args)
@@ -584,10 +660,7 @@ class BaseFactory(ABC, Generic[T]):
         if isinstance(unwrapped_annotation, EnumMeta):
             return cls.__random__.choice(list(unwrapped_annotation))  # pyright: ignore
 
-        if field_meta.constraints and (
-            unwrapped_annotation in (float, int, Decimal, str, list, tuple, set, frozenset)
-            or unwrapped_annotation not in cls.get_provider_map()
-        ):
+        if field_meta.constraints:
             return cls.get_constrained_field_value(annotation=unwrapped_annotation, field_meta=field_meta)
 
         if BaseFactory.is_factory_type(annotation=unwrapped_annotation):
@@ -665,7 +738,7 @@ class BaseFactory(ABC, Generic[T]):
         for field_meta in cls.get_model_fields():
             field_build_parameters = cls.extract_field_build_parameters(field_meta=field_meta, build_args=kwargs)
             if cls.should_set_field_value(field_meta, **kwargs):
-                if hasattr(cls, field_meta.name) and field_meta.name in cls.__dict__:
+                if hasattr(cls, field_meta.name) and not hasattr(BaseFactory, field_meta.name):
                     field_value = getattr(cls, field_meta.name)
                     if isinstance(field_value, Ignore):
                         continue

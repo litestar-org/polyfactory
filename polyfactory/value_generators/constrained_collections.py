@@ -1,4 +1,5 @@
 from __future__ import annotations
+
 from typing import TYPE_CHECKING, Any, Callable, TypeVar
 
 from polyfactory.exceptions import ParameterException
@@ -12,7 +13,7 @@ T = TypeVar("T", list, set, frozenset)
 
 def handle_constrained_collection(
     collection_type: Callable[..., T],
-    factory: type[BaseFactory],
+    factory: type[BaseFactory[Any]],
     field_meta: FieldMeta,
     item_type: Any,
     max_items: int | None = None,
@@ -31,16 +32,17 @@ def handle_constrained_collection(
 
     :returns: A collection value.
     """
-    min_items = min_items if min_items is not None else (max_items or 0)
-    max_items = max_items if max_items is not None else min_items + 1
+    min_items = abs(min_items if min_items is not None else (max_items or 0))
+    max_items = abs(max_items if max_items is not None else min_items + 1)
 
     if max_items < min_items:
         raise ParameterException("max_items must be larger or equal to min_items")
 
-    collection: set[T] | list[T] = set() if collection_type in (frozenset, set) or unique_items else []
+    collection: set[T] | list[T] = set() if (collection_type in (frozenset, set) or unique_items) else []
 
     try:
-        while len(collection) < factory.__random__.randint(min_items, max_items):
+        length = factory.__random__.randint(min_items, max_items) or 1
+        while len(collection) < length:
             value = factory.get_field_value(field_meta)
             if isinstance(collection, set):
                 collection.add(value)

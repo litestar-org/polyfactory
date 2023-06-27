@@ -11,7 +11,7 @@ from ipaddress import (
     IPv6Network,
 )
 from pathlib import Path
-from typing import Callable, Literal
+from typing import Callable, Literal, Optional
 from uuid import UUID
 
 import pytest
@@ -43,11 +43,9 @@ from pydantic import (
     NonNegativeInt,
     NonPositiveFloat,
     PastDate,
-    PaymentCardNumber,
     PositiveFloat,
     PositiveInt,
     PostgresDsn,
-    PyObject,
     RedisDsn,
     SecretBytes,
     SecretStr,
@@ -58,6 +56,7 @@ from pydantic import (
     StrictStr,
 )
 from pydantic.color import Color
+from typing_extensions import TypeAlias
 
 from polyfactory.exceptions import ParameterException
 from polyfactory.factories.pydantic_factory import ModelFactory
@@ -155,7 +154,23 @@ def test_embedded_factories_parsing() -> None:
 
 
 def test_type_property_parsing() -> None:
-    class MyModel(BaseModel):
+    try:
+        # pydantic v2 only types
+        from pydantic.networks import CockroachDsn, MariaDBDsn, MongoDsn, MySQLDsn
+
+        class Base(BaseModel):
+            MongoDsn_pydantic_type: MongoDsn
+            MariaDBDsn_pydantic_type: MariaDBDsn
+            CockroachDsn_pydantic_type: CockroachDsn
+            MySQLDsn_pydantic_type: MySQLDsn
+
+    except ImportError:
+        from pydantic.types import PyObject
+
+        class Base(BaseModel):  # type: ignore[no-redef]
+            PyObject_pydantic_type: PyObject
+
+    class MyModel(Base):
         object_field: object
         float_field: float
         int_field: int
@@ -204,10 +219,8 @@ def test_type_property_parsing() -> None:
         DirectoryPath_pydantic_type: DirectoryPath
         EmailStr_pydantic_type: EmailStr
         NameEmail_pydantic_type: NameEmail
-        PyObject_pydantic_type: PyObject
         Color_pydantic_type: Color
         Json_pydantic_type: Json
-        PaymentCardNumber_pydantic_type: PaymentCardNumber
         AnyUrl_pydantic_type: AnyUrl
         AnyHttpUrl_pydantic_type: AnyHttpUrl
         HttpUrl_pydantic_type: HttpUrl
@@ -270,7 +283,7 @@ def test_class_parsing() -> None:
     assert isinstance(result.runtime_error_field, RuntimeError)
 
     class TestClassWithKwargs:
-        def __init__(self, _: str):
+        def __init__(self, _: str) -> None:
             self.flag = str
 
     class MyNewModel(BaseModel):
@@ -284,3 +297,20 @@ def test_class_parsing() -> None:
 
     with pytest.raises(ParameterException):
         MySecondFactory.build()
+
+
+@pytest.mark.parametrize(
+    "type_",
+    [AnyUrl, HttpUrl, KafkaDsn, PostgresDsn, RedisDsn, AmqpDsn, AnyHttpUrl],
+)
+def test_optional_url_field_parsed_correctly(type_: TypeAlias) -> None:
+    class MyModel(BaseModel):
+        url: Optional[type_]
+
+    class MyFactory(ModelFactory[MyModel]):
+        __model__ = MyModel
+
+    while not (url := MyFactory.build().url):
+        assert not url
+
+    assert MyModel(url=url)  # no validation error raised

@@ -1,25 +1,12 @@
 import re
 from random import Random
-from typing import Optional
 
 import pytest
 from hypothesis import given, settings
 from hypothesis.strategies import booleans, integers
-from pydantic import ConstrainedStr
 
 from polyfactory.exceptions import ParameterException
 from polyfactory.value_generators.constrained_strings import handle_constrained_string_or_bytes
-
-
-def create_constrained_field(
-    to_lower: bool, min_length: Optional[int] = None, max_length: Optional[int] = None
-) -> ConstrainedStr:
-    field = ConstrainedStr()
-    field.max_length = max_length
-    field.min_length = min_length
-    field.to_lower = to_lower
-    return field
-
 
 REGEXES = [
     r"(a|b|c)xz",
@@ -47,28 +34,26 @@ REGEXES = [
 def test_handle_constrained_string_with_min_length_and_max_length_and_regex(
     to_lower: bool, min_length: int, max_length: int
 ) -> None:
-    field = create_constrained_field(to_lower=to_lower, min_length=min_length, max_length=max_length)
     if min_length < 0 or max_length < 0 or min_length > max_length:
         with pytest.raises(ParameterException):
             handle_constrained_string_or_bytes(
                 random=Random(),
                 t_type=str,
-                lower_case=field.to_lower,
-                upper_case=field.to_lower,
-                min_length=field.min_length,
-                max_length=field.max_length,
+                lower_case=to_lower,
+                upper_case=to_lower,
+                min_length=min_length,
+                max_length=max_length,
                 pattern=None,
             )
     else:
         for regex in REGEXES:
-            field.regex = regex
             result = handle_constrained_string_or_bytes(
                 random=Random(),
                 t_type=str,
-                lower_case=field.to_lower,
-                upper_case=field.to_lower,
-                min_length=field.min_length,
-                max_length=field.max_length,
+                lower_case=to_lower,
+                upper_case=to_lower,
+                min_length=min_length,
+                max_length=max_length,
                 pattern=None,
             )
             if to_lower:
@@ -85,26 +70,25 @@ def test_handle_constrained_string_with_min_length_and_max_length_and_regex(
 def test_handle_constrained_string_with_min_length_and_max_length(
     to_lower: bool, min_length: int, max_length: int
 ) -> None:
-    field = create_constrained_field(to_lower=to_lower, min_length=min_length, max_length=max_length)
     if min_length < 0 or max_length < 0 or min_length > max_length:
         with pytest.raises(ParameterException):
             handle_constrained_string_or_bytes(
                 random=Random(),
                 t_type=str,
-                lower_case=field.to_lower,
-                upper_case=field.to_lower,
-                min_length=field.min_length,
-                max_length=field.max_length,
+                lower_case=to_lower,
+                upper_case=to_lower,
+                min_length=min_length,
+                max_length=max_length,
                 pattern=None,
             )
     else:
         result = handle_constrained_string_or_bytes(
             random=Random(),
             t_type=str,
-            lower_case=field.to_lower,
-            upper_case=field.to_lower,
-            min_length=field.min_length,
-            max_length=field.max_length,
+            lower_case=to_lower,
+            upper_case=to_lower,
+            min_length=min_length,
+            max_length=max_length,
             pattern=None,
         )
         if to_lower:
@@ -115,26 +99,23 @@ def test_handle_constrained_string_with_min_length_and_max_length(
 
 @given(booleans(), integers(max_value=10000))
 def test_handle_constrained_string_with_min_length(to_lower: bool, min_length: int) -> None:
-    field = create_constrained_field(to_lower=to_lower, min_length=min_length)
     if min_length < 0:
         with pytest.raises(ParameterException):
             handle_constrained_string_or_bytes(
                 random=Random(),
                 t_type=str,
-                lower_case=field.to_lower,
-                upper_case=field.to_lower,
-                min_length=field.min_length,
-                max_length=field.max_length,
+                lower_case=to_lower,
+                upper_case=to_lower,
+                min_length=min_length,
                 pattern=None,
             )
     else:
         result = handle_constrained_string_or_bytes(
             random=Random(),
             t_type=str,
-            lower_case=field.to_lower,
-            upper_case=field.to_lower,
-            min_length=field.min_length,
-            max_length=field.max_length,
+            lower_case=to_lower,
+            upper_case=to_lower,
+            min_length=min_length,
             pattern=None,
         )
         if to_lower:
@@ -144,26 +125,23 @@ def test_handle_constrained_string_with_min_length(to_lower: bool, min_length: i
 
 @given(booleans(), integers(max_value=10000))
 def test_handle_constrained_string_with_max_length(to_lower: bool, max_length: int) -> None:
-    field = create_constrained_field(to_lower=to_lower, max_length=max_length)
     if max_length < 0:
         with pytest.raises(ParameterException):
             handle_constrained_string_or_bytes(
                 random=Random(),
                 t_type=str,
-                lower_case=field.to_lower,
-                upper_case=field.to_lower,
-                min_length=field.min_length,
-                max_length=field.max_length,
+                lower_case=to_lower,
+                upper_case=to_lower,
+                max_length=max_length,
                 pattern=None,
             )
     else:
         result = handle_constrained_string_or_bytes(
             random=Random(),
             t_type=str,
-            lower_case=field.to_lower,
-            upper_case=field.to_lower,
-            min_length=field.min_length,
-            max_length=field.max_length,
+            lower_case=to_lower,
+            upper_case=to_lower,
+            max_length=max_length,
             pattern=None,
         )
         if to_lower:

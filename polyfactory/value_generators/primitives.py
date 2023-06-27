@@ -1,4 +1,5 @@
 from __future__ import annotations
+
 from binascii import hexlify
 from decimal import Decimal
 from os import urandom
@@ -37,7 +38,7 @@ def create_random_integer(random: Random, minimum: int | None = None, maximum: i
 
     :returns: A random integer.
     """
-    return int(create_random_float(random=random, minimum=minimum, maximum=maximum))
+    return round(create_random_float(random=random, minimum=minimum, maximum=maximum))
 
 
 def create_random_decimal(

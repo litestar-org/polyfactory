@@ -2,6 +2,7 @@ from datetime import date
 from decimal import Decimal
 from typing import Any, Dict, List, NewType, Optional, Tuple, Union
 
+import pytest
 from pydantic import (
     BaseModel,
     PositiveFloat,
@@ -15,7 +16,8 @@ from pydantic import (
     conset,
     constr,
 )
-from polyfactory.factories.pydantic_factory import ModelFactory
+
+from polyfactory.factories.pydantic_factory import ModelFactory, pydantic_version
 
 
 def test_new_types() -> None:
@@ -66,6 +68,7 @@ def test_complex_new_types() -> None:
     assert isinstance(result.nested_model_field.nested_int_field, int)
 
 
+@pytest.mark.skipif(pydantic_version == 2, reason="https://github.com/pydantic/pydantic/issues/5907")
 def test_constrained_new_types() -> None:
     ConBytes = NewType("ConBytes", conbytes(min_length=2, max_length=4))  # type: ignore[misc]
     ConStr = NewType("ConStr", constr(min_length=10, max_length=15))  # type: ignore[misc]
@@ -73,10 +76,16 @@ def test_constrained_new_types() -> None:
     ConFloat = NewType("ConFloat", confloat(lt=-100))  # type: ignore[misc]
     ConDecimal = NewType("ConDecimal", condecimal(ge=Decimal(6), le=Decimal(8)))  # type: ignore[misc]
     ConDate = NewType("ConDate", condate(gt=date.today()))  # type: ignore[misc]
-    ConList = NewType("ConList", conlist(item_type=int, min_items=3))  # type: ignore[misc]
-    ConSet = NewType("ConSet", conset(item_type=int, min_items=4))  # type: ignore[misc]
-    ConFrozenSet = NewType("ConFrozenSet", confrozenset(item_type=str, min_items=5))  # type: ignore[misc]
     ConMyPositiveFloat = NewType("ConMyPositiveFloat", PositiveFloat)
+
+    if pydantic_version == 1:
+        ConList = NewType("ConList", conlist(item_type=int, min_items=3))  # type: ignore
+        ConSet = NewType("ConSet", conset(item_type=int, min_items=4))  # type: ignore
+        ConFrozenSet = NewType("ConFrozenSet", confrozenset(item_type=str, min_items=5))  # type: ignore
+    else:
+        ConList = NewType("ConList", conlist(item_type=int, min_length=3))  # type: ignore
+        ConSet = NewType("ConSet", conset(item_type=int, min_length=4))  # type: ignore
+        ConFrozenSet = NewType("ConFrozenSet", confrozenset(item_type=str, min_length=5))  # type: ignore
 
     class ConstrainedModel(BaseModel):
         conbytes_field: ConBytes

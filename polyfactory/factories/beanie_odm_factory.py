@@ -1,4 +1,5 @@
 from __future__ import annotations
+
 from typing import TYPE_CHECKING, Any, Generic, TypeVar
 
 from typing_extensions import get_args

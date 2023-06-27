@@ -1,4 +1,4 @@
-from typing_extensions import TypedDict
+from typing import TypedDict
 
 from polyfactory import Ignore
 from polyfactory.factories import TypedDictFactory
