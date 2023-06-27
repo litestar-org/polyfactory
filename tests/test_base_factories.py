@@ -73,3 +73,8 @@ def test_multiple_base_pydantic_factories(override_BaseModel: bool) -> None:
             __base_factory_overrides__ = {MyModelWithFoo: FooModelFactory}
 
     MyFactory.build()
+
+    # XXX: remove the factory classes from _base_factories to prevent side-effects in other tests
+    # see https://github.com/litestar-org/polyfactory/issues/198
+    ModelFactory._base_factories.remove(FooModelFactory)
+    ModelFactory._base_factories.remove(DummyModelFactory)
