@@ -1,4 +1,4 @@
-from typing import Tuple, TYPE_CHECKING, List, Set, FrozenSet, Dict
+from typing import TYPE_CHECKING, Dict, FrozenSet, List, Set, Tuple
 
 import pytest
 
