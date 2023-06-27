@@ -72,7 +72,7 @@ def mock_random_in_field_meta(request: FixtureRequest, monkeypatch: MonkeyPatch)
     original_from_type = FieldMeta.from_type
 
     def from_type_mock(*args: Any, **kwargs: Any) -> FieldMeta:
-        kwargs["random_"] = NotSoRandom
+        kwargs["random"] = NotSoRandom
         return original_from_type(*args, **kwargs)
 
     monkeypatch.setattr(FieldMeta, FieldMeta.from_type.__name__, from_type_mock)

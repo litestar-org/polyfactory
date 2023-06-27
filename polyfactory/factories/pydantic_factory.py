@@ -188,7 +188,7 @@ class PydanticFieldMeta(FieldMeta):
             name=name,
             random=cls.random,
             annotation=annotation,
-            children=children,
+            children=children or None,
             default=default_value,
             constraints=cast("Constraints", {k: v for k, v in constraints.items() if v is not None}) or None,
         )
