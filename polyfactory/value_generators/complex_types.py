@@ -42,23 +42,25 @@ def handle_collection_type(field_meta: FieldMeta, container_type: type, factory:
             key = handle_complex_type(field_meta=key_field_meta, factory=factory)
             value = handle_complex_type(field_meta=value_field_meta, factory=factory)
             container[key] = value
+        return container
 
-    elif issubclass(container_type, MutableSequence):
-        container.append(handle_complex_type(field_meta.children[0], factory))
+    if issubclass(container_type, MutableSequence):
+        for subfield_meta in field_meta.children:
+            container.append(handle_complex_type(subfield_meta, factory))
+        return container
 
-    elif issubclass(container_type, Set):
-        container.add(handle_complex_type(field_meta.children[0], factory))
+    if issubclass(container_type, Set):
+        for subfield_meta in field_meta.children:
+            container.add(handle_complex_type(subfield_meta, factory))
+        return container
 
-    elif issubclass(container_type, AbstractSet):
-        container = container.union(handle_collection_type(field_meta, set, factory))
+    if issubclass(container_type, AbstractSet):
+        return container.union(handle_collection_type(field_meta, set, factory))
 
-    elif issubclass(container_type, tuple):
-        container = container_type(handle_complex_type(subfield_meta, factory) for subfield_meta in field_meta.children)
+    if issubclass(container_type, tuple):
+        return container_type(handle_complex_type(subfield_meta, factory) for subfield_meta in field_meta.children)
 
-    else:
-        raise NotImplementedError(f"Unsupported container type: {container_type}")
-
-    return container
+    raise NotImplementedError(f"Unsupported container type: {container_type}")
 
 
 def handle_complex_type(field_meta: FieldMeta, factory: type[BaseFactory[Any]]) -> Any:

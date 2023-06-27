@@ -73,9 +73,6 @@ class DictExtender(CollectionExtender):
         return type_args * number_of_args
 
 
-# TODO: Add support for Deque
-
-
 class FallbackExtender(CollectionExtender):
     __types__ = ()
 

@@ -1,7 +1,7 @@
 from dataclasses import dataclass as vanilla_dataclass
 from dataclasses import field
 from types import ModuleType
-from typing import Callable, Dict, List, Optional, Tuple
+from typing import Callable, Dict, List, Optional, Set, Tuple
 from unittest.mock import ANY
 
 from _pytest.monkeypatch import MonkeyPatch
@@ -194,6 +194,48 @@ def test_variable_length_dict_generation__many_type_args(monkeypatch: MonkeyPatc
     @vanilla_dataclass
     class VanillaDC:
         ids: Dict[str, int]
+
+    number_of_args = 3
+
+    class MyFactory(DataclassFactory[VanillaDC]):
+        __model__ = VanillaDC
+
+        __randomize_collection_length__ = True
+        __min_collection_length__ = number_of_args
+        __max_collection_length__ = number_of_args
+
+    result = MyFactory.build()
+
+    assert result
+    assert result.ids
+    assert len(result.ids) == number_of_args
+
+
+def test_variable_length_list_generation__many_type_args(monkeypatch: MonkeyPatch) -> None:
+    @vanilla_dataclass
+    class VanillaDC:
+        ids: List[int]
+
+    number_of_args = 3
+
+    class MyFactory(DataclassFactory[VanillaDC]):
+        __model__ = VanillaDC
+
+        __randomize_collection_length__ = True
+        __min_collection_length__ = number_of_args
+        __max_collection_length__ = number_of_args
+
+    result = MyFactory.build()
+
+    assert result
+    assert result.ids
+    assert len(result.ids) == number_of_args
+
+
+def test_variable_length_set_generation__many_type_args(monkeypatch: MonkeyPatch) -> None:
+    @vanilla_dataclass
+    class VanillaDC:
+        ids: Set[int]
 
     number_of_args = 3
 
