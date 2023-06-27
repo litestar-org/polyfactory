@@ -15,6 +15,8 @@ from polyfactory.value_generators.constrained_collections import (
 if TYPE_CHECKING:
     from polyfactory.field_meta import FieldMeta
 
+pytestmark = pytest.mark.enable_randint
+
 
 def create_model_field(
     item_type: Any,

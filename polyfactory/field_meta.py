@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-import random
 from typing import Any, TypedDict, Pattern, TYPE_CHECKING
 
 from polyfactory.collection_extender import CollectionExtender
@@ -8,6 +7,7 @@ from polyfactory.constants import TYPE_MAPPING
 from polyfactory.utils.helpers import unwrap_args, unwrap_new_type
 
 if TYPE_CHECKING:
+    import random
     from _pydecimal import Decimal
     from typing_extensions import NotRequired
 
@@ -73,7 +73,12 @@ class FieldMeta:
 
     @classmethod
     def from_type(
-        cls, annotation: Any, name: str = "", default: Any = Null, constraints: Constraints | None = None
+        cls,
+        annotation: Any,
+        random_: random.Random,
+        name: str = "",
+        default: Any = Null,
+        constraints: Constraints | None = None,
     ) -> FieldMeta:
         """Builder method to create a FieldMeta from a type annotation.
 
@@ -87,7 +92,9 @@ class FieldMeta:
             annotation=unwrap_new_type(annotation), name=name, default=default, children=None, constraints=constraints
         )
         if field.type_args:
-            number_of_args = random.randint(0, 5)
+            number_of_args = random_.randint(0, 5)
             extended_type_args = CollectionExtender.extend_type_args(field.annotation, field.type_args, number_of_args)
-            field.children = [FieldMeta.from_type(annotation=unwrap_new_type(arg)) for arg in extended_type_args]
+            field.children = [
+                FieldMeta.from_type(annotation=unwrap_new_type(arg), random_=random_) for arg in extended_type_args
+            ]
         return field

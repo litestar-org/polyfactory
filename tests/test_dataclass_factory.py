@@ -1,8 +1,8 @@
-import random
 from dataclasses import dataclass as vanilla_dataclass
 from dataclasses import field
 from typing import Dict, List, Optional, Tuple
 
+import pytest
 from _pytest.monkeypatch import MonkeyPatch
 from pydantic.dataclasses import Field  # type: ignore
 from pydantic.dataclasses import dataclass as pydantic_dataclass
@@ -147,6 +147,7 @@ def test_tuple_ellipsis_in_vanilla_dc() -> None:
     assert result.ids
 
 
+@pytest.mark.enable_randint
 def test_variable_length_tuple_generation__many_type_args(monkeypatch: MonkeyPatch) -> None:
     @vanilla_dataclass
     class VanillaDC:
@@ -156,7 +157,7 @@ def test_variable_length_tuple_generation__many_type_args(monkeypatch: MonkeyPat
         __model__ = VanillaDC
 
     number_of_args = 3
-    monkeypatch.setattr(random, "randint", lambda _, __: number_of_args)
+    monkeypatch.setattr(MyFactory.__random__, MyFactory.__random__.randint.__name__, lambda _, __: number_of_args)
 
     result = MyFactory.build()
 
@@ -165,6 +166,7 @@ def test_variable_length_tuple_generation__many_type_args(monkeypatch: MonkeyPat
     assert len(result.ids) == number_of_args
 
 
+@pytest.mark.enable_randint
 def test_variable_length_dict_generation__many_type_args(monkeypatch: MonkeyPatch) -> None:
     @vanilla_dataclass
     class VanillaDC:
@@ -174,7 +176,7 @@ def test_variable_length_dict_generation__many_type_args(monkeypatch: MonkeyPatc
         __model__ = VanillaDC
 
     number_of_args = 3
-    monkeypatch.setattr(random, "randint", lambda _, __: number_of_args)
+    monkeypatch.setattr(MyFactory.__random__, MyFactory.__random__.randint.__name__, lambda _, __: number_of_args)
 
     result = MyFactory.build()
 

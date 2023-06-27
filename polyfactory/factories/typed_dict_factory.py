@@ -41,6 +41,7 @@ class TypedDictFactory(Generic[TypedDictT], BaseFactory[TypedDictT]):
                     annotation=annotation,
                     name=field_name,
                     default=getattr(cls.__model__, field_name, Null),
+                    random_=cls.__random__,
                 )
             )
         return fields_meta

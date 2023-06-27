@@ -47,6 +47,10 @@ class DataclassFactory(Generic[T], BaseFactory[T]):
             else:
                 default_value = Null
 
-            fields_meta.append(FieldMeta.from_type(annotation=field.type, name=field.name, default=default_value))
+            fields_meta.append(
+                FieldMeta.from_type(
+                    annotation=field.type, name=field.name, default=default_value, random_=cls.__random__
+                )
+            )
 
         return fields_meta

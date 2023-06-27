@@ -15,8 +15,11 @@ from pydantic import (
     conset,
     constr,
 )
-
+import pytest
 from polyfactory.factories.pydantic_factory import ModelFactory
+
+
+pytestmark = pytest.mark.enable_randint
 
 
 def test_new_types() -> None:
