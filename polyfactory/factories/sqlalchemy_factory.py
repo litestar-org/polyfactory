@@ -8,6 +8,7 @@ from _decimal import Decimal
 
 from polyfactory.exceptions import MissingDependencyException
 from polyfactory.factories.base import BaseFactory
+from polyfactory.field_meta import FieldMeta, Null
 
 try:
     from sqlalchemy import inspect, orm, types
@@ -18,10 +19,8 @@ except ImportError as e:
     raise MissingDependencyException("sqlalchemy is not installed") from e
 
 if TYPE_CHECKING:
+    from sqlalchemy.sql.elements import KeyedColumnElement
     from typing_extensions import TypeGuard
-
-    from polyfactory.field_meta import FieldMeta
-
 
 T = TypeVar("T", bound=orm.DeclarativeBase)
 
@@ -174,5 +173,18 @@ class SQLAlchemyFactory(Generic[T], BaseFactory[T]):
 
     @classmethod
     def get_model_fields(cls) -> list[FieldMeta]:
-        # TODO
-        raise NotImplementedError()
+        fields_meta: list[FieldMeta] = []
+        column: KeyedColumnElement
+        for column in cls.__model__.__table__.columns:
+            default = Null
+            if column.default is not None:
+                default = column.default.arg(...) if column.default.is_callable else column.default.arg
+            fields_meta.append(
+                FieldMeta.from_type(
+                    annotation=type(column.type),
+                    name=column.name,
+                    default=default,
+                    random=cls.__random__,
+                )
+            )
+        return fields_meta
