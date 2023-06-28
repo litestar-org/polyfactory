@@ -35,20 +35,18 @@ class TypedDictFactory(Generic[TypedDictT], BaseFactory[TypedDictT]):
         :returns: A list of field MetaData instances.
 
         """
-        fields_meta: list["FieldMeta"] = []
-
         model_type_hints = get_type_hints(cls.__model__, include_extras=True)
 
-        for field_name, annotation in model_type_hints.items():
-            fields_meta.append(
-                FieldMeta.from_type(
-                    annotation=annotation,
-                    random=cls.__random__,
-                    name=field_name,
-                    default=getattr(cls.__model__, field_name, Null),
-                    randomize_collection_length=cls.__randomize_collection_length__,
-                    min_collection_length=cls.__min_collection_length__,
-                    max_collection_length=cls.__max_collection_length__,
-                )
+        fields_meta: list["FieldMeta"] = [
+            FieldMeta.from_type(
+                annotation=annotation,
+                random=cls.__random__,
+                name=field_name,
+                default=getattr(cls.__model__, field_name, Null),
+                randomize_collection_length=cls.__randomize_collection_length__,
+                min_collection_length=cls.__min_collection_length__,
+                max_collection_length=cls.__max_collection_length__,
             )
+            for field_name, annotation in model_type_hints.items()
+        ]
         return fields_meta

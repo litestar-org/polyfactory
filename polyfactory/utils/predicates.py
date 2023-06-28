@@ -65,7 +65,7 @@ def is_dict_key_or_value_type(annotation: Any) -> "TypeGuard[Any]":
 
     :returns: A typeguard.
     """
-    return str(annotation) == "~KT" or str(annotation) == "~VT"
+    return str(annotation) in {"~KT", "~VT"}
 
 
 def is_union(annotation: Any) -> "TypeGuard[Any | Any]":
@@ -135,6 +135,4 @@ def get_type_origin(annotation: Any) -> Any:
     origin = get_origin(annotation)
     if origin in (Annotated, Required, NotRequired):
         origin = get_args(annotation)[0]
-    if mapped_type := TYPE_MAPPING.get(origin):  # pyright: ignore
-        return mapped_type
-    return origin
+    return mapped_type if (mapped_type := TYPE_MAPPING.get(origin)) else origin
