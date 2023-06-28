@@ -121,7 +121,7 @@ class SQLAlchemyFactory(Generic[T], BaseFactory[T]):
             mysql.TINYINT: providers_map[int],
             mysql.TINYTEXT: providers_map[str],
             mysql.VARCHAR: providers_map[str],
-            mysql.YEAR: cls.__random__.randint(1901, 2155),  # type: ignore
+            mysql.YEAR: lambda: cls.__random__.randint(1901, 2155),
             # oracle
             oracle.BFILE: providers_map[str],
             oracle.BINARY_DOUBLE: providers_map[int],
