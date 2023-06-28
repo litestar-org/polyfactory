@@ -126,6 +126,4 @@ def get_type_origin(annotation: Any) -> Any:
     origin = get_origin(annotation)
     if origin in (Annotated, Required, NotRequired):
         origin = get_args(annotation)[0]
-    if mapped_type := TYPE_MAPPING.get(origin):  # pyright: ignore
-        return mapped_type
-    return origin
+    return mapped_type if (mapped_type := TYPE_MAPPING.get(origin)) else origin

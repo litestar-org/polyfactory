@@ -43,7 +43,7 @@ def test_collections(t: Type[Union[Tuple, List, Set, FrozenSet]]) -> None:
 
 
 def test_date() -> None:
-    ge_date = datetime.today().date()
+    ge_date = datetime.now().date()
     le_date = ge_date + timedelta(days=10)
     constraints = {"ge": ge_date, "le": le_date}
 

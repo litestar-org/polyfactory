@@ -189,9 +189,7 @@ def get_constrained_number_range(
 
     if multiple_of is None:
         if minimum is not None and maximum is None:
-            if minimum == 0:
-                return minimum, seed  # pyright: ignore
-            return minimum, minimum + seed
+            return (minimum, seed) if minimum == 0 else (minimum, minimum + seed)  # pyright: ignore
         if maximum is not None and minimum is None:
             return maximum - seed, maximum
     else:
@@ -224,18 +222,16 @@ def generate_constrained_number(
 
     :returns: A value of type T.
     """
-    if minimum is not None and maximum is not None:
-        if multiple_of is None:
-            return method(random=random, minimum=minimum, maximum=maximum)
-        if multiple_of >= minimum:
-            return multiple_of
-        result = minimum
-        while not passes_pydantic_multiple_validator(result, multiple_of):
-            result = round(method(random=random, minimum=minimum, maximum=maximum) / multiple_of) * multiple_of
-        return result
-    if multiple_of is not None:
+    if minimum is None or maximum is None:
+        return multiple_of if multiple_of is not None else method(random=random)
+    if multiple_of is None:
+        return method(random=random, minimum=minimum, maximum=maximum)
+    if multiple_of >= minimum:
         return multiple_of
-    return method(random=random)
+    result = minimum
+    while not passes_pydantic_multiple_validator(result, multiple_of):
+        result = round(method(random=random, minimum=minimum, maximum=maximum) / multiple_of) * multiple_of
+    return result
 
 
 def handle_constrained_int(
@@ -348,20 +344,20 @@ def handle_decimal_length(
     string_number = string_number.replace("-", "")
     whole_numbers, decimals = string_number.split(".")
 
-    if max_digits is not None and decimal_places is not None:
-        if len(whole_numbers) + decimal_places > max_digits:
-            # max digits determines decimal length
-            max_decimals = max_digits - len(whole_numbers)
-        else:
-            # decimal places determines max decimal length
-            max_decimals = decimal_places
-    elif max_digits is not None:
+    if (
+        max_digits is not None
+        and decimal_places is not None
+        and len(whole_numbers) + decimal_places > max_digits
+        or (max_digits is None or decimal_places is None)
+        and max_digits is not None
+    ):
         max_decimals = max_digits - len(whole_numbers)
+    elif max_digits is not None:
+        max_decimals = decimal_places  # type: ignore[assignment]
     else:
         max_decimals = cast("int", decimal_places)
 
-    if max_decimals < 0:
-        # in this case there are fewer digits than the len of whole_numbers
+    if max_decimals < 0:  # pyright: ignore
         return Decimal(sign + whole_numbers[:max_decimals])
 
     decimals = decimals[:max_decimals]
