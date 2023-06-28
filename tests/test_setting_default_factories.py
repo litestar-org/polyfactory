@@ -30,10 +30,10 @@ def test_auto_register_model_factory() -> None:
     class BFactory(ModelFactory):
         b_text = "const value"
         __model__ = B
-        __set_as_default_factory_for_type__ = True
 
     class CFactory(ModelFactory):
         __model__ = C
+        __base_factory_overrides__ = {B: BFactory}
 
     c = CFactory.build()
 
@@ -45,8 +45,8 @@ def test_auto_register_model_factory() -> None:
 def test_auto_register_model_factory_using_create_factory() -> None:
     const_value = "const value"
     ModelFactory.create_factory(model=A, a_text=const_value)
-    ModelFactory.create_factory(model=B, b_text=const_value, __set_as_default_factory_for_type__=True)
-    factory = ModelFactory.create_factory(model=C)
+    BFactory = ModelFactory.create_factory(model=B, b_text=const_value)
+    factory = ModelFactory.create_factory(model=C, __base_factory_overrides__={B: BFactory})
 
     c = factory.build()
 
@@ -64,13 +64,13 @@ def test_dataclass_model_factory_auto_registration() -> None:
         nested_field: DataClass
         nested_list_field: List[DataClass]
 
-    class UpperModelFactory(ModelFactory):
-        __model__ = UpperModel
-
     class DTFactory(DataclassFactory):
         text = "const value"
         __model__ = DataClass
-        __set_as_default_factory_for_type__ = True
+
+    class UpperModelFactory(ModelFactory):
+        __model__ = UpperModel
+        __base_factory_overrides__ = {DataClass: DTFactory}
 
     upper = UpperModelFactory.build()
 
@@ -86,13 +86,13 @@ def test_typeddict_model_factory_auto_registration() -> None:
         nested_field: TD
         nested_list_field: List[TD]
 
-    class UpperModelFactory(ModelFactory):
-        __model__ = UpperSchema
-
     class TDFactory(TypedDictFactory):
         text = "const value"
         __model__ = TD
-        __set_as_default_factory_for_type__ = True
+
+    class UpperModelFactory(ModelFactory):
+        __model__ = UpperSchema
+        __base_factory_overrides__ = {TD: TDFactory}
 
     upper = UpperModelFactory.build()
 

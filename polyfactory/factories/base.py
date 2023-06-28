@@ -197,11 +197,6 @@ class BaseFactory(ABC, Generic[T]):
     """A sync persistence handler. Can be a class or a class instance."""
     __async_persistence__: type[AsyncPersistenceProtocol[T]] | AsyncPersistenceProtocol[T] | None = None
     """An async persistence handler. Can be a class or a class instance."""
-    __set_as_default_factory_for_type__ = False
-    """
-    Flag dictating whether to set as the default factory for the given type.
-    If 'True' the factory will be used instead of dynamically generating a factory for the type.
-    """
     __is_base_factory__: bool = False
     """
     Flag dictating whether the factory is a 'base' factory. Base factories are registered globally as handlers for types.
@@ -230,7 +225,6 @@ class BaseFactory(ABC, Generic[T]):
     # cached attributes
     _fields_metadata: list[FieldMeta]
     # BaseFactory only attributes
-    _factory_type_mapping: ClassVar[dict[Any, type[BaseFactory[Any]]]]
     _base_factories: ClassVar[list[type[BaseFactory[Any]]]]
 
     def __init_subclass__(cls, *args: Any, **kwargs: Any) -> None:
@@ -238,9 +232,6 @@ class BaseFactory(ABC, Generic[T]):
 
         if not hasattr(BaseFactory, "_base_factories"):
             BaseFactory._base_factories = []
-
-        if not hasattr(BaseFactory, "_factory_type_mapping"):
-            BaseFactory._factory_type_mapping = {}
 
         if "__is_base_factory__" not in cls.__dict__ or not cls.__is_base_factory__:
             model = getattr(cls, "__model__", None)
@@ -264,9 +255,6 @@ class BaseFactory(ABC, Generic[T]):
 
         if random_seed := getattr(cls, "__random_seed__", None) is not None:
             cls.seed_random(random_seed)
-
-        if cls.__set_as_default_factory_for_type__:
-            BaseFactory._factory_type_mapping[cls.__model__] = cls
 
     @classmethod
     def _get_sync_persistence(cls) -> SyncPersistenceProtocol[T]:
@@ -328,13 +316,10 @@ class BaseFactory(ABC, Generic[T]):
         :returns: A Factory sub-class.
 
         """
-        if factory := BaseFactory._factory_type_mapping.get(model):
-            return factory
-
         if cls.__base_factory_overrides__:
             for model_ancestor in model.mro():
                 if factory := cls.__base_factory_overrides__.get(model_ancestor):
-                    return factory.create_factory(model)
+                    return factory if hasattr(factory, "__model__") else factory.create_factory(model)
 
         for factory in reversed(BaseFactory._base_factories):
             if factory.is_supported_type(model):
