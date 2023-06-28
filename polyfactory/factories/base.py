@@ -22,7 +22,6 @@ from ipaddress import (
 )
 from os.path import realpath
 from pathlib import Path
-from random import Random
 from typing import (
     TYPE_CHECKING,
     Any,
@@ -41,6 +40,7 @@ from uuid import NAMESPACE_DNS, UUID, uuid1, uuid3, uuid5
 from faker import Faker
 from typing_extensions import get_args
 
+from polyfactory.constants import DEFAULT_RANDOM
 from polyfactory.exceptions import (
     ConfigurationException,
     MissingBuildKwargException,
@@ -75,6 +75,8 @@ from polyfactory.value_generators.primitives import (
 )
 
 if TYPE_CHECKING:
+    from random import Random
+
     from typing_extensions import TypeGuard
 
     from polyfactory.field_meta import Constraints, FieldMeta
@@ -221,7 +223,7 @@ class BaseFactory(ABC, Generic[T]):
     """
     A faker instance to use. Can be a user provided value.
     """
-    __random__: ClassVar["Random"] = Random()
+    __random__: ClassVar["Random"] = DEFAULT_RANDOM
     """
     An instance of 'random.Random' to use.
     """

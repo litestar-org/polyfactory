@@ -17,7 +17,7 @@ maintainers = [
     "Jacob Coffee <jacob@z7x.org>",
 ]
 license = "MIT"
-readme = "README.md"
+readme = "docs/PYPI_README.md"
 homepage = "https://github.com/litestar-org/polyfactory"
 repository = "https://github.com/litestar-org/polyfactory"
 documentation = "https://github.com/litestar-org/polyfactory"
@@ -60,15 +60,11 @@ packages = [{ include = "polyfactory" }]
 
 [tool.poetry.dependencies]
 python = ">=3.8,<4.0"
-beanie = { version = "*", optional = true, extras = ["beanie"] }
+beanie = { version = "*", optional = true }
 faker = "*"
-msgspec = { version = "*", optional = true, extras = ["msgspec"] }
-odmantic = { version = "*", optional = true, extras = ["odmantic"] }
-pydantic = { version = "*", optional = true, extras = [
-    "pydantic",
-    "odmantic",
-    "beanie",
-] }
+msgspec = { version = "*", optional = true }
+odmantic = { version = "*", optional = true }
+pydantic = { version = "*", optional = true }
 typing-extensions = "*"
 
 [tool.poetry.group.dev.dependencies]
@@ -116,6 +112,12 @@ omit = ["*/tests/*"]
 
 [tool.pytest.ini_options]
 asyncio_mode = "auto"
+filterwarnings = [
+    "ignore:.*pkg_resources.declare_namespace\\('sphinxcontrib'\\).*:DeprecationWarning",
+    "ignore:pkg_resources is deprecated as an API:DeprecationWarning",
+    # Get rid those above once sphinxcontrib-mermaid doesn't use pkg_resources anymore
+    # https://github.com/mgaitan/sphinxcontrib-mermaid/issues/119
+]
 
 [tool.coverage.report]
 exclude_lines = [
@@ -128,57 +130,57 @@ exclude_lines = [
 
 [tool.ruff]
 select = [
-    "A",   # flake8-builtins
-    "B",   # flake8-bugbear
+    "A", # flake8-builtins
+    "B", # flake8-bugbear
     "BLE", # flake8-blind-except
-    "C4",  # flake8-comprehensions
-    "D",   # pydocstyle
-    "DJ",  # flake8-django
+    "C4", # flake8-comprehensions
+    "D", # pydocstyle
+    "DJ", # flake8-django
     "DTZ", # flake8-datetimez
-    "E",   # pycodestyle errors
+    "E", # pycodestyle errors
     "ERA", # eradicate
     "EXE", # flake8-executable
-    "F",   # pyflakes
-    "G",   # flake8-logging-format
-    "I",   # isort
+    "F", # pyflakes
+    "G", # flake8-logging-format
+    "I", # isort
     "ICN", # flake8-import-conventions
     "ISC", # flake8-implicit-str-concat
-    "N",   # pep8-naming
+    "N", # pep8-naming
     "PIE", # flake8-pie
     "PLC", # pylint - convention
     "PLE", # pylint - error
     "PLW", # pylint - warning
     "PTH", # flake8-use-pathlib
-    "Q",   # flake8-quotes
+    "Q", # flake8-quotes
     "RET", # flake8-return
     "RUF", # Ruff-specific rules
-    "S",   # flake8-bandit
+    "S", # flake8-bandit
     "SIM", # flake8-simplify
     "T10", # flake8-debugger
     "T20", # flake8-print
     "TCH", # flake8-type-checking
     "TID", # flake8-tidy-imports
-    "UP",  # pyupgrade
-    "W",   # pycodestyle - warning
+    "UP", # pyupgrade
+    "W", # pycodestyle - warning
     "YTT", # flake8-2020
 ]
 
 ignore = [
-    "A003",  # flake8-builtins - class attribute {name} is shadowing a python builtin
-    "B010",  # flake8-bugbear - do not call setattr with a constant attribute value
-    "D100",  # pydocstyle - missing docstring in public module
-    "D101",  # pydocstyle - missing docstring in public class
-    "D102",  # pydocstyle - missing docstring in public method
-    "D103",  # pydocstyle - missing docstring in public function
-    "D104",  # pydocstyle - missing docstring in public package
-    "D105",  # pydocstyle - missing docstring in magic method
-    "D106",  # pydocstyle - missing docstring in public nested class
-    "D107",  # pydocstyle - missing docstring in __init__
-    "D202",  # pydocstyle - no blank lines allowed after function docstring
-    "D205",  # pydocstyle - 1 blank line required between summary line and description
-    "D415",  # pydocstyle - first line should end with a period, question mark, or exclamation point
-    "E501",  # pycodestyle line too long, handled by black
-    "N818",  # pep8-naming - exception name should be named with an Error suffix
+    "A003", # flake8-builtins - class attribute {name} is shadowing a python builtin
+    "B010", # flake8-bugbear - do not call setattr with a constant attribute value
+    "D100", # pydocstyle - missing docstring in public module
+    "D101", # pydocstyle - missing docstring in public class
+    "D102", # pydocstyle - missing docstring in public method
+    "D103", # pydocstyle - missing docstring in public function
+    "D104", # pydocstyle - missing docstring in public package
+    "D105", # pydocstyle - missing docstring in magic method
+    "D106", # pydocstyle - missing docstring in public nested class
+    "D107", # pydocstyle - missing docstring in __init__
+    "D202", # pydocstyle - no blank lines allowed after function docstring
+    "D205", # pydocstyle - 1 blank line required between summary line and description
+    "D415", # pydocstyle - first line should end with a period, question mark, or exclamation point
+    "E501", # pycodestyle line too long, handled by black
+    "N818", # pep8-naming - exception name should be named with an Error suffix
     "UP037", # pyupgrade - removes quotes from type annotation
 ]
 line-length = 120
