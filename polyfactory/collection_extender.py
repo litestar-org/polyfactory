@@ -68,8 +68,6 @@ class DictExtender(CollectionExtender):
 
     @staticmethod
     def _extend_type_args(type_args: tuple[Any, ...], number_of_args: int) -> tuple[Any, ...]:
-        if not type_args:
-            return type_args
         return type_args * number_of_args
 
 
