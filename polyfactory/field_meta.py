@@ -142,15 +142,15 @@ class FieldMeta:
                 constraints.update(cast("dict[str, Any]", cls.parse_constraints(metadata=inner_metadata)))
             elif func := getattr(value, "func", None):
                 if func is str.islower:
-                    constraints.update({"lower_case": True})
+                    constraints["lower_case"] = True
                 elif func is str.isupper:
-                    constraints.update({"upper_case": True})
+                    constraints["upper_case"] = True
                 elif func is str.isascii:
-                    constraints.update({"pattern": "[[:ascii:]]"})
+                    constraints["pattern"] = "[[:ascii:]]"
                 elif func is str.isdigit:
-                    constraints.update({"pattern": "[[:digit:]]"})
+                    constraints["pattern"] = "[[:digit:]]"
             elif is_dataclass(value) and (value_dict := asdict(value)) and ("allowed_schemes" in value_dict):
-                constraints.update({"url": {k: v for k, v in value_dict.items() if v is not None}})
+                constraints["url"] = {k: v for k, v in value_dict.items() if v is not None}
             else:
                 constraints.update(
                     {

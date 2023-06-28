@@ -132,9 +132,9 @@ class PydanticFieldMeta(FieldMeta):
 
         outer_type = unwrap_new_type(model_field.outer_type_)
         annotation = (
-            unwrap_new_type(model_field.annotation)
-            if not isinstance(model_field.annotation, DeferredType)
-            else model_field.outer_type_
+            model_field.outer_type_
+            if isinstance(model_field.annotation, DeferredType)
+            else unwrap_new_type(model_field.annotation)
         )
 
         constraints = cast(

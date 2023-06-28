@@ -141,10 +141,10 @@ class RegexFactory:
         return self._random.choice(candidates)
 
     def _handle_repeat(self, start_range: int, end_range: Any, value: SubPattern) -> str:
-        result: list[str] = []
         end_range = min(end_range, self._limit)
 
-        for _ in range(self._random.randint(start_range, max(start_range, end_range))):
-            result.append("".join(self._handle_state(v) for v in list(value)))  # pyright:ignore
-
+        result = [
+            "".join(self._handle_state(v) for v in list(value))  # pyright: ignore
+            for _ in range(self._random.randint(start_range, max(start_range, end_range)))
+        ]
         return "".join(result)

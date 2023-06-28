@@ -71,7 +71,7 @@ def test_constrained_attribute_parsing_pydantic_v1() -> None:
     assert len(result.str_field3) <= 11
     match = re.search(pattern, result.str_field3)
     assert match
-    assert match.group(0)
+    assert match[0]
     assert result.int_field >= 1
     assert result.int_field % 5 == 0
     assert result.float_field > 100
@@ -257,7 +257,7 @@ def test_constrained_attribute_parsing_pydantic_v2() -> None:
     assert len(result.str_field3) <= 11
     match = re.search(pattern, result.str_field3)
     assert match
-    assert match.group(0)
+    assert match[0]
     assert result.int_field >= 1
     assert result.int_field % 5 == 0
     assert result.float_field > 100
