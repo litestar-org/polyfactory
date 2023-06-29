@@ -28,11 +28,11 @@ P = ParamSpec("P")
 T = TypeVar("T")
 
 
-def is_safe_subclass(annotation: Any, super_class: type[T]) -> "TypeGuard[type[T]]":
+def is_safe_subclass(annotation: Any, class_or_tuple: type[T] | tuple[type[T], ...]) -> "TypeGuard[type[T]]":
     """Determine whether a given annotation is a subclass of a give type
 
     :param annotation: A type annotation.
-    :param super_class: A potential super class.
+    :param class_or_tuple: A potential super class or classes.
 
     :returns: A typeguard
     """
@@ -40,7 +40,7 @@ def is_safe_subclass(annotation: Any, super_class: type[T]) -> "TypeGuard[type[T
     if not origin and not isclass(annotation):
         return False
     try:
-        return issubclass(origin or annotation, super_class)
+        return issubclass(origin or annotation, class_or_tuple)
     except TypeError:  # pragma: no cover
         return False
 

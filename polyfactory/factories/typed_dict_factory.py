@@ -16,16 +16,13 @@ class TypedDictFactory(Generic[TypedDictT], BaseFactory[TypedDictT]):
     __is_base_factory__ = True
 
     @classmethod
-    def is_supported_type(cls, value: Any) -> "TypeGuard[type[TypedDictT]]":
+    def is_supported_type(cls, value: Any) -> TypeGuard[type[TypedDictT]]:
         """Determine whether the given value is supported by the factory.
 
         :param value: An arbitrary value.
         :returns: A typeguard
         """
-        try:
-            return is_typeddict(value)
-        except (TypeError, AttributeError):  # pragma: no cover
-            return False
+        return is_typeddict(value)
 
     @classmethod
     def get_model_fields(cls) -> list["FieldMeta"]:

@@ -2,7 +2,6 @@ from __future__ import annotations
 
 import re
 from typing import (
-    TYPE_CHECKING,
     Any,
     Callable,
     ClassVar,
@@ -10,19 +9,15 @@ from typing import (
     Union,
 )
 
-from pytest import fixture
+from pytest import Config, fixture
 
 from polyfactory.exceptions import ParameterException
-
-if TYPE_CHECKING:
-    from pytest import Config  # nopycln: import
-
-    from polyfactory.factories.base import BaseFactory
-
+from polyfactory.factories.base import BaseFactory
+from polyfactory.utils.predicates import is_safe_subclass
 
 Scope = Union[
     Literal["session", "package", "module", "class", "function"],
-    Callable[[str, "Config"], Literal["session", "package", "module", "class", "function"]],
+    Callable[[str, Config], Literal["session", "package", "module", "class", "function"]],
 ]
 
 
@@ -68,9 +63,7 @@ class FactoryFixture:
         self.name = name
 
     def __call__(self, factory: type[BaseFactory[Any]]) -> Any:
-        from polyfactory.factories.base import is_factory
-
-        if not is_factory(factory):
+        if not is_safe_subclass(factory, BaseFactory):
             raise ParameterException(f"{factory.__name__} is not a BaseFactory subclass.")
 
         fixture_name = self.name or _get_fixture_name(factory.__name__)

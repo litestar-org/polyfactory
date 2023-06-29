@@ -8,7 +8,6 @@ from decimal import Decimal
 from enum import EnumMeta
 from functools import partial
 from importlib import import_module
-from inspect import isclass
 from ipaddress import (
     IPv4Address,
     IPv4Interface,
@@ -169,16 +168,6 @@ def _create_pydantic_type_map(cls: type[BaseFactory[Any]]) -> dict[type, Callabl
 T = TypeVar("T")
 
 
-def is_factory(value: Any) -> "TypeGuard[type[BaseFactory[Any]]]":
-    """Determine if a given value is a subclass of ModelFactory.
-
-    :param value: An arbitrary value.
-    :returns: A boolean typeguard.
-
-    """
-    return isclass(value) and issubclass(value, BaseFactory)
-
-
 class BaseFactory(ABC, Generic[T]):
     """Base Factory class - this class holds the main logic of the library"""
 
@@ -303,7 +292,7 @@ class BaseFactory(ABC, Generic[T]):
 
         :returns: An arbitrary value correlating with the given field_meta value.
         """
-        if is_factory(field_value):
+        if is_safe_subclass(field_value, BaseFactory):
             if isinstance(field_build_parameters, Mapping):
                 return field_value.build(**field_build_parameters)
 
@@ -361,7 +350,7 @@ class BaseFactory(ABC, Generic[T]):
         :returns: Boolean dictating whether the annotation is a batch factory type
         """
         origin = get_type_origin(annotation) or annotation
-        if is_safe_subclass(origin, Sequence) and (args := unwrap_args(annotation, random=cls.__random__)):  # type: ignore
+        if is_safe_subclass(origin, Sequence) and (args := unwrap_args(annotation, random=cls.__random__)):
             return len(args) == 1 and BaseFactory.is_factory_type(annotation=args[0])
         return False
 
