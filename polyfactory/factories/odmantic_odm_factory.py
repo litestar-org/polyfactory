@@ -34,7 +34,7 @@ class OdmanticModelFactory(Generic[T], ModelFactory[T]):
         :param value: An arbitrary value.
         :returns: A typeguard
         """
-        return is_safe_subclass(value, Model) or is_safe_subclass(value, EmbeddedModel)
+        return is_safe_subclass(value, (Model, EmbeddedModel))
 
     @classmethod
     def get_provider_map(cls) -> dict[Any, Callable[[], Any]]:

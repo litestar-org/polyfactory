@@ -1,7 +1,6 @@
 from __future__ import annotations
 
 from contextlib import suppress
-from inspect import isclass
 from typing import (
     TYPE_CHECKING,
     Any,
@@ -17,11 +16,11 @@ from polyfactory.exceptions import MissingDependencyException
 from polyfactory.factories.base import BaseFactory
 from polyfactory.field_meta import Constraints, FieldMeta, Null
 from polyfactory.utils.helpers import unwrap_new_type, unwrap_optional
-from polyfactory.utils.predicates import is_optional_union
+from polyfactory.utils.predicates import is_optional_union, is_safe_subclass
 
 try:
     from pydantic import BaseModel
-
+    from pydantic.fields import FieldInfo
 except ImportError as e:
     raise MissingDependencyException("pydantic is not installed") from e
 
@@ -38,26 +37,10 @@ except ImportError:
 if TYPE_CHECKING:
     from random import Random
 
-    from pydantic.fields import FieldInfo
     from typing_extensions import TypeGuard
 
+
 T = TypeVar("T", bound=BaseModel)
-
-
-def is_pydantic_model(value: Any) -> "TypeGuard[type[BaseModel]]":
-    """Determine whether the given value is a subclass of BaseModel.
-
-    :param value: A value to test.
-
-    :returns: A type guard.
-
-    """
-    try:
-        return isclass(value) and issubclass(value, BaseModel)
-    except TypeError:  # pragma: no cover
-        # isclass(value) returns True for python 3.9+ typings such as list[str] etc.
-        # this raises a TypeError in issubclass, and so we need to handle it.
-        return False
 
 
 class PydanticFieldMeta(FieldMeta):
@@ -89,8 +72,6 @@ class PydanticFieldMeta(FieldMeta):
         if is_optional_union(field_info.annotation):
             # pydantic v2 do not propagate metadata for Union types #[?]
             # hence we cannot acquire any constraints w/ straightforward approach
-            from pydantic.fields import FieldInfo
-
             field_info = FieldInfo.from_annotation(unwrap_optional(annotation))
 
         if metadata := [v for v in field_info.metadata if v is not None]:
@@ -208,13 +189,13 @@ class ModelFactory(Generic[T], BaseFactory[T]):
                 cls.__model__.update_forward_refs(**cls.__forward_ref_resolution_type_mapping__)
 
     @classmethod
-    def is_supported_type(cls, value: Any) -> "TypeGuard[type[T]]":
+    def is_supported_type(cls, value: Any) -> TypeGuard[type[T]]:
         """Determine whether the given value is supported by the factory.
 
         :param value: An arbitrary value.
         :returns: A typeguard
         """
-        return is_pydantic_model(value)
+        return is_safe_subclass(value, BaseModel)
 
     @classmethod
     def get_model_fields(cls) -> list["FieldMeta"]:
