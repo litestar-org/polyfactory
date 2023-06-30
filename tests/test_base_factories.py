@@ -4,6 +4,7 @@ from typing import Any, Dict
 import pytest
 from pydantic.main import BaseModel
 
+from polyfactory.exceptions import ParameterException
 from polyfactory.factories import DataclassFactory
 from polyfactory.factories.pydantic_factory import ModelFactory
 
@@ -72,13 +73,8 @@ def test_multiple_base_pydantic_factories(override_BaseModel: bool) -> None:
 
     MyFactory.build()
 
-    # XXX: remove the factory classes from _base_factories to prevent side-effects in other tests
-    # see https://github.com/litestar-org/polyfactory/issues/198
-    ModelFactory._base_factories.remove(FooModelFactory)
-    ModelFactory._base_factories.remove(DummyModelFactory)
 
-
-def test_implicit_custom_base_factory() -> None:
+def test_using_base_factories() -> None:
     class Foo:
         def __init__(self, value: str) -> None:
             self.value = value
@@ -101,4 +97,11 @@ def test_implicit_custom_base_factory() -> None:
     class MyFactory(DataclassFactory):
         __model__ = MyModel
 
-    MyFactory.build()
+    exc_info = pytest.raises(ParameterException, MyFactory.build)
+    assert str(exc_info.value).startswith("Unsupported type:")
+
+    with MyFactory.using_base_factories(FooDataclassFactory):
+        MyFactory.build()
+
+    exc_info = pytest.raises(ParameterException, MyFactory.build)
+    assert str(exc_info.value).startswith("Unsupported type:")

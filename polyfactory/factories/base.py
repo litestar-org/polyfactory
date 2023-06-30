@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from abc import ABC, abstractmethod
 from collections import Counter, abc, deque
-from contextlib import suppress
+from contextlib import contextmanager, suppress
 from datetime import date, datetime, time, timedelta
 from decimal import Decimal
 from enum import EnumMeta
@@ -28,9 +28,9 @@ from typing import (
     ClassVar,
     Collection,
     Generic,
+    Iterator,
     Mapping,
     Sequence,
-    Type,
     TypeVar,
     cast,
 )
@@ -219,18 +219,11 @@ class BaseFactory(ABC, Generic[T]):
     # cached attributes
     _fields_metadata: list[FieldMeta]
     # BaseFactory only attributes
-    _factory_type_mapping: ClassVar[dict[Any, type[BaseFactory[Any]]]]
-    _base_factories: ClassVar[list[type[BaseFactory[Any]]]]
+    _factory_type_mapping: ClassVar[dict[Any, type[BaseFactory[Any]]]] = {}
+    _base_factories: ClassVar[list[type[BaseFactory[Any]]]] = []
 
     def __init_subclass__(cls, *args: Any, **kwargs: Any) -> None:
         super().__init_subclass__(*args, **kwargs)
-
-        if not hasattr(BaseFactory, "_base_factories"):
-            BaseFactory._base_factories = []
-
-        if not hasattr(BaseFactory, "_factory_type_mapping"):
-            BaseFactory._factory_type_mapping = {}
-
         if "__is_base_factory__" not in cls.__dict__ or not cls.__is_base_factory__:
             model = getattr(cls, "__model__", None)
             if not model:
@@ -248,7 +241,7 @@ class BaseFactory(ABC, Generic[T]):
                         f"Model type {model.__name__} is not supported. "
                         "To support it, register an appropriate base factory and subclass it for your factory."
                     )
-        else:
+        elif cls.__module__.split(".", 1)[0] == "polyfactory":
             BaseFactory._base_factories.append(cls)
 
         if random_seed := getattr(cls, "__random_seed__", None) is not None:
@@ -256,6 +249,20 @@ class BaseFactory(ABC, Generic[T]):
 
         if cls.__set_as_default_factory_for_type__:
             BaseFactory._factory_type_mapping[cls.__model__] = cls
+
+    @classmethod
+    @contextmanager
+    def using_base_factories(cls, *factories: type[BaseFactory]) -> Iterator[None]:
+        """Context manager to temporarily add base factories to the list of base factories.
+
+        :param factories: One or more base factories.
+        """
+        BaseFactory._base_factories.extend(factories)
+        try:
+            yield None
+        finally:
+            for factory in reversed(factories):
+                assert BaseFactory._base_factories.pop() is factory
 
     @classmethod
     def _get_sync_persistence(cls) -> SyncPersistenceProtocol[T]:
@@ -486,7 +493,7 @@ class BaseFactory(ABC, Generic[T]):
 
         """
         return cast(
-            "Type[BaseFactory[Any]]",
+            type[BaseFactory[Any]],
             type(
                 f"{model.__name__}Factory",
                 (*(bases or ()), cls),

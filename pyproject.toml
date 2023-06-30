@@ -168,6 +168,7 @@ select = [
 ignore = [
     "A003", # flake8-builtins - class attribute {name} is shadowing a python builtin
     "B010", # flake8-bugbear - do not call setattr with a constant attribute value
+    "S101", # flake8-bandit - use of assert detected
     "D100", # pydocstyle - missing docstring in public module
     "D101", # pydocstyle - missing docstring in public class
     "D102", # pydocstyle - missing docstring in public method
