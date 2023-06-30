@@ -481,14 +481,7 @@ class BaseFactory(ABC, Generic[T]):
         :returns: A 'ModelFactory' subclass.
 
         """
-        return cast(
-            type[BaseFactory[Any]],
-            type(
-                f"{model.__name__}Factory",
-                (*(bases or ()), cls),
-                {"__model__": model, **kwargs},
-            ),
-        )
+        return type(f"{model.__name__}Factory", (*(bases or ()), cls), {"__model__": model, **kwargs})
 
     @classmethod
     def get_constrained_field_value(cls, annotation: Any, field_meta: FieldMeta) -> Any:
