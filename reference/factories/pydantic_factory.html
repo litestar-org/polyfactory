@@ -744,20 +744,6 @@ document.write(`
                   
   <section id="module-polyfactory.factories.pydantic_factory">
 <span id="pydantic-factory"></span><h1>pydantic_factory<a class="headerlink" href="#module-polyfactory.factories.pydantic_factory" title="Permalink to this heading">#</a></h1>
-<dl class="py function">
-<dt class="sig sig-object py" id="polyfactory.factories.pydantic_factory.is_pydantic_model">
-<span class="sig-prename descclassname"><span class="pre">polyfactory.factories.pydantic_factory.</span></span><span class="sig-name descname"><span class="pre">is_pydantic_model</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">value</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Any</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">TypeGuard</span><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/functions.html#type" title="(in Python v3.11)"><span class="pre">type</span></a><span class="p"><span class="pre">[</span></span><span class="pre">BaseModel</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#polyfactory.factories.pydantic_factory.is_pydantic_model" title="Permalink to this definition">#</a></dt>
-<dd><p>Determine whether the given value is a subclass of BaseModel.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>value</strong> – A value to test.</p>
-</dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p>A type guard.</p>
-</dd>
-</dl>
-</dd></dl>
-
 <dl class="py class">
 <dt class="sig sig-object py" id="polyfactory.factories.pydantic_factory.PydanticFieldMeta">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">polyfactory.factories.pydantic_factory.</span></span><span class="sig-name descname"><span class="pre">PydanticFieldMeta</span></span><a class="headerlink" href="#polyfactory.factories.pydantic_factory.PydanticFieldMeta" title="Permalink to this definition">#</a></dt>
@@ -784,7 +770,7 @@ document.write(`
 
 <dl class="py method">
 <dt class="sig sig-object py" id="polyfactory.factories.pydantic_factory.PydanticFieldMeta.from_model_field">
-<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">from_model_field</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model_field</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ModelField</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">use_alias</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.11)"><span class="pre">bool</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#polyfactory.factories.pydantic_factory.PydanticFieldMeta" title="polyfactory.factories.pydantic_factory.PydanticFieldMeta"><span class="pre">PydanticFieldMeta</span></a></span></span><a class="headerlink" href="#polyfactory.factories.pydantic_factory.PydanticFieldMeta.from_model_field" title="Permalink to this definition">#</a></dt>
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">from_model_field</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model_field</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Any" title="(in Python v3.11)"><span class="pre">Any</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">use_alias</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.11)"><span class="pre">bool</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#polyfactory.factories.pydantic_factory.PydanticFieldMeta" title="polyfactory.factories.pydantic_factory.PydanticFieldMeta"><span class="pre">PydanticFieldMeta</span></a></span></span><a class="headerlink" href="#polyfactory.factories.pydantic_factory.PydanticFieldMeta.from_model_field" title="Permalink to this definition">#</a></dt>
 <dd><p>Create an instance from a pydantic model field.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
@@ -932,7 +918,6 @@ This is an override of BaseFactory.should_set_field_value.</p>
   </div>
   <nav class="bd-toc-nav page-toc">
     <ul class="visible nav section-nav flex-column">
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#polyfactory.factories.pydantic_factory.is_pydantic_model"><code class="docutils literal notranslate"><span class="pre">is_pydantic_model()</span></code></a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#polyfactory.factories.pydantic_factory.PydanticFieldMeta"><code class="docutils literal notranslate"><span class="pre">PydanticFieldMeta</span></code></a><ul class="visible nav section-nav flex-column">
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#polyfactory.factories.pydantic_factory.PydanticFieldMeta.from_field_info"><code class="docutils literal notranslate"><span class="pre">PydanticFieldMeta.from_field_info()</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#polyfactory.factories.pydantic_factory.PydanticFieldMeta.from_model_field"><code class="docutils literal notranslate"><span class="pre">PydanticFieldMeta.from_model_field()</span></code></a></li>
