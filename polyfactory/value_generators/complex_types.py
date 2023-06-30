@@ -5,21 +5,24 @@ from typing import (
     AbstractSet,
     Any,
     Collection,
+    Iterable,
     MutableMapping,
     MutableSequence,
     Set,
+    Tuple,
     TypeVar,
+    cast,
 )
 
 from typing_extensions import get_args, is_typeddict
 
+from polyfactory.field_meta import FieldMeta
 from polyfactory.utils.helpers import unwrap_annotation
 from polyfactory.utils.predicates import get_type_origin, is_any, is_dict_key_or_value_type, is_literal, is_union
 from polyfactory.value_generators.primitives import create_random_string
 
 if TYPE_CHECKING:
     from polyfactory.factories.base import BaseFactory
-    from polyfactory.field_meta import FieldMeta
 
 
 def handle_collection_type(field_meta: FieldMeta, container_type: type, factory: type[BaseFactory[Any]]) -> Any:
@@ -36,9 +39,9 @@ def handle_collection_type(field_meta: FieldMeta, container_type: type, factory:
         return container
 
     if issubclass(container_type, MutableMapping) or is_typeddict(container_type):
-        key_field_meta: FieldMeta
-        value_field_meta: FieldMeta
-        for key_field_meta, value_field_meta in zip(field_meta.children[::2], field_meta.children[1::2]):
+        for key_field_meta, value_field_meta in cast(
+            Iterable[Tuple[FieldMeta, FieldMeta]], zip(field_meta.children[::2], field_meta.children[1::2])
+        ):
             key = handle_complex_type(field_meta=key_field_meta, factory=factory)
             value = handle_complex_type(field_meta=value_field_meta, factory=factory)
             container[key] = value
