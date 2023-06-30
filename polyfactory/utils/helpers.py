@@ -99,8 +99,7 @@ def unwrap_annotated(annotation: Any, random: Random) -> tuple[Any, list[Any]]:
     return unwrap_annotation(args[0], random=random), args[1:]
 
 
-# FIXME: remove the pragma when switching to pydantic v2 permanently
-def normalize_annotation(annotation: Any, random: Random) -> Any:  # pragma: no cover
+def normalize_annotation(annotation: Any, random: Random) -> Any:
     """Normalize an annotation.
 
     :param annotation: A type annotation.
