@@ -231,7 +231,7 @@ class BaseFactory(ABC, Generic[T]):
                     f"required configuration attribute '__model__' is not set on {cls.__name__}"
                 )
             if not cls.is_supported_type(model):
-                for factory in BaseFactory._base_factories:
+                for factory in cls._base_factories:
                     if factory.is_supported_type(model):
                         raise ConfigurationException(
                             f"{cls.__name__} does not support {model.__name__}, but this type is support by the {factory.__name__} base factory class. T"
@@ -242,13 +242,13 @@ class BaseFactory(ABC, Generic[T]):
                         "To support it, register an appropriate base factory and subclass it for your factory."
                     )
         elif cls.__module__.split(".", 1)[0] == "polyfactory":
-            BaseFactory._base_factories.append(cls)
+            cls._base_factories.append(cls)
 
         if random_seed := getattr(cls, "__random_seed__", None) is not None:
             cls.seed_random(random_seed)
 
         if cls.__set_as_default_factory_for_type__:
-            BaseFactory._factory_type_mapping[cls.__model__] = cls
+            cls._factory_type_mapping[cls.__model__] = cls
 
     @classmethod
     @contextmanager
@@ -257,12 +257,12 @@ class BaseFactory(ABC, Generic[T]):
 
         :param factories: One or more base factories.
         """
-        BaseFactory._base_factories.extend(factories)
+        cls._base_factories.extend(factories)
         try:
             yield None
         finally:
             for factory in reversed(factories):
-                assert BaseFactory._base_factories.pop() is factory
+                assert cls._base_factories.pop() is factory
 
     @classmethod
     def _get_sync_persistence(cls) -> SyncPersistenceProtocol[T]:
@@ -324,7 +324,7 @@ class BaseFactory(ABC, Generic[T]):
         :returns: A Factory sub-class.
 
         """
-        if factory := BaseFactory._factory_type_mapping.get(model):
+        if factory := cls._factory_type_mapping.get(model):
             return factory
 
         if cls.__base_factory_overrides__:
@@ -332,7 +332,7 @@ class BaseFactory(ABC, Generic[T]):
                 if factory := cls.__base_factory_overrides__.get(model_ancestor):
                     return factory.create_factory(model)
 
-        for factory in reversed(BaseFactory._base_factories):
+        for factory in reversed(cls._base_factories):
             if factory.is_supported_type(model):
                 return factory.create_factory(model)
 
@@ -347,7 +347,7 @@ class BaseFactory(ABC, Generic[T]):
         :param annotation: A type annotation.
         :returns: Boolean dictating whether the annotation is a factory type
         """
-        return any(factory.is_supported_type(annotation) for factory in BaseFactory._base_factories)
+        return any(factory.is_supported_type(annotation) for factory in cls._base_factories)
 
     @classmethod
     def is_batch_factory_type(cls, annotation: Any) -> bool:
@@ -358,7 +358,7 @@ class BaseFactory(ABC, Generic[T]):
         """
         origin = get_type_origin(annotation) or annotation
         if is_safe_subclass(origin, Sequence) and (args := unwrap_args(annotation, random=cls.__random__)):
-            return len(args) == 1 and BaseFactory.is_factory_type(annotation=args[0])
+            return len(args) == 1 and cls.is_factory_type(args[0])
         return False
 
     @classmethod
@@ -372,16 +372,16 @@ class BaseFactory(ABC, Generic[T]):
         if build_arg := build_args.get(field_meta.name):
             annotation = unwrap_optional(field_meta.annotation)
             if (
-                BaseFactory.is_factory_type(annotation=annotation)
+                cls.is_factory_type(annotation)
                 and isinstance(build_arg, Mapping)
-                and not BaseFactory.is_factory_type(annotation=type(build_arg))
+                and not cls.is_factory_type(type(build_arg))
             ):
                 return build_args.pop(field_meta.name)
 
             if (
-                BaseFactory.is_batch_factory_type(annotation=annotation)
+                cls.is_batch_factory_type(annotation)
                 and isinstance(build_arg, Sequence)
-                and not any(BaseFactory.is_factory_type(annotation=type(value)) for value in build_arg)
+                and not any(cls.is_factory_type(type(value)) for value in build_arg)
             ):
                 return build_args.pop(field_meta.name)
         return None
@@ -628,15 +628,15 @@ class BaseFactory(ABC, Generic[T]):
             return cls.__random__.choice(list(unwrapped_annotation))  # pyright: ignore
 
         if field_meta.constraints:
-            return cls.get_constrained_field_value(annotation=unwrapped_annotation, field_meta=field_meta)
+            return cls.get_constrained_field_value(unwrapped_annotation, field_meta)
 
-        if BaseFactory.is_factory_type(annotation=unwrapped_annotation):
-            return cls._get_or_create_factory(model=unwrapped_annotation).build(
+        if cls.is_factory_type(unwrapped_annotation):
+            return cls._get_or_create_factory(unwrapped_annotation).build(
                 **(field_build_parameters if isinstance(field_build_parameters, Mapping) else {})
             )
 
-        if BaseFactory.is_batch_factory_type(annotation=unwrapped_annotation):
-            factory = cls._get_or_create_factory(model=field_meta.type_args[0])
+        if cls.is_batch_factory_type(unwrapped_annotation):
+            factory = cls._get_or_create_factory(field_meta.type_args[0])
             if isinstance(field_build_parameters, Sequence):
                 return [factory.build(**field_parameters) for field_parameters in field_build_parameters]
             return factory.batch(size=cls.__random__.randint(1, 10))
