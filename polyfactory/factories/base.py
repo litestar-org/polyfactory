@@ -246,7 +246,7 @@ class BaseFactory(ABC, Generic[T]):
 
     @classmethod
     @contextmanager
-    def using_base_factories(cls, *factories: type[BaseFactory]) -> Iterator[None]:
+    def using_base_factories(cls, *factories: type[BaseFactory[Any]]) -> Iterator[None]:
         """Context manager to temporarily add base factories to the list of base factories.
 
         :param factories: One or more base factories.
