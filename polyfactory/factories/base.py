@@ -196,12 +196,6 @@ class BaseFactory(ABC, Generic[T]):
     Flag dictating whether the factory is a 'base' factory. Base factories are registered globally as handlers for types.
     For example, the 'DataclassFactory', 'TypedDictFactory' and 'ModelFactory' are all base factories.
     """
-    __base_factory_overrides__: dict[Any, type[BaseFactory[Any]]] | None = None
-    """
-    A base factory to override with this factory. If this value is set, the given factory will replace the given base factory.
-
-    Note: this value can only be set when '__is_base_factory__' is 'True'.
-    """
     __faker__: ClassVar["Faker"] = Faker()
     """
     A faker instance to use. Can be a user provided value.
@@ -326,11 +320,6 @@ class BaseFactory(ABC, Generic[T]):
         """
         if factory := cls._factory_type_mapping.get(model):
             return factory
-
-        if cls.__base_factory_overrides__:
-            for model_ancestor in model.mro():
-                if factory := cls.__base_factory_overrides__.get(model_ancestor):
-                    return factory.create_factory(model)
 
         for factory in reversed(cls._base_factories):
             if factory.is_supported_type(model):

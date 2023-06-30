@@ -34,13 +34,12 @@ def test_multiple_base_factories() -> None:
 
     class MyFactory(FooDataclassFactory):
         __model__ = MyModel
-        __base_factory_overrides__ = {MyModelWithFoo: FooDataclassFactory}
 
-    MyFactory.build()
+    with MyFactory.using_base_factories(FooDataclassFactory):
+        MyFactory.build()
 
 
-@pytest.mark.parametrize("override_BaseModel", [False, True])
-def test_multiple_base_pydantic_factories(override_BaseModel: bool) -> None:
+def test_multiple_base_pydantic_factories() -> None:
     class Foo:
         def __init__(self, value: str) -> None:
             self.value = value
@@ -66,12 +65,9 @@ def test_multiple_base_pydantic_factories(override_BaseModel: bool) -> None:
 
     class MyFactory(FooModelFactory):
         __model__ = MyModel
-        if override_BaseModel:
-            __base_factory_overrides__ = {BaseModel: FooModelFactory}
-        else:
-            __base_factory_overrides__ = {MyModelWithFoo: FooModelFactory}
 
-    MyFactory.build()
+    with MyFactory.using_base_factories(FooModelFactory):
+        MyFactory.build()
 
 
 def test_using_base_factories() -> None:
