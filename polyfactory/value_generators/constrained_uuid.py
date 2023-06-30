@@ -4,8 +4,7 @@ from uuid import NAMESPACE_DNS, UUID, uuid1, uuid3, uuid5
 from faker import Faker
 
 
-# FIXME: remove the pragma when switching to pydantic v2 permanently
-def handle_constrained_uuid(uuid_version: Literal[1, 3, 4, 5], faker: Faker) -> UUID:  # pragma: no cover
+def handle_constrained_uuid(uuid_version: Literal[1, 3, 4, 5], faker: Faker) -> UUID:
     if uuid_version == 1:
         return uuid1()
     if uuid_version == 3:

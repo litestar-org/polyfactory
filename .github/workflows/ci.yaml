@@ -28,7 +28,7 @@ jobs:
       fail-fast: true
       matrix:
         python-version: ["3.8", "3.9", "3.10", "3.11"]
-        pydantic-version: ["1.10.9", "2.0b3"]
+        pydantic-version: ["1.10", "2.0"]
     steps:
       - name: Check out repository
         uses: actions/checkout@v3
@@ -52,15 +52,15 @@ jobs:
         if: steps.cached-poetry-dependencies.outputs.cache-hit != 'true'
         run: poetry install --no-interaction
       - name: Install pydantic
-        if: matrix.pydantic-version == '2.0b3'
-        run: source .venv/bin/activate && pip install "pydantic==2.0b3"
+        if: matrix.pydantic-version == '1.10'
+        run: source .venv/bin/activate && pip install "pydantic==1.10.10"
       - name: Set pythonpath
         run: echo "PYTHONPATH=$PWD" >> $GITHUB_ENV
       - name: Test
-        if: matrix.python-version != '3.11' || matrix.pydantic-version != '1.10.9'
+        if: matrix.python-version != '3.11' || matrix.pydantic-version != '2.0'
         run: poetry run pytest
       - name: Test with Coverage
-        if: matrix.python-version == '3.11' && matrix.pydantic-version == '1.10.9'
+        if: matrix.python-version == '3.11' && matrix.pydantic-version == '2.0'
         run: poetry run pytest --cov=. --cov-report=xml
       - uses: actions/upload-artifact@v3
         if: matrix.python-version == '3.11'

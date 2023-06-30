@@ -32,7 +32,7 @@ except ImportError:
     pydantic_version = 2
 
     ModelField = Any
-    from pydantic._internal._fields import Undefined
+    from pydantic_core import PydanticUndefined as Undefined
 
 if TYPE_CHECKING:
     from random import Random
@@ -46,11 +46,10 @@ T = TypeVar("T", bound=BaseModel)
 class PydanticFieldMeta(FieldMeta):
     """Field meta subclass capable of handling pydantic ModelFields"""
 
-    # FIXME: remove the pragma when switching to pydantic v2 permanently
     @classmethod
     def from_field_info(
         cls, field_name: str, field_info: FieldInfo, use_alias: bool, random: Random
-    ) -> PydanticFieldMeta:  # pragma: no cover
+    ) -> PydanticFieldMeta:
         """Create an instance from a pydantic field info.
 
         :param field_name: The name of the field.
@@ -92,7 +91,9 @@ class PydanticFieldMeta(FieldMeta):
         )
 
     @classmethod
-    def from_model_field(cls, model_field: ModelField, use_alias: bool) -> PydanticFieldMeta:  # pyright: ignore
+    def from_model_field(
+        cls, model_field: ModelField, use_alias: bool  # pyright: ignore
+    ) -> PydanticFieldMeta:  # pragma: no cover
         """Create an instance from a pydantic model field.
 
         :param model_field: A pydantic ModelField.
@@ -214,8 +215,7 @@ class ModelFactory(Generic[T], BaseFactory[T]):
                     )
                     for field in cls.__model__.__fields__.values()  # type: ignore[attr-defined]
                 ]
-            # FIXME: remove the pragma when switching to pydantic v2 permanently
-            else:  # pragma: no cover
+            else:
                 cls._fields_metadata = [
                     PydanticFieldMeta.from_field_info(
                         field_info=field_info,
