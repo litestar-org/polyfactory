@@ -24,7 +24,6 @@ def test_multiple_base_factories() -> None:
         def get_provider_map(cls) -> Dict[Any, Any]:
             return {Foo: lambda: Foo("foo"), **super().get_provider_map()}
 
-    # noinspection PyUnusedLocal
     class DummyDataclassFactory(DataclassFactory):
         __is_base_factory__ = True
 
@@ -58,7 +57,6 @@ def test_multiple_base_pydantic_factories(override_BaseModel: bool) -> None:
         def get_provider_map(cls) -> Dict[Any, Any]:
             return {Foo: lambda: Foo("foo"), **super().get_provider_map()}
 
-    # noinspection PyUnusedLocal
     class DummyModelFactory(ModelFactory):
         __is_base_factory__ = True
 
@@ -78,3 +76,29 @@ def test_multiple_base_pydantic_factories(override_BaseModel: bool) -> None:
     # see https://github.com/litestar-org/polyfactory/issues/198
     ModelFactory._base_factories.remove(FooModelFactory)
     ModelFactory._base_factories.remove(DummyModelFactory)
+
+
+def test_implicit_custom_base_factory() -> None:
+    class Foo:
+        def __init__(self, value: str) -> None:
+            self.value = value
+
+    class FooDataclassFactory(DataclassFactory):
+        __is_base_factory__ = True
+
+        @classmethod
+        def get_provider_map(cls) -> Dict[Any, Any]:
+            return {Foo: lambda: Foo("foo"), **super().get_provider_map()}
+
+    @dataclass
+    class MyModelWithFoo:
+        foo: Foo
+
+    @dataclass
+    class MyModel:
+        nested: MyModelWithFoo
+
+    class MyFactory(DataclassFactory):
+        __model__ = MyModel
+
+    MyFactory.build()
