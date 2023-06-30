@@ -32,7 +32,7 @@ except ImportError:
     pydantic_version = 2
 
     ModelField = Any
-    from pydantic._internal._fields import Undefined
+    from pydantic_core import PydanticUndefined as Undefined
 
 if TYPE_CHECKING:
     from random import Random
