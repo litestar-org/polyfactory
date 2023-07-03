@@ -105,17 +105,21 @@ def test_post_generated_from_id() -> None:
 
 @pytest.mark.parametrize("type_", (Set, FrozenSet, List))
 def test_variable_length(type_: Any) -> None:
+
     class MyModel(Model):  # type: ignore
         items: type_[bson.Int64]
 
-    number_of_args = 3
+
 
     class MyFactory(OdmanticModelFactory[MyModel]):
         __model__ = MyModel
 
         __randomize_collection_length__ = True
+        number_of_args = 3
+
         __min_collection_length__ = number_of_args
         __max_collection_length__ = number_of_args
+
 
     result = MyFactory.build()
 
@@ -123,17 +127,21 @@ def test_variable_length(type_: Any) -> None:
 
 
 def test_variable_length__dict() -> None:
+
     class MyModel(Model):  # type: ignore
         items: Dict[bson.Int64, UUID]
 
-    number_of_args = 3
+
 
     class MyFactory(OdmanticModelFactory[MyModel]):
         __model__ = MyModel
 
         __randomize_collection_length__ = True
+        number_of_args = 3
+
         __min_collection_length__ = number_of_args
         __max_collection_length__ = number_of_args
+
 
     result = MyFactory.build()
 
@@ -141,17 +149,21 @@ def test_variable_length__dict() -> None:
 
 
 def test_variable_length__tuple() -> None:
+
     class MyModel(Model):  # type: ignore
         items: Tuple[bson.Int64, ...]
 
-    number_of_args = 3
+
 
     class MyFactory(OdmanticModelFactory[MyModel]):
         __model__ = MyModel
 
         __randomize_collection_length__ = True
+        number_of_args = 3
+
         __min_collection_length__ = number_of_args
         __max_collection_length__ = number_of_args
+
 
     result = MyFactory.build()
 
