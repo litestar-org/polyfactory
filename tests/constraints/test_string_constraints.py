@@ -58,10 +58,8 @@ def test_handle_constrained_string_with_min_length_and_max_length_and_regex(
             )
             if to_lower:
                 assert result == result.lower()
-            match = re.search(regex, result)
-
-            if match:
-                assert match.group(0)
+            if match := re.search(regex, result):
+                assert match[0]
             assert len(result) >= min_length
             assert len(result) <= max_length
 

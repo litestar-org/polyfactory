@@ -8,7 +8,6 @@ from decimal import Decimal
 from enum import EnumMeta
 from functools import partial
 from importlib import import_module
-from inspect import isclass
 from ipaddress import (
     IPv4Address,
     IPv4Interface,
@@ -22,12 +21,12 @@ from ipaddress import (
 )
 from os.path import realpath
 from pathlib import Path
-from random import Random
 from typing import (
     TYPE_CHECKING,
     Any,
     Callable,
     ClassVar,
+    Collection,
     Generic,
     Mapping,
     Sequence,
@@ -40,7 +39,7 @@ from uuid import NAMESPACE_DNS, UUID, uuid1, uuid3, uuid5
 from faker import Faker
 from typing_extensions import get_args
 
-from polyfactory.constants import MAX_COLLECTION_LENGTH, MIN_COLLECTION_LENGTH, RANDOMIZE_COLLECTION_LENGTH
+from polyfactory.constants import MAX_COLLECTION_LENGTH, MIN_COLLECTION_LENGTH, RANDOMIZE_COLLECTION_LENGTH, DEFAULT_RANDOM
 from polyfactory.exceptions import (
     ConfigurationException,
     MissingBuildKwargException,
@@ -50,11 +49,13 @@ from polyfactory.fields import Fixture, Ignore, PostGenerated, Require, Use
 from polyfactory.utils.helpers import unwrap_annotation, unwrap_args, unwrap_optional
 from polyfactory.utils.predicates import (
     get_type_origin,
+    is_any,
     is_literal,
     is_optional_union,
     is_safe_subclass,
+    is_union,
 )
-from polyfactory.value_generators.complex_types import handle_complex_type
+from polyfactory.value_generators.complex_types import handle_collection_type
 from polyfactory.value_generators.constrained_collections import handle_constrained_collection
 from polyfactory.value_generators.constrained_dates import handle_constrained_date
 from polyfactory.value_generators.constrained_numbers import (
@@ -69,9 +70,12 @@ from polyfactory.value_generators.constrained_uuid import handle_constrained_uui
 from polyfactory.value_generators.primitives import (
     create_random_boolean,
     create_random_bytes,
+    create_random_string,
 )
 
 if TYPE_CHECKING:
+    from random import Random
+
     from typing_extensions import TypeGuard
 
     from polyfactory.field_meta import Constraints, FieldMeta
@@ -119,7 +123,7 @@ def _create_pydantic_type_map(cls: type[BaseFactory[Any]]) -> dict[type, Callabl
     except ImportError:
         mapping = {}
 
-    try:
+    with suppress(ImportError):
         # v1 only values - these will raise an exception in v2
         # in pydantic v2 these are all aliases for Annotated with a constraint.
         # we therefore do not need them in v2
@@ -153,31 +157,15 @@ def _create_pydantic_type_map(cls: type[BaseFactory[Any]]) -> dict[type, Callabl
             }
         )
 
-    except ImportError:
-        pass
-
-    try:
+    with suppress(ImportError):
         # this might be removed by pydantic 2
         from pydantic import color
 
         mapping[color.Color] = cls.__faker__.hex_color  # pyright: ignore
-    except ImportError:
-        pass
-
     return mapping
 
 
 T = TypeVar("T")
-
-
-def is_factory(value: Any) -> "TypeGuard[type[BaseFactory[Any]]]":
-    """Determine if a given value is a subclass of ModelFactory.
-
-    :param value: An arbitrary value.
-    :returns: A boolean typeguard.
-
-    """
-    return isclass(value) and issubclass(value, BaseFactory)
 
 
 class BaseFactory(ABC, Generic[T]):
@@ -218,7 +206,7 @@ class BaseFactory(ABC, Generic[T]):
     """
     A faker instance to use. Can be a user provided value.
     """
-    __random__: ClassVar["Random"] = Random()
+    __random__: ClassVar["Random"] = DEFAULT_RANDOM
     """
     An instance of 'random.Random' to use.
     """
@@ -321,7 +309,7 @@ class BaseFactory(ABC, Generic[T]):
 
         :returns: An arbitrary value correlating with the given field_meta value.
         """
-        if is_factory(field_value):
+        if is_safe_subclass(field_value, BaseFactory):
             if isinstance(field_build_parameters, Mapping):
                 return field_value.build(**field_build_parameters)
 
@@ -336,29 +324,23 @@ class BaseFactory(ABC, Generic[T]):
         if isinstance(field_value, Fixture):
             return field_value.to_value()
 
-        if callable(field_value):
-            return field_value()
-
-        return field_value
+        return field_value() if callable(field_value) else field_value
 
     @classmethod
-    def _get_or_create_factory(
-        cls,
-        model: type,
-    ) -> type[BaseFactory[Any]]:
+    def _get_or_create_factory(cls, model: type) -> type[BaseFactory[Any]]:
         """Get a factory from registered factories or generate a factory dynamically.
 
         :param model: A model type.
         :returns: A Factory sub-class.
 
         """
-        if cls.__base_factory_overrides__ and (
-            factory := cls.__base_factory_overrides__.get(model, cls.__base_factory_overrides__.get(type(model)))
-        ):
-            return factory.create_factory(model)
-
         if factory := BaseFactory._factory_type_mapping.get(model):
             return factory
+
+        if cls.__base_factory_overrides__:
+            for model_ancestor in model.mro():
+                if factory := cls.__base_factory_overrides__.get(model_ancestor):
+                    return factory.create_factory(model)
 
         for factory in reversed(BaseFactory._base_factories):
             if factory.is_supported_type(model):
@@ -385,7 +367,7 @@ class BaseFactory(ABC, Generic[T]):
         :returns: Boolean dictating whether the annotation is a batch factory type
         """
         origin = get_type_origin(annotation) or annotation
-        if is_safe_subclass(origin, Sequence) and (args := unwrap_args(annotation, random=cls.__random__)):  # type: ignore
+        if is_safe_subclass(origin, Sequence) and (args := unwrap_args(annotation, random=cls.__random__)):
             return len(args) == 1 and BaseFactory.is_factory_type(annotation=args[0])
         return False
 
@@ -503,29 +485,6 @@ class BaseFactory(ABC, Generic[T]):
             Counter: lambda: Counter(cls.__faker__.pystr()),
             **_create_pydantic_type_map(cls),
         }
-
-    @classmethod
-    def get_mock_value(cls, annotation: type) -> Any:
-        """Return a mock value for a given type.
-
-        :param annotation: An arbitrary type.
-        :returns: An arbitrary value.
-
-        """
-
-        if handler := cls.get_provider_map().get(annotation):
-            return handler()
-
-        if isclass(annotation):
-            # if value is a class we can try to naively instantiate it.
-            # this will work for classes that do not require any parameters passed to __init__
-            with suppress(Exception):
-                return annotation()
-
-        raise ParameterException(
-            f"Unsupported type: {annotation!r}"
-            f"\n\nEither extend the providers map or add a factory function for this type."
-        )
 
     @classmethod
     def create_factory(
@@ -695,10 +654,28 @@ class BaseFactory(ABC, Generic[T]):
             batch_size = cls.__random__.randint(cls.__min_collection_length__, cls.__max_collection_length__)
             return factory.batch(size=batch_size)
 
-        if field_meta.children is not None:
-            return handle_complex_type(field_meta=field_meta, factory=cls)
+        if (origin := get_type_origin(unwrapped_annotation)) and issubclass(origin, Collection):
+            return handle_collection_type(field_meta, origin, cls)
 
-        return cls.get_mock_value(annotation=unwrapped_annotation)
+        if is_union(field_meta.annotation) and field_meta.children:
+            return cls.get_field_value(cls.__random__.choice(field_meta.children))
+
+        if is_any(unwrapped_annotation) or isinstance(unwrapped_annotation, TypeVar):
+            return create_random_string(cls.__random__, min_length=1, max_length=10)
+
+        if provider := cls.get_provider_map().get(unwrapped_annotation):
+            return provider()
+
+        if callable(unwrapped_annotation):
+            # if value is a callable we can try to naively call it.
+            # this will work for callables that do not require any parameters passed
+            with suppress(Exception):
+                return unwrapped_annotation()
+
+        raise ParameterException(
+            f"Unsupported type: {unwrapped_annotation!r}"
+            f"\n\nEither extend the providers map or add a factory function for this type."
+        )
 
     @classmethod
     def should_set_none_value(cls, field_meta: FieldMeta) -> bool:

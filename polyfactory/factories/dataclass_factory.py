@@ -1,16 +1,12 @@
 from __future__ import annotations
 
 from dataclasses import MISSING, fields, is_dataclass
-from inspect import isclass
-from typing import TYPE_CHECKING, Any, Generic
+from typing import Any, Generic
 
-from typing_extensions import get_type_hints
+from typing_extensions import TypeGuard, get_type_hints
 
 from polyfactory.factories.base import BaseFactory, T
 from polyfactory.field_meta import FieldMeta, Null
-
-if TYPE_CHECKING:
-    from typing_extensions import TypeGuard
 
 
 class DataclassFactory(Generic[T], BaseFactory[T]):
@@ -19,16 +15,13 @@ class DataclassFactory(Generic[T], BaseFactory[T]):
     __is_base_factory__ = True
 
     @classmethod
-    def is_supported_type(cls, value: Any) -> "TypeGuard[type[T]]":
+    def is_supported_type(cls, value: Any) -> TypeGuard[type[T]]:
         """Determine whether the given value is supported by the factory.
 
         :param value: An arbitrary value.
         :returns: A typeguard
         """
-        try:
-            return isclass(value) and is_dataclass(value)
-        except (TypeError, AttributeError):  # pragma: no cover
-            return False
+        return bool(is_dataclass(value))
 
     @classmethod
     def get_model_fields(cls) -> list["FieldMeta"]:

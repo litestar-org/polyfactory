@@ -89,7 +89,7 @@ def create_random_bytes(
 
     if max_length and len(result) > max_length:
         end = random.randint(min_length or 0, max_length)
-        return result[0:end]
+        return result[:end]
 
     return result
 

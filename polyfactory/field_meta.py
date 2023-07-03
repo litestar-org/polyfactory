@@ -128,8 +128,7 @@ class FieldMeta:
         """
         field_type = normalize_annotation(annotation, random=random)
 
-        # FIXME: remove the pragma when switching to pydantic v2 permanently
-        if not constraints and is_annotated(annotation):  # pragma: no cover
+        if not constraints and is_annotated(annotation):
             _, metadata = unwrap_annotated(annotation, random=random)
             constraints = cls.parse_constraints(metadata)
 
@@ -159,9 +158,8 @@ class FieldMeta:
             ]
         return field
 
-    # FIXME: remove the pragma when switching to pydantic v2 permanently
     @classmethod
-    def parse_constraints(cls, metadata: list[Any]) -> "Constraints":  # pragma: no cover
+    def parse_constraints(cls, metadata: list[Any]) -> "Constraints":
         constraints = {}
 
         for value in metadata:
@@ -170,15 +168,15 @@ class FieldMeta:
                 constraints.update(cast("dict[str, Any]", cls.parse_constraints(metadata=inner_metadata)))
             elif func := getattr(value, "func", None):
                 if func is str.islower:
-                    constraints.update({"lower_case": True})
+                    constraints["lower_case"] = True
                 elif func is str.isupper:
-                    constraints.update({"upper_case": True})
+                    constraints["upper_case"] = True
                 elif func is str.isascii:
-                    constraints.update({"pattern": "[[:ascii:]]"})
+                    constraints["pattern"] = "[[:ascii:]]"
                 elif func is str.isdigit:
-                    constraints.update({"pattern": "[[:digit:]]"})
+                    constraints["pattern"] = "[[:digit:]]"
             elif is_dataclass(value) and (value_dict := asdict(value)) and ("allowed_schemes" in value_dict):
-                constraints.update({"url": {k: v for k, v in value_dict.items() if v is not None}})
+                constraints["url"] = {k: v for k, v in value_dict.items() if v is not None}
             else:
                 constraints.update(
                     {

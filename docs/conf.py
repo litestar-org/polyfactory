@@ -1,11 +1,16 @@
 from __future__ import annotations
 
+import sys
 from functools import partial
 from typing import TYPE_CHECKING, Any
+from unittest import mock
 
 if TYPE_CHECKING:
     from sphinx.addnodes import document
     from sphinx.application import Sphinx
+
+for mod_name in ("beanie", "odmantic"):
+    sys.modules[mod_name] = mock.Mock()
 
 PY_CLASS = "py:class"
 PY_RE = r"py:.*"
@@ -79,6 +84,8 @@ nitpick_ignore = [
     (PY_CLASS, "TypeGuard"),
     (PY_CLASS, "date"),
     (PY_CLASS, "tzinfo"),
+    (PY_CLASS, "BeanieDocumentFactory"),
+    (PY_CLASS, "OdmanticModelFactory"),
 ]
 nitpick_ignore_regex = [
     (PY_RE, r"typing_extensions.*"),
