@@ -39,7 +39,12 @@ from uuid import NAMESPACE_DNS, UUID, uuid1, uuid3, uuid5
 from faker import Faker
 from typing_extensions import get_args
 
-from polyfactory.constants import MAX_COLLECTION_LENGTH, MIN_COLLECTION_LENGTH, RANDOMIZE_COLLECTION_LENGTH, DEFAULT_RANDOM
+from polyfactory.constants import (
+    DEFAULT_RANDOM,
+    MAX_COLLECTION_LENGTH,
+    MIN_COLLECTION_LENGTH,
+    RANDOMIZE_COLLECTION_LENGTH,
+)
 from polyfactory.exceptions import (
     ConfigurationException,
     MissingBuildKwargException,

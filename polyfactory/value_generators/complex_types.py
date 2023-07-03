@@ -1,27 +1,20 @@
 from __future__ import annotations
 
-from typing import TYPE_CHECKING, AbstractSet, Any, MutableMapping, MutableSequence, Set
 from typing import (
     TYPE_CHECKING,
     AbstractSet,
     Any,
-    Collection,
     Iterable,
     MutableMapping,
     MutableSequence,
     Set,
     Tuple,
-    TypeVar,
     cast,
 )
 
 from typing_extensions import is_typeddict
-from typing_extensions import get_args, is_typeddict
 
 from polyfactory.field_meta import FieldMeta
-from polyfactory.utils.helpers import unwrap_annotation
-from polyfactory.utils.predicates import get_type_origin, is_any, is_dict_key_or_value_type, is_literal, is_union
-from polyfactory.value_generators.primitives import create_random_string
 
 if TYPE_CHECKING:
     from polyfactory.factories.base import BaseFactory
@@ -49,20 +42,20 @@ def handle_collection_type(field_meta: FieldMeta, container_type: type, factory:
             container[key] = value
         return container
 
-    elif issubclass(container_type, MutableSequence):
+    if issubclass(container_type, MutableSequence):
         for subfield_meta in field_meta.children:
             container.append(factory.get_field_value(subfield_meta))
         return container
 
-    elif issubclass(container_type, Set):
+    if issubclass(container_type, Set):
         for subfield_meta in field_meta.children:
             container.add(factory.get_field_value(subfield_meta))
         return container
 
-    elif issubclass(container_type, AbstractSet):
+    if issubclass(container_type, AbstractSet):
         return container.union(handle_collection_type(field_meta, set, factory))
 
-    elif issubclass(container_type, tuple):
+    if issubclass(container_type, tuple):
         return container_type(map(factory.get_field_value, field_meta.children))
 
     raise NotImplementedError(f"Unsupported container type: {container_type}")
