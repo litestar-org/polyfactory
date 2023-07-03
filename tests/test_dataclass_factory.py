@@ -4,7 +4,6 @@ from types import ModuleType
 from typing import Callable, Dict, List, Optional, Set, Tuple
 from unittest.mock import ANY
 
-from _pytest.monkeypatch import MonkeyPatch
 from pydantic.dataclasses import Field  # type: ignore
 from pydantic.dataclasses import dataclass as pydantic_dataclass
 
@@ -169,7 +168,7 @@ class example:
     assert MyFactory.process_kwargs() == {"foo": ANY}
 
 
-def test_variable_length_tuple_generation__many_type_args(monkeypatch: MonkeyPatch) -> None:
+def test_variable_length_tuple_generation__many_type_args() -> None:
     @vanilla_dataclass
     class VanillaDC:
         ids: Tuple[int, ...]
@@ -190,7 +189,7 @@ def test_variable_length_tuple_generation__many_type_args(monkeypatch: MonkeyPat
     assert len(result.ids) == number_of_args
 
 
-def test_variable_length_dict_generation__many_type_args(monkeypatch: MonkeyPatch) -> None:
+def test_variable_length_dict_generation__many_type_args() -> None:
     @vanilla_dataclass
     class VanillaDC:
         ids: Dict[str, int]
@@ -211,7 +210,7 @@ def test_variable_length_dict_generation__many_type_args(monkeypatch: MonkeyPatc
     assert len(result.ids) == number_of_args
 
 
-def test_variable_length_list_generation__many_type_args(monkeypatch: MonkeyPatch) -> None:
+def test_variable_length_list_generation__many_type_args() -> None:
     @vanilla_dataclass
     class VanillaDC:
         ids: List[int]
@@ -232,7 +231,7 @@ def test_variable_length_list_generation__many_type_args(monkeypatch: MonkeyPatc
     assert len(result.ids) == number_of_args
 
 
-def test_variable_length_set_generation__many_type_args(monkeypatch: MonkeyPatch) -> None:
+def test_variable_length_set_generation__many_type_args() -> None:
     @vanilla_dataclass
     class VanillaDC:
         ids: Set[int]

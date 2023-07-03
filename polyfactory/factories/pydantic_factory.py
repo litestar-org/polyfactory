@@ -201,31 +201,28 @@ class PydanticFieldMeta(FieldMeta):
             constraints = {}
 
         children: list[FieldMeta] = []
-        if model_field.key_field:
-            children.append(
-                PydanticFieldMeta.from_model_field(
-                    model_field.key_field,
-                    use_alias,
-                    random,
-                    randomize_collection_length,
-                    min_collection_length,
-                    max_collection_length,
-                )
-            )
-        if model_field.sub_fields:
+        if model_field.key_field or model_field.sub_fields:
             if randomize_collection_length:
                 number_of_args = random.randint(min_collection_length, max_collection_length)
             else:
                 number_of_args = 1
+            fields_to_iterate = (
+                ([model_field.key_field, *model_field.sub_fields])
+                if model_field.key_field is not None
+                else model_field.sub_fields
+            )
             type_args = tuple(
                 (
                     unwrap_new_type(sub_field.annotation)
                     if not isinstance(sub_field.annotation, DeferredType)
                     else sub_field.outer_type_
                 )
-                for sub_field in model_field.sub_fields
+                for sub_field in fields_to_iterate
             )
-            type_arg_to_sub_field = dict(zip(type_args, model_field.sub_fields))
+            type_arg_to_sub_field = dict(zip(type_args, fields_to_iterate))
+            if outer_type.__origin__ == tuple and outer_type.__args__[-1] == Ellipsis:
+                # pydantic removes ellipses from Tuples in sub_fields
+                type_args += (...,)
             extended_type_args = CollectionExtender.extend_type_args(annotation, type_args, number_of_args)
             children.extend(
                 PydanticFieldMeta.from_model_field(

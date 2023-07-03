@@ -690,7 +690,10 @@ class BaseFactory(ABC, Generic[T]):
             factory = cls._get_or_create_factory(model=field_meta.type_args[0])
             if isinstance(field_build_parameters, Sequence):
                 return [factory.build(**field_parameters) for field_parameters in field_build_parameters]
-            return factory.batch(size=cls.__random__.randint(1, 10))
+            if not cls.__randomize_collection_length__:
+                return [factory.build()]
+            batch_size = cls.__random__.randint(cls.__min_collection_length__, cls.__max_collection_length__)
+            return factory.batch(size=batch_size)
 
         if field_meta.children is not None:
             return handle_complex_type(field_meta=field_meta, factory=cls)

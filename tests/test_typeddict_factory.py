@@ -44,3 +44,21 @@ def test_factory_model_with_typeddict_attribute_value() -> None:
     assert result.td["name"]
     assert result.td["list_field"][0]
     assert type(result.td["int_field"]) in (type(None), int)
+
+
+def test_variable_length() -> None:
+    class MyModel(BaseModel):
+        items: List[int]
+
+    number_of_args = 3
+
+    class MyFactory(ModelFactory[MyModel]):
+        __model__ = MyModel
+
+        __randomize_collection_length__ = True
+        __min_collection_length__ = number_of_args
+        __max_collection_length__ = number_of_args
+
+    result = MyFactory.build()
+
+    assert len(result.items) == 3
