@@ -59,6 +59,15 @@ def is_any(annotation: Any) -> "TypeGuard[Any]":
     )
 
 
+def is_dict_key_or_value_type(annotation: Any) -> "TypeGuard[Any]":
+    """Determine whether a given annotation is a valid dict key or value type:
+    ``typing.KT`` or ``typing.VT``.
+
+    :returns: A typeguard.
+    """
+    return str(annotation) == "~KT" or str(annotation) == "~VT"
+
+
 def is_union(annotation: Any) -> "TypeGuard[Any | Any]":
     """Determine whether a given annotation is 'typing.Union'.
 

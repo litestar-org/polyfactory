@@ -1,5 +1,6 @@
-from typing import List, Mapping, Optional
+from typing import Any, Dict, FrozenSet, List, Mapping, Optional, Set, Tuple
 
+import pytest
 from pydantic import BaseModel
 
 from polyfactory.factories.pydantic_factory import ModelFactory
@@ -176,3 +177,67 @@ def test_factory_with_partial_kwargs_deep_in_tree() -> None:
     build_result = DFactory.build(factory_use_construct=False, **{"c": {"b": {"a": {"name": "test"}}}})
     assert build_result
     assert build_result.c.b.a.name == "test"
+
+
+@pytest.mark.parametrize("type_", (Set, FrozenSet, List))
+def test_variable_length__collection(type_: Any) -> None:
+    class Vanilla(BaseModel):
+        ids: type_[int]
+
+    number_of_args = 3
+
+    class MyFactory(ModelFactory[Vanilla]):
+        __model__ = Vanilla
+
+        __randomize_collection_length__ = True
+        __min_collection_length__ = number_of_args
+        __max_collection_length__ = number_of_args
+
+    result = MyFactory.build()
+
+    assert result
+    assert result.ids
+    assert len(result.ids) == number_of_args
+
+
+def test_variable_length__tuple() -> None:
+    class Chocolate(BaseModel):
+        val: float
+
+    class Vanilla(BaseModel):
+        ids: Tuple[Chocolate, ...]
+
+    number_of_args = 3
+
+    class MyFactory(ModelFactory[Vanilla]):
+        __model__ = Vanilla
+
+        __randomize_collection_length__ = True
+        __min_collection_length__ = number_of_args
+        __max_collection_length__ = number_of_args
+
+    result = MyFactory.build()
+
+    assert result
+    assert result.ids
+    assert len(result.ids) == number_of_args
+
+
+def test_variable_length__dict() -> None:
+    class Vanilla(BaseModel):
+        ids: Dict[str, float]
+
+    number_of_args = 3
+
+    class MyFactory(ModelFactory[Vanilla]):
+        __model__ = Vanilla
+
+        __randomize_collection_length__ = True
+        __min_collection_length__ = number_of_args
+        __max_collection_length__ = number_of_args
+
+    result = MyFactory.build()
+
+    assert result
+    assert result.ids
+    assert len(result.ids) == number_of_args

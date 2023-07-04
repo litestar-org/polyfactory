@@ -203,3 +203,16 @@ def test_non_collection_generic() -> None:
 
     result = MyFactory.build()
     assert isinstance(result.x, LoggedVar)
+
+
+def test_sequence_dict() -> None:
+    @dataclass
+    class MyModel:
+        sequence_dict: Sequence[Dict]
+
+    class MyFactory(DataclassFactory):
+        __model__ = MyModel
+
+    result = MyFactory.build()
+
+    assert result.sequence_dict

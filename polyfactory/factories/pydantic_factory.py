@@ -12,6 +12,8 @@ from typing import (
     cast,
 )
 
+from polyfactory.collection_extender import CollectionExtender
+from polyfactory.constants import MAX_COLLECTION_LENGTH, MIN_COLLECTION_LENGTH, RANDOMIZE_COLLECTION_LENGTH
 from polyfactory.exceptions import MissingDependencyException
 from polyfactory.factories.base import BaseFactory
 from polyfactory.field_meta import Constraints, FieldMeta, Null
@@ -48,7 +50,14 @@ class PydanticFieldMeta(FieldMeta):
 
     @classmethod
     def from_field_info(
-        cls, field_name: str, field_info: FieldInfo, use_alias: bool, random: Random
+        cls,
+        field_name: str,
+        field_info: FieldInfo,
+        use_alias: bool,
+        random: Random,
+        randomize_collection_length: bool = RANDOMIZE_COLLECTION_LENGTH,
+        min_collection_length: int = MIN_COLLECTION_LENGTH,
+        max_collection_length: int = MAX_COLLECTION_LENGTH,
     ) -> PydanticFieldMeta:
         """Create an instance from a pydantic field info.
 
@@ -88,16 +97,29 @@ class PydanticFieldMeta(FieldMeta):
             annotation=annotation,
             default=default_value,
             constraints=cast("Constraints", {k: v for k, v in constraints.items() if v is not None}) or None,
+            randomize_collection_length=randomize_collection_length,
+            min_collection_length=min_collection_length,
+            max_collection_length=max_collection_length,
         )
 
     @classmethod
     def from_model_field(
-        cls, model_field: ModelField, use_alias: bool  # pyright: ignore
-    ) -> PydanticFieldMeta:  # pragma: no cover
+        cls,
+        model_field: ModelField,  # pyright: ignore
+        use_alias: bool,
+        random: Random,
+        randomize_collection_length: bool,
+        min_collection_length: int,
+        max_collection_length: int,
+    ) -> PydanticFieldMeta:
         """Create an instance from a pydantic model field.
 
         :param model_field: A pydantic ModelField.
         :param use_alias: Whether to use the field alias.
+        :param random: An instance of random.Random.
+        :param randomize_collection_length: A boolean flag whether to randomize collections lengths
+        :param min_collection_length: Minimum number of elements in randomized collection
+        :param max_collection_length: Maximum number of elements in randomized collection
 
         :returns: A PydanticFieldMeta instance.
 
@@ -159,18 +181,46 @@ class PydanticFieldMeta(FieldMeta):
             constraints = {}
 
         children: list[FieldMeta] = []
-        if model_field.key_field:
-            children.append(PydanticFieldMeta.from_model_field(model_field.key_field, use_alias))
-        if model_field.sub_fields:
+        if model_field.key_field or model_field.sub_fields:
+            if randomize_collection_length:
+                number_of_args = random.randint(min_collection_length, max_collection_length)
+            else:
+                number_of_args = 1
+            fields_to_iterate = (
+                ([model_field.key_field, *model_field.sub_fields])
+                if model_field.key_field is not None
+                else model_field.sub_fields
+            )
+            type_args = tuple(
+                (
+                    unwrap_new_type(sub_field.annotation)
+                    if not isinstance(sub_field.annotation, DeferredType)
+                    else sub_field.outer_type_
+                )
+                for sub_field in fields_to_iterate
+            )
+            type_arg_to_sub_field = dict(zip(type_args, fields_to_iterate))
+            if outer_type.__origin__ == tuple and outer_type.__args__[-1] == Ellipsis:
+                # pydantic removes ellipses from Tuples in sub_fields
+                type_args += (...,)
+            extended_type_args = CollectionExtender.extend_type_args(annotation, type_args, number_of_args)
             children.extend(
-                PydanticFieldMeta.from_model_field(sub_field, use_alias) for sub_field in model_field.sub_fields
+                PydanticFieldMeta.from_model_field(
+                    type_arg_to_sub_field[arg],
+                    use_alias,
+                    random,
+                    randomize_collection_length,
+                    min_collection_length,
+                    max_collection_length,
+                )
+                for arg in extended_type_args
             )
 
         return PydanticFieldMeta(
             name=name,
             random=cls.random,
             annotation=annotation,
-            children=children,
+            children=children or None,
             default=default_value,
             constraints=cast("Constraints", {k: v for k, v in constraints.items() if v is not None}) or None,
         )
@@ -212,6 +262,10 @@ class ModelFactory(Generic[T], BaseFactory[T]):
                     PydanticFieldMeta.from_model_field(
                         field,
                         use_alias=not cls.__model__.__config__.allow_population_by_field_name,
+                        random=cls.__random__,
+                        randomize_collection_length=cls.__randomize_collection_length__,
+                        min_collection_length=cls.__min_collection_length__,
+                        max_collection_length=cls.__max_collection_length__,
                     )
                     for field in cls.__model__.__fields__.values()  # type: ignore[attr-defined]
                 ]
@@ -222,6 +276,9 @@ class ModelFactory(Generic[T], BaseFactory[T]):
                         field_name=field_name,
                         random=cls.__random__,
                         use_alias=not cls.__model__.model_config.get("populate_by_name", False),
+                        randomize_collection_length=cls.__randomize_collection_length__,
+                        min_collection_length=cls.__min_collection_length__,
+                        max_collection_length=cls.__max_collection_length__,
                     )
                     for field_name, field_info in cls.__model__.model_fields.items()
                 ]

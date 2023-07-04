@@ -3,7 +3,14 @@ from __future__ import annotations
 from dataclasses import asdict, is_dataclass
 from typing import TYPE_CHECKING, Any, Literal, Pattern, TypedDict, cast
 
-from polyfactory.constants import DEFAULT_RANDOM, IGNORED_TYPE_ARGS, TYPE_MAPPING
+from polyfactory.collection_extender import CollectionExtender
+from polyfactory.constants import (
+    DEFAULT_RANDOM,
+    MAX_COLLECTION_LENGTH,
+    MIN_COLLECTION_LENGTH,
+    RANDOMIZE_COLLECTION_LENGTH,
+    TYPE_MAPPING,
+)
 from polyfactory.utils.helpers import normalize_annotation, unwrap_annotated, unwrap_args, unwrap_new_type
 from polyfactory.utils.predicates import is_annotated
 
@@ -89,7 +96,10 @@ class FieldMeta:
 
         :returns: a tuple of types.
         """
-        return tuple(arg for arg in unwrap_args(self.annotation, random=self.random) if arg not in IGNORED_TYPE_ARGS)
+        return tuple(
+            TYPE_MAPPING[arg] if arg in TYPE_MAPPING else arg
+            for arg in unwrap_args(self.annotation, random=self.random)
+        )
 
     @classmethod
     def from_type(
@@ -99,6 +109,9 @@ class FieldMeta:
         name: str = "",
         default: Any = Null,
         constraints: Constraints | None = None,
+        randomize_collection_length: bool = RANDOMIZE_COLLECTION_LENGTH,
+        min_collection_length: int = MIN_COLLECTION_LENGTH,
+        max_collection_length: int = MAX_COLLECTION_LENGTH,
     ) -> Self:
         """Builder method to create a FieldMeta from a type annotation.
 
@@ -107,6 +120,9 @@ class FieldMeta:
         :param name: Field name
         :param default: Default value, if any.
         :param constraints: A dictionary of constraints, if any.
+        :param randomize_collection_length: A boolean flag whether to randomize collections lengths
+        :param min_collection_length: Minimum number of elements in randomized collection
+        :param max_collection_length: Maximum number of elements in randomized collection
 
         :returns: A field meta instance.
         """
@@ -125,8 +141,20 @@ class FieldMeta:
             constraints=constraints,
         )
         if field.type_args:
+            if randomize_collection_length:
+                number_of_args = random.randint(min_collection_length, max_collection_length)
+            else:
+                number_of_args = 1
+            extended_type_args = CollectionExtender.extend_type_args(field.annotation, field.type_args, number_of_args)
             field.children = [
-                FieldMeta.from_type(annotation=unwrap_new_type(arg), random=random) for arg in field.type_args
+                FieldMeta.from_type(
+                    annotation=unwrap_new_type(arg),
+                    random=random,
+                    randomize_collection_length=randomize_collection_length,
+                    min_collection_length=min_collection_length,
+                    max_collection_length=max_collection_length,
+                )
+                for arg in extended_type_args
             ]
         return field
 

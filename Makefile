@@ -15,3 +15,6 @@ test:
 coverage:
 	poetry run pytest tests --cov=polyfactory
 	poetry run coverage html
+
+format:
+	poetry run pre-commit run --all-files

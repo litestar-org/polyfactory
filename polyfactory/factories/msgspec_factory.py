@@ -68,7 +68,13 @@ class MsgspecFactory(Generic[T], BaseFactory[T]):
 
             fields_meta.append(
                 FieldMeta.from_type(
-                    annotation=annotation, name=field.name, default=default_value, random=cls.__random__
+                    annotation=annotation,
+                    name=field.name,
+                    default=default_value,
+                    random=cls.__random__,
+                    randomize_collection_length=cls.__randomize_collection_length__,
+                    min_collection_length=cls.__min_collection_length__,
+                    max_collection_length=cls.__max_collection_length__,
                 )
             )
         return fields_meta

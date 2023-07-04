@@ -3,7 +3,6 @@ from __future__ import annotations
 from collections import abc, defaultdict, deque
 from random import Random
 from typing import (
-    Any,
     DefaultDict,
     Deque,
     Dict,
@@ -42,6 +41,7 @@ TYPE_MAPPING = {
     UnionType: Union,
 }
 
-IGNORED_TYPE_ARGS: set[Any] = {Ellipsis}
-
 DEFAULT_RANDOM = Random()
+RANDOMIZE_COLLECTION_LENGTH = False
+MIN_COLLECTION_LENGTH = 0
+MAX_COLLECTION_LENGTH = 5

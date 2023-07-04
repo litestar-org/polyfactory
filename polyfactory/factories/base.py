@@ -39,7 +39,12 @@ from uuid import NAMESPACE_DNS, UUID, uuid1, uuid3, uuid5
 from faker import Faker
 from typing_extensions import get_args
 
-from polyfactory.constants import DEFAULT_RANDOM
+from polyfactory.constants import (
+    DEFAULT_RANDOM,
+    MAX_COLLECTION_LENGTH,
+    MIN_COLLECTION_LENGTH,
+    RANDOMIZE_COLLECTION_LENGTH,
+)
 from polyfactory.exceptions import (
     ConfigurationException,
     MissingBuildKwargException,
@@ -215,6 +220,18 @@ class BaseFactory(ABC, Generic[T]):
     An integer to seed the factory's Faker and Random instances with.
     This attribute can be used to control random generation.
     """
+    __randomize_collection_length__: ClassVar[bool] = RANDOMIZE_COLLECTION_LENGTH
+    """
+    Flag dictating whether to randomize collections lengths.
+    """
+    __min_collection_length__: ClassVar[int] = MIN_COLLECTION_LENGTH
+    """
+    An integer value that defines minimum length of a collection.
+    """
+    __max_collection_length__: ClassVar[int] = MAX_COLLECTION_LENGTH
+    """
+    An integer value that defines maximum length of a collection.
+    """
 
     # cached attributes
     _fields_metadata: list[FieldMeta]
@@ -230,6 +247,11 @@ class BaseFactory(ABC, Generic[T]):
 
         if not hasattr(BaseFactory, "_factory_type_mapping"):
             BaseFactory._factory_type_mapping = {}
+
+        if cls.__min_collection_length__ > cls.__max_collection_length__:
+            raise ConfigurationException(
+                "Minimum collection length shouldn't be greater than maximum collection length"
+            )
 
         if "__is_base_factory__" not in cls.__dict__ or not cls.__is_base_factory__:
             model = getattr(cls, "__model__", None)
@@ -632,7 +654,10 @@ class BaseFactory(ABC, Generic[T]):
             factory = cls._get_or_create_factory(model=field_meta.type_args[0])
             if isinstance(field_build_parameters, Sequence):
                 return [factory.build(**field_parameters) for field_parameters in field_build_parameters]
-            return factory.batch(size=cls.__random__.randint(1, 10))
+            if not cls.__randomize_collection_length__:
+                return [factory.build()]
+            batch_size = cls.__random__.randint(cls.__min_collection_length__, cls.__max_collection_length__)
+            return factory.batch(size=batch_size)
 
         if (origin := get_type_origin(unwrapped_annotation)) and issubclass(origin, Collection):
             return handle_collection_type(field_meta, origin, cls)

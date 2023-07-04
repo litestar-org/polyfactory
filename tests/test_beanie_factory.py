@@ -80,3 +80,18 @@ async def test_beanie_persistence_of_multiple_instances(beanie_init: Callable) -
 async def test_beanie_links(beanie_init: Callable) -> None:
     result = await MyOtherFactory.create_async()
     assert isinstance(result.document, MyDocument)
+
+
+def test_variable_length(beanie_init: Callable) -> None:
+    number_of_args = 3
+
+    class MyVariableFactory(BeanieDocumentFactory):
+        __model__ = MyDocument
+
+        __randomize_collection_length__ = True
+        __min_collection_length__ = number_of_args
+        __max_collection_length__ = number_of_args
+
+    result = MyVariableFactory.build()
+
+    assert len(result.siblings) == 3
