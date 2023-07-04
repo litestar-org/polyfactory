@@ -182,10 +182,9 @@ class PydanticFieldMeta(FieldMeta):
 
         children: list[FieldMeta] = []
         if model_field.key_field or model_field.sub_fields:
-            if randomize_collection_length:
-                number_of_args = random.randint(min_collection_length, max_collection_length)
-            else:
-                number_of_args = 1
+            number_of_args = (
+                random.randint(min_collection_length, max_collection_length) if randomize_collection_length else 1
+            )
             fields_to_iterate = (
                 ([model_field.key_field, *model_field.sub_fields])
                 if model_field.key_field is not None
@@ -193,9 +192,9 @@ class PydanticFieldMeta(FieldMeta):
             )
             type_args = tuple(
                 (
-                    unwrap_new_type(sub_field.annotation)
-                    if not isinstance(sub_field.annotation, DeferredType)
-                    else sub_field.outer_type_
+                    sub_field.outer_type_
+                    if isinstance(sub_field.annotation, DeferredType)
+                    else unwrap_new_type(sub_field.annotation)
                 )
                 for sub_field in fields_to_iterate
             )

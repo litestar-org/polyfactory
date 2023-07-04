@@ -65,7 +65,7 @@ def is_dict_key_or_value_type(annotation: Any) -> "TypeGuard[Any]":
 
     :returns: A typeguard.
     """
-    return str(annotation) == "~KT" or str(annotation) == "~VT"
+    return str(annotation) in {"~KT", "~VT"}
 
 
 def is_union(annotation: Any) -> "TypeGuard[Any | Any]":

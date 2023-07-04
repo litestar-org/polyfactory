@@ -18,10 +18,14 @@ class CollectionExtender(ABC):
 
     @classmethod
     def _subclass_for_type(cls, annotation_alias: Any) -> type[CollectionExtender]:
-        for subclass in cls.__subclasses__():
-            if any(is_safe_subclass(annotation_alias, t) for t in subclass.__types__):
-                return subclass
-        return FallbackExtender
+        return next(
+            (
+                subclass
+                for subclass in cls.__subclasses__()
+                if any(is_safe_subclass(annotation_alias, t) for t in subclass.__types__)
+            ),
+            FallbackExtender,
+        )
 
     @classmethod
     def extend_type_args(

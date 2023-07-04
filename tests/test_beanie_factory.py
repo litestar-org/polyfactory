@@ -83,12 +83,12 @@ async def test_beanie_links(beanie_init: Callable) -> None:
 
 
 def test_variable_length(beanie_init: Callable) -> None:
-    number_of_args = 3
-
     class MyVariableFactory(BeanieDocumentFactory):
         __model__ = MyDocument
 
         __randomize_collection_length__ = True
+        number_of_args = 3
+
         __min_collection_length__ = number_of_args
         __max_collection_length__ = number_of_args
 

@@ -50,12 +50,12 @@ def test_variable_length() -> None:
     class MyModel(BaseModel):
         items: List[int]
 
-    number_of_args = 3
-
     class MyFactory(ModelFactory[MyModel]):
         __model__ = MyModel
 
         __randomize_collection_length__ = True
+        number_of_args = 3
+
         __min_collection_length__ = number_of_args
         __max_collection_length__ = number_of_args
 

@@ -66,6 +66,7 @@ pydantic = { version = "*", optional = true }
 typing-extensions = "*"
 
 [tool.poetry.group.dev.dependencies]
+annotated-types = "*"
 beanie = "*"
 email-validator = "*"
 hypothesis = "*"
@@ -77,7 +78,7 @@ pydantic = "*"
 pytest = "*"
 pytest-asyncio = "*"
 pytest-cov = "*"
-annotated-types = "*"
+sourcery = "*"
 
 [tool.poetry.group.docs.dependencies]
 sphinx-autobuild = "*"
