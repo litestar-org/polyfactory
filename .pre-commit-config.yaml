@@ -13,7 +13,7 @@ repos:
       - id: mixed-line-ending
       - id: trailing-whitespace
   - repo: https://github.com/charliermarsh/ruff-pre-commit
-    rev: "v0.0.275"
+    rev: "v0.0.276"
     hooks:
       - id: ruff
         args: ["--fix"]
@@ -37,15 +37,15 @@ repos:
         exclude: "test_decimal_constraints|examples/fields/test_example_2|examples/configuration"
         additional_dependencies:
           [
+            "pydantic>=2",
             beanie,
             faker,
             hypothesis,
             mongomock_motor,
+            msgspec,
             odmantic,
-            pydantic,
             pytest,
             sphinx,
-            msgspec,
           ]
   - repo: https://github.com/RobertCraigie/pyright-python
     rev: v1.1.316
@@ -54,13 +54,13 @@ repos:
         exclude: "tests"
         additional_dependencies:
           [
+            "pydantic>=2",
             beanie,
             faker,
             hypothesis,
             mongomock_motor,
+            msgspec,
             odmantic,
-            pydantic,
             pytest,
             sphinx,
-            msgspec,
           ]

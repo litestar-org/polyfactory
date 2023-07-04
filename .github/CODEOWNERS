@@ -5,6 +5,4 @@
 
 # Global Assignment
 *      @litestar-org/maintainers
-
-# Documentation
-docs/* @litestar-org/maintainers @JacobCoffee
+*      @litestar-org/members
