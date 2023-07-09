@@ -101,7 +101,7 @@ class PydanticFieldMeta(FieldMeta):
         )
 
     @classmethod
-    def from_model_field(
+    def from_model_field(  # pragma: no cover
         cls,
         model_field: ModelField,  # pyright: ignore
         use_alias: bool,
