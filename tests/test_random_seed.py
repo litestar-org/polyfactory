@@ -1,16 +1,18 @@
 from random import randint
 from typing import Optional
 
-from pydantic import BaseModel, Field
+from pydantic import VERSION, BaseModel, Field
 
-from polyfactory.factories.pydantic_factory import ModelFactory, pydantic_version
+from polyfactory.factories.pydantic_factory import ModelFactory
 
 
 def test_random_seed() -> None:
     class MyModel(BaseModel):
         id: int
         special_id: str = (
-            Field(pattern=r"ID-[1-9]{3}\.[1-9]{3}") if pydantic_version == 2 else Field(regex=r"ID-[1-9]{3}\.[1-9]{3}")
+            Field(pattern=r"ID-[1-9]{3}\.[1-9]{3}")
+            if VERSION.startswith("2")
+            else Field(regex=r"ID-[1-9]{3}\.[1-9]{3}")
         )
 
     class MyModelFactory(ModelFactory):

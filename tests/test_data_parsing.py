@@ -14,6 +14,7 @@ from pathlib import Path
 from typing import Callable, Literal, Optional
 from uuid import UUID
 
+import pydantic
 import pytest
 from pydantic import (
     UUID1,
@@ -55,7 +56,6 @@ from pydantic import (
     StrictInt,
     StrictStr,
 )
-from pydantic.color import Color
 from typing_extensions import TypeAlias
 
 from polyfactory.exceptions import ParameterException
@@ -154,21 +154,16 @@ def test_embedded_factories_parsing() -> None:
 
 
 def test_type_property_parsing() -> None:
-    try:
-        # pydantic v2 only types
-        from pydantic.networks import CockroachDsn, MariaDBDsn, MongoDsn, MySQLDsn
+    class Base(BaseModel):
+        if pydantic.VERSION.startswith("2"):
+            MongoDsn_pydantic_type: pydantic.networks.MongoDsn
+            MariaDBDsn_pydantic_type: pydantic.networks.MariaDBDsn
+            CockroachDsn_pydantic_type: pydantic.networks.CockroachDsn
+            MySQLDsn_pydantic_type: pydantic.networks.MySQLDsn
 
-        class Base(BaseModel):
-            MongoDsn_pydantic_type: MongoDsn
-            MariaDBDsn_pydantic_type: MariaDBDsn
-            CockroachDsn_pydantic_type: CockroachDsn
-            MySQLDsn_pydantic_type: MySQLDsn
-
-    except ImportError:
-        from pydantic.types import PyObject
-
-        class Base(BaseModel):  # type: ignore[no-redef]
-            PyObject_pydantic_type: PyObject
+        else:
+            PyObject_pydantic_type: pydantic.types.PyObject
+            Color_pydantic_type: pydantic.color.Color
 
     class MyModel(Base):
         object_field: object
@@ -219,7 +214,6 @@ def test_type_property_parsing() -> None:
         DirectoryPath_pydantic_type: DirectoryPath
         EmailStr_pydantic_type: EmailStr
         NameEmail_pydantic_type: NameEmail
-        Color_pydantic_type: Color
         Json_pydantic_type: Json
         AnyUrl_pydantic_type: AnyUrl
         AnyHttpUrl_pydantic_type: AnyHttpUrl

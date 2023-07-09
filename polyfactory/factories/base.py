@@ -125,48 +125,30 @@ def _create_pydantic_type_map(cls: type[BaseFactory[Any]]) -> dict[type, Callabl
             pydantic.FutureDate: cls.__faker__.future_date,
         }
 
+        if pydantic.VERSION.startswith("1"):
+            # v1 only values - these will raise an exception in v2
+            # in pydantic v2 these are all aliases for Annotated with a constraint.
+            # we therefore do not need them in v2
+            mapping.update(
+                {  # pyright: ignore
+                    pydantic.PyObject: lambda: "decimal.Decimal",
+                    pydantic.AmqpDsn: lambda: "amqps://example.com",
+                    pydantic.KafkaDsn: lambda: "kafka://localhost:9092",
+                    pydantic.PostgresDsn: lambda: "postgresql://user:secret@localhost",
+                    pydantic.RedisDsn: lambda: "redis://localhost:6379/0",
+                    pydantic.FilePath: lambda: Path(realpath(__file__)),
+                    pydantic.DirectoryPath: lambda: Path(realpath(__file__)).parent,
+                    pydantic.UUID1: uuid1,
+                    pydantic.UUID3: lambda: uuid3(NAMESPACE_DNS, cls.__faker__.pystr()),
+                    pydantic.UUID4: cls.__faker__.uuid4,
+                    pydantic.UUID5: lambda: uuid5(NAMESPACE_DNS, cls.__faker__.pystr()),
+                    pydantic.color.Color: cls.__faker__.hex_color,  # pyright: ignore
+                }
+            )
+
     except ImportError:
         mapping = {}
 
-    with suppress(ImportError):
-        # v1 only values - these will raise an exception in v2
-        # in pydantic v2 these are all aliases for Annotated with a constraint.
-        # we therefore do not need them in v2
-        from pydantic import (
-            UUID1,
-            UUID3,
-            UUID4,
-            UUID5,
-            AmqpDsn,
-            DirectoryPath,
-            FilePath,
-            KafkaDsn,
-            PostgresDsn,
-            PyObject,
-            RedisDsn,
-        )
-
-        mapping.update(
-            {  # pyright: ignore
-                PyObject: lambda: "decimal.Decimal",
-                AmqpDsn: lambda: "amqps://example.com",
-                KafkaDsn: lambda: "kafka://localhost:9092",
-                PostgresDsn: lambda: "postgresql://user:secret@localhost",
-                RedisDsn: lambda: "redis://localhost:6379/0",
-                FilePath: lambda: Path(realpath(__file__)),
-                DirectoryPath: lambda: Path(realpath(__file__)).parent,
-                UUID1: uuid1,
-                UUID3: lambda: uuid3(NAMESPACE_DNS, cls.__faker__.pystr()),
-                UUID4: cls.__faker__.uuid4,
-                UUID5: lambda: uuid5(NAMESPACE_DNS, cls.__faker__.pystr()),
-            }
-        )
-
-    with suppress(ImportError):
-        # this might be removed by pydantic 2
-        from pydantic import color
-
-        mapping[color.Color] = cls.__faker__.hex_color  # pyright: ignore
     return mapping
 
 
@@ -627,9 +609,6 @@ class BaseFactory(ABC, Generic[T]):
         """
         if cls.is_ignored_type(field_meta.annotation):
             return None
-
-        if field_meta.constraints and field_meta.constraints.pop("constant", False):
-            return field_meta.default
 
         if cls.should_set_none_value(field_meta=field_meta):
             return None

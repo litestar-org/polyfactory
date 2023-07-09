@@ -20,11 +20,11 @@ from typing import (
 )
 
 import pytest
-from pydantic import BaseModel
+from pydantic import VERSION, BaseModel
 
 from polyfactory.exceptions import ParameterException
 from polyfactory.factories import DataclassFactory
-from polyfactory.factories.pydantic_factory import ModelFactory, pydantic_version
+from polyfactory.factories.pydantic_factory import ModelFactory
 from tests.models import Person
 
 
@@ -80,7 +80,7 @@ def test_handles_complex_typing_with_embedded_models() -> None:
     assert result.person_list[0].pets
 
 
-@pytest.mark.skipif(pydantic_version == 2, reason="pydantic 1 only test")
+@pytest.mark.skipif(VERSION.startswith("2"), reason="pydantic 1 only test")
 def test_handles_complex_typing_with_custom_root_type() -> None:
     class MyModel(BaseModel):
         __root__: List[int]

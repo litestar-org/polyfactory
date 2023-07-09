@@ -4,6 +4,7 @@ from typing import Any, Dict, List, NewType, Optional, Tuple, Union
 
 import pytest
 from pydantic import (
+    VERSION,
     BaseModel,
     PositiveFloat,
     conbytes,
@@ -17,7 +18,7 @@ from pydantic import (
     constr,
 )
 
-from polyfactory.factories.pydantic_factory import ModelFactory, pydantic_version
+from polyfactory.factories.pydantic_factory import ModelFactory
 
 
 def test_new_types() -> None:
@@ -68,7 +69,7 @@ def test_complex_new_types() -> None:
     assert isinstance(result.nested_model_field.nested_int_field, int)
 
 
-@pytest.mark.skipif(pydantic_version == 2, reason="https://github.com/pydantic/pydantic/issues/5907")
+@pytest.mark.skipif(VERSION.startswith("2"), reason="https://github.com/pydantic/pydantic/issues/5907")
 def test_constrained_new_types() -> None:
     ConBytes = NewType("ConBytes", conbytes(min_length=2, max_length=4))  # type: ignore[misc]
     ConStr = NewType("ConStr", constr(min_length=10, max_length=15))  # type: ignore[misc]
@@ -78,7 +79,7 @@ def test_constrained_new_types() -> None:
     ConDate = NewType("ConDate", condate(gt=date.today()))  # type: ignore[misc]
     ConMyPositiveFloat = NewType("ConMyPositiveFloat", PositiveFloat)
 
-    if pydantic_version == 1:
+    if VERSION.startswith("1"):
         ConList = NewType("ConList", conlist(item_type=int, min_items=3))  # type: ignore
         ConSet = NewType("ConSet", conset(item_type=int, min_items=4))  # type: ignore
         ConFrozenSet = NewType("ConFrozenSet", confrozenset(item_type=str, min_items=5))  # type: ignore

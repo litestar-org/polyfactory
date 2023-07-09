@@ -1,9 +1,9 @@
 from typing import Dict, Union
 
 import pytest
-from pydantic import BaseModel
+from pydantic import VERSION, BaseModel
 
-from polyfactory.factories.pydantic_factory import ModelFactory, pydantic_version
+from polyfactory.factories.pydantic_factory import ModelFactory
 
 
 def test_passing_nested_dict() -> None:
@@ -26,7 +26,7 @@ def test_passing_nested_dict() -> None:
 
 
 @pytest.mark.skipif(
-    pydantic_version == 2,
+    VERSION.startswith("2"),
     reason="indeterminate behaviour in pydantic 2.0",
 )
 def test_dict_with_union_random_types() -> None:

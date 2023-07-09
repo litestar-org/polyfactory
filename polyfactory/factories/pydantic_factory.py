@@ -6,11 +6,13 @@ from typing import (
     Any,
     ClassVar,
     Generic,
-    Literal,
     Mapping,
+    Tuple,
     TypeVar,
     cast,
 )
+
+from typing_extensions import Literal, get_args, get_origin
 
 from polyfactory.collection_extender import CollectionExtender
 from polyfactory.constants import MAX_COLLECTION_LENGTH, MIN_COLLECTION_LENGTH, RANDOMIZE_COLLECTION_LENGTH
@@ -21,7 +23,7 @@ from polyfactory.utils.helpers import unwrap_new_type, unwrap_optional
 from polyfactory.utils.predicates import is_optional_union, is_safe_subclass
 
 try:
-    from pydantic import BaseModel
+    from pydantic import VERSION, BaseModel
     from pydantic.fields import FieldInfo
 except ImportError as e:
     raise MissingDependencyException("pydantic is not installed") from e
@@ -29,10 +31,7 @@ except ImportError as e:
 try:
     from pydantic.fields import ModelField  # type: ignore[attr-defined]
 
-    pydantic_version: Literal[1, 2] = 1
 except ImportError:
-    pydantic_version = 2
-
     ModelField = Any
     from pydantic_core import PydanticUndefined as Undefined
 
@@ -40,7 +39,6 @@ if TYPE_CHECKING:
     from random import Random
 
     from typing_extensions import TypeGuard
-
 
 T = TypeVar("T", bound=BaseModel)
 
@@ -127,7 +125,9 @@ class PydanticFieldMeta(FieldMeta):
         from pydantic import AmqpDsn, AnyHttpUrl, AnyUrl, HttpUrl, KafkaDsn, PostgresDsn, RedisDsn
         from pydantic.fields import DeferredType, Undefined  # type: ignore
 
-        if callable(model_field.default_factory):
+        if model_field.default is not Undefined:
+            default_value = model_field.default
+        elif callable(model_field.default_factory):
             default_value = model_field.default_factory()
         else:
             default_value = model_field.default if model_field.default is not Undefined else Null
@@ -144,7 +144,6 @@ class PydanticFieldMeta(FieldMeta):
         constraints = cast(
             "Constraints",
             {
-                "constant": bool(model_field.field_info.const) or None,
                 "ge": getattr(outer_type, "ge", model_field.field_info.ge),
                 "gt": getattr(outer_type, "gt", model_field.field_info.gt),
                 "le": getattr(outer_type, "le", model_field.field_info.le),
@@ -169,7 +168,7 @@ class PydanticFieldMeta(FieldMeta):
         )
 
         # pydantic v1 has constraints set for these values, but we generate them using faker
-        if pydantic_version == 1 and unwrap_optional(annotation) in (
+        if unwrap_optional(annotation) in (
             AnyUrl,
             HttpUrl,
             KafkaDsn,
@@ -179,6 +178,11 @@ class PydanticFieldMeta(FieldMeta):
             AnyHttpUrl,
         ):
             constraints = {}
+
+        if model_field.field_info.const and (
+            default_value is None or isinstance(default_value, (int, bool, str, bytes))
+        ):
+            annotation = Literal[default_value]  # pyright: ignore
 
         children: list[FieldMeta] = []
         if model_field.key_field or model_field.sub_fields:
@@ -199,7 +203,7 @@ class PydanticFieldMeta(FieldMeta):
                 for sub_field in fields_to_iterate
             )
             type_arg_to_sub_field = dict(zip(type_args, fields_to_iterate))
-            if outer_type.__origin__ == tuple and outer_type.__args__[-1] == Ellipsis:
+            if get_origin(outer_type) in (tuple, Tuple) and get_args(outer_type)[-1] == Ellipsis:
                 # pydantic removes ellipses from Tuples in sub_fields
                 type_args += (...,)
             extended_type_args = CollectionExtender.extend_type_args(annotation, type_args, number_of_args)
@@ -256,7 +260,7 @@ class ModelFactory(Generic[T], BaseFactory[T]):
 
         """
         if "_fields_metadata" not in cls.__dict__:
-            if pydantic_version == 1:
+            if VERSION.startswith("1"):
                 cls._fields_metadata = [
                     PydanticFieldMeta.from_model_field(
                         field,
