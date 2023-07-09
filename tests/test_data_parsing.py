@@ -154,18 +154,14 @@ def test_embedded_factories_parsing() -> None:
 
 
 def test_type_property_parsing() -> None:
-    if pydantic.VERSION.startswith("2"):
-        # pydantic v2 only types
-
-        class Base(BaseModel):
+    class Base(BaseModel):
+        if pydantic.VERSION.startswith("2"):
             MongoDsn_pydantic_type: pydantic.networks.MongoDsn
             MariaDBDsn_pydantic_type: pydantic.networks.MariaDBDsn
             CockroachDsn_pydantic_type: pydantic.networks.CockroachDsn
             MySQLDsn_pydantic_type: pydantic.networks.MySQLDsn
 
-    else:
-
-        class Base(BaseModel):  # type: ignore[no-redef]
+        else:
             PyObject_pydantic_type: pydantic.types.PyObject
             Color_pydantic_type: pydantic.color.Color
 

@@ -39,7 +39,6 @@ class Constraints(TypedDict):
     """Metadata regarding a type constraints, if any"""
 
     allow_inf_nan: NotRequired[bool]
-    constant: NotRequired[bool]
     decimal_places: NotRequired[int]
     ge: NotRequired[int | float | Decimal]
     gt: NotRequired[int | float | Decimal]
@@ -183,7 +182,6 @@ class FieldMeta:
                         k: v
                         for k, v in {
                             "allow_inf_nan": getattr(value, "allow_inf_nan", None),
-                            "constant": getattr(value, "const", None) is not None,
                             "decimal_places": getattr(value, "decimal_places", None),
                             "ge": getattr(value, "ge", None),
                             "gt": getattr(value, "gt", None),
