@@ -86,6 +86,7 @@ nitpick_ignore = [
     (PY_CLASS, "tzinfo"),
     (PY_CLASS, "BeanieDocumentFactory"),
     (PY_CLASS, "OdmanticModelFactory"),
+    (PY_CLASS, "ModelField"),
 ]
 nitpick_ignore_regex = [
     (PY_RE, r"typing_extensions.*"),
