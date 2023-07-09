@@ -74,7 +74,7 @@ mongomock-motor = "*"
 msgspec = { git = "https://github.com/jcrist/msgspec.git", branch = "main" }
 odmantic = "*"
 pre-commit = "*"
-pydantic = { git = "https://github.com/pydantic/pydantic", branch = "main" }
+pydantic = ">=1.10.10,<2"
 pytest = "*"
 pytest-asyncio = "*"
 pytest-cov = "*"
