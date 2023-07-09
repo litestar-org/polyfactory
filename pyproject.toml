@@ -71,23 +71,23 @@ beanie = "*"
 email-validator = "*"
 hypothesis = "*"
 mongomock-motor = "*"
-msgspec = "*"
+msgspec = { git = "https://github.com/jcrist/msgspec.git", branch = "main" }
 odmantic = "*"
 pre-commit = "*"
-pydantic = "*"
+pydantic = { git = "https://github.com/pydantic/pydantic", branch = "main" }
 pytest = "*"
 pytest-asyncio = "*"
 pytest-cov = "*"
 sourcery = "*"
 
 [tool.poetry.group.docs.dependencies]
-sphinx-autobuild = "*"
-blacken-docs = "*"
 auto-pytabs = "*"
-sphinxcontrib-mermaid = "*"
-sphinx-copybutton = "*"
-sphinx = "*"
+blacken-docs = "*"
 litestar-sphinx-theme = { git = "https://github.com/litestar-org/litestar-sphinx-theme.git" }
+sphinx = "*"
+sphinx-autobuild = "*"
+sphinx-copybutton = "*"
+sphinxcontrib-mermaid = "*"
 
 [tool.poetry.extras]
 pydantic = ["pydantic"]

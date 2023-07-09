@@ -37,12 +37,12 @@ repos:
         exclude: "test_decimal_constraints|examples/fields/test_example_2|examples/configuration"
         additional_dependencies:
           [
-            "pydantic>=2",
+            "git+https://github.com/jcrist/msgspec.git",
+            "git+https://github.com/pydantic/pydantic.git",
             beanie,
             faker,
             hypothesis,
             mongomock_motor,
-            msgspec,
             odmantic,
             pytest,
             sphinx,
@@ -54,12 +54,12 @@ repos:
         exclude: "tests"
         additional_dependencies:
           [
-            "pydantic>=2",
+            "git+https://github.com/jcrist/msgspec.git",
+            "git+https://github.com/pydantic/pydantic.git",
             beanie,
             faker,
             hypothesis,
             mongomock_motor,
-            msgspec,
             odmantic,
             pytest,
             sphinx,
