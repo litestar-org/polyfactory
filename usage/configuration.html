@@ -1066,6 +1066,37 @@ Once a factory is generated, it is then cached and reused - when the same type i
 </div>
 </div>
 </section>
+<section id="randomized-collection-length">
+<h2>Randomized Collection Length<a class="headerlink" href="#randomized-collection-length" title="Permalink to this heading">#</a></h2>
+<p>Set of fields that allow you to generate a collection with random lengths. By default only one item is generated.</p>
+<div class="literal-block-wrapper docutils container" id="id7">
+<div class="code-block-caption"><span class="caption-text">Randomized collection length</span><a class="headerlink" href="#id7" title="Permalink to this code">#</a></div>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">dataclasses</span> <span class="kn">import</span> <span class="n">dataclass</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Tuple</span>
+
+<span class="kn">from</span> <span class="nn">polyfactory.factories</span> <span class="kn">import</span> <span class="n">DataclassFactory</span>
+
+
+<span class="nd">@dataclass</span>
+<span class="k">class</span> <span class="nc">Owner</span><span class="p">:</span>
+    <span class="n">cars</span><span class="p">:</span> <span class="n">Tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="o">...</span><span class="p">]</span>
+
+
+<span class="k">class</span> <span class="nc">OwnerFactory</span><span class="p">(</span><span class="n">DataclassFactory</span><span class="p">[</span><span class="n">Owner</span><span class="p">]):</span>
+    <span class="n">__model__</span> <span class="o">=</span> <span class="n">Owner</span>
+
+    <span class="n">__randomize_collection_length__</span> <span class="o">=</span> <span class="kc">True</span>
+    <span class="n">__min_collection_length__</span> <span class="o">=</span> <span class="mi">2</span>
+    <span class="n">__max_collection_length__</span> <span class="o">=</span> <span class="mi">5</span>
+
+
+<span class="k">def</span> <span class="nf">test_randomized_collection_length</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="n">owner</span> <span class="o">=</span> <span class="n">OwnerFactory</span><span class="o">.</span><span class="n">build</span><span class="p">()</span>
+    <span class="k">assert</span> <span class="mi">2</span> <span class="o">&lt;=</span> <span class="nb">len</span><span class="p">(</span><span class="n">owner</span><span class="o">.</span><span class="n">cars</span><span class="p">)</span> <span class="o">&lt;=</span> <span class="mi">5</span>
+</pre></div>
+</div>
+</div>
+</section>
 </section>
 
 
@@ -1120,6 +1151,7 @@ Once a factory is generated, it is then cached and reused - when the same type i
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#setting-faker">Setting Faker</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#persistence-handlers">Persistence Handlers</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#defining-default-factories">Defining Default Factories</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#randomized-collection-length">Randomized Collection Length</a></li>
 </ul>
   </nav></div>
 
