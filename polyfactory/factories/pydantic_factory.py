@@ -6,7 +6,6 @@ from typing import (
     Any,
     ClassVar,
     Generic,
-    Literal,
     Mapping,
     TypeVar,
     cast,
@@ -21,7 +20,7 @@ from polyfactory.utils.helpers import unwrap_new_type, unwrap_optional
 from polyfactory.utils.predicates import is_optional_union, is_safe_subclass
 
 try:
-    from pydantic import BaseModel
+    from pydantic import VERSION, BaseModel
     from pydantic.fields import FieldInfo
 except ImportError as e:
     raise MissingDependencyException("pydantic is not installed") from e
@@ -29,10 +28,7 @@ except ImportError as e:
 try:
     from pydantic.fields import ModelField  # type: ignore[attr-defined]
 
-    pydantic_version: Literal[1, 2] = 1
 except ImportError:
-    pydantic_version = 2
-
     ModelField = Any
     from pydantic_core import PydanticUndefined as Undefined
 
@@ -169,7 +165,7 @@ class PydanticFieldMeta(FieldMeta):
         )
 
         # pydantic v1 has constraints set for these values, but we generate them using faker
-        if pydantic_version == 1 and unwrap_optional(annotation) in (
+        if VERSION.startswith("1") and unwrap_optional(annotation) in (
             AnyUrl,
             HttpUrl,
             KafkaDsn,
@@ -256,7 +252,7 @@ class ModelFactory(Generic[T], BaseFactory[T]):
 
         """
         if "_fields_metadata" not in cls.__dict__:
-            if pydantic_version == 1:
+            if VERSION.startswith("1"):
                 cls._fields_metadata = [
                     PydanticFieldMeta.from_model_field(
                         field,

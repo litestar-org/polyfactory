@@ -5,6 +5,7 @@ from typing import Dict, List, Optional, Tuple
 
 import pytest
 from pydantic import (
+    VERSION,
     BaseModel,
     Field,
     conbytes,
@@ -17,13 +18,13 @@ from pydantic import (
     constr,
 )
 
-from polyfactory.factories.pydantic_factory import ModelFactory, pydantic_version
+from polyfactory.factories.pydantic_factory import ModelFactory
 from tests.models import Person
 
 pattern = r"(a|b|c)zz"
 
 
-@pytest.mark.skipif(pydantic_version == 2, reason="pydantic 1 only test")
+@pytest.mark.skipif(VERSION.startswith("2"), reason="pydantic 1 only test")
 def test_constrained_attribute_parsing_pydantic_v1() -> None:
     class ConstrainedModel(BaseModel):
         conbytes_field: conbytes()  # type: ignore[valid-type]
@@ -85,7 +86,7 @@ def test_constrained_attribute_parsing_pydantic_v1() -> None:
     assert result.optional_field is None or len(result.optional_field) >= 1
 
 
-@pytest.mark.skipif(pydantic_version == 2, reason="pydantic 1 only test")
+@pytest.mark.skipif(VERSION.startswith("2"), reason="pydantic 1 only test")
 def test_complex_constrained_attribute_parsing_pydantic_v1() -> None:
     class MyModel(BaseModel):
         conlist_with_model_field: conlist(Person, min_items=3)  # type: ignore[valid-type]
@@ -107,7 +108,7 @@ def test_complex_constrained_attribute_parsing_pydantic_v1() -> None:
     assert all(isinstance(v, Person) for v in list(result.conlist_with_complex_type[0].values())[0])
 
 
-@pytest.mark.skipif(pydantic_version == 2, reason="pydantic 1 only test")
+@pytest.mark.skipif(VERSION.startswith("2"), reason="pydantic 1 only test")
 def test_nested_constrained_attribute_handling_pydantic_1() -> None:
     # subclassing the constrained fields is not documented by pydantic, but is supported apparently
 
@@ -180,7 +181,8 @@ def test_nested_constrained_attribute_handling_pydantic_1() -> None:
 
 
 @pytest.mark.skipif(
-    pydantic_version == 1 or sys.version_info < (3, 9), reason="pydantic 2 only test, does not work correctly in py 3.8"
+    VERSION.startswith("1") or sys.version_info < (3, 9),
+    reason="pydantic 2 only test, does not work correctly in py 3.8",
 )
 def test_nested_constrained_attribute_handling_pydantic_2() -> None:
     # subclassing the constrained fields is not documented by pydantic, but is supported apparently
@@ -209,7 +211,8 @@ def test_nested_constrained_attribute_handling_pydantic_2() -> None:
 
 
 @pytest.mark.skipif(
-    pydantic_version == 1 or sys.version_info < (3, 9), reason="pydantic 2 only test, does not work correctly in py 3.8"
+    VERSION.startswith("1") or sys.version_info < (3, 9),
+    reason="pydantic 2 only test, does not work correctly in py 3.8",
 )
 def test_constrained_attribute_parsing_pydantic_v2() -> None:
     class ConstrainedModel(BaseModel):
@@ -270,7 +273,7 @@ def test_constrained_attribute_parsing_pydantic_v2() -> None:
     assert result.optional_field is None or len(result.optional_field) >= 1
 
 
-@pytest.mark.skipif(pydantic_version == 1, reason="pydantic 2 only test")
+@pytest.mark.skipif(VERSION.startswith("1"), reason="pydantic 2 only test")
 def test_complex_constrained_attribute_parsing_pydantic_v2() -> None:
     class MyModel(BaseModel):
         conlist_with_model_field: conlist(Person, min_length=3)  # type: ignore[valid-type]

@@ -1,9 +1,9 @@
 from uuid import uuid4
 
 import pytest
-from pydantic import BaseModel, Field, ValidationError
+from pydantic import VERSION, BaseModel, Field, ValidationError
 
-from polyfactory.factories.pydantic_factory import ModelFactory, pydantic_version
+from polyfactory.factories.pydantic_factory import ModelFactory
 from tests.models import PersonFactoryWithDefaults, Pet, PetFactory
 
 
@@ -74,7 +74,7 @@ def test_factory_use_construct() -> None:
         PetFactory.build(age=invalid_age)
 
 
-@pytest.mark.skipif(pydantic_version == 2, reason="pydantic 1 only test")
+@pytest.mark.skipif(VERSION.startswith("2"), reason="pydantic 1 only test")
 def test_build_instance_by_field_alias_with_allow_population_by_field_name_flag_pydantic_v1() -> None:
     class MyModel(BaseModel):
         aliased_field: str = Field(..., alias="special_field")
@@ -89,7 +89,7 @@ def test_build_instance_by_field_alias_with_allow_population_by_field_name_flag_
     assert instance.aliased_field == "some"
 
 
-@pytest.mark.skipif(pydantic_version == 1, reason="pydantic 2 only test")
+@pytest.mark.skipif(VERSION.startswith("1"), reason="pydantic 2 only test")
 def test_build_instance_by_field_alias_with_populate_by_name_flag_pydantic_v2() -> None:
     class MyModel(BaseModel):
         model_config = {"populate_by_name": True}

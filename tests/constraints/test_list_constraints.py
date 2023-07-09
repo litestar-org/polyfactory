@@ -5,9 +5,10 @@ from typing import Any, List
 import pytest
 from hypothesis import given
 from hypothesis.strategies import integers
+from pydantic import VERSION
 
 from polyfactory.exceptions import ParameterException
-from polyfactory.factories.pydantic_factory import ModelFactory, pydantic_version
+from polyfactory.factories.pydantic_factory import ModelFactory
 from polyfactory.field_meta import FieldMeta
 from polyfactory.value_generators.constrained_collections import (
     handle_constrained_collection,
@@ -74,7 +75,9 @@ def test_handle_constrained_list_with_min_items(
     assert len(result) >= min_items
 
 
-@pytest.mark.skipif(sys.version_info < (3, 9) and pydantic_version == 2, reason="fails on python 3.8 with pydantic v2")
+@pytest.mark.skipif(
+    sys.version_info < (3, 9) and VERSION.startswith("2"), reason="fails on python 3.8 with pydantic v2"
+)
 @pytest.mark.parametrize("t_type", tuple(ModelFactory.get_provider_map()))
 def test_handle_constrained_list_with_different_types(t_type: Any) -> None:
     field_meta = FieldMeta.from_type(List[t_type], name="test", random=Random())
