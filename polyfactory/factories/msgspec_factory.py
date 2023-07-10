@@ -10,6 +10,8 @@ from typing import (
     cast,
 )
 
+from typing_extensions import get_type_hints
+
 from polyfactory.exceptions import MissingDependencyException
 from polyfactory.factories.base import BaseFactory
 from polyfactory.field_meta import FieldMeta, Null
@@ -58,7 +60,7 @@ class MsgspecFactory(Generic[T], BaseFactory[T]):
         fields_meta: list[FieldMeta] = []
 
         for field in type_info.fields:
-            annotation = cls.__model__.__annotations__[field.name]
+            annotation = get_type_hints(cls.__model__, include_extras=True)[field.name]
             if field.default is not msgspec.NODEFAULT:
                 default_value = field.default
             elif field.default_factory is not msgspec.NODEFAULT:
