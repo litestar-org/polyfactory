@@ -2,7 +2,7 @@ import datetime as dt
 import sys
 from decimal import Decimal
 from enum import Enum
-from typing import Any, Dict, FrozenSet, List, NewType, Set, Tuple, Type, Union
+from typing import Any, Dict, FrozenSet, Generic, List, NewType, Set, Tuple, Type, TypeVar, Union
 from uuid import UUID
 
 import msgspec
@@ -227,3 +227,40 @@ def test_variable_length__tuple() -> None:
 
     foo = FooFactory.build()
     assert len(foo.items) == 3
+
+
+def test_inheritence() -> None:
+    class Foo(Struct):
+        int_field: int
+
+    class Bar(Foo):
+        pass
+
+    class BarFactory(MsgspecFactory[Bar]):
+        __model__ = Bar
+
+    bar = BarFactory.build()
+    bar_dict = structs.asdict(bar)
+
+    validated_bar = msgspec.convert(bar_dict, type=Bar)
+    assert validated_bar == bar
+
+
+def test_inheritence_with_generics() -> None:
+    T = TypeVar("T")
+
+    class Foo(Struct, Generic[T]):
+        int_field: int
+        generic_field: T
+
+    class Bar(Foo[str]):
+        pass
+
+    class BarFactory(MsgspecFactory[Bar]):
+        __model__ = Bar
+
+    bar = BarFactory.build()
+    bar_dict = structs.asdict(bar)
+
+    validated_bar = msgspec.convert(bar_dict, type=Bar)
+    assert validated_bar == bar
