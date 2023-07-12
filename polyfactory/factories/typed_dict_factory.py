@@ -4,6 +4,7 @@ from typing import Any, Generic, TypeVar
 
 from typing_extensions import TypeGuard, _TypedDictMeta, get_type_hints, is_typeddict  # type: ignore[attr-defined]
 
+from polyfactory.constants import DEFAULT_RANDOM
 from polyfactory.factories.base import BaseFactory
 from polyfactory.field_meta import FieldMeta, Null
 
@@ -37,7 +38,7 @@ class TypedDictFactory(Generic[TypedDictT], BaseFactory[TypedDictT]):
         fields_meta: list["FieldMeta"] = [
             FieldMeta.from_type(
                 annotation=annotation,
-                random=cls.__random__,
+                random=DEFAULT_RANDOM,
                 name=field_name,
                 default=getattr(cls.__model__, field_name, Null),
                 randomize_collection_length=cls.__randomize_collection_length__,

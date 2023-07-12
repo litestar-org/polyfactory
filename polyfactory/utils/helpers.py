@@ -1,7 +1,9 @@
 from __future__ import annotations
 
 import sys
-from typing import TYPE_CHECKING, Any, get_args, get_origin
+from typing import TYPE_CHECKING, Any
+
+from typing_extensions import get_args, get_origin
 
 from polyfactory.constants import TYPE_MAPPING
 from polyfactory.utils.predicates import (
@@ -36,7 +38,8 @@ def unwrap_union(annotation: Any, random: Random) -> Any:
     :returns: A type annotation
     """
     while is_union(annotation):
-        annotation = random.choice(get_args(annotation))
+        args = list(get_args(annotation))
+        annotation = random.choice(args)
     return annotation
 
 

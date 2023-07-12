@@ -76,14 +76,14 @@ class FieldMeta:
         *,
         name: str,
         annotation: type,
-        random: Random = DEFAULT_RANDOM,
+        random: Random | None = None,
         default: Any = Null,
         children: list[FieldMeta] | None = None,
         constraints: Constraints | None = None,
     ) -> None:
         """Create a factory field metadata instance."""
         self.annotation = annotation
-        self.random = random
+        self.random = random or DEFAULT_RANDOM
         self.children = children
         self.default = default
         self.name = name
@@ -144,6 +144,7 @@ class FieldMeta:
                 number_of_args = random.randint(min_collection_length, max_collection_length)
             else:
                 number_of_args = 1
+
             extended_type_args = CollectionExtender.extend_type_args(field.annotation, field.type_args, number_of_args)
             field.children = [
                 FieldMeta.from_type(
