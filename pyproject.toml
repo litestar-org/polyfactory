@@ -71,10 +71,10 @@ beanie = "*"
 email-validator = "*"
 hypothesis = "*"
 mongomock-motor = "*"
-msgspec = { git = "https://github.com/jcrist/msgspec.git", branch = "main" }
+msgspec = "*"
 odmantic = "*"
 pre-commit = "*"
-pydantic = { git = "https://github.com/pydantic/pydantic", branch = "main" }
+pydantic = ">=2"
 pytest = "*"
 pytest-asyncio = "*"
 pytest-cov = "*"

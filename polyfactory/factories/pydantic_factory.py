@@ -5,6 +5,7 @@ from typing import (
     TYPE_CHECKING,
     Any,
     ClassVar,
+    ForwardRef,
     Generic,
     Mapping,
     Tuple,
@@ -15,7 +16,12 @@ from typing import (
 from typing_extensions import Literal, get_args, get_origin
 
 from polyfactory.collection_extender import CollectionExtender
-from polyfactory.constants import MAX_COLLECTION_LENGTH, MIN_COLLECTION_LENGTH, RANDOMIZE_COLLECTION_LENGTH
+from polyfactory.constants import (
+    DEFAULT_RANDOM,
+    MAX_COLLECTION_LENGTH,
+    MIN_COLLECTION_LENGTH,
+    RANDOMIZE_COLLECTION_LENGTH,
+)
 from polyfactory.exceptions import MissingDependencyException
 from polyfactory.factories.base import BaseFactory
 from polyfactory.field_meta import Constraints, FieldMeta, Null
@@ -52,7 +58,7 @@ class PydanticFieldMeta(FieldMeta):
         field_name: str,
         field_info: FieldInfo,
         use_alias: bool,
-        random: Random,
+        random: Random | None,
         randomize_collection_length: bool = RANDOMIZE_COLLECTION_LENGTH,
         min_collection_length: int = MIN_COLLECTION_LENGTH,
         max_collection_length: int = MAX_COLLECTION_LENGTH,
@@ -91,7 +97,7 @@ class PydanticFieldMeta(FieldMeta):
 
         return PydanticFieldMeta.from_type(
             name=name,
-            random=random,
+            random=random or DEFAULT_RANDOM,
             annotation=annotation,
             default=default_value,
             constraints=cast("Constraints", {k: v for k, v in constraints.items() if v is not None}) or None,
@@ -105,19 +111,18 @@ class PydanticFieldMeta(FieldMeta):
         cls,
         model_field: ModelField,  # pyright: ignore
         use_alias: bool,
-        random: Random,
         randomize_collection_length: bool,
         min_collection_length: int,
         max_collection_length: int,
+        random: Random = DEFAULT_RANDOM,
     ) -> PydanticFieldMeta:
         """Create an instance from a pydantic model field.
-
         :param model_field: A pydantic ModelField.
         :param use_alias: Whether to use the field alias.
-        :param random: An instance of random.Random.
         :param randomize_collection_length: A boolean flag whether to randomize collections lengths
         :param min_collection_length: Minimum number of elements in randomized collection
         :param max_collection_length: Maximum number of elements in randomized collection
+        :param random: An instance of random.Random.
 
         :returns: A PydanticFieldMeta instance.
 
@@ -137,7 +142,7 @@ class PydanticFieldMeta(FieldMeta):
         outer_type = unwrap_new_type(model_field.outer_type_)
         annotation = (
             model_field.outer_type_
-            if isinstance(model_field.annotation, DeferredType)
+            if isinstance(model_field.annotation, (DeferredType, ForwardRef))
             else unwrap_new_type(model_field.annotation)
         )
 
@@ -209,19 +214,19 @@ class PydanticFieldMeta(FieldMeta):
             extended_type_args = CollectionExtender.extend_type_args(annotation, type_args, number_of_args)
             children.extend(
                 PydanticFieldMeta.from_model_field(
-                    type_arg_to_sub_field[arg],
-                    use_alias,
-                    random,
-                    randomize_collection_length,
-                    min_collection_length,
-                    max_collection_length,
+                    model_field=type_arg_to_sub_field[arg],
+                    use_alias=use_alias,
+                    random=random,
+                    randomize_collection_length=randomize_collection_length,
+                    min_collection_length=min_collection_length,
+                    max_collection_length=max_collection_length,
                 )
                 for arg in extended_type_args
             )
 
         return PydanticFieldMeta(
             name=name,
-            random=cls.random,
+            random=random or DEFAULT_RANDOM,
             annotation=annotation,
             children=children or None,
             default=default_value,
@@ -238,7 +243,11 @@ class ModelFactory(Generic[T], BaseFactory[T]):
     def __init_subclass__(cls, *args: Any, **kwargs: Any) -> None:
         super().__init_subclass__(*args, **kwargs)
 
-        if not cls.__is_base_factory__ and hasattr(cls.__model__, "update_forward_refs"):
+        if (
+            VERSION.startswith("1")
+            and getattr(cls, "__model__", None)
+            and hasattr(cls.__model__, "update_forward_refs")
+        ):
             with suppress(NameError):  # pragma: no cover
                 cls.__model__.update_forward_refs(**cls.__forward_ref_resolution_type_mapping__)
 
