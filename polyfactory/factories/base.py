@@ -402,7 +402,7 @@ class BaseFactory(ABC, Generic[T]):
 
         """
         cls.__random__.seed(seed, version=3)
-        Faker.seed(seed)
+        cls.__faker__.seed_instance(seed)
 
     @classmethod
     def is_ignored_type(cls, value: Any) -> bool:
