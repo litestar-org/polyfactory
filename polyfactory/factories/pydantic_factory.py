@@ -273,7 +273,7 @@ class ModelFactory(Generic[T], BaseFactory[T]):
                 cls._fields_metadata = [
                     PydanticFieldMeta.from_model_field(
                         field,
-                        use_alias=not cls.__model__.__config__.allow_population_by_field_name,
+                        use_alias=not cls.__model__.__config__.allow_population_by_field_name,  # type: ignore[attr-defined]
                         random=cls.__random__,
                         randomize_collection_length=cls.__randomize_collection_length__,
                         min_collection_length=cls.__min_collection_length__,

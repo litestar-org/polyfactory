@@ -4,12 +4,14 @@ Contributing
 Setting up the environment
 --------------------------
 
-1. Install `poetry <https://python-poetry.org/>`_
-2. Run ``poetry install`` to create a `virtual environment <https://docs.python.org/3/tutorial/venv.html>`_ and install
-   the dependencies
-3. If you're working on the documentation and need to build it locally, install the extra dependencies with ``poetry install --with docs``
-4. Install `pre-commit <https://pre-commit.com/>`_
-5. Run ``pre-commit install`` to install pre-commit hooks
+1. Install `poetry <https://python-poetry.org/>`_.
+2. Run ``poetry install --extras full`` to create a `virtual environment <https://docs.python.org/3/tutorial/venv.html>`_
+    and install
+   the dependencies.
+3. If you're working on the documentation and need to build it locally, install the extra dependencies with ``poetry
+    install --with docs --extras full``.
+4. Install `pre-commit <https://pre-commit.com/>`_.
+5. Run ``pre-commit install`` to install pre-commit hooks.
 
 Code contributions
 ------------------
@@ -18,7 +20,7 @@ Workflow
 ++++++++
 
 1. `Fork <https://github.com/litestar-org/polyfactory/fork>`_ the upstream repository and clone the fork locally.
-2. Install `poetry <https://python-poetry.org/>`_, and install the project's dependencies with ``poetry install``.
+2. Install `poetry <https://python-poetry.org/>`_, and install the project's dependencies with ``poetry install --extras full``.
 3. Install `pre-commit <https://pre-commit.com/>`_ by running ``pre-commit install``.
 4. Make whatever changes and additions you wish and commit these - please try to keep your commit history clean.
    1. .. note:: 100% tests are mandatory.
@@ -50,7 +52,7 @@ Running the docs locally
 
 To run or build the docs locally, you need to first install the required dependencies:
 
-``poetry install --with docs``
+``poetry install --with docs --extras full``
 
 Then you can serve the documentation with ``make docs-serve``, or build them with ``make docs``
 
