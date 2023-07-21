@@ -3,6 +3,8 @@ from __future__ import annotations
 from dataclasses import asdict, is_dataclass
 from typing import TYPE_CHECKING, Any, Literal, Pattern, TypedDict, cast
 
+from typing_extensions import get_args, get_origin
+
 from polyfactory.collection_extender import CollectionExtender
 from polyfactory.constants import (
     DEFAULT_RANDOM,
@@ -131,14 +133,21 @@ class FieldMeta:
             _, metadata = unwrap_annotated(annotation, random=random)
             constraints = cls.parse_constraints(metadata)
 
+        if not any(is_annotated(arg) for arg in get_args(annotation)):
+            annotation = TYPE_MAPPING[field_type] if field_type in TYPE_MAPPING else field_type
+        elif (origin := get_origin(annotation)) and origin in TYPE_MAPPING:  # pragma: no cover
+            container = TYPE_MAPPING[origin]
+            annotation = container[get_args(annotation)]  # type: ignore
+
         field = cls(
-            annotation=TYPE_MAPPING[field_type] if field_type in TYPE_MAPPING else field_type,
+            annotation=annotation,
             random=random,
             name=name,
             default=default,
             children=None,
             constraints=constraints,
         )
+
         if field.type_args:
             if randomize_collection_length:
                 number_of_args = random.randint(min_collection_length, max_collection_length)
