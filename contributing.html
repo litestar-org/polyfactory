@@ -739,12 +739,13 @@ document.write(`
 <section id="setting-up-the-environment">
 <h2>Setting up the environment<a class="headerlink" href="#setting-up-the-environment" title="Permalink to this heading">#</a></h2>
 <ol class="arabic simple">
-<li><p>Install <a class="reference external" href="https://python-poetry.org/">poetry</a></p></li>
-<li><p>Run <code class="docutils literal notranslate"><span class="pre">poetry</span> <span class="pre">install</span></code> to create a <a class="reference external" href="https://docs.python.org/3/tutorial/venv.html">virtual environment</a> and install
-the dependencies</p></li>
-<li><p>If you’re working on the documentation and need to build it locally, install the extra dependencies with <code class="docutils literal notranslate"><span class="pre">poetry</span> <span class="pre">install</span> <span class="pre">--with</span> <span class="pre">docs</span></code></p></li>
-<li><p>Install <a class="reference external" href="https://pre-commit.com/">pre-commit</a></p></li>
-<li><p>Run <code class="docutils literal notranslate"><span class="pre">pre-commit</span> <span class="pre">install</span></code> to install pre-commit hooks</p></li>
+<li><p>Install <a class="reference external" href="https://python-poetry.org/">poetry</a>.</p></li>
+<li><p>Run <code class="docutils literal notranslate"><span class="pre">poetry</span> <span class="pre">install</span> <span class="pre">--extras</span> <span class="pre">full</span></code> to create a <a class="reference external" href="https://docs.python.org/3/tutorial/venv.html">virtual environment</a>
+and install the dependencies.</p></li>
+<li><p>If you’re working on the documentation and need to build it locally, install the extra dependencies with <code class="docutils literal notranslate"><span class="pre">poetry</span>
+<span class="pre">install</span> <span class="pre">--with</span> <span class="pre">docs</span> <span class="pre">--extras</span> <span class="pre">full</span></code>.</p></li>
+<li><p>Install <a class="reference external" href="https://pre-commit.com/">pre-commit</a>.</p></li>
+<li><p>Run <code class="docutils literal notranslate"><span class="pre">pre-commit</span> <span class="pre">install</span></code> to install pre-commit hooks.</p></li>
 </ol>
 </section>
 <section id="code-contributions">
@@ -753,7 +754,7 @@ the dependencies</p></li>
 <h3>Workflow<a class="headerlink" href="#workflow" title="Permalink to this heading">#</a></h3>
 <ol class="arabic simple">
 <li><p><a class="reference external" href="https://github.com/litestar-org/polyfactory/fork">Fork</a> the upstream repository and clone the fork locally.</p></li>
-<li><p>Install <a class="reference external" href="https://python-poetry.org/">poetry</a>, and install the project’s dependencies with <code class="docutils literal notranslate"><span class="pre">poetry</span> <span class="pre">install</span></code>.</p></li>
+<li><p>Install <a class="reference external" href="https://python-poetry.org/">poetry</a>, and install the project’s dependencies with <code class="docutils literal notranslate"><span class="pre">poetry</span> <span class="pre">install</span> <span class="pre">--extras</span> <span class="pre">full</span></code>.</p></li>
 <li><p>Install <a class="reference external" href="https://pre-commit.com/">pre-commit</a> by running <code class="docutils literal notranslate"><span class="pre">pre-commit</span> <span class="pre">install</span></code>.</p></li>
 <li><p>Make whatever changes and additions you wish and commit these - please try to keep your commit history clean.
 1. .. note:: 100% tests are mandatory.</p></li>
@@ -762,8 +763,9 @@ the dependencies</p></li>
 </ol>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
-<p>The test suite requires having an instance of MongoDB available. You can launch one using the root level
-docker-compose config with <code class="docutils literal notranslate"><span class="pre">docker-compose</span> <span class="pre">up</span> <span class="pre">--detach</span></code>, or by any other means.</p>
+<p>The test suite requires having an instance of MongoDB available. You can launch one
+using the root level docker-compose config with <code class="docutils literal notranslate"><span class="pre">docker-compose</span> <span class="pre">up</span> <span class="pre">--detach</span></code>, or
+by any other means.</p>
 </div>
 </section>
 </section>
@@ -783,7 +785,7 @@ you should consult the theme docs as a first step.</p>
 <section id="running-the-docs-locally">
 <h3>Running the docs locally<a class="headerlink" href="#running-the-docs-locally" title="Permalink to this heading">#</a></h3>
 <p>To run or build the docs locally, you need to first install the required dependencies:</p>
-<p><code class="docutils literal notranslate"><span class="pre">poetry</span> <span class="pre">install</span> <span class="pre">--with</span> <span class="pre">docs</span></code></p>
+<p><code class="docutils literal notranslate"><span class="pre">poetry</span> <span class="pre">install</span> <span class="pre">--with</span> <span class="pre">docs</span> <span class="pre">--extras</span> <span class="pre">full</span></code></p>
 <p>Then you can serve the documentation with <code class="docutils literal notranslate"><span class="pre">make</span> <span class="pre">docs-serve</span></code>, or build them with <code class="docutils literal notranslate"><span class="pre">make</span> <span class="pre">docs</span></code></p>
 </section>
 <section id="writing-and-editing-docs">
