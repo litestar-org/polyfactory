@@ -1,7 +1,5 @@
-from __future__ import annotations
-
 from dataclasses import dataclass
-from typing import Literal, Tuple
+from typing import Literal, Tuple, Union
 
 from annotated_types import Ge, Le, LowerCase, UpperCase
 from pydantic import BaseModel, Field
@@ -28,7 +26,7 @@ def test_discriminated_unions() -> None:
 
     class Owner(BaseModel):
         pet: Annotated[
-            Annotated[BlackCat | WhiteCat, Field(discriminator="color")] | Dog,
+            Union[Annotated[Union[BlackCat, WhiteCat], Field(discriminator="color")], Dog],
             Field(discriminator="pet_type"),
         ]
         name: str
@@ -53,7 +51,7 @@ def test_predicated_fields() -> None:
 
 def test_tuple_with_annotated_constraints() -> None:
     class Location(BaseModel):
-        long_lat: tuple[Annotated[float, Ge(-180), Le(180)], Annotated[float, Ge(-90), Le(90)]]
+        long_lat: Tuple[Annotated[float, Ge(-180), Le(180)], Annotated[float, Ge(-90), Le(90)]]
 
     class LocationFactory(ModelFactory[Location]):
         __model__ = Location
@@ -63,7 +61,7 @@ def test_tuple_with_annotated_constraints() -> None:
 
 def test_legacy_tuple_with_annotated_constraints() -> None:
     class Location(BaseModel):
-        long_lat: Tuple[Annotated[float, Ge(-180), Le(180)], Annotated[float, Ge(-90), Le(90)]]  # noqa
+        long_lat: Tuple[Annotated[float, Ge(-180), Le(180)], Annotated[float, Ge(-90), Le(90)]]
 
     class LocationFactory(ModelFactory[Location]):
         __model__ = Location
