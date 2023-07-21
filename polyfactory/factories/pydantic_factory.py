@@ -69,6 +69,9 @@ class PydanticFieldMeta(FieldMeta):
         :param field_info: A pydantic FieldInfo instance.
         :param use_alias: Whether to use the field alias.
         :param random: A random.Random instance.
+        :param randomize_collection_length: Whether to randomize collection length.
+        :param min_collection_length: Minimum collection length.
+        :param max_collection_length: Maximum collection length.
 
         :returns: A PydanticFieldMeta instance.
         """
