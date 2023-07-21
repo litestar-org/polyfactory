@@ -6,10 +6,9 @@ Setting up the environment
 
 1. Install `poetry <https://python-poetry.org/>`_.
 2. Run ``poetry install --extras full`` to create a `virtual environment <https://docs.python.org/3/tutorial/venv.html>`_
-    and install
-   the dependencies.
+   and install the dependencies.
 3. If you're working on the documentation and need to build it locally, install the extra dependencies with ``poetry
-    install --with docs --extras full``.
+   install --with docs --extras full``.
 4. Install `pre-commit <https://pre-commit.com/>`_.
 5. Run ``pre-commit install`` to install pre-commit hooks.
 
@@ -27,8 +26,10 @@ Workflow
 5. Once you are ready, add a PR in the main repo.
 6. Create a pull request to the main repository with an explanation of your changes.
 
-.. note:: The test suite requires having an instance of MongoDB available. You can launch one using the root level
-          docker-compose config with ``docker-compose up --detach``, or by any other means.
+.. note::
+    The test suite requires having an instance of MongoDB available. You can launch one
+    using the root level docker-compose config with ``docker-compose up --detach``, or
+    by any other means.
 
 
 Project documentation
