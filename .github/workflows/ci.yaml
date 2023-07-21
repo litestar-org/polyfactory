@@ -50,7 +50,7 @@ jobs:
           key: v1-venv-${{ runner.os }}-${{ matrix.python-version }}-${{ matrix.pydantic-version}}-${{ hashFiles('**/poetry.lock') }}
       - name: Install dependencies
         if: steps.cached-poetry-dependencies.outputs.cache-hit != 'true'
-        run: poetry install --no-interaction
+        run: poetry install --no-interaction --extras full
       - name: Install pydantic
         if: matrix.pydantic-version == '1.10'
         run: source .venv/bin/activate && pip install "pydantic==1.10.10"
@@ -88,7 +88,7 @@ jobs:
           path: .venv
           key: venv-docs-${{ hashFiles('**/poetry.lock') }}
       - name: Install docs dependencies
-        run: poetry install --no-interaction --with docs
+        run: poetry install --no-interaction --with docs --extras full
       - name: Build docs
         run: poetry run make docs
   sonar:

@@ -53,7 +53,7 @@ repos:
             sphinx,
           ]
   - repo: https://github.com/RobertCraigie/pyright-python
-    rev: v1.1.317
+    rev: v1.1.318
     hooks:
       - id: pyright
         exclude: "tests"
@@ -69,3 +69,7 @@ repos:
             pytest,
             sphinx,
           ]
+  - repo: https://github.com/sphinx-contrib/sphinx-lint
+    rev: "v0.6.7"
+    hooks:
+      - id: sphinx-lint
