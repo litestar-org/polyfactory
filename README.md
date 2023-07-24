@@ -22,6 +22,9 @@
 
 # Polyfactory
 
+> [!IMPORTANT]\
+> [**_Starlite has been renamed to Litestar_**](https://litestar.dev/about/organization.html#litestar-and-starlite)
+
 Polyfactory is a simple and powerful mock data generation library, based around type
 hints and supporting dataclasses, typed-dicts, pydantic models, msgspec structs and more.
 
