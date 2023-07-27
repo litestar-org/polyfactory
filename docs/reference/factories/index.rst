@@ -14,3 +14,4 @@ factories
     msgspec_factory
     odmantic_odm_factory
     beanie_odm_factory
+    attrs_factory
