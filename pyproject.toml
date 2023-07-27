@@ -64,6 +64,7 @@ msgspec = { version = "*", optional = true }
 odmantic = { version = "*", optional = true }
 pydantic = { version = "*", optional = true, extras = ["email"] }
 typing-extensions = "*"
+attrs = {version = "*", optional = true}
 
 [tool.poetry.group.dev.dependencies]
 hypothesis = "*"
@@ -98,11 +99,13 @@ pydantic = ["pydantic"]
 msgspec = ["msgspec"]
 odmantic = ["odmantic", "pydantic"]
 beanie = ["beanie", "pydantic"]
+attrs = ["attrs"]
 full = [
     "pydantic",
     "odmantic",
     "msgspec",
     "beanie",
+    "attrs",
 ]
 
 [build-system]
