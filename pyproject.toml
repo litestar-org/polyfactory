@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "polyfactory"
-version = "2.6.3"
+version = "2.7.0"
 description = "Mock data generation factories"
 authors = [
     "Na'aman Hirschfeld <nhirschfeld@gmail.com>",
@@ -20,19 +20,11 @@ homepage = "https://github.com/litestar-org/polyfactory"
 repository = "https://github.com/litestar-org/polyfactory"
 documentation = "https://github.com/litestar-org/polyfactory"
 keywords = [
-    "beanie",
     "dataclasses",
     "factory",
-    "faker",
-    "litestar",
-    "mock",
     "msgspec",
-    "odmantic",
     "pydantic",
-    "pytest",
-    "tdd",
     "testing",
-    "typeddict",
 ]
 classifiers = [
     "Development Status :: 5 - Production/Stable",
@@ -64,7 +56,7 @@ msgspec = { version = "*", optional = true }
 odmantic = { version = "*", optional = true }
 pydantic = { version = "*", optional = true, extras = ["email"] }
 typing-extensions = "*"
-attrs = {version = "*", optional = true}
+attrs = { version = "*", optional = true }
 
 [tool.poetry.group.dev.dependencies]
 hypothesis = "*"

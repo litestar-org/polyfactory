@@ -26,7 +26,7 @@ from polyfactory.exceptions import MissingDependencyException
 from polyfactory.factories.base import BaseFactory
 from polyfactory.field_meta import Constraints, FieldMeta, Null
 from polyfactory.utils.helpers import unwrap_new_type, unwrap_optional
-from polyfactory.utils.predicates import is_optional_union, is_safe_subclass
+from polyfactory.utils.predicates import is_optional_union, is_safe_subclass, is_union
 
 try:
     from pydantic import VERSION, BaseModel
@@ -80,33 +80,45 @@ class PydanticFieldMeta(FieldMeta):
         else:
             default_value = field_info.default if field_info.default is not Undefined else Null
 
+        annotation = unwrap_new_type(field_info.annotation)
+        children: list[FieldMeta,] | None = None
+        constraints: Constraints = {}
         name = field_info.alias if field_info.alias and use_alias else field_name
 
-        annotation = unwrap_new_type(field_info.annotation)
-
-        if is_optional_union(field_info.annotation):
-            # pydantic v2 do not propagate metadata for Union types #[?]
-            # hence we cannot acquire any constraints w/ straightforward approach
+        # pydantic v2 do not propagate metadata for Union types
+        if is_optional_union(annotation):
             field_info = FieldInfo.from_annotation(unwrap_optional(annotation))
+        elif is_union(annotation):
+            children = [
+                cls.from_field_info(
+                    field_info=FieldInfo.from_annotation(arg),
+                    field_name=field_name,
+                    max_collection_length=max_collection_length,
+                    min_collection_length=min_collection_length,
+                    random=random,
+                    randomize_collection_length=randomize_collection_length,
+                    use_alias=use_alias,
+                )
+                for arg in get_args(annotation)
+            ]
 
         if metadata := [v for v in field_info.metadata if v is not None]:
             constraints = cls.parse_constraints(metadata=metadata)
-        else:
-            constraints = {}
 
         if "url" in constraints:
             # pydantic uses a sentinel value for url constraints
             annotation = str
 
         return PydanticFieldMeta.from_type(
+            annotation=annotation,
+            children=children,
+            constraints=cast("Constraints", {k: v for k, v in constraints.items() if v is not None}) or None,
+            default=default_value,
+            max_collection_length=max_collection_length,
+            min_collection_length=min_collection_length,
             name=name,
             random=random or DEFAULT_RANDOM,
-            annotation=annotation,
-            default=default_value,
-            constraints=cast("Constraints", {k: v for k, v in constraints.items() if v is not None}) or None,
             randomize_collection_length=randomize_collection_length,
-            min_collection_length=min_collection_length,
-            max_collection_length=max_collection_length,
         )
 
     @classmethod

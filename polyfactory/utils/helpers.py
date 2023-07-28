@@ -51,7 +51,7 @@ def unwrap_optional(annotation: Any) -> Any:
     :returns: A type annotation
     """
     while is_optional_union(annotation):
-        annotation = [arg for arg in get_args(annotation) if arg not in (type(None), None)][0]
+        annotation = next(arg for arg in get_args(annotation) if arg not in (type(None), None))
     return annotation
 
 
