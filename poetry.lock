@@ -1890,8 +1890,9 @@ docs = ["furo", "jaraco.packaging (>=9.3)", "jaraco.tidelift (>=1.4)", "rst.link
 testing = ["big-O", "jaraco.functools", "jaraco.itertools", "more-itertools", "pytest (>=6)", "pytest-black (>=0.3.7)", "pytest-checkdocs (>=2.4)", "pytest-cov", "pytest-enabler (>=2.2)", "pytest-ignore-flaky", "pytest-mypy (>=0.9.1)", "pytest-ruff"]
 
 [extras]
+attrs = ["attrs"]
 beanie = ["beanie", "pydantic"]
-full = ["beanie", "msgspec", "odmantic", "pydantic"]
+full = ["attrs", "beanie", "msgspec", "odmantic", "pydantic"]
 msgspec = ["msgspec"]
 odmantic = ["odmantic", "pydantic"]
 pydantic = ["pydantic"]
@@ -1899,4 +1900,4 @@ pydantic = ["pydantic"]
 [metadata]
 lock-version = "2.0"
 python-versions = ">=3.8,<4.0"
-content-hash = "f99487000e55fe0b08a744930b288d81d55b1e66547d69223e01640a30b00bc1"
+content-hash = "25094a0e7feb671a9aba503e09c2304b739b43ace6da443e647780f80aabd630"

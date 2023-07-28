@@ -23,6 +23,9 @@ These include:
 :class:`MsgspecFactory <polyfactory.factories.msgspec_factory.MsgspecFactory>`
     a base factory for `msgspec <https://jcristharif.com/msgspec/>`_ Structs
 
+:class:`AttrsFactory <polyfactory.factories.attrs_factory.AttrsFactory>`
+    a base factory for `attrs <https://www.attrs.org/en/stable/index.html>`_ models.
+
 .. note::
     All factories exported from ``polyfactory.factories`` do not require any additional dependencies. The other factories,
     such as :class:`ModelFactory <polyfactory.factories.pydantic_factory.ModelFactory>`, require an additional but optional
