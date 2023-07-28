@@ -659,6 +659,7 @@ document.write(`
 <li class="toctree-l3"><a class="reference internal" href="reference/factories/msgspec_factory.html">msgspec_factory</a></li>
 <li class="toctree-l3"><a class="reference internal" href="reference/factories/odmantic_odm_factory.html">odmantic_odm_factory</a></li>
 <li class="toctree-l3"><a class="reference internal" href="reference/factories/beanie_odm_factory.html">beanie_odm_factory</a></li>
+<li class="toctree-l3"><a class="reference internal" href="reference/factories/attrs_factory.html">attrs_factory</a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="reference/field_meta.html">field_meta</a></li>
@@ -767,6 +768,8 @@ document.write(`
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="reference/persistence.html#polyfactory.persistence.AsyncPersistenceProtocol">AsyncPersistenceProtocol (class in polyfactory.persistence)</a>
+</li>
+      <li><a href="reference/factories/attrs_factory.html#polyfactory.factories.attrs_factory.AttrsFactory">AttrsFactory (class in polyfactory.factories.attrs_factory)</a>
 </li>
   </ul></td>
 </tr></table>
@@ -880,9 +883,11 @@ document.write(`
       </ul></li>
       <li><a href="reference/value_generators/constrained_numbers.html#polyfactory.value_generators.constrained_numbers.get_increment">get_increment() (in module polyfactory.value_generators.constrained_numbers)</a>
 </li>
-      <li><a href="reference/factories/base.html#polyfactory.factories.base.BaseFactory.get_model_fields">get_model_fields() (polyfactory.factories.base.BaseFactory class method)</a>
+      <li><a href="reference/factories/attrs_factory.html#polyfactory.factories.attrs_factory.AttrsFactory.get_model_fields">get_model_fields() (polyfactory.factories.attrs_factory.AttrsFactory class method)</a>
 
       <ul>
+        <li><a href="reference/factories/base.html#polyfactory.factories.base.BaseFactory.get_model_fields">(polyfactory.factories.base.BaseFactory class method)</a>
+</li>
         <li><a href="reference/factories/dataclass_factory.html#polyfactory.factories.dataclass_factory.DataclassFactory.get_model_fields">(polyfactory.factories.dataclass_factory.DataclassFactory class method)</a>
 </li>
         <li><a href="reference/factories/msgspec_factory.html#polyfactory.factories.msgspec_factory.MsgspecFactory.get_model_fields">(polyfactory.factories.msgspec_factory.MsgspecFactory class method)</a>
@@ -946,11 +951,11 @@ document.write(`
 </li>
       <li><a href="reference/value_generators/constrained_numbers.html#polyfactory.value_generators.constrained_numbers.is_multiply_of_multiple_of_in_range">is_multiply_of_multiple_of_in_range() (in module polyfactory.value_generators.constrained_numbers)</a>
 </li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="reference/factories/base.html#polyfactory.factories.base.BaseFactory.is_supported_type">is_supported_type() (polyfactory.factories.base.BaseFactory class method)</a>
+      <li><a href="reference/factories/attrs_factory.html#polyfactory.factories.attrs_factory.AttrsFactory.is_supported_type">is_supported_type() (polyfactory.factories.attrs_factory.AttrsFactory class method)</a>
 
       <ul>
+        <li><a href="reference/factories/base.html#polyfactory.factories.base.BaseFactory.is_supported_type">(polyfactory.factories.base.BaseFactory class method)</a>
+</li>
         <li><a href="reference/factories/beanie_odm_factory.html#polyfactory.factories.beanie_odm_factory.BeanieDocumentFactory.is_supported_type">(polyfactory.factories.beanie_odm_factory.BeanieDocumentFactory class method)</a>
 </li>
         <li><a href="reference/factories/dataclass_factory.html#polyfactory.factories.dataclass_factory.DataclassFactory.is_supported_type">(polyfactory.factories.dataclass_factory.DataclassFactory class method)</a>
@@ -985,6 +990,8 @@ document.write(`
         <li><a href="reference/decorators.html#module-polyfactory.decorators">polyfactory.decorators</a>
 </li>
         <li><a href="reference/exceptions.html#module-polyfactory.exceptions">polyfactory.exceptions</a>
+</li>
+        <li><a href="reference/factories/attrs_factory.html#module-polyfactory.factories.attrs_factory">polyfactory.factories.attrs_factory</a>
 </li>
         <li><a href="reference/factories/base.html#module-polyfactory.factories.base">polyfactory.factories.base</a>
 </li>
@@ -1077,6 +1084,13 @@ document.write(`
 </li>
       </ul></li>
       <li>
+    polyfactory.factories.attrs_factory
+
+      <ul>
+        <li><a href="reference/factories/attrs_factory.html#module-polyfactory.factories.attrs_factory">module</a>
+</li>
+      </ul></li>
+      <li>
     polyfactory.factories.base
 
       <ul>
@@ -1125,6 +1139,8 @@ document.write(`
         <li><a href="reference/factories/typed_dict_factory.html#module-polyfactory.factories.typed_dict_factory">module</a>
 </li>
       </ul></li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
       <li>
     polyfactory.field_meta
 
@@ -1132,8 +1148,6 @@ document.write(`
         <li><a href="reference/field_meta.html#module-polyfactory.field_meta">module</a>
 </li>
       </ul></li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
       <li>
     polyfactory.fields
 

@@ -664,6 +664,7 @@ document.write(`
 <li class="toctree-l3"><a class="reference internal" href="../reference/factories/msgspec_factory.html">msgspec_factory</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../reference/factories/odmantic_odm_factory.html">odmantic_odm_factory</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../reference/factories/beanie_odm_factory.html">beanie_odm_factory</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../reference/factories/attrs_factory.html">attrs_factory</a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="../reference/field_meta.html">field_meta</a></li>
@@ -864,14 +865,54 @@ dataclasses interface. For example, this is using the pydantic <code class="docu
 </div>
 </div>
 </div>
+<p>Or for attrs models:</p>
+<div class="literal-block-wrapper docutils container" id="id5">
+<div class="code-block-caption"><span class="caption-text">Declaring a factory for a attrs model</span><a class="headerlink" href="#id5" title="Permalink to this code">#</a></div>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">datetime</span> <span class="kn">import</span> <span class="n">date</span><span class="p">,</span> <span class="n">datetime</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">List</span><span class="p">,</span> <span class="n">Union</span>
+<span class="kn">from</span> <span class="nn">uuid</span> <span class="kn">import</span> <span class="n">UUID</span>
+
+<span class="kn">import</span> <span class="nn">attrs</span>
+
+<span class="kn">from</span> <span class="nn">polyfactory.factories.attrs_factory</span> <span class="kn">import</span> <span class="n">AttrsFactory</span>
+
+
+<span class="nd">@attrs</span><span class="o">.</span><span class="n">define</span>
+<span class="k">class</span> <span class="nc">Person</span><span class="p">:</span>
+    <span class="nb">id</span><span class="p">:</span> <span class="n">UUID</span>
+    <span class="n">name</span><span class="p">:</span> <span class="nb">str</span>
+    <span class="n">hobbies</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span>
+    <span class="n">age</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="nb">int</span><span class="p">]</span>
+    <span class="c1"># an aliased variable</span>
+    <span class="n">birthday</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">datetime</span><span class="p">,</span> <span class="n">date</span><span class="p">]</span> <span class="o">=</span> <span class="n">attrs</span><span class="o">.</span><span class="n">field</span><span class="p">(</span><span class="n">alias</span><span class="o">=</span><span class="s2">&quot;date_of_birth&quot;</span><span class="p">)</span>
+    <span class="c1"># a &quot;private&quot; variable</span>
+    <span class="n">_assets</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]]]</span>
+
+
+<span class="k">class</span> <span class="nc">PersonFactory</span><span class="p">(</span><span class="n">AttrsFactory</span><span class="p">[</span><span class="n">Person</span><span class="p">]):</span>
+    <span class="n">__model__</span> <span class="o">=</span> <span class="n">Person</span>
+
+
+<span class="k">def</span> <span class="nf">test_person_factory</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="n">person</span> <span class="o">=</span> <span class="n">PersonFactory</span><span class="o">.</span><span class="n">build</span><span class="p">()</span>
+
+    <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">person</span><span class="p">,</span> <span class="n">Person</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Validators are not currently supported - neither the built in validators that come
+with <cite>attrs</cite> nor custom validators.</p>
+</div>
 <section id="imperative-factory-creation">
 <h2>Imperative Factory Creation<a class="headerlink" href="#imperative-factory-creation" title="Permalink to this heading">#</a></h2>
 <p>Although the definition of factories is primarily meant to be done imperatively, factories expose the
 <a class="reference internal" href="../reference/factories/base.html#polyfactory.factories.base.BaseFactory.create_factory" title="polyfactory.factories.base.BaseFactory.create_factory"><code class="xref py py-meth docutils literal notranslate"><span class="pre">create_factory</span></code></a> method. This method is used internally
 inside factories to dynamically create factories for models. For example, below the <code class="docutils literal notranslate"><span class="pre">PersonFactory</span></code> will dynamically
 create a <code class="docutils literal notranslate"><span class="pre">PetFactory</span></code>:</p>
-<div class="literal-block-wrapper docutils container" id="id5">
-<div class="code-block-caption"><span class="caption-text">Dynamic factory generation</span><a class="headerlink" href="#id5" title="Permalink to this code">#</a></div>
+<div class="literal-block-wrapper docutils container" id="id6">
+<div class="code-block-caption"><span class="caption-text">Dynamic factory generation</span><a class="headerlink" href="#id6" title="Permalink to this code">#</a></div>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">dataclasses</span> <span class="kn">import</span> <span class="n">dataclass</span>
 <span class="kn">from</span> <span class="nn">datetime</span> <span class="kn">import</span> <span class="n">date</span><span class="p">,</span> <span class="n">datetime</span>
 <span class="kn">from</span> <span class="nn">enum</span> <span class="kn">import</span> <span class="n">Enum</span>
@@ -916,8 +957,8 @@ create a <code class="docutils literal notranslate"><span class="pre">PetFactory
 </div>
 </div>
 <p>You can also use this method to create factories imperatively:</p>
-<div class="literal-block-wrapper docutils container" id="id6">
-<div class="code-block-caption"><span class="caption-text">Imperative factory creation</span><a class="headerlink" href="#id6" title="Permalink to this code">#</a></div>
+<div class="literal-block-wrapper docutils container" id="id7">
+<div class="code-block-caption"><span class="caption-text">Imperative factory creation</span><a class="headerlink" href="#id7" title="Permalink to this code">#</a></div>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">dataclasses</span> <span class="kn">import</span> <span class="n">dataclass</span>
 <span class="kn">from</span> <span class="nn">enum</span> <span class="kn">import</span> <span class="n">Enum</span>
 
