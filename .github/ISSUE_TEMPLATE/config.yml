@@ -1,0 +1,5 @@
+blank_lines_enabled: true
+contact_links:
+  - name: Polyfactory Documentation
+    url: https://polyfactory.litestar.dev/
+    about: Official Polyfactory documentation - please check here before opening an issue.
