@@ -28,6 +28,15 @@ Or for pydantic models:
         :caption: Declaring a factory for a pydantic dataclass
         :language: python
 
+Or for attrs models:
+
+.. literalinclude:: /examples/declaring_factories/test_example_7.py
+    :caption: Declaring a factory for a attrs model
+    :language: python
+
+.. note::
+    Validators are not currently supported - neither the built in validators that come
+    with `attrs` nor custom validators.
 
 Imperative Factory Creation
 ---------------------------

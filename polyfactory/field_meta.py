@@ -113,6 +113,7 @@ class FieldMeta:
         randomize_collection_length: bool = RANDOMIZE_COLLECTION_LENGTH,
         min_collection_length: int = MIN_COLLECTION_LENGTH,
         max_collection_length: int = MAX_COLLECTION_LENGTH,
+        children: list[FieldMeta] | None = None,
     ) -> Self:
         """Builder method to create a FieldMeta from a type annotation.
 
@@ -144,11 +145,11 @@ class FieldMeta:
             random=random,
             name=name,
             default=default,
-            children=None,
+            children=children,
             constraints=constraints,
         )
 
-        if field.type_args:
+        if field.type_args and not field.children:
             if randomize_collection_length:
                 number_of_args = random.randint(min_collection_length, max_collection_length)
             else:

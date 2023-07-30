@@ -103,9 +103,9 @@ def test_complex_constrained_attribute_parsing_pydantic_v1() -> None:
     assert all(isinstance(v, Person) for v in result.conlist_with_model_field)
     assert result.conlist_with_complex_type
     assert isinstance(result.conlist_with_complex_type[0], dict)
-    assert isinstance(list(result.conlist_with_complex_type[0].values())[0], tuple)
-    assert len(list(result.conlist_with_complex_type[0].values())[0]) == 3
-    assert all(isinstance(v, Person) for v in list(result.conlist_with_complex_type[0].values())[0])
+    assert isinstance(next(iter(result.conlist_with_complex_type[0].values())), tuple)
+    assert len(next(iter(result.conlist_with_complex_type[0].values()))) == 3
+    assert all(isinstance(v, Person) for v in next(iter(result.conlist_with_complex_type[0].values())))
 
 
 @pytest.mark.skipif(VERSION.startswith("2"), reason="pydantic 1 only test")
@@ -290,6 +290,6 @@ def test_complex_constrained_attribute_parsing_pydantic_v2() -> None:
     assert all(isinstance(v, Person) for v in result.conlist_with_model_field)
     assert result.conlist_with_complex_type
     assert isinstance(result.conlist_with_complex_type[0], dict)
-    assert isinstance(list(result.conlist_with_complex_type[0].values())[0], tuple)
-    assert len(list(result.conlist_with_complex_type[0].values())[0]) == 3
-    assert all(isinstance(v, Person) for v in list(result.conlist_with_complex_type[0].values())[0])
+    assert isinstance(next(iter(result.conlist_with_complex_type[0].values())), tuple)
+    assert len(next(iter(result.conlist_with_complex_type[0].values()))) == 3
+    assert all(isinstance(v, Person) for v in next(iter(result.conlist_with_complex_type[0].values())))

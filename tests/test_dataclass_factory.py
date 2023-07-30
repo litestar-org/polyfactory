@@ -128,9 +128,9 @@ def test_complex_embedded_dataclass() -> None:
 
     assert result.weirdly_nest_field
     assert result.weirdly_nest_field[0]
-    assert list(result.weirdly_nest_field[0].values())[0].values()
-    assert list(list(result.weirdly_nest_field[0].values())[0].values())[0]
-    assert isinstance(list(list(result.weirdly_nest_field[0].values())[0].values())[0], VanillaDC)
+    assert next(iter(result.weirdly_nest_field[0].values())).values()
+    assert next(iter(next(iter(result.weirdly_nest_field[0].values())).values()))
+    assert isinstance(next(iter(next(iter(result.weirdly_nest_field[0].values())).values())), VanillaDC)
 
 
 def test_tuple_ellipsis_in_vanilla_dc() -> None:
