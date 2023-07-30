@@ -3,7 +3,7 @@ from __future__ import annotations
 import sys
 
 import pytest
-from pydantic import VERSION, BaseModel, Field
+from pydantic import VERSION, BaseModel, Field, Json
 
 from polyfactory.factories.pydantic_factory import ModelFactory
 
@@ -39,3 +39,28 @@ def test_list_unions() -> None:
     assert isinstance(CFactory.build().c, list)
     assert len(CFactory.build().c) > 0
     assert isinstance(CFactory.build().c[0], (A, B))
+
+
+@pytest.mark.skipif(VERSION.startswith("1"), reason="only for Pydantic v2")
+def test_json_type() -> None:
+    class A(BaseModel):
+        a: Json[int]
+
+    class AFactory(ModelFactory[A]):
+        __model__ = A
+
+    assert isinstance(AFactory.build(), A)
+
+
+@pytest.mark.skipif(VERSION.startswith("1"), reason="only for Pydantic v2")
+def test_nested_json_type() -> None:
+    class A(BaseModel):
+        a: int
+
+    class B(BaseModel):
+        b: Json[A]
+
+    class BFactory(ModelFactory[B]):
+        __model__ = B
+
+    assert isinstance(BFactory.build(), B)
