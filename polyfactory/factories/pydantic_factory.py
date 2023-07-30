@@ -29,8 +29,9 @@ from polyfactory.utils.helpers import unwrap_new_type, unwrap_optional
 from polyfactory.utils.predicates import is_optional_union, is_safe_subclass, is_union
 
 try:
-    from pydantic import VERSION, BaseModel
+    from pydantic import VERSION, BaseModel, Json
     from pydantic.fields import FieldInfo
+    from pydantic_core import to_json
 except ImportError as e:
     raise MissingDependencyException("pydantic is not installed") from e
 
@@ -44,13 +45,33 @@ except ImportError:
 if TYPE_CHECKING:
     from random import Random
 
-    from typing_extensions import TypeGuard
+    from typing_extensions import NotRequired, TypeGuard
 
 T = TypeVar("T", bound=BaseModel)
 
 
+class PydanticConstraints(Constraints):
+    """Metadata regarding a Pydantic type constraints, if any"""
+
+    json: NotRequired[bool]
+
+
 class PydanticFieldMeta(FieldMeta):
     """Field meta subclass capable of handling pydantic ModelFields"""
+
+    def __init__(
+        self,
+        *,
+        name: str,
+        annotation: type,
+        random: Random | None = None,
+        default: Any = ...,
+        children: list[FieldMeta] | None = None,
+        constraints: PydanticConstraints | None = None,
+    ) -> None:
+        super().__init__(
+            name=name, annotation=annotation, random=random, default=default, children=children, constraints=constraints
+        )
 
     @classmethod
     def from_field_info(
@@ -102,12 +123,22 @@ class PydanticFieldMeta(FieldMeta):
                 for arg in get_args(annotation)
             ]
 
-        if metadata := [v for v in field_info.metadata if v is not None]:
-            constraints = cls.parse_constraints(metadata=metadata)
+        metadata, is_json = [], False
+        for m in field_info.metadata:
+            if not is_json and isinstance(m, Json):  # type: ignore[misc]
+                is_json = True
+            elif m is not None:
+                metadata.append(m)
+
+        constraints = cls.parse_constraints(metadata=metadata) if metadata else {}
+        constraints = cast(PydanticConstraints, constraints)
 
         if "url" in constraints:
             # pydantic uses a sentinel value for url constraints
             annotation = str
+
+        if is_json:
+            constraints["json"] = True
 
         return PydanticFieldMeta.from_type(
             annotation=annotation,
@@ -245,7 +276,7 @@ class PydanticFieldMeta(FieldMeta):
             annotation=annotation,
             children=children or None,
             default=default_value,
-            constraints=cast("Constraints", {k: v for k, v in constraints.items() if v is not None}) or None,
+            constraints=cast("PydanticConstraints", {k: v for k, v in constraints.items() if v is not None}) or None,
         )
 
 
@@ -310,6 +341,15 @@ class ModelFactory(Generic[T], BaseFactory[T]):
                     for field_name, field_info in cls.__model__.model_fields.items()
                 ]
         return cls._fields_metadata
+
+    @classmethod
+    def get_constrained_field_value(cls, annotation: Any, field_meta: FieldMeta) -> Any:
+        constraints = cast(PydanticConstraints, field_meta.constraints)
+        if constraints.pop("json", None):
+            value = cls.get_field_value(field_meta)
+            return to_json(value)
+
+        return super().get_constrained_field_value(annotation, field_meta)
 
     @classmethod
     def build(cls, factory_use_construct: bool = False, **kwargs: Any) -> T:
