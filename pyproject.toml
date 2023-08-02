@@ -115,6 +115,7 @@ include = ["polyfactory", "tests", "examples"]
 omit = ["*/tests/*"]
 
 [tool.pytest.ini_options]
+addopts = "tests docs/examples"
 asyncio_mode = "auto"
 filterwarnings = [
     "ignore:.*pkg_resources.declare_namespace\\('sphinxcontrib'\\).*:DeprecationWarning",
