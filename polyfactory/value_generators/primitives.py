@@ -2,7 +2,6 @@ from __future__ import annotations
 
 from binascii import hexlify
 from decimal import Decimal
-from os import urandom
 from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
@@ -80,7 +79,7 @@ def create_random_bytes(
         max_length = min_length + 1 * 2
 
     length = random.randint(min_length, max_length)
-    result = hexlify(urandom(length))
+    result = b"" if length == 0 else hexlify(random.getrandbits(length * 8).to_bytes(length, "little"))
 
     if lower_case:
         result = result.lower()
