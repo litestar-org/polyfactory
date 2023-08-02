@@ -21,6 +21,7 @@ from ipaddress import (
 )
 from os.path import realpath
 from pathlib import Path
+from random import Random
 from typing import (
     TYPE_CHECKING,
     Any,
@@ -79,8 +80,6 @@ from polyfactory.value_generators.primitives import (
 )
 
 if TYPE_CHECKING:
-    from random import Random
-
     from typing_extensions import TypeGuard
 
     from polyfactory.field_meta import Constraints, FieldMeta
@@ -255,7 +254,8 @@ class BaseFactory(ABC, Generic[T]):
         else:
             BaseFactory._base_factories.append(cls)
 
-        if random_seed := getattr(cls, "__random_seed__", None) is not None:
+        random_seed = getattr(cls, "__random_seed__", None)
+        if random_seed is not None:
             cls.seed_random(random_seed)
 
         if cls.__set_as_default_factory_for_type__:
@@ -401,8 +401,11 @@ class BaseFactory(ABC, Generic[T]):
         :returns: 'None'
 
         """
-        cls.__random__.seed(seed, version=3)
-        cls.__faker__.seed_instance(seed)
+        cls.__random__ = Random(seed)
+
+        faker = Faker()
+        faker.seed_instance(seed)
+        cls.__faker__ = faker
 
     @classmethod
     def is_ignored_type(cls, value: Any) -> bool:
