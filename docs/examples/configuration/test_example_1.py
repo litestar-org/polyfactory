@@ -1,6 +1,5 @@
 from dataclasses import dataclass
 
-from polyfactory import Use
 from polyfactory.factories import DataclassFactory
 
 
@@ -16,7 +15,9 @@ class PersonFactory(DataclassFactory[Person]):
     __model__ = Person
     __random_seed__ = 1
 
-    name = Use(DataclassFactory.__random__.choice, ["John", "Alice", "George"])
+    @classmethod
+    def name(cls) -> str:
+        return cls.__random__.choice(["John", "Alice", "George"])
 
 
 def test_random_seed() -> None:
