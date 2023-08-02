@@ -40,3 +40,19 @@ def test_deterministic_optionals_seeding() -> None:
     ModelFactory.seed_random(seed)
     second_build = [FactoryWithNoneOptionals.build() for _ in range(10)]
     assert first_build == second_build
+
+
+def test_deterministic_constrained_strings() -> None:
+    class MyModel(BaseModel):
+        id: int
+        special_id: str = Field(min_length=10, max_length=24)
+
+    class MyModelFactory(ModelFactory):
+        __model__ = MyModel
+
+    ModelFactory.seed_random(1651)
+
+    ins = MyModelFactory.build()
+
+    assert ins.id == 4
+    assert ins.special_id == "48489ab53c59b24acfe1"
