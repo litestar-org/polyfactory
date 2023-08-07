@@ -57,7 +57,7 @@ from polyfactory.utils.predicates import (
     get_type_origin,
     is_any,
     is_literal,
-    is_optional_union,
+    is_optional,
     is_safe_subclass,
     is_union,
 )
@@ -678,7 +678,7 @@ class BaseFactory(ABC, Generic[T]):
         """
         return (
             cls.__allow_none_optionals__
-            and is_optional_union(field_meta.annotation)
+            and is_optional(field_meta.annotation)
             and create_random_boolean(random=cls.__random__)
         )
 

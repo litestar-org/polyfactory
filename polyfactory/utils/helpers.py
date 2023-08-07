@@ -9,7 +9,7 @@ from polyfactory.constants import TYPE_MAPPING
 from polyfactory.utils.predicates import (
     is_annotated,
     is_new_type,
-    is_optional_union,
+    is_optional,
     is_union,
 )
 
@@ -50,7 +50,7 @@ def unwrap_optional(annotation: Any) -> Any:
 
     :returns: A type annotation
     """
-    while is_optional_union(annotation):
+    while is_optional(annotation):
         annotation = next(arg for arg in get_args(annotation) if arg not in (type(None), None))
     return annotation
 
@@ -64,10 +64,10 @@ def unwrap_annotation(annotation: Any, random: Random) -> Any:
     :returns: The unwrapped annotation.
 
     """
-    while is_optional_union(annotation) or is_union(annotation) or is_new_type(annotation) or is_annotated(annotation):
+    while is_optional(annotation) or is_union(annotation) or is_new_type(annotation) or is_annotated(annotation):
         if is_new_type(annotation):
             annotation = unwrap_new_type(annotation)
-        elif is_optional_union(annotation):
+        elif is_optional(annotation):
             annotation = unwrap_optional(annotation)
         elif is_annotated(annotation):
             annotation = unwrap_annotated(annotation, random=random)[0]
