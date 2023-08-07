@@ -24,12 +24,7 @@ Workflow
 4. Make whatever changes and additions you wish and commit these - please try to keep your commit history clean.
    1. .. note:: 100% tests are mandatory.
 5. Once you are ready, add a PR in the main repo.
-6. Create a pull request to the main repository with an explanation of your changes.
-
-.. note::
-    The test suite requires having an instance of MongoDB available. You can launch one
-    using the root level docker-compose config with ``docker-compose up --detach``, or
-    by any other means.
+6. Create a pull request to the main repository with an explanation of your changes. The title should follow the `conventional commits <https://www.conventionalcommits.org/en/v1.0.0/>`_ convention.
 
 
 Project documentation

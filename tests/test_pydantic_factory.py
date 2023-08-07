@@ -1,6 +1,5 @@
-from __future__ import annotations
-
 import sys
+from typing import Optional
 
 import pytest
 from pydantic import VERSION, BaseModel, Field, Json
@@ -18,6 +17,21 @@ def test_const() -> None:
 
     for _ in range(5):
         assert AFactory.build()
+
+
+def test_optional_with_constraints() -> None:
+    # Setting random seed so that we get a non-optional value
+    random_seed = 1
+
+    class A(BaseModel):
+        a: Optional[float] = Field(None, ge=0, le=1)
+
+    class AFactory(ModelFactory[A]):
+        __model__ = A
+        __random_seed__ = random_seed
+
+    # verify no pydantic.ValidationError is thrown
+    assert isinstance(AFactory.build().a, float)
 
 
 @pytest.mark.skipif(sys.version_info < (3, 10), reason="requires python3.9 or higher")

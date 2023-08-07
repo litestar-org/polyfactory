@@ -26,7 +26,7 @@ from polyfactory.exceptions import MissingDependencyException
 from polyfactory.factories.base import BaseFactory
 from polyfactory.field_meta import Constraints, FieldMeta, Null
 from polyfactory.utils.helpers import unwrap_new_type, unwrap_optional
-from polyfactory.utils.predicates import is_optional_union, is_safe_subclass, is_union
+from polyfactory.utils.predicates import is_optional, is_safe_subclass, is_union
 
 try:
     from pydantic import VERSION, BaseModel, Json
@@ -106,8 +106,8 @@ class PydanticFieldMeta(FieldMeta):
         constraints: Constraints = {}
         name = field_info.alias if field_info.alias and use_alias else field_name
 
-        # pydantic v2 do not propagate metadata for Union types
-        if is_optional_union(annotation):
+        # pydantic v2 does not always propagate metadata for Union types
+        if not field_info.metadata and is_optional(annotation):
             field_info = FieldInfo.from_annotation(unwrap_optional(annotation))
         elif is_union(annotation):
             children = [
