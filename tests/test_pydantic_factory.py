@@ -2,7 +2,7 @@ import sys
 from typing import Optional
 
 import pytest
-from pydantic import VERSION, BaseModel, Field, Json, ValidationError
+from pydantic import VERSION, BaseModel, Field, Json
 
 from polyfactory.factories.pydantic_factory import ModelFactory
 
@@ -20,25 +20,18 @@ def test_const() -> None:
 
 
 def test_optional_with_constraints() -> None:
-    """this is a flaky test - because it depends on randomness, hence it's been re-ran multiple times."""
+    # Setting random seed so that we get a non-optional value
+    random_seed = 1
 
     class A(BaseModel):
-        a: Optional[int] = Field(None, ge=0, le=1)
+        a: Optional[float] = Field(None, ge=0, le=1)
 
     class AFactory(ModelFactory[A]):
         __model__ = A
+        __random_seed__ = random_seed
 
-    has_failed = False
-    exception: Optional[Exception] = None
-    for _ in range(100):
-        try:
-            assert isinstance(AFactory.build().a, (int, type(None)))
-        except ValidationError as e:
-            exception = e
-            has_failed = True
-
-    if has_failed:
-        pytest.fail(reason=str(exception))
+    # verify no pydantic.ValidationError is thrown
+    assert isinstance(AFactory.build().a, float)
 
 
 @pytest.mark.skipif(sys.version_info < (3, 10), reason="requires python3.9 or higher")
