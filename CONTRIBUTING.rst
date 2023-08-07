@@ -26,11 +26,6 @@ Workflow
 5. Once you are ready, add a PR in the main repo.
 6. Create a pull request to the main repository with an explanation of your changes.
 
-.. note::
-    The test suite requires having an instance of MongoDB available. You can launch one
-    using the root level docker-compose config with ``docker-compose up --detach``, or
-    by any other means.
-
 
 Project documentation
 ---------------------
