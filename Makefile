@@ -1,5 +1,10 @@
 .PHONY: docs
 
+install:
+	poetry install --extras full --with docs --no-ansi --sync
+	pre-commit install
+.PHONY: install
+
 docs-clean:
 	rm -rf docs/_build
 
