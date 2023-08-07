@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import sys
+from typing import Optional
 
 import pytest
 from pydantic import VERSION, BaseModel, Field, Json, ValidationError
@@ -24,13 +25,13 @@ def test_optional_with_constraints() -> None:
     """this is a flaky test - because it depends on randomness, hence it's been re-ran multiple times."""
 
     class A(BaseModel):
-        a: int | None = Field(None, ge=0, le=1)
+        a: Optional[int] = Field(None, ge=0, le=1)
 
     class AFactory(ModelFactory[A]):
         __model__ = A
 
     has_failed = False
-    exception: Exception | None = None
+    exception: Optional[Exception] = None
     for _ in range(100):
         try:
             assert isinstance(AFactory.build().a, (int, type(None)))
