@@ -298,6 +298,15 @@
       "contributions": [
         "code"
       ]
+    },
+    {
+      "login": "tcrasset",
+      "name": "Tom Crasset",
+      "avatar_url": "https://avatars.githubusercontent.com/u/25140344?v=4",
+      "profile": "https://github.com/tcrasset",
+      "contributions": [
+        "code"
+      ]
     }
   ],
   "contributorsPerLine": 7,
