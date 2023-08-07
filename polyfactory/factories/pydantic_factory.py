@@ -106,8 +106,8 @@ class PydanticFieldMeta(FieldMeta):
         constraints: Constraints = {}
         name = field_info.alias if field_info.alias and use_alias else field_name
 
-        # pydantic v2 do not propagate metadata for Union types
-        if is_optional_union(annotation):
+        # pydantic v2 does not always propagate metadata for Union types
+        if not field_info.metadata and is_optional_union(annotation):
             field_info = FieldInfo.from_annotation(unwrap_optional(annotation))
         elif is_union(annotation):
             children = [

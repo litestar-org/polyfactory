@@ -79,7 +79,7 @@ def is_union(annotation: Any) -> "TypeGuard[Any | Any]":
 
 
 def is_optional_union(annotation: Any) -> "TypeGuard[Any | None]":
-    """Determine whether a given annotation is 'typing.Optional'.
+    """Determine whether a given annotation is 'typing.Union[XXXX, NoneType]'.
 
     :param annotation: A type annotation.
 
