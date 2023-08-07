@@ -137,6 +137,7 @@ Thanks goes to these wonderful people ([emoji key](https://allcontributors.org/d
       <td align="center" valign="top" width="14.28%"><a href="https://github.com/danielkatzan"><img src="https://avatars.githubusercontent.com/u/9249066?v=4?s=100" width="100px;" alt="danielkatzan"/><br /><sub><b>danielkatzan</b></sub></a><br /><a href="https://github.com/litestar-org/polyfactory/commits?author=danielkatzan" title="Documentation">📖</a></td>
       <td align="center" valign="top" width="14.28%"><a href="https://github.com/abdulhaq-e"><img src="https://avatars.githubusercontent.com/u/2532125?v=4?s=100" width="100px;" alt="Abdulhaq Emhemmed"/><br /><sub><b>Abdulhaq Emhemmed</b></sub></a><br /><a href="https://github.com/litestar-org/polyfactory/commits?author=abdulhaq-e" title="Code">💻</a></td>
       <td align="center" valign="top" width="14.28%"><a href="https://github.com/klimantje"><img src="https://avatars.githubusercontent.com/u/20017047?v=4?s=100" width="100px;" alt="klimantje"/><br /><sub><b>klimantje</b></sub></a><br /><a href="https://github.com/litestar-org/polyfactory/commits?author=klimantje" title="Code">💻</a></td>
+      <td align="center" valign="top" width="14.28%"><a href="https://github.com/tcrasset"><img src="https://avatars.githubusercontent.com/u/25140344?v=4?s=100" width="100px;" alt="Tom Crasset"/><br /><sub><b>Tom Crasset</b></sub></a><br /><a href="https://github.com/litestar-org/polyfactory/commits?author=tcrasset" title="Code">💻</a></td>
     </tr>
   </tbody>
 </table>
