@@ -751,7 +751,6 @@ You can read the reference for these in the API reference for
 <div class="code-block-caption"><span class="caption-text">Seeding the factory’s ‘random.Random’</span><a class="headerlink" href="#id1" title="Permalink to this code">#</a></div>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">dataclasses</span> <span class="kn">import</span> <span class="n">dataclass</span>
 
-<span class="kn">from</span> <span class="nn">polyfactory</span> <span class="kn">import</span> <span class="n">Use</span>
 <span class="kn">from</span> <span class="nn">polyfactory.factories</span> <span class="kn">import</span> <span class="n">DataclassFactory</span>
 
 
@@ -767,7 +766,9 @@ You can read the reference for these in the API reference for
     <span class="n">__model__</span> <span class="o">=</span> <span class="n">Person</span>
     <span class="n">__random_seed__</span> <span class="o">=</span> <span class="mi">1</span>
 
-    <span class="n">name</span> <span class="o">=</span> <span class="n">Use</span><span class="p">(</span><span class="n">DataclassFactory</span><span class="o">.</span><span class="n">__random__</span><span class="o">.</span><span class="n">choice</span><span class="p">,</span> <span class="p">[</span><span class="s2">&quot;John&quot;</span><span class="p">,</span> <span class="s2">&quot;Alice&quot;</span><span class="p">,</span> <span class="s2">&quot;George&quot;</span><span class="p">])</span>
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">name</span><span class="p">(</span><span class="bp">cls</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+        <span class="k">return</span> <span class="bp">cls</span><span class="o">.</span><span class="n">__random__</span><span class="o">.</span><span class="n">choice</span><span class="p">([</span><span class="s2">&quot;John&quot;</span><span class="p">,</span> <span class="s2">&quot;Alice&quot;</span><span class="p">,</span> <span class="s2">&quot;George&quot;</span><span class="p">])</span>
 
 
 <span class="k">def</span> <span class="nf">test_random_seed</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
@@ -788,7 +789,6 @@ methods as well as faker.</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">dataclasses</span> <span class="kn">import</span> <span class="n">dataclass</span>
 <span class="kn">from</span> <span class="nn">random</span> <span class="kn">import</span> <span class="n">Random</span>
 
-<span class="kn">from</span> <span class="nn">polyfactory</span> <span class="kn">import</span> <span class="n">Use</span>
 <span class="kn">from</span> <span class="nn">polyfactory.factories</span> <span class="kn">import</span> <span class="n">DataclassFactory</span>
 
 
@@ -804,12 +804,14 @@ methods as well as faker.</p>
     <span class="n">__model__</span> <span class="o">=</span> <span class="n">Person</span>
     <span class="n">__random__</span> <span class="o">=</span> <span class="n">Random</span><span class="p">(</span><span class="mi">10</span><span class="p">)</span>
 
-    <span class="n">name</span> <span class="o">=</span> <span class="n">Use</span><span class="p">(</span><span class="n">DataclassFactory</span><span class="o">.</span><span class="n">__random__</span><span class="o">.</span><span class="n">choice</span><span class="p">,</span> <span class="p">[</span><span class="s2">&quot;John&quot;</span><span class="p">,</span> <span class="s2">&quot;Alice&quot;</span><span class="p">,</span> <span class="s2">&quot;George&quot;</span><span class="p">])</span>
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">name</span><span class="p">(</span><span class="bp">cls</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+        <span class="k">return</span> <span class="bp">cls</span><span class="o">.</span><span class="n">__random__</span><span class="o">.</span><span class="n">choice</span><span class="p">([</span><span class="s2">&quot;John&quot;</span><span class="p">,</span> <span class="s2">&quot;Alice&quot;</span><span class="p">,</span> <span class="s2">&quot;George&quot;</span><span class="p">])</span>
 
 
 <span class="k">def</span> <span class="nf">test_setting_random</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
     <span class="c1"># the outcome of &#39;factory.__random__.choice&#39; is deterministic, because Random is configured with a set value.</span>
-    <span class="k">assert</span> <span class="n">PersonFactory</span><span class="o">.</span><span class="n">build</span><span class="p">()</span><span class="o">.</span><span class="n">name</span> <span class="o">==</span> <span class="s2">&quot;Alice&quot;</span>
+    <span class="k">assert</span> <span class="n">PersonFactory</span><span class="o">.</span><span class="n">build</span><span class="p">()</span><span class="o">.</span><span class="n">name</span> <span class="o">==</span> <span class="s2">&quot;George&quot;</span>
     <span class="k">assert</span> <span class="n">PersonFactory</span><span class="o">.</span><span class="n">build</span><span class="p">()</span><span class="o">.</span><span class="n">name</span> <span class="o">==</span> <span class="s2">&quot;John&quot;</span>
     <span class="k">assert</span> <span class="n">PersonFactory</span><span class="o">.</span><span class="n">build</span><span class="p">()</span><span class="o">.</span><span class="n">name</span> <span class="o">==</span> <span class="s2">&quot;Alice&quot;</span>
 </pre></div>
@@ -851,7 +853,7 @@ other libraries, as well as when factories are being dynamically generated.</p>
 
 <span class="k">def</span> <span class="nf">test_setting_faker</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
     <span class="c1"># the outcome of faker deterministic because we seeded random, and it uses a spanish locale.</span>
-    <span class="k">assert</span> <span class="n">PersonFactory</span><span class="o">.</span><span class="n">build</span><span class="p">()</span><span class="o">.</span><span class="n">name</span> <span class="o">==</span> <span class="s2">&quot;Lucas Barroso Jara&quot;</span>
+    <span class="k">assert</span> <span class="n">PersonFactory</span><span class="o">.</span><span class="n">build</span><span class="p">()</span><span class="o">.</span><span class="n">name</span> <span class="o">==</span> <span class="s2">&quot;Jessica Lane&quot;</span>
 </pre></div>
 </div>
 </div>
