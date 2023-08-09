@@ -92,21 +92,27 @@ pytz = {version = ">=2015.7", markers = "python_version < \"3.9\""}
 
 [[package]]
 name = "beanie"
-version = "1.19.2"
+version = "1.21.0"
 description = "Asynchronous Python ODM for MongoDB"
 optional = true
 python-versions = ">=3.7,<4.0"
 files = [
-    {file = "beanie-1.19.2-py3-none-any.whl", hash = "sha256:fba803e954eff3f036db2236c1e02fe7afffe4330db2108d405ac820076e3ae1"},
-    {file = "beanie-1.19.2.tar.gz", hash = "sha256:1894c984a9f129bce03e19a9cb52ad47002bb3b4ea1a6b7af3a8a65978a35b78"},
+    {file = "beanie-1.21.0-py3-none-any.whl", hash = "sha256:180a6d5e854297be2da84689b03509e7dc4f40f00c58a894a17ad40a00630838"},
+    {file = "beanie-1.21.0.tar.gz", hash = "sha256:df1bcac1d5834730d3a1e461814fd0dfa173d91daca047b4d8ddcbf54343b4fd"},
 ]
 
 [package.dependencies]
 click = ">=7"
-lazy-model = ">=0.0.3"
-motor = ">=2.5,<4.0"
-pydantic = ">=1.10.0"
+lazy-model = "0.1.0b0"
+motor = ">=2.5.0,<4.0.0"
+pydantic = ">=1.10,<3.0"
 toml = "*"
+typing-extensions = ">=4.7"
+
+[package.extras]
+doc = ["Markdown (>=3.3)", "Pygments (>=2.8.0)", "jinja2 (>=3.0.3)", "mkdocs (>=1.4)", "mkdocs-material (>=9.0)", "pydoc-markdown (>=4.8)"]
+queue = ["beanie-batteries-queue (>=0.2)"]
+test = ["asgi-lifespan (>=1.0.1)", "dnspython (>=2.1.0)", "fastapi (>=0.100)", "flake8 (>=3)", "httpx (>=0.23.0)", "pre-commit (>=2.3.0)", "pydantic-settings (>=2.0)", "pyright (>=0)", "pytest (>=6.0.0)", "pytest-asyncio (>=0.21.0)", "pytest-cov (>=2.8.1)"]
 
 [[package]]
 name = "beautifulsoup4"
@@ -464,13 +470,13 @@ test = ["pytest (>=6)"]
 
 [[package]]
 name = "faker"
-version = "19.2.0"
+version = "19.3.0"
 description = "Faker is a Python package that generates fake data for you."
 optional = false
 python-versions = ">=3.8"
 files = [
-    {file = "Faker-19.2.0-py3-none-any.whl", hash = "sha256:c6c1218482faf79ae1d791bb7124067d12339e0b8f400de855e2c281bcf78c77"},
-    {file = "Faker-19.2.0.tar.gz", hash = "sha256:78840b94843f3aa32a34a220b2b5e8b309e3ffff3a231b0c54e841bb68e0757d"},
+    {file = "Faker-19.3.0-py3-none-any.whl", hash = "sha256:bee54278d6e1289573317604ab6f4782acca724396bf261eaf1890de228e553d"},
+    {file = "Faker-19.3.0.tar.gz", hash = "sha256:7d6ed00de3eef9bd57504500c67ee034cab959e4248f9c24aca33e08af82ca93"},
 ]
 
 [package.dependencies]
@@ -494,13 +500,12 @@ testing = ["covdefaults (>=2.3)", "coverage (>=7.2.7)", "diff-cover (>=7.5)", "p
 
 [[package]]
 name = "hypothesis"
-version = "6.82.0"
+version = "6.82.3"
 description = "A library for property-based testing"
 optional = false
 python-versions = ">=3.8"
 files = [
-    {file = "hypothesis-6.82.0-py3-none-any.whl", hash = "sha256:fa8eee429b99f7d3c953fb2b57de415fd39b472b09328b86c1978f12669ef395"},
-    {file = "hypothesis-6.82.0.tar.gz", hash = "sha256:ffece8e40a34329e7112f7408f2c45fe587761978fdbc6f4f91bf0d683a7d4d9"},
+    {file = "hypothesis-6.82.3-py3-none-any.whl", hash = "sha256:7ff0f6a12d3cd9372e30f84d300e2468c3923e813198a93b9e479dda91858460"},
 ]
 
 [package.dependencies]
@@ -609,13 +614,13 @@ i18n = ["Babel (>=2.7)"]
 
 [[package]]
 name = "lazy-model"
-version = "0.0.5"
+version = "0.1.0b0"
 description = ""
 optional = true
 python-versions = ">=3.7,<4.0"
 files = [
-    {file = "lazy-model-0.0.5.tar.gz", hash = "sha256:2d98f9dfe275012477555a439dceb56364793a0f266758d1a33267d68e8fbc76"},
-    {file = "lazy_model-0.0.5-py3-none-any.whl", hash = "sha256:8b4fc5eac99029f84b11b21e81a6894911a475f25e53227b7e44833e62e26553"},
+    {file = "lazy-model-0.1.0b0.tar.gz", hash = "sha256:90dd0b26d3033fadc18f697ab9cdd66cdf8e55469f32f2d88efd92610468e2d6"},
+    {file = "lazy_model-0.1.0b0-py3-none-any.whl", hash = "sha256:74406bd54cf96a89b73570d8409b538c660ae4d0bfb4b30bbe46db2658a5937d"},
 ]
 
 [package.dependencies]
@@ -731,13 +736,12 @@ sentinels = "*"
 
 [[package]]
 name = "mongomock-motor"
-version = "0.0.20"
+version = "0.0.21"
 description = "Library for mocking AsyncIOMotorClient built on top of mongomock."
 optional = false
 python-versions = ">=3.6"
 files = [
-    {file = "mongomock_motor-0.0.20-py3-none-any.whl", hash = "sha256:908bc8f969ced87e11e2c526b3f215d51410c28148cc7374d0ee285d64c98d91"},
-    {file = "mongomock_motor-0.0.20.tar.gz", hash = "sha256:f708073db304ebee95bfd37ea9ef93019196082cd11dd5e61d34c9e8be213521"},
+    {file = "mongomock_motor-0.0.21-py3-none-any.whl", hash = "sha256:f6f4a16d092d9b416ee91049eefd0dc97e9863677a5ef5308d67bc030d0820fc"},
 ]
 
 [package.dependencies]
@@ -918,29 +922,29 @@ files = [
 
 [[package]]
 name = "pathspec"
-version = "0.11.1"
+version = "0.11.2"
 description = "Utility library for gitignore style pattern matching of file paths."
 optional = false
 python-versions = ">=3.7"
 files = [
-    {file = "pathspec-0.11.1-py3-none-any.whl", hash = "sha256:d8af70af76652554bd134c22b3e8a1cc46ed7d91edcdd721ef1a0c51a84a5293"},
-    {file = "pathspec-0.11.1.tar.gz", hash = "sha256:2798de800fa92780e33acca925945e9a19a133b715067cf165b8866c15a31687"},
+    {file = "pathspec-0.11.2-py3-none-any.whl", hash = "sha256:1d6ed233af05e679efb96b1851550ea95bbb64b7c490b0f5aa52996c11e92a20"},
+    {file = "pathspec-0.11.2.tar.gz", hash = "sha256:e0d8d0ac2f12da61956eb2306b69f9469b42f4deb0f3cb6ed47b9cce9996ced3"},
 ]
 
 [[package]]
 name = "platformdirs"
-version = "3.9.1"
+version = "3.10.0"
 description = "A small Python package for determining appropriate platform-specific dirs, e.g. a \"user data dir\"."
 optional = false
 python-versions = ">=3.7"
 files = [
-    {file = "platformdirs-3.9.1-py3-none-any.whl", hash = "sha256:ad8291ae0ae5072f66c16945166cb11c63394c7a3ad1b1bc9828ca3162da8c2f"},
-    {file = "platformdirs-3.9.1.tar.gz", hash = "sha256:1b42b450ad933e981d56e59f1b97495428c9bd60698baab9f3eb3d00d5822421"},
+    {file = "platformdirs-3.10.0-py3-none-any.whl", hash = "sha256:d7c24979f292f916dc9cbf8648319032f551ea8c49a4c9bf2fb556a02070ec1d"},
+    {file = "platformdirs-3.10.0.tar.gz", hash = "sha256:b45696dab2d7cc691a3226759c0d3b00c47c8b6e293d96f6436f733303f77f6d"},
 ]
 
 [package.extras]
-docs = ["furo (>=2023.5.20)", "proselint (>=0.13)", "sphinx (>=7.0.1)", "sphinx-autodoc-typehints (>=1.23,!=1.23.4)"]
-test = ["appdirs (==1.4.4)", "covdefaults (>=2.3)", "pytest (>=7.3.1)", "pytest-cov (>=4.1)", "pytest-mock (>=3.10)"]
+docs = ["furo (>=2023.7.26)", "proselint (>=0.13)", "sphinx (>=7.1.1)", "sphinx-autodoc-typehints (>=1.24)"]
+test = ["appdirs (==1.4.4)", "covdefaults (>=2.3)", "pytest (>=7.4)", "pytest-cov (>=4.1)", "pytest-mock (>=3.11.1)"]
 
 [[package]]
 name = "pluggy"
@@ -1136,13 +1140,13 @@ test = ["codecov", "pytest", "pytest-cov", "pytest-regressions"]
 
 [[package]]
 name = "pygments"
-version = "2.15.1"
+version = "2.16.1"
 description = "Pygments is a syntax highlighting package written in Python."
 optional = false
 python-versions = ">=3.7"
 files = [
-    {file = "Pygments-2.15.1-py3-none-any.whl", hash = "sha256:db2db3deb4b4179f399a09054b023b6a586b76499d36965813c71aa8ed7b5fd1"},
-    {file = "Pygments-2.15.1.tar.gz", hash = "sha256:8ace4d3c1dd481894b2005f560ead0f9f19ee64fe983366be1a21e171d12775c"},
+    {file = "Pygments-2.16.1-py3-none-any.whl", hash = "sha256:13fc09fa63bc8d8671a6d247e1eb303c4b343eaee81d861f3404db2935653692"},
+    {file = "Pygments-2.16.1.tar.gz", hash = "sha256:1daff0494820c69bc8941e407aa20f577374ee88364ee10a98fdbe0aece96e29"},
 ]
 
 [package.extras]
@@ -1244,13 +1248,13 @@ zstd = ["zstandard"]
 
 [[package]]
 name = "pyright"
-version = "1.1.318"
+version = "1.1.320"
 description = "Command line wrapper for pyright"
 optional = false
 python-versions = ">=3.7"
 files = [
-    {file = "pyright-1.1.318-py3-none-any.whl", hash = "sha256:056c1b2e711c3526e32919de1684ae599d34b7ec27e94398858a43f56ac9ba9b"},
-    {file = "pyright-1.1.318.tar.gz", hash = "sha256:69dcf9c32d5be27d531750de627e76a7cadc741d333b547c09044278b508db7b"},
+    {file = "pyright-1.1.320-py3-none-any.whl", hash = "sha256:cdf739f7827374575cefb134311457d08c189793c3da3097c023debec9acaedb"},
+    {file = "pyright-1.1.320.tar.gz", hash = "sha256:94223e3b82d0b4c99c5125bab4d628ec749ce0b5b2ae0471fd4921dd4eff460d"},
 ]
 
 [package.dependencies]
@@ -1415,28 +1419,28 @@ use-chardet-on-py3 = ["chardet (>=3.0.2,<6)"]
 
 [[package]]
 name = "ruff"
-version = "0.0.280"
+version = "0.0.283"
 description = "An extremely fast Python linter, written in Rust."
 optional = false
 python-versions = ">=3.7"
 files = [
-    {file = "ruff-0.0.280-py3-none-macosx_10_7_x86_64.whl", hash = "sha256:48ed5aca381050a4e2f6d232db912d2e4e98e61648b513c350990c351125aaec"},
-    {file = "ruff-0.0.280-py3-none-macosx_10_9_x86_64.macosx_11_0_arm64.macosx_10_9_universal2.whl", hash = "sha256:ef6ee3e429fd29d6a5ceed295809e376e6ece5b0f13c7e703efaf3d3bcb30b96"},
-    {file = "ruff-0.0.280-py3-none-manylinux_2_17_aarch64.manylinux2014_aarch64.whl", hash = "sha256:d878370f7e9463ac40c253724229314ff6ebe4508cdb96cb536e1af4d5a9cd4f"},
-    {file = "ruff-0.0.280-py3-none-manylinux_2_17_armv7l.manylinux2014_armv7l.whl", hash = "sha256:83e8f372fa5627eeda5b83b5a9632d2f9c88fc6d78cead7e2a1f6fb05728d137"},
-    {file = "ruff-0.0.280-py3-none-manylinux_2_17_i686.manylinux2014_i686.whl", hash = "sha256:7008fc6ca1df18b21fa98bdcfc711dad5f94d0fc3c11791f65e460c48ef27c82"},
-    {file = "ruff-0.0.280-py3-none-manylinux_2_17_ppc64.manylinux2014_ppc64.whl", hash = "sha256:fe7118c1eae3fda17ceb409629c7f3b5a22dffa7caf1f6796776936dca1fe653"},
-    {file = "ruff-0.0.280-py3-none-manylinux_2_17_ppc64le.manylinux2014_ppc64le.whl", hash = "sha256:37359cd67d2af8e09110a546507c302cbea11c66a52d2a9b6d841d465f9962d4"},
-    {file = "ruff-0.0.280-py3-none-manylinux_2_17_s390x.manylinux2014_s390x.whl", hash = "sha256:bd58af46b0221efb95966f1f0f7576df711cb53e50d2fdb0e83c2f33360116a4"},
-    {file = "ruff-0.0.280-py3-none-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:2e7c15828d09f90e97bea8feefcd2907e8c8ce3a1f959c99f9b4b3469679f33c"},
-    {file = "ruff-0.0.280-py3-none-musllinux_1_2_aarch64.whl", hash = "sha256:2dae8f2d9c44c5c49af01733c2f7956f808db682a4193180dedb29dd718d7bbe"},
-    {file = "ruff-0.0.280-py3-none-musllinux_1_2_armv7l.whl", hash = "sha256:5f972567163a20fb8c2d6afc60c2ea5ef8b68d69505760a8bd0377de8984b4f6"},
-    {file = "ruff-0.0.280-py3-none-musllinux_1_2_i686.whl", hash = "sha256:8ffa7347ad11643f29de100977c055e47c988cd6d9f5f5ff83027600b11b9189"},
-    {file = "ruff-0.0.280-py3-none-musllinux_1_2_x86_64.whl", hash = "sha256:7a37dab70114671d273f203268f6c3366c035fe0c8056614069e90a65e614bfc"},
-    {file = "ruff-0.0.280-py3-none-win32.whl", hash = "sha256:7784e3606352fcfb193f3cd22b2e2117c444cb879ef6609ec69deabd662b0763"},
-    {file = "ruff-0.0.280-py3-none-win_amd64.whl", hash = "sha256:4a7d52457b5dfcd3ab24b0b38eefaead8e2dca62b4fbf10de4cd0938cf20ce30"},
-    {file = "ruff-0.0.280-py3-none-win_arm64.whl", hash = "sha256:b7de5b8689575918e130e4384ed9f539ce91d067c0a332aedef6ca7188adac2d"},
-    {file = "ruff-0.0.280.tar.gz", hash = "sha256:581c43e4ac5e5a7117ad7da2120d960a4a99e68ec4021ec3cd47fe1cf78f8380"},
+    {file = "ruff-0.0.283-py3-none-macosx_10_7_x86_64.whl", hash = "sha256:d59615628b43c40b8335af0fafd544b3a09e9891829461fa2eb0d67f00570df5"},
+    {file = "ruff-0.0.283-py3-none-macosx_10_9_x86_64.macosx_11_0_arm64.macosx_10_9_universal2.whl", hash = "sha256:742d3c09bb4272d92fcd0a01a203d837488060280c28a42461e166226651a12a"},
+    {file = "ruff-0.0.283-py3-none-manylinux_2_17_aarch64.manylinux2014_aarch64.whl", hash = "sha256:03622378270a37c61bb0f430c29f41bdf0699e8791d0d7548ad5745c737723fb"},
+    {file = "ruff-0.0.283-py3-none-manylinux_2_17_armv7l.manylinux2014_armv7l.whl", hash = "sha256:a4d36f0b3beecc01b50933795da718347ee442afa14cced5a60afe20e8335d24"},
+    {file = "ruff-0.0.283-py3-none-manylinux_2_17_i686.manylinux2014_i686.whl", hash = "sha256:d21b29dc63d8ec246207dd7115ec39814ca74ee0f0f7b261aa82fb9c1cd8dfcf"},
+    {file = "ruff-0.0.283-py3-none-manylinux_2_17_ppc64.manylinux2014_ppc64.whl", hash = "sha256:fe095f2c3e8e557f2709945d611efd476b3eb39bdec5b258b2f88cfb8b5d136d"},
+    {file = "ruff-0.0.283-py3-none-manylinux_2_17_ppc64le.manylinux2014_ppc64le.whl", hash = "sha256:b773f1dc57e642f707ee0e8bd68a0bc5ec95441367166a276e5dfdf88b21e1bf"},
+    {file = "ruff-0.0.283-py3-none-manylinux_2_17_s390x.manylinux2014_s390x.whl", hash = "sha256:d539c73e207a13a915bde6c52ae8b2beb0b00c3b975e9e5d808fe288ea354a72"},
+    {file = "ruff-0.0.283-py3-none-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:e43d3ab5c0bdb7b7a045411773b18ed115f0590a30c8d267c484393c6b0486ba"},
+    {file = "ruff-0.0.283-py3-none-musllinux_1_2_aarch64.whl", hash = "sha256:c5d72c97daa72f8914bf1b0c0ae4dbffc999e1945c291fa2d37c02ee4fa7f398"},
+    {file = "ruff-0.0.283-py3-none-musllinux_1_2_armv7l.whl", hash = "sha256:c32eb49ecf190a7bec0305270c864f796b362027b39a7d49c6fb120ea75e7b52"},
+    {file = "ruff-0.0.283-py3-none-musllinux_1_2_i686.whl", hash = "sha256:b1eae6990b078883c0cae60f1df0c31d2071f20afcec285baa363b9b6f7321cf"},
+    {file = "ruff-0.0.283-py3-none-musllinux_1_2_x86_64.whl", hash = "sha256:ad5a3042cbae1b82c3c953be77181a0934a6b02ba476fec4f177eb9c297e19ed"},
+    {file = "ruff-0.0.283-py3-none-win32.whl", hash = "sha256:bd64f9775d96f35a236980ac98ed50fb5c755b227845612a873ad4f247c0cf8d"},
+    {file = "ruff-0.0.283-py3-none-win_amd64.whl", hash = "sha256:28e3545ff24ae44e13da2b8fc706dd62a374cc74e4f5c1fbc8bc071ab0cc309f"},
+    {file = "ruff-0.0.283-py3-none-win_arm64.whl", hash = "sha256:28732d956171f493b45c096d27f015e34fde065414330b68d59efcd0f3f67d5d"},
+    {file = "ruff-0.0.283.tar.gz", hash = "sha256:6ee6928ad7b6b2b103d3b41517ff252cb81506dacbef01bab31fcfd0de39c5bb"},
 ]
 
 [[package]]
