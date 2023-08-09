@@ -31,16 +31,17 @@ from polyfactory.utils.predicates import is_optional, is_safe_subclass, is_union
 try:
     from pydantic import VERSION, BaseModel, Json
     from pydantic.fields import FieldInfo
-    from pydantic_core import to_json
 except ImportError as e:
     raise MissingDependencyException("pydantic is not installed") from e
 
 try:
     from pydantic.fields import ModelField  # type: ignore[attr-defined]
-
 except ImportError:
     ModelField = Any
     from pydantic_core import PydanticUndefined as Undefined
+
+with suppress(ImportError):
+    from pydantic_core import to_json
 
 if TYPE_CHECKING:
     from random import Random
