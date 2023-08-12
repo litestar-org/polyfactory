@@ -120,6 +120,7 @@ def test_no_override_of_faker() -> None:
 
 @pytest.mark.parametrize("locale", FAKER_LOCALES)
 def test_faker_locale_preserved(locale: FakerLocaleType) -> None:
+
     @dataclass
     class Foo:
         foo: int
@@ -130,9 +131,5 @@ def test_faker_locale_preserved(locale: FakerLocaleType) -> None:
         __faker__ = Faker(locale=locale)
         __random_seed__ = 10
 
-    if isinstance(locale, str):
-        expected_locales = [locale]
-    else:
-        expected_locales = locale
-
+    expected_locales = [locale] if isinstance(locale, str) else locale
     assert FooFactory.__faker__.locales == expected_locales
