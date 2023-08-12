@@ -3,6 +3,7 @@ from random import Random
 from typing import cast
 
 import pytest
+from faker import Faker
 
 from polyfactory.factories.dataclass_factory import DataclassFactory
 
@@ -90,3 +91,19 @@ def test_setting_random_seed_on_multiple_factories() -> None:
 
     assert FooFactory.build().foo == RANDINT_MAP[foo_seed]
     assert BarFactory.build().bar == RANDINT_MAP[bar_seed]
+
+
+def test_no_override_of_faker() -> None:
+    faker = Faker()
+
+    @dataclass
+    class Foo:
+        foo: int
+
+    class FooFactory(DataclassFactory[Foo]):
+        __model__ = Foo
+
+        __faker__ = faker
+        __random_seed__ = 10
+
+    assert FooFactory.__faker__ is faker
