@@ -126,7 +126,9 @@ def _create_pydantic_type_map(cls: type[BaseFactory[Any]]) -> dict[type, Callabl
 
         if pydantic.VERSION.startswith("2"):
             # v2 exclusive values
-            mapping.update({pydantic.AwareDatetime: partial(cls.__faker__.date_time, timezone.utc)})
+            mapping[pydantic.AwareDatetime] = partial(
+                cls.__faker__.date_time, timezone.utc
+            )
 
         if pydantic.VERSION.startswith("1"):
             # v1 only values - these will raise an exception in v2
