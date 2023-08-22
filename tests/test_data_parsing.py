@@ -160,6 +160,7 @@ def test_type_property_parsing() -> None:
             MariaDBDsn_pydantic_type: pydantic.networks.MariaDBDsn
             CockroachDsn_pydantic_type: pydantic.networks.CockroachDsn
             MySQLDsn_pydantic_type: pydantic.networks.MySQLDsn
+            AwareDatetime_pydantic_type: pydantic.AwareDatetime
 
         else:
             PyObject_pydantic_type: pydantic.types.PyObject

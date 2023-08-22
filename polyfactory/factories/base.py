@@ -3,7 +3,7 @@ from __future__ import annotations
 from abc import ABC, abstractmethod
 from collections import Counter, abc, deque
 from contextlib import suppress
-from datetime import date, datetime, time, timedelta
+from datetime import date, datetime, time, timedelta, timezone
 from decimal import Decimal
 from enum import EnumMeta
 from functools import partial
@@ -123,6 +123,10 @@ def _create_pydantic_type_map(cls: type[BaseFactory[Any]]) -> dict[type, Callabl
             pydantic.PastDate: cls.__faker__.past_date,
             pydantic.FutureDate: cls.__faker__.future_date,
         }
+
+        if pydantic.VERSION.startswith("2"):
+            # v2 exclusive values
+            mapping.update({pydantic.AwareDatetime: partial(cls.__faker__.date_time, timezone.utc)})
 
         if pydantic.VERSION.startswith("1"):
             # v1 only values - these will raise an exception in v2
