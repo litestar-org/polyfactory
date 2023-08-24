@@ -160,8 +160,11 @@ def test_dict_constraints() -> None:
     class FooFactory(MsgspecFactory[Foo]):
         __model__ = Foo
 
-    with pytest.raises(ParameterException):
-        _ = FooFactory.build()
+    foo = FooFactory.build()
+    foo_dict = structs.asdict(foo)
+
+    validated_foo = msgspec.convert(foo_dict, type=Foo)
+    assert foo == validated_foo
 
 
 @pytest.mark.skipif(sys.version_info < (3, 9), reason="flaky in 3.8")
