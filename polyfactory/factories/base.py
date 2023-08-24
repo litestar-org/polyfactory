@@ -124,10 +124,6 @@ def _create_pydantic_type_map(cls: type[BaseFactory[Any]]) -> dict[type, Callabl
             pydantic.FutureDate: cls.__faker__.future_date,
         }
 
-        if pydantic.VERSION.startswith("2"):
-            # v2 exclusive values
-            mapping.update({pydantic.AwareDatetime: partial(cls.__faker__.date_time, timezone.utc)})
-
         if pydantic.VERSION.startswith("1"):
             # v1 only values - these will raise an exception in v2
             # in pydantic v2 these are all aliases for Annotated with a constraint.
@@ -146,6 +142,15 @@ def _create_pydantic_type_map(cls: type[BaseFactory[Any]]) -> dict[type, Callabl
                     pydantic.UUID4: cls.__faker__.uuid4,
                     pydantic.UUID5: lambda: uuid5(NAMESPACE_DNS, cls.__faker__.pystr()),
                     pydantic.color.Color: cls.__faker__.hex_color,  # pyright: ignore
+                }
+            )
+        else:
+            mapping.update(
+                {
+                    pydantic.PastDatetime: cls.__faker__.past_datetime,
+                    pydantic.FutureDatetime: cls.__faker__.future_datetime,
+                    pydantic.AwareDatetime: partial(cls.__faker__.date_time, timezone.utc),
+                    pydantic.NaiveDatetime: cls.__faker__.date_time,
                 }
             )
 
