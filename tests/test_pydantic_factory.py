@@ -20,14 +20,14 @@ def test_const() -> None:
 
 
 def test_optional_with_constraints() -> None:
-    # Setting random seed so that we get a non-optional value
-    random_seed = 1
-
     class A(BaseModel):
         a: Optional[float] = Field(None, ge=0, le=1)
 
     class AFactory(ModelFactory[A]):
         __model__ = A
+        # Setting random seed so that we get a non-optional value
+        random_seed = 1
+
         __random_seed__ = random_seed
 
     # verify no pydantic.ValidationError is thrown
