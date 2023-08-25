@@ -3,7 +3,7 @@ from __future__ import annotations
 from abc import ABC, abstractmethod
 from collections import Counter, abc, deque
 from contextlib import suppress
-from datetime import date, datetime, time, timedelta
+from datetime import date, datetime, time, timedelta, timezone
 from decimal import Decimal
 from enum import EnumMeta
 from functools import partial
@@ -145,6 +145,15 @@ def _create_pydantic_type_map(cls: type[BaseFactory[Any]]) -> dict[type, Callabl
                     pydantic.UUID4: cls.__faker__.uuid4,
                     pydantic.UUID5: lambda: uuid5(NAMESPACE_DNS, cls.__faker__.pystr()),
                     pydantic.color.Color: cls.__faker__.hex_color,  # pyright: ignore
+                }
+            )
+        else:
+            mapping.update(
+                {
+                    pydantic.PastDatetime: cls.__faker__.past_datetime,
+                    pydantic.FutureDatetime: cls.__faker__.future_datetime,
+                    pydantic.AwareDatetime: partial(cls.__faker__.date_time, timezone.utc),
+                    pydantic.NaiveDatetime: cls.__faker__.date_time,
                 }
             )
 
