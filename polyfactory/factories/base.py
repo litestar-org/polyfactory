@@ -62,7 +62,10 @@ from polyfactory.utils.predicates import (
     is_union,
 )
 from polyfactory.value_generators.complex_types import handle_collection_type
-from polyfactory.value_generators.constrained_collections import handle_constrained_collection
+from polyfactory.value_generators.constrained_collections import (
+    handle_constrained_collection,
+    handle_constrained_mapping,
+)
 from polyfactory.value_generators.constrained_dates import handle_constrained_date
 from polyfactory.value_generators.constrained_numbers import (
     handle_constrained_decimal,
@@ -581,6 +584,14 @@ class BaseFactory(ABC, Generic[T]):
                     max_items=constraints.get("max_length"),
                     min_items=constraints.get("min_length"),
                     unique_items=constraints.get("unique_items", False),
+                )
+
+            if is_safe_subclass(annotation, dict):
+                return handle_constrained_mapping(
+                    factory=cls,
+                    field_meta=field_meta,
+                    min_items=constraints.get("min_length"),
+                    max_items=constraints.get("max_length"),
                 )
 
             if is_safe_subclass(annotation, date):
