@@ -227,6 +227,13 @@
       "avatar_url": "https://avatars.githubusercontent.com/u/25140344?v=4",
       "profile": "https://github.com/tcrasset",
       "contributions": ["code"]
+    },
+    {
+      "login": "185504a9",
+      "name": "cătălin",
+      "avatar_url": "https://avatars.githubusercontent.com/u/45485069?v=4",
+      "profile": "https://git.roboces.dev/catalin",
+      "contributions": ["code"]
     }
   ],
   "contributorsPerLine": 7,
