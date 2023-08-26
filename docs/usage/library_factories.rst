@@ -26,6 +26,9 @@ These include:
 :class:`AttrsFactory <polyfactory.factories.attrs_factory.AttrsFactory>`
     a base factory for `attrs <https://www.attrs.org/en/stable/index.html>`_ models.
 
+:class:`SQLAlchemyFactory <polyfactory.factories.sqlachemy_factory.SQLAlchemyFactory>`
+    a base factory for `SQLAlchemy <https://www.sqlalchemy.org/>`_ models.
+
 .. note::
     All factories exported from ``polyfactory.factories`` do not require any additional dependencies. The other factories,
     such as :class:`ModelFactory <polyfactory.factories.pydantic_factory.ModelFactory>`, require an additional but optional
