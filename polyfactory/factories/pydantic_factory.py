@@ -38,7 +38,7 @@ try:
     from pydantic.fields import ModelField  # type: ignore[attr-defined]
 except ImportError:
     ModelField = Any
-    from pydantic_core import PydanticUndefined as Undefined
+    from pydantic._internal._fields import Undefined  # type: ignore[attr-defined]
 
 with suppress(ImportError):
     from pydantic_core import to_json
