@@ -69,21 +69,32 @@ class SQLAlchemyFactory(Generic[T], BaseFactory[T]):
         return True
 
     @classmethod
+    def get_type_from_column(cls, column: Column) -> type:
+        column_type = type(column.type)
+        if column_type in cls.get_sqlalchemy_types():
+            annotation = column_type
+        elif issubclass(column_type, types.ARRAY):
+            annotation = list[column.type.item_type.python_type]  # type: ignore[assignment,name-defined]
+        else:
+            annotation = column.type.python_type
+
+        if column.nullable:
+            annotation = Union[annotation, None]  # type: ignore[assignment]
+
+        return annotation
+
+    @classmethod
     def get_model_fields(cls) -> list[FieldMeta]:
         fields_meta: list[FieldMeta] = []
 
-        types_override = cls.get_sqlalchemy_types()
         table = inspect(cls.__model__)
         for name, column in table.columns.items():
             if not cls.should_column_be_set(column):
                 continue
 
-            annotation: type = type(column.type) if type(column.type) in types_override else column.type.python_type
-            if column.nullable:
-                annotation = Union[annotation, None]  # type: ignore[assignment]
             fields_meta.append(
                 FieldMeta.from_type(
-                    annotation=annotation,
+                    annotation=cls.get_type_from_column(column),
                     name=name,
                     random=cls.__random__,
                 )
@@ -92,7 +103,7 @@ class SQLAlchemyFactory(Generic[T], BaseFactory[T]):
         if cls.__resolve_relationships__:
             for name, relationship in table.relationships.items():
                 class_ = relationship.entity.class_
-                annotation = class_ if not relationship.uselist else list[class_]  # type: ignore[valid-type,assignment]
+                annotation = class_ if not relationship.uselist else list[class_]  # type: ignore[valid-type]
                 fields_meta.append(
                     FieldMeta.from_type(
                         name=name,

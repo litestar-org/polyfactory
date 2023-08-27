@@ -1,10 +1,9 @@
 from dataclasses import dataclass
 from enum import Enum
-from typing import Optional
+from typing import Any, Optional
 
 import pytest
-from sqlalchemy import ForeignKey, orm
-from sqlalchemy.dialects import mysql
+from sqlalchemy import ForeignKey, orm, types
 from sqlalchemy.orm import mapped_column
 
 from polyfactory.exceptions import ConfigurationException
@@ -27,7 +26,7 @@ def test_invalid_model() -> None:
             SQLAlchemyFactory.create_factory(invalid)
 
 
-def test_type_handling() -> None:
+def test_python_type_handling() -> None:
     class Base(orm.DeclarativeBase):
         ...
 
@@ -39,19 +38,42 @@ def test_type_handling() -> None:
         __tablename__ = "model"
 
         id: orm.Mapped[int] = mapped_column(primary_key=True)
-        provided_type: orm.Mapped[str] = mapped_column(nullable=False)
-        overriden_type: orm.Mapped[int] = mapped_column(type_=mysql.YEAR, nullable=False, primary_key=True)
+        str_type: orm.Mapped[str] = mapped_column(nullable=False)
         enum_type: orm.Mapped[Animal]
+        str_array_type: orm.Mapped[list[str]] = mapped_column(type_=types.ARRAY(types.String))
 
     class ModelFactory(SQLAlchemyFactory[Model]):
         __model__ = Model
 
     instance = ModelFactory.build()
     assert isinstance(instance.id, int)
-    assert isinstance(instance.provided_type, str)
-    assert isinstance(instance.overriden_type, int)
-    assert 1901 <= instance.overriden_type <= 2155
+    assert isinstance(instance.str_type, str)
     assert isinstance(instance.enum_type, Animal)
+    assert isinstance(instance.str_array_type, list)
+    assert isinstance(instance.str_array_type[0], str)
+
+
+@pytest.mark.parametrize(
+    "type_",
+    tuple(
+        SQLAlchemyFactory.get_sqlalchemy_types().keys(),
+    ),
+)
+def test_sqlalchemy_type_handlers(type_: types.TypeEngine) -> None:
+    class Base(orm.DeclarativeBase):
+        ...
+
+    class Model(Base):
+        __tablename__ = "model"
+
+        id: orm.Mapped[int] = mapped_column(primary_key=True)
+        overridden: orm.Mapped[Any] = mapped_column(type_=type_)
+
+    class ModelFactory(SQLAlchemyFactory[Model]):
+        __model__ = Model
+
+    instance = ModelFactory.build()
+    assert instance.overridden is not None
 
 
 def test_optional_field() -> None:
