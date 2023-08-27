@@ -3,7 +3,7 @@ from enum import Enum
 from typing import Optional
 
 import pytest
-from sqlalchemy import orm
+from sqlalchemy import ForeignKey, orm
 from sqlalchemy.dialects import mysql
 from sqlalchemy.orm import mapped_column
 
@@ -78,3 +78,86 @@ def test_optional_field() -> None:
             continue
 
     assert not failed
+
+
+def test_ignore_primary_key() -> None:
+    class Base(orm.DeclarativeBase):
+        ...
+
+    class Model(Base):
+        __tablename__ = "model"
+
+        id: orm.Mapped[int] = mapped_column(primary_key=True)
+        optional_field: orm.Mapped[Optional[str]]
+
+    class ModelFactory(SQLAlchemyFactory[Model]):
+        __model__ = Model
+        __resolve_primary_key__ = False
+
+    result = ModelFactory.build()
+    assert result.id is None
+
+
+class Base(orm.DeclarativeBase):
+    ...
+
+
+class Author(Base):
+    __tablename__ = "authors"
+
+    id: orm.Mapped[int] = mapped_column(primary_key=True)
+    books: orm.Mapped[list["Book"]] = orm.relationship(
+        "Book",
+        uselist=True,
+        back_populates="author",
+    )
+
+
+class Book(Base):
+    __tablename__ = "books"
+
+    id: orm.Mapped[int] = mapped_column(primary_key=True)
+    author_id: orm.Mapped[Optional[int]] = mapped_column(ForeignKey(Author.id))
+    author: orm.Mapped[Author] = orm.relationship(
+        Author,
+        uselist=False,
+        back_populates="books",
+    )
+
+
+def test_relationship_resolution() -> None:
+    class BookFactory(SQLAlchemyFactory[Book]):
+        __model__ = Book
+        __resolve_foreign_keys__ = False
+        __resolve_relationships__ = True
+
+    result = BookFactory.build()
+    assert result.author_id is None
+    assert isinstance(result.author, Author)
+
+
+def test_relationship_list_resolution() -> None:
+    class AuthorFactory(SQLAlchemyFactory[Author]):
+        __model__ = Author
+        __resolve_foreign_keys__ = False
+        __resolve_relationships__ = True
+
+    result = AuthorFactory.build()
+    assert isinstance(result.books, list)
+
+
+def test_alias() -> None:
+    class Base(orm.DeclarativeBase):
+        ...
+
+    class ModelWithAlias(Base):
+        __tablename__ = "table"
+
+        id: orm.Mapped[int] = mapped_column(primary_key=True)
+        name: orm.Mapped[str] = mapped_column("alias")
+
+    class ModelFactory(SQLAlchemyFactory[ModelWithAlias]):
+        __model__ = ModelWithAlias
+
+    result = ModelFactory.build()
+    assert isinstance(result.name, str)

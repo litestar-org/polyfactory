@@ -1,14 +1,14 @@
 from __future__ import annotations
 
 from datetime import date, datetime
-from typing import TYPE_CHECKING, Any, Callable, Generic, TypeVar, Union
+from typing import TYPE_CHECKING, Any, Callable, ClassVar, Generic, TypeVar, Union
 
 from polyfactory.exceptions import MissingDependencyException
 from polyfactory.factories.base import BaseFactory
 from polyfactory.field_meta import FieldMeta
 
 try:
-    from sqlalchemy import inspect, orm, types
+    from sqlalchemy import Column, inspect, orm, types
     from sqlalchemy.dialects import mysql, postgresql
     from sqlalchemy.exc import NoInspectionAvailable
     from sqlalchemy.orm import InstanceState, Mapper
@@ -24,6 +24,9 @@ T = TypeVar("T", bound=orm.DeclarativeBase)
 
 class SQLAlchemyFactory(Generic[T], BaseFactory[T]):
     __is_base_factory__ = True
+    __resolve_primary_key__: ClassVar[bool] = True
+    __resolve_foreign_keys__: ClassVar[bool] = True
+    __resolve_relationships__: ClassVar[bool] = False
 
     @classmethod
     def get_sqlalchemy_types(cls) -> dict[Any, Callable[[], Any]]:
@@ -56,12 +59,25 @@ class SQLAlchemyFactory(Generic[T], BaseFactory[T]):
         return isinstance(inspected, (Mapper, InstanceState))
 
     @classmethod
+    def should_column_be_set(cls, column: Column) -> bool:
+        if not cls.__resolve_primary_key__ and column.primary_key:
+            return False
+
+        if not cls.__resolve_foreign_keys__ and column.foreign_keys:
+            return False
+
+        return True
+
+    @classmethod
     def get_model_fields(cls) -> list[FieldMeta]:
         fields_meta: list[FieldMeta] = []
 
         types_override = cls.get_sqlalchemy_types()
-        columns = cls.__model__.__table__.columns
-        for name, column in columns.items():
+        table = inspect(cls.__model__)
+        for name, column in table.columns.items():
+            if not cls.should_column_be_set(column):
+                continue
+
             annotation: type = type(column.type) if type(column.type) in types_override else column.type.python_type
             if column.nullable:
                 annotation = Union[annotation, None]  # type: ignore[assignment]
@@ -72,5 +88,17 @@ class SQLAlchemyFactory(Generic[T], BaseFactory[T]):
                     random=cls.__random__,
                 )
             )
+
+        if cls.__resolve_relationships__:
+            for name, relationship in table.relationships.items():
+                class_ = relationship.entity.class_
+                annotation = class_ if not relationship.uselist else list[class_]  # type: ignore[valid-type,assignment]
+                fields_meta.append(
+                    FieldMeta.from_type(
+                        name=name,
+                        annotation=annotation,
+                        random=cls.__random__,
+                    )
+                )
 
         return fields_meta
