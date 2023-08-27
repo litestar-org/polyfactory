@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from dataclasses import dataclass
 from enum import Enum
-from typing import Any, Optional
+from typing import Any
 
 import pytest
 from sqlalchemy import ForeignKey, orm, types
@@ -86,7 +86,7 @@ def test_optional_field() -> None:
         __tablename__ = "model"
 
         id: orm.Mapped[int] = mapped_column(primary_key=True)
-        optional_field: orm.Mapped[Optional[str]]
+        optional_field: orm.Mapped[str | None]
 
     class ModelFactory(SQLAlchemyFactory[Model]):
         __model__ = Model
@@ -112,7 +112,7 @@ def test_ignore_primary_key() -> None:
         __tablename__ = "model"
 
         id: orm.Mapped[int] = mapped_column(primary_key=True)
-        optional_field: orm.Mapped[Optional[str]]
+        optional_field: orm.Mapped[str | None]
 
     class ModelFactory(SQLAlchemyFactory[Model]):
         __model__ = Model
@@ -141,7 +141,7 @@ class Book(Base):
     __tablename__ = "books"
 
     id: orm.Mapped[int] = mapped_column(primary_key=True)
-    author_id: orm.Mapped[Optional[int]] = mapped_column(ForeignKey(Author.id))
+    author_id: orm.Mapped[int | None] = mapped_column(ForeignKey(Author.id))
     author: orm.Mapped[Author] = orm.relationship(
         Author,
         uselist=False,
