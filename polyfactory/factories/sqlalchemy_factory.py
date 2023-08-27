@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from datetime import date, datetime
-from typing import TYPE_CHECKING, Any, Callable, ClassVar, Generic, TypeVar, Union
+from typing import TYPE_CHECKING, Any, Callable, ClassVar, Generic, List, TypeVar, Union
 
 from polyfactory.exceptions import MissingDependencyException
 from polyfactory.factories.base import BaseFactory
@@ -74,7 +74,7 @@ class SQLAlchemyFactory(Generic[T], BaseFactory[T]):
         if column_type in cls.get_sqlalchemy_types():
             annotation = column_type
         elif issubclass(column_type, types.ARRAY):
-            annotation = list[column.type.item_type.python_type]  # type: ignore[assignment,name-defined]
+            annotation = List[column.type.item_type.python_type]  # type: ignore[assignment,name-defined]
         else:
             annotation = column.type.python_type
 
@@ -103,7 +103,7 @@ class SQLAlchemyFactory(Generic[T], BaseFactory[T]):
         if cls.__resolve_relationships__:
             for name, relationship in table.relationships.items():
                 class_ = relationship.entity.class_
-                annotation = class_ if not relationship.uselist else list[class_]  # type: ignore[valid-type]
+                annotation = class_ if not relationship.uselist else List[class_]  # type: ignore[valid-type]
                 fields_meta.append(
                     FieldMeta.from_type(
                         name=name,
