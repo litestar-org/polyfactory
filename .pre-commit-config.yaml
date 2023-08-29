@@ -70,6 +70,7 @@ repos:
             pydantic>=2,
             pytest,
             sphinx,
+            sqlalchemy>=2,
           ]
   - repo: https://github.com/sphinx-contrib/sphinx-lint
     rev: "v0.6.8"

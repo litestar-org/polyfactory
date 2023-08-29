@@ -23,13 +23,19 @@ T = TypeVar("T", bound=orm.DeclarativeBase)
 
 
 class SQLAlchemyFactory(Generic[T], BaseFactory[T]):
+    """Base factory for SQLAlchemy models."""
+
     __is_base_factory__ = True
     __resolve_primary_key__: ClassVar[bool] = True
+    """Configuration to consider primary key columns as a field or not."""
     __resolve_foreign_keys__: ClassVar[bool] = True
+    """Configuration to consider columns with foreign keys as a field or not."""
     __resolve_relationships__: ClassVar[bool] = False
+    """Configuration to consider relationships property as a model field or not."""
 
     @classmethod
     def get_sqlalchemy_types(cls) -> dict[Any, Callable[[], Any]]:
+        """Get mapping of types where column type."""
         return {
             types.TupleType: cls.__faker__.pytuple,
             mysql.YEAR: lambda: cls.__random__.randint(1901, 2155),
@@ -74,7 +80,7 @@ class SQLAlchemyFactory(Generic[T], BaseFactory[T]):
         if column_type in cls.get_sqlalchemy_types():
             annotation = column_type
         elif issubclass(column_type, types.ARRAY):
-            annotation = List[column.type.item_type.python_type]  # type: ignore[assignment,name-defined]
+            annotation = List[column.type.item_type.python_type]  # type: ignore[access,unused-ignore] # add unused-ignore as not an error in mypy
         else:
             annotation = column.type.python_type
 
@@ -97,6 +103,9 @@ class SQLAlchemyFactory(Generic[T], BaseFactory[T]):
                     annotation=cls.get_type_from_column(column),
                     name=name,
                     random=cls.__random__,
+                    randomize_collection_length=cls.__randomize_collection_length__,
+                    min_collection_length=cls.__min_collection_length__,
+                    max_collection_length=cls.__max_collection_length__,
                 )
             )
 
@@ -109,6 +118,9 @@ class SQLAlchemyFactory(Generic[T], BaseFactory[T]):
                         name=name,
                         annotation=annotation,
                         random=cls.__random__,
+                        randomize_collection_length=cls.__randomize_collection_length__,
+                        min_collection_length=cls.__min_collection_length__,
+                        max_collection_length=cls.__max_collection_length__,
                     )
                 )
 
