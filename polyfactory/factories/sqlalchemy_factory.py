@@ -80,7 +80,7 @@ class SQLAlchemyFactory(Generic[T], BaseFactory[T]):
         if column_type in cls.get_sqlalchemy_types():
             annotation = column_type
         elif issubclass(column_type, types.ARRAY):
-            annotation = List[column.type.item_type.python_type]  # type: ignore[access,unused-ignore] # add unused-ignore as not an error in mypy
+            annotation = List[column.type.item_type.python_type]  # type: ignore[assignment,name-defined]
         else:
             annotation = column.type.python_type
 

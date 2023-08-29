@@ -52,6 +52,7 @@ repos:
             pydantic>=2,
             pytest,
             sphinx,
+            sqlalchemy>=2,
           ]
   - repo: https://github.com/RobertCraigie/pyright-python
     rev: v1.1.324
