@@ -15,3 +15,4 @@ factories
     odmantic_odm_factory
     beanie_odm_factory
     attrs_factory
+    sqlalchemy_factory
