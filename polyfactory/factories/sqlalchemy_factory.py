@@ -69,10 +69,7 @@ class SQLAlchemyFactory(Generic[T], BaseFactory[T]):
         if not cls.__resolve_primary_key__ and column.primary_key:
             return False
 
-        if not cls.__resolve_foreign_keys__ and column.foreign_keys:
-            return False
-
-        return True
+        return bool(cls.__resolve_foreign_keys__ or not column.foreign_keys)
 
     @classmethod
     def get_type_from_column(cls, column: Column) -> type:
@@ -94,21 +91,18 @@ class SQLAlchemyFactory(Generic[T], BaseFactory[T]):
         fields_meta: list[FieldMeta] = []
 
         table = inspect(cls.__model__)
-        for name, column in table.columns.items():
-            if not cls.should_column_be_set(column):
-                continue
-
-            fields_meta.append(
-                FieldMeta.from_type(
-                    annotation=cls.get_type_from_column(column),
-                    name=name,
-                    random=cls.__random__,
-                    randomize_collection_length=cls.__randomize_collection_length__,
-                    min_collection_length=cls.__min_collection_length__,
-                    max_collection_length=cls.__max_collection_length__,
-                )
+        fields_meta.extend(
+            FieldMeta.from_type(
+                annotation=cls.get_type_from_column(column),
+                name=name,
+                random=cls.__random__,
+                randomize_collection_length=cls.__randomize_collection_length__,
+                min_collection_length=cls.__min_collection_length__,
+                max_collection_length=cls.__max_collection_length__,
             )
-
+            for name, column in table.columns.items()
+            if cls.should_column_be_set(column)
+        )
         if cls.__resolve_relationships__:
             for name, relationship in table.relationships.items():
                 class_ = relationship.entity.class_
