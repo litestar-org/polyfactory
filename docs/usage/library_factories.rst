@@ -26,7 +26,7 @@ These include:
 :class:`AttrsFactory <polyfactory.factories.attrs_factory.AttrsFactory>`
     a base factory for `attrs <https://www.attrs.org/en/stable/index.html>`_ models.
 
-:class:`SQLAlchemyFactory <polyfactory.factories.sqlachemy_factory.SQLAlchemyFactory>`
+:class:`SQLAlchemyFactory <polyfactory.factories.sqlalchemy_factory.SQLAlchemyFactory>`
     a base factory for `SQLAlchemy <https://www.sqlalchemy.org/>`_ models.
 
 .. note::
