@@ -847,6 +847,8 @@ def _register_builtin_factories() -> None:
         "polyfactory.factories.pydantic_factory",
         "polyfactory.factories.beanie_odm_factory",
         "polyfactory.factories.odmantic_odm_factory",
+        "polyfactory.factories.msgspec_factory",
+        "polyfactory.factories.attrs_factory",
     ]:
         try:
             import_module(module)
