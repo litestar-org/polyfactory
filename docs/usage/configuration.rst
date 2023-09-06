@@ -94,8 +94,10 @@ Set of fields that allow you to generate a collection with random lengths. By de
 Allow None Optionals
 ----------------------------
 
-Allow None to be set for optional types. By default, Optional type will be ignored.
+Allow `None` to be generated as a value for types marked as optional. When set to `True`, the outputted value will be randomly chosen between `None` and other allowed types. By default, this is set to `True`.
+
+By setting to `False`, then optional types will always be treated as the wrapped type:
 
 .. literalinclude:: /examples/configuration/test_example_7.py
-    :caption: Allow None Optionals
+    :caption: Disable Allow None Optionals
     :language: python

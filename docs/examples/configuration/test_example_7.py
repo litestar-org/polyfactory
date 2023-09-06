@@ -13,10 +13,9 @@ class Person:
 
 class PersonFactory(DataclassFactory[Person]):
     __model__ = Person
-    __allow_none_optionals__ = True
-    __random_seed__ = 0
+    __allow_none_optionals__ = False
 
 
-def test_optional_field() -> None:
+def test_optional_type_ignored() -> None:
     person_instance = PersonFactory.build()
-    assert person_instance.name is None
+    assert isinstance(person_instance.name, str)
