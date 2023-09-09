@@ -240,10 +240,7 @@
       "name": "Andrew Truong",
       "avatar_url": "https://avatars.githubusercontent.com/u/40660973?v=4",
       "profile": "https://github.com/adhtruong",
-      "contributions": [
-        "code",
-        "doc"
-      ]
+      "contributions": ["code", "doc"]
     }
   ],
   "contributorsPerLine": 7,
