@@ -48,7 +48,12 @@ napoleon_attr_annotations = True
 
 autoclass_content = "class"
 autodoc_class_signature = "separated"
-autodoc_default_options = {"special-members": "__init__", "show-inheritance": True, "members": True}
+autodoc_default_options = {
+    "special-members": True,
+    "show-inheritance": True,
+    "members": True,
+    "exclude-members": "__init_subclass__,__weakref__,__subclasshook__",
+}
 autodoc_member_order = "bysource"
 autodoc_typehints_format = "short"
 

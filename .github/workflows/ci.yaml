@@ -33,6 +33,7 @@ jobs:
       - name: Check out repository
         uses: actions/checkout@v4
       - name: Set up python ${{ matrix.python-version }}
+        id: checkout-python
         uses: actions/setup-python@v4
         with:
           python-version: ${{ matrix.python-version }}
@@ -47,7 +48,7 @@ jobs:
         uses: actions/cache@v3
         with:
           path: .venv
-          key: v1-venv-${{ runner.os }}-${{ matrix.python-version }}-${{ matrix.pydantic-version}}-${{ hashFiles('**/poetry.lock') }}
+          key: v1-venv-${{ runner.os }}-${{ steps.checkout-python.outputs.version }}-${{ matrix.pydantic-version}}-${{ hashFiles('**/poetry.lock') }}
       - name: Install dependencies
         if: steps.cached-poetry-dependencies.outputs.cache-hit != 'true'
         run: poetry install --no-interaction --extras full
