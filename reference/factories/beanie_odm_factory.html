@@ -770,6 +770,19 @@ document.write(`
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">polyfactory.factories.beanie_odm_factory.</span></span><span class="sig-name descname"><span class="pre">BeanieDocumentFactory</span></span><a class="headerlink" href="#polyfactory.factories.beanie_odm_factory.BeanieDocumentFactory" title="Permalink to this definition">#</a></dt>
 <dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Generic" title="(in Python v3.11)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Generic</span></code></a>[<code class="xref py py-obj docutils literal notranslate"><span class="pre">T</span></code>], <a class="reference internal" href="pydantic_factory.html#polyfactory.factories.pydantic_factory.ModelFactory" title="polyfactory.factories.pydantic_factory.ModelFactory"><code class="xref py py-class docutils literal notranslate"><span class="pre">ModelFactory</span></code></a>[<code class="xref py py-obj docutils literal notranslate"><span class="pre">T</span></code>]</p>
 <p>Base factory for Beanie Documents</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="polyfactory.factories.beanie_odm_factory.BeanieDocumentFactory.__async_persistence__">
+<span class="sig-name descname"><span class="pre">__async_persistence__</span></span><a class="headerlink" href="#polyfactory.factories.beanie_odm_factory.BeanieDocumentFactory.__async_persistence__" title="Permalink to this definition">#</a></dt>
+<dd><p>alias of <a class="reference internal" href="#polyfactory.factories.beanie_odm_factory.BeaniePersistenceHandler" title="polyfactory.factories.beanie_odm_factory.BeaniePersistenceHandler"><code class="xref py py-class docutils literal notranslate"><span class="pre">BeaniePersistenceHandler</span></code></a></p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="polyfactory.factories.beanie_odm_factory.BeanieDocumentFactory.__is_base_factory__">
+<span class="sig-name descname"><span class="pre">__is_base_factory__</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.11)"><span class="pre">bool</span></a></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">True</span></em><a class="headerlink" href="#polyfactory.factories.beanie_odm_factory.BeanieDocumentFactory.__is_base_factory__" title="Permalink to this definition">#</a></dt>
+<dd><p>Flag dictating whether the factory is a ‘base’ factory. Base factories are registered globally as handlers for types.
+For example, the ‘DataclassFactory’, ‘TypedDictFactory’ and ‘ModelFactory’ are all base factories.</p>
+</dd></dl>
+
 <dl class="py method">
 <dt class="sig sig-object py" id="polyfactory.factories.beanie_odm_factory.BeanieDocumentFactory.is_supported_type">
 <em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">is_supported_type</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">value</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Any</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">TypeGuard</span><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/functions.html#type" title="(in Python v3.11)"><span class="pre">type</span></a><span class="p"><span class="pre">[</span></span><span class="pre">T</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#polyfactory.factories.beanie_odm_factory.BeanieDocumentFactory.is_supported_type" title="Permalink to this definition">#</a></dt>
@@ -858,6 +871,8 @@ document.write(`
 </ul>
 </li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#polyfactory.factories.beanie_odm_factory.BeanieDocumentFactory"><code class="docutils literal notranslate"><span class="pre">BeanieDocumentFactory</span></code></a><ul class="visible nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#polyfactory.factories.beanie_odm_factory.BeanieDocumentFactory.__async_persistence__"><code class="docutils literal notranslate"><span class="pre">BeanieDocumentFactory.__async_persistence__</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#polyfactory.factories.beanie_odm_factory.BeanieDocumentFactory.__is_base_factory__"><code class="docutils literal notranslate"><span class="pre">BeanieDocumentFactory.__is_base_factory__</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#polyfactory.factories.beanie_odm_factory.BeanieDocumentFactory.is_supported_type"><code class="docutils literal notranslate"><span class="pre">BeanieDocumentFactory.is_supported_type()</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#polyfactory.factories.beanie_odm_factory.BeanieDocumentFactory.get_field_value"><code class="docutils literal notranslate"><span class="pre">BeanieDocumentFactory.get_field_value()</span></code></a></li>
 </ul>

@@ -1100,6 +1100,37 @@ Once a factory is generated, it is then cached and reused - when the same type i
 </div>
 </div>
 </section>
+<section id="allow-none-optionals">
+<h2>Allow None Optionals<a class="headerlink" href="#allow-none-optionals" title="Permalink to this heading">#</a></h2>
+<p>Allow <cite>None</cite> to be generated as a value for types marked as optional. When set to <cite>True</cite>, the outputted value will be randomly chosen between <cite>None</cite> and other allowed types. By default, this is set to <cite>True</cite>.</p>
+<p>By setting to <cite>False</cite>, then optional types will always be treated as the wrapped type:</p>
+<div class="literal-block-wrapper docutils container" id="id8">
+<div class="code-block-caption"><span class="caption-text">Disable Allow None Optionals</span><a class="headerlink" href="#id8" title="Permalink to this code">#</a></div>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">dataclasses</span> <span class="kn">import</span> <span class="n">dataclass</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Optional</span>
+<span class="kn">from</span> <span class="nn">uuid</span> <span class="kn">import</span> <span class="n">UUID</span>
+
+<span class="kn">from</span> <span class="nn">polyfactory.factories.dataclass_factory</span> <span class="kn">import</span> <span class="n">DataclassFactory</span>
+
+
+<span class="nd">@dataclass</span>
+<span class="k">class</span> <span class="nc">Person</span><span class="p">:</span>
+    <span class="nb">id</span><span class="p">:</span> <span class="n">UUID</span>
+    <span class="n">name</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span>
+
+
+<span class="k">class</span> <span class="nc">PersonFactory</span><span class="p">(</span><span class="n">DataclassFactory</span><span class="p">[</span><span class="n">Person</span><span class="p">]):</span>
+    <span class="n">__model__</span> <span class="o">=</span> <span class="n">Person</span>
+    <span class="n">__allow_none_optionals__</span> <span class="o">=</span> <span class="kc">False</span>
+
+
+<span class="k">def</span> <span class="nf">test_optional_type_ignored</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="n">person_instance</span> <span class="o">=</span> <span class="n">PersonFactory</span><span class="o">.</span><span class="n">build</span><span class="p">()</span>
+    <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">person_instance</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="nb">str</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</section>
 </section>
 
 
@@ -1155,6 +1186,7 @@ Once a factory is generated, it is then cached and reused - when the same type i
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#persistence-handlers">Persistence Handlers</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#defining-default-factories">Defining Default Factories</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#randomized-collection-length">Randomized Collection Length</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#allow-none-optionals">Allow None Optionals</a></li>
 </ul>
   </nav></div>
 

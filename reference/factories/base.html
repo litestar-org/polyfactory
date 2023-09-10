@@ -750,6 +750,90 @@ document.write(`
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">polyfactory.factories.base.</span></span><span class="sig-name descname"><span class="pre">BaseFactory</span></span><a class="headerlink" href="#polyfactory.factories.base.BaseFactory" title="Permalink to this definition">#</a></dt>
 <dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/abc.html#abc.ABC" title="(in Python v3.11)"><code class="xref py py-class docutils literal notranslate"><span class="pre">ABC</span></code></a>, <a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Generic" title="(in Python v3.11)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Generic</span></code></a>[<code class="xref py py-obj docutils literal notranslate"><span class="pre">T</span></code>]</p>
 <p>Base Factory class - this class holds the main logic of the library</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="polyfactory.factories.base.BaseFactory.__model__">
+<span class="sig-name descname"><span class="pre">__model__</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/functions.html#type" title="(in Python v3.11)"><span class="pre">type</span></a><span class="p"><span class="pre">[</span></span><span class="pre">T</span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#polyfactory.factories.base.BaseFactory.__model__" title="Permalink to this definition">#</a></dt>
+<dd><p>The model for the factory.
+This attribute is required for non-base factories and an exception will be raised if its not set.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="polyfactory.factories.base.BaseFactory.__allow_none_optionals__">
+<span class="sig-name descname"><span class="pre">__allow_none_optionals__</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">ClassVar</span><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.11)"><span class="pre">bool</span></a><span class="p"><span class="pre">]</span></span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">True</span></em><a class="headerlink" href="#polyfactory.factories.base.BaseFactory.__allow_none_optionals__" title="Permalink to this definition">#</a></dt>
+<dd><p>Flag dictating whether to allow ‘None’ for optional values.
+If ‘True’, ‘None’ will be randomly generated as a value for optional model fields</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="polyfactory.factories.base.BaseFactory.__sync_persistence__">
+<span class="sig-name descname"><span class="pre">__sync_persistence__</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/functions.html#type" title="(in Python v3.11)"><span class="pre">type</span></a><span class="p"><span class="pre">[</span></span><a class="reference internal" href="../persistence.html#polyfactory.persistence.SyncPersistenceProtocol" title="polyfactory.persistence.SyncPersistenceProtocol"><span class="pre">SyncPersistenceProtocol</span></a><span class="p"><span class="pre">[</span></span><span class="pre">T</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="../persistence.html#polyfactory.persistence.SyncPersistenceProtocol" title="polyfactory.persistence.SyncPersistenceProtocol"><span class="pre">SyncPersistenceProtocol</span></a><span class="p"><span class="pre">[</span></span><span class="pre">T</span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.11)"><span class="pre">None</span></a></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#polyfactory.factories.base.BaseFactory.__sync_persistence__" title="Permalink to this definition">#</a></dt>
+<dd><p>A sync persistence handler. Can be a class or a class instance.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="polyfactory.factories.base.BaseFactory.__async_persistence__">
+<span class="sig-name descname"><span class="pre">__async_persistence__</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/functions.html#type" title="(in Python v3.11)"><span class="pre">type</span></a><span class="p"><span class="pre">[</span></span><a class="reference internal" href="../persistence.html#polyfactory.persistence.AsyncPersistenceProtocol" title="polyfactory.persistence.AsyncPersistenceProtocol"><span class="pre">AsyncPersistenceProtocol</span></a><span class="p"><span class="pre">[</span></span><span class="pre">T</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="../persistence.html#polyfactory.persistence.AsyncPersistenceProtocol" title="polyfactory.persistence.AsyncPersistenceProtocol"><span class="pre">AsyncPersistenceProtocol</span></a><span class="p"><span class="pre">[</span></span><span class="pre">T</span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.11)"><span class="pre">None</span></a></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#polyfactory.factories.base.BaseFactory.__async_persistence__" title="Permalink to this definition">#</a></dt>
+<dd><p>An async persistence handler. Can be a class or a class instance.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="polyfactory.factories.base.BaseFactory.__set_as_default_factory_for_type__">
+<span class="sig-name descname"><span class="pre">__set_as_default_factory_for_type__</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">False</span></em><a class="headerlink" href="#polyfactory.factories.base.BaseFactory.__set_as_default_factory_for_type__" title="Permalink to this definition">#</a></dt>
+<dd><p>Flag dictating whether to set as the default factory for the given type.
+If ‘True’ the factory will be used instead of dynamically generating a factory for the type.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="polyfactory.factories.base.BaseFactory.__is_base_factory__">
+<span class="sig-name descname"><span class="pre">__is_base_factory__</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.11)"><span class="pre">bool</span></a></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">False</span></em><a class="headerlink" href="#polyfactory.factories.base.BaseFactory.__is_base_factory__" title="Permalink to this definition">#</a></dt>
+<dd><p>Flag dictating whether the factory is a ‘base’ factory. Base factories are registered globally as handlers for types.
+For example, the ‘DataclassFactory’, ‘TypedDictFactory’ and ‘ModelFactory’ are all base factories.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="polyfactory.factories.base.BaseFactory.__base_factory_overrides__">
+<span class="sig-name descname"><span class="pre">__base_factory_overrides__</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.11)"><span class="pre">dict</span></a><span class="p"><span class="pre">[</span></span><span class="pre">Any</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/functions.html#type" title="(in Python v3.11)"><span class="pre">type</span></a><span class="p"><span class="pre">[</span></span><a class="reference internal" href="#polyfactory.factories.base.BaseFactory" title="polyfactory.factories.base.BaseFactory"><span class="pre">BaseFactory</span></a><span class="p"><span class="pre">[</span></span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.11)"><span class="pre">None</span></a></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#polyfactory.factories.base.BaseFactory.__base_factory_overrides__" title="Permalink to this definition">#</a></dt>
+<dd><p>A base factory to override with this factory. If this value is set, the given factory will replace the given base factory.</p>
+<p>Note: this value can only be set when ‘__is_base_factory__’ is ‘True’.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="polyfactory.factories.base.BaseFactory.__faker__">
+<span class="sig-name descname"><span class="pre">__faker__</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">ClassVar</span><span class="p"><span class="pre">[</span></span><span class="s"><span class="pre">'Faker'</span></span><span class="p"><span class="pre">]</span></span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">&lt;faker.proxy.Faker</span> <span class="pre">object&gt;</span></em><a class="headerlink" href="#polyfactory.factories.base.BaseFactory.__faker__" title="Permalink to this definition">#</a></dt>
+<dd><p>A faker instance to use. Can be a user provided value.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="polyfactory.factories.base.BaseFactory.__random__">
+<span class="sig-name descname"><span class="pre">__random__</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">ClassVar</span><span class="p"><span class="pre">[</span></span><span class="s"><span class="pre">'Random'</span></span><span class="p"><span class="pre">]</span></span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">&lt;random.Random</span> <span class="pre">object&gt;</span></em><a class="headerlink" href="#polyfactory.factories.base.BaseFactory.__random__" title="Permalink to this definition">#</a></dt>
+<dd><p>An instance of ‘random.Random’ to use.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="polyfactory.factories.base.BaseFactory.__random_seed__">
+<span class="sig-name descname"><span class="pre">__random_seed__</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">ClassVar</span><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.11)"><span class="pre">int</span></a><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#polyfactory.factories.base.BaseFactory.__random_seed__" title="Permalink to this definition">#</a></dt>
+<dd><p>An integer to seed the factory’s Faker and Random instances with.
+This attribute can be used to control random generation.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="polyfactory.factories.base.BaseFactory.__randomize_collection_length__">
+<span class="sig-name descname"><span class="pre">__randomize_collection_length__</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">ClassVar</span><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.11)"><span class="pre">bool</span></a><span class="p"><span class="pre">]</span></span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">False</span></em><a class="headerlink" href="#polyfactory.factories.base.BaseFactory.__randomize_collection_length__" title="Permalink to this definition">#</a></dt>
+<dd><p>Flag dictating whether to randomize collections lengths.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="polyfactory.factories.base.BaseFactory.__min_collection_length__">
+<span class="sig-name descname"><span class="pre">__min_collection_length__</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">ClassVar</span><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.11)"><span class="pre">int</span></a><span class="p"><span class="pre">]</span></span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">0</span></em><a class="headerlink" href="#polyfactory.factories.base.BaseFactory.__min_collection_length__" title="Permalink to this definition">#</a></dt>
+<dd><p>An integer value that defines minimum length of a collection.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="polyfactory.factories.base.BaseFactory.__max_collection_length__">
+<span class="sig-name descname"><span class="pre">__max_collection_length__</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">ClassVar</span><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.11)"><span class="pre">int</span></a><span class="p"><span class="pre">]</span></span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">5</span></em><a class="headerlink" href="#polyfactory.factories.base.BaseFactory.__max_collection_length__" title="Permalink to this definition">#</a></dt>
+<dd><p>An integer value that defines maximum length of a collection.</p>
+</dd></dl>
+
 <dl class="py method">
 <dt class="sig sig-object py" id="polyfactory.factories.base.BaseFactory.is_factory_type">
 <em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">is_factory_type</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">annotation</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Any" title="(in Python v3.11)"><span class="pre">Any</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.11)"><span class="pre">bool</span></a></span></span><a class="headerlink" href="#polyfactory.factories.base.BaseFactory.is_factory_type" title="Permalink to this definition">#</a></dt>
@@ -1104,6 +1188,19 @@ document.write(`
   <nav class="bd-toc-nav page-toc">
     <ul class="visible nav section-nav flex-column">
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#polyfactory.factories.base.BaseFactory"><code class="docutils literal notranslate"><span class="pre">BaseFactory</span></code></a><ul class="visible nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#polyfactory.factories.base.BaseFactory.__model__"><code class="docutils literal notranslate"><span class="pre">BaseFactory.__model__</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#polyfactory.factories.base.BaseFactory.__allow_none_optionals__"><code class="docutils literal notranslate"><span class="pre">BaseFactory.__allow_none_optionals__</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#polyfactory.factories.base.BaseFactory.__sync_persistence__"><code class="docutils literal notranslate"><span class="pre">BaseFactory.__sync_persistence__</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#polyfactory.factories.base.BaseFactory.__async_persistence__"><code class="docutils literal notranslate"><span class="pre">BaseFactory.__async_persistence__</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#polyfactory.factories.base.BaseFactory.__set_as_default_factory_for_type__"><code class="docutils literal notranslate"><span class="pre">BaseFactory.__set_as_default_factory_for_type__</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#polyfactory.factories.base.BaseFactory.__is_base_factory__"><code class="docutils literal notranslate"><span class="pre">BaseFactory.__is_base_factory__</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#polyfactory.factories.base.BaseFactory.__base_factory_overrides__"><code class="docutils literal notranslate"><span class="pre">BaseFactory.__base_factory_overrides__</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#polyfactory.factories.base.BaseFactory.__faker__"><code class="docutils literal notranslate"><span class="pre">BaseFactory.__faker__</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#polyfactory.factories.base.BaseFactory.__random__"><code class="docutils literal notranslate"><span class="pre">BaseFactory.__random__</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#polyfactory.factories.base.BaseFactory.__random_seed__"><code class="docutils literal notranslate"><span class="pre">BaseFactory.__random_seed__</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#polyfactory.factories.base.BaseFactory.__randomize_collection_length__"><code class="docutils literal notranslate"><span class="pre">BaseFactory.__randomize_collection_length__</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#polyfactory.factories.base.BaseFactory.__min_collection_length__"><code class="docutils literal notranslate"><span class="pre">BaseFactory.__min_collection_length__</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#polyfactory.factories.base.BaseFactory.__max_collection_length__"><code class="docutils literal notranslate"><span class="pre">BaseFactory.__max_collection_length__</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#polyfactory.factories.base.BaseFactory.is_factory_type"><code class="docutils literal notranslate"><span class="pre">BaseFactory.is_factory_type()</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#polyfactory.factories.base.BaseFactory.is_batch_factory_type"><code class="docutils literal notranslate"><span class="pre">BaseFactory.is_batch_factory_type()</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#polyfactory.factories.base.BaseFactory.extract_field_build_parameters"><code class="docutils literal notranslate"><span class="pre">BaseFactory.extract_field_build_parameters()</span></code></a></li>

@@ -90,3 +90,14 @@ Set of fields that allow you to generate a collection with random lengths. By de
 .. literalinclude:: /examples/configuration/test_example_6.py
     :caption: Randomized collection length
     :language: python
+
+Allow None Optionals
+----------------------------
+
+Allow `None` to be generated as a value for types marked as optional. When set to `True`, the outputted value will be randomly chosen between `None` and other allowed types. By default, this is set to `True`.
+
+By setting to `False`, then optional types will always be treated as the wrapped type:
+
+.. literalinclude:: /examples/configuration/test_example_7.py
+    :caption: Disable Allow None Optionals
+    :language: python
