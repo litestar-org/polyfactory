@@ -59,9 +59,29 @@ def test_tuple_with_annotated_constraints() -> None:
     assert LocationFactory.build()
 
 
+def test_optional_tuple_with_annotated_constraints() -> None:
+    class Location(BaseModel):
+        long_lat: Union[Tuple[Annotated[float, Ge(-180), Le(180)], Annotated[float, Ge(-90), Le(90)]], None]
+
+    class LocationFactory(ModelFactory[Location]):
+        __model__ = Location
+
+    assert LocationFactory.build()
+
+
 def test_legacy_tuple_with_annotated_constraints() -> None:
     class Location(BaseModel):
         long_lat: Tuple[Annotated[float, Ge(-180), Le(180)], Annotated[float, Ge(-90), Le(90)]]
+
+    class LocationFactory(ModelFactory[Location]):
+        __model__ = Location
+
+    assert LocationFactory.build()
+
+
+def test_legacy_optional_tuple_with_annotated_constraints() -> None:
+    class Location(BaseModel):
+        long_lat: Union[Tuple[Annotated[float, Ge(-180), Le(180)], Annotated[float, Ge(-90), Le(90)]], None]
 
     class LocationFactory(ModelFactory[Location]):
         __model__ = Location

@@ -125,6 +125,18 @@ def is_annotated(annotation: Any) -> bool:
     )
 
 
+def is_any_annotated(annotation: Any) -> bool:
+    """Determine whether any of the types in the given annotation is
+    `typing.Annotated`.
+
+    :param annotation: A type annotation.
+
+    :returns: A boolean
+    """
+
+    return any(is_annotated(arg) or hasattr(arg, "__args__") and is_any_annotated(arg) for arg in get_args(annotation))
+
+
 def get_type_origin(annotation: Any) -> Any:
     """Get the type origin of an annotation - safely.
 
