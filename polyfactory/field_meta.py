@@ -14,7 +14,7 @@ from polyfactory.constants import (
     TYPE_MAPPING,
 )
 from polyfactory.utils.helpers import normalize_annotation, unwrap_annotated, unwrap_args, unwrap_new_type
-from polyfactory.utils.predicates import is_annotated
+from polyfactory.utils.predicates import is_annotated, is_any_annotated
 
 if TYPE_CHECKING:
     import datetime
@@ -134,7 +134,7 @@ class FieldMeta:
             _, metadata = unwrap_annotated(annotation, random=random)
             constraints = cls.parse_constraints(metadata)
 
-        if not any(is_annotated(arg) for arg in get_args(annotation)):
+        if not is_any_annotated(annotation):
             annotation = TYPE_MAPPING[field_type] if field_type in TYPE_MAPPING else field_type
         elif (origin := get_origin(annotation)) and origin in TYPE_MAPPING:  # pragma: no cover
             container = TYPE_MAPPING[origin]
