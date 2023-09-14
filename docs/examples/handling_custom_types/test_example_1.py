@@ -23,7 +23,8 @@ class Person:
     secret: CustomSecret
 
 
-# by default the factory class cannot handle unknown types, so we need to override the provider map to add it:
+# by default the factory class cannot handle unknown types,
+# so we need to override the provider map to add it:
 class PersonFactory(DataclassFactory[Person]):
     __model__ = Person
 
