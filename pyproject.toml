@@ -44,7 +44,7 @@ msgspec = { version = "*", optional = true }
 odmantic = { version = "*", optional = true }
 pydantic = { version = "*", optional = true, extras = ["email"] }
 typing-extensions = "*"
-attrs = { version = "*", optional = true }
+attrs = {version = ">=22.2.0", optional = true}
 
 [tool.poetry.group.dev.dependencies]
 hypothesis = "*"
