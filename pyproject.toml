@@ -97,13 +97,17 @@ include = ["polyfactory", "tests", "examples"]
 omit = ["*/tests/*"]
 
 [tool.pytest.ini_options]
-addopts = "tests docs/examples"
+addopts = "--strict-config --strict-markers tests docs/examples"
 asyncio_mode = "auto"
 filterwarnings = [
     "ignore:.*pkg_resources.declare_namespace\\('sphinxcontrib'\\).*:DeprecationWarning",
     "ignore:pkg_resources is deprecated as an API:DeprecationWarning",
     # Get rid those above once sphinxcontrib-mermaid doesn't use pkg_resources anymore
     # https://github.com/mgaitan/sphinxcontrib-mermaid/issues/119
+]
+markers = [
+    # Marks tests that use `attrs` library
+    "attrs",
 ]
 
 [tool.coverage.report]
