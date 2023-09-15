@@ -82,6 +82,7 @@ nitpick_ignore = [
     (PY_CLASS, "Random"),
     (PY_CLASS, "Scope"),
     (PY_CLASS, "T"),
+    (PY_CLASS, "F"),
     (PY_CLASS, "P"),
     (PY_CLASS, "P.args"),
     (PY_CLASS, "P.kwargs"),
