@@ -771,7 +771,8 @@ you can extend what’s referred as the <cite>providers_map</cite>:</p>
     <span class="n">secret</span><span class="p">:</span> <span class="n">CustomSecret</span>
 
 
-<span class="c1"># by default the factory class cannot handle unknown types, so we need to override the provider map to add it:</span>
+<span class="c1"># by default the factory class cannot handle unknown types,</span>
+<span class="c1"># so we need to override the provider map to add it:</span>
 <span class="k">class</span> <span class="nc">PersonFactory</span><span class="p">(</span><span class="n">DataclassFactory</span><span class="p">[</span><span class="n">Person</span><span class="p">]):</span>
     <span class="n">__model__</span> <span class="o">=</span> <span class="n">Person</span>
 
