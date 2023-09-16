@@ -164,6 +164,7 @@ def _create_pydantic_type_map(cls: type[BaseFactory[Any]]) -> dict[type, Callabl
 
 
 T = TypeVar("T")
+F = TypeVar("F", bound="BaseFactory[Any]")
 
 
 class BaseFactory(ABC, Generic[T]):
@@ -487,11 +488,11 @@ class BaseFactory(ABC, Generic[T]):
 
     @classmethod
     def create_factory(
-        cls,
-        model: type,
+        cls: type[F],
+        model: type[T],
         bases: tuple[type[BaseFactory[Any]], ...] | None = None,
         **kwargs: Any,
-    ) -> type[BaseFactory[Any]]:
+    ) -> type[F]:
         """Generate a factory for the given type dynamically.
 
         :param model: A type to model.
@@ -502,7 +503,7 @@ class BaseFactory(ABC, Generic[T]):
 
         """
         return cast(
-            "Type[BaseFactory[Any]]",
+            "Type[F]",
             type(
                 f"{model.__name__}Factory",
                 (*(bases or ()), cls),
