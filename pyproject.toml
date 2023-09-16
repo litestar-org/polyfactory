@@ -6,7 +6,7 @@ authors = [
     "Na'aman Hirschfeld <nhirschfeld@gmail.com>",
 ]
 maintainers = [
-    "Na'aman Hirschfeld <nhirschfeld@gmail.com>",
+    "Visakh Unnikrishnan <guacs.guacs@gmail.com>",
 ]
 license = "MIT"
 readme = "docs/PYPI_README.md"
