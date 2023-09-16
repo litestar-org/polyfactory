@@ -75,6 +75,7 @@ Creating a new release
 4. In GitHub go to the `releases tab <https://github.com/litestar-org/polyfactory/releases>`_
 5. Pick "`Draft a new release <https://github.com/litestar-org/polyfactory/releases/new>`_"
 6. Give it a title and a tag, both ``vX.X.X``
-7. Fill in the release description, you can let GitHub do it for you and then edit as needed.
+7. Fill in the release description. You can let GitHub do it for you and then edit as needed.
 8. Publish the release.
-9. Look under the action pane and make sure the release action runs correctly
+9. Go to `Actions <https://github.com/litestar-org/polyfactory/actions>`_ and approve the workflow
+10. Check that the workflow runs successfully
