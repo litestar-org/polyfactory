@@ -849,7 +849,9 @@ def _register_builtin_factories() -> None:
         "polyfactory.factories.beanie_odm_factory",
         "polyfactory.factories.odmantic_odm_factory",
         "polyfactory.factories.msgspec_factory",
-        "polyfactory.factories.attrs_factory",
+        # `AttrsFactory` is not being registered by default since not all versions of `attrs` are supported.
+        # Issue: https://github.com/litestar-org/polyfactory/issues/356
+        # "polyfactory.factories.attrs_factory",
     ]:
         try:
             import_module(module)
