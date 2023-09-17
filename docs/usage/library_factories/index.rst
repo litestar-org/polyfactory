@@ -37,3 +37,9 @@ These include:
 
 .. note::
     We will be adding additional factories to this package, so make sure to checkout the above list from time to time.
+
+
+.. toctree::
+    :maxdepth: 1
+
+    sqlalchemy_factory
