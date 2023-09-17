@@ -43,7 +43,6 @@ faker = "*"
 msgspec = { version = "*", optional = true }
 odmantic = { version = "*", optional = true }
 pydantic = { version = "*", optional = true, extras = ["email"] }
-sqlalchemy = { version = ">=2", optional = true }
 typing-extensions = "*"
 attrs = {version = ">=22.2.0", optional = true}
 
@@ -53,6 +52,7 @@ mongomock-motor = "*"
 pytest = "*"
 pytest-asyncio = "*"
 pytest-cov = "*"
+aiosqlite = "^0.19.0"
 
 [tool.poetry.group.docs.dependencies]
 auto-pytabs = "*"
@@ -76,13 +76,12 @@ ruff = '*'
 sourcery = "*"
 
 [tool.poetry.extras]
-sqlalchemy = ["sqlalchemy"]
 pydantic = ["pydantic"]
 msgspec = ["msgspec"]
 odmantic = ["odmantic", "pydantic"]
 beanie = ["beanie", "pydantic"]
 attrs = ["attrs"]
-full = ["pydantic", "odmantic", "msgspec", "beanie", "attrs", "sqlalchemy"]
+full = ["pydantic", "odmantic", "msgspec", "beanie", "attrs"]
 
 [build-system]
 requires = ["poetry-core>=1.0.0"]
