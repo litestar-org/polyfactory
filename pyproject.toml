@@ -45,6 +45,7 @@ odmantic = { version = "*", optional = true }
 pydantic = { version = "*", optional = true, extras = ["email"] }
 typing-extensions = "*"
 attrs = {version = ">=22.2.0", optional = true}
+sqlalchemy = { version = ">=2", optional = true }
 
 [tool.poetry.group.dev.dependencies]
 hypothesis = "*"
@@ -76,12 +77,13 @@ ruff = '*'
 sourcery = "*"
 
 [tool.poetry.extras]
+sqlalchemy = ["sqlalchemy"]
 pydantic = ["pydantic"]
 msgspec = ["msgspec"]
 odmantic = ["odmantic", "pydantic"]
 beanie = ["beanie", "pydantic"]
 attrs = ["attrs"]
-full = ["pydantic", "odmantic", "msgspec", "beanie", "attrs"]
+full = ["pydantic", "odmantic", "msgspec", "beanie", "attrs", "sqlalchemy"]
 
 [build-system]
 requires = ["poetry-core>=1.0.0"]

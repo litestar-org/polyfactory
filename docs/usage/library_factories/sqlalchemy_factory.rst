@@ -3,7 +3,7 @@ SQLAlchemyFactory
 
 Basic usage is like other factories
 
-.. literalinclude:: /examples/library_factories/sqlalchemy/test_example_1.py
+.. literalinclude:: /examples/library_factories/sqlalchemy_factory/test_example_1.py
     :caption: Declaring a factory for a SQLAlchemy model
     :language: python
 
@@ -12,7 +12,7 @@ Configurations
 
 By default, relationships will not be set. This can be overridden via ``__set_relationships__``.
 
-.. literalinclude:: /examples/library_factories/sqlalchemy/test_example_2.py
+.. literalinclude:: /examples/library_factories/sqlalchemy_factory/test_example_2.py
     :caption: Setting relationships
     :language: python
 
@@ -25,7 +25,7 @@ Persistence
 
 A handler is provided to allow persistence. This can be used by setting ``__session__`` attribute on a factory.
 
-.. literalinclude:: /examples/library_factories/sqlalchemy/test_example_3.py
+.. literalinclude:: /examples/library_factories/sqlalchemy_factory/test_example_3.py
     :caption: Using persistence
     :language: python
 
