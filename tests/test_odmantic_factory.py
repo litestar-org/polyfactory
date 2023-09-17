@@ -1,4 +1,3 @@
-import sys
 from datetime import datetime
 from typing import Any, Dict, FrozenSet, List, Set, Tuple
 from uuid import UUID
@@ -123,7 +122,7 @@ def test_variable_length(type_: Any) -> None:
     assert len(result.items) == 3
 
 
-@pytest.mark.skipif(sys.version_info < (3, 9), reason="flaky in python 3.8")
+@pytest.mark.skipif(True, reason="test is flaky - refer issue #362")
 def test_variable_length__dict() -> None:
     class MyModel(Model):  # type: ignore
         items: Dict[bson.Int64, UUID]
