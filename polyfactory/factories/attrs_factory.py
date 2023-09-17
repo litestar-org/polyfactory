@@ -14,10 +14,12 @@ if TYPE_CHECKING:
 try:
     import attrs
     from attr._make import Factory
+    from attrs import AttrsInstance
 except ImportError as ex:
     raise MissingDependencyException("attrs is not installed") from ex
 
-T = TypeVar("T", bound=attrs.AttrsInstance)
+
+T = TypeVar("T", bound=AttrsInstance)
 
 
 class AttrsFactory(BaseFactory[T]):
@@ -32,8 +34,10 @@ class AttrsFactory(BaseFactory[T]):
     @classmethod
     def get_model_fields(cls) -> list[FieldMeta]:
         field_metas: list[FieldMeta] = []
-        fields = attrs.fields(cls.__model__)
         none_type = type(None)
+
+        cls.resolve_types(cls.__model__)
+        fields = attrs.fields(cls.__model__)
 
         for field in fields:
             annotation = none_type if field.type is None else field.type
@@ -63,3 +67,13 @@ class AttrsFactory(BaseFactory[T]):
             )
 
         return field_metas
+
+    @classmethod
+    def resolve_types(cls, model: type[T], **kwargs: Any) -> None:
+        """Resolve any strings and forward annotations in type annotations.
+
+        :param model: The model to resolve the type annotations for.
+        :param kwargs: Any parameters that need to be passed to `attrs.resolve_types`.
+        """
+
+        attrs.resolve_types(model, **kwargs)  # type: ignore[type-var]
