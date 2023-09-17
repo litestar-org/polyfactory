@@ -222,3 +222,16 @@ def test_with_inheritance() -> None:
     child_dict = asdict(child)
 
     assert child == Child(**child_dict)
+
+
+def test_with_stringified_annotations() -> None:
+    @define
+    class Foo:
+        int_field: "int"
+
+    class FooFactory(AttrsFactory[Foo]):
+        __model__ = Foo
+
+    foo = FooFactory.build()
+
+    assert isinstance(foo.int_field, int)
