@@ -1,6 +1,6 @@
 from dataclasses import dataclass
 from enum import Enum
-from typing import Any, Callable, List, Optional
+from typing import Any, Callable, List, Optional, Type
 
 import pytest
 from sqlalchemy import Engine, ForeignKey, create_engine, inspect, orm, types
@@ -21,7 +21,7 @@ def async_engine() -> AsyncEngine:
     return create_async_engine("sqlite+aiosqlite:///:memory:")
 
 
-async def create_tables(engine: AsyncEngine, base: type[orm.DeclarativeBase]) -> None:
+async def create_tables(engine: AsyncEngine, base: Type[orm.DeclarativeBase]) -> None:
     async with engine.connect() as connection:
         await connection.run_sync(base.metadata.create_all)
 

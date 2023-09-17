@@ -27,6 +27,7 @@ T = TypeVar("T", bound=orm.DeclarativeBase)
 
 class SQLASyncPersistence(SyncPersistenceProtocol[T]):
     def __init__(self, session: Session) -> None:
+        """Sync persistence handler for SQLAFactory."""
         self.session = session
 
     def save(self, data: T) -> T:
@@ -42,6 +43,7 @@ class SQLASyncPersistence(SyncPersistenceProtocol[T]):
 
 class SQLAASyncPersistence(AsyncPersistenceProtocol[T]):
     def __init__(self, session: AsyncSession) -> None:
+        """Async persistence handler for SQLAFactory."""
         self.session = session
 
     async def save(self, data: T) -> T:
