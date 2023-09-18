@@ -108,7 +108,7 @@ class Fixture:
         from polyfactory.pytest_plugin import FactoryFixture
 
         if factory := FactoryFixture.factory_class_map.get(self.ref["value"]):
-            if self.size:
+            if self.size is not None:
                 return factory.batch(self.size, **self.kwargs)
             return factory.build(**self.kwargs)
 
