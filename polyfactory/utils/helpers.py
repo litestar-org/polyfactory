@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 import sys
-from typing import TYPE_CHECKING, Any
+from typing import TYPE_CHECKING, Any, ForwardRef
 
 from typing_extensions import get_args, get_origin
 
@@ -130,3 +130,17 @@ def normalize_annotation(annotation: Any, random: Random) -> Any:
         return origin[args] if origin is not type else annotation
 
     return origin
+
+
+def evaluate_forwardref(ref: ForwardRef) -> Any:
+    """Evaluate ForwardRef to get type annotation
+
+    :param ref: A ForwardRef object
+
+    :returns: A type annotation
+
+    """
+    if sys.version_info < (3, 9):
+        return ref._evaluate(globals(), locals())
+
+    return ref._evaluate(globals(), locals(), frozenset())
