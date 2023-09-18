@@ -324,6 +324,16 @@
       "profile": "https://github.com/adhtruong",
       "contributions": [
         "code",
+        "doc"
+      ]
+    },
+    {
+      "login": "anthonyjgraff",
+      "name": "Anthony",
+      "avatar_url": "https://avatars.githubusercontent.com/u/59455370?v=4",
+      "profile": "https://github.com/anthonyjgraff",
+      "contributions": [
+        "code"
         "doc",
         "test"
       ]
