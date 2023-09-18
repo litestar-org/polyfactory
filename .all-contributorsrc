@@ -334,6 +334,8 @@
       "profile": "https://github.com/anthonyjgraff",
       "contributions": [
         "code"
+        "doc",
+        "test"
       ]
     }
   ],
