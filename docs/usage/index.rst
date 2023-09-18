@@ -5,7 +5,7 @@ Usage Guide
     :titlesonly:
     :maxdepth: 1
 
-    library_factories
+    library_factories/index
     declaring_factories
     configuration
     fields
