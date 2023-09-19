@@ -15,7 +15,7 @@ docs: docs-clean
 	poetry run sphinx-build -M html docs docs/_build/ -a -j auto -W --keep-going
 
 test:
-	poetry run pytest tests
+	poetry run pytest tests docs/examples
 
 coverage:
 	poetry run pytest tests --cov=polyfactory

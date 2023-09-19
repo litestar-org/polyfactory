@@ -62,7 +62,7 @@ jobs:
         run: poetry run pytest
       - name: Test with Coverage
         if: matrix.python-version == '3.11' && matrix.pydantic-version == '2.0'
-        run: poetry run pytest --cov=. --cov-report=xml
+        run: poetry run pytest tests docs/examples --cov=. --cov-report=xml
       - uses: actions/upload-artifact@v3
         if: matrix.python-version == '3.11'
         with:

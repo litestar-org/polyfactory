@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "polyfactory"
-version = "2.8.2"
+version = "2.9.0"
 description = "Mock data generation factories"
 authors = [
     "Na'aman Hirschfeld <nhirschfeld@gmail.com>",
@@ -13,7 +13,7 @@ readme = "docs/PYPI_README.md"
 homepage = "https://github.com/litestar-org/polyfactory"
 repository = "https://github.com/litestar-org/polyfactory"
 documentation = "https://github.com/litestar-org/polyfactory"
-keywords = ["dataclasses", "factory", "msgspec", "pydantic", "testing"]
+keywords = ["dataclasses", "factory", "msgspec", "pydantic", "attrs", "sqlalchemy", "testing"]
 classifiers = [
     "Development Status :: 5 - Production/Stable",
     "Environment :: Web Environment",
@@ -100,7 +100,7 @@ include = ["polyfactory", "tests", "examples"]
 omit = ["*/tests/*"]
 
 [tool.pytest.ini_options]
-addopts = "--strict-config --strict-markers tests docs/examples"
+addopts = "--strict-config --strict-markers"
 asyncio_mode = "auto"
 filterwarnings = [
     "ignore:.*pkg_resources.declare_namespace\\('sphinxcontrib'\\).*:DeprecationWarning",
