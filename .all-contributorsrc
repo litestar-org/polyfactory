@@ -101,7 +101,8 @@
         "code",
         "infra",
         "doc",
-        "test"
+        "test",
+        "maintenance"
       ]
     },
     {
