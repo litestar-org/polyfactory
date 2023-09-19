@@ -98,7 +98,10 @@
       "avatar_url": "https://avatars.githubusercontent.com/u/126393040?v=4",
       "profile": "https://github.com/guacs",
       "contributions": [
-        "code"
+        "code",
+        "infra",
+        "doc",
+        "test"
       ]
     },
     {
