@@ -639,7 +639,10 @@ document.write(`
   <div class="bd-toc-item navbar-nav"><p aria-level="2" class="caption" role="heading"><span class="caption-text">Documentation</span></p>
 <ul class="nav bd-sidenav">
 <li class="toctree-l1 has-children"><a class="reference internal" href="usage/index.html">Usage Guide</a><input class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-1"><i class="fa-solid fa-chevron-down"></i></label><ul>
-<li class="toctree-l2"><a class="reference internal" href="usage/library_factories.html">Polyfactory Factories</a></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="usage/library_factories/index.html">Polyfactory Factories</a><input class="toctree-checkbox" id="toctree-checkbox-2" name="toctree-checkbox-2" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-2"><i class="fa-solid fa-chevron-down"></i></label><ul>
+<li class="toctree-l3"><a class="reference internal" href="usage/library_factories/sqlalchemy_factory.html">SQLAlchemyFactory</a></li>
+</ul>
+</li>
 <li class="toctree-l2"><a class="reference internal" href="usage/declaring_factories.html">Declaring Factories</a></li>
 <li class="toctree-l2"><a class="reference internal" href="usage/configuration.html">Factory Configuration</a></li>
 <li class="toctree-l2"><a class="reference internal" href="usage/fields.html">Factory Fields</a></li>
@@ -648,10 +651,10 @@ document.write(`
 <li class="toctree-l2"><a class="reference internal" href="usage/handling_custom_types.html">Handling Custom Types</a></li>
 </ul>
 </li>
-<li class="toctree-l1 has-children"><a class="reference internal" href="reference/index.html">API Reference</a><input class="toctree-checkbox" id="toctree-checkbox-2" name="toctree-checkbox-2" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-2"><i class="fa-solid fa-chevron-down"></i></label><ul>
+<li class="toctree-l1 has-children"><a class="reference internal" href="reference/index.html">API Reference</a><input class="toctree-checkbox" id="toctree-checkbox-3" name="toctree-checkbox-3" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-3"><i class="fa-solid fa-chevron-down"></i></label><ul>
 <li class="toctree-l2"><a class="reference internal" href="reference/constants.html">constants</a></li>
 <li class="toctree-l2"><a class="reference internal" href="reference/exceptions.html">exceptions</a></li>
-<li class="toctree-l2 has-children"><a class="reference internal" href="reference/factories/index.html">factories</a><input class="toctree-checkbox" id="toctree-checkbox-3" name="toctree-checkbox-3" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-3"><i class="fa-solid fa-chevron-down"></i></label><ul>
+<li class="toctree-l2 has-children"><a class="reference internal" href="reference/factories/index.html">factories</a><input class="toctree-checkbox" id="toctree-checkbox-4" name="toctree-checkbox-4" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-4"><i class="fa-solid fa-chevron-down"></i></label><ul>
 <li class="toctree-l3"><a class="reference internal" href="reference/factories/base.html">base_factory</a></li>
 <li class="toctree-l3"><a class="reference internal" href="reference/factories/dataclass_factory.html">dataclass_factory</a></li>
 <li class="toctree-l3"><a class="reference internal" href="reference/factories/typed_dict_factory.html">typed_dict_factory</a></li>
@@ -660,6 +663,7 @@ document.write(`
 <li class="toctree-l3"><a class="reference internal" href="reference/factories/odmantic_odm_factory.html">odmantic_odm_factory</a></li>
 <li class="toctree-l3"><a class="reference internal" href="reference/factories/beanie_odm_factory.html">beanie_odm_factory</a></li>
 <li class="toctree-l3"><a class="reference internal" href="reference/factories/attrs_factory.html">attrs_factory</a></li>
+<li class="toctree-l3"><a class="reference internal" href="reference/factories/sqlalchemy_factory.html">sqlalchemy_factory</a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="reference/field_meta.html">field_meta</a></li>
@@ -667,7 +671,7 @@ document.write(`
 <li class="toctree-l2"><a class="reference internal" href="reference/decorators.html">decorators</a></li>
 <li class="toctree-l2"><a class="reference internal" href="reference/persistence.html">persistence</a></li>
 <li class="toctree-l2"><a class="reference internal" href="reference/pytest_plugin.html">pytest_plugin</a></li>
-<li class="toctree-l2 has-children"><a class="reference internal" href="reference/value_generators/index.html">value_generators</a><input class="toctree-checkbox" id="toctree-checkbox-4" name="toctree-checkbox-4" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-4"><i class="fa-solid fa-chevron-down"></i></label><ul>
+<li class="toctree-l2 has-children"><a class="reference internal" href="reference/value_generators/index.html">value_generators</a><input class="toctree-checkbox" id="toctree-checkbox-5" name="toctree-checkbox-5" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-5"><i class="fa-solid fa-chevron-down"></i></label><ul>
 <li class="toctree-l3"><a class="reference internal" href="reference/value_generators/complex_types.html">complex_types</a></li>
 <li class="toctree-l3"><a class="reference internal" href="reference/value_generators/constrained_collections.html">constrained_collections</a></li>
 <li class="toctree-l3"><a class="reference internal" href="reference/value_generators/constrained_dates.html">constrained_dates</a></li>
@@ -758,6 +762,10 @@ document.write(`
       <ul>
         <li><a href="reference/factories/pydantic_factory.html#polyfactory.factories.pydantic_factory.PydanticFieldMeta.__init__">(polyfactory.factories.pydantic_factory.PydanticFieldMeta method)</a>
 </li>
+        <li><a href="reference/factories/sqlalchemy_factory.html#polyfactory.factories.sqlalchemy_factory.SQLAASyncPersistence.__init__">(polyfactory.factories.sqlalchemy_factory.SQLAASyncPersistence method)</a>
+</li>
+        <li><a href="reference/factories/sqlalchemy_factory.html#polyfactory.factories.sqlalchemy_factory.SQLASyncPersistence.__init__">(polyfactory.factories.sqlalchemy_factory.SQLASyncPersistence method)</a>
+</li>
         <li><a href="reference/field_meta.html#polyfactory.field_meta.FieldMeta.__init__">(polyfactory.field_meta.FieldMeta method)</a>
 </li>
         <li><a href="reference/fields.html#polyfactory.fields.Fixture.__init__">(polyfactory.fields.Fixture method)</a>
@@ -792,6 +800,8 @@ document.write(`
 </li>
         <li><a href="reference/factories/pydantic_factory.html#polyfactory.factories.pydantic_factory.ModelFactory.__is_base_factory__">(polyfactory.factories.pydantic_factory.ModelFactory attribute)</a>
 </li>
+        <li><a href="reference/factories/sqlalchemy_factory.html#polyfactory.factories.sqlalchemy_factory.SQLAlchemyFactory.__is_base_factory__">(polyfactory.factories.sqlalchemy_factory.SQLAlchemyFactory attribute)</a>
+</li>
         <li><a href="reference/factories/typed_dict_factory.html#polyfactory.factories.typed_dict_factory.TypedDictFactory.__is_base_factory__">(polyfactory.factories.typed_dict_factory.TypedDictFactory attribute)</a>
 </li>
       </ul></li>
@@ -808,6 +818,12 @@ document.write(`
       <li><a href="reference/factories/base.html#polyfactory.factories.base.BaseFactory.__randomize_collection_length__">__randomize_collection_length__ (polyfactory.factories.base.BaseFactory attribute)</a>
 </li>
       <li><a href="reference/factories/base.html#polyfactory.factories.base.BaseFactory.__set_as_default_factory_for_type__">__set_as_default_factory_for_type__ (polyfactory.factories.base.BaseFactory attribute)</a>
+</li>
+      <li><a href="reference/factories/sqlalchemy_factory.html#polyfactory.factories.sqlalchemy_factory.SQLAlchemyFactory.__set_foreign_keys__">__set_foreign_keys__ (polyfactory.factories.sqlalchemy_factory.SQLAlchemyFactory attribute)</a>
+</li>
+      <li><a href="reference/factories/sqlalchemy_factory.html#polyfactory.factories.sqlalchemy_factory.SQLAlchemyFactory.__set_primary_key__">__set_primary_key__ (polyfactory.factories.sqlalchemy_factory.SQLAlchemyFactory attribute)</a>
+</li>
+      <li><a href="reference/factories/sqlalchemy_factory.html#polyfactory.factories.sqlalchemy_factory.SQLAlchemyFactory.__set_relationships__">__set_relationships__ (polyfactory.factories.sqlalchemy_factory.SQLAlchemyFactory attribute)</a>
 </li>
       <li><a href="reference/factories/base.html#polyfactory.factories.base.BaseFactory.__sync_persistence__">__sync_persistence__ (polyfactory.factories.base.BaseFactory attribute)</a>
 </li>
@@ -948,6 +964,8 @@ document.write(`
 </li>
         <li><a href="reference/factories/pydantic_factory.html#polyfactory.factories.pydantic_factory.ModelFactory.get_model_fields">(polyfactory.factories.pydantic_factory.ModelFactory class method)</a>
 </li>
+        <li><a href="reference/factories/sqlalchemy_factory.html#polyfactory.factories.sqlalchemy_factory.SQLAlchemyFactory.get_model_fields">(polyfactory.factories.sqlalchemy_factory.SQLAlchemyFactory class method)</a>
+</li>
         <li><a href="reference/factories/typed_dict_factory.html#polyfactory.factories.typed_dict_factory.TypedDictFactory.get_model_fields">(polyfactory.factories.typed_dict_factory.TypedDictFactory class method)</a>
 </li>
       </ul></li>
@@ -960,7 +978,11 @@ document.write(`
 </li>
         <li><a href="reference/factories/odmantic_odm_factory.html#polyfactory.factories.odmantic_odm_factory.OdmanticModelFactory.get_provider_map">(polyfactory.factories.odmantic_odm_factory.OdmanticModelFactory class method)</a>
 </li>
+        <li><a href="reference/factories/sqlalchemy_factory.html#polyfactory.factories.sqlalchemy_factory.SQLAlchemyFactory.get_provider_map">(polyfactory.factories.sqlalchemy_factory.SQLAlchemyFactory class method)</a>
+</li>
       </ul></li>
+      <li><a href="reference/factories/sqlalchemy_factory.html#polyfactory.factories.sqlalchemy_factory.SQLAlchemyFactory.get_sqlalchemy_types">get_sqlalchemy_types() (polyfactory.factories.sqlalchemy_factory.SQLAlchemyFactory class method)</a>
+</li>
       <li><a href="reference/value_generators/constrained_numbers.html#polyfactory.value_generators.constrained_numbers.get_value_or_none">get_value_or_none() (in module polyfactory.value_generators.constrained_numbers)</a>
 </li>
   </ul></td>
@@ -1022,6 +1044,8 @@ document.write(`
 </li>
         <li><a href="reference/factories/pydantic_factory.html#polyfactory.factories.pydantic_factory.ModelFactory.is_supported_type">(polyfactory.factories.pydantic_factory.ModelFactory class method)</a>
 </li>
+        <li><a href="reference/factories/sqlalchemy_factory.html#polyfactory.factories.sqlalchemy_factory.SQLAlchemyFactory.is_supported_type">(polyfactory.factories.sqlalchemy_factory.SQLAlchemyFactory class method)</a>
+</li>
         <li><a href="reference/factories/typed_dict_factory.html#polyfactory.factories.typed_dict_factory.TypedDictFactory.is_supported_type">(polyfactory.factories.typed_dict_factory.TypedDictFactory class method)</a>
 </li>
       </ul></li>
@@ -1060,6 +1084,8 @@ document.write(`
         <li><a href="reference/factories/odmantic_odm_factory.html#module-polyfactory.factories.odmantic_odm_factory">polyfactory.factories.odmantic_odm_factory</a>
 </li>
         <li><a href="reference/factories/pydantic_factory.html#module-polyfactory.factories.pydantic_factory">polyfactory.factories.pydantic_factory</a>
+</li>
+        <li><a href="reference/factories/sqlalchemy_factory.html#module-polyfactory.factories.sqlalchemy_factory">polyfactory.factories.sqlalchemy_factory</a>
 </li>
         <li><a href="reference/factories/typed_dict_factory.html#module-polyfactory.factories.typed_dict_factory">polyfactory.factories.typed_dict_factory</a>
 </li>
@@ -1189,6 +1215,13 @@ document.write(`
 </li>
       </ul></li>
       <li>
+    polyfactory.factories.sqlalchemy_factory
+
+      <ul>
+        <li><a href="reference/factories/sqlalchemy_factory.html#module-polyfactory.factories.sqlalchemy_factory">module</a>
+</li>
+      </ul></li>
+      <li>
     polyfactory.factories.typed_dict_factory
 
       <ul>
@@ -1289,6 +1322,8 @@ document.write(`
   <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="reference/fields.html#polyfactory.fields.Require">Require (class in polyfactory.fields)</a>
 </li>
+      <li><a href="reference/factories/attrs_factory.html#polyfactory.factories.attrs_factory.AttrsFactory.resolve_types">resolve_types() (polyfactory.factories.attrs_factory.AttrsFactory class method)</a>
+</li>
   </ul></td>
 </tr></table>
 
@@ -1298,6 +1333,10 @@ document.write(`
       <li><a href="reference/factories/beanie_odm_factory.html#polyfactory.factories.beanie_odm_factory.BeaniePersistenceHandler.save">save() (polyfactory.factories.beanie_odm_factory.BeaniePersistenceHandler method)</a>
 
       <ul>
+        <li><a href="reference/factories/sqlalchemy_factory.html#polyfactory.factories.sqlalchemy_factory.SQLAASyncPersistence.save">(polyfactory.factories.sqlalchemy_factory.SQLAASyncPersistence method)</a>
+</li>
+        <li><a href="reference/factories/sqlalchemy_factory.html#polyfactory.factories.sqlalchemy_factory.SQLASyncPersistence.save">(polyfactory.factories.sqlalchemy_factory.SQLASyncPersistence method)</a>
+</li>
         <li><a href="reference/persistence.html#polyfactory.persistence.AsyncPersistenceProtocol.save">(polyfactory.persistence.AsyncPersistenceProtocol method)</a>
 </li>
         <li><a href="reference/persistence.html#polyfactory.persistence.SyncPersistenceProtocol.save">(polyfactory.persistence.SyncPersistenceProtocol method)</a>
@@ -1306,6 +1345,10 @@ document.write(`
       <li><a href="reference/factories/beanie_odm_factory.html#polyfactory.factories.beanie_odm_factory.BeaniePersistenceHandler.save_many">save_many() (polyfactory.factories.beanie_odm_factory.BeaniePersistenceHandler method)</a>
 
       <ul>
+        <li><a href="reference/factories/sqlalchemy_factory.html#polyfactory.factories.sqlalchemy_factory.SQLAASyncPersistence.save_many">(polyfactory.factories.sqlalchemy_factory.SQLAASyncPersistence method)</a>
+</li>
+        <li><a href="reference/factories/sqlalchemy_factory.html#polyfactory.factories.sqlalchemy_factory.SQLASyncPersistence.save_many">(polyfactory.factories.sqlalchemy_factory.SQLASyncPersistence method)</a>
+</li>
         <li><a href="reference/persistence.html#polyfactory.persistence.AsyncPersistenceProtocol.save_many">(polyfactory.persistence.AsyncPersistenceProtocol method)</a>
 </li>
         <li><a href="reference/persistence.html#polyfactory.persistence.SyncPersistenceProtocol.save_many">(polyfactory.persistence.SyncPersistenceProtocol method)</a>
@@ -1322,6 +1365,12 @@ document.write(`
 </li>
       </ul></li>
       <li><a href="reference/factories/base.html#polyfactory.factories.base.BaseFactory.should_set_none_value">should_set_none_value() (polyfactory.factories.base.BaseFactory class method)</a>
+</li>
+      <li><a href="reference/factories/sqlalchemy_factory.html#polyfactory.factories.sqlalchemy_factory.SQLAASyncPersistence">SQLAASyncPersistence (class in polyfactory.factories.sqlalchemy_factory)</a>
+</li>
+      <li><a href="reference/factories/sqlalchemy_factory.html#polyfactory.factories.sqlalchemy_factory.SQLAlchemyFactory">SQLAlchemyFactory (class in polyfactory.factories.sqlalchemy_factory)</a>
+</li>
+      <li><a href="reference/factories/sqlalchemy_factory.html#polyfactory.factories.sqlalchemy_factory.SQLASyncPersistence">SQLASyncPersistence (class in polyfactory.factories.sqlalchemy_factory)</a>
 </li>
       <li><a href="reference/persistence.html#polyfactory.persistence.SyncPersistenceProtocol">SyncPersistenceProtocol (class in polyfactory.persistence)</a>
 </li>

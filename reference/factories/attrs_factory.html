@@ -52,7 +52,7 @@
     <link rel="shortcut icon" href="../../_static/favicon.png"/>
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
-    <link rel="next" title="field_meta" href="../field_meta.html" />
+    <link rel="next" title="sqlalchemy_factory" href="sqlalchemy_factory.html" />
     <link rel="prev" title="beanie_odm_factory" href="beanie_odm_factory.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
@@ -644,7 +644,10 @@ document.write(`
   <div class="bd-toc-item navbar-nav"><p aria-level="2" class="caption" role="heading"><span class="caption-text">Documentation</span></p>
 <ul class="current nav bd-sidenav">
 <li class="toctree-l1 has-children"><a class="reference internal" href="../../usage/index.html">Usage Guide</a><input class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-1"><i class="fa-solid fa-chevron-down"></i></label><ul>
-<li class="toctree-l2"><a class="reference internal" href="../../usage/library_factories.html">Polyfactory Factories</a></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../usage/library_factories/index.html">Polyfactory Factories</a><input class="toctree-checkbox" id="toctree-checkbox-2" name="toctree-checkbox-2" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-2"><i class="fa-solid fa-chevron-down"></i></label><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../usage/library_factories/sqlalchemy_factory.html">SQLAlchemyFactory</a></li>
+</ul>
+</li>
 <li class="toctree-l2"><a class="reference internal" href="../../usage/declaring_factories.html">Declaring Factories</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../usage/configuration.html">Factory Configuration</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../usage/fields.html">Factory Fields</a></li>
@@ -653,10 +656,10 @@ document.write(`
 <li class="toctree-l2"><a class="reference internal" href="../../usage/handling_custom_types.html">Handling Custom Types</a></li>
 </ul>
 </li>
-<li class="toctree-l1 current active has-children"><a class="reference internal" href="../index.html">API Reference</a><input checked="" class="toctree-checkbox" id="toctree-checkbox-2" name="toctree-checkbox-2" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-2"><i class="fa-solid fa-chevron-down"></i></label><ul class="current">
+<li class="toctree-l1 current active has-children"><a class="reference internal" href="../index.html">API Reference</a><input checked="" class="toctree-checkbox" id="toctree-checkbox-3" name="toctree-checkbox-3" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-3"><i class="fa-solid fa-chevron-down"></i></label><ul class="current">
 <li class="toctree-l2"><a class="reference internal" href="../constants.html">constants</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../exceptions.html">exceptions</a></li>
-<li class="toctree-l2 current active has-children"><a class="reference internal" href="index.html">factories</a><input checked="" class="toctree-checkbox" id="toctree-checkbox-3" name="toctree-checkbox-3" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-3"><i class="fa-solid fa-chevron-down"></i></label><ul class="current">
+<li class="toctree-l2 current active has-children"><a class="reference internal" href="index.html">factories</a><input checked="" class="toctree-checkbox" id="toctree-checkbox-4" name="toctree-checkbox-4" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-4"><i class="fa-solid fa-chevron-down"></i></label><ul class="current">
 <li class="toctree-l3"><a class="reference internal" href="base.html">base_factory</a></li>
 <li class="toctree-l3"><a class="reference internal" href="dataclass_factory.html">dataclass_factory</a></li>
 <li class="toctree-l3"><a class="reference internal" href="typed_dict_factory.html">typed_dict_factory</a></li>
@@ -665,6 +668,7 @@ document.write(`
 <li class="toctree-l3"><a class="reference internal" href="odmantic_odm_factory.html">odmantic_odm_factory</a></li>
 <li class="toctree-l3"><a class="reference internal" href="beanie_odm_factory.html">beanie_odm_factory</a></li>
 <li class="toctree-l3 current active"><a class="current reference internal" href="#">attrs_factory</a></li>
+<li class="toctree-l3"><a class="reference internal" href="sqlalchemy_factory.html">sqlalchemy_factory</a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="../field_meta.html">field_meta</a></li>
@@ -672,7 +676,7 @@ document.write(`
 <li class="toctree-l2"><a class="reference internal" href="../decorators.html">decorators</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../persistence.html">persistence</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../pytest_plugin.html">pytest_plugin</a></li>
-<li class="toctree-l2 has-children"><a class="reference internal" href="../value_generators/index.html">value_generators</a><input class="toctree-checkbox" id="toctree-checkbox-4" name="toctree-checkbox-4" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-4"><i class="fa-solid fa-chevron-down"></i></label><ul>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../value_generators/index.html">value_generators</a><input class="toctree-checkbox" id="toctree-checkbox-5" name="toctree-checkbox-5" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-5"><i class="fa-solid fa-chevron-down"></i></label><ul>
 <li class="toctree-l3"><a class="reference internal" href="../value_generators/complex_types.html">complex_types</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../value_generators/constrained_collections.html">constrained_collections</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../value_generators/constrained_dates.html">constrained_dates</a></li>
@@ -782,6 +786,20 @@ For example, the ‘DataclassFactory’, ‘TypedDictFactory’ and ‘ModelFact
 </dl>
 </dd></dl>
 
+<dl class="py method">
+<dt class="sig sig-object py" id="polyfactory.factories.attrs_factory.AttrsFactory.resolve_types">
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">resolve_types</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#type" title="(in Python v3.11)"><span class="pre">type</span></a><span class="p"><span class="pre">[</span></span><span class="pre">T</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Any</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.11)"><span class="pre">None</span></a></span></span><a class="headerlink" href="#polyfactory.factories.attrs_factory.AttrsFactory.resolve_types" title="Permalink to this definition">#</a></dt>
+<dd><p>Resolve any strings and forward annotations in type annotations.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>model</strong> – The model to resolve the type annotations for.</p></li>
+<li><p><strong>kwargs</strong> – Any parameters that need to be passed to <cite>attrs.resolve_types</cite>.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
 </dd></dl>
 
 </section>
@@ -807,11 +825,11 @@ For example, the ‘DataclassFactory’, ‘TypedDictFactory’ and ‘ModelFact
       </div>
     </a>
     <a class="right-next"
-       href="../field_meta.html"
+       href="sqlalchemy_factory.html"
        title="next page">
       <div class="prev-next-info">
         <p class="prev-next-subtitle">next</p>
-        <p class="prev-next-title">field_meta</p>
+        <p class="prev-next-title">sqlalchemy_factory</p>
       </div>
       <i class="fa-solid fa-angle-right"></i>
     </a>
@@ -837,6 +855,7 @@ For example, the ‘DataclassFactory’, ‘TypedDictFactory’ and ‘ModelFact
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#polyfactory.factories.attrs_factory.AttrsFactory.__is_base_factory__"><code class="docutils literal notranslate"><span class="pre">AttrsFactory.__is_base_factory__</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#polyfactory.factories.attrs_factory.AttrsFactory.is_supported_type"><code class="docutils literal notranslate"><span class="pre">AttrsFactory.is_supported_type()</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#polyfactory.factories.attrs_factory.AttrsFactory.get_model_fields"><code class="docutils literal notranslate"><span class="pre">AttrsFactory.get_model_fields()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#polyfactory.factories.attrs_factory.AttrsFactory.resolve_types"><code class="docutils literal notranslate"><span class="pre">AttrsFactory.resolve_types()</span></code></a></li>
 </ul>
 </li>
 </ul>

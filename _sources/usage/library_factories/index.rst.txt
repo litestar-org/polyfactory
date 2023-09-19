@@ -26,6 +26,9 @@ These include:
 :class:`AttrsFactory <polyfactory.factories.attrs_factory.AttrsFactory>`
     a base factory for `attrs <https://www.attrs.org/en/stable/index.html>`_ models.
 
+:class:`SQLAlchemyFactory <polyfactory.factories.sqlalchemy_factory.SQLAlchemyFactory>`
+    a base factory for `SQLAlchemy <https://www.sqlalchemy.org/>`_ models.
+
 .. note::
     All factories exported from ``polyfactory.factories`` do not require any additional dependencies. The other factories,
     such as :class:`ModelFactory <polyfactory.factories.pydantic_factory.ModelFactory>`, require an additional but optional
@@ -34,3 +37,9 @@ These include:
 
 .. note::
     We will be adding additional factories to this package, so make sure to checkout the above list from time to time.
+
+
+.. toctree::
+    :maxdepth: 1
+
+    sqlalchemy_factory

@@ -9,7 +9,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.19: https://docutils.sourceforge.io/" />
 
-    <title>pydantic_factory &#8212; Polyfactory</title>
+    <title>sqlalchemy_factory &#8212; Polyfactory</title>
   
   
   
@@ -48,12 +48,12 @@
     <script src="../../_static/copybutton.js"></script>
     <script src="../../_static/litestar-theme.js"></script>
     <script src="../../_static/design-tabs.js"></script>
-    <script>DOCUMENTATION_OPTIONS.pagename = 'reference/factories/pydantic_factory';</script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'reference/factories/sqlalchemy_factory';</script>
     <link rel="shortcut icon" href="../../_static/favicon.png"/>
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
-    <link rel="next" title="msgspec_factory" href="msgspec_factory.html" />
-    <link rel="prev" title="typed_dict_factory" href="typed_dict_factory.html" />
+    <link rel="next" title="field_meta" href="../field_meta.html" />
+    <link rel="prev" title="attrs_factory" href="attrs_factory.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
   </head>
@@ -663,12 +663,12 @@ document.write(`
 <li class="toctree-l3"><a class="reference internal" href="base.html">base_factory</a></li>
 <li class="toctree-l3"><a class="reference internal" href="dataclass_factory.html">dataclass_factory</a></li>
 <li class="toctree-l3"><a class="reference internal" href="typed_dict_factory.html">typed_dict_factory</a></li>
-<li class="toctree-l3 current active"><a class="current reference internal" href="#">pydantic_factory</a></li>
+<li class="toctree-l3"><a class="reference internal" href="pydantic_factory.html">pydantic_factory</a></li>
 <li class="toctree-l3"><a class="reference internal" href="msgspec_factory.html">msgspec_factory</a></li>
 <li class="toctree-l3"><a class="reference internal" href="odmantic_odm_factory.html">odmantic_odm_factory</a></li>
 <li class="toctree-l3"><a class="reference internal" href="beanie_odm_factory.html">beanie_odm_factory</a></li>
 <li class="toctree-l3"><a class="reference internal" href="attrs_factory.html">attrs_factory</a></li>
-<li class="toctree-l3"><a class="reference internal" href="sqlalchemy_factory.html">sqlalchemy_factory</a></li>
+<li class="toctree-l3 current active"><a class="current reference internal" href="#">sqlalchemy_factory</a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="../field_meta.html">field_meta</a></li>
@@ -730,7 +730,7 @@ document.write(`
     
     <li class="breadcrumb-item"><a href="index.html" class="nav-link">factories</a></li>
     
-    <li class="breadcrumb-item active" aria-current="page">pydantic_factory</li>
+    <li class="breadcrumb-item active" aria-current="page">sqlalchemy_factory</li>
   </ul>
 </nav>
 </div>
@@ -747,61 +747,42 @@ document.write(`
 <div id="searchbox"></div>
                 <article class="bd-article" role="main">
                   
-  <section id="module-polyfactory.factories.pydantic_factory">
-<span id="pydantic-factory"></span><h1>pydantic_factory<a class="headerlink" href="#module-polyfactory.factories.pydantic_factory" title="Permalink to this heading">#</a></h1>
+  <section id="module-polyfactory.factories.sqlalchemy_factory">
+<span id="sqlalchemy-factory"></span><h1>sqlalchemy_factory<a class="headerlink" href="#module-polyfactory.factories.sqlalchemy_factory" title="Permalink to this heading">#</a></h1>
 <dl class="py class">
-<dt class="sig sig-object py" id="polyfactory.factories.pydantic_factory.PydanticConstraints">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">polyfactory.factories.pydantic_factory.</span></span><span class="sig-name descname"><span class="pre">PydanticConstraints</span></span><a class="headerlink" href="#polyfactory.factories.pydantic_factory.PydanticConstraints" title="Permalink to this definition">#</a></dt>
-<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.11)"><code class="xref py py-class docutils literal notranslate"><span class="pre">dict</span></code></a></p>
-<p>Metadata regarding a Pydantic type constraints, if any</p>
-</dd></dl>
-
-<dl class="py class">
-<dt class="sig sig-object py" id="polyfactory.factories.pydantic_factory.PydanticFieldMeta">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">polyfactory.factories.pydantic_factory.</span></span><span class="sig-name descname"><span class="pre">PydanticFieldMeta</span></span><a class="headerlink" href="#polyfactory.factories.pydantic_factory.PydanticFieldMeta" title="Permalink to this definition">#</a></dt>
-<dd><p>Bases: <a class="reference internal" href="../field_meta.html#polyfactory.field_meta.FieldMeta" title="polyfactory.field_meta.FieldMeta"><code class="xref py py-class docutils literal notranslate"><span class="pre">FieldMeta</span></code></a></p>
-<p>Field meta subclass capable of handling pydantic ModelFields</p>
+<dt class="sig sig-object py" id="polyfactory.factories.sqlalchemy_factory.SQLASyncPersistence">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">polyfactory.factories.sqlalchemy_factory.</span></span><span class="sig-name descname"><span class="pre">SQLASyncPersistence</span></span><a class="headerlink" href="#polyfactory.factories.sqlalchemy_factory.SQLASyncPersistence" title="Permalink to this definition">#</a></dt>
+<dd><p>Bases: <a class="reference internal" href="../persistence.html#polyfactory.persistence.SyncPersistenceProtocol" title="polyfactory.persistence.SyncPersistenceProtocol"><code class="xref py py-class docutils literal notranslate"><span class="pre">SyncPersistenceProtocol</span></code></a>[<code class="xref py py-obj docutils literal notranslate"><span class="pre">T</span></code>]</p>
 <dl class="py method">
-<dt class="sig sig-object py" id="polyfactory.factories.pydantic_factory.PydanticFieldMeta.__init__">
-<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.11)"><span class="pre">str</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">annotation</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#type" title="(in Python v3.11)"><span class="pre">type</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">random</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Random</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.11)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">default</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Any</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">Ellipsis</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">children</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.11)"><span class="pre">list</span></a><span class="p"><span class="pre">[</span></span><a class="reference internal" href="../field_meta.html#polyfactory.field_meta.FieldMeta" title="polyfactory.field_meta.FieldMeta"><span class="pre">FieldMeta</span></a><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.11)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">constraints</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#polyfactory.factories.pydantic_factory.PydanticConstraints" title="polyfactory.factories.pydantic_factory.PydanticConstraints"><span class="pre">PydanticConstraints</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.11)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.11)"><span class="pre">None</span></a></span></span><a class="headerlink" href="#polyfactory.factories.pydantic_factory.PydanticFieldMeta.__init__" title="Permalink to this definition">#</a></dt>
-<dd><p>Create a factory field metadata instance.</p>
+<dt class="sig sig-object py" id="polyfactory.factories.sqlalchemy_factory.SQLASyncPersistence.__init__">
+<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">session</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Session</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.11)"><span class="pre">None</span></a></span></span><a class="headerlink" href="#polyfactory.factories.sqlalchemy_factory.SQLASyncPersistence.__init__" title="Permalink to this definition">#</a></dt>
+<dd><p>Sync persistence handler for SQLAFactory.</p>
 </dd></dl>
 
 <dl class="py method">
-<dt class="sig sig-object py" id="polyfactory.factories.pydantic_factory.PydanticFieldMeta.from_field_info">
-<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">from_field_info</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">field_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.11)"><span class="pre">str</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">field_info</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">FieldInfo</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">use_alias</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.11)"><span class="pre">bool</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">random</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Random</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.11)"><span class="pre">None</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">randomize_collection_length</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.11)"><span class="pre">bool</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">min_collection_length</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.11)"><span class="pre">int</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_collection_length</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.11)"><span class="pre">int</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">5</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#polyfactory.factories.pydantic_factory.PydanticFieldMeta" title="polyfactory.factories.pydantic_factory.PydanticFieldMeta"><span class="pre">PydanticFieldMeta</span></a></span></span><a class="headerlink" href="#polyfactory.factories.pydantic_factory.PydanticFieldMeta.from_field_info" title="Permalink to this definition">#</a></dt>
-<dd><p>Create an instance from a pydantic field info.</p>
+<dt class="sig sig-object py" id="polyfactory.factories.sqlalchemy_factory.SQLASyncPersistence.save">
+<span class="sig-name descname"><span class="pre">save</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">T</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">T</span></span></span><a class="headerlink" href="#polyfactory.factories.sqlalchemy_factory.SQLASyncPersistence.save" title="Permalink to this definition">#</a></dt>
+<dd><p>Persist a single instance synchronously.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>field_name</strong> – The name of the field.</p></li>
-<li><p><strong>field_info</strong> – A pydantic FieldInfo instance.</p></li>
-<li><p><strong>use_alias</strong> – Whether to use the field alias.</p></li>
-<li><p><strong>random</strong> – A random.Random instance.</p></li>
-<li><p><strong>randomize_collection_length</strong> – Whether to randomize collection length.</p></li>
-<li><p><strong>min_collection_length</strong> – Minimum collection length.</p></li>
-<li><p><strong>max_collection_length</strong> – Maximum collection length.</p></li>
-</ul>
+<dd class="field-odd"><p><strong>data</strong> – A single instance to persist.</p>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p>A PydanticFieldMeta instance.</p>
+<dd class="field-even"><p>The persisted result.</p>
 </dd>
 </dl>
 </dd></dl>
 
 <dl class="py method">
-<dt class="sig sig-object py" id="polyfactory.factories.pydantic_factory.PydanticFieldMeta.from_model_field">
-<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">from_model_field</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model_field:</span> <span class="pre">ModelField</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">use_alias:</span> <span class="pre">bool</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">randomize_collection_length:</span> <span class="pre">bool</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">min_collection_length:</span> <span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_collection_length:</span> <span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">random:</span> <span class="pre">Random</span> <span class="pre">=</span> <span class="pre">&lt;random.Random</span> <span class="pre">object&gt;</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#polyfactory.factories.pydantic_factory.PydanticFieldMeta" title="polyfactory.factories.pydantic_factory.PydanticFieldMeta"><span class="pre">PydanticFieldMeta</span></a></span></span><a class="headerlink" href="#polyfactory.factories.pydantic_factory.PydanticFieldMeta.from_model_field" title="Permalink to this definition">#</a></dt>
-<dd><p>Create an instance from a pydantic model field.
-:param model_field: A pydantic ModelField.
-:param use_alias: Whether to use the field alias.
-:param randomize_collection_length: A boolean flag whether to randomize collections lengths
-:param min_collection_length: Minimum number of elements in randomized collection
-:param max_collection_length: Maximum number of elements in randomized collection
-:param random: An instance of random.Random.</p>
+<dt class="sig sig-object py" id="polyfactory.factories.sqlalchemy_factory.SQLASyncPersistence.save_many">
+<span class="sig-name descname"><span class="pre">save_many</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.11)"><span class="pre">list</span></a><span class="p"><span class="pre">[</span></span><span class="pre">T</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.11)"><span class="pre">list</span></a><span class="p"><span class="pre">[</span></span><span class="pre">T</span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#polyfactory.factories.sqlalchemy_factory.SQLASyncPersistence.save_many" title="Permalink to this definition">#</a></dt>
+<dd><p>Persist multiple instances synchronously.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Returns<span class="colon">:</span></dt>
-<dd class="field-odd"><p>A PydanticFieldMeta instance.</p>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>data</strong> – A list of instances to persist.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The persisted result</p>
 </dd>
 </dl>
 </dd></dl>
@@ -809,20 +790,100 @@ document.write(`
 </dd></dl>
 
 <dl class="py class">
-<dt class="sig sig-object py" id="polyfactory.factories.pydantic_factory.ModelFactory">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">polyfactory.factories.pydantic_factory.</span></span><span class="sig-name descname"><span class="pre">ModelFactory</span></span><a class="headerlink" href="#polyfactory.factories.pydantic_factory.ModelFactory" title="Permalink to this definition">#</a></dt>
+<dt class="sig sig-object py" id="polyfactory.factories.sqlalchemy_factory.SQLAASyncPersistence">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">polyfactory.factories.sqlalchemy_factory.</span></span><span class="sig-name descname"><span class="pre">SQLAASyncPersistence</span></span><a class="headerlink" href="#polyfactory.factories.sqlalchemy_factory.SQLAASyncPersistence" title="Permalink to this definition">#</a></dt>
+<dd><p>Bases: <a class="reference internal" href="../persistence.html#polyfactory.persistence.AsyncPersistenceProtocol" title="polyfactory.persistence.AsyncPersistenceProtocol"><code class="xref py py-class docutils literal notranslate"><span class="pre">AsyncPersistenceProtocol</span></code></a>[<code class="xref py py-obj docutils literal notranslate"><span class="pre">T</span></code>]</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="polyfactory.factories.sqlalchemy_factory.SQLAASyncPersistence.__init__">
+<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">session</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">AsyncSession</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.11)"><span class="pre">None</span></a></span></span><a class="headerlink" href="#polyfactory.factories.sqlalchemy_factory.SQLAASyncPersistence.__init__" title="Permalink to this definition">#</a></dt>
+<dd><p>Async persistence handler for SQLAFactory.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="polyfactory.factories.sqlalchemy_factory.SQLAASyncPersistence.save">
+<em class="property"><span class="pre">async</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">save</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">T</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">T</span></span></span><a class="headerlink" href="#polyfactory.factories.sqlalchemy_factory.SQLAASyncPersistence.save" title="Permalink to this definition">#</a></dt>
+<dd><p>Persist a single instance asynchronously.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>data</strong> – A single instance to persist.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The persisted result.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="polyfactory.factories.sqlalchemy_factory.SQLAASyncPersistence.save_many">
+<em class="property"><span class="pre">async</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">save_many</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.11)"><span class="pre">list</span></a><span class="p"><span class="pre">[</span></span><span class="pre">T</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.11)"><span class="pre">list</span></a><span class="p"><span class="pre">[</span></span><span class="pre">T</span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#polyfactory.factories.sqlalchemy_factory.SQLAASyncPersistence.save_many" title="Permalink to this definition">#</a></dt>
+<dd><p>Persist multiple instances asynchronously.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>data</strong> – A list of instances to persist.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The persisted result</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="polyfactory.factories.sqlalchemy_factory.SQLAlchemyFactory">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">polyfactory.factories.sqlalchemy_factory.</span></span><span class="sig-name descname"><span class="pre">SQLAlchemyFactory</span></span><a class="headerlink" href="#polyfactory.factories.sqlalchemy_factory.SQLAlchemyFactory" title="Permalink to this definition">#</a></dt>
 <dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Generic" title="(in Python v3.11)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Generic</span></code></a>[<code class="xref py py-obj docutils literal notranslate"><span class="pre">T</span></code>], <a class="reference internal" href="base.html#polyfactory.factories.base.BaseFactory" title="polyfactory.factories.base.BaseFactory"><code class="xref py py-class docutils literal notranslate"><span class="pre">BaseFactory</span></code></a>[<code class="xref py py-obj docutils literal notranslate"><span class="pre">T</span></code>]</p>
-<p>Base factory for pydantic models</p>
+<p>Base factory for SQLAlchemy models.</p>
 <dl class="py attribute">
-<dt class="sig sig-object py" id="polyfactory.factories.pydantic_factory.ModelFactory.__is_base_factory__">
-<span class="sig-name descname"><span class="pre">__is_base_factory__</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.11)"><span class="pre">bool</span></a></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">True</span></em><a class="headerlink" href="#polyfactory.factories.pydantic_factory.ModelFactory.__is_base_factory__" title="Permalink to this definition">#</a></dt>
+<dt class="sig sig-object py" id="polyfactory.factories.sqlalchemy_factory.SQLAlchemyFactory.__is_base_factory__">
+<span class="sig-name descname"><span class="pre">__is_base_factory__</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.11)"><span class="pre">bool</span></a></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">True</span></em><a class="headerlink" href="#polyfactory.factories.sqlalchemy_factory.SQLAlchemyFactory.__is_base_factory__" title="Permalink to this definition">#</a></dt>
 <dd><p>Flag dictating whether the factory is a ‘base’ factory. Base factories are registered globally as handlers for types.
 For example, the ‘DataclassFactory’, ‘TypedDictFactory’ and ‘ModelFactory’ are all base factories.</p>
 </dd></dl>
 
+<dl class="py attribute">
+<dt class="sig sig-object py" id="polyfactory.factories.sqlalchemy_factory.SQLAlchemyFactory.__set_primary_key__">
+<span class="sig-name descname"><span class="pre">__set_primary_key__</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">ClassVar</span><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.11)"><span class="pre">bool</span></a><span class="p"><span class="pre">]</span></span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">True</span></em><a class="headerlink" href="#polyfactory.factories.sqlalchemy_factory.SQLAlchemyFactory.__set_primary_key__" title="Permalink to this definition">#</a></dt>
+<dd><p>Configuration to consider primary key columns as a field or not.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="polyfactory.factories.sqlalchemy_factory.SQLAlchemyFactory.__set_foreign_keys__">
+<span class="sig-name descname"><span class="pre">__set_foreign_keys__</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">ClassVar</span><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.11)"><span class="pre">bool</span></a><span class="p"><span class="pre">]</span></span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">True</span></em><a class="headerlink" href="#polyfactory.factories.sqlalchemy_factory.SQLAlchemyFactory.__set_foreign_keys__" title="Permalink to this definition">#</a></dt>
+<dd><p>Configuration to consider columns with foreign keys as a field or not.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="polyfactory.factories.sqlalchemy_factory.SQLAlchemyFactory.__set_relationships__">
+<span class="sig-name descname"><span class="pre">__set_relationships__</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">ClassVar</span><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.11)"><span class="pre">bool</span></a><span class="p"><span class="pre">]</span></span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">False</span></em><a class="headerlink" href="#polyfactory.factories.sqlalchemy_factory.SQLAlchemyFactory.__set_relationships__" title="Permalink to this definition">#</a></dt>
+<dd><p>Configuration to consider relationships property as a model field or not.</p>
+</dd></dl>
+
 <dl class="py method">
-<dt class="sig sig-object py" id="polyfactory.factories.pydantic_factory.ModelFactory.is_supported_type">
-<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">is_supported_type</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">value</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Any</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">TypeGuard</span><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/functions.html#type" title="(in Python v3.11)"><span class="pre">type</span></a><span class="p"><span class="pre">[</span></span><span class="pre">T</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#polyfactory.factories.pydantic_factory.ModelFactory.is_supported_type" title="Permalink to this definition">#</a></dt>
+<dt class="sig sig-object py" id="polyfactory.factories.sqlalchemy_factory.SQLAlchemyFactory.get_sqlalchemy_types">
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">get_sqlalchemy_types</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.11)"><span class="pre">dict</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Any" title="(in Python v3.11)"><span class="pre">Any</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Callable" title="(in Python v3.11)"><span class="pre">Callable</span></a><span class="p"><span class="pre">[</span></span><span class="p"><span class="pre">[</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Any" title="(in Python v3.11)"><span class="pre">Any</span></a><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#polyfactory.factories.sqlalchemy_factory.SQLAlchemyFactory.get_sqlalchemy_types" title="Permalink to this definition">#</a></dt>
+<dd><p>Get mapping of types where column type.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="polyfactory.factories.sqlalchemy_factory.SQLAlchemyFactory.get_provider_map">
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">get_provider_map</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.11)"><span class="pre">dict</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Any" title="(in Python v3.11)"><span class="pre">Any</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Callable" title="(in Python v3.11)"><span class="pre">Callable</span></a><span class="p"><span class="pre">[</span></span><span class="p"><span class="pre">[</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Any" title="(in Python v3.11)"><span class="pre">Any</span></a><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#polyfactory.factories.sqlalchemy_factory.SQLAlchemyFactory.get_provider_map" title="Permalink to this definition">#</a></dt>
+<dd><p>Map types to callables.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Notes<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p>This method is distinct to allow overriding.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>a dictionary mapping types to callables.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="polyfactory.factories.sqlalchemy_factory.SQLAlchemyFactory.is_supported_type">
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">is_supported_type</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">value</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Any</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">TypeGuard</span><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/functions.html#type" title="(in Python v3.11)"><span class="pre">type</span></a><span class="p"><span class="pre">[</span></span><span class="pre">T</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#polyfactory.factories.sqlalchemy_factory.SQLAlchemyFactory.is_supported_type" title="Permalink to this definition">#</a></dt>
 <dd><p>Determine whether the given value is supported by the factory.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
@@ -835,62 +896,12 @@ For example, the ‘DataclassFactory’, ‘TypedDictFactory’ and ‘ModelFact
 </dd></dl>
 
 <dl class="py method">
-<dt class="sig sig-object py" id="polyfactory.factories.pydantic_factory.ModelFactory.get_model_fields">
-<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">get_model_fields</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.11)"><span class="pre">list</span></a><span class="p"><span class="pre">[</span></span><a class="reference internal" href="../field_meta.html#polyfactory.field_meta.FieldMeta" title="polyfactory.field_meta.FieldMeta"><span class="pre">polyfactory.field_meta.FieldMeta</span></a><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#polyfactory.factories.pydantic_factory.ModelFactory.get_model_fields" title="Permalink to this definition">#</a></dt>
+<dt class="sig sig-object py" id="polyfactory.factories.sqlalchemy_factory.SQLAlchemyFactory.get_model_fields">
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">get_model_fields</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.11)"><span class="pre">list</span></a><span class="p"><span class="pre">[</span></span><a class="reference internal" href="../field_meta.html#polyfactory.field_meta.FieldMeta" title="polyfactory.field_meta.FieldMeta"><span class="pre">polyfactory.field_meta.FieldMeta</span></a><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#polyfactory.factories.sqlalchemy_factory.SQLAlchemyFactory.get_model_fields" title="Permalink to this definition">#</a></dt>
 <dd><p>Retrieve a list of fields from the factory’s model.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Returns<span class="colon">:</span></dt>
 <dd class="field-odd"><p>A list of field MetaData instances.</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="polyfactory.factories.pydantic_factory.ModelFactory.build">
-<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">build</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">factory_use_construct</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.11)"><span class="pre">bool</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Any" title="(in Python v3.11)"><span class="pre">Any</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">T</span></span></span><a class="headerlink" href="#polyfactory.factories.pydantic_factory.ModelFactory.build" title="Permalink to this definition">#</a></dt>
-<dd><p>Build an instance of the factory’s __model__</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>factory_use_construct</strong> – A boolean that determines whether validations will be made when instantiating the
-model. This is supported only for pydantic models.</p></li>
-<li><p><strong>kwargs</strong> – Any kwargs. If field_meta names are set in kwargs, their values will be used.</p></li>
-</ul>
-</dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p>An instance of type T.</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="polyfactory.factories.pydantic_factory.ModelFactory.is_custom_root_field">
-<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">is_custom_root_field</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">field_meta</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="../field_meta.html#polyfactory.field_meta.FieldMeta" title="polyfactory.field_meta.FieldMeta"><span class="pre">FieldMeta</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.11)"><span class="pre">bool</span></a></span></span><a class="headerlink" href="#polyfactory.factories.pydantic_factory.ModelFactory.is_custom_root_field" title="Permalink to this definition">#</a></dt>
-<dd><p>Determine whether the field is a custom root field.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>field_meta</strong> – FieldMeta instance.</p>
-</dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p>A boolean determining whether the field is a custom root.</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="polyfactory.factories.pydantic_factory.ModelFactory.should_set_field_value">
-<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">should_set_field_value</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">field_meta</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="../field_meta.html#polyfactory.field_meta.FieldMeta" title="polyfactory.field_meta.FieldMeta"><span class="pre">FieldMeta</span></a></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Any" title="(in Python v3.11)"><span class="pre">Any</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.11)"><span class="pre">bool</span></a></span></span><a class="headerlink" href="#polyfactory.factories.pydantic_factory.ModelFactory.should_set_field_value" title="Permalink to this definition">#</a></dt>
-<dd><p>Determine whether to set a value for a given field_name.
-This is an override of BaseFactory.should_set_field_value.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>field_meta</strong> – FieldMeta instance.</p></li>
-<li><p><strong>kwargs</strong> – Any kwargs passed to the factory.</p></li>
-</ul>
-</dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p>A boolean determining whether a value should be set for the given field_meta.</p>
 </dd>
 </dl>
 </dd></dl>
@@ -911,20 +922,20 @@ This is an override of BaseFactory.should_set_field_value.</p>
     <div class="footer-article-item"><!-- Previous / next buttons -->
 <div class="prev-next-area">
     <a class="left-prev"
-       href="typed_dict_factory.html"
+       href="attrs_factory.html"
        title="previous page">
       <i class="fa-solid fa-angle-left"></i>
       <div class="prev-next-info">
         <p class="prev-next-subtitle">previous</p>
-        <p class="prev-next-title">typed_dict_factory</p>
+        <p class="prev-next-title">attrs_factory</p>
       </div>
     </a>
     <a class="right-next"
-       href="msgspec_factory.html"
+       href="../field_meta.html"
        title="next page">
       <div class="prev-next-info">
         <p class="prev-next-subtitle">next</p>
-        <p class="prev-next-title">msgspec_factory</p>
+        <p class="prev-next-title">field_meta</p>
       </div>
       <i class="fa-solid fa-angle-right"></i>
     </a>
@@ -946,20 +957,27 @@ This is an override of BaseFactory.should_set_field_value.</p>
   </div>
   <nav class="bd-toc-nav page-toc">
     <ul class="visible nav section-nav flex-column">
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#polyfactory.factories.pydantic_factory.PydanticConstraints"><code class="docutils literal notranslate"><span class="pre">PydanticConstraints</span></code></a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#polyfactory.factories.pydantic_factory.PydanticFieldMeta"><code class="docutils literal notranslate"><span class="pre">PydanticFieldMeta</span></code></a><ul class="visible nav section-nav flex-column">
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#polyfactory.factories.pydantic_factory.PydanticFieldMeta.__init__"><code class="docutils literal notranslate"><span class="pre">PydanticFieldMeta.__init__()</span></code></a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#polyfactory.factories.pydantic_factory.PydanticFieldMeta.from_field_info"><code class="docutils literal notranslate"><span class="pre">PydanticFieldMeta.from_field_info()</span></code></a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#polyfactory.factories.pydantic_factory.PydanticFieldMeta.from_model_field"><code class="docutils literal notranslate"><span class="pre">PydanticFieldMeta.from_model_field()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#polyfactory.factories.sqlalchemy_factory.SQLASyncPersistence"><code class="docutils literal notranslate"><span class="pre">SQLASyncPersistence</span></code></a><ul class="visible nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#polyfactory.factories.sqlalchemy_factory.SQLASyncPersistence.__init__"><code class="docutils literal notranslate"><span class="pre">SQLASyncPersistence.__init__()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#polyfactory.factories.sqlalchemy_factory.SQLASyncPersistence.save"><code class="docutils literal notranslate"><span class="pre">SQLASyncPersistence.save()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#polyfactory.factories.sqlalchemy_factory.SQLASyncPersistence.save_many"><code class="docutils literal notranslate"><span class="pre">SQLASyncPersistence.save_many()</span></code></a></li>
 </ul>
 </li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#polyfactory.factories.pydantic_factory.ModelFactory"><code class="docutils literal notranslate"><span class="pre">ModelFactory</span></code></a><ul class="visible nav section-nav flex-column">
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#polyfactory.factories.pydantic_factory.ModelFactory.__is_base_factory__"><code class="docutils literal notranslate"><span class="pre">ModelFactory.__is_base_factory__</span></code></a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#polyfactory.factories.pydantic_factory.ModelFactory.is_supported_type"><code class="docutils literal notranslate"><span class="pre">ModelFactory.is_supported_type()</span></code></a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#polyfactory.factories.pydantic_factory.ModelFactory.get_model_fields"><code class="docutils literal notranslate"><span class="pre">ModelFactory.get_model_fields()</span></code></a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#polyfactory.factories.pydantic_factory.ModelFactory.build"><code class="docutils literal notranslate"><span class="pre">ModelFactory.build()</span></code></a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#polyfactory.factories.pydantic_factory.ModelFactory.is_custom_root_field"><code class="docutils literal notranslate"><span class="pre">ModelFactory.is_custom_root_field()</span></code></a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#polyfactory.factories.pydantic_factory.ModelFactory.should_set_field_value"><code class="docutils literal notranslate"><span class="pre">ModelFactory.should_set_field_value()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#polyfactory.factories.sqlalchemy_factory.SQLAASyncPersistence"><code class="docutils literal notranslate"><span class="pre">SQLAASyncPersistence</span></code></a><ul class="visible nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#polyfactory.factories.sqlalchemy_factory.SQLAASyncPersistence.__init__"><code class="docutils literal notranslate"><span class="pre">SQLAASyncPersistence.__init__()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#polyfactory.factories.sqlalchemy_factory.SQLAASyncPersistence.save"><code class="docutils literal notranslate"><span class="pre">SQLAASyncPersistence.save()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#polyfactory.factories.sqlalchemy_factory.SQLAASyncPersistence.save_many"><code class="docutils literal notranslate"><span class="pre">SQLAASyncPersistence.save_many()</span></code></a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#polyfactory.factories.sqlalchemy_factory.SQLAlchemyFactory"><code class="docutils literal notranslate"><span class="pre">SQLAlchemyFactory</span></code></a><ul class="visible nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#polyfactory.factories.sqlalchemy_factory.SQLAlchemyFactory.__is_base_factory__"><code class="docutils literal notranslate"><span class="pre">SQLAlchemyFactory.__is_base_factory__</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#polyfactory.factories.sqlalchemy_factory.SQLAlchemyFactory.__set_primary_key__"><code class="docutils literal notranslate"><span class="pre">SQLAlchemyFactory.__set_primary_key__</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#polyfactory.factories.sqlalchemy_factory.SQLAlchemyFactory.__set_foreign_keys__"><code class="docutils literal notranslate"><span class="pre">SQLAlchemyFactory.__set_foreign_keys__</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#polyfactory.factories.sqlalchemy_factory.SQLAlchemyFactory.__set_relationships__"><code class="docutils literal notranslate"><span class="pre">SQLAlchemyFactory.__set_relationships__</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#polyfactory.factories.sqlalchemy_factory.SQLAlchemyFactory.get_sqlalchemy_types"><code class="docutils literal notranslate"><span class="pre">SQLAlchemyFactory.get_sqlalchemy_types()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#polyfactory.factories.sqlalchemy_factory.SQLAlchemyFactory.get_provider_map"><code class="docutils literal notranslate"><span class="pre">SQLAlchemyFactory.get_provider_map()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#polyfactory.factories.sqlalchemy_factory.SQLAlchemyFactory.is_supported_type"><code class="docutils literal notranslate"><span class="pre">SQLAlchemyFactory.is_supported_type()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#polyfactory.factories.sqlalchemy_factory.SQLAlchemyFactory.get_model_fields"><code class="docutils literal notranslate"><span class="pre">SQLAlchemyFactory.get_model_fields()</span></code></a></li>
 </ul>
 </li>
 </ul>

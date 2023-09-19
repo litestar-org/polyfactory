@@ -642,7 +642,10 @@ document.write(`
   <div class="bd-toc-item navbar-nav"><p aria-level="2" class="caption" role="heading"><span class="caption-text">Documentation</span></p>
 <ul class="nav bd-sidenav">
 <li class="toctree-l1 has-children"><a class="reference internal" href="usage/index.html">Usage Guide</a><input class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-1"><i class="fa-solid fa-chevron-down"></i></label><ul>
-<li class="toctree-l2"><a class="reference internal" href="usage/library_factories.html">Polyfactory Factories</a></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="usage/library_factories/index.html">Polyfactory Factories</a><input class="toctree-checkbox" id="toctree-checkbox-2" name="toctree-checkbox-2" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-2"><i class="fa-solid fa-chevron-down"></i></label><ul>
+<li class="toctree-l3"><a class="reference internal" href="usage/library_factories/sqlalchemy_factory.html">SQLAlchemyFactory</a></li>
+</ul>
+</li>
 <li class="toctree-l2"><a class="reference internal" href="usage/declaring_factories.html">Declaring Factories</a></li>
 <li class="toctree-l2"><a class="reference internal" href="usage/configuration.html">Factory Configuration</a></li>
 <li class="toctree-l2"><a class="reference internal" href="usage/fields.html">Factory Fields</a></li>
@@ -651,10 +654,10 @@ document.write(`
 <li class="toctree-l2"><a class="reference internal" href="usage/handling_custom_types.html">Handling Custom Types</a></li>
 </ul>
 </li>
-<li class="toctree-l1 has-children"><a class="reference internal" href="reference/index.html">API Reference</a><input class="toctree-checkbox" id="toctree-checkbox-2" name="toctree-checkbox-2" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-2"><i class="fa-solid fa-chevron-down"></i></label><ul>
+<li class="toctree-l1 has-children"><a class="reference internal" href="reference/index.html">API Reference</a><input class="toctree-checkbox" id="toctree-checkbox-3" name="toctree-checkbox-3" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-3"><i class="fa-solid fa-chevron-down"></i></label><ul>
 <li class="toctree-l2"><a class="reference internal" href="reference/constants.html">constants</a></li>
 <li class="toctree-l2"><a class="reference internal" href="reference/exceptions.html">exceptions</a></li>
-<li class="toctree-l2 has-children"><a class="reference internal" href="reference/factories/index.html">factories</a><input class="toctree-checkbox" id="toctree-checkbox-3" name="toctree-checkbox-3" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-3"><i class="fa-solid fa-chevron-down"></i></label><ul>
+<li class="toctree-l2 has-children"><a class="reference internal" href="reference/factories/index.html">factories</a><input class="toctree-checkbox" id="toctree-checkbox-4" name="toctree-checkbox-4" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-4"><i class="fa-solid fa-chevron-down"></i></label><ul>
 <li class="toctree-l3"><a class="reference internal" href="reference/factories/base.html">base_factory</a></li>
 <li class="toctree-l3"><a class="reference internal" href="reference/factories/dataclass_factory.html">dataclass_factory</a></li>
 <li class="toctree-l3"><a class="reference internal" href="reference/factories/typed_dict_factory.html">typed_dict_factory</a></li>
@@ -663,6 +666,7 @@ document.write(`
 <li class="toctree-l3"><a class="reference internal" href="reference/factories/odmantic_odm_factory.html">odmantic_odm_factory</a></li>
 <li class="toctree-l3"><a class="reference internal" href="reference/factories/beanie_odm_factory.html">beanie_odm_factory</a></li>
 <li class="toctree-l3"><a class="reference internal" href="reference/factories/attrs_factory.html">attrs_factory</a></li>
+<li class="toctree-l3"><a class="reference internal" href="reference/factories/sqlalchemy_factory.html">sqlalchemy_factory</a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="reference/field_meta.html">field_meta</a></li>
@@ -670,7 +674,7 @@ document.write(`
 <li class="toctree-l2"><a class="reference internal" href="reference/decorators.html">decorators</a></li>
 <li class="toctree-l2"><a class="reference internal" href="reference/persistence.html">persistence</a></li>
 <li class="toctree-l2"><a class="reference internal" href="reference/pytest_plugin.html">pytest_plugin</a></li>
-<li class="toctree-l2 has-children"><a class="reference internal" href="reference/value_generators/index.html">value_generators</a><input class="toctree-checkbox" id="toctree-checkbox-4" name="toctree-checkbox-4" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-4"><i class="fa-solid fa-chevron-down"></i></label><ul>
+<li class="toctree-l2 has-children"><a class="reference internal" href="reference/value_generators/index.html">value_generators</a><input class="toctree-checkbox" id="toctree-checkbox-5" name="toctree-checkbox-5" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-5"><i class="fa-solid fa-chevron-down"></i></label><ul>
 <li class="toctree-l3"><a class="reference internal" href="reference/value_generators/complex_types.html">complex_types</a></li>
 <li class="toctree-l3"><a class="reference internal" href="reference/value_generators/constrained_collections.html">constrained_collections</a></li>
 <li class="toctree-l3"><a class="reference internal" href="reference/value_generators/constrained_dates.html">constrained_dates</a></li>
@@ -799,16 +803,23 @@ referencing external libraries</p></li>
 </section>
 <section id="creating-a-new-release">
 <h2>Creating a new release<a class="headerlink" href="#creating-a-new-release" title="Permalink to this heading">#</a></h2>
-<ol class="arabic simple">
-<li><p>Update changelog.md</p></li>
-<li><p>Increment the version in <a class="reference external" href="pyproject.toml">pyproject.toml</a></p></li>
+<ol class="arabic">
+<li><dl>
+<dt>Increment the version in <a class="reference external" href="pyproject.toml">pyproject.toml</a></dt><dd><div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>The version should follow <a class="reference external" href="https://semver.org/">semantic versioning</a> and <a class="reference external" href="https://www.python.org/dev/peps/pep-0440/">PEP 440</a>.</p>
+</div>
+</dd>
+</dl>
+</li>
 <li><p>Commit and push.</p></li>
 <li><p>In GitHub go to the <a class="reference external" href="https://github.com/litestar-org/polyfactory/releases">releases tab</a></p></li>
 <li><p>Pick “<a class="reference external" href="https://github.com/litestar-org/polyfactory/releases/new">Draft a new release</a>”</p></li>
 <li><p>Give it a title and a tag, both <code class="docutils literal notranslate"><span class="pre">vX.X.X</span></code></p></li>
-<li><p>Fill in the release description, you can let GitHub do it for you and then edit as needed.</p></li>
+<li><p>Fill in the release description. You can let GitHub do it for you and then edit as needed.</p></li>
 <li><p>Publish the release.</p></li>
-<li><p>Look under the action pane and make sure the release action runs correctly</p></li>
+<li><p>Go to <a class="reference external" href="https://github.com/litestar-org/polyfactory/actions">Actions</a> and approve the workflow</p></li>
+<li><p>Check that the workflow runs successfully</p></li>
 </ol>
 </section>
 </section>
