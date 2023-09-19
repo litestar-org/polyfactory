@@ -70,6 +70,7 @@ Creating a new release
 ----------------------
 
 1. Increment the version in `pyproject.toml <pyproject.toml>`_
+    .. note:: The version should follow `semantic versioning <https://semver.org/>`_ and `PEP 440 <https://www.python.org/dev/peps/pep-0440/>`_.
 2. Commit and push.
 3. In GitHub go to the `releases tab <https://github.com/litestar-org/polyfactory/releases>`_
 4. Pick "`Draft a new release <https://github.com/litestar-org/polyfactory/releases/new>`_"
