@@ -69,13 +69,12 @@ restructure the docs etc., but make sure to follow these guidelines:
 Creating a new release
 ----------------------
 
-1. Update changelog.md
-2. Increment the version in `pyproject.toml <pyproject.toml>`_
-3. Commit and push.
-4. In GitHub go to the `releases tab <https://github.com/litestar-org/polyfactory/releases>`_
-5. Pick "`Draft a new release <https://github.com/litestar-org/polyfactory/releases/new>`_"
-6. Give it a title and a tag, both ``vX.X.X``
-7. Fill in the release description. You can let GitHub do it for you and then edit as needed.
-8. Publish the release.
-9. Go to `Actions <https://github.com/litestar-org/polyfactory/actions>`_ and approve the workflow
-10. Check that the workflow runs successfully
+1. Increment the version in `pyproject.toml <pyproject.toml>`_
+2. Commit and push.
+3. In GitHub go to the `releases tab <https://github.com/litestar-org/polyfactory/releases>`_
+4. Pick "`Draft a new release <https://github.com/litestar-org/polyfactory/releases/new>`_"
+5. Give it a title and a tag, both ``vX.X.X``
+6. Fill in the release description. You can let GitHub do it for you and then edit as needed.
+7. Publish the release.
+8. Go to `Actions <https://github.com/litestar-org/polyfactory/actions>`_ and approve the workflow
+9. Check that the workflow runs successfully
