@@ -1,12 +1,14 @@
 from __future__ import annotations
 
 from dataclasses import MISSING, fields, is_dataclass
-from typing import Any, Generic
-
-from typing_extensions import TypeGuard, get_type_hints
+from typing import TYPE_CHECKING, Any, ForwardRef, Generic
 
 from polyfactory.factories.base import BaseFactory, T
 from polyfactory.field_meta import FieldMeta, Null
+from polyfactory.utils.helpers import evaluate_forwardref
+
+if TYPE_CHECKING:
+    from typing_extensions import TypeGuard
 
 
 class DataclassFactory(Generic[T], BaseFactory[T]):
@@ -33,8 +35,6 @@ class DataclassFactory(Generic[T], BaseFactory[T]):
         """
         fields_meta: list["FieldMeta"] = []
 
-        model_type_hints = get_type_hints(cls.__model__, include_extras=True)
-
         for field in fields(cls.__model__):  # type: ignore[arg-type]
             if field.default_factory and field.default_factory is not MISSING:
                 default_value = field.default_factory()
@@ -43,9 +43,16 @@ class DataclassFactory(Generic[T], BaseFactory[T]):
             else:
                 default_value = Null
 
+            if isinstance(field.type, ForwardRef):
+                annotation = evaluate_forwardref(field.type)  # type: ignore[unreachable]
+            elif isinstance(field.type, str):
+                annotation = evaluate_forwardref(ForwardRef(field.type))  # type: ignore[unreachable]
+            else:
+                annotation = field.type
+
             fields_meta.append(
                 FieldMeta.from_type(
-                    annotation=model_type_hints[field.name],
+                    annotation=annotation,
                     name=field.name,
                     default=default_value,
                     random=cls.__random__,
