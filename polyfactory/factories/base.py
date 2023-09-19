@@ -659,11 +659,11 @@ class BaseFactory(ABC, Generic[T]):
             batch_size = cls.__random__.randint(cls.__min_collection_length__, cls.__max_collection_length__)
             return factory.batch(size=batch_size)
 
-        if (origin := get_type_origin(unwrapped_annotation)) and issubclass(origin, Collection):
-            return handle_collection_type(field_meta, origin, cls)
-
         if is_union(field_meta.annotation) and field_meta.children:
             return cls.get_field_value(cls.__random__.choice(field_meta.children))
+
+        if (origin := get_type_origin(unwrapped_annotation)) and issubclass(origin, Collection):
+            return handle_collection_type(field_meta, origin, cls)
 
         if is_any(unwrapped_annotation) or isinstance(unwrapped_annotation, TypeVar):
             return create_random_string(cls.__random__, min_length=1, max_length=10)

@@ -1,5 +1,5 @@
 import sys
-from typing import Optional
+from typing import List, Optional, Union
 
 import pytest
 from pydantic import VERSION, BaseModel, Field, Json
@@ -78,3 +78,16 @@ def test_nested_json_type() -> None:
         __model__ = B
 
     assert isinstance(BFactory.build(), B)
+
+
+def test_union_str_and_list() -> None:
+    class A(BaseModel):
+        a: Union[str, List[str]]
+
+    class AFactory(ModelFactory[A]):
+        __model__ = A
+
+    for _ in range(1000):
+        a = AFactory.process_kwargs()
+        if isinstance(a["a"], list):
+            assert len(a) == 1

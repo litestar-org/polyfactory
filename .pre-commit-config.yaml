@@ -18,12 +18,12 @@ repos:
       - id: mixed-line-ending
       - id: trailing-whitespace
   - repo: https://github.com/charliermarsh/ruff-pre-commit
-    rev: "v0.0.286"
+    rev: "v0.0.290"
     hooks:
       - id: ruff
         args: ["--fix"]
   - repo: https://github.com/psf/black
-    rev: 23.7.0
+    rev: 23.9.1
     hooks:
       - id: black
         args: [--config=./pyproject.toml]
@@ -55,7 +55,7 @@ repos:
             sqlalchemy>=2,
           ]
   - repo: https://github.com/RobertCraigie/pyright-python
-    rev: v1.1.324
+    rev: v1.1.327
     hooks:
       - id: pyright
         exclude: "tests"
