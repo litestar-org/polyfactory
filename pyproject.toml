@@ -111,6 +111,27 @@ include = '\.pyi?$'
 
 [tool.mypy]
 exclude = "^tools/.*"
+plugins = ["pydantic.mypy"]
+
+warn_unused_ignores = true
+warn_redundant_casts = true
+warn_unused_configs = true
+warn_unreachable = true
+warn_return_any = true
+strict = true
+disallow_untyped_decorators = true
+disallow_any_generics = false
+implicit_reexport = false
+show_error_codes = true
+
+[tool.pydantic-mypy]
+init_forbid_extra = true
+init_typed = true
+warn_required_dynamic_aliases = true
+warn_untyped_fields = true
+
+[tool.mypy-tests.typing_test_strict]
+disallow_any_generics = true
 
 [tool.pyright]
 include = ["polyfactory", "tests", "examples"]
