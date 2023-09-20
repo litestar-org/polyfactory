@@ -44,7 +44,6 @@ install:											## Install the project and
 	@if [ "$(USING_PDM)" ]; then $(PDM) install -G:all; fi
 	@echo "=> Install complete! Note: If you want to re-install re-run 'make install'"
 
-
 clean: 												## Cleanup temporary build artifacts
 	@echo "=> Cleaning working directory"
 	@rm -rf .pytest_cache .ruff_cache .hypothesis build/ -rf dist/ .eggs/
@@ -84,44 +83,16 @@ test:  												## Run the tests
 	@$(ENV_PREFIX)pytest tests
 	@echo "=> Tests complete"
 
-.PHONY: test-asyncpg
-test-asyncpg:
-	$(ENV_PREFIX)pytest tests -m='integration and asyncpg'
+.PHONY: test-examples
+test-examples:            			              	## Run the examples tests
+	pytest docs/examples
 
-.PHONY: test-psycopg-async
-test-psycopg-async:
-	$(ENV_PREFIX)pytest tests -m='integration and psycopg_async'
+.PHONY: test-all
+test-all: test test-examples 						## Run all tests
 
-.PHONY: test-psycopg-sync
-test-psycopg-sync:
-	$(ENV_PREFIX)pytest tests -m='integration and psycopg_sync'
-
-.PHONY: test-asyncmy
-test-asyncmy:
-	$(ENV_PREFIX)pytest tests -m='integration and asyncmy'
-
-.PHONY: test-oracledb
-test-oracledb:
-	$(ENV_PREFIX)pytest tests -m='integration and oracledb'
-
-.PHONY: test-duckdb
-test-duckdb:
-	$(ENV_PREFIX)pytest tests -m='integration and duckdb'
-
-.PHONY: test-spanner
-test-spanner:
-	$(ENV_PREFIX)pytest tests -m='integration and spanner'
-
-.PHONY: test-mssql
-test-mssql:
-	$(ENV_PREFIX)pytest tests -m='integration and mssql'
-
-.PHONY: test-all-databases
-test-all-databases:
-	$(ENV_PREFIX)pytest tests -m='integration and integration'
 
 .PHONY: check-all
-check-all: lint test coverage 						## Run all linting, tests, and coverage checks
+check-all: lint test-all coverage 					## Run all linting, tests, and coverage checks
 
 # =============================================================================
 # Docs
