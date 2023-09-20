@@ -54,7 +54,7 @@ jobs:
           cache: true
 
       - name: Install dependencies
-        run: pdm install
+        run: pdm install -G:all
 
       - name: Install pydantic
         if: matrix.pydantic-version == '1.10'
