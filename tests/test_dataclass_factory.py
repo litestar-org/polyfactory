@@ -219,6 +219,35 @@ class SqlAlchemyDC(SqlAlchemyDCBase):
     assert isinstance(result.name, str)
 
 
+def test_dataclass_with_forward_reference(create_module: Callable[[str], ModuleType]) -> None:
+    module = create_module(
+        """
+from __future__ import annotations
+
+from dataclasses import dataclass
+from polyfactory.factories import DataclassFactory
+
+
+@dataclass
+class Foo:
+    bar: Bar
+
+
+@dataclass
+class Bar:
+    ...
+"""
+    )
+
+    Foo: type = module.Foo
+
+    class FooFactory(DataclassFactory[Foo]):  # type:ignore[valid-type]
+        __model__ = Foo
+
+    foo = FooFactory.build()
+    assert isinstance(foo, Foo)
+
+
 def test_variable_length_tuple_generation__many_type_args() -> None:
     @vanilla_dataclass
     class VanillaDC:
