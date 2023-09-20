@@ -17,7 +17,8 @@ if TYPE_CHECKING:
 try:
     from beanie import Document
 except ImportError as e:
-    raise MissingDependencyException("beanie is not installed") from e
+    msg = "beanie is not installed"
+    raise MissingDependencyException(msg) from e
 
 T = TypeVar("T", bound=Document)
 
@@ -27,17 +28,15 @@ class BeaniePersistenceHandler(Generic[T], AsyncPersistenceProtocol[T]):
 
     async def save(self, data: T) -> T:
         """Persist a single instance in mongoDB."""
-        return await data.insert()  # type: ignore
+        return await data.insert()  # type: ignore[no-any-return]
 
     async def save_many(self, data: list[T]) -> list[T]:
         """Persist multiple instances in mongoDB.
 
-        Note: we cannot use the .insert_many method from Beanie here because it doesn't return the created instances
+        .. note:: we cannot use the ``.insert_many`` method from Beanie here because it doesn't
+            return the created instances
         """
-        result = []
-        for doc in data:
-            result.append(await doc.insert())  # pyright: ignore
-        return result
+        return [await doc.insert() for doc in data]  # pyright: ignore[reportGeneralTypeIssues]
 
 
 class BeanieDocumentFactory(Generic[T], ModelFactory[T]):

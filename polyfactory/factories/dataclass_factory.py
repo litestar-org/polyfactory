@@ -52,7 +52,7 @@ class DataclassFactory(Generic[T], BaseFactory[T]):
                     randomize_collection_length=cls.__randomize_collection_length__,
                     min_collection_length=cls.__min_collection_length__,
                     max_collection_length=cls.__max_collection_length__,
-                )
+                ),
             )
 
         return fields_meta

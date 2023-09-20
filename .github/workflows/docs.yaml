@@ -1,0 +1,46 @@
+name: Documentation Building
+
+on:
+  release:
+    types: [published]
+  push:
+    branches:
+      - main
+
+jobs:
+  docs:
+    permissions:
+      contents: write
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v4
+        with:
+          python-version: "3.11"
+
+      - uses: pdm-project/setup-pdm@v3
+        name: Set up PDM
+        with:
+          python-version: "3.11"
+          allow-python-prereleases: true
+          cache: true
+
+      - name: Install dependencies
+        run: pdm install -G:docs
+
+      - name: Fetch gh pages
+        run: git fetch origin gh-pages --depth=1
+
+      - name: Build release docs
+        run: pdm run python tools/build_docs.py docs-build
+        if: github.event_name == 'release'
+
+      - name: Build dev docs
+        run: pdm run python tools/build_docs.py docs-build
+        if: github.event_name == 'push'
+
+      - name: Deploy
+        uses: JamesIves/github-pages-deploy-action@v4
+        with:
+          folder: docs-build

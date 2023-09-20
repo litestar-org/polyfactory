@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import contextlib
 import inspect
 from typing import Any, Callable
 
@@ -13,20 +14,18 @@ class post_generated:  # noqa: N801
 
     def __init__(self, method: Callable | classmethod) -> None:
         if not isinstance(method, classmethod):
-            raise TypeError("post_generated decorator can only be used on classmethods")
+            msg = "post_generated decorator can only be used on classmethods"
+            raise TypeError(msg)
         self.method = method
         self.cache: dict[type, PostGenerated] = {}
 
     def __get__(self, obj: Any, objtype: type) -> PostGenerated:
-        try:
+        with contextlib.suppress(KeyError):
             return self.cache[objtype]
-        except KeyError:
-            pass
-
         fn = self.method.__func__
         fn_args = inspect.getfullargspec(fn).args[1:]
 
-        def new_fn(name: str, values: dict[str, Any]) -> Any:
+        def new_fn(name: str, values: dict[str, Any]) -> Any:  # noqa: ARG001  - investigate @guacs
             return fn(objtype, **{arg: values[arg] for arg in fn_args if arg in values})
 
         return self.cache.setdefault(objtype, PostGenerated(new_fn))

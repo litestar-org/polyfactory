@@ -138,7 +138,7 @@ class FieldMeta:
             annotation = TYPE_MAPPING[field_type] if field_type in TYPE_MAPPING else field_type
         elif (origin := get_origin(annotation)) and origin in TYPE_MAPPING:  # pragma: no cover
             container = TYPE_MAPPING[origin]
-            annotation = container[get_args(annotation)]  # type: ignore
+            annotation = container[get_args(annotation)]  # type: ignore[index]
 
         field = cls(
             annotation=annotation,
@@ -212,6 +212,6 @@ class FieldMeta:
                             "uuid_version": getattr(value, "uuid_version", None),
                         }.items()
                         if v is not None
-                    }
+                    },
                 )
         return cast("Constraints", constraints)

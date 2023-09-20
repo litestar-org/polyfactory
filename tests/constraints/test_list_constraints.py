@@ -76,7 +76,8 @@ def test_handle_constrained_list_with_min_items(
 
 
 @pytest.mark.skipif(
-    sys.version_info < (3, 9) and VERSION.startswith("2"), reason="fails on python 3.8 with pydantic v2"
+    sys.version_info < (3, 9) and VERSION.startswith("2"),
+    reason="fails on python 3.8 with pydantic v2",
 )
 @pytest.mark.parametrize("t_type", tuple(ModelFactory.get_provider_map()))
 def test_handle_constrained_list_with_different_types(t_type: Any) -> None:

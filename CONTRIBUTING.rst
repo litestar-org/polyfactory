@@ -4,13 +4,12 @@ Contributing
 Setting up the environment
 --------------------------
 
-1. Install `poetry <https://python-poetry.org/>`_.
-2. Run ``poetry install --extras full`` to create a `virtual environment <https://docs.python.org/3/tutorial/venv.html>`_
-   and install the dependencies.
-3. If you're working on the documentation and need to build it locally, install the extra dependencies with ``poetry
-   install --with docs --extras full``.
-4. Install `pre-commit <https://pre-commit.com/>`_.
-5. Run ``pre-commit install`` to install pre-commit hooks.
+1. Install `Pizza Delivery Man <https://pdm.fming.dev/latest/>`_
+2. Run ``pdm install -G:all`` to create a `virtual environment <https://docs.python.org/3/tutorial/venv.html>`_ and install
+   the dependencies
+3. If you're working on the documentation and need to build it locally, install the extra dependencies with ``pdm install -G:docs``
+4. Install `pre-commit <https://pre-commit.com/>`_
+5. Run ``pre-commit install`` to install pre-commit hooks
 
 Code contributions
 ------------------
@@ -18,14 +17,21 @@ Code contributions
 Workflow
 ++++++++
 
-1. `Fork <https://github.com/litestar-org/polyfactory/fork>`_ the upstream repository and clone the fork locally.
-2. Install `poetry <https://python-poetry.org/>`_, and install the project's dependencies with ``poetry install --extras full``.
-3. Install `pre-commit <https://pre-commit.com/>`_ by running ``pre-commit install``.
-4. Make whatever changes and additions you wish and commit these - please try to keep your commit history clean.
-   1. .. note:: 100% tests are mandatory.
-5. Once you are ready, add a PR in the main repo.
-6. Create a pull request to the main repository with an explanation of your changes. The title should follow the `conventional commits <https://www.conventionalcommits.org/en/v1.0.0/>`_ convention.
+1. `Fork <https://github.com/litestar-org/polyfactory/fork>`_ the `Polyfactory repository <https://github.com/litestar-org/polyfactory>`_
+2. Clone your fork locally with git
+3. `Set up the environment <#setting-up-the-environment>`_
+4. Make your changes
+5. (Optional) Run ``pre-commit run --all-files`` to run linters and formatters. This step is optional and will be executed
+   automatically by git before you make a commit, but you may want to run it manually in order to apply fixes
+6. Commit your changes to git
+7. Push the changes to your fork
+8. Open a `pull request <https://docs.github.com/en/pull-requests>`_. Give the pull request a descriptive title
+   indicating what it changes. If it has a corresponding open issue, the issue number should be included in the title as
+   well. For example a pull request that fixes issue ``bug: Increased stack size making it impossible to find needle #100``
+   could be titled ``fix(#100): Make needles easier to find by applying fire to haystack``
 
+.. tip:: Pull requests and commits all need to follow the
+    `Conventional Commit format <https://www.conventionalcommits.org>`_
 
 Project documentation
 ---------------------
@@ -48,7 +54,9 @@ Running the docs locally
 
 To run or build the docs locally, you need to first install the required dependencies:
 
-``poetry install --with docs --extras full``
+.. code-block:: console
+
+    pdm install -G:docs
 
 Then you can serve the documentation with ``make docs-serve``, or build them with ``make docs``
 

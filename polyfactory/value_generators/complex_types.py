@@ -35,7 +35,8 @@ def handle_collection_type(field_meta: FieldMeta, container_type: type, factory:
 
     if issubclass(container_type, MutableMapping) or is_typeddict(container_type):
         for key_field_meta, value_field_meta in cast(
-            Iterable[Tuple[FieldMeta, FieldMeta]], zip(field_meta.children[::2], field_meta.children[1::2])
+            Iterable[Tuple[FieldMeta, FieldMeta]],
+            zip(field_meta.children[::2], field_meta.children[1::2]),
         ):
             key = factory.get_field_value(key_field_meta)
             value = factory.get_field_value(value_field_meta)
@@ -43,8 +44,7 @@ def handle_collection_type(field_meta: FieldMeta, container_type: type, factory:
         return container
 
     if issubclass(container_type, MutableSequence):
-        for subfield_meta in field_meta.children:
-            container.append(factory.get_field_value(subfield_meta))
+        container.extend([factory.get_field_value(subfield_meta) for subfield_meta in field_meta.children])
         return container
 
     if issubclass(container_type, Set):
@@ -58,4 +58,5 @@ def handle_collection_type(field_meta: FieldMeta, container_type: type, factory:
     if issubclass(container_type, tuple):
         return container_type(map(factory.get_field_value, field_meta.children))
 
-    raise NotImplementedError(f"Unsupported container type: {container_type}")
+    msg = f"Unsupported container type: {container_type}"
+    raise NotImplementedError(msg)

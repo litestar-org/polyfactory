@@ -26,13 +26,16 @@ def _validate_length(
     :returns: None.
     """
     if min_length is not None and min_length < 0:
-        raise ParameterException("min_length must be greater or equal to 0")
+        msg = "min_length must be greater or equal to 0"
+        raise ParameterException(msg)
 
     if max_length is not None and max_length < 0:
-        raise ParameterException("max_length must be greater or equal to 0")
+        msg = "max_length must be greater or equal to 0"
+        raise ParameterException(msg)
 
     if max_length is not None and min_length is not None and max_length < min_length:
-        raise ParameterException("max_length must be greater than min_length")
+        msg = "max_length must be greater than min_length"
+        raise ParameterException(msg)
 
 
 def _generate_pattern(

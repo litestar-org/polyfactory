@@ -89,7 +89,7 @@ def test_handle_constrained_decimal_handles_max_digits_and_decimal_places(max_di
         allow_infinity=False,
         min_value=-1000000000,
         max_value=1000000000,
-    )
+    ),
 )
 def test_handle_constrained_decimal_handles_ge(minimum: Decimal) -> None:
     result = handle_constrained_decimal(
@@ -105,7 +105,7 @@ def test_handle_constrained_decimal_handles_ge(minimum: Decimal) -> None:
         allow_infinity=False,
         min_value=-1000000000,
         max_value=1000000000,
-    )
+    ),
 )
 def test_handle_constrained_decimal_handles_gt(minimum: Decimal) -> None:
     result = handle_constrained_decimal(
@@ -121,7 +121,7 @@ def test_handle_constrained_decimal_handles_gt(minimum: Decimal) -> None:
         allow_infinity=False,
         min_value=-1000000000,
         max_value=1000000000,
-    )
+    ),
 )
 def test_handle_constrained_decimal_handles_le(maximum: Decimal) -> None:
     result = handle_constrained_decimal(
@@ -137,7 +137,7 @@ def test_handle_constrained_decimal_handles_le(maximum: Decimal) -> None:
         allow_infinity=False,
         min_value=-1000000000,
         max_value=1000000000,
-    )
+    ),
 )
 def test_handle_constrained_decimal_handles_lt(maximum: Decimal) -> None:
     result = handle_constrained_decimal(
@@ -153,7 +153,7 @@ def test_handle_constrained_decimal_handles_lt(maximum: Decimal) -> None:
         allow_infinity=False,
         min_value=-1000000000,
         max_value=1000000000,
-    )
+    ),
 )
 def test_handle_constrained_decimal_handles_multiple_of(multiple_of: Decimal) -> None:
     if multiple_of != Decimal("0"):
@@ -319,11 +319,15 @@ def test_handle_constrained_decimal_handles_multiple_of_with_gt(val1: Decimal, v
     ),
 )
 def test_handle_constrained_decimal_handles_multiple_of_with_ge_and_le(
-    val1: Decimal, val2: Decimal, val3: Decimal
+    val1: Decimal,
+    val2: Decimal,
+    val3: Decimal,
 ) -> None:
     min_value, multiple_of, max_value = sorted([val1, val2, val3])
     if multiple_of != Decimal("0") and is_multiply_of_multiple_of_in_range(
-        minimum=min_value, maximum=max_value, multiple_of=multiple_of
+        minimum=min_value,
+        maximum=max_value,
+        multiple_of=multiple_of,
     ):
         result = handle_constrained_decimal(
             random=Random(),
@@ -345,7 +349,10 @@ def test_handle_constrained_decimal_handles_multiple_of_with_ge_and_le(
 def test_max_digits_and_decimal_places() -> None:
     class Person(BaseModel):
         social_score: condecimal(
-            decimal_places=4, max_digits=5, gt=Decimal("0.0"), le=Decimal("9.9999")
+            decimal_places=4,
+            max_digits=5,
+            gt=Decimal("0.0"),
+            le=Decimal("9.9999"),
         )  # type: ignore
 
     class PersonFactory(ModelFactory):

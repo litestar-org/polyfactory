@@ -57,7 +57,10 @@ def test_handle_constrained_mapping_with_constrained_key_and_value() -> None:
     field_meta = FieldMeta(name="test", annotation=dict, children=[key_field, value_field], random=random)
 
     result = handle_constrained_mapping(
-        factory=ModelFactory, field_meta=field_meta, min_items=min_length, max_items=max_length
+        factory=ModelFactory,
+        field_meta=field_meta,
+        min_items=min_length,
+        max_items=max_length,
     )
 
     assert len(result) >= min_length

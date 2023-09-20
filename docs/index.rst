@@ -45,3 +45,10 @@ the Person class constructor.
 
     usage/index
     reference/index
+
+.. toctree::
+    :titlesonly:
+    :caption: Development
+    :hidden:
+
+    contributing

@@ -32,7 +32,9 @@ REGEXES = [
     integers(min_value=5, max_value=100),
 )
 def test_handle_constrained_string_with_min_length_and_max_length_and_regex(
-    to_lower: bool, min_length: int, max_length: int
+    to_lower: bool,
+    min_length: int,
+    max_length: int,
 ) -> None:
     if min_length < 0 or max_length < 0 or min_length > max_length:
         with pytest.raises(ParameterException):
@@ -66,7 +68,9 @@ def test_handle_constrained_string_with_min_length_and_max_length_and_regex(
 
 @given(booleans(), integers(max_value=10000), integers(max_value=10000))
 def test_handle_constrained_string_with_min_length_and_max_length(
-    to_lower: bool, min_length: int, max_length: int
+    to_lower: bool,
+    min_length: int,
+    max_length: int,
 ) -> None:
     if min_length < 0 or max_length < 0 or min_length > max_length:
         with pytest.raises(ParameterException):
