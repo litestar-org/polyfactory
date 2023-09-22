@@ -35,7 +35,7 @@ v2_only = pytest.mark.skipif(not is_v2, reason="Requires v2 syntax")
 if is_v2:
 
     class Base(orm.DeclarativeBase):
-        ...
+        __allow_unmapped__ = True
 
 else:
     _registry = registry()
