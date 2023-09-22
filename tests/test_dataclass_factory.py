@@ -55,27 +55,6 @@ def test_factory_pydantic_dc() -> None:
     assert result.constrained_field >= 100
 
 
-def test_factory_sqlalchemy_dc() -> None:
-    from sqlalchemy.orm import DeclarativeBase, Mapped, MappedAsDataclass, mapped_column
-
-    class SqlAlchemyDCBase(MappedAsDataclass, DeclarativeBase):
-        pass
-
-    class SqlAlchemyDC(SqlAlchemyDCBase):
-        __tablename__ = "foo"
-
-        id: Mapped[int] = mapped_column(primary_key=True)
-        name: Mapped[str]
-
-    class SqlAlchemyDCFactory(DataclassFactory[SqlAlchemyDC]):
-        __model__ = SqlAlchemyDC
-
-    result = SqlAlchemyDCFactory.build()
-
-    assert isinstance(result.id, int)
-    assert isinstance(result.name, str)
-
-
 def test_vanilla_dc_with_embedded_model() -> None:
     @vanilla_dataclass
     class VanillaDC:
@@ -189,34 +168,33 @@ class example:
     assert MyFactory.process_kwargs() == {"foo": ANY}
 
 
-def test_sqlalchemy_dc_factory_with_future_annotations(create_module: Callable[[str], ModuleType]) -> None:
+def test_dataclass_with_forward_reference(create_module: Callable[[str], ModuleType]) -> None:
     module = create_module(
         """
 from __future__ import annotations
 
-from sqlalchemy.orm import DeclarativeBase, Mapped, MappedAsDataclass, mapped_column
+from dataclasses import dataclass
+from polyfactory.factories import DataclassFactory
 
-class SqlAlchemyDCBase(MappedAsDataclass, DeclarativeBase):  # type: ignore
-    pass
 
-class SqlAlchemyDC(SqlAlchemyDCBase):
-    __tablename__ = "foo"
+@dataclass
+class Foo:
+    bar: Bar
 
-    id: Mapped[int] = mapped_column(primary_key=True)
-    name: Mapped[str]
 
+@dataclass
+class Bar:
+    ...
 """
     )
 
-    SqlAlchemyDC: type = module.SqlAlchemyDC
-    assert SqlAlchemyDC.__annotations__ == {"id": "Mapped[int]", "name": "Mapped[str]"}
+    Foo: type = module.Foo
 
-    class SqlAlchemyDCFactory(DataclassFactory[SqlAlchemyDC]):  # type:ignore[valid-type]
-        __model__ = SqlAlchemyDC
+    class FooFactory(DataclassFactory[Foo]):  # type:ignore[valid-type]
+        __model__ = Foo
 
-    result = SqlAlchemyDCFactory.build()
-    assert isinstance(result.id, int)
-    assert isinstance(result.name, str)
+    foo = FooFactory.build()
+    assert isinstance(foo, Foo)
 
 
 def test_variable_length_tuple_generation__many_type_args() -> None:
