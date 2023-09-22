@@ -1,8 +1,12 @@
 from typing import List
 
-from sqlalchemy import ForeignKey
-from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column, relationship
+import pytest
 
+try:
+    from sqlalchemy import ForeignKey
+    from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column, relationship
+except ImportError:
+    pytest.skip("SQLA2 only", allow_module_level=True)
 from polyfactory.factories.sqlalchemy_factory import SQLAlchemyFactory
 
 
