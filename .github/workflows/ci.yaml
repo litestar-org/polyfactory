@@ -29,6 +29,11 @@ jobs:
       matrix:
         python-version: ["3.8", "3.9", "3.10", "3.11"]
         pydantic-version: ["1.10", "2.0"]
+        include:
+          - pydantic-version: "2.0"
+            sqla-version: "1.4"
+          - pydantic-version: "2.0"
+            sqla-version: "2"
     steps:
       - name: Check out repository
         uses: actions/checkout@v4
@@ -48,20 +53,23 @@ jobs:
         uses: actions/cache@v3
         with:
           path: .venv
-          key: v1-venv-${{ runner.os }}-${{ steps.checkout-python.outputs.version }}-${{ matrix.pydantic-version}}-${{ hashFiles('**/poetry.lock') }}
+          key: v1-venv-${{ runner.os }}-${{ steps.checkout-python.outputs.version }}-${{ matrix.pydantic-version}}-${{ matrix.sqla-version }}-${{ hashFiles('**/poetry.lock') }}
       - name: Install dependencies
         if: steps.cached-poetry-dependencies.outputs.cache-hit != 'true'
         run: poetry install --no-interaction --extras full
       - name: Install pydantic
         if: matrix.pydantic-version == '1.10'
         run: source .venv/bin/activate && pip install "pydantic==1.10.10" && pip uninstall pydantic_core -y
+      - name: Install SQLAlchemy
+        if: matrix.sqla-version == '1.4'
+        run: source .venv/bin/activate && pip install "sqlalchemy==1.4.49"
       - name: Set pythonpath
         run: echo "PYTHONPATH=$PWD" >> $GITHUB_ENV
       - name: Test
-        if: matrix.python-version != '3.11' || matrix.pydantic-version != '2.0'
+        if: matrix.python-version != '3.11' || matrix.pydantic-version != '2.0' || matrix.sqla-version != '2'
         run: poetry run pytest
       - name: Test with Coverage
-        if: matrix.python-version == '3.11' && matrix.pydantic-version == '2.0'
+        if: matrix.python-version == '3.11' && matrix.pydantic-version == '2.0' && matrix.sqla-version == '2'
         run: poetry run pytest tests docs/examples --cov=. --cov-report=xml
       - uses: actions/upload-artifact@v3
         if: matrix.python-version == '3.11'
