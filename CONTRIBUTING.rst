@@ -26,9 +26,9 @@ Workflow
 6. Commit your changes to git
 7. Push the changes to your fork
 8. Open a `pull request <https://docs.github.com/en/pull-requests>`_. Give the pull request a descriptive title
-   indicating what it changes. If it has a corresponding open issue, the issue number should be included in the title as
-   well. For example a pull request that fixes issue ``bug: Increased stack size making it impossible to find needle #100``
-   could be titled ``fix(#100): Make needles easier to find by applying fire to haystack``
+   indicating what it changes. If it has a corresponding open issue.
+   For example a pull request that fixes issue ``bug: Increased stack size making it impossible to find needle``
+   could be titled ``fix: Make needles easier to find by applying fire to haystack``
 
 .. tip:: Pull requests and commits all need to follow the
     `Conventional Commit format <https://www.conventionalcommits.org>`_
