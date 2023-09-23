@@ -28,3 +28,7 @@ target/
 /docs/_build/
 coverage.*
 setup.py
+
+# PDM Things to ignore
+.pdm-python
+__pypackages__/
