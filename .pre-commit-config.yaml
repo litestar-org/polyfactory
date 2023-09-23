@@ -17,6 +17,10 @@ repos:
       - id: end-of-file-fixer
       - id: mixed-line-ending
       - id: trailing-whitespace
+  - repo: https://github.com/pdm-project/pdm
+    rev: 2.9.2
+    hooks:
+      - id: pdm-lock-check
   - repo: https://github.com/charliermarsh/ruff-pre-commit
     rev: "v0.0.286"
     hooks:

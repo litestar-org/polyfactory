@@ -35,15 +35,19 @@ install-pdm: 										## Install latest version of PDM
 	curl -sSL https://pdm.fming.dev/install-pdm.py.sha256 | shasum -a 256 -c - && \
 	python3 install-pdm.py
 
-install:											## Install the project and
+.PHONY: install
+install:											## Install the project, dependencies, and pre-commit for local development
 	@if ! $(PDM) --version > /dev/null; then echo '=> Installing PDM'; $(MAKE) install-pdm; fi
 	@if [ "$(VENV_EXISTS)" ]; then echo "=> Removing existing virtual environment"; fi
 	if [ "$(VENV_EXISTS)" ]; then $(MAKE) destroy; fi
 	if [ "$(VENV_EXISTS)" ]; then $(MAKE) clean; fi
 	@if [ "$(USING_PDM)" ]; then $(PDM) config venv.in_project true && python3 -m venv --copies .venv && . $(ENV_PREFIX)/activate && $(ENV_PREFIX)/pip install --quiet -U wheel setuptools cython pip; fi
 	@if [ "$(USING_PDM)" ]; then $(PDM) install -G:all; fi
+	@echo "=> Installing pre-commit hooks"
+	pre-commit install --install-hooks
 	@echo "=> Install complete! Note: If you want to re-install re-run 'make install'"
 
+.PHONY: clean
 clean: 												## Cleanup temporary build artifacts
 	@echo "=> Cleaning working directory"
 	@rm -rf .pytest_cache .ruff_cache .hypothesis build/ -rf dist/ .eggs/
@@ -57,8 +61,17 @@ clean: 												## Cleanup temporary build artifacts
 	@rm -rf .coverage coverage.xml coverage.json htmlcov/ .pytest_cache tests/.pytest_cache tests/**/.pytest_cache .mypy_cache
 	$(MAKE) docs-clean
 
+.PHONY: destroy
 destroy: 											## Destroy the virtual environment
 	@rm -rf .venv
+
+.PHONY: refresh-lockfiles
+refresh-lockfiles:                                 ## Sync lockfiles with requirements files.
+	pdm update --update-reuse --group :all
+
+.PHONY: lock
+lock:                                             ## Rebuild lockfiles from scratch, updating all dependencies
+	pdm update --update-eager --group :all
 
 # =============================================================================
 # Tests, Linting, Coverage
