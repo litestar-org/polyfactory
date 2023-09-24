@@ -1,9 +1,4 @@
-import pytest
-
-try:
-    from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column
-except ImportError:
-    pytest.skip("SQLA2 only", allow_module_level=True)
+from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column
 
 from polyfactory.factories.sqlalchemy_factory import SQLAlchemyFactory
 

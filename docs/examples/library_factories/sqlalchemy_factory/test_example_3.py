@@ -1,12 +1,7 @@
 from typing import List
 
-import pytest
-
-try:
-    from sqlalchemy import ForeignKey, create_engine
-    from sqlalchemy.orm import DeclarativeBase, Mapped, Session, mapped_column, relationship
-except ImportError:
-    pytest.skip("SQLA2 only", allow_module_level=True)
+from sqlalchemy import ForeignKey, create_engine
+from sqlalchemy.orm import DeclarativeBase, Mapped, Session, mapped_column, relationship
 
 from polyfactory.factories.sqlalchemy_factory import SQLAlchemyFactory
 

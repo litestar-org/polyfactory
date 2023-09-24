@@ -1,9 +1,9 @@
 from dataclasses import dataclass
 from enum import Enum
-from typing import Any, Callable, List, Type
+from typing import Any, Callable, Type
 
 import pytest
-from sqlalchemy import Column, ForeignKey, Integer, String, __version__, create_engine, inspect, orm, types
+from sqlalchemy import Column, ForeignKey, Integer, String, create_engine, inspect, orm, types
 from sqlalchemy.engine import Engine
 from sqlalchemy.ext.asyncio import AsyncEngine, AsyncSession, create_async_engine
 from sqlalchemy.orm import Session
@@ -28,23 +28,15 @@ async def create_tables(engine: AsyncEngine, base: Type) -> None:
         await connection.run_sync(base.metadata.create_all)
 
 
-is_v2 = __version__.startswith("2")
+_registry = registry()
 
-v2_only = pytest.mark.skipif(not is_v2, reason="Requires v2 syntax")
 
-if is_v2:
+class Base(metaclass=DeclarativeMeta):
+    __abstract__ = True
+    __allow_unmapped__ = True
 
-    class Base(orm.DeclarativeBase):
-        __allow_unmapped__ = True
-
-else:
-    _registry = registry()
-
-    class Base(metaclass=DeclarativeMeta):  # type: ignore[no-redef]
-        __abstract__ = True
-
-        registry = _registry
-        metadata = _registry.metadata
+    registry = _registry
+    metadata = _registry.metadata
 
 
 class Author(Base):
@@ -126,36 +118,6 @@ def test_python_type_handling() -> None:
     assert isinstance(instance.str_array_type[0], str)
 
 
-@v2_only
-def test_python_type_handling_v2() -> None:
-    class Base(orm.DeclarativeBase):
-        ...
-
-    class Animal(str, Enum):
-        DOG = "Dog"
-        CAT = "Cat"
-
-    class Model(Base):
-        __tablename__ = "model"
-
-        id: orm.Mapped[int] = orm.mapped_column(primary_key=True)
-        str_type: orm.Mapped[str]
-        enum_type: orm.Mapped[Animal]
-        str_array_type: orm.Mapped[List[str]] = orm.mapped_column(
-            type_=types.ARRAY(types.String),
-        )
-
-    class ModelFactory(SQLAlchemyFactory[Model]):
-        __model__ = Model
-
-    instance = ModelFactory.build()
-    assert isinstance(instance.id, int)
-    assert isinstance(instance.str_type, str)
-    assert isinstance(instance.enum_type, Animal)
-    assert isinstance(instance.str_array_type, list)
-    assert isinstance(instance.str_array_type[0], str)
-
-
 @pytest.mark.parametrize(
     "type_",
     tuple(SQLAlchemyFactory.get_sqlalchemy_types().keys()),
@@ -168,28 +130,6 @@ def test_sqlalchemy_type_handlers(type_: types.TypeEngine) -> None:
 
         registry = _registry
         metadata = _registry.metadata
-
-    class Model(Base):
-        __tablename__ = "model_with_overriden_type"
-
-        id: Any = Column(Integer(), primary_key=True)
-        overridden: Any = Column(type_, nullable=False)
-
-    class ModelFactory(SQLAlchemyFactory[Model]):
-        __model__ = Model
-
-    instance = ModelFactory.build()
-    assert instance.overridden is not None
-
-
-@v2_only
-@pytest.mark.parametrize(
-    "type_",
-    tuple(SQLAlchemyFactory.get_sqlalchemy_types().keys()),
-)
-def test_sqlalchemy_type_handlers_v2(type_: types.TypeEngine) -> None:
-    class Base(orm.DeclarativeBase):
-        ...
 
     class Model(Base):
         __tablename__ = "model_with_overriden_type"
@@ -293,15 +233,14 @@ def test_sync_persistence(engine: Engine, session_config: Callable[[Session], An
 
         author = AuthorFactory.create_sync()
         assert author.id is not None
-        assert inspect(author).persistent
+        assert inspect(author).persistent  # type: ignore[union-attr]
 
         batch_result = AuthorFactory.create_batch_sync(size=2)
         assert len(batch_result) == 2
         for batch_item in batch_result:
-            assert inspect(batch_item).persistent
+            assert inspect(batch_item).persistent  # type: ignore[union-attr]
 
 
-@v2_only
 @pytest.mark.parametrize(
     "session_config",
     (
@@ -313,15 +252,18 @@ async def test_async_persistence(
     async_engine: AsyncEngine,
     session_config: Callable[[AsyncSession], Any],
 ) -> None:
-    from sqlalchemy.ext.asyncio import AsyncAttrs
+    _registry = registry()
 
-    class Base(orm.DeclarativeBase):
-        ...
+    class Base(metaclass=DeclarativeMeta):
+        __abstract__ = True
 
-    class AsyncModel(AsyncAttrs, Base):
+        registry = _registry
+        metadata = _registry.metadata
+
+    class AsyncModel(Base):
         __tablename__ = "table"
 
-        id: orm.Mapped[int] = orm.mapped_column(primary_key=True)
+        id: Any = Column(Integer(), primary_key=True)
 
     await create_tables(async_engine, Base)
 
@@ -332,13 +274,12 @@ async def test_async_persistence(
             __model__ = AsyncModel
 
         result = await Factory.create_async()
-        assert await result.awaitable_attrs.id is not None
-        assert inspect(result).persistent
+        assert inspect(result).persistent  # type: ignore[union-attr]
 
         batch_result = await Factory.create_batch_async(size=2)
         assert len(batch_result) == 2
         for batch_item in batch_result:
-            assert inspect(batch_item).persistent
+            assert inspect(batch_item).persistent  # type: ignore[union-attr]
 
 
 def test_alias() -> None:
