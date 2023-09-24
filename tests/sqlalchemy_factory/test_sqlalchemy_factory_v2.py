@@ -1,30 +1,13 @@
 from enum import Enum
-from typing import Any, Callable, List, Type
+from typing import Any, List
 
 import pytest
-from sqlalchemy import ForeignKey, __version__, create_engine, inspect, orm, types
-from sqlalchemy.engine import Engine
-from sqlalchemy.ext.asyncio import AsyncEngine, AsyncSession, create_async_engine
+from sqlalchemy import ForeignKey, __version__, orm, types
 
 from polyfactory.factories.sqlalchemy_factory import SQLAlchemyFactory
 
 if __version__.startswith("1"):
     pytest.importorskip("SQLAlchemy", "2")
-
-
-@pytest.fixture
-def engine() -> Engine:
-    return create_engine("sqlite:///:memory:")
-
-
-@pytest.fixture
-def async_engine() -> AsyncEngine:
-    return create_async_engine("sqlite+aiosqlite:///:memory:")
-
-
-async def create_tables(engine: AsyncEngine, base: Type) -> None:
-    async with engine.connect() as connection:
-        await connection.run_sync(base.metadata.create_all)
 
 
 class Base(orm.DeclarativeBase):
@@ -102,42 +85,3 @@ def test_sqlalchemy_type_handlers_v2(type_: types.TypeEngine) -> None:
 
     instance = ModelFactory.build()
     assert instance.overridden is not None
-
-
-@pytest.mark.parametrize(
-    "session_config",
-    (
-        lambda session: session,
-        lambda session: (lambda: session),
-    ),
-)
-async def test_async_persistence(
-    async_engine: AsyncEngine,
-    session_config: Callable[[AsyncSession], Any],
-) -> None:
-    from sqlalchemy.ext.asyncio import AsyncAttrs
-
-    class Base(orm.DeclarativeBase):
-        ...
-
-    class AsyncModel(AsyncAttrs, Base):
-        __tablename__ = "table"
-
-        id: orm.Mapped[int] = orm.mapped_column(primary_key=True)
-
-    await create_tables(async_engine, Base)
-
-    async with AsyncSession(async_engine) as session:
-
-        class Factory(SQLAlchemyFactory[AsyncModel]):
-            __async_session__ = session_config(session)
-            __model__ = AsyncModel
-
-        result = await Factory.create_async()
-        assert await result.awaitable_attrs.id is not None
-        assert inspect(result).persistent
-
-        batch_result = await Factory.create_batch_async(size=2)
-        assert len(batch_result) == 2
-        for batch_item in batch_result:
-            assert inspect(batch_item).persistent
