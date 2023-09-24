@@ -157,7 +157,7 @@ from dataclasses import dataclass
 @dataclass
 class example:
     foo: str
-"""
+""",
     )
     example: type = module.example
     assert example.__annotations__ == {"foo": "str"}
@@ -185,7 +185,7 @@ class Foo:
 @dataclass
 class Bar:
     ...
-"""
+""",
     )
 
     Foo: type = module.Foo

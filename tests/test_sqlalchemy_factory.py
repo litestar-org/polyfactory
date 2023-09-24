@@ -11,12 +11,12 @@ from polyfactory.exceptions import ConfigurationException
 from polyfactory.factories.sqlalchemy_factory import SQLAlchemyFactory
 
 
-@pytest.fixture
+@pytest.fixture()
 def engine() -> Engine:
     return create_engine("sqlite:///:memory:")
 
 
-@pytest.fixture
+@pytest.fixture()
 def async_engine() -> AsyncEngine:
     return create_async_engine("sqlite+aiosqlite:///:memory:")
 

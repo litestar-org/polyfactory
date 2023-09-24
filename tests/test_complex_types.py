@@ -135,7 +135,7 @@ def test_randomizes_optional_returns() -> None:
                     not result.optional_2,
                     not result.optional_3,
                     not result.optional_4,
-                ]
+                ],
             )
             assert any(
                 [
@@ -143,7 +143,7 @@ def test_randomizes_optional_returns() -> None:
                     bool(result.optional_2),
                     bool(result.optional_3),
                     bool(result.optional_4),
-                ]
+                ],
             )
             failed = False
             break

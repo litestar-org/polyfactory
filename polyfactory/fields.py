@@ -112,4 +112,5 @@ class Fixture:
                 return factory.batch(self.size, **self.kwargs)
             return factory.build(**self.kwargs)
 
-        raise ParameterException("fixture has not been registered using the register_factory decorator")
+        msg = "fixture has not been registered using the register_factory decorator"
+        raise ParameterException(msg)

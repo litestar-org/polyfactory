@@ -29,7 +29,10 @@ class CollectionExtender(ABC):
 
     @classmethod
     def extend_type_args(
-        cls, annotation_alias: Any, type_args: tuple[Any, ...], number_of_args: int
+        cls,
+        annotation_alias: Any,
+        type_args: tuple[Any, ...],
+        number_of_args: int,
     ) -> tuple[Any, ...]:
         return cls._subclass_for_type(annotation_alias)._extend_type_args(type_args, number_of_args)
 
@@ -79,5 +82,8 @@ class FallbackExtender(CollectionExtender):
     __types__ = ()
 
     @staticmethod
-    def _extend_type_args(type_args: tuple[Any, ...], number_of_args: int) -> tuple[Any, ...]:
+    def _extend_type_args(
+        type_args: tuple[Any, ...],
+        number_of_args: int,  # noqa: ARG004
+    ) -> tuple[Any, ...]:  # - investigate @guacs
         return type_args

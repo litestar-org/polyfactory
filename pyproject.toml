@@ -1,19 +1,15 @@
-[tool.poetry]
-name = "polyfactory"
-version = "2.9.0"
-description = "Mock data generation factories"
+[project]
 authors = [
-    "Na'aman Hirschfeld <nhirschfeld@gmail.com>",
+    {name = "Na'aman Hirschfeld", email = "nhirschfeld@gmail.com"},
 ]
 maintainers = [
-    "Visakh Unnikrishnan <guacs.guacs@gmail.com>",
+    {name = "Visakh Unnikrishnan", email = "guacs.guacs@gmail.com"},
+    {name = "Cody Fincher", email = "cody.fincher@gmail.com"},
+    {name = "Janek Nouvertné", email = "provinzkraut@posteo.de"},
+    {name = "Jacob Coffee", email = "jacob@z7x.org"},
+    {name = "Peter Schutt", email = "peter.github@proton.me"},
 ]
-license = "MIT"
-readme = "docs/PYPI_README.md"
-homepage = "https://github.com/litestar-org/polyfactory"
-repository = "https://github.com/litestar-org/polyfactory"
-documentation = "https://github.com/litestar-org/polyfactory"
-keywords = ["dataclasses", "factory", "msgspec", "pydantic", "attrs", "sqlalchemy", "testing"]
+keywords = ["dataclasses", "msgspec", "pydantic", "attrs", "sqlalchemy",]
 classifiers = [
     "Development Status :: 5 - Production/Stable",
     "Environment :: Web Environment",
@@ -34,67 +30,112 @@ classifiers = [
     "Topic :: Utilities",
     "Typing :: Typed",
 ]
-packages = [{ include = "polyfactory" }]
+name = "polyfactory"
+version = "2.9.0"
+description = "Mock data generation factories"
+readme = "docs/PYPI_README.md"
+license = {text = "MIT"}
+requires-python = ">=3.8,<4.0"
+dependencies = [
+    "faker",
+    "typing-extensions",
+]
 
-[tool.poetry.dependencies]
-python = ">=3.8,<4.0"
-beanie = { version = "*", optional = true }
-faker = "*"
-msgspec = { version = "*", optional = true }
-odmantic = { version = "*", optional = true }
-pydantic = { version = "*", optional = true, extras = ["email"] }
-typing-extensions = "*"
-attrs = {version = ">=22.2.0", optional = true}
-sqlalchemy = { version = ">=2", optional = true }
-
-[tool.poetry.group.dev.dependencies]
-hypothesis = "*"
-mongomock-motor = "*"
-pytest = "*"
-pytest-asyncio = "*"
-pytest-cov = "*"
-aiosqlite = "^0.19.0"
-
-[tool.poetry.group.docs.dependencies]
-auto-pytabs = "*"
-blacken-docs = "*"
-litestar-sphinx-theme = { git = "https://github.com/litestar-org/litestar-sphinx-theme.git" }
-sphinx = "*"
-sphinx-autobuild = "*"
-sphinx-copybutton = "*"
-sphinxcontrib-mermaid = "*"
-
-[tool.poetry.group.lint]
-optional = true
-
-[tool.poetry.group.lint.dependencies]
-black = "*"
-blacken-docs = "*"
-mypy = "*"
-pre-commit = "*"
-pyright = "*"
-ruff = '*'
-sourcery = "*"
-
-[tool.poetry.extras]
-sqlalchemy = ["sqlalchemy"]
-pydantic = ["pydantic"]
-msgspec = ["msgspec"]
-odmantic = ["odmantic", "pydantic"]
-beanie = ["beanie", "pydantic"]
-attrs = ["attrs"]
+[project.optional-dependencies]
+sqlalchemy = ["sqlalchemy>=2",]
+pydantic = ["pydantic[email]",]
+msgspec = ["msgspec",]
+odmantic = ["odmantic", "pydantic[email]",]
+beanie = ["beanie", "pydantic[email]",]
+attrs = ["attrs>=22.2.0",]
 full = ["pydantic", "odmantic", "msgspec", "beanie", "attrs", "sqlalchemy"]
 
+[project.urls]
+"Issue Tracker" = "https://github.com/litestar-org/polyfactory/issues?q=is%3Aissue+is%3Aopen+sort%3Aupdated-desc"
+Changelog = "https://github.com/litestar-org/polyfactory/releases/"
+Twitter = "https://twitter.com/LitestarAPI"
+Reddit = "https://www.reddit.com/r/LitestarAPI"
+Discord = "https://discord.gg/MmcwxztmQb"
+Blog = "https://blog.litestar.dev"
+homepage = "https://github.com/litestar-org/polyfactory"
+repository = "https://github.com/litestar-org/polyfactory"
+documentation = "https://github.com/litestar-org/polyfactory"
+
 [build-system]
-requires = ["poetry-core>=1.0.0"]
-build-backend = "poetry.core.masonry.api"
+build-backend = "hatchling.build"
+requires = ["hatchling"]
+
+[tool.pdm.scripts]
+lint = "pre-commit run --all-files"
+test = "pytest tests docs/examples"
+docs-serve = "sphinx-autobuild docs docs/_build/ -j auto --watch polyfactory --watch docs --watch tests --port 8002"
+ci = {composite = ["lint", "test"]}
+
+[tool.pdm.dev-dependencies]
+docs = [
+    "sphinx>=7.1.2",
+    "sphinx-autobuild>=2021.3.14",
+    "auto-pytabs>=0.4.0",
+    "sphinx-copybutton>=0.5.2",
+    "sphinx-toolbox>=3.5.0",
+    "blacken-docs>=1.16.0",
+    "sphinx-design>=0.5.0",
+    "sphinxcontrib-mermaid>=0.9.2",
+    "litestar-sphinx-theme @ git+https://github.com/litestar-org/litestar-sphinx-theme.git",
+]
+lint = [
+    "black>=23.9.1",
+    "ruff>=0.0.290",
+    "codespell>=2.2.5",
+    "mypy>=1.5.1",
+    "pre-commit>=3.4.0",
+    "blacken-docs>=1.16.0",
+    "shellcheck-py>=0.9.0.5",
+    "pyright>=1.1.327",
+    "sourcery>=1.9.0",
+]
+test = [
+    "pytest>=7.4.2",
+    "pytest-asyncio>=0.21.1",
+    "pytest-cov>=4.1.0",
+    "hypothesis>=6.86.2",
+]
+dev = [
+    "mongomock-motor>=0.0.21",
+    "aiosqlite>=0.19.0",
+]
 
 [tool.black]
 line-length = 120
 include = '\.pyi?$'
 
+[tool.mypy]
+exclude = "^tools/.*"
+plugins = ["pydantic.mypy"]
+
+warn_unused_ignores = true
+warn_redundant_casts = true
+warn_unused_configs = true
+warn_unreachable = true
+warn_return_any = true
+strict = true
+disallow_untyped_decorators = true
+disallow_any_generics = false
+implicit_reexport = false
+show_error_codes = true
+
+[tool.pydantic-mypy]
+init_forbid_extra = true
+init_typed = true
+warn_required_dynamic_aliases = true
+warn_untyped_fields = true
+
+[tool.mypy-tests.typing_test_strict]
+disallow_any_generics = true
+
 [tool.pyright]
 include = ["polyfactory", "tests", "examples"]
+exclude = ["tools/**/*.*"]
 
 [tool.coverage.run]
 omit = ["*/tests/*"]
@@ -123,42 +164,7 @@ exclude_lines = [
 ]
 
 [tool.ruff]
-select = [
-    "A",   # flake8-builtins
-    "B",   # flake8-bugbear
-    "BLE", # flake8-blind-except
-    "C4",  # flake8-comprehensions
-    "D",   # pydocstyle
-    "DJ",  # flake8-django
-    "DTZ", # flake8-datetimez
-    "E",   # pycodestyle errors
-    "ERA", # eradicate
-    "EXE", # flake8-executable
-    "F",   # pyflakes
-    "G",   # flake8-logging-format
-    "I",   # isort
-    "ICN", # flake8-import-conventions
-    "ISC", # flake8-implicit-str-concat
-    "N",   # pep8-naming
-    "PIE", # flake8-pie
-    "PLC", # pylint - convention
-    "PLE", # pylint - error
-    "PLW", # pylint - warning
-    "PTH", # flake8-use-pathlib
-    "Q",   # flake8-quotes
-    "RET", # flake8-return
-    "RUF", # Ruff-specific rules
-    "S",   # flake8-bandit
-    "SIM", # flake8-simplify
-    "T10", # flake8-debugger
-    "T20", # flake8-print
-    "TCH", # flake8-type-checking
-    "TID", # flake8-tidy-imports
-    "UP",  # pyupgrade
-    "W",   # pycodestyle - warning
-    "YTT", # flake8-2020
-]
-
+select = ["ALL"]
 ignore = [
     "A003",  # flake8-builtins - class attribute {name} is shadowing a python builtin
     "B010",  # flake8-bugbear - do not call setattr with a constant attribute value
@@ -197,6 +203,13 @@ classmethod-decorators = [
 known-first-party = ["polyfactory", "tests"]
 
 [tool.ruff.per-file-ignores]
+"**/*.*" = ["ANN101", "ANN401", "ANN102", "TD",]
+"polyfactory/**/*.*" = ["PLR0913",
+    "ARG005", # Investigate @guacs
+    "FBT001", # Investigate @guacs
+    "FBT002", # Investigate @guacs
+    "SLF001", # Ignore use of private member access
+    ]
 "polyfactory/field_meta.py" = ["N806"]
 "tests/**/*.*" = [
     "S101",
@@ -222,7 +235,23 @@ known-first-party = ["polyfactory", "tests"]
     "G",
     "PIE",
     "RUF012",
+    "FA",
+    "ANN",
+    "SLF",
+    "PT",
+    "INP",
+    "TD",
+    "FIX",
+    "FBT",
+    "PLR0913", # too many arguments
+    "PT",
+    "ARG002", # Investigate @guacs
+    "PERF203", # Investigate @guacs
 ]
+"docs/examples/**/*.*" = [
+    "PLR2004", # Investigate @guacs
+    "INP001", # Add __init__.py
+    ]
 "docs/examples/tests/**/*.*" = [
     "S101",
     "D",
@@ -258,4 +287,8 @@ known-first-party = ["polyfactory", "tests"]
     "RET",
     "E731",
     "RUF012",
+    "FA100",
+    "ARG001",
 ]
+"docs/conf.py" = ["FIX002", "ARG001",]
+"tools/**/*.*" = ["D", "ARG", "EM", "TRY", "G", "FBT", "INP"]

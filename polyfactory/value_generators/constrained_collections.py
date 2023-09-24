@@ -36,7 +36,8 @@ def handle_constrained_collection(
     max_items = abs(max_items if max_items is not None else min_items + 1)
 
     if max_items < min_items:
-        raise ParameterException("max_items must be larger or equal to min_items")
+        msg = "max_items must be larger or equal to min_items"
+        raise ParameterException(msg)
 
     collection: set[T] | list[T] = set() if (collection_type in (frozenset, set) or unique_items) else []
 
@@ -50,7 +51,8 @@ def handle_constrained_collection(
                 collection.append(value)
         return collection_type(collection)
     except TypeError as e:
-        raise ParameterException(f"cannot generate a constrained collection of type: {item_type}") from e
+        msg = f"cannot generate a constrained collection of type: {item_type}"
+        raise ParameterException(msg) from e
 
 
 def handle_constrained_mapping(
@@ -72,7 +74,8 @@ def handle_constrained_mapping(
     max_items = abs(max_items if max_items is not None else min_items + 1)
 
     if max_items < min_items:
-        raise ParameterException("max_items must be larger or equal to min_items")
+        msg = "max_items must be larger or equal to min_items"
+        raise ParameterException(msg)
 
     length = factory.__random__.randint(min_items, max_items) or 1
 

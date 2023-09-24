@@ -68,7 +68,9 @@ def test_is_multiply_of_multiple_of_in_range_extreme_cases() -> None:
 
     assert is_multiply_of_multiple_of_in_range(minimum=1.0, maximum=1.0, multiple_of=0.33333333333)
     assert is_multiply_of_multiple_of_in_range(
-        minimum=Decimal(1), maximum=Decimal(1), multiple_of=Decimal("0.33333333333")
+        minimum=Decimal(1),
+        maximum=Decimal(1),
+        multiple_of=Decimal("0.33333333333"),
     )
     assert not is_multiply_of_multiple_of_in_range(minimum=Decimal(1), maximum=Decimal(1), multiple_of=Decimal("0.333"))
 
@@ -96,7 +98,7 @@ def test_is_multiply_of_multiple_of_in_range_for_floats(base_multiple_of: float,
                 [
                     multiplier * multiple_of + random.random() * 100,
                     (multiplier + random.randint(1, 100)) * multiple_of + random.random() * 100,
-                ]
+                ],
             )
             assert is_multiply_of_multiple_of_in_range(minimum=minimum, maximum=maximum, multiple_of=multiple_of)
 
@@ -104,7 +106,7 @@ def test_is_multiply_of_multiple_of_in_range_for_floats(base_multiple_of: float,
                 [
                     (multiplier + (random.random() / 2 + 0.01)) * multiple_of,
                     (multiplier + (random.random() / 2 + 0.45)) * multiple_of,
-                ]
+                ],
             )
             assert not is_multiply_of_multiple_of_in_range(minimum=minimum, maximum=maximum, multiple_of=multiple_of)
 
@@ -120,7 +122,7 @@ def test_is_multiply_of_multiple_of_in_range_for_int(base_multiple_of: int, mult
                 [
                     multiplier * multiple_of + random.randint(1, 100),
                     (multiplier + random.randint(1, 100)) * multiple_of + random.randint(1, 100),
-                ]
+                ],
             )
             assert is_multiply_of_multiple_of_in_range(minimum=minimum, maximum=maximum, multiple_of=multiple_of)
 
@@ -137,7 +139,7 @@ def test_is_multiply_of_multiple_of_in_range_for_decimals(base_multiple_of: Deci
                 [
                     multiplier * multiple_of + Decimal(random.random() * 100),
                     (multiplier + random.randint(1, 100)) * multiple_of + Decimal(random.random() * 100),
-                ]
+                ],
             )
             assert is_multiply_of_multiple_of_in_range(minimum=minimum, maximum=maximum, multiple_of=multiple_of)
 
@@ -145,6 +147,6 @@ def test_is_multiply_of_multiple_of_in_range_for_decimals(base_multiple_of: Deci
                 [
                     (multiplier + Decimal(random.random() / 2 + 0.01)) * multiple_of,
                     (multiplier + Decimal(random.random() / 2 + 0.45)) * multiple_of,
-                ]
+                ],
             )
             assert not is_multiply_of_multiple_of_in_range(minimum=minimum, maximum=maximum, multiple_of=multiple_of)

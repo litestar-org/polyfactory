@@ -19,7 +19,7 @@ if TYPE_CHECKING:
 T = TypeVar("T")
 
 
-@pytest.fixture
+@pytest.fixture()
 def create_module(tmp_path: Path, monkeypatch: MonkeyPatch) -> Callable[[str], ModuleType]:
     """Utility fixture for dynamic module creation."""
 
