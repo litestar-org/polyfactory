@@ -44,7 +44,7 @@ from string import (
 from typing import TYPE_CHECKING, Any, Pattern
 
 try:  # >=3.11
-    from re._parser import SubPattern, parse  # pyright:ignore
+    from re._parser import SubPattern, parse
 except ImportError:  # < 3.11
     from sre_parse import SubPattern, parse  # pylint: disable=deprecated-module
 
@@ -121,7 +121,7 @@ class RegexFactory:
         return result
 
     def _build_string(self, parsed: SubPattern) -> str:
-        return "".join([self._handle_state(state) for state in parsed])  # pyright:ignore
+        return "".join([self._handle_state(state) for state in parsed])  # pyright:ignore[reportGeneralTypeIssues]
 
     def _handle_state(self, state: tuple[SubPattern, tuple[Any, ...]]) -> Any:
         opcode, value = state
@@ -144,7 +144,7 @@ class RegexFactory:
         end_range = min(end_range, self._limit)
 
         result = [
-            "".join(self._handle_state(v) for v in list(value))  # pyright: ignore
+            "".join(self._handle_state(v) for v in list(value))  # pyright: ignore[reportGeneralTypeIssues]
             for _ in range(self._random.randint(start_range, max(start_range, end_range)))
         ]
         return "".join(result)

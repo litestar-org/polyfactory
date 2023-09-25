@@ -10,7 +10,7 @@ from polyfactory.value_generators.primitives import create_random_float
 
 
 @pytest.mark.parametrize(
-    "maximum, minimum, multiple_of",
+    ("maximum", "minimum", "multiple_of"),
     ((100, 2, 8), (-100, -187, -10), (7.55, 0.13, 0.0123)),
 )
 def test_generate_constrained_number(maximum: float, minimum: float, multiple_of: float) -> None:

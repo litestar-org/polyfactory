@@ -19,7 +19,7 @@ from typing import (
 try:
     from types import UnionType
 except ImportError:
-    UnionType = Union  # type: ignore
+    UnionType = Union  # type: ignore[misc,assignment]
 
 
 # Mapping of type annotations into concrete types. This is used to normalize python <= 3.9 annotations.

@@ -14,7 +14,8 @@ try:
     from sqlalchemy.exc import NoInspectionAvailable
     from sqlalchemy.orm import InstanceState, Mapper
 except ImportError as e:
-    raise MissingDependencyException("sqlalchemy is not installed") from e
+    msg = "sqlalchemy is not installed"
+    raise MissingDependencyException(msg) from e
 
 if TYPE_CHECKING:
     from sqlalchemy.ext.asyncio import AsyncSession
@@ -154,7 +155,7 @@ class SQLAlchemyFactory(Generic[T], BaseFactory[T]):
                         randomize_collection_length=cls.__randomize_collection_length__,
                         min_collection_length=cls.__min_collection_length__,
                         max_collection_length=cls.__max_collection_length__,
-                    )
+                    ),
                 )
 
         return fields_meta

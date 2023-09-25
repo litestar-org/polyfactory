@@ -25,7 +25,8 @@ try:
     import msgspec
     from msgspec import inspect
 except ImportError as e:
-    raise MissingDependencyException("msgspec is not installed") from e
+    msg = "msgspec is not installed"
+    raise MissingDependencyException(msg) from e
 
 T = TypeVar("T", bound=msgspec.Struct)
 
@@ -77,6 +78,6 @@ class MsgspecFactory(Generic[T], BaseFactory[T]):
                     randomize_collection_length=cls.__randomize_collection_length__,
                     min_collection_length=cls.__min_collection_length__,
                     max_collection_length=cls.__max_collection_length__,
-                )
+                ),
             )
         return fields_meta

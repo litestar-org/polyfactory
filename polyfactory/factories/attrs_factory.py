@@ -16,7 +16,8 @@ try:
     from attr._make import Factory
     from attrs import AttrsInstance
 except ImportError as ex:
-    raise MissingDependencyException("attrs is not installed") from ex
+    msg = "attrs is not installed"
+    raise MissingDependencyException(msg) from ex
 
 
 T = TypeVar("T", bound=AttrsInstance)
@@ -63,7 +64,7 @@ class AttrsFactory(BaseFactory[T]):
                     randomize_collection_length=cls.__randomize_collection_length__,
                     min_collection_length=cls.__min_collection_length__,
                     max_collection_length=cls.__max_collection_length__,
-                )
+                ),
             )
 
         return field_metas

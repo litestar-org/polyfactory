@@ -185,22 +185,27 @@ def get_constrained_number_range(
     minimum, maximum = get_value_or_none(lt=lt, le=le, gt=gt, ge=ge, t_type=t_type)
 
     if minimum is not None and maximum is not None and maximum < minimum:
-        raise ParameterException("maximum value must be greater than minimum value")
+        msg = "maximum value must be greater than minimum value"
+        raise ParameterException(msg)
 
     if multiple_of is None:
         if minimum is not None and maximum is None:
-            return (minimum, seed) if minimum == 0 else (minimum, minimum + seed)  # pyright: ignore
+            return (
+                (minimum, seed) if minimum == 0 else (minimum, minimum + seed)
+            )  # pyright: ignore[reportGeneralTypeIssues]
         if maximum is not None and minimum is None:
             return maximum - seed, maximum
     else:
-        if multiple_of == 0.0:
-            raise ParameterException("multiple_of can not be zero")
+        if multiple_of == 0.0:  # TODO: investigate @guacs # noqa: PLR2004, FIX002
+            msg = "multiple_of can not be zero"
+            raise ParameterException(msg)
         if (
             minimum is not None
             and maximum is not None
             and not is_multiply_of_multiple_of_in_range(minimum=minimum, maximum=maximum, multiple_of=multiple_of)
         ):
-            raise ParameterException("given range should include at least one multiply of multiple_of")
+            msg = "given range should include at least one multiply of multiple_of"
+            raise ParameterException(msg)
 
     return minimum, maximum
 
@@ -256,7 +261,13 @@ def handle_constrained_int(
     """
 
     minimum, maximum = get_constrained_number_range(
-        gt=gt, ge=ge, lt=lt, le=le, t_type=int, multiple_of=multiple_of, random=random
+        gt=gt,
+        ge=ge,
+        lt=lt,
+        le=le,
+        t_type=int,
+        multiple_of=multiple_of,
+        random=random,
     )
     return generate_constrained_number(
         random=random,
@@ -288,7 +299,13 @@ def handle_constrained_float(
     """
 
     minimum, maximum = get_constrained_number_range(
-        gt=gt, ge=ge, lt=lt, le=le, t_type=float, multiple_of=multiple_of, random=random
+        gt=gt,
+        ge=ge,
+        lt=lt,
+        le=le,
+        t_type=float,
+        multiple_of=multiple_of,
+        random=random,
     )
 
     return generate_constrained_number(
@@ -315,16 +332,19 @@ def validate_max_digits(
 
     """
     if max_digits <= 0:
-        raise ParameterException("max_digits must be greater than 0")
+        msg = "max_digits must be greater than 0"
+        raise ParameterException(msg)
 
     if minimum is not None:
         min_str = str(minimum).split(".")[1] if "." in str(minimum) else str(minimum)
 
         if max_digits <= len(min_str):
-            raise ParameterException("minimum is greater than max_digits")
+            msg = "minimum is greater than max_digits"
+            raise ParameterException(msg)
 
     if decimal_places is not None and max_digits <= decimal_places:
-        raise ParameterException("max_digits must be greater than decimal places")
+        msg = "max_digits must be greater than decimal places"
+        raise ParameterException(msg)
 
 
 def handle_decimal_length(
@@ -357,7 +377,7 @@ def handle_decimal_length(
     else:
         max_decimals = cast("int", decimal_places)
 
-    if max_decimals < 0:  # pyright: ignore
+    if max_decimals < 0:  # pyright: ignore[reportOptionalOperand]
         return Decimal(sign + whole_numbers[:max_decimals])
 
     decimals = decimals[:max_decimals]

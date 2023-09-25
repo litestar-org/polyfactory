@@ -132,7 +132,7 @@ def _create_pydantic_type_map(cls: type[BaseFactory[Any]]) -> dict[type, Callabl
             # in pydantic v2 these are all aliases for Annotated with a constraint.
             # we therefore do not need them in v2
             mapping.update(
-                {  # pyright: ignore
+                {
                     pydantic.PyObject: lambda: "decimal.Decimal",
                     pydantic.AmqpDsn: lambda: "amqps://example.com",
                     pydantic.KafkaDsn: lambda: "kafka://localhost:9092",
@@ -144,8 +144,8 @@ def _create_pydantic_type_map(cls: type[BaseFactory[Any]]) -> dict[type, Callabl
                     pydantic.UUID3: lambda: uuid3(NAMESPACE_DNS, cls.__faker__.pystr()),
                     pydantic.UUID4: cls.__faker__.uuid4,
                     pydantic.UUID5: lambda: uuid5(NAMESPACE_DNS, cls.__faker__.pystr()),
-                    pydantic.color.Color: cls.__faker__.hex_color,  # pyright: ignore
-                }
+                    pydantic.color.Color: cls.__faker__.hex_color,  # pyright: ignore[reportGeneralTypeIssues]
+                },
             )
         else:
             mapping.update(
@@ -154,7 +154,7 @@ def _create_pydantic_type_map(cls: type[BaseFactory[Any]]) -> dict[type, Callabl
                     pydantic.FutureDatetime: cls.__faker__.future_datetime,
                     pydantic.AwareDatetime: partial(cls.__faker__.date_time, timezone.utc),
                     pydantic.NaiveDatetime: cls.__faker__.date_time,
-                }
+                },
             )
 
     except ImportError:
@@ -233,7 +233,7 @@ class BaseFactory(ABC, Generic[T]):
     _factory_type_mapping: ClassVar[dict[Any, type[BaseFactory[Any]]]]
     _base_factories: ClassVar[list[type[BaseFactory[Any]]]]
 
-    def __init_subclass__(cls, *args: Any, **kwargs: Any) -> None:
+    def __init_subclass__(cls, *args: Any, **kwargs: Any) -> None:  # noqa: C901
         super().__init_subclass__(*args, **kwargs)
 
         if not hasattr(BaseFactory, "_base_factories"):
@@ -243,26 +243,28 @@ class BaseFactory(ABC, Generic[T]):
             BaseFactory._factory_type_mapping = {}
 
         if cls.__min_collection_length__ > cls.__max_collection_length__:
+            msg = "Minimum collection length shouldn't be greater than maximum collection length"
             raise ConfigurationException(
-                "Minimum collection length shouldn't be greater than maximum collection length"
+                msg,
             )
 
         if "__is_base_factory__" not in cls.__dict__ or not cls.__is_base_factory__:
             model = getattr(cls, "__model__", None)
             if not model:
+                msg = f"required configuration attribute '__model__' is not set on {cls.__name__}"
                 raise ConfigurationException(
-                    f"required configuration attribute '__model__' is not set on {cls.__name__}"
+                    msg,
                 )
             if not cls.is_supported_type(model):
                 for factory in BaseFactory._base_factories:
                     if factory.is_supported_type(model):
+                        msg = f"{cls.__name__} does not support {model.__name__}, but this type is support by the {factory.__name__} base factory class. To resolve this error, subclass the factory from {factory.__name__} instead of {cls.__name__}"
                         raise ConfigurationException(
-                            f"{cls.__name__} does not support {model.__name__}, but this type is support by the {factory.__name__} base factory class. T"
-                            f"o resolve this error, subclass the factory from {factory.__name__} instead of {cls.__name__}"
+                            msg,
                         )
+                    msg = f"Model type {model.__name__} is not supported. To support it, register an appropriate base factory and subclass it for your factory."
                     raise ConfigurationException(
-                        f"Model type {model.__name__} is not supported. "
-                        "To support it, register an appropriate base factory and subclass it for your factory."
+                        msg,
                     )
         else:
             BaseFactory._base_factories.append(cls)
@@ -283,8 +285,9 @@ class BaseFactory(ABC, Generic[T]):
         """
         if cls.__sync_persistence__:
             return cls.__sync_persistence__() if callable(cls.__sync_persistence__) else cls.__sync_persistence__
+        msg = "A '__sync_persistence__' handler must be defined in the factory to use this method"
         raise ConfigurationException(
-            "A '__sync_persistence__' handler must be defined in the factory to use this method"
+            msg,
         )
 
     @classmethod
@@ -296,8 +299,9 @@ class BaseFactory(ABC, Generic[T]):
         """
         if cls.__async_persistence__:
             return cls.__async_persistence__() if callable(cls.__async_persistence__) else cls.__async_persistence__
+        msg = "An '__async_persistence__' handler must be defined in the factory to use this method"
         raise ConfigurationException(
-            "An '__async_persistence__' handler must be defined in the factory to use this method"
+            msg,
         )
 
     @classmethod
@@ -346,7 +350,8 @@ class BaseFactory(ABC, Generic[T]):
             if factory.is_supported_type(model):
                 return factory.create_factory(model)
 
-        raise ParameterException(f"unsupported model type {model.__name__}")  # pragma: no cover
+        msg = f"unsupported model type {model.__name__}"
+        raise ParameterException(msg)  # pragma: no cover
 
     # Public Methods
 
@@ -512,7 +517,7 @@ class BaseFactory(ABC, Generic[T]):
         )
 
     @classmethod
-    def get_constrained_field_value(cls, annotation: Any, field_meta: FieldMeta) -> Any:
+    def get_constrained_field_value(cls, annotation: Any, field_meta: FieldMeta) -> Any:  # noqa: C901, PLR0911, PLR0912
         try:
             constraints = cast("Constraints", field_meta.constraints)
             if is_safe_subclass(annotation, float):
@@ -567,7 +572,7 @@ class BaseFactory(ABC, Generic[T]):
                 or is_safe_subclass(annotation, frozenset)
                 or is_safe_subclass(annotation, tuple)
             ):
-                collection_type: type[list] | type[set] | type[tuple] | type[frozenset]
+                collection_type: type[list | set | tuple | frozenset]
                 if is_safe_subclass(annotation, list):
                     collection_type = list
                 elif is_safe_subclass(annotation, set):
@@ -578,7 +583,7 @@ class BaseFactory(ABC, Generic[T]):
                     collection_type = frozenset
 
                 return handle_constrained_collection(
-                    collection_type=collection_type,  # type: ignore
+                    collection_type=collection_type,  # type: ignore[type-var]
                     factory=cls,
                     field_meta=field_meta.children[0] if field_meta.children else field_meta,
                     item_type=constraints.get("item_type"),
@@ -616,10 +621,15 @@ class BaseFactory(ABC, Generic[T]):
         except TypeError as e:
             raise ParameterException from e
 
-        raise ParameterException(f"received constraints for unsupported type {annotation}")
+        msg = f"received constraints for unsupported type {annotation}"
+        raise ParameterException(msg)
 
     @classmethod
-    def get_field_value(cls, field_meta: FieldMeta, field_build_parameters: Any | None = None) -> Any:
+    def get_field_value(  # noqa: C901, PLR0911, PLR0912
+        cls,
+        field_meta: FieldMeta,
+        field_build_parameters: Any | None = None,
+    ) -> Any:
         """Return a field value on the subclass if existing, otherwise returns a mock value.
 
         :param field_meta: FieldMeta instance.
@@ -640,14 +650,14 @@ class BaseFactory(ABC, Generic[T]):
             return cls.__random__.choice(literal_args)
 
         if isinstance(unwrapped_annotation, EnumMeta):
-            return cls.__random__.choice(list(unwrapped_annotation))  # pyright: ignore
+            return cls.__random__.choice(list(unwrapped_annotation))
 
         if field_meta.constraints:
             return cls.get_constrained_field_value(annotation=unwrapped_annotation, field_meta=field_meta)
 
         if BaseFactory.is_factory_type(annotation=unwrapped_annotation):
             return cls._get_or_create_factory(model=unwrapped_annotation).build(
-                **(field_build_parameters if isinstance(field_build_parameters, Mapping) else {})
+                **(field_build_parameters if isinstance(field_build_parameters, Mapping) else {}),
             )
 
         if BaseFactory.is_batch_factory_type(annotation=unwrapped_annotation):
@@ -677,9 +687,9 @@ class BaseFactory(ABC, Generic[T]):
             with suppress(Exception):
                 return unwrapped_annotation()
 
+        msg = f"Unsupported type: {unwrapped_annotation!r}\n\nEither extend the providers map or add a factory function for this type."
         raise ParameterException(
-            f"Unsupported type: {unwrapped_annotation!r}"
-            f"\n\nEither extend the providers map or add a factory function for this type."
+            msg,
         )
 
     @classmethod
@@ -747,7 +757,8 @@ class BaseFactory(ABC, Generic[T]):
                         continue
 
                     if isinstance(field_value, Require) and field_meta.name not in kwargs:
-                        raise MissingBuildKwargException(f"Require kwarg {field_meta.name} is missing")
+                        msg = f"Require kwarg {field_meta.name} is missing"
+                        raise MissingBuildKwargException(msg)
 
                     if isinstance(field_value, PostGenerated):
                         generate_post[field_meta.name] = field_value
@@ -855,7 +866,7 @@ def _register_builtin_factories() -> None:
     ]:
         try:
             import_module(module)
-        except ImportError:
+        except ImportError:  # noqa: PERF203
             continue
 
 

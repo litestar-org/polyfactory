@@ -32,7 +32,8 @@ try:
     from pydantic import VERSION, BaseModel, Json
     from pydantic.fields import FieldInfo
 except ImportError as e:
-    raise MissingDependencyException("pydantic is not installed") from e
+    msg = "pydantic is not installed"
+    raise MissingDependencyException(msg) from e
 
 try:
     from pydantic.fields import ModelField  # type: ignore[attr-defined]
@@ -71,7 +72,12 @@ class PydanticFieldMeta(FieldMeta):
         constraints: PydanticConstraints | None = None,
     ) -> None:
         super().__init__(
-            name=name, annotation=annotation, random=random, default=default, children=children, constraints=constraints
+            name=name,
+            annotation=annotation,
+            random=random,
+            default=default,
+            children=children,
+            constraints=constraints,
         )
 
     @classmethod
@@ -156,7 +162,7 @@ class PydanticFieldMeta(FieldMeta):
     @classmethod
     def from_model_field(  # pragma: no cover
         cls,
-        model_field: ModelField,  # pyright: ignore
+        model_field: ModelField,  # pyright: ignore[reportGeneralTypeIssues]
         use_alias: bool,
         randomize_collection_length: bool,
         min_collection_length: int,
@@ -175,7 +181,7 @@ class PydanticFieldMeta(FieldMeta):
 
         """
         from pydantic import AmqpDsn, AnyHttpUrl, AnyUrl, HttpUrl, KafkaDsn, PostgresDsn, RedisDsn
-        from pydantic.fields import DeferredType, Undefined  # type: ignore
+        from pydantic.fields import DeferredType, Undefined  # type: ignore[attr-defined]
 
         if model_field.default is not Undefined:
             default_value = model_field.default
@@ -234,7 +240,7 @@ class PydanticFieldMeta(FieldMeta):
         if model_field.field_info.const and (
             default_value is None or isinstance(default_value, (int, bool, str, bytes))
         ):
-            annotation = Literal[default_value]  # pyright: ignore
+            annotation = Literal[default_value]  # pyright: ignore  # noqa: PGH003
 
         children: list[FieldMeta] = []
         if model_field.key_field or model_field.sub_fields:

@@ -10,7 +10,9 @@ from polyfactory.value_generators.constrained_strings import handle_constrained_
 
 @given(booleans(), integers(max_value=10000), integers(max_value=10000))
 def test_handle_constrained_bytes_with_min_length_and_max_length(
-    to_lower: bool, min_length: int, max_length: int
+    to_lower: bool,
+    min_length: int,
+    max_length: int,
 ) -> None:
     if min_length < 0 or max_length < 0 or min_length > max_length:
         with pytest.raises(ParameterException):
