@@ -1,11 +1,13 @@
 from dataclasses import dataclass
 from enum import Enum
-from typing import Any, Callable, List, Optional, Type
+from typing import Any, Callable, Type
 
 import pytest
-from sqlalchemy import Engine, ForeignKey, create_engine, inspect, orm, types
-from sqlalchemy.ext.asyncio import AsyncAttrs, AsyncEngine, AsyncSession, create_async_engine
-from sqlalchemy.orm import Session, mapped_column
+from sqlalchemy import Column, ForeignKey, Integer, String, create_engine, inspect, orm, types
+from sqlalchemy.engine import Engine
+from sqlalchemy.ext.asyncio import AsyncEngine, AsyncSession, create_async_engine
+from sqlalchemy.orm import Session
+from sqlalchemy.orm.decl_api import DeclarativeMeta, registry
 
 from polyfactory.exceptions import ConfigurationException
 from polyfactory.factories.sqlalchemy_factory import SQLAlchemyFactory
@@ -21,20 +23,27 @@ def async_engine() -> AsyncEngine:
     return create_async_engine("sqlite+aiosqlite:///:memory:")
 
 
-async def create_tables(engine: AsyncEngine, base: Type[orm.DeclarativeBase]) -> None:
+async def create_tables(engine: AsyncEngine, base: Type) -> None:
     async with engine.connect() as connection:
         await connection.run_sync(base.metadata.create_all)
 
 
-class Base(orm.DeclarativeBase):
-    ...
+_registry = registry()
+
+
+class Base(metaclass=DeclarativeMeta):
+    __abstract__ = True
+    __allow_unmapped__ = True
+
+    registry = _registry
+    metadata = _registry.metadata
 
 
 class Author(Base):
     __tablename__ = "authors"
 
-    id: orm.Mapped[int] = mapped_column(primary_key=True)
-    books: orm.Mapped[List["Book"]] = orm.relationship(
+    id: Any = Column(Integer(), primary_key=True)
+    books: Any = orm.relationship(
         "Book",
         uselist=True,
         back_populates="author",
@@ -44,9 +53,13 @@ class Author(Base):
 class Book(Base):
     __tablename__ = "books"
 
-    id: orm.Mapped[int] = mapped_column(primary_key=True)
-    author_id: orm.Mapped[int] = mapped_column(ForeignKey(Author.id))
-    author: orm.Mapped[Author] = orm.relationship(
+    id: Any = Column(Integer(), primary_key=True)
+    author_id: Any = Column(
+        Integer(),
+        ForeignKey(Author.id),
+        nullable=False,
+    )
+    author: Any = orm.relationship(
         Author,
         uselist=False,
         back_populates="books",
@@ -71,8 +84,13 @@ def test_invalid_model(invalid_model: type) -> None:
 
 
 def test_python_type_handling() -> None:
-    class Base(orm.DeclarativeBase):
-        ...
+    _registry = registry()
+
+    class Base(metaclass=DeclarativeMeta):
+        __abstract__ = True
+
+        registry = _registry
+        metadata = _registry.metadata
 
     class Animal(str, Enum):
         DOG = "Dog"
@@ -81,10 +99,13 @@ def test_python_type_handling() -> None:
     class Model(Base):
         __tablename__ = "model"
 
-        id: orm.Mapped[int] = mapped_column(primary_key=True)
-        str_type: orm.Mapped[str] = mapped_column(nullable=False)
-        enum_type: orm.Mapped[Animal]
-        str_array_type: orm.Mapped[List[str]] = mapped_column(type_=types.ARRAY(types.String))
+        id: Any = Column(Integer(), primary_key=True)
+        str_type: Any = Column(String(), nullable=False)
+        enum_type: Any = Column(types.Enum(Animal), nullable=False)
+        str_array_type: Any = Column(
+            types.ARRAY(types.String),
+            nullable=False,
+        )
 
     class ModelFactory(SQLAlchemyFactory[Model]):
         __model__ = Model
@@ -102,14 +123,19 @@ def test_python_type_handling() -> None:
     tuple(SQLAlchemyFactory.get_sqlalchemy_types().keys()),
 )
 def test_sqlalchemy_type_handlers(type_: types.TypeEngine) -> None:
-    class Base(orm.DeclarativeBase):
-        ...
+    _registry = registry()
+
+    class Base(metaclass=DeclarativeMeta):
+        __abstract__ = True
+
+        registry = _registry
+        metadata = _registry.metadata
 
     class Model(Base):
-        __tablename__ = "model"
+        __tablename__ = "model_with_overriden_type"
 
-        id: orm.Mapped[int] = mapped_column(primary_key=True)
-        overridden: orm.Mapped[Any] = mapped_column(type_=type_)
+        id: Any = Column(Integer(), primary_key=True)
+        overridden: Any = Column(type_, nullable=False)
 
     class ModelFactory(SQLAlchemyFactory[Model]):
         __model__ = Model
@@ -119,14 +145,11 @@ def test_sqlalchemy_type_handlers(type_: types.TypeEngine) -> None:
 
 
 def test_optional_field() -> None:
-    class Base(orm.DeclarativeBase):
-        ...
-
     class Model(Base):
-        __tablename__ = "model"
+        __tablename__ = "model_with_optional_field"
 
-        id: orm.Mapped[int] = mapped_column(primary_key=True)
-        optional_field: orm.Mapped[Optional[str]]
+        id: Any = Column(Integer(), primary_key=True)
+        optional_field: Any = Column(String(), nullable=True)
 
     class ModelFactory(SQLAlchemyFactory[Model]):
         __model__ = Model
@@ -210,12 +233,12 @@ def test_sync_persistence(engine: Engine, session_config: Callable[[Session], An
 
         author = AuthorFactory.create_sync()
         assert author.id is not None
-        assert inspect(author).persistent
+        assert inspect(author).persistent  # type: ignore[union-attr]
 
         batch_result = AuthorFactory.create_batch_sync(size=2)
         assert len(batch_result) == 2
         for batch_item in batch_result:
-            assert inspect(batch_item).persistent
+            assert inspect(batch_item).persistent  # type: ignore[union-attr]
 
 
 @pytest.mark.parametrize(
@@ -229,13 +252,18 @@ async def test_async_persistence(
     async_engine: AsyncEngine,
     session_config: Callable[[AsyncSession], Any],
 ) -> None:
-    class Base(orm.DeclarativeBase):
-        ...
+    _registry = registry()
 
-    class AsyncModel(AsyncAttrs, Base):
+    class Base(metaclass=DeclarativeMeta):
+        __abstract__ = True
+
+        registry = _registry
+        metadata = _registry.metadata
+
+    class AsyncModel(Base):
         __tablename__ = "table"
 
-        id: orm.Mapped[int] = mapped_column(primary_key=True)
+        id: Any = Column(Integer(), primary_key=True)
 
     await create_tables(async_engine, Base)
 
@@ -246,24 +274,20 @@ async def test_async_persistence(
             __model__ = AsyncModel
 
         result = await Factory.create_async()
-        assert await result.awaitable_attrs.id is not None
-        assert inspect(result).persistent
+        assert inspect(result).persistent  # type: ignore[union-attr]
 
         batch_result = await Factory.create_batch_async(size=2)
         assert len(batch_result) == 2
         for batch_item in batch_result:
-            assert inspect(batch_item).persistent
+            assert inspect(batch_item).persistent  # type: ignore[union-attr]
 
 
 def test_alias() -> None:
-    class Base(orm.DeclarativeBase):
-        ...
-
     class ModelWithAlias(Base):
         __tablename__ = "table"
 
-        id: orm.Mapped[int] = mapped_column(primary_key=True)
-        name: orm.Mapped[str] = mapped_column("alias")
+        id: Any = Column(Integer(), primary_key=True)
+        name: Any = Column("alias", String(), nullable=False)
 
     class ModelFactory(SQLAlchemyFactory[ModelWithAlias]):
         __model__ = ModelWithAlias

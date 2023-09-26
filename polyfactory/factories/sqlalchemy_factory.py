@@ -9,7 +9,7 @@ from polyfactory.field_meta import FieldMeta
 from polyfactory.persistence import AsyncPersistenceProtocol, SyncPersistenceProtocol
 
 try:
-    from sqlalchemy import Column, inspect, orm, types
+    from sqlalchemy import Column, inspect, types
     from sqlalchemy.dialects import mysql, postgresql
     from sqlalchemy.exc import NoInspectionAvailable
     from sqlalchemy.orm import InstanceState, Mapper
@@ -23,7 +23,7 @@ if TYPE_CHECKING:
     from typing_extensions import TypeGuard
 
 
-T = TypeVar("T", bound=orm.DeclarativeBase)
+T = TypeVar("T")
 
 
 class SQLASyncPersistence(SyncPersistenceProtocol[T]):
@@ -130,7 +130,7 @@ class SQLAlchemyFactory(Generic[T], BaseFactory[T]):
     def get_model_fields(cls) -> list[FieldMeta]:
         fields_meta: list[FieldMeta] = []
 
-        table = inspect(cls.__model__)
+        table: Mapper = inspect(cls.__model__)  # type: ignore[assignment]
         fields_meta.extend(
             FieldMeta.from_type(
                 annotation=cls.get_type_from_column(column),

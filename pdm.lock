@@ -6,7 +6,7 @@ groups = ["default", "msgspec", "sqlalchemy", "lint", "attrs", "full", "docs", "
 cross_platform = true
 static_urls = false
 lock_version = "4.3"
-content_hash = "sha256:ef9bb377462b7cb21cdcb02f38073aebceac5cab405f5274ea604d95992408ad"
+content_hash = "sha256:3278e52b0241e6ed1b882054281f8fd06fc71e64a1bf49d8ad62db7d77d2208d"
 
 [[package]]
 name = "accessible-pygments"
@@ -238,10 +238,6 @@ summary = "httplib2 caching for requests"
 dependencies = [
     "cachecontrol==0.13.1",
     "filelock>=3.8.0",
-]
-files = [
-    {file = "cachecontrol-0.13.1-py3-none-any.whl", hash = "sha256:95dedbec849f46dda3137866dc28b9d133fc9af55f5b805ab1291833e4457aa4"},
-    {file = "cachecontrol-0.13.1.tar.gz", hash = "sha256:f012366b79d2243a6118309ce73151bf52a38d4a5dac8ea57f09bd29087e506b"},
 ]
 
 [[package]]

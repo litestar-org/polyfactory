@@ -36,6 +36,10 @@ jobs:
       matrix:
         python-version: ["3.8", "3.9", "3.10", "3.11"]
         pydantic-version: ["1.10", "2.0"]
+        sqla-version: ["1.4", "2"]
+        exclude:
+          - pydantic-version: "1.10"
+            sqla-version: "1.4"
     steps:
       - name: Check out repository
         uses: actions/checkout@v4
@@ -60,15 +64,19 @@ jobs:
         if: matrix.pydantic-version == '1.10'
         run: source .venv/bin/activate && pip install "pydantic==1.10.10" && pip uninstall pydantic_core -y
 
+      - name: Install SQLAlchemy
+        if: matrix.sqla-version == '1.4'
+        run: source .venv/bin/activate && pip install "sqlalchemy==1.4.49"
+
       - name: Set pythonpath
         run: echo "PYTHONPATH=$PWD" >> $GITHUB_ENV
 
       - name: Test
-        if: matrix.python-version != '3.11' || matrix.pydantic-version != '2.0'
-        run: pdm run pytest
+        if: matrix.python-version != '3.11' || matrix.pydantic-version != '2.0' || matrix.sqla-version != '2'
+        run: pdm run pytest tests
 
       - name: Test with Coverage
-        if: matrix.python-version == '3.11' && matrix.pydantic-version == '2.0'
+        if: matrix.python-version == '3.11' && matrix.pydantic-version == '2.0' && matrix.sqla-version == '2'
         run: pdm run pytest tests docs/examples --cov=. --cov-report=xml
 
       - uses: actions/upload-artifact@v3

@@ -42,7 +42,7 @@ dependencies = [
 ]
 
 [project.optional-dependencies]
-sqlalchemy = ["sqlalchemy>=2",]
+sqlalchemy = ["sqlalchemy>=1.4",]
 pydantic = ["pydantic[email]",]
 msgspec = ["msgspec",]
 odmantic = ["odmantic", "pydantic[email]",]
