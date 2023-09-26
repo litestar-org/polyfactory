@@ -50,23 +50,29 @@ jobs:
         with:
           python-version: ${{ matrix.python-version }}
 
+      - name: Create cache file
+        run: echo '${{ matrix.pydantic-version }}-${{ matrix.sqla-version }}' > ./matrix-file.txt
+
       - uses: pdm-project/setup-pdm@v3
         name: Set up PDM
         with:
           python-version: ${{ matrix.python-version }}
           allow-python-prereleases: true
           cache: true
-
-      - name: Install dependencies
-        run: pdm install -G:all
+          cache-dependency-path: |
+            ./pdm.lock
+            ./matrix-file.txt
 
       - name: Install pydantic
         if: matrix.pydantic-version == '1.10'
-        run: source .venv/bin/activate && pip install "pydantic==1.10.10" && pip uninstall pydantic_core -y
+        run: pdm add "pydantic==1.10.10"
 
       - name: Install SQLAlchemy
         if: matrix.sqla-version == '1.4'
-        run: source .venv/bin/activate && pip install "sqlalchemy==1.4.49"
+        run: pdm add "sqlalchemy==1.4.49"
+
+      - name: Install dependencies
+        run: pdm install -G:all
 
       - name: Set pythonpath
         run: echo "PYTHONPATH=$PWD" >> $GITHUB_ENV
