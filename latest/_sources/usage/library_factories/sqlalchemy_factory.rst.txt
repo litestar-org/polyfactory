@@ -7,7 +7,10 @@ Basic usage is like other factories
     :caption: Declaring a factory for a SQLAlchemy model
     :language: python
 
-Configurations
+.. note::
+    The examples here require SQLAlchemy 2 to be installed. The factory itself supports both 1.4 and 2.
+
+Configuration
 ------------------------------
 
 By default, relationships will not be set. This can be overridden via ``__set_relationships__``.
