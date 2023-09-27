@@ -19,7 +19,7 @@ class CoverageContainer(CoverageContainerBase):
     def __init__(self, instances: Iterable[Any]) -> None:
         self._pos = 0
         self._instances = list(instances)
-        if len(self._instances) == 0:
+        if not self._instances:
             msg = "CoverageContainer must have at least one instance"
             raise ValueError(msg)
 
