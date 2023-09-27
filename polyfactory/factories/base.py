@@ -22,6 +22,7 @@ from ipaddress import (
 from os.path import realpath
 from pathlib import Path
 from random import Random
+from types import NoneType
 from typing import (
     TYPE_CHECKING,
     Any,
@@ -46,22 +47,12 @@ from polyfactory.constants import (
     MIN_COLLECTION_LENGTH,
     RANDOMIZE_COLLECTION_LENGTH,
 )
-from polyfactory.exceptions import (
-    ConfigurationException,
-    MissingBuildKwargException,
-    ParameterException,
-)
+from polyfactory.exceptions import ConfigurationException, MissingBuildKwargException, ParameterException
 from polyfactory.fields import Fixture, Ignore, PostGenerated, Require, Use
-from polyfactory.utils.helpers import unwrap_annotation, unwrap_args, unwrap_optional
-from polyfactory.utils.predicates import (
-    get_type_origin,
-    is_any,
-    is_literal,
-    is_optional,
-    is_safe_subclass,
-    is_union,
-)
-from polyfactory.value_generators.complex_types import handle_collection_type
+from polyfactory.utils.helpers import flatten_annotation, unwrap_annotation, unwrap_args, unwrap_optional
+from polyfactory.utils.model_coverage import CoverageContainer, CoverageContainerCallable, resolve_kwargs_coverage
+from polyfactory.utils.predicates import get_type_origin, is_any, is_literal, is_optional, is_safe_subclass, is_union
+from polyfactory.value_generators.complex_types import handle_collection_type, handle_collection_type_coverage
 from polyfactory.value_generators.constrained_collections import (
     handle_constrained_collection,
     handle_constrained_mapping,
@@ -76,11 +67,7 @@ from polyfactory.value_generators.constrained_path import handle_constrained_pat
 from polyfactory.value_generators.constrained_strings import handle_constrained_string_or_bytes
 from polyfactory.value_generators.constrained_url import handle_constrained_url
 from polyfactory.value_generators.constrained_uuid import handle_constrained_uuid
-from polyfactory.value_generators.primitives import (
-    create_random_boolean,
-    create_random_bytes,
-    create_random_string,
-)
+from polyfactory.value_generators.primitives import create_random_boolean, create_random_bytes, create_random_string
 
 if TYPE_CHECKING:
     from typing_extensions import TypeGuard
@@ -329,6 +316,32 @@ class BaseFactory(ABC, Generic[T]):
             return field_value.to_value()
 
         return field_value() if callable(field_value) else field_value
+
+    @classmethod
+    def _handle_factory_field_coverage(cls, field_value: Any, field_build_parameters: Any | None = None) -> Any:
+        """Handle a value defined on the factory class itself.
+
+        :param field_value: A value defined as an attribute on the factory class.
+        :param field_build_parameters: Any build parameters passed to the factory as kwarg values.
+
+        :returns: An arbitrary value correlating with the given field_meta value.
+        """
+        if is_safe_subclass(field_value, BaseFactory):
+            if isinstance(field_build_parameters, Mapping):
+                return CoverageContainer(field_value.coverage(**field_build_parameters))
+
+            if isinstance(field_build_parameters, Sequence):
+                return [CoverageContainer(field_value.coverage(**parameter)) for parameter in field_build_parameters]
+
+            return CoverageContainer(field_value.coverage())
+
+        if isinstance(field_value, Use):
+            return field_value.to_value()
+
+        if isinstance(field_value, Fixture):
+            return CoverageContainerCallable(field_value.to_value)
+
+        return CoverageContainerCallable(field_value) if callable(field_value) else field_value
 
     @classmethod
     def _get_or_create_factory(cls, model: type) -> type[BaseFactory[Any]]:
@@ -693,6 +706,67 @@ class BaseFactory(ABC, Generic[T]):
         )
 
     @classmethod
+    def get_field_value_coverage(  # noqa: C901
+        cls,
+        field_meta: FieldMeta,
+        field_build_parameters: Any | None = None,
+    ) -> abc.Iterable[Any]:
+        """Return a field value on the subclass if existing, otherwise returns a mock value.
+
+        :param field_meta: FieldMeta instance.
+        :param field_build_parameters: Any build parameters passed to the factory as kwarg values.
+
+        :returns: An arbitrary value.
+
+        """
+        if cls.is_ignored_type(field_meta.annotation):
+            return [None]
+
+        for unwrapped_annotation in flatten_annotation(field_meta.annotation):
+            if unwrapped_annotation in (None, NoneType):
+                yield None
+
+            elif is_literal(annotation=unwrapped_annotation) and (literal_args := get_args(unwrapped_annotation)):
+                yield CoverageContainer(literal_args)
+
+            elif isinstance(unwrapped_annotation, EnumMeta):
+                yield CoverageContainer(list(unwrapped_annotation))
+
+            elif field_meta.constraints:
+                yield CoverageContainerCallable(
+                    cls.get_constrained_field_value,
+                    annotation=unwrapped_annotation,
+                    field_meta=field_meta,
+                )
+
+            elif BaseFactory.is_factory_type(annotation=unwrapped_annotation):
+                yield CoverageContainer(
+                    cls._get_or_create_factory(model=unwrapped_annotation).coverage(
+                        **(field_build_parameters if isinstance(field_build_parameters, Mapping) else {}),
+                    ),
+                )
+
+            elif (origin := get_type_origin(unwrapped_annotation)) and issubclass(origin, Collection):
+                yield handle_collection_type_coverage(field_meta, origin, cls)
+
+            elif is_any(unwrapped_annotation) or isinstance(unwrapped_annotation, TypeVar):
+                yield create_random_string(cls.__random__, min_length=1, max_length=10)
+
+            elif provider := cls.get_provider_map().get(unwrapped_annotation):
+                yield CoverageContainerCallable(provider)
+
+            elif callable(unwrapped_annotation):
+                # if value is a callable we can try to naively call it.
+                # this will work for callables that do not require any parameters passed
+                with suppress(Exception):
+                    yield CoverageContainerCallable(unwrapped_annotation)
+            else:
+                msg = f"Unsupported type: {unwrapped_annotation!r}\n\nEither extend the providers map or add a factory function for this type."
+                raise ParameterException(
+                    msg,
+                )
+
+    @classmethod
     def should_set_none_value(cls, field_meta: FieldMeta) -> bool:
         """Determine whether a given model field_meta should be set to None.
 
@@ -778,6 +852,50 @@ class BaseFactory(ABC, Generic[T]):
         return result
 
     @classmethod
+    def process_kwargs_coverage(cls, **kwargs: Any) -> abc.Iterable[dict[str, Any]]:
+        """Process the given kwargs and generate values for the factory's model.
+
+        :param kwargs: Any build kwargs.
+
+        :returns: A dictionary of build results.
+
+        """
+        result: dict[str, Any] = {**kwargs}
+        generate_post: dict[str, PostGenerated] = {}
+
+        for field_meta in cls.get_model_fields():
+            field_build_parameters = cls.extract_field_build_parameters(field_meta=field_meta, build_args=kwargs)
+
+            if cls.should_set_field_value(field_meta, **kwargs):
+                if hasattr(cls, field_meta.name) and not hasattr(BaseFactory, field_meta.name):
+                    field_value = getattr(cls, field_meta.name)
+                    if isinstance(field_value, Ignore):
+                        continue
+
+                    if isinstance(field_value, Require) and field_meta.name not in kwargs:
+                        msg = f"Require kwarg {field_meta.name} is missing"
+                        raise MissingBuildKwargException(msg)
+
+                    if isinstance(field_value, PostGenerated):
+                        generate_post[field_meta.name] = field_value
+                        continue
+
+                    result[field_meta.name] = cls._handle_factory_field_coverage(
+                        field_value=field_value,
+                        field_build_parameters=field_build_parameters,
+                    )
+                    continue
+
+                result[field_meta.name] = CoverageContainer(
+                    cls.get_field_value_coverage(field_meta, field_build_parameters=field_build_parameters),
+                )
+
+        for resolved in resolve_kwargs_coverage(result):
+            for field_name, post_generator in generate_post.items():
+                resolved[field_name] = post_generator.to_value(field_name, resolved)
+            yield resolved
+
+    @classmethod
     def build(cls, **kwargs: Any) -> T:
         """Build an instance of the factory's __model__
 
@@ -800,6 +918,19 @@ class BaseFactory(ABC, Generic[T]):
 
         """
         return [cls.build(**kwargs) for _ in range(size)]
+
+    @classmethod
+    def coverage(cls, **kwargs: Any) -> abc.Iterator[T]:
+        """Build a batch of the factory's Meta.model will full coverage of the sub-types of the model.
+
+        :param kwargs: Any kwargs. If field_meta names are set in kwargs, their values will be used.
+
+        :returns: A iterator of instances of type T.
+
+        """
+        for data in cls.process_kwargs_coverage(**kwargs):
+            instance = cls.__model__(**data)
+            yield cast("T", instance)
 
     @classmethod
     def create_sync(cls, **kwargs: Any) -> T:
