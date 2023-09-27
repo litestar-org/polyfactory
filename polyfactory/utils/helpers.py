@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import sys
 from typing import TYPE_CHECKING, Any, Mapping
+from types import NoneType
 
 try:
     from types import NoneType
