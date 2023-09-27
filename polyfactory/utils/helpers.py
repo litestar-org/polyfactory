@@ -3,6 +3,12 @@ from __future__ import annotations
 import sys
 from typing import TYPE_CHECKING, Any, Mapping
 from types import NoneType
+from typing import TYPE_CHECKING, Any
+
+try:
+    from types import NoneType
+except ImportError:
+    NoneType = type(None)  # type: ignore[misc,assignment]
 
 try:
     from types import NoneType
