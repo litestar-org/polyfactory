@@ -2,7 +2,9 @@ from __future__ import annotations
 
 from abc import ABC, abstractmethod
 from collections.abc import Callable, Iterable, Iterator, Mapping, MutableSequence
-from typing import AbstractSet, Any, Generic, ParamSpec, Set, TypeVar
+from typing import AbstractSet, Any, Generic, Set, TypeVar
+
+from typing_extensions import ParamSpec
 
 
 class CoverageContainerBase(ABC):
