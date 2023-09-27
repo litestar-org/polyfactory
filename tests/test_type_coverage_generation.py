@@ -9,6 +9,7 @@ import pytest
 from pydantic import BaseModel
 from typing_extensions import TypedDict
 
+from polyfactory.decorators import post_generated
 from polyfactory.factories.pydantic_factory import ModelFactory
 from polyfactory.factories.typed_dict_factory import TypedDictFactory
 
@@ -201,3 +202,23 @@ def test_coverage_values_unique() -> None:
 
     assert len(results) == 2
     assert results[0].uuid != results[1].uuid
+
+
+@pytest.mark.skipif(sys.version_info < (3, 10), reason="requires python3.10 or higher")
+def test_coverage_post_generated() -> None:
+    class Model(BaseModel):
+        i: int
+        j: int
+
+    class Factory(ModelFactory[Model]):
+        __model__ = Model
+
+        @post_generated
+        @classmethod
+        def i(cls, j: int) -> int:
+            return j + 10
+
+    results = list(Factory.coverage())
+    assert len(results) == 1
+
+    assert results[0].i == results[0].j + 10
