@@ -113,6 +113,7 @@ def test_coverage_literal() -> None:
     assert results[3].literal == 2
 
 
+@pytest.mark.skipif(sys.version_info < (3, 10), reason="requires python3.10 or higher")
 def test_coverage_dict() -> None:
     class Thesaurus(BaseModel):
         dict_simple: dict[str, int]
