@@ -65,14 +65,14 @@ jobs:
 
       - name: Install pydantic
         if: matrix.pydantic-version == '1.10'
-        run: pdm add "pydantic[email]==1.10.10"
+        run: pdm add --no-sync -G pydantic "pydantic[email]==1.10.10"
 
       - name: Install SQLAlchemy
         if: matrix.sqla-version == '1.4'
-        run: pdm add "sqlalchemy==1.4.49"
+        run: pdm add --no-sync -G sqlalchemy "sqlalchemy==1.4.49"
 
       - name: Install dependencies
-        run: pdm install -G:all
+        run: pdm sync -G:all
 
       - name: Set pythonpath
         run: echo "PYTHONPATH=$PWD" >> $GITHUB_ENV
