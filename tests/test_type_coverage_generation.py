@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import sys
 from datetime import date
 from typing import Literal, Sequence
 from uuid import UUID
@@ -12,58 +13,23 @@ from polyfactory.factories.pydantic_factory import ModelFactory
 from polyfactory.factories.typed_dict_factory import TypedDictFactory
 
 
-class Stringy(BaseModel):
-    string: str
-
-
-class Numberish(BaseModel):
-    number: int | float
-
-
-class Datelike(BaseModel):
-    birthday: date
-
-
-class Profile(BaseModel):
-    name: Stringy
-    high_score: Numberish
-    dob: Datelike
-    data: Stringy | Datelike | Numberish
-
-
-class Tuple(BaseModel):
-    tuple_: tuple[int | str, tuple[Numberish, int]]
-
-
-class Collective(BaseModel):
-    set_: set[int | str]
-    list_: list[int | str]
-    frozenset_: frozenset[int | str]
-    sequence_: Sequence[int | str]
-
-
-class Literally(BaseModel):
-    literal: Literal["a", "b", 1, 2]
-
-
-class Thesaurus(BaseModel):
-    dict_simple: dict[str, int]
-    dict_more_key_types: dict[str | int | float, int | str]
-    dict_more_value_types: dict[str, int | str]
-
-
-class TypedThesaurus(TypedDict):
-    number: int
-    string: str
-    union: int | str
-    collection: list[int | str]
-
-
-class TypedThesaurusModel(BaseModel):
-    thesaurus: TypedThesaurus
-
-
+@pytest.mark.skipif(sys.version_info < (3, 10), reason="requires python3.10 or higher")
 def test_coverage_count() -> None:
+    class Stringy(BaseModel):
+        string: str
+
+    class Numberish(BaseModel):
+        number: int | float
+
+    class Datelike(BaseModel):
+        birthday: date
+
+    class Profile(BaseModel):
+        name: Stringy
+        high_score: Numberish
+        dob: Datelike
+        data: Stringy | Datelike | Numberish
+
     class ProfileFactory(ModelFactory[Profile]):
         __model__ = Profile
 
@@ -75,7 +41,14 @@ def test_coverage_count() -> None:
         assert isinstance(result, Profile)
 
 
+@pytest.mark.skipif(sys.version_info < (3, 10), reason="requires python3.10 or higher")
 def test_coverage_tuple() -> None:
+    class Numberish(BaseModel):
+        number: int | float
+
+    class Tuple(BaseModel):
+        tuple_: tuple[int | str, tuple[Numberish, int]]
+
     class TupleFactory(ModelFactory[Tuple]):
         __model__ = Tuple
 
@@ -90,7 +63,14 @@ def test_coverage_tuple() -> None:
     assert isinstance(a1, str) and isinstance(b1, Numberish) and isinstance(b1.number, float) and isinstance(c1, int)
 
 
+@pytest.mark.skipif(sys.version_info < (3, 10), reason="requires python3.10 or higher")
 def test_coverage_collection() -> None:
+    class Collective(BaseModel):
+        set_: set[int | str]
+        list_: list[int | str]
+        frozenset_: frozenset[int | str]
+        sequence_: Sequence[int | str]
+
     class CollectiveFactory(ModelFactory[Collective]):
         __model__ = Collective
 
@@ -115,7 +95,11 @@ def test_coverage_collection() -> None:
     assert {type(v0), type(v1)} == {int, str}
 
 
+@pytest.mark.skipif(sys.version_info < (3, 10), reason="requires python3.10 or higher")
 def test_coverage_literal() -> None:
+    class Literally(BaseModel):
+        literal: Literal["a", "b", 1, 2]
+
     class LiterallyFactory(ModelFactory[Literally]):
         __model__ = Literally
 
@@ -130,6 +114,11 @@ def test_coverage_literal() -> None:
 
 
 def test_coverage_dict() -> None:
+    class Thesaurus(BaseModel):
+        dict_simple: dict[str, int]
+        dict_more_key_types: dict[str | int | float, int | str]
+        dict_more_value_types: dict[str, int | str]
+
     class ThesaurusFactory(ModelFactory[Thesaurus]):
         __model__ = Thesaurus
 
@@ -139,6 +128,7 @@ def test_coverage_dict() -> None:
 
 
 @pytest.mark.skip(reason="Does not support recursive types yet.")
+@pytest.mark.skipif(sys.version_info < (3, 10), reason="requires python3.10 or higher")
 def test_coverage_recursive() -> None:
     class Recursive(BaseModel):
         r: Recursive | None
@@ -150,7 +140,14 @@ def test_coverage_recursive() -> None:
     assert len(results) == 2
 
 
+@pytest.mark.skipif(sys.version_info < (3, 10), reason="requires python3.10 or higher")
 def test_coverage_typed_dict() -> None:
+    class TypedThesaurus(TypedDict):
+        number: int
+        string: str
+        union: int | str
+        collection: list[int | str]
+
     class TypedThesaurusFactory(TypedDictFactory[TypedThesaurus]):
         __model__ = TypedThesaurus
 
@@ -163,7 +160,17 @@ def test_coverage_typed_dict() -> None:
         assert result.keys() == example.keys()
 
 
+@pytest.mark.skipif(sys.version_info < (3, 10), reason="requires python3.10 or higher")
 def test_coverage_typed_dict_field() -> None:
+    class TypedThesaurus(TypedDict):
+        number: int
+        string: str
+        union: int | str
+        collection: list[int | str]
+
+    class TypedThesaurusModel(BaseModel):
+        thesaurus: TypedThesaurus
+
     class TypedThesaurusModelFactory(ModelFactory[TypedThesaurusModel]):
         __model__ = TypedThesaurusModel
 
@@ -180,6 +187,7 @@ def test_coverage_typed_dict_field() -> None:
         assert result.thesaurus.keys() == example.keys()
 
 
+@pytest.mark.skipif(sys.version_info < (3, 10), reason="requires python3.10 or higher")
 def test_coverage_values_unique() -> None:
     class Unique(BaseModel):
         uuid: UUID
