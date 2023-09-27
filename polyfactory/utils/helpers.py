@@ -1,8 +1,12 @@
 from __future__ import annotations
 
 import sys
-from types import NoneType
 from typing import TYPE_CHECKING, Any
+
+try:
+    from types import NoneType
+except ImportError:
+    NoneType = type(None)  # type: ignore[misc,assignment]
 
 from typing_extensions import get_args, get_origin
 
@@ -47,7 +51,7 @@ def unwrap_optional(annotation: Any) -> Any:
     :returns: A type annotation
     """
     while is_optional(annotation):
-        annotation = next(arg for arg in get_args(annotation) if arg not in (type(None), None))
+        annotation = next(arg for arg in get_args(annotation) if arg not in (NoneType, None))
     return annotation
 
 

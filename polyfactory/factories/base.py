@@ -22,7 +22,11 @@ from ipaddress import (
 from os.path import realpath
 from pathlib import Path
 from random import Random
-from types import NoneType
+
+try:
+    from types import NoneType
+except ImportError:
+    NoneType = type(None)  # type: ignore[misc,assignment]
 from typing import (
     TYPE_CHECKING,
     Any,
