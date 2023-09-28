@@ -9,7 +9,7 @@ from typing import (
     Union,
 )
 
-from pytest import Config, fixture
+from pytest import Config, fixture  # noqa: PT013
 
 from polyfactory.exceptions import ParameterException
 from polyfactory.factories.base import BaseFactory
@@ -64,10 +64,15 @@ class FactoryFixture:
 
     def __call__(self, factory: type[BaseFactory[Any]]) -> Any:
         if not is_safe_subclass(factory, BaseFactory):
-            raise ParameterException(f"{factory.__name__} is not a BaseFactory subclass.")
+            msg = f"{factory.__name__} is not a BaseFactory subclass."
+            raise ParameterException(msg)
 
         fixture_name = self.name or _get_fixture_name(factory.__name__)
-        fixture_register = fixture(scope=self.scope, name=fixture_name, autouse=self.autouse)  # pyright: ignore
+        fixture_register = fixture(
+            scope=self.scope,  # pyright: ignore[reportGeneralTypeIssues]
+            name=fixture_name,
+            autouse=self.autouse,
+        )
 
         def _factory_fixture() -> type[BaseFactory[Any]]:
             """The wrapped factory"""

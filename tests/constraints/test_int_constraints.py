@@ -182,7 +182,9 @@ def test_handle_constrained_int_handles_multiple_of_with_gt(val1: int, val2: int
 def test_handle_constrained_int_handles_multiple_of_with_ge_and_le(val1: int, val2: int, val3: int) -> None:
     min_value, multiple_of, max_value = sorted([val1, val2, val3])
     if multiple_of != 0 and is_multiply_of_multiple_of_in_range(
-        minimum=min_value, maximum=max_value, multiple_of=multiple_of
+        minimum=min_value,
+        maximum=max_value,
+        multiple_of=multiple_of,
     ):
         result = handle_constrained_int(
             random=Random(),

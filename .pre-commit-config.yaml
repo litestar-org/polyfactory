@@ -17,6 +17,10 @@ repos:
       - id: end-of-file-fixer
       - id: mixed-line-ending
       - id: trailing-whitespace
+  - repo: https://github.com/pdm-project/pdm
+    rev: 2.9.2
+    hooks:
+      - id: pdm-lock-check
   - repo: https://github.com/charliermarsh/ruff-pre-commit
     rev: "v0.0.290"
     hooks:
@@ -40,7 +44,7 @@ repos:
     rev: "v1.5.1"
     hooks:
       - id: mypy
-        exclude: "test_decimal_constraints|examples/fields/test_example_2|examples/configuration"
+        exclude: "test_decimal_constraints|examples/fields/test_example_2|examples/configuration|tools/"
         additional_dependencies:
           [
             beanie,

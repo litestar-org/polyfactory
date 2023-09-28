@@ -10,8 +10,8 @@ if TYPE_CHECKING:
 
 def create_random_float(
     random: Random,
-    minimum: Decimal | int | float | None = None,
-    maximum: Decimal | int | float | None = None,
+    minimum: Decimal | float | None = None,
+    maximum: Decimal | float | None = None,
 ) -> float:
     """Generate a random float given the constraints.
 

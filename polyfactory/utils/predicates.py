@@ -20,7 +20,7 @@ try:
 
     UNION_TYPES = {UnionType, Union}
 except ImportError:
-    NoneType = type(None)  # type: ignore
+    NoneType = type(None)  # type: ignore[misc,assignment]
     UNION_TYPES = {Union}
 
 
@@ -68,7 +68,7 @@ def is_dict_key_or_value_type(annotation: Any) -> "TypeGuard[Any]":
     return str(annotation) in {"~KT", "~VT"}
 
 
-def is_union(annotation: Any) -> "TypeGuard[Any | Any]":
+def is_union(annotation: Any) -> "TypeGuard[Any]":
     """Determine whether a given annotation is 'typing.Union'.
 
     :param annotation: A type annotation.

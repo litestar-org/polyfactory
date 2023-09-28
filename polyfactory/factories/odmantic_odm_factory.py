@@ -14,7 +14,8 @@ try:
     from odmantic import bson as odbson
 
 except ImportError as e:
-    raise MissingDependencyException("odmantic is not installed") from e
+    msg = "odmantic is not installed"
+    raise MissingDependencyException(msg) from e
 
 T = TypeVar("T", bound=Union[Model, EmbeddedModel])
 
@@ -49,7 +50,7 @@ class OdmanticModelFactory(Generic[T], ModelFactory[T]):
                 # a random regular expression with Faker
                 # bson.Regex:
                 # bson._Pattern:
-            }
+            },
         )
         return provider_map
 

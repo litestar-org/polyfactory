@@ -91,7 +91,8 @@ def test_complex_constrained_attribute_parsing_pydantic_v1() -> None:
     class MyModel(BaseModel):
         conlist_with_model_field: conlist(Person, min_items=3)  # type: ignore[valid-type]
         conlist_with_complex_type: conlist(  # type: ignore[valid-type]
-            Dict[str, Tuple[Person, Person, Person]], min_items=1
+            Dict[str, Tuple[Person, Person, Person]],
+            min_items=1,
         )
 
     class MyFactory(ModelFactory):
@@ -278,7 +279,8 @@ def test_complex_constrained_attribute_parsing_pydantic_v2() -> None:
     class MyModel(BaseModel):
         conlist_with_model_field: conlist(Person, min_length=3)  # type: ignore[valid-type]
         conlist_with_complex_type: conlist(  # type: ignore[valid-type]
-            Dict[str, Tuple[Person, Person, Person]], min_length=1
+            Dict[str, Tuple[Person, Person, Person]],
+            min_length=1,
         )
 
     class MyFactory(ModelFactory):

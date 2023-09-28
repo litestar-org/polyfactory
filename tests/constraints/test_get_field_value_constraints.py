@@ -48,7 +48,10 @@ def test_date() -> None:
     constraints = {"ge": ge_date, "le": le_date}
 
     field_meta = FieldMeta.from_type(
-        annotation=date, name="foo", constraints=cast(Constraints, constraints), random=Random()
+        annotation=date,
+        name="foo",
+        constraints=cast(Constraints, constraints),
+        random=Random(),
     )
     value = BaseFactory.get_field_value(field_meta)
 

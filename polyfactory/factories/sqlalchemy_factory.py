@@ -9,12 +9,13 @@ from polyfactory.field_meta import FieldMeta
 from polyfactory.persistence import AsyncPersistenceProtocol, SyncPersistenceProtocol
 
 try:
-    from sqlalchemy import Column, inspect, orm, types
+    from sqlalchemy import Column, inspect, types
     from sqlalchemy.dialects import mysql, postgresql
     from sqlalchemy.exc import NoInspectionAvailable
     from sqlalchemy.orm import InstanceState, Mapper
 except ImportError as e:
-    raise MissingDependencyException("sqlalchemy is not installed") from e
+    msg = "sqlalchemy is not installed"
+    raise MissingDependencyException(msg) from e
 
 if TYPE_CHECKING:
     from sqlalchemy.ext.asyncio import AsyncSession
@@ -22,7 +23,7 @@ if TYPE_CHECKING:
     from typing_extensions import TypeGuard
 
 
-T = TypeVar("T", bound=orm.DeclarativeBase)
+T = TypeVar("T")
 
 
 class SQLASyncPersistence(SyncPersistenceProtocol[T]):
@@ -129,7 +130,7 @@ class SQLAlchemyFactory(Generic[T], BaseFactory[T]):
     def get_model_fields(cls) -> list[FieldMeta]:
         fields_meta: list[FieldMeta] = []
 
-        table = inspect(cls.__model__)
+        table: Mapper = inspect(cls.__model__)  # type: ignore[assignment]
         fields_meta.extend(
             FieldMeta.from_type(
                 annotation=cls.get_type_from_column(column),
@@ -154,7 +155,7 @@ class SQLAlchemyFactory(Generic[T], BaseFactory[T]):
                         randomize_collection_length=cls.__randomize_collection_length__,
                         min_collection_length=cls.__min_collection_length__,
                         max_collection_length=cls.__max_collection_length__,
-                    )
+                    ),
                 )
 
         return fields_meta

@@ -1,58 +1,65 @@
-name: Publish package
+name: Latest Release
 
 on:
   release:
     types: [published]
+  workflow_dispatch:
 
 jobs:
   publish-release:
     name: upload release to PyPI
     runs-on: ubuntu-latest
-    environment: release
     permissions:
       id-token: write
+    environment: release
     steps:
       - name: Check out repository
         uses: actions/checkout@v4
-      - name: Set up python 3.11
-        uses: actions/setup-python@v4
+
+      - uses: actions/setup-python@v4
         with:
           python-version: "3.11"
-      - name: Install Poetry
-        uses: snok/install-poetry@v1
-      - name: Install dependencies
-        run: poetry install --no-interaction --no-root --no-dev
-      - name: build
-        shell: bash
-        run: poetry build
+
+      - uses: pdm-project/setup-pdm@v3
+        name: Set up PDM
+        with:
+          python-version: "3.11"
+          allow-python-prereleases: true
+          cache: true
+
+      - name: Build package
+        run: pdm build
+
       - name: Publish package distributions to PyPI
         uses: pypa/gh-action-pypi-publish@release/v1
+
   build-docs:
     permissions:
       contents: write
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+
       - uses: actions/setup-python@v4
         with:
           python-version: "3.11"
-      - name: Install Poetry
-        uses: snok/install-poetry@v1
+
+      - uses: pdm-project/setup-pdm@v3
+        name: Set up PDM
         with:
-          version: 1.4.0
-          virtualenvs-create: false
-          installer-parallel: true
-          virtualenvs-in-project: true
-      - name: Load cached venv
-        id: cached-poetry-dependencies
-        uses: actions/cache@v3
-        with:
-          path: .venv
-          key: venv-docs-${{ hashFiles('**/poetry.lock') }}
+          python-version: "3.11"
+          allow-python-prereleases: true
+          cache: true
+
+      - name: Build package
+        run: pdm build
+
       - name: Install docs dependencies
-        run: poetry install --no-interaction --with docs --extras full
+        run: pdm install -G:docs
+
       - name: Build docs
-        run: poetry run make docs
+        run: pdm run make docs
+
       - name: Deploy
         uses: JamesIves/github-pages-deploy-action@v4
         with:

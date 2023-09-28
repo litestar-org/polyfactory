@@ -25,7 +25,7 @@ def test_handle_constrained_float_without_constraints() -> None:
         allow_infinity=False,
         min_value=-1000000000,
         max_value=1000000000,
-    )
+    ),
 )
 def test_handle_constrained_float_handles_ge(minimum: float) -> None:
     result = handle_constrained_float(
@@ -41,7 +41,7 @@ def test_handle_constrained_float_handles_ge(minimum: float) -> None:
         allow_infinity=False,
         min_value=-1000000000,
         max_value=1000000000,
-    )
+    ),
 )
 def test_handle_constrained_float_handles_gt(minimum: float) -> None:
     result = handle_constrained_float(
@@ -57,7 +57,7 @@ def test_handle_constrained_float_handles_gt(minimum: float) -> None:
         allow_infinity=False,
         min_value=-1000000000,
         max_value=1000000000,
-    )
+    ),
 )
 def test_handle_constrained_float_handles_le(maximum: float) -> None:
     result = handle_constrained_float(
@@ -73,7 +73,7 @@ def test_handle_constrained_float_handles_le(maximum: float) -> None:
         allow_infinity=False,
         min_value=-1000000000,
         max_value=1000000000,
-    )
+    ),
 )
 def test_handle_constrained_float_handles_lt(maximum: float) -> None:
     result = handle_constrained_float(
@@ -89,7 +89,7 @@ def test_handle_constrained_float_handles_lt(maximum: float) -> None:
         allow_infinity=False,
         min_value=-1000000000,
         max_value=1000000000,
-    )
+    ),
 )
 def test_handle_constrained_float_handles_multiple_of(multiple_of: float) -> None:
     if multiple_of != 0.0:
@@ -258,7 +258,9 @@ def test_handle_constrained_float_handles_multiple_of_with_gt(val1: float, val2:
 def test_handle_constrained_float_handles_multiple_of_with_ge_and_le(val1: float, val2: float, val3: float) -> None:
     min_value, multiple_of, max_value = sorted([val1, val2, val3])
     if multiple_of != 0.0 and is_multiply_of_multiple_of_in_range(
-        minimum=min_value, maximum=max_value, multiple_of=multiple_of
+        minimum=min_value,
+        maximum=max_value,
+        multiple_of=multiple_of,
     ):
         result = handle_constrained_float(
             random=Random(),
