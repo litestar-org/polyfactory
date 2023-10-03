@@ -1,6 +1,10 @@
 from __future__ import annotations
 
 from contextlib import suppress
+from datetime import timezone
+from functools import partial
+from os.path import realpath
+from pathlib import Path
 from typing import (
     TYPE_CHECKING,
     Any,
@@ -12,6 +16,7 @@ from typing import (
     TypeVar,
     cast,
 )
+from uuid import NAMESPACE_DNS, uuid1, uuid3, uuid5
 
 from typing_extensions import Literal, get_args, get_origin
 
@@ -27,8 +32,10 @@ from polyfactory.factories.base import BaseFactory
 from polyfactory.field_meta import Constraints, FieldMeta, Null
 from polyfactory.utils.helpers import unwrap_new_type, unwrap_optional
 from polyfactory.utils.predicates import is_optional, is_safe_subclass, is_union
+from polyfactory.value_generators.primitives import create_random_bytes
 
 try:
+    import pydantic
     from pydantic import VERSION, BaseModel, Json
     from pydantic.fields import FieldInfo
 except ImportError as e:
@@ -47,7 +54,7 @@ with suppress(ImportError):
 if TYPE_CHECKING:
     from random import Random
 
-    from typing_extensions import NotRequired, TypeGuard
+    from typing_extensions import Callable, NotRequired, TypeGuard
 
 T = TypeVar("T", bound=BaseModel)
 
@@ -405,3 +412,67 @@ class ModelFactory(Generic[T], BaseFactory[T]):
         return field_meta.name not in kwargs and (
             not field_meta.name.startswith("_") or cls.is_custom_root_field(field_meta)
         )
+
+    @classmethod
+    def get_provider_map(cls) -> dict[Any, Callable[[], Any]]:
+        mapping = {
+            pydantic.ByteSize: cls.__faker__.pyint,
+            pydantic.PositiveInt: cls.__faker__.pyint,
+            pydantic.NegativeFloat: lambda: cls.__random__.uniform(-100, -1),
+            pydantic.NegativeInt: lambda: cls.__faker__.pyint() * -1,
+            pydantic.PositiveFloat: cls.__faker__.pyint,
+            pydantic.NonPositiveFloat: lambda: cls.__random__.uniform(-100, 0),
+            pydantic.NonNegativeInt: cls.__faker__.pyint,
+            pydantic.StrictInt: cls.__faker__.pyint,
+            pydantic.StrictBool: cls.__faker__.pybool,
+            pydantic.StrictBytes: partial(create_random_bytes, cls.__random__),
+            pydantic.StrictFloat: cls.__faker__.pyfloat,
+            pydantic.StrictStr: cls.__faker__.pystr,
+            pydantic.EmailStr: cls.__faker__.free_email,
+            pydantic.NameEmail: cls.__faker__.free_email,
+            pydantic.Json: cls.__faker__.json,
+            pydantic.PaymentCardNumber: cls.__faker__.credit_card_number,
+            pydantic.AnyUrl: cls.__faker__.url,
+            pydantic.AnyHttpUrl: cls.__faker__.url,
+            pydantic.HttpUrl: cls.__faker__.url,
+            pydantic.SecretBytes: partial(create_random_bytes, cls.__random__),
+            pydantic.SecretStr: cls.__faker__.pystr,
+            pydantic.IPvAnyAddress: cls.__faker__.ipv4,
+            pydantic.IPvAnyInterface: cls.__faker__.ipv4,
+            pydantic.IPvAnyNetwork: lambda: cls.__faker__.ipv4(network=True),
+            pydantic.PastDate: cls.__faker__.past_date,
+            pydantic.FutureDate: cls.__faker__.future_date,
+        }
+
+        if pydantic.VERSION.startswith("1"):
+            # v1 only values - these will raise an exception in v2
+            # in pydantic v2 these are all aliases for Annotated with a constraint.
+            # we therefore do not need them in v2
+            mapping.update(
+                {
+                    pydantic.PyObject: lambda: "decimal.Decimal",
+                    pydantic.AmqpDsn: lambda: "amqps://example.com",
+                    pydantic.KafkaDsn: lambda: "kafka://localhost:9092",
+                    pydantic.PostgresDsn: lambda: "postgresql://user:secret@localhost",
+                    pydantic.RedisDsn: lambda: "redis://localhost:6379/0",
+                    pydantic.FilePath: lambda: Path(realpath(__file__)),
+                    pydantic.DirectoryPath: lambda: Path(realpath(__file__)).parent,
+                    pydantic.UUID1: uuid1,
+                    pydantic.UUID3: lambda: uuid3(NAMESPACE_DNS, cls.__faker__.pystr()),
+                    pydantic.UUID4: cls.__faker__.uuid4,
+                    pydantic.UUID5: lambda: uuid5(NAMESPACE_DNS, cls.__faker__.pystr()),
+                    pydantic.color.Color: cls.__faker__.hex_color,  # pyright: ignore[reportGeneralTypeIssues]
+                },
+            )
+        else:
+            mapping.update(
+                {
+                    pydantic.PastDatetime: cls.__faker__.past_datetime,
+                    pydantic.FutureDatetime: cls.__faker__.future_datetime,
+                    pydantic.AwareDatetime: partial(cls.__faker__.date_time, timezone.utc),
+                    pydantic.NaiveDatetime: cls.__faker__.date_time,
+                },
+            )
+
+        mapping.update(super().get_provider_map())
+        return mapping

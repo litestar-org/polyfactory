@@ -3,7 +3,7 @@ from __future__ import annotations
 from abc import ABC, abstractmethod
 from collections import Counter, abc, deque
 from contextlib import suppress
-from datetime import date, datetime, time, timedelta, timezone
+from datetime import date, datetime, time, timedelta
 from decimal import Decimal
 from enum import EnumMeta
 from functools import partial
@@ -40,7 +40,7 @@ from typing import (
     TypeVar,
     cast,
 )
-from uuid import NAMESPACE_DNS, UUID, uuid1, uuid3, uuid5
+from uuid import UUID
 
 from faker import Faker
 from typing_extensions import get_args
@@ -78,80 +78,6 @@ if TYPE_CHECKING:
 
     from polyfactory.field_meta import Constraints, FieldMeta
     from polyfactory.persistence import AsyncPersistenceProtocol, SyncPersistenceProtocol
-
-
-def _create_pydantic_type_map(cls: type[BaseFactory[Any]]) -> dict[type, Callable[[], Any]]:
-    """Creates a mapping of pydantic types to mock data functions.
-
-    :param cls: The base factory class.
-    :return: A dict mapping types to callables.
-    """
-    try:
-        import pydantic
-
-        mapping = {
-            pydantic.ByteSize: cls.__faker__.pyint,
-            pydantic.PositiveInt: cls.__faker__.pyint,
-            pydantic.NegativeFloat: lambda: cls.__random__.uniform(-100, -1),
-            pydantic.NegativeInt: lambda: cls.__faker__.pyint() * -1,
-            pydantic.PositiveFloat: cls.__faker__.pyint,
-            pydantic.NonPositiveFloat: lambda: cls.__random__.uniform(-100, 0),
-            pydantic.NonNegativeInt: cls.__faker__.pyint,
-            pydantic.StrictInt: cls.__faker__.pyint,
-            pydantic.StrictBool: cls.__faker__.pybool,
-            pydantic.StrictBytes: partial(create_random_bytes, cls.__random__),
-            pydantic.StrictFloat: cls.__faker__.pyfloat,
-            pydantic.StrictStr: cls.__faker__.pystr,
-            pydantic.EmailStr: cls.__faker__.free_email,
-            pydantic.NameEmail: cls.__faker__.free_email,
-            pydantic.Json: cls.__faker__.json,
-            pydantic.PaymentCardNumber: cls.__faker__.credit_card_number,
-            pydantic.AnyUrl: cls.__faker__.url,
-            pydantic.AnyHttpUrl: cls.__faker__.url,
-            pydantic.HttpUrl: cls.__faker__.url,
-            pydantic.SecretBytes: partial(create_random_bytes, cls.__random__),
-            pydantic.SecretStr: cls.__faker__.pystr,
-            pydantic.IPvAnyAddress: cls.__faker__.ipv4,
-            pydantic.IPvAnyInterface: cls.__faker__.ipv4,
-            pydantic.IPvAnyNetwork: lambda: cls.__faker__.ipv4(network=True),
-            pydantic.PastDate: cls.__faker__.past_date,
-            pydantic.FutureDate: cls.__faker__.future_date,
-        }
-
-        if pydantic.VERSION.startswith("1"):
-            # v1 only values - these will raise an exception in v2
-            # in pydantic v2 these are all aliases for Annotated with a constraint.
-            # we therefore do not need them in v2
-            mapping.update(
-                {
-                    pydantic.PyObject: lambda: "decimal.Decimal",
-                    pydantic.AmqpDsn: lambda: "amqps://example.com",
-                    pydantic.KafkaDsn: lambda: "kafka://localhost:9092",
-                    pydantic.PostgresDsn: lambda: "postgresql://user:secret@localhost",
-                    pydantic.RedisDsn: lambda: "redis://localhost:6379/0",
-                    pydantic.FilePath: lambda: Path(realpath(__file__)),
-                    pydantic.DirectoryPath: lambda: Path(realpath(__file__)).parent,
-                    pydantic.UUID1: uuid1,
-                    pydantic.UUID3: lambda: uuid3(NAMESPACE_DNS, cls.__faker__.pystr()),
-                    pydantic.UUID4: cls.__faker__.uuid4,
-                    pydantic.UUID5: lambda: uuid5(NAMESPACE_DNS, cls.__faker__.pystr()),
-                    pydantic.color.Color: cls.__faker__.hex_color,  # pyright: ignore[reportGeneralTypeIssues]
-                },
-            )
-        else:
-            mapping.update(
-                {
-                    pydantic.PastDatetime: cls.__faker__.past_datetime,
-                    pydantic.FutureDatetime: cls.__faker__.future_datetime,
-                    pydantic.AwareDatetime: partial(cls.__faker__.date_time, timezone.utc),
-                    pydantic.NaiveDatetime: cls.__faker__.date_time,
-                },
-            )
-
-    except ImportError:
-        mapping = {}
-
-    return mapping
 
 
 T = TypeVar("T")
@@ -505,7 +431,6 @@ class BaseFactory(ABC, Generic[T]):
             Callable: _create_generic_fn,
             abc.Callable: _create_generic_fn,
             Counter: lambda: Counter(cls.__faker__.pystr()),
-            **_create_pydantic_type_map(cls),
         }
 
     @classmethod
