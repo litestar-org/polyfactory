@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import sys
 from dataclasses import dataclass
 from datetime import date
 from typing import Literal, Sequence
@@ -13,6 +14,7 @@ from polyfactory.factories.dataclass_factory import DataclassFactory
 from polyfactory.factories.typed_dict_factory import TypedDictFactory
 
 
+@pytest.mark.skipif(sys.version_info < (3, 10), reason="requires python3.10 or higher")
 def test_coverage_count() -> None:
     @dataclass
     class Profile:
@@ -32,6 +34,7 @@ def test_coverage_count() -> None:
         assert isinstance(result, Profile)
 
 
+@pytest.mark.skipif(sys.version_info < (3, 10), reason="requires python3.10 or higher")
 def test_coverage_tuple() -> None:
     @dataclass
     class Tuple:
@@ -51,6 +54,7 @@ def test_coverage_tuple() -> None:
     assert isinstance(a1, str) and isinstance(b1, float) and isinstance(c1, int)
 
 
+@pytest.mark.skipif(sys.version_info < (3, 10), reason="requires python3.10 or higher")
 def test_coverage_collection() -> None:
     @dataclass
     class Collective:
@@ -83,6 +87,7 @@ def test_coverage_collection() -> None:
     assert {type(v0), type(v1)} == {int, str}
 
 
+@pytest.mark.skipif(sys.version_info < (3, 10), reason="requires python3.10 or higher")
 def test_coverage_literal() -> None:
     @dataclass
     class Literally:
@@ -101,6 +106,7 @@ def test_coverage_literal() -> None:
     assert results[3].literal == 2
 
 
+@pytest.mark.skipif(sys.version_info < (3, 10), reason="requires python3.10 or higher")
 def test_coverage_dict() -> None:
     @dataclass
     class Thesaurus:
@@ -117,6 +123,7 @@ def test_coverage_dict() -> None:
 
 
 @pytest.mark.skip(reason="Does not support recursive types yet.")
+@pytest.mark.skipif(sys.version_info < (3, 10), reason="requires python3.10 or higher")
 def test_coverage_recursive() -> None:
     @dataclass
     class Recursive:
@@ -129,6 +136,7 @@ def test_coverage_recursive() -> None:
     assert len(results) == 2
 
 
+@pytest.mark.skipif(sys.version_info < (3, 10), reason="requires python3.10 or higher")
 def test_coverage_typed_dict() -> None:
     class TypedThesaurus(TypedDict):
         number: int
@@ -148,6 +156,7 @@ def test_coverage_typed_dict() -> None:
         assert result.keys() == example.keys()
 
 
+@pytest.mark.skipif(sys.version_info < (3, 10), reason="requires python3.10 or higher")
 def test_coverage_typed_dict_field() -> None:
     class TypedThesaurus(TypedDict):
         number: int
@@ -168,6 +177,7 @@ def test_coverage_typed_dict_field() -> None:
         assert result.keys() == example.keys()
 
 
+@pytest.mark.skipif(sys.version_info < (3, 10), reason="requires python3.10 or higher")
 def test_coverage_values_unique() -> None:
     @dataclass
     class Unique:
@@ -183,6 +193,7 @@ def test_coverage_values_unique() -> None:
     assert results[0].uuid != results[1].uuid
 
 
+@pytest.mark.skipif(sys.version_info < (3, 10), reason="requires python3.10 or higher")
 def test_coverage_post_generated() -> None:
     @dataclass
     class Model:
