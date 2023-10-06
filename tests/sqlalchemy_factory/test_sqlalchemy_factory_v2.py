@@ -1,7 +1,7 @@
 import datetime
 from collections.abc import Callable
 from enum import Enum
-from typing import Any, List
+from typing import Any, Dict, List
 
 import pytest
 from sqlalchemy import ForeignKey, __version__, orm, sql, types
@@ -154,7 +154,7 @@ def test_sqlalchemy_custom_type_from_user_defined_type__overridden() -> None:
         __model__ = Model
 
         @classmethod
-        def get_sqlalchemy_types(cls) -> dict[Any, Callable[[], Any]]:
+        def get_sqlalchemy_types(cls) -> Dict[Any, Callable[[], Any]]:
             return super().get_sqlalchemy_types() | {CustomType: lambda: cls.__faker__.date_time()}
 
     instance = ModelFactory.build()
