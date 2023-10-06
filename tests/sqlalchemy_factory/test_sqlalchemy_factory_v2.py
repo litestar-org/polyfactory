@@ -154,7 +154,7 @@ def test_sqlalchemy_custom_type_from_user_defined_type__overridden() -> None:
 
         @classmethod
         def get_sqlalchemy_types(cls) -> Dict[Any, Callable[[], Any]]:
-            return super().get_sqlalchemy_types() | {CustomType: lambda: cls.__faker__.date_time()}
+            return {**super().get_sqlalchemy_types(), CustomType: lambda: cls.__faker__.date_time()}
 
     instance = ModelFactory.build()
     assert isinstance(instance.id, int)
