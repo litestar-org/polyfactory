@@ -1,3 +1,5 @@
+import datetime
+from collections.abc import Callable
 from enum import Enum
 from typing import Any, List
 
@@ -113,17 +115,17 @@ def test_sqlalchemy_type_handlers_v2(type_: types.TypeEngine) -> None:
     ),
 )
 def test_sqlalchemy_custom_type_from_type_decorator(impl_: types.TypeEngine) -> None:
-    class CustomTypeDecoratorSQLAlchemyType(types.TypeDecorator):
+    class CustomType(types.TypeDecorator):
         impl = impl_
 
     class Base(orm.DeclarativeBase):
-        type_annotation_map = {object: CustomTypeDecoratorSQLAlchemyType}
+        type_annotation_map = {object: CustomType}
 
     class Model(Base):
         __tablename__ = "model_with_custom_types"
 
         id: orm.Mapped[int] = orm.mapped_column(primary_key=True)
-        custom_type: orm.Mapped[Any] = orm.mapped_column(type_=CustomTypeDecoratorSQLAlchemyType(), nullable=False)
+        custom_type: orm.Mapped[Any] = orm.mapped_column(type_=CustomType(), nullable=False)
         custom_type_from_annotation_map: orm.Mapped[object]
 
     class ModelFactory(SQLAlchemyFactory[Model]):
@@ -135,9 +137,9 @@ def test_sqlalchemy_custom_type_from_type_decorator(impl_: types.TypeEngine) -> 
     assert isinstance(instance.custom_type_from_annotation_map, impl_.python_type)
 
 
-def test_sqlalchemy_custom_type_from_user_defined_type() -> None:
-    class MyType(types.UserDefinedType):
-        pass
+def test_sqlalchemy_custom_type_from_user_defined_type__overridden() -> None:
+    class CustomType(types.UserDefinedType):
+        ...
 
     class Base(orm.DeclarativeBase):
         ...
@@ -146,7 +148,32 @@ def test_sqlalchemy_custom_type_from_user_defined_type() -> None:
         __tablename__ = "model_with_custom_types"
 
         id: orm.Mapped[int] = orm.mapped_column(primary_key=True)
-        custom_type: orm.Mapped[Any] = orm.mapped_column(type_=MyType())
+        custom_type: orm.Mapped[Any] = orm.mapped_column(type_=CustomType())
+
+    class ModelFactory(SQLAlchemyFactory[Model]):
+        __model__ = Model
+
+        @classmethod
+        def get_sqlalchemy_types(cls) -> dict[Any, Callable[[], Any]]:
+            return super().get_sqlalchemy_types() | {CustomType: lambda: cls.__faker__.date_time()}
+
+    instance = ModelFactory.build()
+    assert isinstance(instance.id, int)
+    assert isinstance(instance.custom_type, datetime.datetime)
+
+
+def test_sqlalchemy_custom_type_from_user_defined_type__type_not_supported() -> None:
+    class CustomType(types.UserDefinedType):
+        ...
+
+    class Base(orm.DeclarativeBase):
+        ...
+
+    class Model(Base):
+        __tablename__ = "model_with_custom_types"
+
+        id: orm.Mapped[int] = orm.mapped_column(primary_key=True)
+        custom_type: orm.Mapped[Any] = orm.mapped_column(type_=CustomType())
 
     class ModelFactory(SQLAlchemyFactory[Model]):
         __model__ = Model
