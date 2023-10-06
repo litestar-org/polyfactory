@@ -2,8 +2,9 @@ from enum import Enum
 from typing import Any, List
 
 import pytest
-from sqlalchemy import ForeignKey, __version__, orm, types
+from sqlalchemy import ForeignKey, __version__, orm, sql, types
 
+from polyfactory.exceptions import ParameterException
 from polyfactory.factories.sqlalchemy_factory import SQLAlchemyFactory
 
 if __version__.startswith("1"):
@@ -85,3 +86,70 @@ def test_sqlalchemy_type_handlers_v2(type_: types.TypeEngine) -> None:
 
     instance = ModelFactory.build()
     assert instance.overridden is not None
+
+
+@pytest.mark.parametrize(
+    "impl_",
+    (
+        sql.sqltypes.BigInteger(),
+        sql.sqltypes.Boolean(),
+        sql.sqltypes.Date(),
+        sql.sqltypes.DateTime(),
+        sql.sqltypes.Double(),
+        sql.sqltypes.Enum(),
+        sql.sqltypes.Float(),
+        sql.sqltypes.Integer(),
+        sql.sqltypes.Interval(),
+        sql.sqltypes.LargeBinary(),
+        sql.sqltypes.MatchType(),
+        sql.sqltypes.Numeric(),
+        sql.sqltypes.SmallInteger(),
+        sql.sqltypes.String(),
+        sql.sqltypes.Text(),
+        sql.sqltypes.Time(),
+        sql.sqltypes.Unicode(),  # type: ignore[no-untyped-call]
+        sql.sqltypes.UnicodeText(),  # type: ignore[no-untyped-call]
+        sql.sqltypes.Uuid(),
+    ),
+)
+def test_sqlalchemy_custom_type_from_type_decorator(impl_: types.TypeEngine) -> None:
+    class CustomTypeDecoratorSQLAlchemyType(types.TypeDecorator):
+        impl = impl_
+
+    class Base(orm.DeclarativeBase):
+        type_annotation_map = {object: CustomTypeDecoratorSQLAlchemyType}
+
+    class Model(Base):
+        __tablename__ = "model_with_custom_types"
+
+        id: orm.Mapped[int] = orm.mapped_column(primary_key=True)
+        custom_type: orm.Mapped[Any] = orm.mapped_column(type_=CustomTypeDecoratorSQLAlchemyType(), nullable=False)
+        custom_type_from_annotation_map: orm.Mapped[object]
+
+    class ModelFactory(SQLAlchemyFactory[Model]):
+        __model__ = Model
+
+    instance = ModelFactory.build()
+    assert isinstance(instance.id, int)
+    assert isinstance(instance.custom_type, impl_.python_type)
+    assert isinstance(instance.custom_type_from_annotation_map, impl_.python_type)
+
+
+def test_sqlalchemy_custom_type_from_user_defined_type() -> None:
+    class MyType(types.UserDefinedType):
+        pass
+
+    class Base(orm.DeclarativeBase):
+        ...
+
+    class Model(Base):
+        __tablename__ = "model_with_custom_types"
+
+        id: orm.Mapped[int] = orm.mapped_column(primary_key=True)
+        custom_type: orm.Mapped[Any] = orm.mapped_column(type_=MyType())
+
+    class ModelFactory(SQLAlchemyFactory[Model]):
+        __model__ = Model
+
+    with pytest.raises(ParameterException, match="User defined type detected"):
+        ModelFactory.build()

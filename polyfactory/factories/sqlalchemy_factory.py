@@ -3,7 +3,7 @@ from __future__ import annotations
 from datetime import date, datetime
 from typing import TYPE_CHECKING, Any, Callable, ClassVar, Generic, List, TypeVar, Union
 
-from polyfactory.exceptions import MissingDependencyException
+from polyfactory.exceptions import MissingDependencyException, ParameterException
 from polyfactory.factories.base import BaseFactory
 from polyfactory.field_meta import FieldMeta
 from polyfactory.persistence import AsyncPersistenceProtocol, SyncPersistenceProtocol
@@ -118,6 +118,17 @@ class SQLAlchemyFactory(Generic[T], BaseFactory[T]):
             annotation = column_type
         elif issubclass(column_type, types.ARRAY):
             annotation = List[column.type.item_type.python_type]  # type: ignore[assignment,name-defined]
+        elif issubclass(column_type, types.TypeDecorator) and isinstance(
+            python_type := column_type.impl.python_type,
+            type,
+        ):
+            annotation = python_type
+        elif issubclass(column_type, types.UserDefinedType):
+            parameter_exc_msg = (
+                f"User defined type detected (subclass of {types.UserDefinedType}). "
+                "Override get_sqlalchemy_types to provide factory function."
+            )
+            raise ParameterException(parameter_exc_msg)
         else:
             annotation = column.type.python_type
 
