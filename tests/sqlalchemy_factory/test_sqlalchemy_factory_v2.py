@@ -1,7 +1,6 @@
 import datetime
-from collections.abc import Callable
 from enum import Enum
-from typing import Any, Dict, List
+from typing import Any, Callable, Dict, List
 
 import pytest
 from sqlalchemy import ForeignKey, __version__, orm, sql, types
