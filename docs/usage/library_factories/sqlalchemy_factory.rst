@@ -55,10 +55,10 @@ UserDefinedType based
 ``get_sqlalchemy_types`` classmethod needs to be overridden to provide factory function for custom type.
 
 .. literalinclude:: /examples/library_factories/sqlalchemy_factory/test_example_5.py
-    :caption: Custom types with TypeDecorator
+    :caption: Custom types with UserDefinedType
     :language: python
 
-More info on `SQLAlchemy Custom Types <https://docs.sqlalchemy.org/en/20/core/custom_types.html>`_
+More info on `SQLAlchemy Custom Types <https://docs.sqlalchemy.org/en/20/core/custom_types.html>`_.
 
 API reference
 ------------------------------
