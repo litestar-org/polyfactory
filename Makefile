@@ -5,11 +5,11 @@ SHELL := /bin/bash
 
 .DEFAULT_GOAL:=help
 .ONESHELL:
-USING_PDM		=  $(shell grep "tool.pdm" pyproject.toml && echo "yes")
+USING_PDM       =  $(shell grep "tool.pdm" pyproject.toml && echo "yes")
 ENV_PREFIX      := $(shell if [ -d .venv ]; then echo ".venv/bin/"; fi)
 VENV_EXISTS     := $(shell if [ -d .venv ]; then echo "yes"; fi)
-PDM_OPTS 		?=
-PDM 			?= 	pdm $(PDM_OPTS)
+PDM_OPTS        ?=
+PDM             ?= pdm $(PDM_OPTS)
 
 .EXPORT_ALL_VARIABLES:
 
