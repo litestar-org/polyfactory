@@ -39,7 +39,6 @@ requires-python = ">=3.8,<4.0"
 dependencies = [
     "faker",
     "typing-extensions",
-    "greenlet>=3.0.0",
 ]
 
 [project.optional-dependencies]
