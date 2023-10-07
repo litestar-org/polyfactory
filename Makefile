@@ -5,9 +5,9 @@ SHELL := /bin/bash
 
 .DEFAULT_GOAL:=help
 .ONESHELL:
-USING_PDM		=	$(shell grep "tool.pdm" pyproject.toml && echo "yes")
-ENV_PREFIX		=	$(shell python3 -c "if __import__('pathlib').Path('.venv/bin/pip').exists(): print('.venv/bin/')")
-VENV_EXISTS		=	$(shell python3 -c "if __import__('pathlib').Path('.venv/bin/activate').exists(): print('yes')")
+USING_PDM		=  $(shell grep "tool.pdm" pyproject.toml && echo "yes")
+ENV_PREFIX      := $(shell if [ -d .venv ]; then echo ".venv/bin/"; fi)
+VENV_EXISTS     := $(shell if [ -d .venv ]; then echo "yes"; fi)
 PDM_OPTS 		?=
 PDM 			?= 	pdm $(PDM_OPTS)
 
