@@ -760,23 +760,23 @@ Abstract Base Class (ABC) <a class="reference internal" href="../../reference/fa
 </dd>
 <dt><a class="reference internal" href="../../reference/factories/typed_dict_factory.html#polyfactory.factories.typed_dict_factory.TypedDictFactory" title="polyfactory.factories.typed_dict_factory.TypedDictFactory"><code class="xref py py-class docutils literal notranslate"><span class="pre">TypedDictFactory</span></code></a></dt><dd><p>a base factory for typed-dicts</p>
 </dd>
-<dt><code class="xref py py-class docutils literal notranslate"><span class="pre">ModelFactory</span></code></dt><dd><p>a base factory for <a class="reference external" href="https://docs.pydantic.dev/">pydantic</a> models</p>
+<dt><a class="reference internal" href="../../reference/factories/pydantic_factory.html#polyfactory.factories.pydantic_factory.ModelFactory" title="polyfactory.factories.pydantic_factory.ModelFactory"><code class="xref py py-class docutils literal notranslate"><span class="pre">ModelFactory</span></code></a></dt><dd><p>a base factory for <a class="reference external" href="https://docs.pydantic.dev/">pydantic</a> models</p>
 </dd>
-<dt><code class="xref py py-class docutils literal notranslate"><span class="pre">BeanieDocumentFactory</span></code></dt><dd><p>a base factory for <a class="reference external" href="https://beanie-odm.dev/">beanie</a> documents</p>
+<dt><a class="reference internal" href="../../reference/factories/beanie_odm_factory.html#polyfactory.factories.beanie_odm_factory.BeanieDocumentFactory" title="polyfactory.factories.beanie_odm_factory.BeanieDocumentFactory"><code class="xref py py-class docutils literal notranslate"><span class="pre">BeanieDocumentFactory</span></code></a></dt><dd><p>a base factory for <a class="reference external" href="https://beanie-odm.dev/">beanie</a> documents</p>
 </dd>
-<dt><code class="xref py py-class docutils literal notranslate"><span class="pre">OdmanticModelFactory</span></code></dt><dd><p>a base factory for <a class="reference external" href="https://art049.github.io/odmantic/">odmantic</a> models.</p>
+<dt><a class="reference internal" href="../../reference/factories/odmantic_odm_factory.html#polyfactory.factories.odmantic_odm_factory.OdmanticModelFactory" title="polyfactory.factories.odmantic_odm_factory.OdmanticModelFactory"><code class="xref py py-class docutils literal notranslate"><span class="pre">OdmanticModelFactory</span></code></a></dt><dd><p>a base factory for <a class="reference external" href="https://art049.github.io/odmantic/">odmantic</a> models.</p>
 </dd>
-<dt><code class="xref py py-class docutils literal notranslate"><span class="pre">MsgspecFactory</span></code></dt><dd><p>a base factory for <a class="reference external" href="https://jcristharif.com/msgspec/">msgspec</a> Structs</p>
+<dt><a class="reference internal" href="../../reference/factories/msgspec_factory.html#polyfactory.factories.msgspec_factory.MsgspecFactory" title="polyfactory.factories.msgspec_factory.MsgspecFactory"><code class="xref py py-class docutils literal notranslate"><span class="pre">MsgspecFactory</span></code></a></dt><dd><p>a base factory for <a class="reference external" href="https://jcristharif.com/msgspec/">msgspec</a> Structs</p>
 </dd>
 <dt><a class="reference internal" href="../../reference/factories/attrs_factory.html#polyfactory.factories.attrs_factory.AttrsFactory" title="polyfactory.factories.attrs_factory.AttrsFactory"><code class="xref py py-class docutils literal notranslate"><span class="pre">AttrsFactory</span></code></a></dt><dd><p>a base factory for <a class="reference external" href="https://www.attrs.org/en/stable/index.html">attrs</a> models.</p>
 </dd>
-<dt><code class="xref py py-class docutils literal notranslate"><span class="pre">SQLAlchemyFactory</span></code></dt><dd><p>a base factory for <a class="reference external" href="https://www.sqlalchemy.org/">SQLAlchemy</a> models.</p>
+<dt><a class="reference internal" href="../../reference/factories/sqlalchemy_factory.html#polyfactory.factories.sqlalchemy_factory.SQLAlchemyFactory" title="polyfactory.factories.sqlalchemy_factory.SQLAlchemyFactory"><code class="xref py py-class docutils literal notranslate"><span class="pre">SQLAlchemyFactory</span></code></a></dt><dd><p>a base factory for <a class="reference external" href="https://www.sqlalchemy.org/">SQLAlchemy</a> models.</p>
 </dd>
 </dl>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
 <p>All factories exported from <code class="docutils literal notranslate"><span class="pre">polyfactory.factories</span></code> do not require any additional dependencies. The other factories,
-such as <code class="xref py py-class docutils literal notranslate"><span class="pre">ModelFactory</span></code>, require an additional but optional
+such as <a class="reference internal" href="../../reference/factories/pydantic_factory.html#polyfactory.factories.pydantic_factory.ModelFactory" title="polyfactory.factories.pydantic_factory.ModelFactory"><code class="xref py py-class docutils literal notranslate"><span class="pre">ModelFactory</span></code></a>, require an additional but optional
 dependency, in this case <a class="reference external" href="https://docs.pydantic.dev/">pydantic</a>. As such, they are exported only from their respective
 namespaced module, e.g. <code class="docutils literal notranslate"><span class="pre">polyfactory.factories.pydantic_factory.ModelFactory</span></code>.</p>
 </div>

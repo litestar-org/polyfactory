@@ -405,6 +405,10 @@ document.write(`
   
 
   
+    <label class="sidebar-toggle secondary-toggle" for="__secondary" tabindex="0">
+      <span class="fa-solid fa-outdent"></span>
+    </label>
+  
 </div>
 
     </nav>
@@ -753,8 +757,83 @@ document.write(`
 <div id="searchbox"></div>
                 <article class="bd-article" role="main">
                   
-  <section id="beanie-odm-factory">
-<h1>beanie_odm_factory<a class="headerlink" href="#beanie-odm-factory" title="Permalink to this heading">#</a></h1>
+  <section id="module-polyfactory.factories.beanie_odm_factory">
+<span id="beanie-odm-factory"></span><h1>beanie_odm_factory<a class="headerlink" href="#module-polyfactory.factories.beanie_odm_factory" title="Permalink to this heading">#</a></h1>
+<dl class="py class">
+<dt class="sig sig-object py" id="polyfactory.factories.beanie_odm_factory.BeaniePersistenceHandler">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">polyfactory.factories.beanie_odm_factory.</span></span><span class="sig-name descname"><span class="pre">BeaniePersistenceHandler</span></span><a class="headerlink" href="#polyfactory.factories.beanie_odm_factory.BeaniePersistenceHandler" title="Permalink to this definition">#</a></dt>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Generic" title="(in Python v3.12)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Generic</span></code></a>[<code class="xref py py-obj docutils literal notranslate"><span class="pre">T</span></code>], <a class="reference internal" href="../persistence.html#polyfactory.persistence.AsyncPersistenceProtocol" title="polyfactory.persistence.AsyncPersistenceProtocol"><code class="xref py py-class docutils literal notranslate"><span class="pre">AsyncPersistenceProtocol</span></code></a>[<code class="xref py py-obj docutils literal notranslate"><span class="pre">T</span></code>]</p>
+<p>Persistence Handler using beanie logic</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="polyfactory.factories.beanie_odm_factory.BeaniePersistenceHandler.save">
+<em class="property"><span class="pre">async</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">save</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">T</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">T</span></span></span><a class="headerlink" href="#polyfactory.factories.beanie_odm_factory.BeaniePersistenceHandler.save" title="Permalink to this definition">#</a></dt>
+<dd><p>Persist a single instance in mongoDB.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="polyfactory.factories.beanie_odm_factory.BeaniePersistenceHandler.save_many">
+<em class="property"><span class="pre">async</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">save_many</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.12)"><span class="pre">list</span></a><span class="p"><span class="pre">[</span></span><span class="pre">T</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.12)"><span class="pre">list</span></a><span class="p"><span class="pre">[</span></span><span class="pre">T</span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#polyfactory.factories.beanie_odm_factory.BeaniePersistenceHandler.save_many" title="Permalink to this definition">#</a></dt>
+<dd><p>Persist multiple instances in mongoDB.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>we cannot use the <code class="docutils literal notranslate"><span class="pre">.insert_many</span></code> method from Beanie here because it doesn’t
+return the created instances</p>
+</div>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="polyfactory.factories.beanie_odm_factory.BeanieDocumentFactory">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">polyfactory.factories.beanie_odm_factory.</span></span><span class="sig-name descname"><span class="pre">BeanieDocumentFactory</span></span><a class="headerlink" href="#polyfactory.factories.beanie_odm_factory.BeanieDocumentFactory" title="Permalink to this definition">#</a></dt>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Generic" title="(in Python v3.12)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Generic</span></code></a>[<code class="xref py py-obj docutils literal notranslate"><span class="pre">T</span></code>], <a class="reference internal" href="pydantic_factory.html#polyfactory.factories.pydantic_factory.ModelFactory" title="polyfactory.factories.pydantic_factory.ModelFactory"><code class="xref py py-class docutils literal notranslate"><span class="pre">ModelFactory</span></code></a>[<code class="xref py py-obj docutils literal notranslate"><span class="pre">T</span></code>]</p>
+<p>Base factory for Beanie Documents</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="polyfactory.factories.beanie_odm_factory.BeanieDocumentFactory.__async_persistence__">
+<span class="sig-name descname"><span class="pre">__async_persistence__</span></span><a class="headerlink" href="#polyfactory.factories.beanie_odm_factory.BeanieDocumentFactory.__async_persistence__" title="Permalink to this definition">#</a></dt>
+<dd><p>alias of <a class="reference internal" href="#polyfactory.factories.beanie_odm_factory.BeaniePersistenceHandler" title="polyfactory.factories.beanie_odm_factory.BeaniePersistenceHandler"><code class="xref py py-class docutils literal notranslate"><span class="pre">BeaniePersistenceHandler</span></code></a></p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="polyfactory.factories.beanie_odm_factory.BeanieDocumentFactory.__is_base_factory__">
+<span class="sig-name descname"><span class="pre">__is_base_factory__</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.12)"><span class="pre">bool</span></a></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">True</span></em><a class="headerlink" href="#polyfactory.factories.beanie_odm_factory.BeanieDocumentFactory.__is_base_factory__" title="Permalink to this definition">#</a></dt>
+<dd><p>Flag dictating whether the factory is a ‘base’ factory. Base factories are registered globally as handlers for types.
+For example, the ‘DataclassFactory’, ‘TypedDictFactory’ and ‘ModelFactory’ are all base factories.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="polyfactory.factories.beanie_odm_factory.BeanieDocumentFactory.is_supported_type">
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">is_supported_type</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">value</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Any</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">TypeGuard</span><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/functions.html#type" title="(in Python v3.12)"><span class="pre">type</span></a><span class="p"><span class="pre">[</span></span><span class="pre">T</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#polyfactory.factories.beanie_odm_factory.BeanieDocumentFactory.is_supported_type" title="Permalink to this definition">#</a></dt>
+<dd><p>Determine whether the given value is supported by the factory.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>value</strong> – An arbitrary value.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>A typeguard</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="polyfactory.factories.beanie_odm_factory.BeanieDocumentFactory.get_field_value">
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">get_field_value</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">field_meta</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="../field_meta.html#polyfactory.field_meta.FieldMeta" title="polyfactory.field_meta.FieldMeta"><span class="pre">FieldMeta</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">field_build_parameters</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Any</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.12)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Any</span></span></span><a class="headerlink" href="#polyfactory.factories.beanie_odm_factory.BeanieDocumentFactory.get_field_value" title="Permalink to this definition">#</a></dt>
+<dd><p>Return a field value on the subclass if existing, otherwise returns a mock value.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>field_meta</strong> – FieldMeta instance.</p></li>
+<li><p><strong>field_build_parameters</strong> – Any build parameters passed to the factory as kwarg values.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>An arbitrary value.</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
 </section>
 
 
@@ -791,6 +870,31 @@ document.write(`
             </div>
             
             
+              
+                <div class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+  <div class="sidebar-secondary-item">
+  <div class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> On this page
+  </div>
+  <nav class="bd-toc-nav page-toc">
+    <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#polyfactory.factories.beanie_odm_factory.BeaniePersistenceHandler"><code class="docutils literal notranslate"><span class="pre">BeaniePersistenceHandler</span></code></a><ul class="visible nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#polyfactory.factories.beanie_odm_factory.BeaniePersistenceHandler.save"><code class="docutils literal notranslate"><span class="pre">BeaniePersistenceHandler.save()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#polyfactory.factories.beanie_odm_factory.BeaniePersistenceHandler.save_many"><code class="docutils literal notranslate"><span class="pre">BeaniePersistenceHandler.save_many()</span></code></a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#polyfactory.factories.beanie_odm_factory.BeanieDocumentFactory"><code class="docutils literal notranslate"><span class="pre">BeanieDocumentFactory</span></code></a><ul class="visible nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#polyfactory.factories.beanie_odm_factory.BeanieDocumentFactory.__async_persistence__"><code class="docutils literal notranslate"><span class="pre">BeanieDocumentFactory.__async_persistence__</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#polyfactory.factories.beanie_odm_factory.BeanieDocumentFactory.__is_base_factory__"><code class="docutils literal notranslate"><span class="pre">BeanieDocumentFactory.__is_base_factory__</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#polyfactory.factories.beanie_odm_factory.BeanieDocumentFactory.is_supported_type"><code class="docutils literal notranslate"><span class="pre">BeanieDocumentFactory.is_supported_type()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#polyfactory.factories.beanie_odm_factory.BeanieDocumentFactory.get_field_value"><code class="docutils literal notranslate"><span class="pre">BeanieDocumentFactory.get_field_value()</span></code></a></li>
+</ul>
+</li>
+</ul>
+  </nav></div>
+
+</div></div>
               
             
           </div>
