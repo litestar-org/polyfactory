@@ -7,7 +7,6 @@ from typing import (
     Callable,
     Generic,
     TypeVar,
-    cast,
 )
 
 from typing_extensions import get_type_hints
@@ -23,7 +22,7 @@ if TYPE_CHECKING:
 
 try:
     import msgspec
-    from msgspec import inspect
+    from msgspec.structs import fields
 except ImportError as e:
     msg = "msgspec is not installed"
     raise MissingDependencyException(msg) from e
@@ -56,11 +55,9 @@ class MsgspecFactory(Generic[T], BaseFactory[T]):
 
     @classmethod
     def get_model_fields(cls) -> list[FieldMeta]:
-        type_info = cast(inspect.StructType, inspect.type_info(cls.__model__))
-
         fields_meta: list[FieldMeta] = []
 
-        for field in type_info.fields:
+        for field in fields(cls.__model__):
             annotation = get_type_hints(cls.__model__, include_extras=True)[field.name]
             if field.default is not msgspec.NODEFAULT:
                 default_value = field.default
