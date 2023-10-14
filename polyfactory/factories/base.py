@@ -279,10 +279,6 @@ class BaseFactory(ABC, Generic[T]):
         msg = f"unsupported model type {model.__name__}"
         raise ParameterException(msg)  # pragma: no cover
 
-    @classmethod
-    def _get_constrained_collection_field_meta(cls, field_meta: FieldMeta) -> None:
-        ...
-
     # Public Methods
 
     @classmethod
