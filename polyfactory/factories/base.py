@@ -279,6 +279,10 @@ class BaseFactory(ABC, Generic[T]):
         msg = f"unsupported model type {model.__name__}"
         raise ParameterException(msg)  # pragma: no cover
 
+    @classmethod
+    def _get_constrained_collection_field_meta(cls, field_meta: FieldMeta) -> None:
+        ...
+
     # Public Methods
 
     @classmethod
@@ -595,6 +599,41 @@ class BaseFactory(ABC, Generic[T]):
             return factory.batch(size=batch_size)
 
         if (origin := get_type_origin(unwrapped_annotation)) and issubclass(origin, Collection):
+            # There's repetition of code from the get_constrained_field_value, but that can't be directly
+            # called since that function depends on the field_meta.constraints for the min_items etc. but
+            # there are no constraints for this field meta.
+            if cls.__randomize_collection_length__:
+                if (
+                    is_safe_subclass(unwrapped_annotation, set)
+                    or is_safe_subclass(unwrapped_annotation, list)
+                    or is_safe_subclass(unwrapped_annotation, frozenset)
+                    or is_safe_subclass(unwrapped_annotation, tuple)
+                ):
+                    collection_type: type[list | set | tuple | frozenset]
+                    if is_safe_subclass(unwrapped_annotation, list):
+                        collection_type = list
+                    elif is_safe_subclass(unwrapped_annotation, set):
+                        collection_type = set
+                    elif is_safe_subclass(unwrapped_annotation, tuple):
+                        collection_type = tuple
+                    else:
+                        collection_type = frozenset
+
+                    return handle_constrained_collection(
+                        collection_type=collection_type,  # type: ignore[type-var]
+                        factory=cls,
+                        item_type=Any,
+                        field_meta=field_meta.children[0] if field_meta.children else field_meta,
+                        min_items=cls.__min_collection_length__,
+                        max_items=cls.__max_collection_length__,
+                    )
+                return handle_constrained_mapping(
+                    factory=cls,
+                    field_meta=field_meta,
+                    min_items=cls.__min_collection_length__,
+                    max_items=cls.__max_collection_length__,
+                )
+
             return handle_collection_type(field_meta, origin, cls)
 
         if is_union(field_meta.annotation) and field_meta.children:
