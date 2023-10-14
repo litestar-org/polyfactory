@@ -150,11 +150,7 @@ class FieldMeta:
         )
 
         if field.type_args and not field.children:
-            if randomize_collection_length:
-                number_of_args = random.randint(min_collection_length, max_collection_length)
-            else:
-                number_of_args = 1
-
+            number_of_args = 1
             extended_type_args = CollectionExtender.extend_type_args(field.annotation, field.type_args, number_of_args)
             field.children = [
                 FieldMeta.from_type(
