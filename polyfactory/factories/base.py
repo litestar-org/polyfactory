@@ -57,6 +57,16 @@ from polyfactory.utils.helpers import flatten_annotation, unwrap_annotation, unw
 from polyfactory.utils.model_coverage import CoverageContainer, CoverageContainerCallable, resolve_kwargs_coverage
 from polyfactory.utils.predicates import get_type_origin, is_any, is_literal, is_optional, is_safe_subclass, is_union
 from polyfactory.value_generators.complex_types import handle_collection_type, handle_collection_type_coverage
+from polyfactory.utils.helpers import get_collection_type, unwrap_annotation, unwrap_args, unwrap_optional
+from polyfactory.utils.predicates import (
+    get_type_origin,
+    is_any,
+    is_literal,
+    is_optional,
+    is_safe_subclass,
+    is_union,
+)
+from polyfactory.value_generators.complex_types import handle_collection_type
 from polyfactory.value_generators.constrained_collections import (
     handle_constrained_collection,
     handle_constrained_mapping,
@@ -459,7 +469,7 @@ class BaseFactory(ABC, Generic[T]):
         )
 
     @classmethod
-    def get_constrained_field_value(cls, annotation: Any, field_meta: FieldMeta) -> Any:  # noqa: C901, PLR0911, PLR0912
+    def get_constrained_field_value(cls, annotation: Any, field_meta: FieldMeta) -> Any:  # noqa: C901, PLR0911
         try:
             constraints = cast("Constraints", field_meta.constraints)
             if is_safe_subclass(annotation, float):
@@ -508,21 +518,15 @@ class BaseFactory(ABC, Generic[T]):
                     pattern=constraints.get("pattern"),
                 )
 
-            if (
-                is_safe_subclass(annotation, set)
-                or is_safe_subclass(annotation, list)
-                or is_safe_subclass(annotation, frozenset)
-                or is_safe_subclass(annotation, tuple)
-            ):
-                collection_type: type[list | set | tuple | frozenset]
-                if is_safe_subclass(annotation, list):
-                    collection_type = list
-                elif is_safe_subclass(annotation, set):
-                    collection_type = set
-                elif is_safe_subclass(annotation, tuple):
-                    collection_type = tuple
-                else:
-                    collection_type = frozenset
+            with suppress(ValueError):
+                collection_type = get_collection_type(annotation)
+                if collection_type == dict:
+                    return handle_constrained_mapping(
+                        factory=cls,
+                        field_meta=field_meta,
+                        min_items=constraints.get("min_length"),
+                        max_items=constraints.get("max_length"),
+                    )
 
                 return handle_constrained_collection(
                     collection_type=collection_type,  # type: ignore[type-var]
@@ -532,14 +536,6 @@ class BaseFactory(ABC, Generic[T]):
                     max_items=constraints.get("max_length"),
                     min_items=constraints.get("min_length"),
                     unique_items=constraints.get("unique_items", False),
-                )
-
-            if is_safe_subclass(annotation, dict):
-                return handle_constrained_mapping(
-                    factory=cls,
-                    field_meta=field_meta,
-                    min_items=constraints.get("min_length"),
-                    max_items=constraints.get("max_length"),
                 )
 
             if is_safe_subclass(annotation, date):
@@ -612,6 +608,24 @@ class BaseFactory(ABC, Generic[T]):
             return factory.batch(size=batch_size)
 
         if (origin := get_type_origin(unwrapped_annotation)) and issubclass(origin, Collection):
+            if cls.__randomize_collection_length__:
+                collection_type = get_collection_type(unwrapped_annotation)
+                if collection_type != dict:
+                    return handle_constrained_collection(
+                        collection_type=collection_type,  # type: ignore[type-var]
+                        factory=cls,
+                        item_type=Any,
+                        field_meta=field_meta.children[0] if field_meta.children else field_meta,
+                        min_items=cls.__min_collection_length__,
+                        max_items=cls.__max_collection_length__,
+                    )
+                return handle_constrained_mapping(
+                    factory=cls,
+                    field_meta=field_meta,
+                    min_items=cls.__min_collection_length__,
+                    max_items=cls.__max_collection_length__,
+                )
+
             return handle_collection_type(field_meta, origin, cls)
 
         if is_union(field_meta.annotation) and field_meta.children:
