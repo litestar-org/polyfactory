@@ -491,7 +491,7 @@ class BaseFactory(ABC, Generic[T]):
                     pattern=constraints.get("pattern"),
                 )
 
-            try:
+            with suppress(ValueError):
                 collection_type = get_collection_type(annotation)
                 if collection_type == dict:
                     return handle_constrained_mapping(
@@ -510,10 +510,6 @@ class BaseFactory(ABC, Generic[T]):
                     min_items=constraints.get("min_length"),
                     unique_items=constraints.get("unique_items", False),
                 )
-            except ValueError:
-                # implies the annotation was not a collection type
-                pass
-
             if is_safe_subclass(annotation, date):
                 return handle_constrained_date(
                     faker=cls.__faker__,
