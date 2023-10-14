@@ -52,7 +52,7 @@ from polyfactory.exceptions import (
     ParameterException,
 )
 from polyfactory.fields import Fixture, Ignore, PostGenerated, Require, Use
-from polyfactory.utils.helpers import unwrap_annotation, unwrap_args, unwrap_optional
+from polyfactory.utils.helpers import get_collection_type, unwrap_annotation, unwrap_args, unwrap_optional
 from polyfactory.utils.predicates import (
     get_type_origin,
     is_any,
@@ -495,21 +495,15 @@ class BaseFactory(ABC, Generic[T]):
                     pattern=constraints.get("pattern"),
                 )
 
-            if (
-                is_safe_subclass(annotation, set)
-                or is_safe_subclass(annotation, list)
-                or is_safe_subclass(annotation, frozenset)
-                or is_safe_subclass(annotation, tuple)
-            ):
-                collection_type: type[list | set | tuple | frozenset]
-                if is_safe_subclass(annotation, list):
-                    collection_type = list
-                elif is_safe_subclass(annotation, set):
-                    collection_type = set
-                elif is_safe_subclass(annotation, tuple):
-                    collection_type = tuple
-                else:
-                    collection_type = frozenset
+            try:
+                collection_type = get_collection_type(annotation)
+                if collection_type == dict:
+                    return handle_constrained_mapping(
+                        factory=cls,
+                        field_meta=field_meta,
+                        min_items=constraints.get("min_length"),
+                        max_items=constraints.get("max_length"),
+                    )
 
                 return handle_constrained_collection(
                     collection_type=collection_type,  # type: ignore[type-var]
@@ -520,14 +514,9 @@ class BaseFactory(ABC, Generic[T]):
                     min_items=constraints.get("min_length"),
                     unique_items=constraints.get("unique_items", False),
                 )
-
-            if is_safe_subclass(annotation, dict):
-                return handle_constrained_mapping(
-                    factory=cls,
-                    field_meta=field_meta,
-                    min_items=constraints.get("min_length"),
-                    max_items=constraints.get("max_length"),
-                )
+            except ValueError:
+                # implies the annotation was not a collection type
+                pass
 
             if is_safe_subclass(annotation, date):
                 return handle_constrained_date(
@@ -599,26 +588,9 @@ class BaseFactory(ABC, Generic[T]):
             return factory.batch(size=batch_size)
 
         if (origin := get_type_origin(unwrapped_annotation)) and issubclass(origin, Collection):
-            # There's repetition of code from the get_constrained_field_value, but that can't be directly
-            # called since that function depends on the field_meta.constraints for the min_items etc. but
-            # there are no constraints for this field meta.
             if cls.__randomize_collection_length__:
-                if (
-                    is_safe_subclass(unwrapped_annotation, set)
-                    or is_safe_subclass(unwrapped_annotation, list)
-                    or is_safe_subclass(unwrapped_annotation, frozenset)
-                    or is_safe_subclass(unwrapped_annotation, tuple)
-                ):
-                    collection_type: type[list | set | tuple | frozenset]
-                    if is_safe_subclass(unwrapped_annotation, list):
-                        collection_type = list
-                    elif is_safe_subclass(unwrapped_annotation, set):
-                        collection_type = set
-                    elif is_safe_subclass(unwrapped_annotation, tuple):
-                        collection_type = tuple
-                    else:
-                        collection_type = frozenset
-
+                collection_type = get_collection_type(unwrapped_annotation)
+                if collection_type != dict:
                     return handle_constrained_collection(
                         collection_type=collection_type,  # type: ignore[type-var]
                         factory=cls,
