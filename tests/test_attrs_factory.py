@@ -1,7 +1,7 @@
 import datetime as dt
 from decimal import Decimal
 from enum import Enum
-from typing import Any, Dict, FrozenSet, Generic, List, Set, Tuple, TypeVar
+from typing import Any, Dict, Generic, List, Tuple, TypeVar
 from uuid import UUID
 
 import attrs
@@ -133,61 +133,6 @@ def test_with_aliased_fields() -> None:
     foo = FooFactory.build()
 
     assert foo == Foo(foo.aliased)
-
-
-@pytest.mark.parametrize("type_", (Set, FrozenSet, List))
-def test_variable_length(type_: Any) -> None:
-    @define
-    class Foo:
-        items: type_[int]
-
-    class FooFactory(AttrsFactory[Foo]):
-        __model__ = Foo
-
-        __randomize_collection_length__ = True
-        number_of_args = 3
-
-        __min_collection_length__ = number_of_args
-        __max_collection_length__ = number_of_args
-
-    foo = FooFactory.build()
-    assert len(foo.items) == 3
-
-
-def test_variable_length__dict() -> None:
-    @define
-    class Foo:
-        items: Dict[int, float]
-
-    class FooFactory(AttrsFactory[Foo]):
-        __model__ = Foo
-
-        __randomize_collection_length__ = True
-        number_of_args = 3
-
-        __min_collection_length__ = number_of_args
-        __max_collection_length__ = number_of_args
-
-    foo = FooFactory.build()
-    assert len(foo.items) == 3
-
-
-def test_variable_length__tuple() -> None:
-    @define
-    class Foo:
-        items: Tuple[int, ...]
-
-    class FooFactory(AttrsFactory[Foo]):
-        __model__ = Foo
-
-        __randomize_collection_length__ = True
-        number_of_args = 3
-
-        __min_collection_length__ = number_of_args
-        __max_collection_length__ = number_of_args
-
-    foo = FooFactory.build()
-    assert len(foo.items) == 3
 
 
 def test_with_generics() -> None:

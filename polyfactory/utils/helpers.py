@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 import sys
-from typing import TYPE_CHECKING, Any
+from typing import TYPE_CHECKING, Any, Mapping
 
 from typing_extensions import get_args, get_origin
 
@@ -10,6 +10,7 @@ from polyfactory.utils.predicates import (
     is_annotated,
     is_new_type,
     is_optional,
+    is_safe_subclass,
     is_union,
 )
 
@@ -130,3 +131,26 @@ def normalize_annotation(annotation: Any, random: Random) -> Any:
         return origin[args] if origin is not type else annotation
 
     return origin
+
+
+def get_collection_type(annotation: Any) -> type[list | tuple | set | frozenset | dict]:
+    """Get the collection type from the annotation.
+
+    :param annotation: A type annotation.
+
+    :returns: The collection type.
+    """
+
+    if is_safe_subclass(annotation, list):
+        return list
+    if is_safe_subclass(annotation, Mapping):
+        return dict
+    if is_safe_subclass(annotation, tuple):
+        return tuple
+    if is_safe_subclass(annotation, set):
+        return set
+    if is_safe_subclass(annotation, frozenset):
+        return frozenset
+
+    msg = f"Unknown collection type - {annotation}"
+    raise ValueError(msg)

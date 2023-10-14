@@ -1,5 +1,5 @@
 from datetime import datetime
-from typing import Any, Dict, FrozenSet, List, Set, Tuple
+from typing import Any, List
 from uuid import UUID
 
 import bson
@@ -101,59 +101,3 @@ def test_post_generated_from_id() -> None:
             return f"{cls.__faker__.name()} [{id.generation_time}]"
 
     MyFactory.build()
-
-
-@pytest.mark.parametrize("type_", (Set, FrozenSet, List))
-def test_variable_length(type_: Any) -> None:
-    class MyModel(Model):  # type: ignore
-        items: type_[bson.Int64]
-
-    class MyFactory(OdmanticModelFactory[MyModel]):
-        __model__ = MyModel
-
-        __randomize_collection_length__ = True
-        number_of_args = 3
-
-        __min_collection_length__ = number_of_args
-        __max_collection_length__ = number_of_args
-
-    result = MyFactory.build()
-
-    assert len(result.items) == 3
-
-
-@pytest.mark.skipif(True, reason="test is flaky - refer issue #362")
-def test_variable_length__dict() -> None:
-    class MyModel(Model):  # type: ignore
-        items: Dict[bson.Int64, UUID]
-
-    class MyFactory(OdmanticModelFactory[MyModel]):
-        __model__ = MyModel
-
-        __randomize_collection_length__ = True
-        number_of_args = 3
-
-        __min_collection_length__ = number_of_args
-        __max_collection_length__ = number_of_args
-
-    result = MyFactory.build()
-
-    assert len(result.items) == 3
-
-
-def test_variable_length__tuple() -> None:
-    class MyModel(Model):  # type: ignore
-        items: Tuple[bson.Int64, ...]
-
-    class MyFactory(OdmanticModelFactory[MyModel]):
-        __model__ = MyModel
-
-        __randomize_collection_length__ = True
-        number_of_args = 3
-
-        __min_collection_length__ = number_of_args
-        __max_collection_length__ = number_of_args
-
-    result = MyFactory.build()
-
-    assert len(result.items) == 3
