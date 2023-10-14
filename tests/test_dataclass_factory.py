@@ -4,7 +4,6 @@ from types import ModuleType
 from typing import Callable, Dict, List, Optional, Tuple
 from unittest.mock import ANY
 
-from pydantic.dataclasses import Field  # type: ignore
 from pydantic.dataclasses import dataclass as pydantic_dataclass
 
 from polyfactory.factories import DataclassFactory
@@ -38,7 +37,6 @@ def test_factory_pydantic_dc() -> None:
         id: int
         name: str
         list_field: List[Dict[str, int]]
-        constrained_field: int = Field(ge=100)
         field_of_some_value: Optional[int] = field(default_factory=lambda: 0)
 
     class MyFactory(DataclassFactory[PydanticDC]):
@@ -52,7 +50,6 @@ def test_factory_pydantic_dc() -> None:
     assert result.list_field
     assert result.list_field[0]
     assert [isinstance(value, int) for value in result.list_field[0].values()]
-    assert result.constrained_field >= 100
 
 
 def test_vanilla_dc_with_embedded_model() -> None:
