@@ -1,3 +1,5 @@
+from typing import Dict, List, Set, Tuple
+
 import pytest
 from pydantic.dataclasses import dataclass
 
@@ -6,7 +8,7 @@ from polyfactory.factories import DataclassFactory
 MIN_MAX_PARAMETERS = ((10, 15), (20, 25), (30, 40), (40, 50))
 
 
-@pytest.mark.parametrize("type_", (list, set))
+@pytest.mark.parametrize("type_", (List, Set))
 @pytest.mark.parametrize(("min_val", "max_val"), MIN_MAX_PARAMETERS)
 def test_collection_length_with_list(min_val: int, max_val: int, type_: type) -> None:
     @dataclass
@@ -29,7 +31,7 @@ def test_collection_length_with_list(min_val: int, max_val: int, type_: type) ->
 def test_collection_length_with_tuple(min_val: int, max_val: int) -> None:
     @dataclass
     class Foo:
-        foo: tuple[int, ...]
+        foo: Tuple[int, ...]
 
     class FooFactory(DataclassFactory[Foo]):
         __model__ = Foo
@@ -47,7 +49,7 @@ def test_collection_length_with_tuple(min_val: int, max_val: int) -> None:
 def test_collection_length_with_dict(min_val: int, max_val: int) -> None:
     @dataclass
     class Foo:
-        foo: dict[int, int]
+        foo: Dict[int, int]
 
     class FooFactory(DataclassFactory[Foo]):
         __model__ = Foo
@@ -66,7 +68,7 @@ def test_collection_length_with_dict(min_val: int, max_val: int) -> None:
 def test_collection_length_with_optional_not_allowed(min_val: int, max_val: int) -> None:
     @dataclass
     class Foo:
-        foo: list[int] | None
+        foo: List[int] | None
 
     class FooFactory(DataclassFactory[Foo]):
         __model__ = Foo
@@ -87,7 +89,7 @@ def test_collection_length_with_optional_not_allowed(min_val: int, max_val: int)
 def test_collection_length_with_optional_allowed(min_val: int, max_val: int) -> None:
     @dataclass
     class Foo:
-        foo: list[int] | None
+        foo: List[int] | None
 
     class FooFactory(DataclassFactory[Foo]):
         __model__ = Foo
