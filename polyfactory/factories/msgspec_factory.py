@@ -57,8 +57,9 @@ class MsgspecFactory(Generic[T], BaseFactory[T]):
     def get_model_fields(cls) -> list[FieldMeta]:
         fields_meta: list[FieldMeta] = []
 
+        type_hints = get_type_hints(cls.__model__, include_extras=True)
         for field in fields(cls.__model__):
-            annotation = get_type_hints(cls.__model__, include_extras=True)[field.name]
+            annotation = type_hints[field.name]
             if field.default is not msgspec.NODEFAULT:
                 default_value = field.default
             elif field.default_factory is not msgspec.NODEFAULT:
