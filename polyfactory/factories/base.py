@@ -685,15 +685,14 @@ class BaseFactory(ABC, Generic[T]):
         for field_name, field_value in factory_fields:
             if field_name in model_fields_names or inspect.isfunction(field_value):
                 continue
+            error_message = (
+                f"{field_name} is declared on the factory {cls.__name__}"
+                f" but it is not part of the model {cls.__model__.__name__}"
+            )
+            if isinstance(field_value, (Use, PostGenerated, Ignore, Require)):
+                raise ConfigurationException(error_message)
             else:
-                error_message = (
-                    f"{field_name} is declared on the factory {cls.__name__}"
-                    f" but it is not part of the model {cls.__model__.__name__}"
-                )
-                if isinstance(field_value, (Use, PostGenerated, Ignore, Require)):
-                    raise ConfigurationException(error_message)
-                else:
-                    warnings.warn(ConfigurationWarning(error_message))
+                warnings.warn(ConfigurationWarning(error_message))
 
 
     @classmethod
