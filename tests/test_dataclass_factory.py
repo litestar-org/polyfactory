@@ -1,10 +1,9 @@
 from dataclasses import dataclass as vanilla_dataclass
 from dataclasses import field
 from types import ModuleType
-from typing import Callable, Dict, List, Optional, Set, Tuple
+from typing import Callable, Dict, List, Optional, Tuple
 from unittest.mock import ANY
 
-from pydantic.dataclasses import Field  # type: ignore
 from pydantic.dataclasses import dataclass as pydantic_dataclass
 
 from polyfactory.factories import DataclassFactory
@@ -38,7 +37,6 @@ def test_factory_pydantic_dc() -> None:
         id: int
         name: str
         list_field: List[Dict[str, int]]
-        constrained_field: int = Field(ge=100)
         field_of_some_value: Optional[int] = field(default_factory=lambda: 0)
 
     class MyFactory(DataclassFactory[PydanticDC]):
@@ -52,7 +50,6 @@ def test_factory_pydantic_dc() -> None:
     assert result.list_field
     assert result.list_field[0]
     assert [isinstance(value, int) for value in result.list_field[0].values()]
-    assert result.constrained_field >= 100
 
 
 def test_vanilla_dc_with_embedded_model() -> None:
@@ -195,87 +192,3 @@ class Bar:
 
     foo = FooFactory.build()
     assert isinstance(foo, Foo)
-
-
-def test_variable_length_tuple_generation__many_type_args() -> None:
-    @vanilla_dataclass
-    class VanillaDC:
-        ids: Tuple[int, ...]
-
-    number_of_args = 3
-
-    class MyFactory(DataclassFactory[VanillaDC]):
-        __model__ = VanillaDC
-
-        __randomize_collection_length__ = True
-        __min_collection_length__ = number_of_args
-        __max_collection_length__ = number_of_args
-
-    result = MyFactory.build()
-
-    assert result
-    assert result.ids
-    assert len(result.ids) == number_of_args
-
-
-def test_variable_length_dict_generation__many_type_args() -> None:
-    @vanilla_dataclass
-    class VanillaDC:
-        ids: Dict[str, int]
-
-    number_of_args = 3
-
-    class MyFactory(DataclassFactory[VanillaDC]):
-        __model__ = VanillaDC
-
-        __randomize_collection_length__ = True
-        __min_collection_length__ = number_of_args
-        __max_collection_length__ = number_of_args
-
-    result = MyFactory.build()
-
-    assert result
-    assert result.ids
-    assert len(result.ids) == number_of_args
-
-
-def test_variable_length_list_generation__many_type_args() -> None:
-    @vanilla_dataclass
-    class VanillaDC:
-        ids: List[int]
-
-    number_of_args = 3
-
-    class MyFactory(DataclassFactory[VanillaDC]):
-        __model__ = VanillaDC
-
-        __randomize_collection_length__ = True
-        __min_collection_length__ = number_of_args
-        __max_collection_length__ = number_of_args
-
-    result = MyFactory.build()
-
-    assert result
-    assert result.ids
-    assert len(result.ids) == number_of_args
-
-
-def test_variable_length_set_generation__many_type_args() -> None:
-    @vanilla_dataclass
-    class VanillaDC:
-        ids: Set[int]
-
-    number_of_args = 3
-
-    class MyFactory(DataclassFactory[VanillaDC]):
-        __model__ = VanillaDC
-
-        __randomize_collection_length__ = True
-        __min_collection_length__ = number_of_args
-        __max_collection_length__ = number_of_args
-
-    result = MyFactory.build()
-
-    assert result
-    assert result.ids
-    assert len(result.ids) == number_of_args

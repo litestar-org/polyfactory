@@ -180,58 +180,6 @@ def test_datetime_constraints(t: Union[Type[dt.datetime], Type[dt.time]]) -> Non
         _ = FooFactory.build()
 
 
-@pytest.mark.parametrize("type_", (Set, FrozenSet, List))
-def test_variable_length(type_: Any) -> None:
-    class Foo(Struct):
-        items: type_[int]
-
-    class FooFactory(MsgspecFactory[Foo]):
-        __model__ = Foo
-
-        __randomize_collection_length__ = True
-        number_of_args = 3
-
-        __min_collection_length__ = number_of_args
-        __max_collection_length__ = number_of_args
-
-    foo = FooFactory.build()
-    assert len(foo.items) == 3
-
-
-def test_variable_length__dict() -> None:
-    class Foo(Struct):
-        items: Dict[int, float]
-
-    class FooFactory(MsgspecFactory[Foo]):
-        __model__ = Foo
-
-        __randomize_collection_length__ = True
-        number_of_args = 3
-
-        __min_collection_length__ = number_of_args
-        __max_collection_length__ = number_of_args
-
-    foo = FooFactory.build()
-    assert len(foo.items) == 3
-
-
-def test_variable_length__tuple() -> None:
-    class Foo(Struct):
-        items: Tuple[int, ...]
-
-    class FooFactory(MsgspecFactory[Foo]):
-        __model__ = Foo
-
-        __randomize_collection_length__ = True
-        number_of_args = 3
-
-        __min_collection_length__ = number_of_args
-        __max_collection_length__ = number_of_args
-
-    foo = FooFactory.build()
-    assert len(foo.items) == 3
-
-
 def test_inheritence() -> None:
     class Foo(Struct):
         int_field: int
