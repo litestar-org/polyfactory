@@ -8,7 +8,6 @@ try:
 except ImportError:
     NoneType = type(None)  # type: ignore[misc,assignment]
 
-
 from typing_extensions import get_args, get_origin
 
 from polyfactory.constants import TYPE_MAPPING
