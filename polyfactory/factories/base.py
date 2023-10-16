@@ -85,7 +85,11 @@ from polyfactory.value_generators.constrained_path import handle_constrained_pat
 from polyfactory.value_generators.constrained_strings import handle_constrained_string_or_bytes
 from polyfactory.value_generators.constrained_url import handle_constrained_url
 from polyfactory.value_generators.constrained_uuid import handle_constrained_uuid
-from polyfactory.value_generators.primitives import create_random_boolean, create_random_bytes, create_random_string
+from polyfactory.value_generators.primitives import (
+    create_random_boolean,
+    create_random_bytes,
+    create_random_string,
+)
 
 if TYPE_CHECKING:
     from typing_extensions import TypeGuard
