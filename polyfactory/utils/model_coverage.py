@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from abc import ABC, abstractmethod
 from collections.abc import Callable, Iterable, Iterator, Mapping, MutableSequence
-from typing import AbstractSet, Any, Generic, Set, TypeVar
+from typing import AbstractSet, Any, Generic, Set, TypeVar, cast
 
 from typing_extensions import ParamSpec
 
@@ -17,22 +17,25 @@ class CoverageContainerBase(ABC):
         ...
 
 
-class CoverageContainer(CoverageContainerBase):
-    def __init__(self, instances: Iterable[Any]) -> None:
+T = TypeVar("T")
+
+
+class CoverageContainer(CoverageContainerBase, Generic[T]):
+    def __init__(self, instances: Iterable[T]) -> None:
         self._pos = 0
         self._instances = list(instances)
         if not self._instances:
             msg = "CoverageContainer must have at least one instance"
             raise ValueError(msg)
 
-    def next_value(self) -> Any:
+    def next_value(self) -> T:
         value = self._instances[self._pos % len(self._instances)]
         if isinstance(value, CoverageContainerBase):
             result = value.next_value()
             if value.is_done():
                 # Only move onto the next instance if the sub-container is done
                 self._pos += 1
-            return result
+            return cast(T, result)
 
         self._pos += 1
         return value
@@ -44,7 +47,6 @@ class CoverageContainer(CoverageContainerBase):
         return f"CoverageContainer(instances={self._instances}, is_done={self.is_done()})"
 
 
-T = TypeVar("T")
 P = ParamSpec("P")
 
 
