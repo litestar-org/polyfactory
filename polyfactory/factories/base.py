@@ -184,7 +184,7 @@ class BaseFactory(ABC, Generic[T]):
             if not cls.is_supported_type(model):
                 for factory in BaseFactory._base_factories:
                     if factory.is_supported_type(model):
-                        msg = f"{cls.__name__} does not support {model.__name__}, but this type is support by the {factory.__name__} base factory class. To resolve this error, subclass the factory from {factory.__name__} instead of {cls.__name__}"
+                        msg = f"{cls.__name__} does not support {model.__name__}, but this type is supported by the {factory.__name__} base factory class. To resolve this error, subclass the factory from {factory.__name__} instead of {cls.__name__}"
                         raise ConfigurationException(
                             msg,
                         )
