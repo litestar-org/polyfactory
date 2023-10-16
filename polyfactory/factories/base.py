@@ -8,7 +8,6 @@ from decimal import Decimal
 from enum import EnumMeta
 from functools import partial
 from importlib import import_module
-import inspect
 from ipaddress import (
     IPv4Address,
     IPv4Interface,
@@ -37,7 +36,6 @@ from typing import (
     cast,
 )
 from uuid import UUID
-import warnings
 
 from faker import Faker
 from typing_extensions import get_args
@@ -83,7 +81,6 @@ from polyfactory.value_generators.primitives import (
     create_random_bytes,
     create_random_string,
 )
-from polyfactory.warning_categories import ConfigurationWarning
 
 if TYPE_CHECKING:
     from typing_extensions import TypeGuard
@@ -195,6 +192,7 @@ class BaseFactory(ABC, Generic[T]):
                     raise ConfigurationException(
                         msg,
                     )
+            cls._check_declared_fields_exist_in_model()
         else:
             BaseFactory._base_factories.append(cls)
 
@@ -672,29 +670,26 @@ class BaseFactory(ABC, Generic[T]):
     def get_factory_fields(cls) -> list[tuple[str, Any]]:
         factory_fields = cls.__dict__.items()
         return [
-            (field_name, field_value) for field_name, field_value in factory_fields
+            (field_name, field_value)
+            for field_name, field_value in factory_fields
             if not (field_name.startswith("__") or field_name == "_abc_impl")
         ]
 
-
     @classmethod
-    def _check_declared_fields_exist_in_model(cls):
-        model_fields_names = [field_meta.name for field_meta in cls.get_model_fields()]
+    def _check_declared_fields_exist_in_model(cls) -> None:
+        model_fields_names = {field_meta.name for field_meta in cls.get_model_fields()}
         factory_fields = cls.get_factory_fields()
 
         for field_name, field_value in factory_fields:
-            if field_name in model_fields_names or inspect.isfunction(field_value):
+            if field_name in model_fields_names:
                 continue
-            else:
-                error_message = (
-                    f"{field_name} is declared on the factory {cls.__name__}"
-                    f" but it is not part of the model {cls.__model__.__name__}"
-                )
-                if isinstance(field_value, (Use, PostGenerated, Ignore, Require)):
-                    raise ConfigurationException(error_message)
-                else:
-                    warnings.warn(ConfigurationWarning(error_message))
 
+            error_message = (
+                f"{field_name} is declared on the factory {cls.__name__}"
+                f" but it is not part of the model {cls.__model__.__name__}"
+            )
+            if isinstance(field_value, (Use, PostGenerated, Ignore, Require)):
+                raise ConfigurationException(error_message)
 
     @classmethod
     def process_kwargs(cls, **kwargs: Any) -> dict[str, Any]:
@@ -707,7 +702,7 @@ class BaseFactory(ABC, Generic[T]):
         """
         result: dict[str, Any] = {**kwargs}
         generate_post: dict[str, PostGenerated] = {}
-        cls._check_declared_fields_exist_in_model()
+
         for field_meta in cls.get_model_fields():
             field_build_parameters = cls.extract_field_build_parameters(field_meta=field_meta, build_args=kwargs)
             if cls.should_set_field_value(field_meta, **kwargs):
