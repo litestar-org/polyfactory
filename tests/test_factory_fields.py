@@ -1,6 +1,6 @@
 import random
 from datetime import datetime, timedelta
-from typing import Any, Optional
+from typing import Any, Optional, Union
 
 import pytest
 from pydantic import BaseModel
@@ -172,7 +172,7 @@ def test_post_generation_classmethod() -> None:
         Ignore(),
     ],
 )
-def test_non_existing_model_fields_raises(factory_field: Use | PostGenerated | Require | Ignore) -> None:
+def test_non_existing_model_fields_raises(factory_field: Union[Use, PostGenerated, Require, Ignore]) -> None:
     class NoFieldModel(BaseModel):
         pass
 
