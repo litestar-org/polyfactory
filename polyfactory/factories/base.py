@@ -668,6 +668,13 @@ class BaseFactory(ABC, Generic[T]):
 
     @classmethod
     def get_factory_fields(cls) -> list[tuple[str, Any]]:
+        """Retrieve a list of fields from the factory.
+
+        Trying to be smart about what should be considered a field on the model,
+        ignoring dunder methods and some parent class attributes.
+
+        :returns: A list of tuples made of field name and field definition
+        """
         factory_fields = cls.__dict__.items()
         return [
             (field_name, field_value)
