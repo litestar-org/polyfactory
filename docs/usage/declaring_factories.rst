@@ -41,8 +41,8 @@ Or for attrs models:
 .. note::
     Declaring an argument on the factory that doesn't exist on the model will trigger an exception.
 
-    This is only true when fields are declared with ``Use``, ``PostGenerated``, ``Ignore`` and ``Require``,
-    any other field definition will not be checked.
+    This is only true when fields are declared with ``Use``, ``PostGenerated``, ``Ignore`` and ``Require``.
+    Any other field definition will not be checked.
 
 Imperative Factory Creation
 ---------------------------

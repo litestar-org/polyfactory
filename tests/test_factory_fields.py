@@ -180,4 +180,4 @@ def test_non_existing_model_fields_raises(factory_field: Union[Use, PostGenerate
         ConfigurationException,
         match="unknown_field is declared on the factory NoFieldModelFactory but it is not part of the model NoFieldModel",
     ):
-        ModelFactory.create_factory(NoFieldModel, bases=None, **{"unknown_field": factory_field})
+        ModelFactory.create_factory(NoFieldModel, bases=None, unknown_field=factory_field)
