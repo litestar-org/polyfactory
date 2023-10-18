@@ -1145,6 +1145,41 @@ Once a factory is generated, it is then cached and reused - when the same type i
 </div>
 </div>
 </section>
+<section id="check-factory-fields">
+<h2>Check Factory Fields<a class="headerlink" href="#check-factory-fields" title="Permalink to this heading">#</a></h2>
+<p>When <cite>__check_model__</cite> is set to <cite>True</cite>, declaring fields on the factory that don’t exist on the model will trigger an exception.</p>
+<p>This is only true when fields are declared with <code class="docutils literal notranslate"><span class="pre">Use</span></code>, <code class="docutils literal notranslate"><span class="pre">PostGenerated</span></code>, <code class="docutils literal notranslate"><span class="pre">Ignore</span></code> and <code class="docutils literal notranslate"><span class="pre">Require</span></code>.
+Any other field definition will not be checked.</p>
+<div class="literal-block-wrapper docutils container" id="id9">
+<div class="code-block-caption"><span class="caption-text">Enable Check Factory Fields</span><a class="headerlink" href="#id9" title="Permalink to this code">#</a></div>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">dataclasses</span> <span class="kn">import</span> <span class="n">dataclass</span>
+<span class="kn">from</span> <span class="nn">uuid</span> <span class="kn">import</span> <span class="n">UUID</span>
+
+<span class="kn">import</span> <span class="nn">pytest</span>
+
+<span class="kn">from</span> <span class="nn">polyfactory</span> <span class="kn">import</span> <span class="n">ConfigurationException</span><span class="p">,</span> <span class="n">PostGenerated</span>
+<span class="kn">from</span> <span class="nn">polyfactory.factories.dataclass_factory</span> <span class="kn">import</span> <span class="n">DataclassFactory</span>
+
+
+<span class="nd">@dataclass</span>
+<span class="k">class</span> <span class="nc">Person</span><span class="p">:</span>
+    <span class="nb">id</span><span class="p">:</span> <span class="n">UUID</span>
+
+
+<span class="k">def</span> <span class="nf">test_check_factory_fields</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="k">with</span> <span class="n">pytest</span><span class="o">.</span><span class="n">raises</span><span class="p">(</span>
+        <span class="n">ConfigurationException</span><span class="p">,</span>
+        <span class="n">match</span><span class="o">=</span><span class="s2">&quot;unknown_field is declared on the factory PersonFactory but it is not part of the model Person&quot;</span><span class="p">,</span>
+    <span class="p">):</span>
+
+        <span class="k">class</span> <span class="nc">PersonFactory</span><span class="p">(</span><span class="n">DataclassFactory</span><span class="p">[</span><span class="n">Person</span><span class="p">]):</span>
+            <span class="n">__model__</span> <span class="o">=</span> <span class="n">Person</span>
+            <span class="n">__check_model__</span> <span class="o">=</span> <span class="kc">True</span>
+            <span class="n">unknown_field</span> <span class="o">=</span> <span class="n">PostGenerated</span><span class="p">(</span><span class="k">lambda</span><span class="p">:</span> <span class="s2">&quot;foo&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</section>
 </section>
 
 
@@ -1197,6 +1232,7 @@ Once a factory is generated, it is then cached and reused - when the same type i
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#defining-default-factories">Defining Default Factories</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#randomized-collection-length">Randomized Collection Length</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#allow-none-optionals">Allow None Optionals</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#check-factory-fields">Check Factory Fields</a></li>
 </ul>
   </nav></div>
 

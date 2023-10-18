@@ -772,6 +772,13 @@ This attribute is required for non-base factories and an exception will be raise
 </dd></dl>
 
 <dl class="py attribute">
+<dt class="sig sig-object py" id="polyfactory.factories.base.BaseFactory.__check_model__">
+<span class="sig-name descname"><span class="pre">__check_model__</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.12)"><span class="pre">bool</span></a></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">False</span></em><a class="headerlink" href="#polyfactory.factories.base.BaseFactory.__check_model__" title="Permalink to this definition">#</a></dt>
+<dd><p>Flag dictating whether to check if fields defined on the factory exists on the model or not.
+If ‘True’, checks will be done against Use, PostGenerated, Ignore, Require constructs fields only.</p>
+</dd></dl>
+
+<dl class="py attribute">
 <dt class="sig sig-object py" id="polyfactory.factories.base.BaseFactory.__allow_none_optionals__">
 <span class="sig-name descname"><span class="pre">__allow_none_optionals__</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">ClassVar</span><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.12)"><span class="pre">bool</span></a><span class="p"><span class="pre">]</span></span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">True</span></em><a class="headerlink" href="#polyfactory.factories.base.BaseFactory.__allow_none_optionals__" title="Permalink to this definition">#</a></dt>
 <dd><p>Flag dictating whether to allow ‘None’ for optional values.
@@ -1044,6 +1051,19 @@ This attribute can be used to control random generation.</p>
 </dd></dl>
 
 <dl class="py method">
+<dt class="sig sig-object py" id="polyfactory.factories.base.BaseFactory.get_factory_fields">
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">get_factory_fields</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.12)"><span class="pre">list</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.12)"><span class="pre">tuple</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.12)"><span class="pre">str</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Any" title="(in Python v3.12)"><span class="pre">Any</span></a><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#polyfactory.factories.base.BaseFactory.get_factory_fields" title="Permalink to this definition">#</a></dt>
+<dd><p>Retrieve a list of fields from the factory.</p>
+<p>Trying to be smart about what should be considered a field on the model,
+ignoring dunder methods and some parent class attributes.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>A list of tuples made of field name and field definition</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
 <dt class="sig sig-object py" id="polyfactory.factories.base.BaseFactory.process_kwargs">
 <em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">process_kwargs</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Any" title="(in Python v3.12)"><span class="pre">Any</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.12)"><span class="pre">dict</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.12)"><span class="pre">str</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Any" title="(in Python v3.12)"><span class="pre">Any</span></a><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#polyfactory.factories.base.BaseFactory.process_kwargs" title="Permalink to this definition">#</a></dt>
 <dd><p>Process the given kwargs and generate values for the factory’s model.</p>
@@ -1199,6 +1219,7 @@ This attribute can be used to control random generation.</p>
     <ul class="visible nav section-nav flex-column">
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#polyfactory.factories.base.BaseFactory"><code class="docutils literal notranslate"><span class="pre">BaseFactory</span></code></a><ul class="visible nav section-nav flex-column">
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#polyfactory.factories.base.BaseFactory.__model__"><code class="docutils literal notranslate"><span class="pre">BaseFactory.__model__</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#polyfactory.factories.base.BaseFactory.__check_model__"><code class="docutils literal notranslate"><span class="pre">BaseFactory.__check_model__</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#polyfactory.factories.base.BaseFactory.__allow_none_optionals__"><code class="docutils literal notranslate"><span class="pre">BaseFactory.__allow_none_optionals__</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#polyfactory.factories.base.BaseFactory.__sync_persistence__"><code class="docutils literal notranslate"><span class="pre">BaseFactory.__sync_persistence__</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#polyfactory.factories.base.BaseFactory.__async_persistence__"><code class="docutils literal notranslate"><span class="pre">BaseFactory.__async_persistence__</span></code></a></li>
@@ -1223,6 +1244,7 @@ This attribute can be used to control random generation.</p>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#polyfactory.factories.base.BaseFactory.should_set_none_value"><code class="docutils literal notranslate"><span class="pre">BaseFactory.should_set_none_value()</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#polyfactory.factories.base.BaseFactory.should_set_field_value"><code class="docutils literal notranslate"><span class="pre">BaseFactory.should_set_field_value()</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#polyfactory.factories.base.BaseFactory.get_model_fields"><code class="docutils literal notranslate"><span class="pre">BaseFactory.get_model_fields()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#polyfactory.factories.base.BaseFactory.get_factory_fields"><code class="docutils literal notranslate"><span class="pre">BaseFactory.get_factory_fields()</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#polyfactory.factories.base.BaseFactory.process_kwargs"><code class="docutils literal notranslate"><span class="pre">BaseFactory.process_kwargs()</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#polyfactory.factories.base.BaseFactory.build"><code class="docutils literal notranslate"><span class="pre">BaseFactory.build()</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#polyfactory.factories.base.BaseFactory.batch"><code class="docutils literal notranslate"><span class="pre">BaseFactory.batch()</span></code></a></li>

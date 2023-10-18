@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
 
-    <title>msgspec_factory &#8212; Polyfactory</title>
+    <title>SQLAlchemyFactory &#8212; Polyfactory</title>
   
   
   
@@ -45,12 +45,12 @@
     <script src="../../_static/copybutton.js?v=f281be69"></script>
     <script src="../../_static/litestar-theme.js?v=ab2dcc9e"></script>
     <script src="../../_static/design-tabs.js?v=36754332"></script>
-    <script>DOCUMENTATION_OPTIONS.pagename = 'reference/factories/msgspec_factory';</script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'usage/library_factories/sqlalchemy_factory';</script>
     <link rel="icon" href="../../_static/favicon.png"/>
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
-    <link rel="next" title="odmantic_odm_factory" href="odmantic_odm_factory.html" />
-    <link rel="prev" title="pydantic_factory" href="pydantic_factory.html" />
+    <link rel="next" title="Declaring Factories" href="../declaring_factories.html" />
+    <link rel="prev" title="Polyfactory Factories" href="index.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
   </head>
@@ -405,6 +405,10 @@ document.write(`
   
 
   
+    <label class="sidebar-toggle secondary-toggle" for="__secondary" tabindex="0">
+      <span class="fa-solid fa-outdent"></span>
+    </label>
+  
 </div>
 
     </nav>
@@ -645,46 +649,46 @@ document.write(`
   <p class="bd-links__title" role="heading" aria-level="1">Section Navigation</p>
   <div class="bd-toc-item navbar-nav"><p aria-level="2" class="caption" role="heading"><span class="caption-text">Documentation</span></p>
 <ul class="current nav bd-sidenav">
-<li class="toctree-l1 has-children"><a class="reference internal" href="../../usage/index.html">Usage Guide</a><input class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-1"><i class="fa-solid fa-chevron-down"></i></label><ul>
-<li class="toctree-l2 has-children"><a class="reference internal" href="../../usage/library_factories/index.html">Polyfactory Factories</a><input class="toctree-checkbox" id="toctree-checkbox-2" name="toctree-checkbox-2" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-2"><i class="fa-solid fa-chevron-down"></i></label><ul>
-<li class="toctree-l3"><a class="reference internal" href="../../usage/library_factories/sqlalchemy_factory.html">SQLAlchemyFactory</a></li>
+<li class="toctree-l1 current active has-children"><a class="reference internal" href="../index.html">Usage Guide</a><input checked="" class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-1"><i class="fa-solid fa-chevron-down"></i></label><ul class="current">
+<li class="toctree-l2 current active has-children"><a class="reference internal" href="index.html">Polyfactory Factories</a><input checked="" class="toctree-checkbox" id="toctree-checkbox-2" name="toctree-checkbox-2" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-2"><i class="fa-solid fa-chevron-down"></i></label><ul class="current">
+<li class="toctree-l3 current active"><a class="current reference internal" href="#">SQLAlchemyFactory</a></li>
 </ul>
 </li>
-<li class="toctree-l2"><a class="reference internal" href="../../usage/declaring_factories.html">Declaring Factories</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../usage/configuration.html">Factory Configuration</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../usage/fields.html">Factory Fields</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../usage/decorators.html">The <code class="docutils literal notranslate"><span class="pre">post_generated</span></code> decorator</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../usage/fixtures.html">Pytest fixtures</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../usage/handling_custom_types.html">Handling Custom Types</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../declaring_factories.html">Declaring Factories</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../configuration.html">Factory Configuration</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../fields.html">Factory Fields</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../decorators.html">The <code class="docutils literal notranslate"><span class="pre">post_generated</span></code> decorator</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../fixtures.html">Pytest fixtures</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../handling_custom_types.html">Handling Custom Types</a></li>
 </ul>
 </li>
-<li class="toctree-l1 current active has-children"><a class="reference internal" href="../index.html">API Reference</a><input checked="" class="toctree-checkbox" id="toctree-checkbox-3" name="toctree-checkbox-3" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-3"><i class="fa-solid fa-chevron-down"></i></label><ul class="current">
-<li class="toctree-l2"><a class="reference internal" href="../constants.html">constants</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../exceptions.html">exceptions</a></li>
-<li class="toctree-l2 current active has-children"><a class="reference internal" href="index.html">factories</a><input checked="" class="toctree-checkbox" id="toctree-checkbox-4" name="toctree-checkbox-4" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-4"><i class="fa-solid fa-chevron-down"></i></label><ul class="current">
-<li class="toctree-l3"><a class="reference internal" href="base.html">base_factory</a></li>
-<li class="toctree-l3"><a class="reference internal" href="dataclass_factory.html">dataclass_factory</a></li>
-<li class="toctree-l3"><a class="reference internal" href="typed_dict_factory.html">typed_dict_factory</a></li>
-<li class="toctree-l3"><a class="reference internal" href="pydantic_factory.html">pydantic_factory</a></li>
-<li class="toctree-l3 current active"><a class="current reference internal" href="#">msgspec_factory</a></li>
-<li class="toctree-l3"><a class="reference internal" href="odmantic_odm_factory.html">odmantic_odm_factory</a></li>
-<li class="toctree-l3"><a class="reference internal" href="beanie_odm_factory.html">beanie_odm_factory</a></li>
-<li class="toctree-l3"><a class="reference internal" href="attrs_factory.html">attrs_factory</a></li>
-<li class="toctree-l3"><a class="reference internal" href="sqlalchemy_factory.html">sqlalchemy_factory</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../reference/index.html">API Reference</a><input class="toctree-checkbox" id="toctree-checkbox-3" name="toctree-checkbox-3" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-3"><i class="fa-solid fa-chevron-down"></i></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../reference/constants.html">constants</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../reference/exceptions.html">exceptions</a></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../reference/factories/index.html">factories</a><input class="toctree-checkbox" id="toctree-checkbox-4" name="toctree-checkbox-4" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-4"><i class="fa-solid fa-chevron-down"></i></label><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../reference/factories/base.html">base_factory</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../reference/factories/dataclass_factory.html">dataclass_factory</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../reference/factories/typed_dict_factory.html">typed_dict_factory</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../reference/factories/pydantic_factory.html">pydantic_factory</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../reference/factories/msgspec_factory.html">msgspec_factory</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../reference/factories/odmantic_odm_factory.html">odmantic_odm_factory</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../reference/factories/beanie_odm_factory.html">beanie_odm_factory</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../reference/factories/attrs_factory.html">attrs_factory</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../reference/factories/sqlalchemy_factory.html">sqlalchemy_factory</a></li>
 </ul>
 </li>
-<li class="toctree-l2"><a class="reference internal" href="../field_meta.html">field_meta</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../fields.html">fields</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../decorators.html">decorators</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../persistence.html">persistence</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../pytest_plugin.html">pytest_plugin</a></li>
-<li class="toctree-l2 has-children"><a class="reference internal" href="../value_generators/index.html">value_generators</a><input class="toctree-checkbox" id="toctree-checkbox-5" name="toctree-checkbox-5" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-5"><i class="fa-solid fa-chevron-down"></i></label><ul>
-<li class="toctree-l3"><a class="reference internal" href="../value_generators/complex_types.html">complex_types</a></li>
-<li class="toctree-l3"><a class="reference internal" href="../value_generators/constrained_collections.html">constrained_collections</a></li>
-<li class="toctree-l3"><a class="reference internal" href="../value_generators/constrained_dates.html">constrained_dates</a></li>
-<li class="toctree-l3"><a class="reference internal" href="../value_generators/constrained_numbers.html">constrained_numbers</a></li>
-<li class="toctree-l3"><a class="reference internal" href="../value_generators/constrained_strings.html">constrained_strings</a></li>
-<li class="toctree-l3"><a class="reference internal" href="../value_generators/primitives.html">primitives</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../reference/field_meta.html">field_meta</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../reference/fields.html">fields</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../reference/decorators.html">decorators</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../reference/persistence.html">persistence</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../reference/pytest_plugin.html">pytest_plugin</a></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../reference/value_generators/index.html">value_generators</a><input class="toctree-checkbox" id="toctree-checkbox-5" name="toctree-checkbox-5" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-5"><i class="fa-solid fa-chevron-down"></i></label><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../reference/value_generators/complex_types.html">complex_types</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../reference/value_generators/constrained_collections.html">constrained_collections</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../reference/value_generators/constrained_dates.html">constrained_dates</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../reference/value_generators/constrained_numbers.html">constrained_numbers</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../reference/value_generators/constrained_strings.html">constrained_strings</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../reference/value_generators/primitives.html">primitives</a></li>
 </ul>
 </li>
 </ul>
@@ -731,12 +735,12 @@ document.write(`
       </a>
     </li>
     
-    <li class="breadcrumb-item"><a href="../index.html" class="nav-link">API Reference</a></li>
+    <li class="breadcrumb-item"><a href="../index.html" class="nav-link">Usage Guide</a></li>
     
     
-    <li class="breadcrumb-item"><a href="index.html" class="nav-link">factories</a></li>
+    <li class="breadcrumb-item"><a href="index.html" class="nav-link">Polyfactory Factories</a></li>
     
-    <li class="breadcrumb-item active" aria-current="page">msgspec_factory</li>
+    <li class="breadcrumb-item active" aria-current="page">SQLAlchemyFactory</li>
   </ul>
 </nav>
 </div>
@@ -753,8 +757,158 @@ document.write(`
 <div id="searchbox"></div>
                 <article class="bd-article" role="main">
                   
-  <section id="msgspec-factory">
-<h1>msgspec_factory<a class="headerlink" href="#msgspec-factory" title="Permalink to this heading">#</a></h1>
+  <section id="sqlalchemyfactory">
+<h1>SQLAlchemyFactory<a class="headerlink" href="#sqlalchemyfactory" title="Permalink to this heading">#</a></h1>
+<p>Basic usage is like other factories</p>
+<div class="literal-block-wrapper docutils container" id="id1">
+<div class="code-block-caption"><span class="caption-text">Declaring a factory for a SQLAlchemy model</span><a class="headerlink" href="#id1" title="Permalink to this code">#</a></div>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">sqlalchemy.orm</span> <span class="kn">import</span> <span class="n">DeclarativeBase</span><span class="p">,</span> <span class="n">Mapped</span><span class="p">,</span> <span class="n">mapped_column</span>
+
+<span class="kn">from</span> <span class="nn">polyfactory.factories.sqlalchemy_factory</span> <span class="kn">import</span> <span class="n">SQLAlchemyFactory</span>
+
+
+<span class="k">class</span> <span class="nc">Base</span><span class="p">(</span><span class="n">DeclarativeBase</span><span class="p">):</span>
+    <span class="o">...</span>
+
+
+<span class="k">class</span> <span class="nc">Author</span><span class="p">(</span><span class="n">Base</span><span class="p">):</span>
+    <span class="n">__tablename__</span> <span class="o">=</span> <span class="s2">&quot;authors&quot;</span>
+
+    <span class="nb">id</span><span class="p">:</span> <span class="n">Mapped</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="n">mapped_column</span><span class="p">(</span><span class="n">primary_key</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="n">name</span><span class="p">:</span> <span class="n">Mapped</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span>
+
+
+<span class="k">class</span> <span class="nc">AuthorFactory</span><span class="p">(</span><span class="n">SQLAlchemyFactory</span><span class="p">[</span><span class="n">Author</span><span class="p">]):</span>
+    <span class="n">__model__</span> <span class="o">=</span> <span class="n">Author</span>
+
+
+<span class="k">def</span> <span class="nf">test_sqla_factory</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="n">author</span> <span class="o">=</span> <span class="n">AuthorFactory</span><span class="o">.</span><span class="n">build</span><span class="p">()</span>
+    <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">author</span><span class="p">,</span> <span class="n">Author</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>The examples here require SQLAlchemy 2 to be installed. The factory itself supports both 1.4 and 2.</p>
+</div>
+<section id="configuration">
+<h2>Configuration<a class="headerlink" href="#configuration" title="Permalink to this heading">#</a></h2>
+<p>By default, relationships will not be set. This can be overridden via <code class="docutils literal notranslate"><span class="pre">__set_relationships__</span></code>.</p>
+<div class="literal-block-wrapper docutils container" id="id2">
+<div class="code-block-caption"><span class="caption-text">Setting relationships</span><a class="headerlink" href="#id2" title="Permalink to this code">#</a></div>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">List</span>
+
+<span class="kn">from</span> <span class="nn">sqlalchemy</span> <span class="kn">import</span> <span class="n">ForeignKey</span>
+<span class="kn">from</span> <span class="nn">sqlalchemy.orm</span> <span class="kn">import</span> <span class="n">DeclarativeBase</span><span class="p">,</span> <span class="n">Mapped</span><span class="p">,</span> <span class="n">mapped_column</span><span class="p">,</span> <span class="n">relationship</span>
+
+<span class="kn">from</span> <span class="nn">polyfactory.factories.sqlalchemy_factory</span> <span class="kn">import</span> <span class="n">SQLAlchemyFactory</span>
+
+
+<span class="k">class</span> <span class="nc">Base</span><span class="p">(</span><span class="n">DeclarativeBase</span><span class="p">):</span>
+    <span class="o">...</span>
+
+
+<span class="k">class</span> <span class="nc">Author</span><span class="p">(</span><span class="n">Base</span><span class="p">):</span>
+    <span class="n">__tablename__</span> <span class="o">=</span> <span class="s2">&quot;authors&quot;</span>
+
+    <span class="nb">id</span><span class="p">:</span> <span class="n">Mapped</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="n">mapped_column</span><span class="p">(</span><span class="n">primary_key</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="n">name</span><span class="p">:</span> <span class="n">Mapped</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span>
+
+    <span class="n">books</span><span class="p">:</span> <span class="n">Mapped</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="s2">&quot;Book&quot;</span><span class="p">]]</span> <span class="o">=</span> <span class="n">relationship</span><span class="p">(</span><span class="s2">&quot;Book&quot;</span><span class="p">,</span> <span class="n">uselist</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+
+<span class="k">class</span> <span class="nc">Book</span><span class="p">(</span><span class="n">Base</span><span class="p">):</span>
+    <span class="n">__tablename__</span> <span class="o">=</span> <span class="s2">&quot;books&quot;</span>
+
+    <span class="nb">id</span><span class="p">:</span> <span class="n">Mapped</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="n">mapped_column</span><span class="p">(</span><span class="n">primary_key</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="n">author_id</span><span class="p">:</span> <span class="n">Mapped</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="n">mapped_column</span><span class="p">(</span><span class="n">ForeignKey</span><span class="p">(</span><span class="n">Author</span><span class="o">.</span><span class="n">id</span><span class="p">))</span>
+
+
+<span class="k">class</span> <span class="nc">AuthorFactory</span><span class="p">(</span><span class="n">SQLAlchemyFactory</span><span class="p">[</span><span class="n">Author</span><span class="p">]):</span>
+    <span class="n">__model__</span> <span class="o">=</span> <span class="n">Author</span>
+
+
+<span class="k">class</span> <span class="nc">AuthorFactoryWithRelationship</span><span class="p">(</span><span class="n">SQLAlchemyFactory</span><span class="p">[</span><span class="n">Author</span><span class="p">]):</span>
+    <span class="n">__model__</span> <span class="o">=</span> <span class="n">Author</span>
+    <span class="n">__set_relationships__</span> <span class="o">=</span> <span class="kc">True</span>
+
+
+<span class="k">def</span> <span class="nf">test_sqla_factory_without_relationship</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="n">author</span> <span class="o">=</span> <span class="n">AuthorFactory</span><span class="o">.</span><span class="n">build</span><span class="p">()</span>
+    <span class="k">assert</span> <span class="n">author</span><span class="o">.</span><span class="n">books</span> <span class="o">==</span> <span class="p">[]</span>
+
+
+<span class="k">def</span> <span class="nf">test_sqla_factory</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="n">author</span> <span class="o">=</span> <span class="n">AuthorFactoryWithRelationship</span><span class="o">.</span><span class="n">build</span><span class="p">()</span>
+    <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">author</span><span class="p">,</span> <span class="n">Author</span><span class="p">)</span>
+    <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">author</span><span class="o">.</span><span class="n">books</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">Book</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>In general, foreign keys are not automatically generated by <code class="docutils literal notranslate"><span class="pre">.build</span></code>. This can be resolved by setting the fields yourself and/or using <code class="docutils literal notranslate"><span class="pre">create_sync</span></code>/ <code class="docutils literal notranslate"><span class="pre">create_async</span></code> so models can be added to a SQLA session so these are set.</p>
+</div>
+</section>
+<section id="persistence">
+<h2>Persistence<a class="headerlink" href="#persistence" title="Permalink to this heading">#</a></h2>
+<p>A handler is provided to allow persistence. This can be used by setting <code class="docutils literal notranslate"><span class="pre">__session__</span></code> attribute on a factory.</p>
+<div class="literal-block-wrapper docutils container" id="id3">
+<div class="code-block-caption"><span class="caption-text">Using persistence</span><a class="headerlink" href="#id3" title="Permalink to this code">#</a></div>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">List</span>
+
+<span class="kn">from</span> <span class="nn">sqlalchemy</span> <span class="kn">import</span> <span class="n">ForeignKey</span><span class="p">,</span> <span class="n">create_engine</span>
+<span class="kn">from</span> <span class="nn">sqlalchemy.orm</span> <span class="kn">import</span> <span class="n">DeclarativeBase</span><span class="p">,</span> <span class="n">Mapped</span><span class="p">,</span> <span class="n">Session</span><span class="p">,</span> <span class="n">mapped_column</span><span class="p">,</span> <span class="n">relationship</span>
+
+<span class="kn">from</span> <span class="nn">polyfactory.factories.sqlalchemy_factory</span> <span class="kn">import</span> <span class="n">SQLAlchemyFactory</span>
+
+
+<span class="k">class</span> <span class="nc">Base</span><span class="p">(</span><span class="n">DeclarativeBase</span><span class="p">):</span>
+    <span class="o">...</span>
+
+
+<span class="k">class</span> <span class="nc">Author</span><span class="p">(</span><span class="n">Base</span><span class="p">):</span>
+    <span class="n">__tablename__</span> <span class="o">=</span> <span class="s2">&quot;authors&quot;</span>
+
+    <span class="nb">id</span><span class="p">:</span> <span class="n">Mapped</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="n">mapped_column</span><span class="p">(</span><span class="n">primary_key</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="n">name</span><span class="p">:</span> <span class="n">Mapped</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span>
+
+    <span class="n">books</span><span class="p">:</span> <span class="n">Mapped</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="s2">&quot;Book&quot;</span><span class="p">]]</span> <span class="o">=</span> <span class="n">relationship</span><span class="p">(</span><span class="s2">&quot;Book&quot;</span><span class="p">,</span> <span class="n">uselist</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+
+<span class="k">class</span> <span class="nc">Book</span><span class="p">(</span><span class="n">Base</span><span class="p">):</span>
+    <span class="n">__tablename__</span> <span class="o">=</span> <span class="s2">&quot;books&quot;</span>
+
+    <span class="nb">id</span><span class="p">:</span> <span class="n">Mapped</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="n">mapped_column</span><span class="p">(</span><span class="n">primary_key</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="n">author_id</span><span class="p">:</span> <span class="n">Mapped</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="n">mapped_column</span><span class="p">(</span><span class="n">ForeignKey</span><span class="p">(</span><span class="n">Author</span><span class="o">.</span><span class="n">id</span><span class="p">))</span>
+
+
+<span class="k">class</span> <span class="nc">AuthorFactory</span><span class="p">(</span><span class="n">SQLAlchemyFactory</span><span class="p">[</span><span class="n">Author</span><span class="p">]):</span>
+    <span class="n">__model__</span> <span class="o">=</span> <span class="n">Author</span>
+    <span class="n">__set_relationships__</span> <span class="o">=</span> <span class="kc">True</span>
+
+
+<span class="k">def</span> <span class="nf">test_sqla_factory_persistence</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="n">engine</span> <span class="o">=</span> <span class="n">create_engine</span><span class="p">(</span><span class="s2">&quot;sqlite:///:memory:&quot;</span><span class="p">)</span>
+    <span class="n">Base</span><span class="o">.</span><span class="n">metadata</span><span class="o">.</span><span class="n">create_all</span><span class="p">(</span><span class="n">engine</span><span class="p">)</span>
+    <span class="n">session</span> <span class="o">=</span> <span class="n">Session</span><span class="p">(</span><span class="n">engine</span><span class="p">)</span>
+
+    <span class="n">AuthorFactory</span><span class="o">.</span><span class="n">__session__</span> <span class="o">=</span> <span class="n">session</span>  <span class="c1"># Or using a callable that returns a session</span>
+
+    <span class="n">author</span> <span class="o">=</span> <span class="n">AuthorFactory</span><span class="o">.</span><span class="n">create_sync</span><span class="p">()</span>
+    <span class="k">assert</span> <span class="n">author</span><span class="o">.</span><span class="n">id</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
+    <span class="k">assert</span> <span class="n">author</span><span class="o">.</span><span class="n">id</span> <span class="o">==</span> <span class="n">author</span><span class="o">.</span><span class="n">books</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">author_id</span>
+</pre></div>
+</div>
+</div>
+<p>By default, this will add generated models to the session and then commit. This can be customised further by setting <code class="docutils literal notranslate"><span class="pre">__sync_persistence__</span></code>.</p>
+<p>Similarly for <code class="docutils literal notranslate"><span class="pre">__async_session__</span></code> and <code class="docutils literal notranslate"><span class="pre">create_async</span></code>.</p>
+</section>
+<section id="api-reference">
+<h2>API reference<a class="headerlink" href="#api-reference" title="Permalink to this heading">#</a></h2>
+<p>Full API docs are available <a class="reference internal" href="../../reference/factories/sqlalchemy_factory.html#polyfactory.factories.sqlalchemy_factory.SQLAlchemyFactory" title="polyfactory.factories.sqlalchemy_factory.SQLAlchemyFactory"><code class="xref py py-class docutils literal notranslate"><span class="pre">here</span></code></a>.</p>
+</section>
 </section>
 
 
@@ -768,20 +922,20 @@ document.write(`
                   <!-- Previous / next buttons -->
 <div class="prev-next-area">
     <a class="left-prev"
-       href="pydantic_factory.html"
+       href="index.html"
        title="previous page">
       <i class="fa-solid fa-angle-left"></i>
       <div class="prev-next-info">
         <p class="prev-next-subtitle">previous</p>
-        <p class="prev-next-title">pydantic_factory</p>
+        <p class="prev-next-title">Polyfactory Factories</p>
       </div>
     </a>
     <a class="right-next"
-       href="odmantic_odm_factory.html"
+       href="../declaring_factories.html"
        title="next page">
       <div class="prev-next-info">
         <p class="prev-next-subtitle">next</p>
-        <p class="prev-next-title">odmantic_odm_factory</p>
+        <p class="prev-next-title">Declaring Factories</p>
       </div>
       <i class="fa-solid fa-angle-right"></i>
     </a>
@@ -791,6 +945,22 @@ document.write(`
             </div>
             
             
+              
+                <div class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+  <div class="sidebar-secondary-item">
+  <div class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> On this page
+  </div>
+  <nav class="bd-toc-nav page-toc">
+    <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#configuration">Configuration</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#persistence">Persistence</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#api-reference">API reference</a></li>
+</ul>
+  </nav></div>
+
+</div></div>
               
             
           </div>
