@@ -38,11 +38,6 @@ Or for attrs models:
     Validators are not currently supported - neither the built in validators that come
     with `attrs` nor custom validators.
 
-.. note::
-    Declaring an argument on the factory that doesn't exist on the model will trigger an exception.
-
-    This is only true when fields are declared with ``Use``, ``PostGenerated``, ``Ignore`` and ``Require``.
-    Any other field definition will not be checked.
 
 Imperative Factory Creation
 ---------------------------

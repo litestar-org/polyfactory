@@ -102,6 +102,11 @@ class BaseFactory(ABC, Generic[T]):
     The model for the factory.
     This attribute is required for non-base factories and an exception will be raised if its not set.
     """
+    __check_model__: bool = False
+    """
+    Flag dictating whether to check if fields defined on the factory exists on the model or not.
+    If 'True', checks will be done against Use, PostGenerated, Ignore, Require constructs fields only.
+    """
     __allow_none_optionals__: ClassVar[bool] = True
     """
     Flag dictating whether to allow 'None' for optional values.
@@ -192,7 +197,8 @@ class BaseFactory(ABC, Generic[T]):
                     raise ConfigurationException(
                         msg,
                     )
-            cls._check_declared_fields_exist_in_model()
+            if cls.__check_model__:
+                cls._check_declared_fields_exist_in_model()
         else:
             BaseFactory._base_factories.append(cls)
 
