@@ -113,7 +113,7 @@ jobs:
           cache: true
 
       - name: Install dependencies
-        run: pdm install -G:docs
+        run: pdm install -G:all
 
       - name: Build docs
         run: pdm run make docs

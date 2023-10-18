@@ -1,12 +1,12 @@
 import random
 from datetime import datetime, timedelta
-from typing import Any, Optional
+from typing import Any, Optional, Union
 
 import pytest
 from pydantic import BaseModel
 
 from polyfactory.decorators import post_generated
-from polyfactory.exceptions import MissingBuildKwargException
+from polyfactory.exceptions import ConfigurationException, MissingBuildKwargException
 from polyfactory.factories.pydantic_factory import ModelFactory
 from polyfactory.fields import Ignore, PostGenerated, Require, Use
 
@@ -161,3 +161,43 @@ def test_post_generation_classmethod() -> None:
         assert result.caption == "this was really long for me"
     else:
         assert result.caption == "just this"
+
+
+@pytest.mark.parametrize(
+    "factory_field",
+    [
+        Use(lambda: "foo"),
+        PostGenerated(lambda: "foo"),
+        Require(),
+        Ignore(),
+    ],
+)
+def test_non_existing_model_fields_does_not_raise_by_default(
+    factory_field: Union[Use, PostGenerated, Require, Ignore],
+) -> None:
+    class NoFieldModel(BaseModel):
+        pass
+
+    ModelFactory.create_factory(NoFieldModel, bases=None, unknown_field=factory_field)
+
+
+@pytest.mark.parametrize(
+    "factory_field",
+    [
+        Use(lambda: "foo"),
+        PostGenerated(lambda: "foo"),
+        Require(),
+        Ignore(),
+    ],
+)
+def test_non_existing_model_fields_raises_with__check__model__(
+    factory_field: Union[Use, PostGenerated, Require, Ignore],
+) -> None:
+    class NoFieldModel(BaseModel):
+        pass
+
+    with pytest.raises(
+        ConfigurationException,
+        match="unknown_field is declared on the factory NoFieldModelFactory but it is not part of the model NoFieldModel",
+    ):
+        ModelFactory.create_factory(NoFieldModel, bases=None, __check_model__=True, unknown_field=factory_field)
