@@ -341,6 +341,17 @@
         "doc",
         "test"
       ]
+    },
+    {
+      "login": "johnraz",
+      "name": "Jonathan Liuti",
+      "avatar_url": "https://avatars.githubusercontent.com/u/304164?v=4",
+      "profile": "https://github.com/johnraz",
+      "contributions": [
+        "code",
+        "doc",
+        "test"
+      ]
     }
   ],
   "contributorsPerLine": 7,

@@ -4,6 +4,7 @@ from random import Random
 from typing import FrozenSet, List, Set, Tuple, Type, Union, cast
 
 import pytest
+from typing_extensions import Annotated
 
 from polyfactory.factories.base import BaseFactory
 from polyfactory.field_meta import Constraints, FieldMeta
@@ -57,3 +58,11 @@ def test_date() -> None:
 
     assert value >= ge_date
     assert value <= le_date
+
+
+def test_constraints_parsing() -> None:
+    constraints = Constraints(min_length=10)
+    annotation = Annotated[str, constraints]
+    field_meta = FieldMeta.from_type(annotation)
+
+    assert field_meta.constraints == constraints

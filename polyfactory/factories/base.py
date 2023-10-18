@@ -111,6 +111,11 @@ class BaseFactory(ABC, Generic[T]):
     The model for the factory.
     This attribute is required for non-base factories and an exception will be raised if its not set.
     """
+    __check_model__: bool = False
+    """
+    Flag dictating whether to check if fields defined on the factory exists on the model or not.
+    If 'True', checks will be done against Use, PostGenerated, Ignore, Require constructs fields only.
+    """
     __allow_none_optionals__: ClassVar[bool] = True
     """
     Flag dictating whether to allow 'None' for optional values.
@@ -193,7 +198,7 @@ class BaseFactory(ABC, Generic[T]):
             if not cls.is_supported_type(model):
                 for factory in BaseFactory._base_factories:
                     if factory.is_supported_type(model):
-                        msg = f"{cls.__name__} does not support {model.__name__}, but this type is support by the {factory.__name__} base factory class. To resolve this error, subclass the factory from {factory.__name__} instead of {cls.__name__}"
+                        msg = f"{cls.__name__} does not support {model.__name__}, but this type is supported by the {factory.__name__} base factory class. To resolve this error, subclass the factory from {factory.__name__} instead of {cls.__name__}"
                         raise ConfigurationException(
                             msg,
                         )
@@ -201,6 +206,8 @@ class BaseFactory(ABC, Generic[T]):
                     raise ConfigurationException(
                         msg,
                     )
+            if cls.__check_model__:
+                cls._check_declared_fields_exist_in_model()
         else:
             BaseFactory._base_factories.append(cls)
 
@@ -760,6 +767,38 @@ class BaseFactory(ABC, Generic[T]):
 
         """
         raise NotImplementedError
+
+    @classmethod
+    def get_factory_fields(cls) -> list[tuple[str, Any]]:
+        """Retrieve a list of fields from the factory.
+
+        Trying to be smart about what should be considered a field on the model,
+        ignoring dunder methods and some parent class attributes.
+
+        :returns: A list of tuples made of field name and field definition
+        """
+        factory_fields = cls.__dict__.items()
+        return [
+            (field_name, field_value)
+            for field_name, field_value in factory_fields
+            if not (field_name.startswith("__") or field_name == "_abc_impl")
+        ]
+
+    @classmethod
+    def _check_declared_fields_exist_in_model(cls) -> None:
+        model_fields_names = {field_meta.name for field_meta in cls.get_model_fields()}
+        factory_fields = cls.get_factory_fields()
+
+        for field_name, field_value in factory_fields:
+            if field_name in model_fields_names:
+                continue
+
+            error_message = (
+                f"{field_name} is declared on the factory {cls.__name__}"
+                f" but it is not part of the model {cls.__model__.__name__}"
+            )
+            if isinstance(field_value, (Use, PostGenerated, Ignore, Require)):
+                raise ConfigurationException(error_message)
 
     @classmethod
     def process_kwargs(cls, **kwargs: Any) -> dict[str, Any]:
