@@ -12,12 +12,13 @@ class Person:
     id: UUID
 
 
-with pytest.raises(
-    ConfigurationException,
-    match="unknown_field is declared on the factory PersonFactory but it is not part of the model Person",
-):
+def test_check_factory_fields() -> None:
+    with pytest.raises(
+        ConfigurationException,
+        match="unknown_field is declared on the factory PersonFactory but it is not part of the model Person",
+    ):
 
-    class PersonFactory(DataclassFactory[Person]):
-        __model__ = Person
-        __check_model__ = True
-        unknown_field = PostGenerated(lambda: "foo")
+        class PersonFactory(DataclassFactory[Person]):
+            __model__ = Person
+            __check_model__ = True
+            unknown_field = PostGenerated(lambda: "foo")
