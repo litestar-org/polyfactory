@@ -3,7 +3,7 @@ from __future__ import annotations
 from dataclasses import asdict, is_dataclass
 from typing import TYPE_CHECKING, Any, Literal, Pattern, TypedDict, cast
 
-from typing_extensions import get_args, get_origin
+from typing_extensions import Mapping, get_args, get_origin
 
 from polyfactory.collection_extender import CollectionExtender
 from polyfactory.constants import (
@@ -183,6 +183,10 @@ class FieldMeta:
                     constraints["pattern"] = "[[:digit:]]"
             elif is_dataclass(value) and (value_dict := asdict(value)) and ("allowed_schemes" in value_dict):
                 constraints["url"] = {k: v for k, v in value_dict.items() if v is not None}
+            # This is to support `Constraints`, but we can't do a isinstance with `Constraints` since isinstance
+            # checks with `TypedDict` is not supported.
+            elif isinstance(value, Mapping):
+                constraints.update(value)
             else:
                 constraints.update(
                     {
