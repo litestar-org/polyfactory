@@ -55,7 +55,7 @@ jobs:
         run: pdm build
 
       - name: Install docs dependencies
-        run: pdm install -G:docs
+        run: pdm install -G:all
 
       - name: Build docs
         run: pdm run make docs
