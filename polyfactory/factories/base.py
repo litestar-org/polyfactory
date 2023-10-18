@@ -572,7 +572,8 @@ class BaseFactory(ABC, Generic[T]):
             )
 
         if BaseFactory.is_batch_factory_type(annotation=unwrapped_annotation):
-            factory = cls._get_or_create_factory(model=field_meta.type_args[0])
+            model = get_args(unwrapped_annotation)[0]
+            factory = cls._get_or_create_factory(model=model)
             if isinstance(field_build_parameters, Sequence):
                 return [factory.build(**field_parameters) for field_parameters in field_build_parameters]
             if not cls.__randomize_collection_length__:
