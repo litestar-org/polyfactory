@@ -101,3 +101,15 @@ By setting to `False`, then optional types will always be treated as the wrapped
 .. literalinclude:: /examples/configuration/test_example_7.py
     :caption: Disable Allow None Optionals
     :language: python
+
+Check Factory Fields
+--------------------
+When `__check_model__` is set to `True`, declaring fields on the factory that don't exist on the model will trigger an exception.
+
+This is only true when fields are declared with ``Use``, ``PostGenerated``, ``Ignore`` and ``Require``.
+Any other field definition will not be checked.
+
+
+.. literalinclude:: /examples/configuration/test_example_8.py
+    :caption: Enable Check Factory Fields
+    :language: python
