@@ -667,7 +667,7 @@ class BaseFactory(ABC, Generic[T]):
         :param field_meta: FieldMeta instance.
         :param field_build_parameters: Any build parameters passed to the factory as kwarg values.
 
-        :returns: An arbitrary value.
+        :returns: An iterable of values.
 
         """
         if cls.is_ignored_type(field_meta.annotation):

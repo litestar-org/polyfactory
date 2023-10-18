@@ -12,3 +12,4 @@ Usage Guide
     decorators
     fixtures
     handling_custom_types
+    model_coverage
