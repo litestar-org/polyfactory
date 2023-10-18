@@ -139,6 +139,9 @@ Thanks goes to these wonderful people ([emoji key](https://allcontributors.org/d
       <td align="center" valign="top" width="14.28%"><a href="https://github.com/adhtruong"><img src="https://avatars.githubusercontent.com/u/40660973?v=4?s=100" width="100px;" alt="Andrew Truong"/><br /><sub><b>Andrew Truong</b></sub></a><br /><a href="https://github.com/litestar-org/polyfactory/commits?author=adhtruong" title="Code">💻</a> <a href="https://github.com/litestar-org/polyfactory/commits?author=adhtruong" title="Documentation">📖</a></td>
       <td align="center" valign="top" width="14.28%"><a href="https://github.com/anthonyjgraff"><img src="https://avatars.githubusercontent.com/u/59455370?v=4?s=100" width="100px;" alt="Anthony"/><br /><sub><b>Anthony</b></sub></a><br /><a href="https://github.com/litestar-org/polyfactory/commits?author=anthonyjgraff" title="Code">💻</a> <a href="https://github.com/litestar-org/polyfactory/commits?author=anthonyjgraff" title="Documentation">📖</a> <a href="https://github.com/litestar-org/polyfactory/commits?author=anthonyjgraff" title="Tests">⚠️</a></td>
     </tr>
+    <tr>
+      <td align="center" valign="top" width="14.28%"><a href="https://github.com/johnraz"><img src="https://avatars.githubusercontent.com/u/304164?v=4?s=100" width="100px;" alt="Jonathan Liuti"/><br /><sub><b>Jonathan Liuti</b></sub></a><br /><a href="https://github.com/litestar-org/polyfactory/commits?author=johnraz" title="Code">💻</a> <a href="https://github.com/litestar-org/polyfactory/commits?author=johnraz" title="Documentation">📖</a> <a href="https://github.com/litestar-org/polyfactory/commits?author=johnraz" title="Tests">⚠️</a></td>
+    </tr>
   </tbody>
 </table>
 
