@@ -13,6 +13,7 @@ from polyfactory.constants import (
     RANDOMIZE_COLLECTION_LENGTH,
     TYPE_MAPPING,
 )
+from polyfactory.utils.deprecation import deprecated_parameter
 from polyfactory.utils.helpers import normalize_annotation, unwrap_annotated, unwrap_args, unwrap_new_type
 from polyfactory.utils.predicates import is_annotated, is_any_annotated
 
@@ -103,6 +104,14 @@ class FieldMeta:
         )
 
     @classmethod
+    @deprecated_parameter(
+        "2.11.0",
+        parameters=(
+            "randomize_collection_length",
+            "min_collection_length",
+            "max_collection_length",
+        ),
+    )
     def from_type(
         cls,
         annotation: Any,
@@ -110,9 +119,9 @@ class FieldMeta:
         name: str = "",
         default: Any = Null,
         constraints: Constraints | None = None,
-        randomize_collection_length: bool = RANDOMIZE_COLLECTION_LENGTH,
-        min_collection_length: int = MIN_COLLECTION_LENGTH,
-        max_collection_length: int = MAX_COLLECTION_LENGTH,
+        randomize_collection_length: bool = RANDOMIZE_COLLECTION_LENGTH,  # noqa: ARG003
+        min_collection_length: int = MIN_COLLECTION_LENGTH,  # noqa: ARG003
+        max_collection_length: int = MAX_COLLECTION_LENGTH,  # noqa: ARG003
         children: list[FieldMeta] | None = None,
     ) -> Self:
         """Builder method to create a FieldMeta from a type annotation.
@@ -156,9 +165,6 @@ class FieldMeta:
                 FieldMeta.from_type(
                     annotation=unwrap_new_type(arg),
                     random=random,
-                    randomize_collection_length=randomize_collection_length,
-                    min_collection_length=min_collection_length,
-                    max_collection_length=max_collection_length,
                 )
                 for arg in extended_type_args
             ]
