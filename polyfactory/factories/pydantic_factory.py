@@ -11,12 +11,7 @@ from uuid import NAMESPACE_DNS, uuid1, uuid3, uuid5
 from typing_extensions import Literal, get_args, get_origin
 
 from polyfactory.collection_extender import CollectionExtender
-from polyfactory.constants import (
-    DEFAULT_RANDOM,
-    MAX_COLLECTION_LENGTH,
-    MIN_COLLECTION_LENGTH,
-    RANDOMIZE_COLLECTION_LENGTH,
-)
+from polyfactory.constants import DEFAULT_RANDOM
 from polyfactory.exceptions import MissingDependencyException
 from polyfactory.factories.base import BaseFactory
 from polyfactory.field_meta import Constraints, FieldMeta, Null
@@ -79,23 +74,15 @@ class PydanticFieldMeta(FieldMeta):
         )
 
     @classmethod
-    @deprecated_parameter(
-        "2.11.0",
-        parameters=(
-            "randomize_collection_length",
-            "min_collection_length",
-            "max_collection_length",
-        ),
-    )
     def from_field_info(
         cls,
         field_name: str,
         field_info: FieldInfo,
         use_alias: bool,
         random: Random | None,
-        randomize_collection_length: bool = RANDOMIZE_COLLECTION_LENGTH,  # noqa: ARG003
-        min_collection_length: int = MIN_COLLECTION_LENGTH,  # noqa: ARG003
-        max_collection_length: int = MAX_COLLECTION_LENGTH,  # noqa: ARG003
+        randomize_collection_length: bool | None = None,
+        min_collection_length: int | None = None,
+        max_collection_length: int | None = None,
     ) -> PydanticFieldMeta:
         """Create an instance from a pydantic field info.
 
@@ -109,6 +96,14 @@ class PydanticFieldMeta(FieldMeta):
 
         :returns: A PydanticFieldMeta instance.
         """
+        deprecated_parameter(
+            "2.11.0",
+            parameters=(
+                ("randomize_collection_length", randomize_collection_length),
+                ("min_collection_length", min_collection_length),
+                ("max_collection_length", max_collection_length),
+            ),
+        )
         if callable(field_info.default_factory):
             default_value = field_info.default_factory()
         else:
@@ -160,21 +155,13 @@ class PydanticFieldMeta(FieldMeta):
         )
 
     @classmethod
-    @deprecated_parameter(
-        "2.11.0",
-        parameters=(
-            "randomize_collection_length",
-            "min_collection_length",
-            "max_collection_length",
-        ),
-    )
     def from_model_field(  # pragma: no cover
         cls,
         model_field: ModelField,  # pyright: ignore[reportGeneralTypeIssues]
         use_alias: bool,
-        randomize_collection_length: bool | None = None,  # noqa: ARG003
-        min_collection_length: int | None = None,  # noqa: ARG003
-        max_collection_length: int | None = None,  # noqa: ARG003
+        randomize_collection_length: bool | None = None,
+        min_collection_length: int | None = None,
+        max_collection_length: int | None = None,
         random: Random = DEFAULT_RANDOM,
     ) -> PydanticFieldMeta:
         """Create an instance from a pydantic model field.
@@ -188,6 +175,14 @@ class PydanticFieldMeta(FieldMeta):
         :returns: A PydanticFieldMeta instance.
 
         """
+        deprecated_parameter(
+            "2.11.0",
+            parameters=(
+                ("randomize_collection_length", randomize_collection_length),
+                ("min_collection_length", min_collection_length),
+                ("max_collection_length", max_collection_length),
+            ),
+        )
         from pydantic import AmqpDsn, AnyHttpUrl, AnyUrl, HttpUrl, KafkaDsn, PostgresDsn, RedisDsn
         from pydantic.fields import DeferredType, Undefined  # type: ignore[attr-defined]
 

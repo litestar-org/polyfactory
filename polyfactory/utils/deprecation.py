@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import inspect
 from functools import wraps
-from typing import Callable, Literal, TypeVar
+from typing import Any, Callable, Literal, TypeVar
 from warnings import warn
 
 from typing_extensions import ParamSpec
@@ -28,13 +28,13 @@ def warn_deprecation(
     """Warn about a call to a (soon to be) deprecated function.
 
     Args:
-        version: Polyfactory version where the deprecation will occur
-        deprecated_name: Name of the deprecated function
-        removal_in: Polyfactory version where the deprecated function will be removed
-        alternative: Name of a function that should be used instead
-        info: Additional information
-        pending: Use ``PendingDeprecationWarning`` instead of ``DeprecationWarning``
-        kind: Type of the deprecated thing
+        version: Polyfactory version where the deprecation will occur.
+        deprecated_name: Name of the deprecated function.
+        removal_in: Polyfactory version where the deprecated function will be removed.
+        alternative: Name of a function that should be used instead.
+        info: Additional information.
+        pending: Use ``PendingDeprecationWarning`` instead of ``DeprecationWarning``.
+        kind: Type of the deprecated thing.
     """
     parts = []
 
@@ -80,13 +80,13 @@ def deprecated(
     """Create a decorator wrapping a function, method or property with a warning call about a (pending) deprecation.
 
     Args:
-        version: Polyfactory version where the deprecation will occur
-        removal_in: Polyfactory version where the deprecated function will be removed
-        alternative: Name of a function that should be used instead
-        info: Additional information
-        pending: Use ``PendingDeprecationWarning`` instead of ``DeprecationWarning``
+        version: Polyfactory version where the deprecation will occur.
+        removal_in: Polyfactory version where the deprecated function will be removed.
+        alternative: Name of a function that should be used instead.
+        info: Additional information.
+        pending: Use ``PendingDeprecationWarning`` instead of ``DeprecationWarning``.
         kind: Type of the deprecated callable. If ``None``, will use ``inspect`` to figure
-            out if it's a function or method
+            out if it's a function or method.
 
     Returns:
         A decorator wrapping the function call with a warning
@@ -114,43 +114,36 @@ def deprecated(
 def deprecated_parameter(
     version: str,
     *,
-    parameters: tuple[str, ...],
+    parameters: tuple[tuple[str, Any], ...],
+    default_value: Any = None,
     removal_in: str | None = None,
     alternative: str | None = None,
     info: str | None = None,
     pending: bool = False,
-) -> Callable[[Callable[P, T]], Callable[P, T]]:
-    """Create a decorator wrapping a function, method or property with a warning call about a (pending) deprecation for a parameter.
+) -> None:
+    """Warn about a call to a (soon to be) deprecated argument to a function.
 
     Args:
-        version: Polyfactory version where the deprecation will occur
-        parameters: Parameters to trigger warning if used
-        removal_in: Polyfactory version where the deprecated function will be removed
-        alternative: Name of a function that should be used instead
-        info: Additional information
-        pending: Use ``PendingDeprecationWarning`` instead of ``DeprecationWarning``
+        version: Polyfactory version where the deprecation will occur.
+        parameters: Parameters to trigger warning if used.
+        default_value: Default value for parameter to detect if supplied or not.
+        removal_in: Polyfactory version where the deprecated function will be removed.
+        alternative: Name of a function that should be used instead.
+        info: Additional information.
+        pending: Use ``PendingDeprecationWarning`` instead of ``DeprecationWarning``.
         kind: Type of the deprecated callable. If ``None``, will use ``inspect`` to figure
-            out if it's a function or method
-
-    Returns:
-        A decorator wrapping the function call with a warning
+            out if it's a function or method.
     """
+    for parameter_name, value in parameters:
+        if value == default_value:
+            continue
 
-    def decorator(func: Callable[P, T]) -> Callable[P, T]:
-        @wraps(func)
-        def wrapped(*args: P.args, **kwargs: P.kwargs) -> T:
-            if any(kwarg in parameters for kwarg in kwargs):
-                warn_deprecation(
-                    version=version,
-                    deprecated_name=", ".join(parameters),
-                    info=info,
-                    alternative=alternative,
-                    pending=pending,
-                    removal_in=removal_in,
-                    kind="parameter",
-                )
-            return func(*args, **kwargs)
-
-        return wrapped
-
-    return decorator
+        warn_deprecation(
+            version=version,
+            deprecated_name=parameter_name,
+            info=info,
+            alternative=alternative,
+            pending=pending,
+            removal_in=removal_in,
+            kind="parameter",
+        )

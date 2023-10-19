@@ -6,13 +6,7 @@ from typing import TYPE_CHECKING, Any, Literal, Pattern, TypedDict, cast
 from typing_extensions import Mapping, get_args, get_origin
 
 from polyfactory.collection_extender import CollectionExtender
-from polyfactory.constants import (
-    DEFAULT_RANDOM,
-    MAX_COLLECTION_LENGTH,
-    MIN_COLLECTION_LENGTH,
-    RANDOMIZE_COLLECTION_LENGTH,
-    TYPE_MAPPING,
-)
+from polyfactory.constants import DEFAULT_RANDOM, TYPE_MAPPING
 from polyfactory.utils.deprecation import deprecated_parameter
 from polyfactory.utils.helpers import normalize_annotation, unwrap_annotated, unwrap_args, unwrap_new_type
 from polyfactory.utils.predicates import is_annotated, is_any_annotated
@@ -104,14 +98,6 @@ class FieldMeta:
         )
 
     @classmethod
-    @deprecated_parameter(
-        "2.11.0",
-        parameters=(
-            "randomize_collection_length",
-            "min_collection_length",
-            "max_collection_length",
-        ),
-    )
     def from_type(
         cls,
         annotation: Any,
@@ -119,9 +105,9 @@ class FieldMeta:
         name: str = "",
         default: Any = Null,
         constraints: Constraints | None = None,
-        randomize_collection_length: bool = RANDOMIZE_COLLECTION_LENGTH,  # noqa: ARG003
-        min_collection_length: int = MIN_COLLECTION_LENGTH,  # noqa: ARG003
-        max_collection_length: int = MAX_COLLECTION_LENGTH,  # noqa: ARG003
+        randomize_collection_length: bool | None = None,
+        min_collection_length: int | None = None,
+        max_collection_length: int | None = None,
         children: list[FieldMeta] | None = None,
     ) -> Self:
         """Builder method to create a FieldMeta from a type annotation.
@@ -137,6 +123,14 @@ class FieldMeta:
 
         :returns: A field meta instance.
         """
+        deprecated_parameter(
+            "2.11.0",
+            parameters=(
+                ("randomize_collection_length", randomize_collection_length),
+                ("min_collection_length", min_collection_length),
+                ("max_collection_length", max_collection_length),
+            ),
+        )
         field_type = normalize_annotation(annotation, random=random)
 
         if not constraints and is_annotated(annotation):
