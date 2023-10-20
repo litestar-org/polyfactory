@@ -40,6 +40,21 @@ def test_respects_none_overrides() -> None:
     assert result.hobbies is None
 
 
+def test_allows_nested_optional_field_overrides() -> None:
+    class MyChildModel(BaseModel):
+        name: str
+
+    class MyParentModel(BaseModel):
+        child: MyChildModel | None
+
+    class MyParentModelFactory(ModelFactory):
+        __model__ = MyParentModel
+
+    MyParentModelFactory.seed_random(2)
+    result = MyParentModelFactory.build(child={"name": "test"})
+    assert result.child is not None
+
+
 def test_uses_faker_to_set_values_when_none_available_on_class() -> None:
     result = PetFactory.build()
     assert isinstance(result.name, str)
