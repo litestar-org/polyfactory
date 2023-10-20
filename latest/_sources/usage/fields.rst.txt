@@ -77,3 +77,12 @@ the PostGenerated helper is provided. For example:
 The signature for use is: ``cb: Callable, *args, **defaults``  it can receive any sync callable. The signature for the
 callable should be: ``name: str, values: dict[str, Any], *args, **defaults``. The already generated values are mapped by
 name in the values dictionary.
+
+Factories as Fields
+---------------------------
+
+Factories themselves can be used as fields. In this usage, build parameters will be passed to the declared factory.
+
+.. literalinclude:: /examples/fields/test_example_8.py
+    :caption: Using a factory as a field
+    :language: python

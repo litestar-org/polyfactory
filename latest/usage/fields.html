@@ -650,11 +650,11 @@ document.write(`
   <div class="bd-toc-item navbar-nav"><p aria-level="2" class="caption" role="heading"><span class="caption-text">Documentation</span></p>
 <ul class="current nav bd-sidenav">
 <li class="toctree-l1 current active has-children"><a class="reference internal" href="index.html">Usage Guide</a><input checked="" class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-1"><i class="fa-solid fa-chevron-down"></i></label><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="declaring_factories.html">Declaring Factories</a></li>
 <li class="toctree-l2 has-children"><a class="reference internal" href="library_factories/index.html">Polyfactory Factories</a><input class="toctree-checkbox" id="toctree-checkbox-2" name="toctree-checkbox-2" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-2"><i class="fa-solid fa-chevron-down"></i></label><ul>
 <li class="toctree-l3"><a class="reference internal" href="library_factories/sqlalchemy_factory.html">SQLAlchemyFactory</a></li>
 </ul>
 </li>
-<li class="toctree-l2"><a class="reference internal" href="declaring_factories.html">Declaring Factories</a></li>
 <li class="toctree-l2"><a class="reference internal" href="configuration.html">Factory Configuration</a></li>
 <li class="toctree-l2 current active"><a class="current reference internal" href="#">Factory Fields</a></li>
 <li class="toctree-l2"><a class="reference internal" href="decorators.html">The <code class="docutils literal notranslate"><span class="pre">post_generated</span></code> decorator</a></li>
@@ -1115,6 +1115,67 @@ the PostGenerated helper is provided. For example:</p>
 callable should be: <code class="docutils literal notranslate"><span class="pre">name:</span> <span class="pre">str,</span> <span class="pre">values:</span> <span class="pre">dict[str,</span> <span class="pre">Any],</span> <span class="pre">*args,</span> <span class="pre">**defaults</span></code>. The already generated values are mapped by
 name in the values dictionary.</p>
 </section>
+<section id="factories-as-fields">
+<h2>Factories as Fields<a class="headerlink" href="#factories-as-fields" title="Permalink to this heading">#</a></h2>
+<p>Factories themselves can be used as fields. In this usage, build parameters will be passed to the declared factory.</p>
+<div class="literal-block-wrapper docutils container" id="id8">
+<div class="code-block-caption"><span class="caption-text">Using a factory as a field</span><a class="headerlink" href="#id8" title="Permalink to this code">#</a></div>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">dataclasses</span> <span class="kn">import</span> <span class="n">dataclass</span>
+<span class="kn">from</span> <span class="nn">datetime</span> <span class="kn">import</span> <span class="n">date</span><span class="p">,</span> <span class="n">datetime</span>
+<span class="kn">from</span> <span class="nn">enum</span> <span class="kn">import</span> <span class="n">Enum</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">List</span><span class="p">,</span> <span class="n">Union</span>
+<span class="kn">from</span> <span class="nn">uuid</span> <span class="kn">import</span> <span class="n">UUID</span>
+
+<span class="kn">from</span> <span class="nn">polyfactory.factories</span> <span class="kn">import</span> <span class="n">DataclassFactory</span>
+
+
+<span class="k">class</span> <span class="nc">Species</span><span class="p">(</span><span class="nb">str</span><span class="p">,</span> <span class="n">Enum</span><span class="p">):</span>
+    <span class="n">CAT</span> <span class="o">=</span> <span class="s2">&quot;Cat&quot;</span>
+    <span class="n">DOG</span> <span class="o">=</span> <span class="s2">&quot;Dog&quot;</span>
+
+
+<span class="nd">@dataclass</span>
+<span class="k">class</span> <span class="nc">Pet</span><span class="p">:</span>
+    <span class="n">name</span><span class="p">:</span> <span class="nb">str</span>
+    <span class="n">species</span><span class="p">:</span> <span class="n">Species</span>
+    <span class="n">sound</span><span class="p">:</span> <span class="nb">str</span>
+
+
+<span class="nd">@dataclass</span>
+<span class="k">class</span> <span class="nc">Person</span><span class="p">:</span>
+    <span class="nb">id</span><span class="p">:</span> <span class="n">UUID</span>
+    <span class="n">name</span><span class="p">:</span> <span class="nb">str</span>
+    <span class="n">hobbies</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span>
+    <span class="n">age</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="nb">int</span><span class="p">]</span>
+    <span class="n">birthday</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">datetime</span><span class="p">,</span> <span class="n">date</span><span class="p">]</span>
+    <span class="n">pet</span><span class="p">:</span> <span class="n">Pet</span>
+    <span class="n">assets</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]]]</span>
+
+
+<span class="k">class</span> <span class="nc">PetFactory</span><span class="p">(</span><span class="n">DataclassFactory</span><span class="p">[</span><span class="n">Pet</span><span class="p">]):</span>
+    <span class="n">__model__</span> <span class="o">=</span> <span class="n">Pet</span>
+
+    <span class="n">name</span> <span class="o">=</span> <span class="k">lambda</span><span class="p">:</span> <span class="n">DataclassFactory</span><span class="o">.</span><span class="n">__random__</span><span class="o">.</span><span class="n">choice</span><span class="p">([</span><span class="s2">&quot;Ralph&quot;</span><span class="p">,</span> <span class="s2">&quot;Roxy&quot;</span><span class="p">])</span>
+
+
+<span class="k">class</span> <span class="nc">PersonFactory</span><span class="p">(</span><span class="n">DataclassFactory</span><span class="p">[</span><span class="n">Person</span><span class="p">]):</span>
+    <span class="n">__model__</span> <span class="o">=</span> <span class="n">Person</span>
+
+    <span class="n">pet</span> <span class="o">=</span> <span class="n">PetFactory</span>
+
+
+<span class="k">def</span> <span class="nf">test_subfactory</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="n">person_instance</span> <span class="o">=</span> <span class="n">PersonFactory</span><span class="o">.</span><span class="n">build</span><span class="p">()</span>
+
+    <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">person_instance</span><span class="o">.</span><span class="n">pet</span><span class="p">,</span> <span class="n">Pet</span><span class="p">)</span>
+    <span class="k">assert</span> <span class="n">person_instance</span><span class="o">.</span><span class="n">pet</span><span class="o">.</span><span class="n">name</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;Ralph&quot;</span><span class="p">,</span> <span class="s2">&quot;Roxy&quot;</span><span class="p">]</span>
+
+    <span class="n">person_instance_with_pet_name</span> <span class="o">=</span> <span class="n">PersonFactory</span><span class="o">.</span><span class="n">build</span><span class="p">(</span><span class="n">pet</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;Winston&quot;</span><span class="p">})</span>
+    <span class="k">assert</span> <span class="n">person_instance_with_pet_name</span><span class="o">.</span><span class="n">pet</span><span class="o">.</span><span class="n">name</span> <span class="o">==</span> <span class="s2">&quot;Winston&quot;</span>
+</pre></div>
+</div>
+</div>
+</section>
 </section>
 
 
@@ -1164,6 +1225,7 @@ name in the values dictionary.</p>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#the-ignore-field">The <code class="docutils literal notranslate"><span class="pre">Ignore</span></code> Field</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#the-require-field">The <code class="docutils literal notranslate"><span class="pre">Require</span></code> Field</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#the-postgenerated-field">The <code class="docutils literal notranslate"><span class="pre">PostGenerated</span></code> Field</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#factories-as-fields">Factories as Fields</a></li>
 </ul>
   </nav></div>
 
