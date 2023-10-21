@@ -65,3 +65,5 @@ def test_typeddict_with_required_and_non_required_fields() -> None:
     assert result["annotated"] >= 100
     assert isinstance(result["list_field"], list)
     assert isinstance(result["optional_int"], (type(None), int))
+    assert "name" in result
+    assert isinstance(result["name"], str)
