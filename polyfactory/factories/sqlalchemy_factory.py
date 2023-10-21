@@ -132,11 +132,7 @@ class SQLAlchemyFactory(Generic[T], BaseFactory[T]):
 
         table: Mapper = inspect(cls.__model__)  # type: ignore[assignment]
         fields_meta.extend(
-            FieldMeta.from_type(
-                annotation=cls.get_type_from_column(column),
-                name=name,
-                random=cls.__random__,
-            )
+            FieldMeta.from_type(annotation=cls.get_type_from_column(column), name=name)
             for name, column in table.columns.items()
             if cls.should_column_be_set(column)
         )
@@ -145,11 +141,7 @@ class SQLAlchemyFactory(Generic[T], BaseFactory[T]):
                 class_ = relationship.entity.class_
                 annotation = class_ if not relationship.uselist else List[class_]  # type: ignore[valid-type]
                 fields_meta.append(
-                    FieldMeta.from_type(
-                        name=name,
-                        annotation=annotation,
-                        random=cls.__random__,
-                    ),
+                    FieldMeta.from_type(name=name, annotation=annotation),
                 )
 
         return fields_meta

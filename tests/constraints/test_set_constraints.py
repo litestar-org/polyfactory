@@ -1,5 +1,4 @@
 from contextlib import suppress
-from random import Random
 from typing import Any
 
 import pytest
@@ -9,9 +8,7 @@ from hypothesis.strategies import integers
 from polyfactory.exceptions import ParameterException
 from polyfactory.factories.pydantic_factory import ModelFactory
 from polyfactory.field_meta import FieldMeta
-from polyfactory.value_generators.constrained_collections import (
-    handle_constrained_collection,
-)
+from polyfactory.value_generators.constrained_collections import handle_constrained_collection
 
 
 @given(
@@ -23,7 +20,7 @@ def test_handle_constrained_set_with_min_items_and_max_items(min_items: int, max
         result = handle_constrained_collection(
             collection_type=list,
             factory=ModelFactory,
-            field_meta=FieldMeta(name="test", annotation=set, random=Random()),
+            field_meta=FieldMeta(name="test", annotation=set),
             item_type=str,
             max_items=max_items,
             min_items=min_items,
@@ -35,7 +32,7 @@ def test_handle_constrained_set_with_min_items_and_max_items(min_items: int, max
             handle_constrained_collection(
                 collection_type=list,
                 factory=ModelFactory,
-                field_meta=FieldMeta(name="test", annotation=set, random=Random()),
+                field_meta=FieldMeta(name="test", annotation=set),
                 item_type=str,
                 max_items=max_items,
                 min_items=min_items,
@@ -51,7 +48,7 @@ def test_handle_constrained_set_with_max_items(
     result = handle_constrained_collection(
         collection_type=list,
         factory=ModelFactory,
-        field_meta=FieldMeta(name="test", annotation=set, random=Random()),
+        field_meta=FieldMeta(name="test", annotation=set),
         item_type=str,
         max_items=max_items,
     )
@@ -67,7 +64,7 @@ def test_handle_constrained_set_with_min_items(
     result = handle_constrained_collection(
         collection_type=list,
         factory=ModelFactory,
-        field_meta=FieldMeta(name="test", annotation=set, random=Random()),
+        field_meta=FieldMeta(name="test", annotation=set),
         item_type=str,
         min_items=min_items,
     )
@@ -80,7 +77,7 @@ def test_handle_constrained_set_with_different_types(t_type: Any) -> None:
         result = handle_constrained_collection(
             collection_type=list,
             factory=ModelFactory,
-            field_meta=FieldMeta(name="test", annotation=set, random=Random()),
+            field_meta=FieldMeta(name="test", annotation=set),
             item_type=t_type,
         )
         assert len(result) > 0

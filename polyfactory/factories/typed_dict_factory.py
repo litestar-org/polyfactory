@@ -2,8 +2,8 @@ from __future__ import annotations
 
 from typing import Any, Generic, TypeVar, get_args
 
-from typing_extensions import (  # type: ignore[attr-defined]
-    NotRequired,
+from typing_extensions import (
+    NotRequired,  # type: ignore[attr-defined]
     Required,
     TypeGuard,
     _TypedDictMeta,  # pyright: ignore[reportGeneralTypeIssues]
@@ -12,7 +12,6 @@ from typing_extensions import (  # type: ignore[attr-defined]
     is_typeddict,
 )
 
-from polyfactory.constants import DEFAULT_RANDOM
 from polyfactory.factories.base import BaseFactory
 from polyfactory.field_meta import FieldMeta, Null
 
@@ -52,7 +51,6 @@ class TypedDictFactory(Generic[TypedDictT], BaseFactory[TypedDictT]):
             field_metas.append(
                 FieldMeta.from_type(
                     annotation=annotation,
-                    random=DEFAULT_RANDOM,
                     name=field_name,
                     default=getattr(cls.__model__, field_name, Null),
                 ),

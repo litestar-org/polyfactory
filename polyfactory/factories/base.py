@@ -22,19 +22,7 @@ from ipaddress import (
 from os.path import realpath
 from pathlib import Path
 from random import Random
-from typing import (
-    TYPE_CHECKING,
-    Any,
-    Callable,
-    ClassVar,
-    Collection,
-    Generic,
-    Mapping,
-    Sequence,
-    Type,
-    TypeVar,
-    cast,
-)
+from typing import TYPE_CHECKING, Any, Callable, ClassVar, Collection, Generic, Mapping, Sequence, Type, TypeVar, cast
 from uuid import UUID
 
 from faker import Faker
@@ -46,21 +34,10 @@ from polyfactory.constants import (
     MIN_COLLECTION_LENGTH,
     RANDOMIZE_COLLECTION_LENGTH,
 )
-from polyfactory.exceptions import (
-    ConfigurationException,
-    MissingBuildKwargException,
-    ParameterException,
-)
+from polyfactory.exceptions import ConfigurationException, MissingBuildKwargException, ParameterException
 from polyfactory.fields import Fixture, Ignore, PostGenerated, Require, Use
 from polyfactory.utils.helpers import get_collection_type, unwrap_annotation, unwrap_args, unwrap_optional
-from polyfactory.utils.predicates import (
-    get_type_origin,
-    is_any,
-    is_literal,
-    is_optional,
-    is_safe_subclass,
-    is_union,
-)
+from polyfactory.utils.predicates import get_type_origin, is_any, is_literal, is_optional, is_safe_subclass, is_union
 from polyfactory.value_generators.complex_types import handle_collection_type
 from polyfactory.value_generators.constrained_collections import (
     handle_constrained_collection,
@@ -76,11 +53,7 @@ from polyfactory.value_generators.constrained_path import handle_constrained_pat
 from polyfactory.value_generators.constrained_strings import handle_constrained_string_or_bytes
 from polyfactory.value_generators.constrained_url import handle_constrained_url
 from polyfactory.value_generators.constrained_uuid import handle_constrained_uuid
-from polyfactory.value_generators.primitives import (
-    create_random_boolean,
-    create_random_bytes,
-    create_random_string,
-)
+from polyfactory.value_generators.primitives import create_random_boolean, create_random_bytes, create_random_string
 
 if TYPE_CHECKING:
     from typing_extensions import TypeGuard
@@ -305,7 +278,7 @@ class BaseFactory(ABC, Generic[T]):
         :returns: Boolean dictating whether the annotation is a batch factory type
         """
         origin = get_type_origin(annotation) or annotation
-        if is_safe_subclass(origin, Sequence) and (args := unwrap_args(annotation, random=cls.__random__)):
+        if is_safe_subclass(origin, Sequence) and (args := unwrap_args(annotation)):
             return len(args) == 1 and BaseFactory.is_factory_type(annotation=args[0])
         return False
 
@@ -562,7 +535,7 @@ class BaseFactory(ABC, Generic[T]):
         if cls.should_set_none_value(field_meta=field_meta):
             return None
 
-        unwrapped_annotation = unwrap_annotation(field_meta.annotation, random=cls.__random__)
+        unwrapped_annotation = unwrap_annotation(field_meta.annotation)
 
         if is_literal(annotation=unwrapped_annotation) and (literal_args := get_args(unwrapped_annotation)):
             return cls.__random__.choice(literal_args)
@@ -587,7 +560,7 @@ class BaseFactory(ABC, Generic[T]):
             batch_size = cls.__random__.randint(cls.__min_collection_length__, cls.__max_collection_length__)
             return factory.batch(size=batch_size)
 
-        if (origin := get_type_origin(unwrapped_annotation)) and issubclass(origin, Collection):
+        if (origin := get_type_origin(unwrapped_annotation)) and is_safe_subclass(origin, Collection):
             if cls.__randomize_collection_length__:
                 collection_type = get_collection_type(unwrapped_annotation)
                 if collection_type != dict:

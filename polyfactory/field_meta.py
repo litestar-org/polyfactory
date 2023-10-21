@@ -79,6 +79,10 @@ class FieldMeta:
         constraints: Constraints | None = None,
     ) -> None:
         """Create a factory field metadata instance."""
+        check_for_deprecated_parameters(
+            "2.11.0",
+            parameters=(("random", random),),
+        )
         self.annotation = annotation
         self.random = random or DEFAULT_RANDOM
         self.children = children
@@ -92,16 +96,13 @@ class FieldMeta:
 
         :returns: a tuple of types.
         """
-        return tuple(
-            TYPE_MAPPING[arg] if arg in TYPE_MAPPING else arg
-            for arg in unwrap_args(self.annotation, random=self.random)
-        )
+        return tuple(TYPE_MAPPING[arg] if arg in TYPE_MAPPING else arg for arg in unwrap_args(self.annotation))
 
     @classmethod
     def from_type(
         cls,
         annotation: Any,
-        random: Random = DEFAULT_RANDOM,
+        random: Random | None = None,
         name: str = "",
         default: Any = Null,
         constraints: Constraints | None = None,
@@ -126,15 +127,16 @@ class FieldMeta:
         check_for_deprecated_parameters(
             "2.11.0",
             parameters=(
+                ("random", random),
                 ("randomize_collection_length", randomize_collection_length),
                 ("min_collection_length", min_collection_length),
                 ("max_collection_length", max_collection_length),
             ),
         )
-        field_type = normalize_annotation(annotation, random=random)
+        field_type = normalize_annotation(annotation)
 
         if not constraints and is_annotated(annotation):
-            _, metadata = unwrap_annotated(annotation, random=random)
+            _, metadata = unwrap_annotated(annotation)
             constraints = cls.parse_constraints(metadata)
 
         if not is_any_annotated(annotation):
@@ -145,7 +147,6 @@ class FieldMeta:
 
         field = cls(
             annotation=annotation,
-            random=random,
             name=name,
             default=default,
             children=children,
@@ -155,13 +156,7 @@ class FieldMeta:
         if field.type_args and not field.children:
             number_of_args = 1
             extended_type_args = CollectionExtender.extend_type_args(field.annotation, field.type_args, number_of_args)
-            field.children = [
-                FieldMeta.from_type(
-                    annotation=unwrap_new_type(arg),
-                    random=random,
-                )
-                for arg in extended_type_args
-            ]
+            field.children = [FieldMeta.from_type(annotation=unwrap_new_type(arg)) for arg in extended_type_args]
         return field
 
     @classmethod
@@ -170,7 +165,7 @@ class FieldMeta:
 
         for value in metadata:
             if is_annotated(value):
-                _, inner_metadata = unwrap_annotated(value, random=DEFAULT_RANDOM)
+                _, inner_metadata = unwrap_annotated(value)
                 constraints.update(cast("dict[str, Any]", cls.parse_constraints(metadata=inner_metadata)))
             elif func := getattr(value, "func", None):
                 if func is str.islower:
