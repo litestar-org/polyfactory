@@ -2,12 +2,12 @@ from __future__ import annotations
 
 import pytest
 
-from polyfactory.utils.deprecation import deprecated_parameter
+from polyfactory.utils.deprecation import check_for_deprecated_parameters
 
 
 def test_parameter_deprecation() -> None:
     def my_func(a: int, b: int | None = None) -> None:
-        deprecated_parameter("5", parameters=(("b", b),))
+        check_for_deprecated_parameters("5", parameters=(("b", b),))
 
     with pytest.warns(
         DeprecationWarning,

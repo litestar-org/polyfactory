@@ -15,7 +15,7 @@ from polyfactory.constants import DEFAULT_RANDOM
 from polyfactory.exceptions import MissingDependencyException
 from polyfactory.factories.base import BaseFactory
 from polyfactory.field_meta import Constraints, FieldMeta, Null
-from polyfactory.utils.deprecation import deprecated_parameter
+from polyfactory.utils.deprecation import check_for_deprecated_parameters
 from polyfactory.utils.helpers import unwrap_new_type, unwrap_optional
 from polyfactory.utils.predicates import is_optional, is_safe_subclass, is_union
 from polyfactory.value_generators.primitives import create_random_bytes
@@ -96,7 +96,7 @@ class PydanticFieldMeta(FieldMeta):
 
         :returns: A PydanticFieldMeta instance.
         """
-        deprecated_parameter(
+        check_for_deprecated_parameters(
             "2.11.0",
             parameters=(
                 ("randomize_collection_length", randomize_collection_length),
@@ -175,7 +175,7 @@ class PydanticFieldMeta(FieldMeta):
         :returns: A PydanticFieldMeta instance.
 
         """
-        deprecated_parameter(
+        check_for_deprecated_parameters(
             "2.11.0",
             parameters=(
                 ("randomize_collection_length", randomize_collection_length),
