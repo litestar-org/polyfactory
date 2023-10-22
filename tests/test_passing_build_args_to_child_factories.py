@@ -3,6 +3,7 @@ from typing import List, Mapping, Optional
 from pydantic import BaseModel
 
 from polyfactory.factories.pydantic_factory import ModelFactory
+from polyfactory.field_meta import FieldMeta
 
 
 class Address(BaseModel):
@@ -188,6 +189,9 @@ def test_factory_with_nested_optional_field_overrides_in_dict() -> None:
     class MyParentModelFactory(ModelFactory):
         __model__ = MyParentModel
 
-    MyParentModelFactory.seed_random(2)
+        @classmethod
+        def should_set_none_value(cls, field_meta: FieldMeta) -> bool:
+            return True
+
     result = MyParentModelFactory.build(child={"name": "test"})
     assert result.child is not None
