@@ -183,7 +183,7 @@ def test_factory_with_nested_optional_field_overrides_in_dict() -> None:
         name: str
 
     class MyParentModel(BaseModel):
-        child: MyChildModel | None
+        child: Optional[MyChildModel]
 
     class MyParentModelFactory(ModelFactory):
         __model__ = MyParentModel
