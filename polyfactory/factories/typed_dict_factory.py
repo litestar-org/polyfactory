@@ -1,8 +1,16 @@
 from __future__ import annotations
 
-from typing import Any, Generic, TypeVar
+from typing import Any, Generic, TypeVar, get_args
 
-from typing_extensions import TypeGuard, _TypedDictMeta, get_type_hints, is_typeddict  # type: ignore[attr-defined]
+from typing_extensions import (  # type: ignore[attr-defined]
+    NotRequired,
+    Required,
+    TypeGuard,
+    _TypedDictMeta,  # pyright: ignore[reportGeneralTypeIssues]
+    get_origin,
+    get_type_hints,
+    is_typeddict,
+)
 
 from polyfactory.constants import DEFAULT_RANDOM
 from polyfactory.factories.base import BaseFactory
@@ -35,16 +43,19 @@ class TypedDictFactory(Generic[TypedDictT], BaseFactory[TypedDictT]):
         """
         model_type_hints = get_type_hints(cls.__model__, include_extras=True)
 
-        fields_meta: list["FieldMeta"] = [
-            FieldMeta.from_type(
-                annotation=annotation,
-                random=DEFAULT_RANDOM,
-                name=field_name,
-                default=getattr(cls.__model__, field_name, Null),
-                randomize_collection_length=cls.__randomize_collection_length__,
-                min_collection_length=cls.__min_collection_length__,
-                max_collection_length=cls.__max_collection_length__,
+        field_metas: list[FieldMeta] = []
+        for field_name, annotation in model_type_hints.items():
+            origin = get_origin(annotation)
+            if origin in (Required, NotRequired):
+                annotation = get_args(annotation)[0]  # noqa: PLW2901
+
+            field_metas.append(
+                FieldMeta.from_type(
+                    annotation=annotation,
+                    random=DEFAULT_RANDOM,
+                    name=field_name,
+                    default=getattr(cls.__model__, field_name, Null),
+                ),
             )
-            for field_name, annotation in model_type_hints.items()
-        ]
-        return fields_meta
+
+        return field_metas
