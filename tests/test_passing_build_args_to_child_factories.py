@@ -195,3 +195,4 @@ def test_factory_with_nested_optional_field_overrides_in_dict() -> None:
 
     result = MyParentModelFactory.build(child={"name": "test"})
     assert result.child is not None
+    assert result.child.name == "test"
