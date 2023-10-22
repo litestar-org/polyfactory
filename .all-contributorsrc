@@ -352,6 +352,16 @@
         "doc",
         "test"
       ]
+    },
+    {
+      "login": "julioolvr",
+      "name": "Julio Olivera",
+      "avatar_url": "https://avatars.githubusercontent.com/u/1302493?v=4",
+      "profile": "https://julio.li/",
+      "contributions": [
+        "code",
+        "test"
+      ]
     }
   ],
   "contributorsPerLine": 7,
