@@ -432,7 +432,8 @@ class BaseFactory(ABC, Generic[T]):
     ) -> type[F]:
         """Generate a factory for the given type dynamically.
 
-        :param model: A type to model.
+        :param model: A type to model. Defaults to current factory __model__ if any.
+            Otherwise, raise an error
         :param bases: Base classes to use when generating the new class.
         :param kwargs: Any kwargs.
 
