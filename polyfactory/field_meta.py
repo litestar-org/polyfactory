@@ -1,9 +1,9 @@
 from __future__ import annotations
 
 from dataclasses import asdict, is_dataclass
-from typing import TYPE_CHECKING, Any, Literal, Pattern, TypedDict, cast
+from typing import TYPE_CHECKING, Any, Literal, Mapping, Pattern, TypedDict, cast
 
-from typing_extensions import Mapping, get_args, get_origin
+from typing_extensions import get_args, get_origin
 
 from polyfactory.collection_extender import CollectionExtender
 from polyfactory.constants import DEFAULT_RANDOM, TYPE_MAPPING
