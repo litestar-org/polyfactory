@@ -31,7 +31,7 @@
     <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=a746c00c" />
     <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css?v=76b2166b" />
     <link rel="stylesheet" type="text/css" href="../../_static/design-style.1e8bd061cd6da7fc9cf755528e8ffc24.min.css?v=0a3b3ea7" />
-    <link rel="stylesheet" type="text/css" href="../../_static/litestar-sphinx-theme.css?v=3fb92501" />
+    <link rel="stylesheet" type="text/css" href="../../_static/litestar-sphinx-theme.css?v=db8d6e31" />
   
   <!-- Pre-loaded scripts that we'll load fully later -->
   <link rel="preload" as="script" href="../../_static/scripts/bootstrap.js?digest=ac02cc09edc035673794" />
@@ -762,8 +762,15 @@ document.write(`
 <dl class="py class">
 <dt class="sig sig-object py" id="polyfactory.factories.attrs_factory.AttrsFactory">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">polyfactory.factories.attrs_factory.</span></span><span class="sig-name descname"><span class="pre">AttrsFactory</span></span><a class="headerlink" href="#polyfactory.factories.attrs_factory.AttrsFactory" title="Permalink to this definition">#</a></dt>
-<dd><p>Bases: <a class="reference internal" href="base.html#polyfactory.factories.base.BaseFactory" title="polyfactory.factories.base.BaseFactory"><code class="xref py py-class docutils literal notranslate"><span class="pre">BaseFactory</span></code></a>[<code class="xref py py-obj docutils literal notranslate"><span class="pre">T</span></code>]</p>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Generic" title="(in Python v3.12)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Generic</span></code></a>[<code class="xref py py-obj docutils literal notranslate"><span class="pre">T</span></code>], <a class="reference internal" href="base.html#polyfactory.factories.base.BaseFactory" title="polyfactory.factories.base.BaseFactory"><code class="xref py py-class docutils literal notranslate"><span class="pre">BaseFactory</span></code></a>[<code class="xref py py-obj docutils literal notranslate"><span class="pre">T</span></code>]</p>
 <p>Base factory for attrs classes.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="polyfactory.factories.attrs_factory.AttrsFactory.__model__">
+<span class="sig-name descname"><span class="pre">__model__</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/functions.html#type" title="(in Python v3.12)"><span class="pre">type</span></a><span class="p"><span class="pre">[</span></span><span class="pre">T</span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#polyfactory.factories.attrs_factory.AttrsFactory.__model__" title="Permalink to this definition">#</a></dt>
+<dd><p>The model for the factory.
+This attribute is required for non-base factories and an exception will be raised if its not set.</p>
+</dd></dl>
+
 <dl class="py attribute">
 <dt class="sig sig-object py" id="polyfactory.factories.attrs_factory.AttrsFactory.__is_base_factory__">
 <span class="sig-name descname"><span class="pre">__is_base_factory__</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.12)"><span class="pre">bool</span></a></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">True</span></em><a class="headerlink" href="#polyfactory.factories.attrs_factory.AttrsFactory.__is_base_factory__" title="Permalink to this definition">#</a></dt>
@@ -858,6 +865,7 @@ For example, the ‘DataclassFactory’, ‘TypedDictFactory’ and ‘ModelFact
   <nav class="bd-toc-nav page-toc">
     <ul class="visible nav section-nav flex-column">
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#polyfactory.factories.attrs_factory.AttrsFactory"><code class="docutils literal notranslate"><span class="pre">AttrsFactory</span></code></a><ul class="visible nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#polyfactory.factories.attrs_factory.AttrsFactory.__model__"><code class="docutils literal notranslate"><span class="pre">AttrsFactory.__model__</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#polyfactory.factories.attrs_factory.AttrsFactory.__is_base_factory__"><code class="docutils literal notranslate"><span class="pre">AttrsFactory.__is_base_factory__</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#polyfactory.factories.attrs_factory.AttrsFactory.is_supported_type"><code class="docutils literal notranslate"><span class="pre">AttrsFactory.is_supported_type()</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#polyfactory.factories.attrs_factory.AttrsFactory.get_model_fields"><code class="docutils literal notranslate"><span class="pre">AttrsFactory.get_model_fields()</span></code></a></li>
