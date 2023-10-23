@@ -426,7 +426,7 @@ class BaseFactory(ABC, Generic[T]):
     @classmethod
     def create_factory(
         cls: type[F],
-        model: type[T],
+        model: type[T] | None = None,
         bases: tuple[type[BaseFactory[Any]], ...] | None = None,
         **kwargs: Any,
     ) -> type[F]:
@@ -439,6 +439,12 @@ class BaseFactory(ABC, Generic[T]):
         :returns: A 'ModelFactory' subclass.
 
         """
+        with suppress(AttributeError):
+            model = model or cls.__model__
+        if model is None:
+            msg = "A 'model' argument is required when creating a new factory from a base one"
+            raise TypeError(msg)
+
         return cast(
             "Type[F]",
             type(
