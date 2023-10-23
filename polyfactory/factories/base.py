@@ -594,7 +594,7 @@ class BaseFactory(ABC, Generic[T]):
         if cls.is_ignored_type(field_meta.annotation):
             return None
 
-        if cls.should_set_none_value(field_meta=field_meta):
+        if field_build_parameters is None and cls.should_set_none_value(field_meta=field_meta):
             return None
 
         unwrapped_annotation = unwrap_annotation(field_meta.annotation, random=cls.__random__)

@@ -1,13 +1,7 @@
 from __future__ import annotations
 
 from inspect import isclass
-from typing import (
-    TYPE_CHECKING,
-    Any,
-    Callable,
-    Generic,
-    TypeVar,
-)
+from typing import TYPE_CHECKING, Any, Callable, Generic, TypeVar
 
 from typing_extensions import get_type_hints
 
@@ -73,9 +67,6 @@ class MsgspecFactory(Generic[T], BaseFactory[T]):
                     name=field.name,
                     default=default_value,
                     random=cls.__random__,
-                    randomize_collection_length=cls.__randomize_collection_length__,
-                    min_collection_length=cls.__min_collection_length__,
-                    max_collection_length=cls.__max_collection_length__,
                 ),
             )
         return fields_meta

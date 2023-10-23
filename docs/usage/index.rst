@@ -5,8 +5,8 @@ Usage Guide
     :titlesonly:
     :maxdepth: 1
 
-    library_factories/index
     declaring_factories
+    library_factories/index
     configuration
     fields
     decorators

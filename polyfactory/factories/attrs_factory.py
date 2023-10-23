@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from inspect import isclass
-from typing import TYPE_CHECKING, TypeVar
+from typing import TYPE_CHECKING, Generic, TypeVar
 
 from polyfactory.exceptions import MissingDependencyException
 from polyfactory.factories.base import BaseFactory
@@ -23,8 +23,10 @@ except ImportError as ex:
 T = TypeVar("T", bound=AttrsInstance)
 
 
-class AttrsFactory(BaseFactory[T]):
+class AttrsFactory(Generic[T], BaseFactory[T]):
     """Base factory for attrs classes."""
+
+    __model__: type[T]
 
     __is_base_factory__ = True
 
@@ -61,9 +63,6 @@ class AttrsFactory(BaseFactory[T]):
                     name=field.alias,
                     default=default_value,
                     random=cls.__random__,
-                    randomize_collection_length=cls.__randomize_collection_length__,
-                    min_collection_length=cls.__min_collection_length__,
-                    max_collection_length=cls.__max_collection_length__,
                 ),
             )
 
