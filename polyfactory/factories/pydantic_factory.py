@@ -39,8 +39,9 @@ with suppress(ImportError):
 
 if TYPE_CHECKING:
     from random import Random
+    from typing import Callable
 
-    from typing_extensions import Callable, NotRequired, TypeGuard
+    from typing_extensions import NotRequired, TypeGuard
 
 T = TypeVar("T", bound=BaseModel)
 
