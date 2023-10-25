@@ -440,12 +440,12 @@ class BaseFactory(ABC, Generic[T]):
         :returns: A 'ModelFactory' subclass.
 
         """
-        with suppress(AttributeError):
-            model = model or cls.__model__
         if model is None:
-            msg = "A 'model' argument is required when creating a new factory from a base one"
-            raise TypeError(msg)
-
+            try:
+                model = cls.__model__
+            except AttributeError as ex:
+                msg = "A 'model' argument is required when creating a new factory from a base one"
+                raise TypeError(msg) from ex
         return cast(
             "Type[F]",
             type(
