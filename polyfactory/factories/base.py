@@ -449,7 +449,7 @@ class BaseFactory(ABC, Generic[T]):
         return cast(
             "Type[F]",
             type(
-                f"{model.__name__}Factory",
+                f"{model.__name__}Factory",  # pyright: ignore[reportOptionalMemberAccess]
                 (*(bases or ()), cls),
                 {"__model__": model, **kwargs},
             ),
