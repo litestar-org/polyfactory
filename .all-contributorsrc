@@ -362,6 +362,17 @@
         "code",
         "test"
       ]
+    },
+    {
+      "login": "g0di",
+      "name": "Benoît Godard",
+      "avatar_url": "https://avatars.githubusercontent.com/u/2545380?v=4",
+      "profile": "https://github.com/g0di",
+      "contributions": [
+        "code",
+        "doc",
+        "test"
+      ]
     }
   ],
   "contributorsPerLine": 7,
