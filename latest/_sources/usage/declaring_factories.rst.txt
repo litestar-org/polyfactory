@@ -56,3 +56,11 @@ You can also use this method to create factories imperatively:
 .. literalinclude:: /examples/declaring_factories/test_example_6.py
     :caption: Imperative factory creation
     :language: python
+
+Eventually you can use this method on an existing concrete factory to create a sub factory overriding some parent configuration:
+
+.. literalinclude:: /examples/declaring_factories/test_example_8.py
+    :caption: Imperative sub factory creation
+    :language: python
+
+In this case you don't need to specify the `model` argument to the :meth:`create_factory <polyfactory.factories.base.BaseFactory.create_factory>` method. The one from the parent factory will be used.
