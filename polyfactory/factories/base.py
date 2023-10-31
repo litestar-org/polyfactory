@@ -426,23 +426,30 @@ class BaseFactory(ABC, Generic[T]):
     @classmethod
     def create_factory(
         cls: type[F],
-        model: type[T],
+        model: type[T] | None = None,
         bases: tuple[type[BaseFactory[Any]], ...] | None = None,
         **kwargs: Any,
     ) -> type[F]:
         """Generate a factory for the given type dynamically.
 
-        :param model: A type to model.
+        :param model: A type to model. Defaults to current factory __model__ if any.
+            Otherwise, raise an error
         :param bases: Base classes to use when generating the new class.
         :param kwargs: Any kwargs.
 
         :returns: A 'ModelFactory' subclass.
 
         """
+        if model is None:
+            try:
+                model = cls.__model__
+            except AttributeError as ex:
+                msg = "A 'model' argument is required when creating a new factory from a base one"
+                raise TypeError(msg) from ex
         return cast(
             "Type[F]",
             type(
-                f"{model.__name__}Factory",
+                f"{model.__name__}Factory",  # pyright: ignore[reportOptionalMemberAccess]
                 (*(bases or ()), cls),
                 {"__model__": model, **kwargs},
             ),
