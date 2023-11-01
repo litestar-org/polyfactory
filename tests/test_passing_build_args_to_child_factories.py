@@ -3,6 +3,7 @@ from typing import List, Mapping, Optional
 from pydantic import BaseModel
 
 from polyfactory.factories.pydantic_factory import ModelFactory
+from polyfactory.field_meta import FieldMeta
 
 
 class Address(BaseModel):
@@ -176,3 +177,22 @@ def test_factory_with_partial_kwargs_deep_in_tree() -> None:
     build_result = DFactory.build(factory_use_construct=False, **{"c": {"b": {"a": {"name": "test"}}}})
     assert build_result
     assert build_result.c.b.a.name == "test"
+
+
+def test_factory_with_nested_optional_field_overrides_in_dict() -> None:
+    class MyChildModel(BaseModel):
+        name: str
+
+    class MyParentModel(BaseModel):
+        child: Optional[MyChildModel]
+
+    class MyParentModelFactory(ModelFactory):
+        __model__ = MyParentModel
+
+        @classmethod
+        def should_set_none_value(cls, field_meta: FieldMeta) -> bool:
+            return True
+
+    result = MyParentModelFactory.build(child={"name": "test"})
+    assert result.child is not None
+    assert result.child.name == "test"

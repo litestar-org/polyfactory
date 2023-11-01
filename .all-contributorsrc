@@ -341,6 +341,38 @@
         "doc",
         "test"
       ]
+    },
+    {
+      "login": "johnraz",
+      "name": "Jonathan Liuti",
+      "avatar_url": "https://avatars.githubusercontent.com/u/304164?v=4",
+      "profile": "https://github.com/johnraz",
+      "contributions": [
+        "code",
+        "doc",
+        "test"
+      ]
+    },
+    {
+      "login": "julioolvr",
+      "name": "Julio Olivera",
+      "avatar_url": "https://avatars.githubusercontent.com/u/1302493?v=4",
+      "profile": "https://julio.li/",
+      "contributions": [
+        "code",
+        "test"
+      ]
+    },
+    {
+      "login": "g0di",
+      "name": "Benoît Godard",
+      "avatar_url": "https://avatars.githubusercontent.com/u/2545380?v=4",
+      "profile": "https://github.com/g0di",
+      "contributions": [
+        "code",
+        "doc",
+        "test"
+      ]
     }
   ],
   "contributorsPerLine": 7,

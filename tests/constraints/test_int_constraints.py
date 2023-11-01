@@ -1,7 +1,7 @@
 from random import Random
 
 import pytest
-from hypothesis import assume, given
+from hypothesis import HealthCheck, assume, given, settings
 from hypothesis.strategies import integers
 
 from polyfactory.exceptions import ParameterException
@@ -55,6 +55,7 @@ def test_handle_constrained_int_handles_lt(maximum: int) -> None:
     assert result < maximum
 
 
+@settings(suppress_health_check=(HealthCheck.filter_too_much,))
 @given(
     integers(min_value=1, max_value=10),
     integers(min_value=1, max_value=10),
