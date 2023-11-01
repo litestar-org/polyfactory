@@ -43,6 +43,9 @@ class AttrsFactory(Generic[T], BaseFactory[T]):
         fields = attrs.fields(cls.__model__)
 
         for field in fields:
+            if not field.init:
+                continue
+
             annotation = none_type if field.type is None else field.type
 
             default = field.default

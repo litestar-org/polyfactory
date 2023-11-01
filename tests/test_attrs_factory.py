@@ -180,3 +180,14 @@ def test_with_stringified_annotations() -> None:
     foo = FooFactory.build()
 
     assert isinstance(foo.int_field, int)
+
+
+def test_with_init_false() -> None:
+    @define
+    class Foo:
+        foo: int = attrs.field(init=False)
+
+    class FooFactory(AttrsFactory[Foo]):
+        __model__ = Foo
+
+    assert FooFactory.build()
