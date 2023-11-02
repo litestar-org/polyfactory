@@ -32,7 +32,20 @@ class SocialGroupFactory(DataclassFactory[SocialGroup]):
     __model__ = SocialGroup
 
 
-group = list(SocialGroupFactory.coverage())
+def test_social_group_coverage() -> None:
+    groups = list(SocialGroupFactory.coverage())
+    assert len(groups) == 1
+
+    members = groups[0].members
+    assert len(members) == 3
+
+    assert members[0].favourite_color == "red"
+    assert isinstance(members[0].vehicle, Car)
+    assert members[1].favourite_color == "green"
+    assert isinstance(members[1].vehicle, Boat)
+    assert members[2].favourite_color == "blue"
+    assert isinstance(members[2].vehicle, Car)
+
 
 # >>> print(group)
 # >>> SocialGroup(members=[Profile(...), Profile(...), Profile(...)])
