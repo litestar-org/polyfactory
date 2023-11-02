@@ -27,23 +27,12 @@ class ProfileFactory(DataclassFactory[Profile]):
     __model__ = Profile
 
 
-profiles = list(ProfileFactory.coverage())
+def test_profile_coverage() -> None:
+    profiles = list(ProfileFactory.coverage())
 
-# >>> print(profiles)
-[
-    Profile(
-        age=9325,
-        favourite_color="red",
-        vehicle=Car(model="hrxarraoDbdkBnpxMEiG"),
-    ),
-    Profile(
-        age=6840,
-        favourite_color="green",
-        vehicle=Boat(can_float=False),
-    ),
-    Profile(
-        age=4769,
-        favourite_color="blue",
-        vehicle=Car(model="hrxarraoDbdkBnpxMEiG"),
-    ),
-]
+    assert profiles[0].favourite_color == "red"
+    assert isinstance(profiles[0].vehicle, Car)
+    assert profiles[1].favourite_color == "green"
+    assert isinstance(profiles[1].vehicle, Boat)
+    assert profiles[2].favourite_color == "blue"
+    assert isinstance(profiles[2].vehicle, Car)
