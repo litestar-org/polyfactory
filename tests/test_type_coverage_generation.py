@@ -197,13 +197,14 @@ def test_coverage_post_generated() -> None:
     assert results[0].i == results[0].j + 10
 
 
+class CustomInt:
+    def __init__(self, value: int) -> None:
+        self.value = value
+
+
 def test_coverage_parameter_exception() -> None:
     @dataclass
     class Model:
-        class CustomInt:
-            def __init__(self, value: int) -> None:
-                self.value = value
-
         i: CustomInt
 
     class Factory(DataclassFactory[Model]):
