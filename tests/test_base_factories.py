@@ -5,6 +5,7 @@ import pytest
 from pydantic.main import BaseModel
 
 from polyfactory.factories import DataclassFactory
+from polyfactory.factories.base import BaseFactory
 from polyfactory.factories.pydantic_factory import ModelFactory
 
 
@@ -78,3 +79,19 @@ def test_multiple_base_pydantic_factories(override_BaseModel: bool) -> None:
     # see https://github.com/litestar-org/polyfactory/issues/198
     ModelFactory._base_factories.remove(FooModelFactory)
     ModelFactory._base_factories.remove(DummyModelFactory)
+
+
+def test_create_factory_without_model_reuse_current_factory_model() -> None:
+    @dataclass
+    class Foo:
+        pass
+
+    factory = DataclassFactory.create_factory(model=Foo)
+    sub_factory = factory.create_factory()
+
+    assert sub_factory.__model__ == Foo
+
+
+def test_create_factory_from_base_factory_without_providing_a_model_raises_error() -> None:
+    with pytest.raises(TypeError):
+        BaseFactory.create_factory()

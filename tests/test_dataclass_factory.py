@@ -192,3 +192,16 @@ class Bar:
 
     foo = FooFactory.build()
     assert isinstance(foo, Foo)
+
+
+def test_dataclass_with_init_false() -> None:
+    @vanilla_dataclass
+    class VanillaDC:
+        id_: int = field(init=False)
+
+    class MyFactory(DataclassFactory[VanillaDC]):
+        __model__ = VanillaDC
+
+    result = MyFactory.build()
+
+    assert result
