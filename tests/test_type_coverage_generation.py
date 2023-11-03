@@ -3,7 +3,7 @@ from __future__ import annotations
 
 from dataclasses import dataclass, make_dataclass
 from datetime import date
-from typing import Dict, FrozenSet, List, Literal, Set, Union
+from typing import Dict, FrozenSet, List, Literal, Set, Tuple, Union
 from uuid import UUID
 
 import pytest
@@ -36,11 +36,11 @@ def test_coverage_count() -> None:
 
 def test_coverage_tuple() -> None:
     @dataclass
-    class Tuple:
-        tuple_: tuple[Union[int, str], tuple[Union[int, float], int]]
+    class Pair:
+        tuple_: Tuple[Union[int, str], Tuple[Union[int, float], int]]
 
-    class TupleFactory(DataclassFactory[Tuple]):
-        __model__ = Tuple
+    class TupleFactory(DataclassFactory[Pair]):
+        __model__ = Pair
 
     results = list(TupleFactory.coverage())
 
