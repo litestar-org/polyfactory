@@ -41,7 +41,7 @@ def test_social_group_coverage() -> None:
 
     assert groups[0].members[0].favourite_color == "red"
     assert isinstance(groups[0].members[0].vehicle, Car)
-    assert groups[1].members[1].favourite_color == "green"
+    assert groups[1].members[0].favourite_color == "green"
     assert isinstance(groups[1].members[0].vehicle, Boat)
-    assert groups[2].members[2].favourite_color == "blue"
+    assert groups[2].members[0].favourite_color == "blue"
     assert isinstance(groups[2].members[0].vehicle, Car)
