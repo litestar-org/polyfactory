@@ -3,7 +3,7 @@ from __future__ import annotations
 
 from dataclasses import dataclass, make_dataclass
 from datetime import date
-from typing import FrozenSet, List, Literal, Set, Union
+from typing import Dict, FrozenSet, List, Literal, Set, Union
 from uuid import UUID
 
 import pytest
@@ -98,9 +98,9 @@ def test_coverage_literal() -> None:
 def test_coverage_dict() -> None:
     @dataclass
     class Thesaurus:
-        dict_simple: dict[str, int]
-        dict_more_key_types: dict[Union[str, int, float], Union[int, str]]
-        dict_more_value_types: dict[str, Union[int, str]]
+        dict_simple: Dict[str, int]
+        dict_more_key_types: Dict[Union[str, int, float], Union[int, str]]
+        dict_more_value_types: Dict[str, Union[int, str]]
 
     class ThesaurusFactory(DataclassFactory[Thesaurus]):
         __model__ = Thesaurus
