@@ -45,7 +45,3 @@ def test_social_group_coverage() -> None:
     assert isinstance(members[1].vehicle, Boat)
     assert members[2].favourite_color == "blue"
     assert isinstance(members[2].vehicle, Car)
-
-
-# >>> print(group)
-# >>> SocialGroup(members=[Profile(...), Profile(...), Profile(...)])

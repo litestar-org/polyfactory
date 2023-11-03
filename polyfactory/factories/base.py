@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import typing
 from abc import ABC, abstractmethod
 from collections import Counter, abc, deque
 from contextlib import suppress
@@ -668,7 +669,7 @@ class BaseFactory(ABC, Generic[T]):
         cls,
         field_meta: FieldMeta,
         field_build_parameters: Any | None = None,
-    ) -> abc.Iterable[Any]:
+    ) -> typing.Iterable[Any]:
         """Return a field value on the subclass if existing, otherwise returns a mock value.
 
         :param field_meta: FieldMeta instance.
@@ -716,8 +717,7 @@ class BaseFactory(ABC, Generic[T]):
             elif callable(unwrapped_annotation):
                 # if value is a callable we can try to naively call it.
                 # this will work for callables that do not require any parameters passed
-                with suppress(Exception):
-                    yield CoverageContainerCallable(unwrapped_annotation)
+                yield CoverageContainerCallable(unwrapped_annotation)
             else:
                 msg = f"Unsupported type: {unwrapped_annotation!r}\n\nEither extend the providers map or add a factory function for this type."
                 raise ParameterException(

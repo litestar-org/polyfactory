@@ -6,14 +6,24 @@ from typing import AbstractSet, Any, Generic, Set, TypeVar, cast
 
 from typing_extensions import ParamSpec
 
+from polyfactory.exceptions import ParameterException
+
 
 class CoverageContainerBase(ABC):
+    """Base class for coverage container implementations.
+
+    A coverage container is a wrapper providing values for a particular field. Coverage containers return field values and
+    track a "done" state to indicate that all coverage examples have been generated.
+    """
+
     @abstractmethod
     def next_value(self) -> Any:
+        """Provide the next value"""
         ...
 
     @abstractmethod
     def is_done(self) -> bool:
+        """Indicate if this container has provided every coverage example it has"""
         ...
 
 
@@ -21,6 +31,15 @@ T = TypeVar("T")
 
 
 class CoverageContainer(CoverageContainerBase, Generic[T]):
+    """A coverage container that wraps a collection of values.
+
+    When that calling `next_value()` a greater number of times than the length of the given collection will cause duplicate
+    examples to be returned (wraps around).
+
+    If there are any coverage containers within the given collection, the values from those containers are essentially merged
+    into the parent container.
+    """
+
     def __init__(self, instances: Iterable[T]) -> None:
         self._pos = 0
         self._instances = list(instances)
@@ -57,7 +76,11 @@ class CoverageContainerCallable(CoverageContainerBase, Generic[T]):
         self._kwargs = kwargs
 
     def next_value(self) -> T:
-        return self._func(*self._args, **self._kwargs)
+        try:
+            return self._func(*self._args, **self._kwargs)
+        except Exception as e:  # noqa: BLE001
+            msg = f"Unsupported type: {self._func!r}\n\nEither extend the providers map or add a factory function for this type."
+            raise ParameterException(msg) from e
 
     def is_done(self) -> bool:
         return True

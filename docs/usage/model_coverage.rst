@@ -7,7 +7,7 @@ The ``BaseFactory.coverage()`` function is an alternative approach to ``BaseFact
     :caption: Defining a factory and generating examples with coverage
     :language: python
 
-As you can see in the above example, the ````Profile```` model has 3 options for ``favourite_color``, and 2 options for ``vehicle``. In the output you can expect to see instances of ``Profile`` that have each of these options. The largest variance dictates the length of the output, in this case ``favourite_color`` has the most, at 3 options, so expect to see 3 ``Profile`` instances.
+As you can see in the above example, the ``Profile`` model has 3 options for ``favourite_color``, and 2 options for ``vehicle``. In the output you can expect to see instances of ``Profile`` that have each of these options. The largest variance dictates the length of the output, in this case ``favourite_color`` has the most, at 3 options, so expect to see 3 ``Profile`` instances.
 
 
 .. note::
