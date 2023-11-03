@@ -34,14 +34,14 @@ class SocialGroupFactory(DataclassFactory[SocialGroup]):
 
 def test_social_group_coverage() -> None:
     groups = list(SocialGroupFactory.coverage())
-    assert len(groups) == 1
+    assert len(groups) == 3
 
-    members = groups[0].members
-    assert len(members) == 3
+    for group in groups:
+        assert len(group.members) == 1
 
-    assert members[0].favourite_color == "red"
-    assert isinstance(members[0].vehicle, Car)
-    assert members[1].favourite_color == "green"
-    assert isinstance(members[1].vehicle, Boat)
-    assert members[2].favourite_color == "blue"
-    assert isinstance(members[2].vehicle, Car)
+    assert groups[0].members[0].favourite_color == "red"
+    assert isinstance(groups[0].members[0].vehicle, Car)
+    assert groups[1].members[1].favourite_color == "green"
+    assert isinstance(groups[1].members[0].vehicle, Boat)
+    assert groups[2].members[2].favourite_color == "blue"
+    assert isinstance(groups[2].members[0].vehicle, Car)
