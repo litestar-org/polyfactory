@@ -1,27 +1,27 @@
+# ruff: noqa: UP007
 from __future__ import annotations
 
-import sys
-from dataclasses import dataclass
+from dataclasses import dataclass, make_dataclass
 from datetime import date
-from typing import Literal, Sequence
+from typing import FrozenSet, List, Literal, Set, Union
 from uuid import UUID
 
 import pytest
 from typing_extensions import TypedDict
 
 from polyfactory.decorators import post_generated
+from polyfactory.exceptions import ParameterException
 from polyfactory.factories.dataclass_factory import DataclassFactory
 from polyfactory.factories.typed_dict_factory import TypedDictFactory
 
 
-@pytest.mark.skipif(sys.version_info < (3, 10), reason="requires python3.10 or higher")
 def test_coverage_count() -> None:
     @dataclass
     class Profile:
         name: str
-        high_score: int | float
+        high_score: Union[int, float]
         dob: date
-        data: str | date | int | float
+        data: Union[str, date, int, float]
 
     class ProfileFactory(DataclassFactory[Profile]):
         __model__ = Profile
@@ -34,11 +34,10 @@ def test_coverage_count() -> None:
         assert isinstance(result, Profile)
 
 
-@pytest.mark.skipif(sys.version_info < (3, 10), reason="requires python3.10 or higher")
 def test_coverage_tuple() -> None:
     @dataclass
     class Tuple:
-        tuple_: tuple[int | str, tuple[int | float, int]]
+        tuple_: tuple[Union[int, str], tuple[Union[int, float], int]]
 
     class TupleFactory(DataclassFactory[Tuple]):
         __model__ = Tuple
@@ -54,16 +53,14 @@ def test_coverage_tuple() -> None:
     assert isinstance(a1, str) and isinstance(b1, float) and isinstance(c1, int)
 
 
-@pytest.mark.skipif(sys.version_info < (3, 10), reason="requires python3.10 or higher")
-def test_coverage_collection() -> None:
-    @dataclass
-    class Collective:
-        set_: set[int | str]
-        list_: list[int | str]
-        frozenset_: frozenset[int | str]
-        sequence_: Sequence[int | str]
+@pytest.mark.parametrize(
+    "collection_annotation",
+    (Set[Union[int, str]], List[Union[int, str]], FrozenSet[Union[int, str]]),
+)
+def test_coverage_collection(collection_annotation: type) -> None:
+    Collective = make_dataclass("Collective", [("collection", collection_annotation)])
 
-    class CollectiveFactory(DataclassFactory[Collective]):
+    class CollectiveFactory(DataclassFactory[Collective]):  # type: ignore
         __model__ = Collective
 
     results = list(CollectiveFactory.coverage())
@@ -72,22 +69,14 @@ def test_coverage_collection() -> None:
 
     result = results[0]
 
-    assert len(result.set_) == 2
-    assert len(result.list_) == 2
-    assert len(result.frozenset_) == 2
-    assert len(result.sequence_) == 2
+    collection = result.collection  # type: ignore
 
-    v0, v1 = result.set_
-    assert {type(v0), type(v1)} == {int, str}
-    v0, v1 = result.list_
-    assert {type(v0), type(v1)} == {int, str}
-    v0, v1 = result.frozenset_
-    assert {type(v0), type(v1)} == {int, str}
-    v0, v1 = result.sequence_
+    assert len(collection) == 2
+
+    v0, v1 = collection
     assert {type(v0), type(v1)} == {int, str}
 
 
-@pytest.mark.skipif(sys.version_info < (3, 10), reason="requires python3.10 or higher")
 def test_coverage_literal() -> None:
     @dataclass
     class Literally:
@@ -106,13 +95,12 @@ def test_coverage_literal() -> None:
     assert results[3].literal == 2
 
 
-@pytest.mark.skipif(sys.version_info < (3, 10), reason="requires python3.10 or higher")
 def test_coverage_dict() -> None:
     @dataclass
     class Thesaurus:
         dict_simple: dict[str, int]
-        dict_more_key_types: dict[str | int | float, int | str]
-        dict_more_value_types: dict[str, int | str]
+        dict_more_key_types: dict[Union[str, int, float], Union[int, str]]
+        dict_more_value_types: dict[str, Union[int, str]]
 
     class ThesaurusFactory(DataclassFactory[Thesaurus]):
         __model__ = Thesaurus
@@ -123,11 +111,10 @@ def test_coverage_dict() -> None:
 
 
 @pytest.mark.skip(reason="Does not support recursive types yet.")
-@pytest.mark.skipif(sys.version_info < (3, 10), reason="requires python3.10 or higher")
 def test_coverage_recursive() -> None:
     @dataclass
     class Recursive:
-        r: Recursive | None
+        r: Union[Recursive, None]
 
     class RecursiveFactory(DataclassFactory[Recursive]):
         __model__ = Recursive
@@ -136,13 +123,12 @@ def test_coverage_recursive() -> None:
     assert len(results) == 2
 
 
-@pytest.mark.skipif(sys.version_info < (3, 10), reason="requires python3.10 or higher")
 def test_coverage_typed_dict() -> None:
     class TypedThesaurus(TypedDict):
         number: int
         string: str
-        union: int | str
-        collection: list[int | str]
+        union: Union[int, str]
+        collection: list[Union[int, str]]
 
     class TypedThesaurusFactory(TypedDictFactory[TypedThesaurus]):
         __model__ = TypedThesaurus
@@ -156,13 +142,12 @@ def test_coverage_typed_dict() -> None:
         assert result.keys() == example.keys()
 
 
-@pytest.mark.skipif(sys.version_info < (3, 10), reason="requires python3.10 or higher")
 def test_coverage_typed_dict_field() -> None:
     class TypedThesaurus(TypedDict):
         number: int
         string: str
-        union: int | str
-        collection: list[int | str]
+        union: Union[int, str]
+        collection: list[Union[int, str]]
 
     class TypedThesaurusFactory(TypedDictFactory[TypedThesaurus]):
         __model__ = TypedThesaurus
@@ -177,12 +162,11 @@ def test_coverage_typed_dict_field() -> None:
         assert result.keys() == example.keys()
 
 
-@pytest.mark.skipif(sys.version_info < (3, 10), reason="requires python3.10 or higher")
 def test_coverage_values_unique() -> None:
     @dataclass
     class Unique:
         uuid: UUID
-        data: int | str
+        data: Union[int, str]
 
     class UniqueFactory(DataclassFactory[Unique]):
         __model__ = Unique
@@ -193,7 +177,6 @@ def test_coverage_values_unique() -> None:
     assert results[0].uuid != results[1].uuid
 
 
-@pytest.mark.skipif(sys.version_info < (3, 10), reason="requires python3.10 or higher")
 def test_coverage_post_generated() -> None:
     @dataclass
     class Model:
@@ -212,3 +195,19 @@ def test_coverage_post_generated() -> None:
     assert len(results) == 1
 
     assert results[0].i == results[0].j + 10
+
+
+def test_coverage_parameter_exception() -> None:
+    @dataclass
+    class Model:
+        class CustomInt:
+            def __init__(self, value: int) -> None:
+                self.value = value
+
+        i: CustomInt
+
+    class Factory(DataclassFactory[Model]):
+        __model__ = Model
+
+    with pytest.raises(ParameterException):
+        list(Factory.coverage())
