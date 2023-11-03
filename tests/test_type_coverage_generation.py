@@ -1,4 +1,4 @@
-# ruff: noqa: UP007
+# ruff: noqa: UP007, UP006
 from __future__ import annotations
 
 from dataclasses import dataclass, make_dataclass
@@ -128,7 +128,7 @@ def test_coverage_typed_dict() -> None:
         number: int
         string: str
         union: Union[int, str]
-        collection: list[Union[int, str]]
+        collection: List[Union[int, str]]
 
     class TypedThesaurusFactory(TypedDictFactory[TypedThesaurus]):
         __model__ = TypedThesaurus
@@ -147,7 +147,7 @@ def test_coverage_typed_dict_field() -> None:
         number: int
         string: str
         union: Union[int, str]
-        collection: list[Union[int, str]]
+        collection: List[Union[int, str]]
 
     class TypedThesaurusFactory(TypedDictFactory[TypedThesaurus]):
         __model__ = TypedThesaurus
