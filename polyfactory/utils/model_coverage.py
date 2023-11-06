@@ -33,7 +33,7 @@ T = TypeVar("T")
 class CoverageContainer(CoverageContainerBase, Generic[T]):
     """A coverage container that wraps a collection of values.
 
-    When that calling `next_value()` a greater number of times than the length of the given collection will cause duplicate
+    When calling ``next_value()`` a greater number of times than the length of the given collection will cause duplicate
     examples to be returned (wraps around).
 
     If there are any coverage containers within the given collection, the values from those containers are essentially merged
