@@ -70,6 +70,11 @@ P = ParamSpec("P")
 
 
 class CoverageContainerCallable(CoverageContainerBase, Generic[T]):
+    """A coverage container that wraps a callable.
+
+    When calling ``next_value()`` the wrapped callable is called to provide a value.
+    """
+
     def __init__(self, func: Callable[P, T], *args: P.args, **kwargs: P.kwargs) -> None:
         self._func = func
         self._args = args
