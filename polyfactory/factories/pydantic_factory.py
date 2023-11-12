@@ -39,7 +39,7 @@ with suppress(ImportError):
 
 if TYPE_CHECKING:
     from random import Random
-    from typing import Callable
+    from typing import Callable, Sequence
 
     from typing_extensions import NotRequired, TypeGuard
 
@@ -283,6 +283,19 @@ class PydanticFieldMeta(FieldMeta):
             default=default_value,
             constraints=cast("PydanticConstraints", {k: v for k, v in constraints.items() if v is not None}) or None,
         )
+
+    if VERSION.startswith("2"):
+
+        @classmethod
+        def get_constraints_metadata(cls, annotation: Any) -> Sequence[Any]:
+            metadata = []
+            for m in super().get_constraints_metadata(annotation):
+                if isinstance(m, FieldInfo):
+                    metadata.extend(m.metadata)
+                else:
+                    metadata.append(m)
+
+            return metadata
 
 
 class ModelFactory(Generic[T], BaseFactory[T]):
