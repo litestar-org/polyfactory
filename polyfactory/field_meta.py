@@ -8,14 +8,21 @@ from typing_extensions import get_args, get_origin
 from polyfactory.collection_extender import CollectionExtender
 from polyfactory.constants import DEFAULT_RANDOM, TYPE_MAPPING
 from polyfactory.utils.deprecation import check_for_deprecated_parameters
-from polyfactory.utils.helpers import normalize_annotation, unwrap_annotated, unwrap_args, unwrap_new_type
+from polyfactory.utils.helpers import (
+    get_annotation_metadata,
+    normalize_annotation,
+    unwrap_annotated,
+    unwrap_args,
+    unwrap_new_type,
+)
 from polyfactory.utils.predicates import is_annotated, is_any_annotated
 
 if TYPE_CHECKING:
     import datetime
+    from decimal import Decimal
     from random import Random
+    from typing import Sequence
 
-    from _pydecimal import Decimal
     from typing_extensions import NotRequired, Self
 
 
@@ -134,7 +141,7 @@ class FieldMeta:
         field_type = normalize_annotation(annotation, random=random)
 
         if not constraints and is_annotated(annotation):
-            metadata = cls.get_annotation_metadata(annotation, random=random)
+            metadata = cls.get_annotation_metadata(annotation)
             constraints = cls.parse_constraints(metadata)
 
         if not is_any_annotated(annotation):
@@ -165,7 +172,7 @@ class FieldMeta:
         return field
 
     @classmethod
-    def parse_constraints(cls, metadata: list[Any]) -> "Constraints":
+    def parse_constraints(cls, metadata: Sequence[Any]) -> "Constraints":
         constraints = {}
 
         for value in metadata:
@@ -217,7 +224,7 @@ class FieldMeta:
         return cast("Constraints", constraints)
 
     @classmethod
-    def get_annotation_metadata(cls, annotation: Any, random: Random) -> list[Any]:
+    def get_annotation_metadata(cls, annotation: Any) -> Sequence[Any]:
         """Get the metadatas from the annotation.
 
         :param annotation: A type annotation.
@@ -226,4 +233,4 @@ class FieldMeta:
         :returns: A list of the metadata in the annotation.
         """
 
-        return unwrap_annotated(annotation, random)[1]
+        return get_annotation_metadata(annotation)

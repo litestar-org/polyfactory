@@ -39,7 +39,7 @@ with suppress(ImportError):
 
 if TYPE_CHECKING:
     from random import Random
-    from typing import Callable
+    from typing import Callable, Sequence
 
     from typing_extensions import NotRequired, TypeGuard
 
@@ -287,9 +287,9 @@ class PydanticFieldMeta(FieldMeta):
     if VERSION.startswith("2"):
 
         @classmethod
-        def get_annotation_metadata(cls, annotation: Any, random: Random) -> list[Any]:
+        def get_annotation_metadata(cls, annotation: Any) -> Sequence[Any]:
             metadata = []
-            for m in super().get_annotation_metadata(annotation, random):
+            for m in super().get_annotation_metadata(annotation):
                 if isinstance(m, FieldInfo):
                     metadata.extend(m.metadata)
                 else:
