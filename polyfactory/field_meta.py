@@ -141,7 +141,7 @@ class FieldMeta:
         field_type = normalize_annotation(annotation, random=random)
 
         if not constraints and is_annotated(annotation):
-            metadata = cls.get_annotation_metadata(annotation)
+            metadata = cls.get_constraints_metadata(annotation)
             constraints = cls.parse_constraints(metadata)
 
         if not is_any_annotated(annotation):
@@ -224,8 +224,8 @@ class FieldMeta:
         return cast("Constraints", constraints)
 
     @classmethod
-    def get_annotation_metadata(cls, annotation: Any) -> Sequence[Any]:
-        """Get the metadatas from the annotation.
+    def get_constraints_metadata(cls, annotation: Any) -> Sequence[Any]:
+        """Get the metadatas of the constraints from the given annotation.
 
         :param annotation: A type annotation.
         :param random: An instance of random.Random.
