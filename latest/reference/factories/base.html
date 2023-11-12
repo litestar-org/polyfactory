@@ -660,6 +660,7 @@ document.write(`
 <li class="toctree-l2"><a class="reference internal" href="../../usage/decorators.html">The <code class="docutils literal notranslate"><span class="pre">post_generated</span></code> decorator</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../usage/fixtures.html">Pytest fixtures</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../usage/handling_custom_types.html">Handling Custom Types</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../usage/model_coverage.html">Model coverage generation</a></li>
 </ul>
 </li>
 <li class="toctree-l1 current active has-children"><a class="reference internal" href="../index.html">API Reference</a><input checked="" class="toctree-checkbox" id="toctree-checkbox-3" name="toctree-checkbox-3" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-3"><i class="fa-solid fa-chevron-down"></i></label><ul class="current">
@@ -1000,6 +1001,23 @@ Otherwise, raise an error</p></li>
 </dd></dl>
 
 <dl class="py method">
+<dt class="sig sig-object py" id="polyfactory.factories.base.BaseFactory.get_field_value_coverage">
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">get_field_value_coverage</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">field_meta</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="../field_meta.html#polyfactory.field_meta.FieldMeta" title="polyfactory.field_meta.FieldMeta"><span class="pre">FieldMeta</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">field_build_parameters</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Any</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.12)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Iterable" title="(in Python v3.12)"><span class="pre">Iterable</span></a><span class="p"><span class="pre">[</span></span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#polyfactory.factories.base.BaseFactory.get_field_value_coverage" title="Permalink to this definition">#</a></dt>
+<dd><p>Return a field value on the subclass if existing, otherwise returns a mock value.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>field_meta</strong> – FieldMeta instance.</p></li>
+<li><p><strong>field_build_parameters</strong> – Any build parameters passed to the factory as kwarg values.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>An iterable of values.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
 <dt class="sig sig-object py" id="polyfactory.factories.base.BaseFactory.should_set_none_value">
 <em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">should_set_none_value</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">field_meta</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="../field_meta.html#polyfactory.field_meta.FieldMeta" title="polyfactory.field_meta.FieldMeta"><span class="pre">FieldMeta</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.12)"><span class="pre">bool</span></a></span></span><a class="headerlink" href="#polyfactory.factories.base.BaseFactory.should_set_none_value" title="Permalink to this definition">#</a></dt>
 <dd><p>Determine whether a given model field_meta should be set to None.</p>
@@ -1079,6 +1097,20 @@ ignoring dunder methods and some parent class attributes.</p>
 </dd></dl>
 
 <dl class="py method">
+<dt class="sig sig-object py" id="polyfactory.factories.base.BaseFactory.process_kwargs_coverage">
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">process_kwargs_coverage</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Any" title="(in Python v3.12)"><span class="pre">Any</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/collections.abc.html#collections.abc.Iterable" title="(in Python v3.12)"><span class="pre">Iterable</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.12)"><span class="pre">dict</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.12)"><span class="pre">str</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Any" title="(in Python v3.12)"><span class="pre">Any</span></a><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#polyfactory.factories.base.BaseFactory.process_kwargs_coverage" title="Permalink to this definition">#</a></dt>
+<dd><p>Process the given kwargs and generate values for the factory’s model.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>kwargs</strong> – Any build kwargs.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>A dictionary of build results.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
 <dt class="sig sig-object py" id="polyfactory.factories.base.BaseFactory.build">
 <em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">build</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Any" title="(in Python v3.12)"><span class="pre">Any</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">T</span></span></span><a class="headerlink" href="#polyfactory.factories.base.BaseFactory.build" title="Permalink to this definition">#</a></dt>
 <dd><p>Build an instance of the factory’s __model__</p>
@@ -1105,6 +1137,20 @@ ignoring dunder methods and some parent class attributes.</p>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p>A list of instances of type T.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="polyfactory.factories.base.BaseFactory.coverage">
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">coverage</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Any" title="(in Python v3.12)"><span class="pre">Any</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/collections.abc.html#collections.abc.Iterator" title="(in Python v3.12)"><span class="pre">Iterator</span></a><span class="p"><span class="pre">[</span></span><span class="pre">T</span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#polyfactory.factories.base.BaseFactory.coverage" title="Permalink to this definition">#</a></dt>
+<dd><p>Build a batch of the factory’s Meta.model will full coverage of the sub-types of the model.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>kwargs</strong> – Any kwargs. If field_meta names are set in kwargs, their values will be used.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>A iterator of instances of type T.</p>
 </dd>
 </dl>
 </dd></dl>
@@ -1242,13 +1288,16 @@ ignoring dunder methods and some parent class attributes.</p>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#polyfactory.factories.base.BaseFactory.get_provider_map"><code class="docutils literal notranslate"><span class="pre">BaseFactory.get_provider_map()</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#polyfactory.factories.base.BaseFactory.create_factory"><code class="docutils literal notranslate"><span class="pre">BaseFactory.create_factory()</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#polyfactory.factories.base.BaseFactory.get_field_value"><code class="docutils literal notranslate"><span class="pre">BaseFactory.get_field_value()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#polyfactory.factories.base.BaseFactory.get_field_value_coverage"><code class="docutils literal notranslate"><span class="pre">BaseFactory.get_field_value_coverage()</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#polyfactory.factories.base.BaseFactory.should_set_none_value"><code class="docutils literal notranslate"><span class="pre">BaseFactory.should_set_none_value()</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#polyfactory.factories.base.BaseFactory.should_set_field_value"><code class="docutils literal notranslate"><span class="pre">BaseFactory.should_set_field_value()</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#polyfactory.factories.base.BaseFactory.get_model_fields"><code class="docutils literal notranslate"><span class="pre">BaseFactory.get_model_fields()</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#polyfactory.factories.base.BaseFactory.get_factory_fields"><code class="docutils literal notranslate"><span class="pre">BaseFactory.get_factory_fields()</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#polyfactory.factories.base.BaseFactory.process_kwargs"><code class="docutils literal notranslate"><span class="pre">BaseFactory.process_kwargs()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#polyfactory.factories.base.BaseFactory.process_kwargs_coverage"><code class="docutils literal notranslate"><span class="pre">BaseFactory.process_kwargs_coverage()</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#polyfactory.factories.base.BaseFactory.build"><code class="docutils literal notranslate"><span class="pre">BaseFactory.build()</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#polyfactory.factories.base.BaseFactory.batch"><code class="docutils literal notranslate"><span class="pre">BaseFactory.batch()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#polyfactory.factories.base.BaseFactory.coverage"><code class="docutils literal notranslate"><span class="pre">BaseFactory.coverage()</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#polyfactory.factories.base.BaseFactory.create_sync"><code class="docutils literal notranslate"><span class="pre">BaseFactory.create_sync()</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#polyfactory.factories.base.BaseFactory.create_batch_sync"><code class="docutils literal notranslate"><span class="pre">BaseFactory.create_batch_sync()</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#polyfactory.factories.base.BaseFactory.create_async"><code class="docutils literal notranslate"><span class="pre">BaseFactory.create_async()</span></code></a></li>

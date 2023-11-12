@@ -655,6 +655,7 @@ document.write(`
 <li class="toctree-l2"><a class="reference internal" href="usage/decorators.html">The <code class="docutils literal notranslate"><span class="pre">post_generated</span></code> decorator</a></li>
 <li class="toctree-l2"><a class="reference internal" href="usage/fixtures.html">Pytest fixtures</a></li>
 <li class="toctree-l2"><a class="reference internal" href="usage/handling_custom_types.html">Handling Custom Types</a></li>
+<li class="toctree-l2"><a class="reference internal" href="usage/model_coverage.html">Model coverage generation</a></li>
 </ul>
 </li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="reference/index.html">API Reference</a><input class="toctree-checkbox" id="toctree-checkbox-3" name="toctree-checkbox-3" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-3"><i class="fa-solid fa-chevron-down"></i></label><ul>
@@ -889,6 +890,8 @@ document.write(`
 </li>
       <li><a href="reference/field_meta.html#polyfactory.field_meta.Constraints">Constraints (class in polyfactory.field_meta)</a>
 </li>
+      <li><a href="reference/factories/base.html#polyfactory.factories.base.BaseFactory.coverage">coverage() (polyfactory.factories.base.BaseFactory class method)</a>
+</li>
       <li><a href="reference/factories/base.html#polyfactory.factories.base.BaseFactory.create_async">create_async() (polyfactory.factories.base.BaseFactory class method)</a>
 </li>
       <li><a href="reference/factories/base.html#polyfactory.factories.base.BaseFactory.create_batch_async">create_batch_async() (polyfactory.factories.base.BaseFactory class method)</a>
@@ -969,6 +972,8 @@ document.write(`
         <li><a href="reference/factories/beanie_odm_factory.html#polyfactory.factories.beanie_odm_factory.BeanieDocumentFactory.get_field_value">(polyfactory.factories.beanie_odm_factory.BeanieDocumentFactory class method)</a>
 </li>
       </ul></li>
+      <li><a href="reference/factories/base.html#polyfactory.factories.base.BaseFactory.get_field_value_coverage">get_field_value_coverage() (polyfactory.factories.base.BaseFactory class method)</a>
+</li>
       <li><a href="reference/value_generators/constrained_numbers.html#polyfactory.value_generators.constrained_numbers.get_increment">get_increment() (in module polyfactory.value_generators.constrained_numbers)</a>
 </li>
       <li><a href="reference/factories/attrs_factory.html#polyfactory.factories.attrs_factory.AttrsFactory.get_model_fields">get_model_fields() (polyfactory.factories.attrs_factory.AttrsFactory class method)</a>
@@ -1012,6 +1017,8 @@ document.write(`
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="reference/value_generators/complex_types.html#polyfactory.value_generators.complex_types.handle_collection_type">handle_collection_type() (in module polyfactory.value_generators.complex_types)</a>
+</li>
+      <li><a href="reference/value_generators/complex_types.html#polyfactory.value_generators.complex_types.handle_collection_type_coverage">handle_collection_type_coverage() (in module polyfactory.value_generators.complex_types)</a>
 </li>
       <li><a href="reference/value_generators/constrained_collections.html#polyfactory.value_generators.constrained_collections.handle_constrained_collection">handle_constrained_collection() (in module polyfactory.value_generators.constrained_collections)</a>
 </li>
@@ -1325,6 +1332,8 @@ document.write(`
       <li><a href="reference/fields.html#polyfactory.fields.PostGenerated">PostGenerated (class in polyfactory.fields)</a>
 </li>
       <li><a href="reference/factories/base.html#polyfactory.factories.base.BaseFactory.process_kwargs">process_kwargs() (polyfactory.factories.base.BaseFactory class method)</a>
+</li>
+      <li><a href="reference/factories/base.html#polyfactory.factories.base.BaseFactory.process_kwargs_coverage">process_kwargs_coverage() (polyfactory.factories.base.BaseFactory class method)</a>
 </li>
       <li><a href="reference/factories/pydantic_factory.html#polyfactory.factories.pydantic_factory.PydanticConstraints">PydanticConstraints (class in polyfactory.factories.pydantic_factory)</a>
 </li>
