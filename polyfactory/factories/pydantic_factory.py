@@ -284,6 +284,19 @@ class PydanticFieldMeta(FieldMeta):
             constraints=cast("PydanticConstraints", {k: v for k, v in constraints.items() if v is not None}) or None,
         )
 
+    if VERSION.startswith("2"):
+
+        @classmethod
+        def get_annotation_metadata(cls, annotation: Any, random: Random) -> list[Any]:
+            metadata = []
+            for m in super().get_annotation_metadata(annotation, random):
+                if isinstance(m, FieldInfo):
+                    metadata.extend(m.metadata)
+                else:
+                    metadata.append(m)
+
+            return metadata
+
 
 class ModelFactory(Generic[T], BaseFactory[T]):
     """Base factory for pydantic models"""
