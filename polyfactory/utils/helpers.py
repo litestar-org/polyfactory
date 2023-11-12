@@ -3,6 +3,11 @@ from __future__ import annotations
 import sys
 from typing import TYPE_CHECKING, Any, Mapping
 
+try:
+    from types import NoneType
+except ImportError:
+    NoneType = type(None)  # type: ignore[misc,assignment]
+
 from typing_extensions import get_args, get_origin
 
 from polyfactory.constants import TYPE_MAPPING
@@ -53,7 +58,7 @@ def unwrap_optional(annotation: Any) -> Any:
     :returns: A type annotation
     """
     while is_optional(annotation):
-        annotation = next(arg for arg in get_args(annotation) if arg not in (type(None), None))
+        annotation = next(arg for arg in get_args(annotation) if arg not in (NoneType, None))
     return annotation
 
 
@@ -76,6 +81,30 @@ def unwrap_annotation(annotation: Any, random: Random) -> Any:
         else:
             annotation = unwrap_union(annotation, random=random)
     return annotation
+
+
+def flatten_annotation(annotation: Any) -> list[Any]:
+    """Flattens an annotation.
+
+    :param annotation: A type annotation.
+
+    :returns: The flattened annotations.
+    """
+    flat = []
+    if is_new_type(annotation):
+        flat.extend(flatten_annotation(unwrap_new_type(annotation)))
+    elif is_optional(annotation):
+        flat.append(NoneType)
+        flat.extend(flatten_annotation(arg) for arg in get_args(annotation) if arg not in (NoneType, None))
+    elif is_annotated(annotation):
+        flat.extend(flatten_annotation(get_args(annotation)[0]))
+    elif is_union(annotation):
+        for a in get_args(annotation):
+            flat.extend(flatten_annotation(a))
+    else:
+        flat.append(annotation)
+
+    return flat
 
 
 def unwrap_args(annotation: Any, random: Random) -> tuple[Any, ...]:
