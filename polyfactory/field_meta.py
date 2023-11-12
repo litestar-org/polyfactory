@@ -134,7 +134,7 @@ class FieldMeta:
         field_type = normalize_annotation(annotation, random=random)
 
         if not constraints and is_annotated(annotation):
-            _, metadata = unwrap_annotated(annotation, random=random)
+            metadata = cls.get_annotation_metadata(annotation, random=random)
             constraints = cls.parse_constraints(metadata)
 
         if not is_any_annotated(annotation):
@@ -156,7 +156,7 @@ class FieldMeta:
             number_of_args = 1
             extended_type_args = CollectionExtender.extend_type_args(field.annotation, field.type_args, number_of_args)
             field.children = [
-                FieldMeta.from_type(
+                cls.from_type(
                     annotation=unwrap_new_type(arg),
                     random=random,
                 )
@@ -215,3 +215,15 @@ class FieldMeta:
                     },
                 )
         return cast("Constraints", constraints)
+
+    @classmethod
+    def get_annotation_metadata(cls, annotation: Any, random: Random) -> list[Any]:
+        """Get the metadatas from the annotation.
+
+        :param annotation: A type annotation.
+        :param random: An instance of random.Random.
+
+        :returns: A list of the metadata in the annotation.
+        """
+
+        return unwrap_annotated(annotation, random)[1]
