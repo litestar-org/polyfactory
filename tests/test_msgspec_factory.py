@@ -7,7 +7,7 @@ from uuid import UUID
 
 import msgspec
 import pytest
-from msgspec import Struct, structs
+from msgspec import Meta, Struct, structs
 from typing_extensions import Annotated
 
 from polyfactory.exceptions import ParameterException
@@ -215,3 +215,37 @@ def test_inheritence_with_generics() -> None:
 
     validated_bar = msgspec.convert(bar_dict, type=Bar)
     assert validated_bar == bar
+
+
+def test_sequence_with_constrained_item_types() -> None:
+    ConstrainedInt = Annotated[int, Meta(ge=100, le=200)]
+
+    class Foo(Struct):
+        list_field: List[ConstrainedInt]
+        tuple_field: Tuple[ConstrainedInt]
+        variable_tuple_field: Tuple[ConstrainedInt, ...]
+        set_field: Set[ConstrainedInt]
+
+    class FooFactory(MsgspecFactory[Foo]):
+        __model__ = Foo
+
+    foo = FooFactory.build()
+    validated_foo = msgspec.convert(structs.asdict(foo), Foo)
+
+    assert validated_foo == foo
+
+
+def test_mapping_with_constrained_item_types() -> None:
+    ConstrainedInt = Annotated[int, Meta(ge=100, le=200)]
+    ConstrainedStr = Annotated[str, Meta(min_length=1, max_length=3)]
+
+    class Foo(Struct):
+        dict_field = Dict[ConstrainedStr, ConstrainedInt]
+
+    class FooFactory(MsgspecFactory[Foo]):
+        __model__ = Foo
+
+    foo = FooFactory.build()
+    validated_foo = msgspec.convert(structs.asdict(foo), Foo)
+
+    assert validated_foo == foo

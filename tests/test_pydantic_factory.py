@@ -1,5 +1,5 @@
 import sys
-from typing import Optional
+from typing import Annotated, Dict, List, Optional, Set, Tuple
 
 import pytest
 from pydantic import VERSION, BaseModel, Field, Json
@@ -78,3 +78,31 @@ def test_nested_json_type() -> None:
         __model__ = B
 
     assert isinstance(BFactory.build(), B)
+
+
+def test_sequence_with_annotated_item_types() -> None:
+    ConstrainedInt = Annotated[int, Field(ge=100, le=200)]
+
+    class Foo(BaseModel):
+        list_field: List[ConstrainedInt]
+        tuple_field: Tuple[ConstrainedInt]
+        variable_tuple_field: Tuple[ConstrainedInt, ...]
+        set_field: Set[ConstrainedInt]
+
+    class FooFactory(ModelFactory[Foo]):
+        __model__ = Foo
+
+    assert FooFactory.build()
+
+
+def test_mapping_with_annotated_item_types() -> None:
+    ConstrainedInt = Annotated[int, Field(ge=100, le=200)]
+    ConstrainedStr = Annotated[str, Field(min_length=1, max_length=3)]
+
+    class Foo(BaseModel):
+        dict_field: Dict[ConstrainedStr, ConstrainedInt]
+
+    class FooFactory(ModelFactory[Foo]):
+        __model__ = Foo
+
+    assert FooFactory.build()
