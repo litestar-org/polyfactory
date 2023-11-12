@@ -16,6 +16,7 @@ from polyfactory.utils.predicates import (
 
 if TYPE_CHECKING:
     from random import Random
+    from typing import Sequence
 
 
 def unwrap_new_type(annotation: Any) -> Any:
@@ -131,6 +132,17 @@ def normalize_annotation(annotation: Any, random: Random) -> Any:
         return origin[args] if origin is not type else annotation
 
     return origin
+
+
+def get_annotation_metadata(annotation: Any) -> Sequence[Any]:
+    """Get the metadata in the annotation.
+
+    :param annotation: A type annotation.
+
+    :returns: The metadata.
+    """
+
+    return get_args(annotation)[1:]
 
 
 def get_collection_type(annotation: Any) -> type[list | tuple | set | frozenset | dict]:
