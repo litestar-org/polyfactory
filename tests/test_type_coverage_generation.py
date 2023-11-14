@@ -3,7 +3,7 @@ from __future__ import annotations
 
 from dataclasses import dataclass, make_dataclass
 from datetime import date
-from typing import Dict, FrozenSet, List, Literal, Set, Tuple, Union
+from typing import Dict, FrozenSet, List, Literal, Optional, Set, Tuple, Union
 from uuid import UUID
 
 import pytest
@@ -212,3 +212,18 @@ def test_coverage_parameter_exception() -> None:
 
     with pytest.raises(ParameterException):
         list(Factory.coverage())
+
+
+def test_coverage_optional_field() -> None:
+    @dataclass
+    class OptionalInt:
+        i: Optional[int]
+
+    class OptionalIntFactory(DataclassFactory[OptionalInt]):
+        __model__ = OptionalInt
+
+    results = list(OptionalIntFactory.coverage())
+    assert len(results) == 2
+
+    assert isinstance(results[0].i, int)
+    assert results[1].i is None
