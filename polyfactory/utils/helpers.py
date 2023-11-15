@@ -94,8 +94,8 @@ def flatten_annotation(annotation: Any) -> list[Any]:
     if is_new_type(annotation):
         flat.extend(flatten_annotation(unwrap_new_type(annotation)))
     elif is_optional(annotation):
-        flat.append(NoneType)
-        flat.extend(flatten_annotation(arg) for arg in get_args(annotation) if arg not in (NoneType, None))
+        for a in get_args(annotation):
+            flat.extend(flatten_annotation(a))
     elif is_annotated(annotation):
         flat.extend(flatten_annotation(get_args(annotation)[0]))
     elif is_union(annotation):
