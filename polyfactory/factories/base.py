@@ -492,7 +492,7 @@ class BaseFactory(ABC, Generic[T]):
         )
 
     @classmethod
-    def get_constrained_field_value(cls, annotation: Any, field_meta: FieldMeta) -> Any:  # noqa: C901, PLR0911
+    def get_constrained_field_value(cls, annotation: Any, field_meta: FieldMeta) -> Any:  # noqa: C901, PLR0911, PLR0912
         try:
             constraints = cast("Constraints", field_meta.constraints)
             if is_safe_subclass(annotation, float):
@@ -541,8 +541,11 @@ class BaseFactory(ABC, Generic[T]):
                     pattern=constraints.get("pattern"),
                 )
 
-            with suppress(ValueError):
+            try:
                 collection_type = get_collection_type(annotation)
+            except ValueError:
+                collection_type = None
+            if collection_type is not None:
                 if collection_type == dict:
                     return handle_constrained_mapping(
                         factory=cls,
@@ -550,7 +553,6 @@ class BaseFactory(ABC, Generic[T]):
                         min_items=constraints.get("min_length"),
                         max_items=constraints.get("max_length"),
                     )
-
                 return handle_constrained_collection(
                     collection_type=collection_type,  # type: ignore[type-var]
                     factory=cls,
