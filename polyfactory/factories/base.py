@@ -37,7 +37,6 @@ from typing import (
     Generic,
     Iterable,
     Mapping,
-    Optional,
     Sequence,
     Type,
     TypeVar,
@@ -111,7 +110,7 @@ class BaseFactory(ABC, Generic[T]):
     __model__: type[T]
     """
     The model for the factory.
-    This attribute is required for non-base factories and an exception will be raised if its not set.
+    This attribute is required for non-base factories and an exception will be raised if it's not set. Can be automatically inferred from the factory generic argument.
     """
     __check_model__: bool = False
     """
@@ -222,7 +221,7 @@ class BaseFactory(ABC, Generic[T]):
             BaseFactory._factory_type_mapping[cls.__model__] = cls
 
     @classmethod
-    def _infer_model_type(cls: type[F]) -> Optional[type[T]]:
+    def _infer_model_type(cls: type[F]) -> type[T] | None:
         """Return model type inferred from class declaration.
         class Foo(ModelFactory[MyModel]):  # <<< MyModel
             ...
