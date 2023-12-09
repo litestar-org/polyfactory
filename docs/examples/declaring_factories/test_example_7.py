@@ -20,7 +20,7 @@ class Person:
 
 
 class PersonFactory(AttrsFactory[Person]):
-    __model__ = Person
+    ...
 
 
 def test_person_factory() -> None:

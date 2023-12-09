@@ -12,7 +12,7 @@ class Person:
 
 
 class PersonFactory(DataclassFactory[Person]):
-    __model__ = Person
+    ...
 
 
 def test_is_person() -> None:

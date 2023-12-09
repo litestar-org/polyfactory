@@ -11,7 +11,7 @@ class Person(TypedDict):
 
 
 class PersonFactory(TypedDictFactory[Person]):
-    __model__ = Person
+    ...
 
 
 def test_is_person() -> None:

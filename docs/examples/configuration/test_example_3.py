@@ -14,7 +14,6 @@ class Person:
 
 
 class PersonFactory(DataclassFactory[Person]):
-    __model__ = Person
     __faker__ = Faker(locale="es_ES")
 
     __random_seed__ = 10

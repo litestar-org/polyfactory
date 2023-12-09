@@ -19,7 +19,7 @@ class Person:
 
 @register_fixture
 class PersonFactory(DataclassFactory[Person]):
-    __model__ = Person
+    ...
 
 
 def test_person_factory(person_factory: PersonFactory) -> None:

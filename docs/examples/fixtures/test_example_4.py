@@ -26,12 +26,10 @@ class ClassRoom:
 
 @register_fixture
 class PersonFactory(DataclassFactory[Person]):
-    __model__ = Person
+    ...
 
 
 class ClassRoomFactory(DataclassFactory[ClassRoom]):
-    __model__ = ClassRoom
-
     teacher = Fixture(PersonFactory, name="Ludmilla Newman")
     pupils = Fixture(PersonFactory, size=20)
 

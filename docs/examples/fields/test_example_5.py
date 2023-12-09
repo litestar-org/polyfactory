@@ -10,8 +10,6 @@ class Person(TypedDict):
 
 
 class PersonFactory(TypedDictFactory[Person]):
-    __model__ = Person
-
     id = Ignore()
 
 

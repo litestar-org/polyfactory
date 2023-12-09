@@ -13,7 +13,6 @@ class Person:
 
 
 class PersonFactory(DataclassFactory[Person]):
-    __model__ = Person
     __random__ = Random(10)
 
     @classmethod

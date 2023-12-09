@@ -15,7 +15,7 @@ class Author(Base):
 
 
 class AuthorFactory(SQLAlchemyFactory[Author]):
-    __model__ = Author
+    ...
 
 
 def test_sqla_factory() -> None:

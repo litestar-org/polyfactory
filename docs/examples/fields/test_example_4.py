@@ -32,8 +32,6 @@ class Person:
 
 
 class PetFactory(DataclassFactory[Pet]):
-    __model__ = Pet
-
     @classmethod
     def name(cls) -> str:
         return cls.__random__.choice(["Ralph", "Roxy"])
@@ -44,8 +42,6 @@ class PetFactory(DataclassFactory[Pet]):
 
 
 class PersonFactory(DataclassFactory[Person]):
-    __model__ = Person
-
     pets = Use(PetFactory.batch, size=2)
 
 

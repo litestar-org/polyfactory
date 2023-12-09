@@ -34,8 +34,6 @@ pet_instance = Pet(name="Roxy", sound="woof woof", species=Species.DOG)
 
 
 class PersonFactory(DataclassFactory[Person]):
-    __model__ = Person
-
     pets = [pet_instance]
 
 

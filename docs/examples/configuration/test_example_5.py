@@ -32,14 +32,13 @@ class Person:
 
 
 class PetFactory(DataclassFactory[Pet]):
-    __model__ = Pet
     __set_as_default_factory_for_type__ = True
 
     name = Use(DataclassFactory.__random__.choice, ["Roxy", "Spammy", "Moshe"])
 
 
 class PersonFactory(DataclassFactory[Person]):
-    __model__ = Person
+    ...
 
 
 def test_default_pet_factory() -> None:

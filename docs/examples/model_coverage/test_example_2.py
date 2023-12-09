@@ -29,7 +29,7 @@ class SocialGroup:
 
 
 class SocialGroupFactory(DataclassFactory[SocialGroup]):
-    __model__ = SocialGroup
+    ...
 
 
 def test_social_group_coverage() -> None:

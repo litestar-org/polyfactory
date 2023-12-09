@@ -18,7 +18,7 @@ class Person:
 
 
 class PersonFactory(DataclassFactory[Person]):
-    __model__ = Person
+    ...
 
 
 person_factory_fixture = register_fixture(PersonFactory, name="aliased_person_factory")
