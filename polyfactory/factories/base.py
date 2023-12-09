@@ -46,7 +46,7 @@ from typing import (
 from uuid import UUID
 
 from faker import Faker
-from typing_extensions import get_args, get_origin
+from typing_extensions import get_args, get_origin, get_original_bases
 
 from polyfactory.constants import (
     DEFAULT_RANDOM,
@@ -231,8 +231,9 @@ class BaseFactory(ABC, Generic[T]):
 
         :returns: Inferred model type or None
         """
+
         factory_bases: Iterable[type[BaseFactory[T]]] = (
-            b for b in getattr(cls, "__orig_bases__", []) if issubclass(get_origin(b), BaseFactory)
+            b for b in get_original_bases(cls) if get_origin(b) and issubclass(get_origin(b), BaseFactory)
         )
         generic_args: Sequence[type[T]] = [
             arg for factory_base in factory_bases for arg in get_args(factory_base) if not isinstance(arg, TypeVar)
