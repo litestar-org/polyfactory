@@ -191,7 +191,7 @@ class BaseFactory(ABC, Generic[T]):
             )
 
         if "__is_base_factory__" not in cls.__dict__ or not cls.__is_base_factory__:
-            model: Optional[type[T]] = getattr(cls, "__model__", None) or cls._infer_model_type()
+            model: type[T] | None = getattr(cls, "__model__", None) or cls._infer_model_type()
             if not model:
                 msg = f"required configuration attribute '__model__' is not set on {cls.__name__}"
                 raise ConfigurationException(
