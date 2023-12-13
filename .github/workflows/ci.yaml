@@ -168,13 +168,13 @@ jobs:
 
       - name: Initialize CodeQL With Dependencies
         if: github.event_name == 'push' && github.ref_name == 'main'
-        uses: github/codeql-action/init@v2
+        uses: github/codeql-action/init@v3
 
       - name: Initialize CodeQL Without Dependencies
         if: github.event_name == 'pull_request'
-        uses: github/codeql-action/init@v2
+        uses: github/codeql-action/init@v3
         with:
           setup-python-dependencies: false
 
       - name: Perform CodeQL Analysis
-        uses: github/codeql-action/analyze@v2
+        uses: github/codeql-action/analyze@v3
