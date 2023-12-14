@@ -8,71 +8,23 @@ base factories.
     :caption: Declaring a factory for a dataclass
     :language: python
 
+You can also specify the model type by only specifying the factory generic type parameter.
+
+.. code-block:: python
+
+    @dataclass
+    class Person:
+        name: str
+        age: float
+        height: float
+        weight: float
+
+    class PersonFactory(DataclassFactory[Person]):
+        ...
+
 .. note::
-    .. |white_check_mark|  unicode:: U+2705
-    .. |cross_mark|  unicode:: U+274C
-    .. |warning|  unicode:: U+26A0
-
-    Let's have a closer look at the factory declaration.
-    There are two places where the model type is provided:
-    ``__model__`` class attribute and generic type parameter.
-
-    .. list-table::
-       :align: left
-       :width: 60%
-       :header-rows: 1
-
-       * - Place
-         - Purpose
-       * - ``__model__ = Person``
-         - Model mock-data generation (core feature)
-       * - ``DataclassFactory[Person]``
-         - Type hints (optional)
-
-    In previous library version you had to specify both ``__model__`` class attribute
-    and generic type parameter to get core and type hints features.
-
-    .. list-table::
-       :align: left
-       :width: 100%
-       :header-rows: 1
-
-       * -
-         - |white_check_mark| ``DataclassFactory[Person]``
-         - |cross_mark| ``DataclassFactory``
-       * - |white_check_mark| ``__model__ = Person``
-         - |white_check_mark| OK
-         - |warning| OK (no type hints)
-       * - |cross_mark| ``__model__`` omitting
-         - |cross_mark| Error
-         - |cross_mark| Error
-
-    Now you can omit ``__model__`` attribute assigning.
-
-    .. list-table::
-       :width: 100%
-       :header-rows: 1
-
-       * -
-         - |white_check_mark| ``DataclassFactory[Person]``
-         - |cross_mark| ``DataclassFactory``
-       * - |white_check_mark| ``__model__ = Person``
-         - |white_check_mark| OK (``__model__`` priority)
-         - |warning| OK (no type hints)
-       * - |cross_mark| ``__model__`` omitting
-         - |white_check_mark| OK (infer from generic type)
-         - |cross_mark| Error
-
-    So the syntax is
-
-    .. code-block:: python
-
-        class PersonFactory(DataclassFactory[Person]):
-            ...
-
-    If you specify different types in both places -- that doesn't make any sense --
-    the ``__model__`` class attribute type will be used over generic parameter type.
-
+   The syntax with the ``__model__`` class attribute omitting
+   is only available since version 2.13.0.
 
 The same applies to the other factories exported by this library, for example:
 
