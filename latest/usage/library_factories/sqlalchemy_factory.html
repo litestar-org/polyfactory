@@ -780,7 +780,7 @@ document.write(`
 
 
 <span class="k">class</span> <span class="nc">AuthorFactory</span><span class="p">(</span><span class="n">SQLAlchemyFactory</span><span class="p">[</span><span class="n">Author</span><span class="p">]):</span>
-    <span class="n">__model__</span> <span class="o">=</span> <span class="n">Author</span>
+    <span class="o">...</span>
 
 
 <span class="k">def</span> <span class="nf">test_sqla_factory</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
@@ -827,11 +827,10 @@ document.write(`
 
 
 <span class="k">class</span> <span class="nc">AuthorFactory</span><span class="p">(</span><span class="n">SQLAlchemyFactory</span><span class="p">[</span><span class="n">Author</span><span class="p">]):</span>
-    <span class="n">__model__</span> <span class="o">=</span> <span class="n">Author</span>
+    <span class="o">...</span>
 
 
 <span class="k">class</span> <span class="nc">AuthorFactoryWithRelationship</span><span class="p">(</span><span class="n">SQLAlchemyFactory</span><span class="p">[</span><span class="n">Author</span><span class="p">]):</span>
-    <span class="n">__model__</span> <span class="o">=</span> <span class="n">Author</span>
     <span class="n">__set_relationships__</span> <span class="o">=</span> <span class="kc">True</span>
 
 
@@ -886,7 +885,6 @@ document.write(`
 
 
 <span class="k">class</span> <span class="nc">AuthorFactory</span><span class="p">(</span><span class="n">SQLAlchemyFactory</span><span class="p">[</span><span class="n">Author</span><span class="p">]):</span>
-    <span class="n">__model__</span> <span class="o">=</span> <span class="n">Author</span>
     <span class="n">__set_relationships__</span> <span class="o">=</span> <span class="kc">True</span>
 
 

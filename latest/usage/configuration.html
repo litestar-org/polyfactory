@@ -778,7 +778,6 @@ You can read the reference for these in the API reference for
 
 
 <span class="k">class</span> <span class="nc">PersonFactory</span><span class="p">(</span><span class="n">DataclassFactory</span><span class="p">[</span><span class="n">Person</span><span class="p">]):</span>
-    <span class="n">__model__</span> <span class="o">=</span> <span class="n">Person</span>
     <span class="n">__random_seed__</span> <span class="o">=</span> <span class="mi">1</span>
 
     <span class="nd">@classmethod</span>
@@ -816,7 +815,6 @@ methods as well as faker.</p>
 
 
 <span class="k">class</span> <span class="nc">PersonFactory</span><span class="p">(</span><span class="n">DataclassFactory</span><span class="p">[</span><span class="n">Person</span><span class="p">]):</span>
-    <span class="n">__model__</span> <span class="o">=</span> <span class="n">Person</span>
     <span class="n">__random__</span> <span class="o">=</span> <span class="n">Random</span><span class="p">(</span><span class="mi">10</span><span class="p">)</span>
 
     <span class="nd">@classmethod</span>
@@ -856,7 +854,6 @@ other libraries, as well as when factories are being dynamically generated.</p>
 
 
 <span class="k">class</span> <span class="nc">PersonFactory</span><span class="p">(</span><span class="n">DataclassFactory</span><span class="p">[</span><span class="n">Person</span><span class="p">]):</span>
-    <span class="n">__model__</span> <span class="o">=</span> <span class="n">Person</span>
     <span class="n">__faker__</span> <span class="o">=</span> <span class="n">Faker</span><span class="p">(</span><span class="n">locale</span><span class="o">=</span><span class="s2">&quot;es_ES&quot;</span><span class="p">)</span>
 
     <span class="n">__random_seed__</span> <span class="o">=</span> <span class="mi">10</span>
@@ -943,7 +940,6 @@ we are also setting the random seed value, the results of the test are determini
 
 
 <span class="k">class</span> <span class="nc">PersonFactory</span><span class="p">(</span><span class="n">DataclassFactory</span><span class="p">[</span><span class="n">Person</span><span class="p">]):</span>
-    <span class="n">__model__</span> <span class="o">=</span> <span class="n">Person</span>
     <span class="n">__sync_persistence__</span> <span class="o">=</span> <span class="n">SyncPersistenceHandler</span>
     <span class="n">__async_persistence__</span> <span class="o">=</span> <span class="n">AsyncPersistenceHandler</span>
 
@@ -1019,7 +1015,7 @@ Once a factory is generated, it is then cached and reused - when the same type i
 
 
 <span class="k">class</span> <span class="nc">PersonFactory</span><span class="p">(</span><span class="n">DataclassFactory</span><span class="p">[</span><span class="n">Person</span><span class="p">]):</span>
-    <span class="n">__model__</span> <span class="o">=</span> <span class="n">Person</span>
+    <span class="o">...</span>
 
 
 <span class="k">def</span> <span class="nf">test_dynamic_factory_generation</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
@@ -1066,14 +1062,13 @@ Once a factory is generated, it is then cached and reused - when the same type i
 
 
 <span class="k">class</span> <span class="nc">PetFactory</span><span class="p">(</span><span class="n">DataclassFactory</span><span class="p">[</span><span class="n">Pet</span><span class="p">]):</span>
-    <span class="n">__model__</span> <span class="o">=</span> <span class="n">Pet</span>
     <span class="n">__set_as_default_factory_for_type__</span> <span class="o">=</span> <span class="kc">True</span>
 
     <span class="n">name</span> <span class="o">=</span> <span class="n">Use</span><span class="p">(</span><span class="n">DataclassFactory</span><span class="o">.</span><span class="n">__random__</span><span class="o">.</span><span class="n">choice</span><span class="p">,</span> <span class="p">[</span><span class="s2">&quot;Roxy&quot;</span><span class="p">,</span> <span class="s2">&quot;Spammy&quot;</span><span class="p">,</span> <span class="s2">&quot;Moshe&quot;</span><span class="p">])</span>
 
 
 <span class="k">class</span> <span class="nc">PersonFactory</span><span class="p">(</span><span class="n">DataclassFactory</span><span class="p">[</span><span class="n">Person</span><span class="p">]):</span>
-    <span class="n">__model__</span> <span class="o">=</span> <span class="n">Person</span>
+    <span class="o">...</span>
 
 
 <span class="k">def</span> <span class="nf">test_default_pet_factory</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
@@ -1101,8 +1096,6 @@ Once a factory is generated, it is then cached and reused - when the same type i
 
 
 <span class="k">class</span> <span class="nc">OwnerFactory</span><span class="p">(</span><span class="n">DataclassFactory</span><span class="p">[</span><span class="n">Owner</span><span class="p">]):</span>
-    <span class="n">__model__</span> <span class="o">=</span> <span class="n">Owner</span>
-
     <span class="n">__randomize_collection_length__</span> <span class="o">=</span> <span class="kc">True</span>
     <span class="n">__min_collection_length__</span> <span class="o">=</span> <span class="mi">2</span>
     <span class="n">__max_collection_length__</span> <span class="o">=</span> <span class="mi">5</span>
@@ -1135,7 +1128,6 @@ Once a factory is generated, it is then cached and reused - when the same type i
 
 
 <span class="k">class</span> <span class="nc">PersonFactory</span><span class="p">(</span><span class="n">DataclassFactory</span><span class="p">[</span><span class="n">Person</span><span class="p">]):</span>
-    <span class="n">__model__</span> <span class="o">=</span> <span class="n">Person</span>
     <span class="n">__allow_none_optionals__</span> <span class="o">=</span> <span class="kc">False</span>
 
 
@@ -1174,7 +1166,6 @@ Any other field definition will not be checked.</p>
     <span class="p">):</span>
 
         <span class="k">class</span> <span class="nc">PersonFactory</span><span class="p">(</span><span class="n">DataclassFactory</span><span class="p">[</span><span class="n">Person</span><span class="p">]):</span>
-            <span class="n">__model__</span> <span class="o">=</span> <span class="n">Person</span>
             <span class="n">__check_model__</span> <span class="o">=</span> <span class="kc">True</span>
             <span class="n">unknown_field</span> <span class="o">=</span> <span class="n">PostGenerated</span><span class="p">(</span><span class="k">lambda</span><span class="p">:</span> <span class="s2">&quot;foo&quot;</span><span class="p">)</span>
 </pre></div>

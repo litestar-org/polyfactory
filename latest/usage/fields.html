@@ -798,8 +798,6 @@ Lets look at a few examples:</p>
 
 
 <span class="k">class</span> <span class="nc">PersonFactory</span><span class="p">(</span><span class="n">DataclassFactory</span><span class="p">[</span><span class="n">Person</span><span class="p">]):</span>
-    <span class="n">__model__</span> <span class="o">=</span> <span class="n">Person</span>
-
     <span class="n">pets</span> <span class="o">=</span> <span class="p">[</span><span class="n">pet_instance</span><span class="p">]</span>
 
 
@@ -852,15 +850,11 @@ we like. For example:</p>
 
 
 <span class="k">class</span> <span class="nc">PetFactory</span><span class="p">(</span><span class="n">DataclassFactory</span><span class="p">[</span><span class="n">Pet</span><span class="p">]):</span>
-    <span class="n">__model__</span> <span class="o">=</span> <span class="n">Pet</span>
-
     <span class="n">name</span> <span class="o">=</span> <span class="n">Use</span><span class="p">(</span><span class="n">DataclassFactory</span><span class="o">.</span><span class="n">__random__</span><span class="o">.</span><span class="n">choice</span><span class="p">,</span> <span class="p">[</span><span class="s2">&quot;Ralph&quot;</span><span class="p">,</span> <span class="s2">&quot;Roxy&quot;</span><span class="p">])</span>
     <span class="n">species</span> <span class="o">=</span> <span class="n">Use</span><span class="p">(</span><span class="n">DataclassFactory</span><span class="o">.</span><span class="n">__random__</span><span class="o">.</span><span class="n">choice</span><span class="p">,</span> <span class="nb">list</span><span class="p">(</span><span class="n">Species</span><span class="p">))</span>
 
 
 <span class="k">class</span> <span class="nc">PersonFactory</span><span class="p">(</span><span class="n">DataclassFactory</span><span class="p">[</span><span class="n">Person</span><span class="p">]):</span>
-    <span class="n">__model__</span> <span class="o">=</span> <span class="n">Person</span>
-
     <span class="n">pets</span> <span class="o">=</span> <span class="n">Use</span><span class="p">(</span><span class="n">PetFactory</span><span class="o">.</span><span class="n">batch</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
 
 
@@ -911,15 +905,11 @@ these will be invoked at build-time. Thus, you could for example re-write the ab
 
 
 <span class="k">class</span> <span class="nc">PetFactory</span><span class="p">(</span><span class="n">DataclassFactory</span><span class="p">[</span><span class="n">Pet</span><span class="p">]):</span>
-    <span class="n">__model__</span> <span class="o">=</span> <span class="n">Pet</span>
-
     <span class="n">name</span> <span class="o">=</span> <span class="k">lambda</span><span class="p">:</span> <span class="n">DataclassFactory</span><span class="o">.</span><span class="n">__random__</span><span class="o">.</span><span class="n">choice</span><span class="p">([</span><span class="s2">&quot;Ralph&quot;</span><span class="p">,</span> <span class="s2">&quot;Roxy&quot;</span><span class="p">])</span>
     <span class="n">species</span> <span class="o">=</span> <span class="k">lambda</span><span class="p">:</span> <span class="n">DataclassFactory</span><span class="o">.</span><span class="n">__random__</span><span class="o">.</span><span class="n">choice</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="n">Species</span><span class="p">))</span>
 
 
 <span class="k">class</span> <span class="nc">PersonFactory</span><span class="p">(</span><span class="n">DataclassFactory</span><span class="p">[</span><span class="n">Person</span><span class="p">]):</span>
-    <span class="n">__model__</span> <span class="o">=</span> <span class="n">Person</span>
-
     <span class="n">pets</span> <span class="o">=</span> <span class="n">Use</span><span class="p">(</span><span class="n">PetFactory</span><span class="o">.</span><span class="n">batch</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
 
 
@@ -968,8 +958,6 @@ these will be invoked at build-time. Thus, you could for example re-write the ab
 
 
 <span class="k">class</span> <span class="nc">PetFactory</span><span class="p">(</span><span class="n">DataclassFactory</span><span class="p">[</span><span class="n">Pet</span><span class="p">]):</span>
-    <span class="n">__model__</span> <span class="o">=</span> <span class="n">Pet</span>
-
     <span class="nd">@classmethod</span>
     <span class="k">def</span> <span class="nf">name</span><span class="p">(</span><span class="bp">cls</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
         <span class="k">return</span> <span class="bp">cls</span><span class="o">.</span><span class="n">__random__</span><span class="o">.</span><span class="n">choice</span><span class="p">([</span><span class="s2">&quot;Ralph&quot;</span><span class="p">,</span> <span class="s2">&quot;Roxy&quot;</span><span class="p">])</span>
@@ -980,8 +968,6 @@ these will be invoked at build-time. Thus, you could for example re-write the ab
 
 
 <span class="k">class</span> <span class="nc">PersonFactory</span><span class="p">(</span><span class="n">DataclassFactory</span><span class="p">[</span><span class="n">Person</span><span class="p">]):</span>
-    <span class="n">__model__</span> <span class="o">=</span> <span class="n">Person</span>
-
     <span class="n">pets</span> <span class="o">=</span> <span class="n">Use</span><span class="p">(</span><span class="n">PetFactory</span><span class="o">.</span><span class="n">batch</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
 
 
@@ -1020,8 +1006,6 @@ ignored by the factory:</p>
 
 
 <span class="k">class</span> <span class="nc">PersonFactory</span><span class="p">(</span><span class="n">TypedDictFactory</span><span class="p">[</span><span class="n">Person</span><span class="p">]):</span>
-    <span class="n">__model__</span> <span class="o">=</span> <span class="n">Person</span>
-
     <span class="nb">id</span> <span class="o">=</span> <span class="n">Ignore</span><span class="p">()</span>
 
 
@@ -1055,8 +1039,6 @@ factory will require passing a value for this attribute as a kwarg to the build 
 
 
 <span class="k">class</span> <span class="nc">PersonFactory</span><span class="p">(</span><span class="n">TypedDictFactory</span><span class="p">[</span><span class="n">Person</span><span class="p">]):</span>
-    <span class="n">__model__</span> <span class="o">=</span> <span class="n">Person</span>
-
     <span class="nb">id</span> <span class="o">=</span> <span class="n">Require</span><span class="p">()</span>
 
 
@@ -1101,8 +1083,6 @@ the PostGenerated helper is provided. For example:</p>
 
 
 <span class="k">class</span> <span class="nc">DatetimeRangeFactory</span><span class="p">(</span><span class="n">DataclassFactory</span><span class="p">[</span><span class="n">DatetimeRange</span><span class="p">]):</span>
-    <span class="n">__model__</span> <span class="o">=</span> <span class="n">DatetimeRange</span>
-
     <span class="n">to_dt</span> <span class="o">=</span> <span class="n">PostGenerated</span><span class="p">(</span><span class="n">add_timedelta</span><span class="p">)</span>
 
 
@@ -1154,14 +1134,10 @@ name in the values dictionary.</p>
 
 
 <span class="k">class</span> <span class="nc">PetFactory</span><span class="p">(</span><span class="n">DataclassFactory</span><span class="p">[</span><span class="n">Pet</span><span class="p">]):</span>
-    <span class="n">__model__</span> <span class="o">=</span> <span class="n">Pet</span>
-
     <span class="n">name</span> <span class="o">=</span> <span class="k">lambda</span><span class="p">:</span> <span class="n">DataclassFactory</span><span class="o">.</span><span class="n">__random__</span><span class="o">.</span><span class="n">choice</span><span class="p">([</span><span class="s2">&quot;Ralph&quot;</span><span class="p">,</span> <span class="s2">&quot;Roxy&quot;</span><span class="p">])</span>
 
 
 <span class="k">class</span> <span class="nc">PersonFactory</span><span class="p">(</span><span class="n">DataclassFactory</span><span class="p">[</span><span class="n">Person</span><span class="p">]):</span>
-    <span class="n">__model__</span> <span class="o">=</span> <span class="n">Person</span>
-
     <span class="n">pet</span> <span class="o">=</span> <span class="n">PetFactory</span>
 
 

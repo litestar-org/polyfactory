@@ -789,8 +789,6 @@ you can extend what’s referred as the <cite>providers_map</cite>:</p>
 <span class="c1"># by default the factory class cannot handle unknown types,</span>
 <span class="c1"># so we need to override the provider map to add it:</span>
 <span class="k">class</span> <span class="nc">PersonFactory</span><span class="p">(</span><span class="n">DataclassFactory</span><span class="p">[</span><span class="n">Person</span><span class="p">]):</span>
-    <span class="n">__model__</span> <span class="o">=</span> <span class="n">Person</span>
-
     <span class="nd">@classmethod</span>
     <span class="k">def</span> <span class="nf">get_provider_map</span><span class="p">(</span><span class="bp">cls</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="n">Type</span><span class="p">,</span> <span class="n">Any</span><span class="p">]:</span>
         <span class="n">providers_map</span> <span class="o">=</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">get_provider_map</span><span class="p">()</span>
@@ -864,7 +862,7 @@ for handling dataclasses:</p>
 
 <span class="c1"># we use our CustomDataclassFactory as a base for the PersonFactory</span>
 <span class="k">class</span> <span class="nc">PersonFactory</span><span class="p">(</span><span class="n">CustomDataclassFactory</span><span class="p">[</span><span class="n">Person</span><span class="p">]):</span>
-    <span class="n">__model__</span> <span class="o">=</span> <span class="n">Person</span>
+    <span class="o">...</span>
 
 
 <span class="k">def</span> <span class="nf">test_custom_dataclass_base_factory</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>

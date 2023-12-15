@@ -8,6 +8,24 @@ base factories.
     :caption: Declaring a factory for a dataclass
     :language: python
 
+You can also specify the model type by only specifying the factory generic type parameter.
+
+.. code-block:: python
+
+    @dataclass
+    class Person:
+        name: str
+        age: float
+        height: float
+        weight: float
+
+    class PersonFactory(DataclassFactory[Person]):
+        ...
+
+.. note::
+   The syntax with the ``__model__`` class attribute omitting
+   is only available since version 2.13.0.
+
 The same applies to the other factories exported by this library, for example:
 
 .. literalinclude:: /examples/declaring_factories/test_example_2.py

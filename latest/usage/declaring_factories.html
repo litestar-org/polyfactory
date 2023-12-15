@@ -788,6 +788,23 @@ base factories.</p>
 </pre></div>
 </div>
 </div>
+<p>You can also specify the model type by only specifying the factory generic type parameter.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="nd">@dataclass</span>
+<span class="k">class</span> <span class="nc">Person</span><span class="p">:</span>
+    <span class="n">name</span><span class="p">:</span> <span class="nb">str</span>
+    <span class="n">age</span><span class="p">:</span> <span class="nb">float</span>
+    <span class="n">height</span><span class="p">:</span> <span class="nb">float</span>
+    <span class="n">weight</span><span class="p">:</span> <span class="nb">float</span>
+
+<span class="k">class</span> <span class="nc">PersonFactory</span><span class="p">(</span><span class="n">DataclassFactory</span><span class="p">[</span><span class="n">Person</span><span class="p">]):</span>
+    <span class="o">...</span>
+</pre></div>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>The syntax with the <code class="docutils literal notranslate"><span class="pre">__model__</span></code> class attribute omitting
+is only available since version 2.13.0.</p>
+</div>
 <p>The same applies to the other factories exported by this library, for example:</p>
 <div class="literal-block-wrapper docutils container" id="id2">
 <div class="code-block-caption"><span class="caption-text">Declaring a factory for a typed-dict</span><a class="headerlink" href="#id2" title="Permalink to this code">#</a></div>
@@ -804,7 +821,7 @@ base factories.</p>
 
 
 <span class="k">class</span> <span class="nc">PersonFactory</span><span class="p">(</span><span class="n">TypedDictFactory</span><span class="p">[</span><span class="n">Person</span><span class="p">]):</span>
-    <span class="n">__model__</span> <span class="o">=</span> <span class="n">Person</span>
+    <span class="o">...</span>
 
 
 <span class="k">def</span> <span class="nf">test_is_person</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
@@ -833,7 +850,7 @@ base factories.</p>
 
 
 <span class="k">class</span> <span class="nc">PersonFactory</span><span class="p">(</span><span class="n">ModelFactory</span><span class="p">[</span><span class="n">Person</span><span class="p">]):</span>
-    <span class="n">__model__</span> <span class="o">=</span> <span class="n">Person</span>
+    <span class="o">...</span>
 
 
 <span class="k">def</span> <span class="nf">test_is_person</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
@@ -866,7 +883,7 @@ dataclasses interface. For example, this is using the pydantic <code class="docu
 
 
 <span class="k">class</span> <span class="nc">PersonFactory</span><span class="p">(</span><span class="n">DataclassFactory</span><span class="p">[</span><span class="n">Person</span><span class="p">]):</span>
-    <span class="n">__model__</span> <span class="o">=</span> <span class="n">Person</span>
+    <span class="o">...</span>
 
 
 <span class="k">def</span> <span class="nf">test_is_person</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
@@ -905,7 +922,7 @@ dataclasses interface. For example, this is using the pydantic <code class="docu
 
 
 <span class="k">class</span> <span class="nc">PersonFactory</span><span class="p">(</span><span class="n">AttrsFactory</span><span class="p">[</span><span class="n">Person</span><span class="p">]):</span>
-    <span class="n">__model__</span> <span class="o">=</span> <span class="n">Person</span>
+    <span class="o">...</span>
 
 
 <span class="k">def</span> <span class="nf">test_person_factory</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
@@ -961,7 +978,7 @@ create a <code class="docutils literal notranslate"><span class="pre">PetFactory
 
 
 <span class="k">class</span> <span class="nc">PersonFactory</span><span class="p">(</span><span class="n">DataclassFactory</span><span class="p">[</span><span class="n">Person</span><span class="p">]):</span>
-    <span class="n">__model__</span> <span class="o">=</span> <span class="n">Person</span>
+    <span class="o">...</span>
 
 
 <span class="k">def</span> <span class="nf">test_dynamic_factory_generation</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>

@@ -773,8 +773,6 @@ on the current factory, usually its <code class="docutils literal notranslate"><
 
 
 <span class="k">class</span> <span class="nc">DatetimeRangeFactory</span><span class="p">(</span><span class="n">DataclassFactory</span><span class="p">[</span><span class="n">DatetimeRange</span><span class="p">]):</span>
-    <span class="n">__model__</span> <span class="o">=</span> <span class="n">DatetimeRange</span>
-
     <span class="nd">@post_generated</span>
     <span class="nd">@classmethod</span>
     <span class="k">def</span> <span class="nf">to_dt</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">from_dt</span><span class="p">:</span> <span class="n">datetime</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">datetime</span><span class="p">:</span>

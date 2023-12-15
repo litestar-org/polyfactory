@@ -782,7 +782,7 @@ document.write(`
 
 <span class="nd">@register_fixture</span>
 <span class="k">class</span> <span class="nc">PersonFactory</span><span class="p">(</span><span class="n">DataclassFactory</span><span class="p">[</span><span class="n">Person</span><span class="p">]):</span>
-    <span class="n">__model__</span> <span class="o">=</span> <span class="n">Person</span>
+    <span class="o">...</span>
 
 
 <span class="k">def</span> <span class="nf">test_person_factory</span><span class="p">(</span><span class="n">person_factory</span><span class="p">:</span> <span class="n">PersonFactory</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
@@ -816,7 +816,7 @@ declare the fixture separately from the declaration of the class:</p>
 
 
 <span class="k">class</span> <span class="nc">PersonFactory</span><span class="p">(</span><span class="n">DataclassFactory</span><span class="p">[</span><span class="n">Person</span><span class="p">]):</span>
-    <span class="n">__model__</span> <span class="o">=</span> <span class="n">Person</span>
+    <span class="o">...</span>
 
 
 <span class="n">person_factory_fixture</span> <span class="o">=</span> <span class="n">register_fixture</span><span class="p">(</span><span class="n">PersonFactory</span><span class="p">)</span>
@@ -855,7 +855,7 @@ declare the fixture separately from the declaration of the class:</p>
 
 
 <span class="k">class</span> <span class="nc">PersonFactory</span><span class="p">(</span><span class="n">DataclassFactory</span><span class="p">[</span><span class="n">Person</span><span class="p">]):</span>
-    <span class="n">__model__</span> <span class="o">=</span> <span class="n">Person</span>
+    <span class="o">...</span>
 
 
 <span class="n">person_factory_fixture</span> <span class="o">=</span> <span class="n">register_fixture</span><span class="p">(</span><span class="n">PersonFactory</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s2">&quot;aliased_person_factory&quot;</span><span class="p">)</span>
@@ -900,12 +900,10 @@ declare the fixture separately from the declaration of the class:</p>
 
 <span class="nd">@register_fixture</span>
 <span class="k">class</span> <span class="nc">PersonFactory</span><span class="p">(</span><span class="n">DataclassFactory</span><span class="p">[</span><span class="n">Person</span><span class="p">]):</span>
-    <span class="n">__model__</span> <span class="o">=</span> <span class="n">Person</span>
+    <span class="o">...</span>
 
 
 <span class="k">class</span> <span class="nc">ClassRoomFactory</span><span class="p">(</span><span class="n">DataclassFactory</span><span class="p">[</span><span class="n">ClassRoom</span><span class="p">]):</span>
-    <span class="n">__model__</span> <span class="o">=</span> <span class="n">ClassRoom</span>
-
     <span class="n">teacher</span> <span class="o">=</span> <span class="n">Fixture</span><span class="p">(</span><span class="n">PersonFactory</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s2">&quot;Ludmilla Newman&quot;</span><span class="p">)</span>
     <span class="n">pupils</span> <span class="o">=</span> <span class="n">Fixture</span><span class="p">(</span><span class="n">PersonFactory</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="mi">20</span><span class="p">)</span>
 
