@@ -24,7 +24,7 @@ class Profile:
 
 
 class ProfileFactory(DataclassFactory[Profile]):
-    __model__ = Profile
+    ...
 
 
 def test_profile_coverage() -> None:

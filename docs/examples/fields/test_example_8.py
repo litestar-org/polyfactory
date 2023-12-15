@@ -31,14 +31,10 @@ class Person:
 
 
 class PetFactory(DataclassFactory[Pet]):
-    __model__ = Pet
-
     name = lambda: DataclassFactory.__random__.choice(["Ralph", "Roxy"])
 
 
 class PersonFactory(DataclassFactory[Person]):
-    __model__ = Person
-
     pet = PetFactory
 
 

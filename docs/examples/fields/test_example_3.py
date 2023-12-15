@@ -32,15 +32,11 @@ class Person:
 
 
 class PetFactory(DataclassFactory[Pet]):
-    __model__ = Pet
-
     name = lambda: DataclassFactory.__random__.choice(["Ralph", "Roxy"])
     species = lambda: DataclassFactory.__random__.choice(list(Species))
 
 
 class PersonFactory(DataclassFactory[Person]):
-    __model__ = Person
-
     pets = Use(PetFactory.batch, size=2)
 
 

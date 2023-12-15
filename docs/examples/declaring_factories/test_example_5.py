@@ -31,7 +31,7 @@ class Person:
 
 
 class PersonFactory(DataclassFactory[Person]):
-    __model__ = Person
+    ...
 
 
 def test_dynamic_factory_generation() -> None:

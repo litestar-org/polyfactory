@@ -10,8 +10,6 @@ class Owner:
 
 
 class OwnerFactory(DataclassFactory[Owner]):
-    __model__ = Owner
-
     __randomize_collection_length__ = True
     __min_collection_length__ = 2
     __max_collection_length__ = 5

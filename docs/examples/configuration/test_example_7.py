@@ -12,7 +12,6 @@ class Person:
 
 
 class PersonFactory(DataclassFactory[Person]):
-    __model__ = Person
     __allow_none_optionals__ = False
 
 

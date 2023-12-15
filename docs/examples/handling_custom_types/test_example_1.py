@@ -26,8 +26,6 @@ class Person:
 # by default the factory class cannot handle unknown types,
 # so we need to override the provider map to add it:
 class PersonFactory(DataclassFactory[Person]):
-    __model__ = Person
-
     @classmethod
     def get_provider_map(cls) -> Dict[Type, Any]:
         providers_map = super().get_provider_map()

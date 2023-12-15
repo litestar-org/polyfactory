@@ -18,8 +18,6 @@ class DatetimeRange:
 
 
 class DatetimeRangeFactory(DataclassFactory[DatetimeRange]):
-    __model__ = DatetimeRange
-
     to_dt = PostGenerated(add_timedelta)
 
 

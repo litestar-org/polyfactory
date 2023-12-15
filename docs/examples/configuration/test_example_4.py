@@ -50,7 +50,6 @@ class AsyncPersistenceHandler(AsyncPersistenceProtocol[Person]):
 
 
 class PersonFactory(DataclassFactory[Person]):
-    __model__ = Person
     __sync_persistence__ = SyncPersistenceHandler
     __async_persistence__ = AsyncPersistenceHandler
 

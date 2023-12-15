@@ -13,8 +13,6 @@ class DatetimeRange:
 
 
 class DatetimeRangeFactory(DataclassFactory[DatetimeRange]):
-    __model__ = DatetimeRange
-
     @post_generated
     @classmethod
     def to_dt(cls, from_dt: datetime) -> datetime:

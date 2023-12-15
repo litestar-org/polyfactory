@@ -12,7 +12,6 @@ class Person:
 
 
 class PersonFactory(DataclassFactory[Person]):
-    __model__ = Person
     __random_seed__ = 1
 
     @classmethod

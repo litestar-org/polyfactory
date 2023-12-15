@@ -19,6 +19,5 @@ def test_check_factory_fields() -> None:
     ):
 
         class PersonFactory(DataclassFactory[Person]):
-            __model__ = Person
             __check_model__ = True
             unknown_field = PostGenerated(lambda: "foo")

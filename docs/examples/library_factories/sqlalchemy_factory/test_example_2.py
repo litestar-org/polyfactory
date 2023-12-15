@@ -27,11 +27,10 @@ class Book(Base):
 
 
 class AuthorFactory(SQLAlchemyFactory[Author]):
-    __model__ = Author
+    ...
 
 
 class AuthorFactoryWithRelationship(SQLAlchemyFactory[Author]):
-    __model__ = Author
     __set_relationships__ = True
 
 
