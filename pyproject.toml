@@ -45,7 +45,7 @@ dependencies = [
 sqlalchemy = ["sqlalchemy>=1.4.29",]
 pydantic = ["pydantic[email]",]
 msgspec = ["msgspec",]
-odmantic = ["odmantic", "pydantic[email]",]
+odmantic = ["odmantic<1.0.0", "pydantic[email]",]
 beanie = ["beanie", "pydantic[email]",]
 attrs = ["attrs>=22.2.0",]
 full = ["pydantic", "odmantic", "msgspec", "beanie", "attrs", "sqlalchemy"]
