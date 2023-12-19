@@ -116,7 +116,7 @@ class RegexFactory:
         """
         pattern = string_or_regex.pattern if isinstance(string_or_regex, Pattern) else string_or_regex
         parsed = parse(pattern)
-        result = self._build_string(parsed)
+        result = self._build_string(parsed)  # pyright: ignore[reportGeneralTypeIssues]
         self._cache.clear()
         return result
 

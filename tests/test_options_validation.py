@@ -53,7 +53,7 @@ def test_factory_handling_of_optionals() -> None:
     class ModelWithOptionalValues(BaseModel):
         name: Optional[str]
         id: str
-        complex: List[Optional[str]] = Field(min_items=1)
+        complex: List[Optional[str]] = Field(min_items=1)  # type: ignore[call-arg]
 
     class FactoryWithNoneOptionals(ModelFactory):
         __model__ = ModelWithOptionalValues

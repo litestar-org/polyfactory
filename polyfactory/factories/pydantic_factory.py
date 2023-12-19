@@ -108,7 +108,11 @@ class PydanticFieldMeta(FieldMeta):
         if callable(field_info.default_factory):
             default_value = field_info.default_factory()
         else:
-            default_value = field_info.default if field_info.default is not Undefined else Null
+            default_value = (
+                field_info.default
+                if field_info.default is not Undefined  # pyright: ignore[reportUnboundVariable]
+                else Null
+            )
 
         annotation = unwrap_new_type(field_info.annotation)
         children: list[FieldMeta,] | None = None
@@ -359,7 +363,7 @@ class ModelFactory(Generic[T], BaseFactory[T]):
         constraints = cast(PydanticConstraints, field_meta.constraints)
         if constraints.pop("json", None):
             value = cls.get_field_value(field_meta)
-            return to_json(value)
+            return to_json(value)  # pyright: ignore[reportUnboundVariable]
 
         return super().get_constrained_field_value(annotation, field_meta)
 

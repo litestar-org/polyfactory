@@ -22,7 +22,7 @@ class post_generated:  # noqa: N801
     def __get__(self, obj: Any, objtype: type) -> PostGenerated:
         with contextlib.suppress(KeyError):
             return self.cache[objtype]
-        fn = self.method.__func__
+        fn = self.method.__func__  # pyright: ignore[reportFunctionMemberAccess]
         fn_args = inspect.getfullargspec(fn).args[1:]
 
         def new_fn(name: str, values: dict[str, Any]) -> Any:  # noqa: ARG001  - investigate @guacs
