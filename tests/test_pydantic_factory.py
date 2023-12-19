@@ -11,7 +11,7 @@ from polyfactory.factories.pydantic_factory import ModelFactory
 @pytest.mark.skipif(VERSION.startswith("2"), reason="pydantic v1 only functionality")
 def test_const() -> None:
     class A(BaseModel):
-        v: int = Field(1, const=True)
+        v: int = Field(1, const=True)  # type: ignore[call-arg]
 
     class AFactory(ModelFactory[A]):
         __model__ = A

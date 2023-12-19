@@ -37,12 +37,12 @@ def test_constrained_attribute_parsing_pydantic_v1() -> None:
         constr_field: constr(to_lower=True)  # type: ignore[valid-type]
         str_field1: str = Field(min_length=11)
         str_field2: str = Field(max_length=11)
-        str_field3: str = Field(min_length=8, max_length=11, regex=pattern)
+        str_field3: str = Field(min_length=8, max_length=11, regex=pattern)  # type: ignore[call-arg]
         int_field: int = Field(gt=1, multiple_of=5)
         float_field: float = Field(gt=100, lt=1000)
         decimal_field: Decimal = Field(ge=100, le=1000)
-        list_field: List[str] = Field(min_items=1, max_items=10)
-        constant_field: int = Field(const=True, default=100)
+        list_field: List[str] = Field(min_items=1, max_items=10)  # type: ignore[call-arg]
+        constant_field: int = Field(const=True, default=100)  # type: ignore[call-arg]
         optional_field: Optional[constr(min_length=1)]  # type: ignore[valid-type]
 
     class MyFactory(ModelFactory):
