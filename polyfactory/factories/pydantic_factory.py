@@ -13,7 +13,7 @@ from typing_extensions import Literal, get_args, get_origin
 from polyfactory.collection_extender import CollectionExtender
 from polyfactory.constants import DEFAULT_RANDOM
 from polyfactory.exceptions import MissingDependencyException
-from polyfactory.factories.base import BaseFactory
+from polyfactory.factories.base import BaseFactory, BuildContext
 from polyfactory.field_meta import Constraints, FieldMeta, Null
 from polyfactory.utils.deprecation import check_for_deprecated_parameters
 from polyfactory.utils.helpers import unwrap_new_type, unwrap_optional
@@ -368,7 +368,12 @@ class ModelFactory(Generic[T], BaseFactory[T]):
         return super().get_constrained_field_value(annotation, field_meta)
 
     @classmethod
-    def build(cls, factory_use_construct: bool = False, **kwargs: Any) -> T:
+    def build(
+        cls,
+        build_context: BuildContext | None = None,
+        factory_use_construct: bool = False,
+        **kwargs: Any,
+    ) -> T:
         """Build an instance of the factory's __model__
 
         :param factory_use_construct: A boolean that determines whether validations will be made when instantiating the
@@ -378,7 +383,7 @@ class ModelFactory(Generic[T], BaseFactory[T]):
         :returns: An instance of type T.
 
         """
-        processed_kwargs = cls.process_kwargs(**kwargs)
+        processed_kwargs = cls.process_kwargs(build_context, **kwargs)
 
         if factory_use_construct:
             return (

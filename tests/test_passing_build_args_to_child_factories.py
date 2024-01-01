@@ -64,7 +64,7 @@ def test_factory_child_model_list() -> None:
         },
     }
 
-    person = PersonFactory.build(factory_use_construct=False, **data)
+    person = PersonFactory.build(factory_use_construct=False, **data)  # type: ignore[arg-type]
 
     assert person.name == "Jean"
     assert len(person.pets) == 2
@@ -174,7 +174,7 @@ def test_factory_with_partial_kwargs_deep_in_tree() -> None:
     class DFactory(ModelFactory):
         __model__ = D
 
-    build_result = DFactory.build(factory_use_construct=False, **{"c": {"b": {"a": {"name": "test"}}}})
+    build_result = DFactory.build(factory_use_construct=False, **{"c": {"b": {"a": {"name": "test"}}}})  # type: ignore[arg-type]
     assert build_result
     assert build_result.c.b.a.name == "test"
 

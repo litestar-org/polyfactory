@@ -79,4 +79,4 @@ class AttrsFactory(Generic[T], BaseFactory[T]):
         :param kwargs: Any parameters that need to be passed to `attrs.resolve_types`.
         """
 
-        attrs.resolve_types(model, **kwargs)  # type: ignore[type-var]
+        attrs.resolve_types(model, **kwargs)

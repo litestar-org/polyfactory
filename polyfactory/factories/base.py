@@ -39,6 +39,7 @@ from typing import (
     Mapping,
     Sequence,
     Type,
+    TypedDict,
     TypeVar,
     cast,
 )
@@ -63,14 +64,7 @@ from polyfactory.utils.helpers import (
     unwrap_optional,
 )
 from polyfactory.utils.model_coverage import CoverageContainer, CoverageContainerCallable, resolve_kwargs_coverage
-from polyfactory.utils.predicates import (
-    get_type_origin,
-    is_any,
-    is_literal,
-    is_optional,
-    is_safe_subclass,
-    is_union,
-)
+from polyfactory.utils.predicates import get_type_origin, is_any, is_literal, is_optional, is_safe_subclass, is_union
 from polyfactory.value_generators.complex_types import handle_collection_type, handle_collection_type_coverage
 from polyfactory.value_generators.constrained_collections import (
     handle_constrained_collection,
@@ -86,11 +80,7 @@ from polyfactory.value_generators.constrained_path import handle_constrained_pat
 from polyfactory.value_generators.constrained_strings import handle_constrained_string_or_bytes
 from polyfactory.value_generators.constrained_url import handle_constrained_url
 from polyfactory.value_generators.constrained_uuid import handle_constrained_uuid
-from polyfactory.value_generators.primitives import (
-    create_random_boolean,
-    create_random_bytes,
-    create_random_string,
-)
+from polyfactory.value_generators.primitives import create_random_boolean, create_random_bytes, create_random_string
 
 if TYPE_CHECKING:
     from typing_extensions import TypeGuard
@@ -101,6 +91,15 @@ if TYPE_CHECKING:
 
 T = TypeVar("T")
 F = TypeVar("F", bound="BaseFactory[Any]")
+
+
+class BuildContext(TypedDict):
+    seen_models: set[type]
+
+
+def _get_build_context(build_context: BuildContext | None) -> BuildContext:
+    build_context = build_context or {"seen_models": set()}
+    return build_context.copy()
 
 
 class BaseFactory(ABC, Generic[T]):
@@ -271,7 +270,12 @@ class BaseFactory(ABC, Generic[T]):
         )
 
     @classmethod
-    def _handle_factory_field(cls, field_value: Any, field_build_parameters: Any | None = None) -> Any:
+    def _handle_factory_field(
+        cls,
+        field_value: Any,
+        build_context: BuildContext,
+        field_build_parameters: Any | None = None,
+    ) -> Any:
         """Handle a value defined on the factory class itself.
 
         :param field_value: A value defined as an attribute on the factory class.
@@ -281,12 +285,12 @@ class BaseFactory(ABC, Generic[T]):
         """
         if is_safe_subclass(field_value, BaseFactory):
             if isinstance(field_build_parameters, Mapping):
-                return field_value.build(**field_build_parameters)
+                return field_value.build(build_context, **field_build_parameters)
 
             if isinstance(field_build_parameters, Sequence):
-                return [field_value.build(**parameter) for parameter in field_build_parameters]
+                return [field_value.build(build_context, **parameter) for parameter in field_build_parameters]
 
-            return field_value.build()
+            return field_value.build(build_context)
 
         if isinstance(field_value, Use):
             return field_value.to_value()
@@ -615,6 +619,7 @@ class BaseFactory(ABC, Generic[T]):
         cls,
         field_meta: FieldMeta,
         field_build_parameters: Any | None = None,
+        build_context: BuildContext | None = None,
     ) -> Any:
         """Return a field value on the subclass if existing, otherwise returns a mock value.
 
@@ -624,6 +629,7 @@ class BaseFactory(ABC, Generic[T]):
         :returns: An arbitrary value.
 
         """
+        build_context = _get_build_context(build_context)
         if cls.is_ignored_type(field_meta.annotation):
             return None
 
@@ -642,18 +648,27 @@ class BaseFactory(ABC, Generic[T]):
             return cls.get_constrained_field_value(annotation=unwrapped_annotation, field_meta=field_meta)
 
         if BaseFactory.is_factory_type(annotation=unwrapped_annotation):
+            if not field_build_parameters and unwrapped_annotation in build_context["seen_models"]:
+                return None
+
             return cls._get_or_create_factory(model=unwrapped_annotation).build(
+                build_context,
                 **(field_build_parameters if isinstance(field_build_parameters, Mapping) else {}),
             )
 
         if BaseFactory.is_batch_factory_type(annotation=unwrapped_annotation):
             factory = cls._get_or_create_factory(model=field_meta.type_args[0])
             if isinstance(field_build_parameters, Sequence):
-                return [factory.build(**field_parameters) for field_parameters in field_build_parameters]
+                return [factory.build(build_context, **field_parameters) for field_parameters in field_build_parameters]
+
+            if field_meta.type_args[0] in build_context["seen_models"]:
+                return []
+
             if not cls.__randomize_collection_length__:
-                return [factory.build()]
+                return [factory.build(build_context)]
+
             batch_size = cls.__random__.randint(cls.__min_collection_length__, cls.__max_collection_length__)
-            return factory.batch(size=batch_size)
+            return factory.batch(size=batch_size, build_context=build_context)
 
         if (origin := get_type_origin(unwrapped_annotation)) and issubclass(origin, Collection):
             if cls.__randomize_collection_length__:
@@ -833,7 +848,7 @@ class BaseFactory(ABC, Generic[T]):
                 raise ConfigurationException(error_message)
 
     @classmethod
-    def process_kwargs(cls, **kwargs: Any) -> dict[str, Any]:
+    def process_kwargs(cls, build_context: BuildContext | None = None, **kwargs: Any) -> dict[str, Any]:
         """Process the given kwargs and generate values for the factory's model.
 
         :param kwargs: Any build kwargs.
@@ -841,6 +856,9 @@ class BaseFactory(ABC, Generic[T]):
         :returns: A dictionary of build results.
 
         """
+        build_context = _get_build_context(build_context)
+        build_context["seen_models"] = build_context["seen_models"] | {cls.__model__}
+
         result: dict[str, Any] = {**kwargs}
         generate_post: dict[str, PostGenerated] = {}
 
@@ -863,10 +881,15 @@ class BaseFactory(ABC, Generic[T]):
                     result[field_meta.name] = cls._handle_factory_field(
                         field_value=field_value,
                         field_build_parameters=field_build_parameters,
+                        build_context=build_context,
                     )
                     continue
 
-                result[field_meta.name] = cls.get_field_value(field_meta, field_build_parameters=field_build_parameters)
+                result[field_meta.name] = cls.get_field_value(
+                    field_meta,
+                    field_build_parameters=field_build_parameters,
+                    build_context=build_context,
+                )
 
         for field_name, post_generator in generate_post.items():
             result[field_name] = post_generator.to_value(field_name, result)
@@ -874,7 +897,11 @@ class BaseFactory(ABC, Generic[T]):
         return result
 
     @classmethod
-    def process_kwargs_coverage(cls, **kwargs: Any) -> abc.Iterable[dict[str, Any]]:
+    def process_kwargs_coverage(
+        cls,
+        build_context: BuildContext | None = None,
+        **kwargs: Any,
+    ) -> abc.Iterable[dict[str, Any]]:
         """Process the given kwargs and generate values for the factory's model.
 
         :param kwargs: Any build kwargs.
@@ -882,6 +909,9 @@ class BaseFactory(ABC, Generic[T]):
         :returns: A dictionary of build results.
 
         """
+        build_context = _get_build_context(build_context)
+        build_context["seen_models"] = build_context["seen_models"] | {cls.__model__}
+
         result: dict[str, Any] = {**kwargs}
         generate_post: dict[str, PostGenerated] = {}
 
@@ -918,7 +948,7 @@ class BaseFactory(ABC, Generic[T]):
             yield resolved
 
     @classmethod
-    def build(cls, **kwargs: Any) -> T:
+    def build(cls, build_context: BuildContext | None = None, **kwargs: Any) -> T:
         """Build an instance of the factory's __model__
 
         :param kwargs: Any kwargs. If field names are set in kwargs, their values will be used.
@@ -926,11 +956,10 @@ class BaseFactory(ABC, Generic[T]):
         :returns: An instance of type T.
 
         """
-
-        return cast("T", cls.__model__(**cls.process_kwargs(**kwargs)))
+        return cast("T", cls.__model__(**cls.process_kwargs(build_context, **kwargs)))
 
     @classmethod
-    def batch(cls, size: int, **kwargs: Any) -> list[T]:
+    def batch(cls, size: int, build_context: BuildContext | None = None, **kwargs: Any) -> list[T]:
         """Build a batch of size n of the factory's Meta.model.
 
         :param size: Size of the batch.
@@ -939,7 +968,7 @@ class BaseFactory(ABC, Generic[T]):
         :returns: A list of instances of type T.
 
         """
-        return [cls.build(**kwargs) for _ in range(size)]
+        return [cls.build(build_context, **kwargs) for _ in range(size)]
 
     @classmethod
     def coverage(cls, **kwargs: Any) -> abc.Iterator[T]:

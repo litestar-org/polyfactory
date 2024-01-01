@@ -10,6 +10,7 @@ from sqlalchemy.orm import Session
 from sqlalchemy.orm.decl_api import DeclarativeMeta, registry
 
 from polyfactory.exceptions import ConfigurationException
+from polyfactory.factories.base import BaseFactory
 from polyfactory.factories.sqlalchemy_factory import SQLAlchemyFactory
 
 
@@ -196,6 +197,26 @@ def test_relationship_list_resolution() -> None:
     result = AuthorFactory.build()
     assert isinstance(result.books, list)
     assert isinstance(result.books[0], Book)
+
+
+def test_sqla_factory_create() -> None:
+    engine = create_engine("sqlite:///:memory:")
+    Base.metadata.create_all(engine)
+
+    class OverridenSQLAlchemyFactory(SQLAlchemyFactory):
+        __is_base_factory__ = True
+        __session__ = Session(engine)
+        __set_relationships__ = True
+
+    author: Author = OverridenSQLAlchemyFactory.create_factory(Author).create_sync()
+    assert isinstance(author.books[0], Book)
+    assert author.books[0].author is author
+
+    book = OverridenSQLAlchemyFactory.create_factory(Book).create_sync()
+    assert book.author is not None
+    assert book.author.books == [book]
+
+    BaseFactory._base_factories.remove(OverridenSQLAlchemyFactory)
 
 
 async def test_invalid_peristence_config_raises() -> None:

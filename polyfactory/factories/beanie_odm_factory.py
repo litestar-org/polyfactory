@@ -12,6 +12,7 @@ from polyfactory.utils.predicates import is_safe_subclass
 if TYPE_CHECKING:
     from typing_extensions import TypeGuard
 
+    from polyfactory.factories.base import BuildContext
     from polyfactory.field_meta import FieldMeta
 
 try:
@@ -55,7 +56,12 @@ class BeanieDocumentFactory(Generic[T], ModelFactory[T]):
         return is_safe_subclass(value, Document)
 
     @classmethod
-    def get_field_value(cls, field_meta: "FieldMeta", field_build_parameters: Any | None = None) -> Any:
+    def get_field_value(
+        cls,
+        field_meta: "FieldMeta",
+        field_build_parameters: Any | None = None,
+        build_context: BuildContext | None = None,
+    ) -> Any:
         """Return a field value on the subclass if existing, otherwise returns a mock value.
 
         :param field_meta: FieldMeta instance.
@@ -74,4 +80,8 @@ class BeanieDocumentFactory(Generic[T], ModelFactory[T]):
                 field_meta.annotation = link_class
                 field_meta.annotation = link_class
 
-        return super().get_field_value(field_meta=field_meta, field_build_parameters=field_build_parameters)
+        return super().get_field_value(
+            field_meta=field_meta,
+            field_build_parameters=field_build_parameters,
+            build_context=build_context,
+        )

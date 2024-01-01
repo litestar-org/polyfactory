@@ -42,7 +42,9 @@ dependencies = [
 ]
 
 [project.optional-dependencies]
-sqlalchemy = ["sqlalchemy>=1.4.29",]
+sqlalchemy = [
+    "sqlalchemy[asyncio]>=1.4.29",
+]
 pydantic = ["pydantic[email]",]
 msgspec = ["msgspec",]
 odmantic = ["odmantic<1.0.0", "pydantic[email]",]
