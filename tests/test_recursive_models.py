@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 from dataclasses import dataclass
+from typing import Optional
 
 from polyfactory.factories.dataclass_factory import DataclassFactory
 
@@ -8,7 +9,7 @@ from polyfactory.factories.dataclass_factory import DataclassFactory
 @dataclass
 class Node:
     a: int
-    child: Node | None
+    child: Optional[Node]  # noqa: UP007
 
 
 def test_recusive_model() -> None:
