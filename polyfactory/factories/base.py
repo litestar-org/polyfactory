@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import copy
 from abc import ABC, abstractmethod
 from collections import Counter, abc, deque
 from contextlib import suppress
@@ -98,8 +99,10 @@ class BuildContext(TypedDict):
 
 
 def _get_build_context(build_context: BuildContext | None) -> BuildContext:
-    build_context = build_context or {"seen_models": set()}
-    return build_context.copy()
+    if build_context is None:
+        return {"seen_models": set()}
+
+    return copy.deepcopy(build_context)
 
 
 class BaseFactory(ABC, Generic[T]):
@@ -857,7 +860,7 @@ class BaseFactory(ABC, Generic[T]):
 
         """
         build_context = _get_build_context(build_context)
-        build_context["seen_models"] = build_context["seen_models"] | {cls.__model__}
+        build_context["seen_models"].add(cls.__model__)
 
         result: dict[str, Any] = {**kwargs}
         generate_post: dict[str, PostGenerated] = {}
@@ -910,7 +913,7 @@ class BaseFactory(ABC, Generic[T]):
 
         """
         build_context = _get_build_context(build_context)
-        build_context["seen_models"] = build_context["seen_models"] | {cls.__model__}
+        build_context["seen_models"].add(cls.__model__)
 
         result: dict[str, Any] = {**kwargs}
         generate_post: dict[str, PostGenerated] = {}
