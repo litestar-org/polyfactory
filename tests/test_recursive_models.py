@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from dataclasses import dataclass
-from typing import Optional
+from typing import List, Optional
 
 from polyfactory.factories.dataclass_factory import DataclassFactory
 
@@ -21,7 +21,7 @@ def test_recusive_model() -> None:
 @dataclass
 class Author:
     name: str
-    books: list[Book]
+    books: List[Book]  # noqa: UP006
 
 
 @dataclass
