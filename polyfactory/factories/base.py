@@ -700,7 +700,7 @@ class BaseFactory(ABC, Generic[T]):
 
             return handle_collection_type(field_meta, origin, cls)
 
-        if is_union(field_meta.annotation) and field_meta.children:
+        if is_union(unwrapped_annotation) and field_meta.children:
             children = [child for child in field_meta.children if child.annotation not in build_context["seen_models"]]
             return cls.get_field_value(cls.__random__.choice(children))
 

@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from dataclasses import dataclass, field
-from typing import Any, List, Optional, Union
+from typing import List, Optional, Union
 
 import pytest
 from pydantic import BaseModel, Field
@@ -47,18 +47,13 @@ class PydanticNode(BaseModel):
     optional_child: Union[PydanticNode, None]  # noqa: UP007
     child: PydanticNode = Field(default=_Sentinel)  # type: ignore[assignment]
 
-    def model_post_init(self, context: Any) -> None:
-        # Emulate recursive models set by external init, e.g. ORM relationships
-        if self.child is _Sentinel:
-            self.child = self
-
 
 @pytest.mark.parametrize("factory_use_construct", (True, False))
 def test_recursive_pydantic_models(factory_use_construct: bool) -> None:
     factory = ModelFactory.create_factory(PydanticNode)
 
     result = factory.build(factory_use_construct)
-    assert result.child is result, "Default is not used"
+    assert result.child is _Sentinel, "Default is not used"
     assert isinstance(result.union_child, int)
     assert result.optional_child is None
     assert result.list_child == []
