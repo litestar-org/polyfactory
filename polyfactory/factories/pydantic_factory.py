@@ -368,10 +368,10 @@ class ModelFactory(Generic[T], BaseFactory[T]):
         return super().get_constrained_field_value(annotation, field_meta)
 
     @classmethod
-    def build(
+    def build(  # type: ignore[override]
         cls,
-        build_context: BuildContext | None = None,
         factory_use_construct: bool = False,
+        build_context: BuildContext | None = None,
         **kwargs: Any,
     ) -> T:
         """Build an instance of the factory's __model__

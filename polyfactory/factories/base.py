@@ -288,12 +288,14 @@ class BaseFactory(ABC, Generic[T]):
         """
         if is_safe_subclass(field_value, BaseFactory):
             if isinstance(field_build_parameters, Mapping):
-                return field_value.build(build_context, **field_build_parameters)
+                return field_value.build(build_context=build_context, **field_build_parameters)
 
             if isinstance(field_build_parameters, Sequence):
-                return [field_value.build(build_context, **parameter) for parameter in field_build_parameters]
+                return [
+                    field_value.build(build_context=build_context, **parameter) for parameter in field_build_parameters
+                ]
 
-            return field_value.build(build_context)
+            return field_value.build(build_context=build_context)
 
         if isinstance(field_value, Use):
             return field_value.to_value()
@@ -628,6 +630,7 @@ class BaseFactory(ABC, Generic[T]):
 
         :param field_meta: FieldMeta instance.
         :param field_build_parameters: Any build parameters passed to the factory as kwarg values.
+        :param build_context: BuildContext data for current build.
 
         :returns: An arbitrary value.
 
@@ -652,7 +655,7 @@ class BaseFactory(ABC, Generic[T]):
 
         if BaseFactory.is_factory_type(annotation=unwrapped_annotation):
             if not field_build_parameters and unwrapped_annotation in build_context["seen_models"]:
-                return None
+                return None if is_optional(field_meta.annotation) else Ignore
 
             return cls._get_or_create_factory(model=unwrapped_annotation).build(
                 build_context,
@@ -662,18 +665,21 @@ class BaseFactory(ABC, Generic[T]):
         if BaseFactory.is_batch_factory_type(annotation=unwrapped_annotation):
             factory = cls._get_or_create_factory(model=field_meta.type_args[0])
             if isinstance(field_build_parameters, Sequence):
-                return [factory.build(build_context, **field_parameters) for field_parameters in field_build_parameters]
+                return [
+                    factory.build(build_context=build_context, **field_parameters)
+                    for field_parameters in field_build_parameters
+                ]
 
             if field_meta.type_args[0] in build_context["seen_models"]:
                 return []
 
             if not cls.__randomize_collection_length__:
-                return [factory.build(build_context)]
+                return [factory.build(build_context=build_context)]
 
             batch_size = cls.__random__.randint(cls.__min_collection_length__, cls.__max_collection_length__)
             return factory.batch(size=batch_size, build_context=build_context)
 
-        if (origin := get_type_origin(unwrapped_annotation)) and issubclass(origin, Collection):
+        if (origin := get_type_origin(unwrapped_annotation)) and is_safe_subclass(origin, Collection):
             if cls.__randomize_collection_length__:
                 collection_type = get_collection_type(unwrapped_annotation)
                 if collection_type != dict:
@@ -695,7 +701,8 @@ class BaseFactory(ABC, Generic[T]):
             return handle_collection_type(field_meta, origin, cls)
 
         if is_union(field_meta.annotation) and field_meta.children:
-            return cls.get_field_value(cls.__random__.choice(field_meta.children))
+            children = [child for child in field_meta.children if child.annotation not in build_context["seen_models"]]
+            return cls.get_field_value(cls.__random__.choice(children))
 
         if is_any(unwrapped_annotation) or isinstance(unwrapped_annotation, TypeVar):
             return create_random_string(cls.__random__, min_length=1, max_length=10)
@@ -888,11 +895,15 @@ class BaseFactory(ABC, Generic[T]):
                     )
                     continue
 
-                result[field_meta.name] = cls.get_field_value(
+                field_result = cls.get_field_value(
                     field_meta,
                     field_build_parameters=field_build_parameters,
                     build_context=build_context,
                 )
+                if field_result is Ignore:
+                    continue
+
+                result[field_meta.name] = field_result
 
         for field_name, post_generator in generate_post.items():
             result[field_name] = post_generator.to_value(field_name, result)
@@ -971,7 +982,7 @@ class BaseFactory(ABC, Generic[T]):
         :returns: A list of instances of type T.
 
         """
-        return [cls.build(build_context, **kwargs) for _ in range(size)]
+        return [cls.build(build_context=build_context, **kwargs) for _ in range(size)]
 
     @classmethod
     def coverage(cls, **kwargs: Any) -> abc.Iterator[T]:
