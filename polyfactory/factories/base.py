@@ -24,6 +24,8 @@ from os.path import realpath
 from pathlib import Path
 from random import Random
 
+from polyfactory.field_meta import Null
+
 try:
     from types import NoneType
 except ImportError:
@@ -288,14 +290,14 @@ class BaseFactory(ABC, Generic[T]):
         """
         if is_safe_subclass(field_value, BaseFactory):
             if isinstance(field_build_parameters, Mapping):
-                return field_value.build(build_context=build_context, **field_build_parameters)
+                return field_value.build(_build_context=build_context, **field_build_parameters)
 
             if isinstance(field_build_parameters, Sequence):
                 return [
-                    field_value.build(build_context=build_context, **parameter) for parameter in field_build_parameters
+                    field_value.build(_build_context=build_context, **parameter) for parameter in field_build_parameters
                 ]
 
-            return field_value.build(build_context=build_context)
+            return field_value.build(_build_context=build_context)
 
         if isinstance(field_value, Use):
             return field_value.to_value()
@@ -655,10 +657,10 @@ class BaseFactory(ABC, Generic[T]):
 
         if BaseFactory.is_factory_type(annotation=unwrapped_annotation):
             if not field_build_parameters and unwrapped_annotation in build_context["seen_models"]:
-                return None if is_optional(field_meta.annotation) else Ignore
+                return None if is_optional(field_meta.annotation) else Null
 
             return cls._get_or_create_factory(model=unwrapped_annotation).build(
-                build_context,
+                _build_context=build_context,
                 **(field_build_parameters if isinstance(field_build_parameters, Mapping) else {}),
             )
 
@@ -666,7 +668,7 @@ class BaseFactory(ABC, Generic[T]):
             factory = cls._get_or_create_factory(model=field_meta.type_args[0])
             if isinstance(field_build_parameters, Sequence):
                 return [
-                    factory.build(build_context=build_context, **field_parameters)
+                    factory.build(_build_context=build_context, **field_parameters)
                     for field_parameters in field_build_parameters
                 ]
 
@@ -674,10 +676,10 @@ class BaseFactory(ABC, Generic[T]):
                 return []
 
             if not cls.__randomize_collection_length__:
-                return [factory.build(build_context=build_context)]
+                return [factory.build(_build_context=build_context)]
 
             batch_size = cls.__random__.randint(cls.__min_collection_length__, cls.__max_collection_length__)
-            return factory.batch(size=batch_size, build_context=build_context)
+            return factory.batch(size=batch_size, _build_context=build_context)
 
         if (origin := get_type_origin(unwrapped_annotation)) and is_safe_subclass(origin, Collection):
             if cls.__randomize_collection_length__:
@@ -858,7 +860,7 @@ class BaseFactory(ABC, Generic[T]):
                 raise ConfigurationException(error_message)
 
     @classmethod
-    def process_kwargs(cls, build_context: BuildContext | None = None, **kwargs: Any) -> dict[str, Any]:
+    def process_kwargs(cls, *, _build_context: BuildContext | None = None, **kwargs: Any) -> dict[str, Any]:
         """Process the given kwargs and generate values for the factory's model.
 
         :param kwargs: Any build kwargs.
@@ -866,8 +868,8 @@ class BaseFactory(ABC, Generic[T]):
         :returns: A dictionary of build results.
 
         """
-        build_context = _get_build_context(build_context)
-        build_context["seen_models"].add(cls.__model__)
+        _build_context = _get_build_context(_build_context)
+        _build_context["seen_models"].add(cls.__model__)
 
         result: dict[str, Any] = {**kwargs}
         generate_post: dict[str, PostGenerated] = {}
@@ -891,16 +893,16 @@ class BaseFactory(ABC, Generic[T]):
                     result[field_meta.name] = cls._handle_factory_field(
                         field_value=field_value,
                         field_build_parameters=field_build_parameters,
-                        build_context=build_context,
+                        build_context=_build_context,
                     )
                     continue
 
                 field_result = cls.get_field_value(
                     field_meta,
                     field_build_parameters=field_build_parameters,
-                    build_context=build_context,
+                    build_context=_build_context,
                 )
-                if field_result is Ignore:
+                if field_result is Null:
                     continue
 
                 result[field_meta.name] = field_result
@@ -913,7 +915,7 @@ class BaseFactory(ABC, Generic[T]):
     @classmethod
     def process_kwargs_coverage(
         cls,
-        build_context: BuildContext | None = None,
+        _build_context: BuildContext | None = None,
         **kwargs: Any,
     ) -> abc.Iterable[dict[str, Any]]:
         """Process the given kwargs and generate values for the factory's model.
@@ -923,8 +925,8 @@ class BaseFactory(ABC, Generic[T]):
         :returns: A dictionary of build results.
 
         """
-        build_context = _get_build_context(build_context)
-        build_context["seen_models"].add(cls.__model__)
+        _build_context = _get_build_context(_build_context)
+        _build_context["seen_models"].add(cls.__model__)
 
         result: dict[str, Any] = {**kwargs}
         generate_post: dict[str, PostGenerated] = {}
@@ -962,7 +964,7 @@ class BaseFactory(ABC, Generic[T]):
             yield resolved
 
     @classmethod
-    def build(cls, build_context: BuildContext | None = None, **kwargs: Any) -> T:
+    def build(cls, *, _build_context: BuildContext | None = None, **kwargs: Any) -> T:
         """Build an instance of the factory's __model__
 
         :param kwargs: Any kwargs. If field names are set in kwargs, their values will be used.
@@ -970,10 +972,10 @@ class BaseFactory(ABC, Generic[T]):
         :returns: An instance of type T.
 
         """
-        return cast("T", cls.__model__(**cls.process_kwargs(build_context, **kwargs)))
+        return cast("T", cls.__model__(**cls.process_kwargs(_build_context=_build_context, **kwargs)))
 
     @classmethod
-    def batch(cls, size: int, build_context: BuildContext | None = None, **kwargs: Any) -> list[T]:
+    def batch(cls, size: int, _build_context: BuildContext | None = None, **kwargs: Any) -> list[T]:
         """Build a batch of size n of the factory's Meta.model.
 
         :param size: Size of the batch.
@@ -982,7 +984,7 @@ class BaseFactory(ABC, Generic[T]):
         :returns: A list of instances of type T.
 
         """
-        return [cls.build(build_context=build_context, **kwargs) for _ in range(size)]
+        return [cls.build(_build_context=_build_context, **kwargs) for _ in range(size)]
 
     @classmethod
     def coverage(cls, **kwargs: Any) -> abc.Iterator[T]:

@@ -368,10 +368,11 @@ class ModelFactory(Generic[T], BaseFactory[T]):
         return super().get_constrained_field_value(annotation, field_meta)
 
     @classmethod
-    def build(  # type: ignore[override]
+    def build(
         cls,
         factory_use_construct: bool = False,
-        build_context: BuildContext | None = None,
+        *,
+        _build_context: BuildContext | None = None,
         **kwargs: Any,
     ) -> T:
         """Build an instance of the factory's __model__
@@ -383,7 +384,10 @@ class ModelFactory(Generic[T], BaseFactory[T]):
         :returns: An instance of type T.
 
         """
-        processed_kwargs = cls.process_kwargs(build_context, **kwargs)
+        processed_kwargs = cls.process_kwargs(
+            _build_context=_build_context,
+            **kwargs,
+        )
 
         if factory_use_construct:
             return (

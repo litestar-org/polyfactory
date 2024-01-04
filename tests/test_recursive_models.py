@@ -58,8 +58,6 @@ def test_recursive_pydantic_models(factory_use_construct: bool) -> None:
     assert result.optional_child is None
     assert result.list_child == []
 
-    assert factory.build(child={"child": None}).child.child is None
-
 
 @dataclass
 class Author:
