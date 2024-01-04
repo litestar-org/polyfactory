@@ -107,3 +107,29 @@ def test_mapping_with_annotated_item_types() -> None:
         __model__ = Foo
 
     assert FooFactory.build()
+
+
+def test_use_default_with_callable_default() -> None:
+    class Foo(BaseModel):
+        default_field: int = Field(default_factory=lambda: 10)
+
+    class FooFactory(ModelFactory[Foo]):
+        __model__ = Foo
+        __use_defaults__ = True
+
+    foo = FooFactory.build()
+
+    assert foo.default_field == 10
+
+
+def test_use_default_with_non_callable_default() -> None:
+    class Foo(BaseModel):
+        default_field: int = Field(default=10)
+
+    class FooFactory(ModelFactory[Foo]):
+        __model__ = Foo
+        __use_defaults__ = True
+
+    foo = FooFactory.build()
+
+    assert foo.default_field == 10

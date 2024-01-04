@@ -23,6 +23,8 @@ from os.path import realpath
 from pathlib import Path
 from random import Random
 
+from polyfactory.field_meta import Null
+
 try:
     from types import NoneType
 except ImportError:
@@ -166,6 +168,10 @@ class BaseFactory(ABC, Generic[T]):
     __max_collection_length__: ClassVar[int] = MAX_COLLECTION_LENGTH
     """
     An integer value that defines maximum length of a collection.
+    """
+    __use_defaults__: ClassVar[bool] = False
+    """
+    Flag indicating whether to use the default value on a specific field, if provided.
     """
 
     # cached attributes
@@ -630,6 +636,11 @@ class BaseFactory(ABC, Generic[T]):
         if field_build_parameters is None and cls.should_set_none_value(field_meta=field_meta):
             return None
 
+        if cls.should_use_default_value(field_meta):
+            if callable(field_meta.default):
+                return field_meta.default()
+            return field_meta.default
+
         unwrapped_annotation = unwrap_annotation(field_meta.annotation, random=cls.__random__)
 
         if is_literal(annotation=unwrapped_annotation) and (literal_args := get_args(unwrapped_annotation)):
@@ -773,6 +784,20 @@ class BaseFactory(ABC, Generic[T]):
             and is_optional(field_meta.annotation)
             and create_random_boolean(random=cls.__random__)
         )
+
+    @classmethod
+    def should_use_default_value(cls, field_meta: FieldMeta) -> bool:
+        """Determine whether to use the default value for the given field.
+
+        :param field_meta: FieldMeta instance.
+
+        :notes:
+            - This method is distinct to allow overriding.
+
+        :returns: A boolean determining whether the default value should be used for the given
+        field_meta.
+        """
+        return cls.__use_defaults__ and field_meta.default is not Null
 
     @classmethod
     def should_set_field_value(cls, field_meta: FieldMeta, **kwargs: Any) -> bool:

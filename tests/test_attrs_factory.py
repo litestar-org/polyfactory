@@ -191,3 +191,31 @@ def test_with_init_false() -> None:
         __model__ = Foo
 
     assert FooFactory.build()
+
+
+def test_use_default_with_callable_default() -> None:
+    @define
+    class Foo:
+        default_field: int = attrs.field(default=attrs.Factory(lambda: 10, takes_self=False))
+
+    class FooFactory(AttrsFactory[Foo]):
+        __model__ = Foo
+        __use_defaults__ = True
+
+    foo = FooFactory.build()
+
+    assert foo.default_field == 10
+
+
+def test_use_default_with_non_callable_default() -> None:
+    @define
+    class Foo:
+        default_field: int = attrs.field(default=10)
+
+    class FooFactory(AttrsFactory[Foo]):
+        __model__ = Foo
+        __use_defaults__ = True
+
+    foo = FooFactory.build()
+
+    assert foo.default_field == 10
