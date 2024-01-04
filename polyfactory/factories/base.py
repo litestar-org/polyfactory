@@ -794,8 +794,8 @@ class BaseFactory(ABC, Generic[T]):
         :notes:
             - This method is distinct to allow overriding.
 
-        :returns: A boolean determining whether the default value should be used for the given
-        field_meta.
+        :returns: A boolean determining whether the default value should be used for the given field_meta.
+
         """
         return cls.__use_defaults__ and field_meta.default is not Null
 
