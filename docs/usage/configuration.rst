@@ -123,6 +123,9 @@ for a given field, provided there's a default value for that field.
 By default, ``__use_default__`` is set to ``False.`` If you need more fine grained control, you can override the
 :meth:`BaseFactory <polyfactory.factories.base.BaseFactory.should_use_default_value>` classmethod.
 
+.. note::
+    Setting ``__use_default__`` has no effect for ``TypedDictFactory`` since you cannot set default values for
+    ``TypedDict``.
 
 .. literalinclude:: /examples/configuration/test_example_9.py
     :caption: Use Default Values
