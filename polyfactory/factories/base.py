@@ -636,11 +636,6 @@ class BaseFactory(ABC, Generic[T]):
         if field_build_parameters is None and cls.should_set_none_value(field_meta=field_meta):
             return None
 
-        if cls.should_use_default_value(field_meta):
-            if callable(field_meta.default):
-                return field_meta.default()
-            return field_meta.default
-
         unwrapped_annotation = unwrap_annotation(field_meta.annotation, random=cls.__random__)
 
         if is_literal(annotation=unwrapped_annotation) and (literal_args := get_args(unwrapped_annotation)):
@@ -871,7 +866,7 @@ class BaseFactory(ABC, Generic[T]):
 
         for field_meta in cls.get_model_fields():
             field_build_parameters = cls.extract_field_build_parameters(field_meta=field_meta, build_args=kwargs)
-            if cls.should_set_field_value(field_meta, **kwargs):
+            if cls.should_set_field_value(field_meta, **kwargs) and not cls.should_use_default_value(field_meta):
                 if hasattr(cls, field_meta.name) and not hasattr(BaseFactory, field_meta.name):
                     field_value = getattr(cls, field_meta.name)
                     if isinstance(field_value, Ignore):
