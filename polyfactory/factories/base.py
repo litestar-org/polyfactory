@@ -308,7 +308,12 @@ class BaseFactory(ABC, Generic[T]):
         return field_value() if callable(field_value) else field_value
 
     @classmethod
-    def _handle_factory_field_coverage(cls, field_value: Any, field_build_parameters: Any | None = None) -> Any:
+    def _handle_factory_field_coverage(
+        cls,
+        field_value: Any,
+        field_build_parameters: Any | None = None,
+        build_context: BuildContext | None = None,
+    ) -> Any:
         """Handle a value defined on the factory class itself.
 
         :param field_value: A value defined as an attribute on the factory class.
@@ -318,10 +323,13 @@ class BaseFactory(ABC, Generic[T]):
         """
         if is_safe_subclass(field_value, BaseFactory):
             if isinstance(field_build_parameters, Mapping):
-                return CoverageContainer(field_value.coverage(**field_build_parameters))
+                return CoverageContainer(field_value.coverage(_build_context=build_context, **field_build_parameters))
 
             if isinstance(field_build_parameters, Sequence):
-                return [CoverageContainer(field_value.coverage(**parameter)) for parameter in field_build_parameters]
+                return [
+                    CoverageContainer(field_value.coverage(_build_context=build_context, **parameter))
+                    for parameter in field_build_parameters
+                ]
 
             return CoverageContainer(field_value.coverage())
 
@@ -728,11 +736,13 @@ class BaseFactory(ABC, Generic[T]):
         cls,
         field_meta: FieldMeta,
         field_build_parameters: Any | None = None,
+        build_context: BuildContext | None = None,
     ) -> Iterable[Any]:
         """Return a field value on the subclass if existing, otherwise returns a mock value.
 
         :param field_meta: FieldMeta instance.
         :param field_build_parameters: Any build parameters passed to the factory as kwarg values.
+        :param build_context: BuildContext data for current build.
 
         :returns: An iterable of values.
 
@@ -760,6 +770,7 @@ class BaseFactory(ABC, Generic[T]):
             elif BaseFactory.is_factory_type(annotation=unwrapped_annotation):
                 yield CoverageContainer(
                     cls._get_or_create_factory(model=unwrapped_annotation).coverage(
+                        _build_context=build_context,
                         **(field_build_parameters if isinstance(field_build_parameters, Mapping) else {}),
                     ),
                 )
@@ -915,12 +926,14 @@ class BaseFactory(ABC, Generic[T]):
     @classmethod
     def process_kwargs_coverage(
         cls,
+        *,
         _build_context: BuildContext | None = None,
         **kwargs: Any,
     ) -> abc.Iterable[dict[str, Any]]:
         """Process the given kwargs and generate values for the factory's model.
 
         :param kwargs: Any build kwargs.
+        :param build_context: BuildContext data for current build.
 
         :returns: A dictionary of build results.
 
@@ -951,11 +964,16 @@ class BaseFactory(ABC, Generic[T]):
                     result[field_meta.name] = cls._handle_factory_field_coverage(
                         field_value=field_value,
                         field_build_parameters=field_build_parameters,
+                        build_context=_build_context,
                     )
                     continue
 
                 result[field_meta.name] = CoverageContainer(
-                    cls.get_field_value_coverage(field_meta, field_build_parameters=field_build_parameters),
+                    cls.get_field_value_coverage(
+                        field_meta,
+                        field_build_parameters=field_build_parameters,
+                        build_context=_build_context,
+                    ),
                 )
 
         for resolved in resolve_kwargs_coverage(result):
@@ -987,7 +1005,7 @@ class BaseFactory(ABC, Generic[T]):
         return [cls.build(_build_context=_build_context, **kwargs) for _ in range(size)]
 
     @classmethod
-    def coverage(cls, **kwargs: Any) -> abc.Iterator[T]:
+    def coverage(cls, _build_context: BuildContext | None = None, **kwargs: Any) -> abc.Iterator[T]:
         """Build a batch of the factory's Meta.model will full coverage of the sub-types of the model.
 
         :param kwargs: Any kwargs. If field_meta names are set in kwargs, their values will be used.
@@ -995,7 +1013,7 @@ class BaseFactory(ABC, Generic[T]):
         :returns: A iterator of instances of type T.
 
         """
-        for data in cls.process_kwargs_coverage(**kwargs):
+        for data in cls.process_kwargs_coverage(_build_context=_build_context, **kwargs):
             instance = cls.__model__(**data)
             yield cast("T", instance)
 
