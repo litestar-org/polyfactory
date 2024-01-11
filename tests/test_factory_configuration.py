@@ -1,4 +1,4 @@
-from typing import Any
+from typing import Any, Type
 
 from typing_extensions import TypeGuard
 
@@ -13,7 +13,7 @@ def test_setting_set_as_default_factory_for_type_on_base_factory() -> None:
         __set_as_default_factory_for_type__ = True
 
         @classmethod
-        def is_supported_type(cls, value: Any) -> TypeGuard[type[T]]:
+        def is_supported_type(cls, value: Any) -> TypeGuard[Type[T]]:
             # Set this as false since this factory will be injected into the
             # list of base factories, but this obviously shouldn't be ran
             # for any of the types.
