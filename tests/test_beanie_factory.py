@@ -48,7 +48,7 @@ class MyOtherFactory(BeanieDocumentFactory):
 
 @pytest.fixture()
 async def beanie_init(mongo_connection: AsyncMongoMockClient) -> None:
-    await init_beanie(database=mongo_connection.db_name, document_models=[MyDocument, MyOtherDocument])  # type: ignore
+    await init_beanie(database=mongo_connection.db_name, document_models=[MyDocument, MyOtherDocument])
 
 
 async def test_handling_of_beanie_types(beanie_init: Callable) -> None:
