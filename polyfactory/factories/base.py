@@ -217,7 +217,7 @@ class BaseFactory(ABC, Generic[T]):
         if random_seed is not None:
             cls.seed_random(random_seed)
 
-        if cls.__set_as_default_factory_for_type__:
+        if cls.__set_as_default_factory_for_type__ and hasattr(cls, "__model__"):
             BaseFactory._factory_type_mapping[cls.__model__] = cls
 
     @classmethod
