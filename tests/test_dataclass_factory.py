@@ -1,3 +1,4 @@
+import dataclasses
 from dataclasses import dataclass as vanilla_dataclass
 from dataclasses import field
 from types import ModuleType
@@ -205,3 +206,31 @@ def test_dataclass_with_init_false() -> None:
     result = MyFactory.build()
 
     assert result
+
+
+def test_use_default_with_callable_default() -> None:
+    @vanilla_dataclass
+    class Foo:
+        default_field: int = dataclasses.field(default_factory=lambda: 10)
+
+    class FooFactory(DataclassFactory[Foo]):
+        __model__ = Foo
+        __use_defaults__ = True
+
+    foo = FooFactory.build()
+
+    assert foo.default_field == 10
+
+
+def test_use_default_with_non_callable_default() -> None:
+    @vanilla_dataclass
+    class Foo:
+        default_field: int = 10
+
+    class FooFactory(DataclassFactory[Foo]):
+        __model__ = Foo
+        __use_defaults__ = True
+
+    foo = FooFactory.build()
+
+    assert foo.default_field == 10
