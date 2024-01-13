@@ -863,6 +863,12 @@ This attribute can be used to control random generation.</p>
 <dd><p>An integer value that defines maximum length of a collection.</p>
 </dd></dl>
 
+<dl class="py attribute">
+<dt class="sig sig-object py" id="polyfactory.factories.base.BaseFactory.__use_defaults__">
+<span class="sig-name descname"><span class="pre">__use_defaults__</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">ClassVar</span><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.12)"><span class="pre">bool</span></a><span class="p"><span class="pre">]</span></span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">False</span></em><a class="headerlink" href="#polyfactory.factories.base.BaseFactory.__use_defaults__" title="Permalink to this definition">#</a></dt>
+<dd><p>Flag indicating whether to use the default value on a specific field, if provided.</p>
+</dd></dl>
+
 <dl class="py method">
 <dt class="sig sig-object py" id="polyfactory.factories.base.BaseFactory.is_factory_type">
 <em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">is_factory_type</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">annotation</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Any" title="(in Python v3.12)"><span class="pre">Any</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.12)"><span class="pre">bool</span></a></span></span><a class="headerlink" href="#polyfactory.factories.base.BaseFactory.is_factory_type" title="Permalink to this definition">#</a></dt>
@@ -1039,6 +1045,25 @@ Otherwise, raise an error</p></li>
 </dd>
 <dt class="field-odd">Returns<span class="colon">:</span></dt>
 <dd class="field-odd"><p>A boolean determining whether ‘None’ should be set for the given field_meta.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="polyfactory.factories.base.BaseFactory.should_use_default_value">
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">should_use_default_value</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">field_meta</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="../field_meta.html#polyfactory.field_meta.FieldMeta" title="polyfactory.field_meta.FieldMeta"><span class="pre">FieldMeta</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.12)"><span class="pre">bool</span></a></span></span><a class="headerlink" href="#polyfactory.factories.base.BaseFactory.should_use_default_value" title="Permalink to this definition">#</a></dt>
+<dd><p>Determine whether to use the default value for the given field.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>field_meta</strong> – FieldMeta instance.</p>
+</dd>
+<dt class="field-even">Notes<span class="colon">:</span></dt>
+<dd class="field-even"><ul class="simple">
+<li><p>This method is distinct to allow overriding.</p></li>
+</ul>
+</dd>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>A boolean determining whether the default value should be used for the given field_meta.</p>
 </dd>
 </dl>
 </dd></dl>
@@ -1287,6 +1312,7 @@ ignoring dunder methods and some parent class attributes.</p>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#polyfactory.factories.base.BaseFactory.__randomize_collection_length__"><code class="docutils literal notranslate"><span class="pre">BaseFactory.__randomize_collection_length__</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#polyfactory.factories.base.BaseFactory.__min_collection_length__"><code class="docutils literal notranslate"><span class="pre">BaseFactory.__min_collection_length__</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#polyfactory.factories.base.BaseFactory.__max_collection_length__"><code class="docutils literal notranslate"><span class="pre">BaseFactory.__max_collection_length__</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#polyfactory.factories.base.BaseFactory.__use_defaults__"><code class="docutils literal notranslate"><span class="pre">BaseFactory.__use_defaults__</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#polyfactory.factories.base.BaseFactory.is_factory_type"><code class="docutils literal notranslate"><span class="pre">BaseFactory.is_factory_type()</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#polyfactory.factories.base.BaseFactory.is_batch_factory_type"><code class="docutils literal notranslate"><span class="pre">BaseFactory.is_batch_factory_type()</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#polyfactory.factories.base.BaseFactory.extract_field_build_parameters"><code class="docutils literal notranslate"><span class="pre">BaseFactory.extract_field_build_parameters()</span></code></a></li>
@@ -1298,6 +1324,7 @@ ignoring dunder methods and some parent class attributes.</p>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#polyfactory.factories.base.BaseFactory.get_field_value"><code class="docutils literal notranslate"><span class="pre">BaseFactory.get_field_value()</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#polyfactory.factories.base.BaseFactory.get_field_value_coverage"><code class="docutils literal notranslate"><span class="pre">BaseFactory.get_field_value_coverage()</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#polyfactory.factories.base.BaseFactory.should_set_none_value"><code class="docutils literal notranslate"><span class="pre">BaseFactory.should_set_none_value()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#polyfactory.factories.base.BaseFactory.should_use_default_value"><code class="docutils literal notranslate"><span class="pre">BaseFactory.should_use_default_value()</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#polyfactory.factories.base.BaseFactory.should_set_field_value"><code class="docutils literal notranslate"><span class="pre">BaseFactory.should_set_field_value()</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#polyfactory.factories.base.BaseFactory.get_model_fields"><code class="docutils literal notranslate"><span class="pre">BaseFactory.get_model_fields()</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#polyfactory.factories.base.BaseFactory.get_factory_fields"><code class="docutils literal notranslate"><span class="pre">BaseFactory.get_factory_fields()</span></code></a></li>
