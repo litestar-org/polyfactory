@@ -47,6 +47,7 @@ repos:
         exclude: "test_decimal_constraints|examples/fields/test_example_2|examples/configuration|tools/"
         additional_dependencies:
           [
+            attrs>=22.2.0,
             beanie,
             faker,
             hypothesis,
@@ -65,6 +66,7 @@ repos:
         exclude: "tests"
         additional_dependencies:
           [
+            attrs>=22.2.0,
             beanie,
             faker,
             hypothesis,
