@@ -5,7 +5,7 @@
 groups = ["default", "msgspec", "sqlalchemy", "lint", "attrs", "full", "docs", "odmantic", "pydantic", "test", "dev", "beanie"]
 strategy = ["cross_platform"]
 lock_version = "4.4.1"
-content_hash = "sha256:fdbe2e08c7fa2713913bf0f53e45ac79993264869568e92094eb4acebedf6274"
+content_hash = "sha256:8e11d212169bbcf04b0ad0f5d83338be63e8054ec878487d573051b7a97abb19"
 
 [[package]]
 name = "accessible-pygments"
