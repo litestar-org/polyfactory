@@ -23,6 +23,8 @@ from os.path import realpath
 from pathlib import Path
 from random import Random
 
+from polyfactory.field_meta import Null
+
 try:
     from types import NoneType
 except ImportError:
@@ -166,6 +168,10 @@ class BaseFactory(ABC, Generic[T]):
     __max_collection_length__: ClassVar[int] = MAX_COLLECTION_LENGTH
     """
     An integer value that defines maximum length of a collection.
+    """
+    __use_defaults__: ClassVar[bool] = False
+    """
+    Flag indicating whether to use the default value on a specific field, if provided.
     """
 
     # cached attributes
@@ -775,6 +781,20 @@ class BaseFactory(ABC, Generic[T]):
         )
 
     @classmethod
+    def should_use_default_value(cls, field_meta: FieldMeta) -> bool:
+        """Determine whether to use the default value for the given field.
+
+        :param field_meta: FieldMeta instance.
+
+        :notes:
+            - This method is distinct to allow overriding.
+
+        :returns: A boolean determining whether the default value should be used for the given field_meta.
+
+        """
+        return cls.__use_defaults__ and field_meta.default is not Null
+
+    @classmethod
     def should_set_field_value(cls, field_meta: FieldMeta, **kwargs: Any) -> bool:
         """Determine whether to set a value for a given field_name.
 
@@ -846,7 +866,7 @@ class BaseFactory(ABC, Generic[T]):
 
         for field_meta in cls.get_model_fields():
             field_build_parameters = cls.extract_field_build_parameters(field_meta=field_meta, build_args=kwargs)
-            if cls.should_set_field_value(field_meta, **kwargs):
+            if cls.should_set_field_value(field_meta, **kwargs) and not cls.should_use_default_value(field_meta):
                 if hasattr(cls, field_meta.name) and not hasattr(BaseFactory, field_meta.name):
                     field_value = getattr(cls, field_meta.name)
                     if isinstance(field_value, Ignore):
