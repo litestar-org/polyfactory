@@ -249,3 +249,29 @@ def test_mapping_with_constrained_item_types() -> None:
     validated_foo = msgspec.convert(structs.asdict(foo), Foo)
 
     assert validated_foo == foo
+
+
+def test_use_default_with_callable_default() -> None:
+    class Foo(Struct):
+        default_field: int = msgspec.field(default_factory=lambda: 10)
+
+    class FooFactory(MsgspecFactory[Foo]):
+        __model__ = Foo
+        __use_defaults__ = True
+
+    foo = FooFactory.build()
+
+    assert foo.default_field == 10
+
+
+def test_use_default_with_non_callable_default() -> None:
+    class Foo(Struct):
+        default_field: int = 10
+
+    class FooFactory(MsgspecFactory[Foo]):
+        __model__ = Foo
+        __use_defaults__ = True
+
+    foo = FooFactory.build()
+
+    assert foo.default_field == 10

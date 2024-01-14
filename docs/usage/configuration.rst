@@ -92,7 +92,7 @@ Set of fields that allow you to generate a collection with random lengths. By de
     :language: python
 
 Allow None Optionals
-----------------------------
+--------------------
 
 Allow `None` to be generated as a value for types marked as optional. When set to `True`, the outputted value will be randomly chosen between `None` and other allowed types. By default, this is set to `True`.
 
@@ -112,4 +112,21 @@ Any other field definition will not be checked.
 
 .. literalinclude:: /examples/configuration/test_example_8.py
     :caption: Enable Check Factory Fields
+    :language: python
+
+Use Default Values
+------------------
+
+If ``__use_default__`` is set to ``True``, then the default value will be used instead of creating a random value
+for a given field, provided there's a default value for that field.
+
+By default, ``__use_default__`` is set to ``False.`` If you need more fine grained control, you can override the
+:meth:`~polyfactory.factories.base.BaseFactory.should_use_default_value` classmethod.
+
+.. note::
+    Setting ``__use_default__`` has no effect for ``TypedDictFactory`` since you cannot set default values for
+    ``TypedDict``.
+
+.. literalinclude:: /examples/configuration/test_example_9.py
+    :caption: Use Default Values
     :language: python
