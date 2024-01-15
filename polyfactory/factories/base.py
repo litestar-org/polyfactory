@@ -889,7 +889,7 @@ class BaseFactory(ABC, Generic[T]):
                 raise ConfigurationException(error_message)
 
     @classmethod
-    def process_kwargs(cls, *, _build_context: BuildContext | None = None, **kwargs: Any) -> dict[str, Any]:
+    def process_kwargs(cls, **kwargs: Any) -> dict[str, Any]:
         """Process the given kwargs and generate values for the factory's model.
 
         :param kwargs: Any build kwargs.
@@ -897,7 +897,7 @@ class BaseFactory(ABC, Generic[T]):
         :returns: A dictionary of build results.
 
         """
-        _build_context = _get_build_context(_build_context)
+        _build_context = _get_build_context(kwargs.pop("_build_context", None))
         _build_context["seen_models"].add(cls.__model__)
 
         result: dict[str, Any] = {**kwargs}
@@ -942,12 +942,7 @@ class BaseFactory(ABC, Generic[T]):
         return result
 
     @classmethod
-    def process_kwargs_coverage(
-        cls,
-        *,
-        _build_context: BuildContext | None = None,
-        **kwargs: Any,
-    ) -> abc.Iterable[dict[str, Any]]:
+    def process_kwargs_coverage(cls, **kwargs: Any) -> abc.Iterable[dict[str, Any]]:
         """Process the given kwargs and generate values for the factory's model.
 
         :param kwargs: Any build kwargs.
@@ -956,7 +951,7 @@ class BaseFactory(ABC, Generic[T]):
         :returns: A dictionary of build results.
 
         """
-        _build_context = _get_build_context(_build_context)
+        _build_context = _get_build_context(kwargs.pop("_build_context", None))
         _build_context["seen_models"].add(cls.__model__)
 
         result: dict[str, Any] = {**kwargs}
@@ -1000,7 +995,7 @@ class BaseFactory(ABC, Generic[T]):
             yield resolved
 
     @classmethod
-    def build(cls, *, _build_context: BuildContext | None = None, **kwargs: Any) -> T:
+    def build(cls, **kwargs: Any) -> T:
         """Build an instance of the factory's __model__
 
         :param kwargs: Any kwargs. If field names are set in kwargs, their values will be used.
@@ -1008,10 +1003,10 @@ class BaseFactory(ABC, Generic[T]):
         :returns: An instance of type T.
 
         """
-        return cast("T", cls.__model__(**cls.process_kwargs(_build_context=_build_context, **kwargs)))
+        return cast("T", cls.__model__(**cls.process_kwargs(**kwargs)))
 
     @classmethod
-    def batch(cls, size: int, _build_context: BuildContext | None = None, **kwargs: Any) -> list[T]:
+    def batch(cls, size: int, **kwargs: Any) -> list[T]:
         """Build a batch of size n of the factory's Meta.model.
 
         :param size: Size of the batch.
@@ -1020,10 +1015,10 @@ class BaseFactory(ABC, Generic[T]):
         :returns: A list of instances of type T.
 
         """
-        return [cls.build(_build_context=_build_context, **kwargs) for _ in range(size)]
+        return [cls.build(**kwargs) for _ in range(size)]
 
     @classmethod
-    def coverage(cls, _build_context: BuildContext | None = None, **kwargs: Any) -> abc.Iterator[T]:
+    def coverage(cls, **kwargs: Any) -> abc.Iterator[T]:
         """Build a batch of the factory's Meta.model will full coverage of the sub-types of the model.
 
         :param kwargs: Any kwargs. If field_meta names are set in kwargs, their values will be used.
@@ -1031,7 +1026,7 @@ class BaseFactory(ABC, Generic[T]):
         :returns: A iterator of instances of type T.
 
         """
-        for data in cls.process_kwargs_coverage(_build_context=_build_context, **kwargs):
+        for data in cls.process_kwargs_coverage(**kwargs):
             instance = cls.__model__(**data)
             yield cast("T", instance)
 

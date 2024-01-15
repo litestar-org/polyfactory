@@ -13,7 +13,7 @@ from typing_extensions import Literal, get_args, get_origin
 from polyfactory.collection_extender import CollectionExtender
 from polyfactory.constants import DEFAULT_RANDOM
 from polyfactory.exceptions import MissingDependencyException
-from polyfactory.factories.base import BaseFactory, BuildContext
+from polyfactory.factories.base import BaseFactory
 from polyfactory.field_meta import Constraints, FieldMeta, Null
 from polyfactory.utils.deprecation import check_for_deprecated_parameters
 from polyfactory.utils.helpers import unwrap_new_type, unwrap_optional
@@ -371,8 +371,6 @@ class ModelFactory(Generic[T], BaseFactory[T]):
     def build(
         cls,
         factory_use_construct: bool = False,
-        *,
-        _build_context: BuildContext | None = None,
         **kwargs: Any,
     ) -> T:
         """Build an instance of the factory's __model__
@@ -384,10 +382,7 @@ class ModelFactory(Generic[T], BaseFactory[T]):
         :returns: An instance of type T.
 
         """
-        processed_kwargs = cls.process_kwargs(
-            _build_context=_build_context,
-            **kwargs,
-        )
+        processed_kwargs = cls.process_kwargs(**kwargs)
 
         if factory_use_construct:
             return (

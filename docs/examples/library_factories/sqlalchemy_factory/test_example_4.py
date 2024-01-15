@@ -56,5 +56,3 @@ def test_custom_sqla_factory() -> None:
     book = BaseFactory.create_factory(Book).create_sync()
     assert book.id is not None
     assert book.author.books == [book]
-
-    BaseFactory._base_factories.remove(BaseFactory)  # noqa: SLF001
