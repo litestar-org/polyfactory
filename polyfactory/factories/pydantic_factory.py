@@ -368,7 +368,11 @@ class ModelFactory(Generic[T], BaseFactory[T]):
         return super().get_constrained_field_value(annotation, field_meta)
 
     @classmethod
-    def build(cls, factory_use_construct: bool = False, **kwargs: Any) -> T:
+    def build(
+        cls,
+        factory_use_construct: bool = False,
+        **kwargs: Any,
+    ) -> T:
         """Build an instance of the factory's __model__
 
         :param factory_use_construct: A boolean that determines whether validations will be made when instantiating the

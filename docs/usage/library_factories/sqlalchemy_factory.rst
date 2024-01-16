@@ -37,6 +37,16 @@ By default, this will add generated models to the session and then commit. This 
 Similarly for ``__async_session__`` and ``create_async``.
 
 
+Adding global overrides
+------------------------------
+
+By combining the above and using other settings, a global base factory can be set up for other factories.
+
+.. literalinclude:: /examples/library_factories/sqlalchemy_factory/test_example_4.py
+    :caption: Using persistence
+    :language: python
+
+
 API reference
 ------------------------------
 Full API docs are available :class:`here <polyfactory.factories.sqlalchemy_factory.SQLAlchemyFactory>`.

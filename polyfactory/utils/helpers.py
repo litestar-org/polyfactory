@@ -11,13 +11,7 @@ except ImportError:
 from typing_extensions import get_args, get_origin
 
 from polyfactory.constants import TYPE_MAPPING
-from polyfactory.utils.predicates import (
-    is_annotated,
-    is_new_type,
-    is_optional,
-    is_safe_subclass,
-    is_union,
-)
+from polyfactory.utils.predicates import is_annotated, is_new_type, is_optional, is_safe_subclass, is_union
 
 if TYPE_CHECKING:
     from random import Random
@@ -71,15 +65,14 @@ def unwrap_annotation(annotation: Any, random: Random) -> Any:
     :returns: The unwrapped annotation.
 
     """
-    while is_optional(annotation) or is_union(annotation) or is_new_type(annotation) or is_annotated(annotation):
+    while is_optional(annotation) or is_new_type(annotation) or is_annotated(annotation):
         if is_new_type(annotation):
             annotation = unwrap_new_type(annotation)
         elif is_optional(annotation):
             annotation = unwrap_optional(annotation)
         elif is_annotated(annotation):
             annotation = unwrap_annotated(annotation, random=random)[0]
-        else:
-            annotation = unwrap_union(annotation, random=random)
+
     return annotation
 
 
