@@ -911,6 +911,73 @@ document.write(`
 <p>By default, this will add generated models to the session and then commit. This can be customised further by setting <code class="docutils literal notranslate"><span class="pre">__sync_persistence__</span></code>.</p>
 <p>Similarly for <code class="docutils literal notranslate"><span class="pre">__async_session__</span></code> and <code class="docutils literal notranslate"><span class="pre">create_async</span></code>.</p>
 </section>
+<section id="adding-global-overrides">
+<h2>Adding global overrides<a class="headerlink" href="#adding-global-overrides" title="Permalink to this heading">#</a></h2>
+<p>By combining the above and using other settings, a global base factory can be set up for other factories.</p>
+<div class="literal-block-wrapper docutils container" id="id4">
+<div class="code-block-caption"><span class="caption-text">Using persistence</span><a class="headerlink" href="#id4" title="Permalink to this code">#</a></div>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">List</span>
+
+<span class="kn">from</span> <span class="nn">sqlalchemy</span> <span class="kn">import</span> <span class="n">ForeignKey</span><span class="p">,</span> <span class="n">create_engine</span>
+<span class="kn">from</span> <span class="nn">sqlalchemy.orm</span> <span class="kn">import</span> <span class="n">DeclarativeBase</span><span class="p">,</span> <span class="n">Mapped</span><span class="p">,</span> <span class="n">Session</span><span class="p">,</span> <span class="n">mapped_column</span><span class="p">,</span> <span class="n">relationship</span>
+
+<span class="kn">from</span> <span class="nn">polyfactory.factories.sqlalchemy_factory</span> <span class="kn">import</span> <span class="n">SQLAlchemyFactory</span><span class="p">,</span> <span class="n">T</span>
+
+
+<span class="k">class</span> <span class="nc">Base</span><span class="p">(</span><span class="n">DeclarativeBase</span><span class="p">):</span>
+    <span class="o">...</span>
+
+
+<span class="k">class</span> <span class="nc">Author</span><span class="p">(</span><span class="n">Base</span><span class="p">):</span>
+    <span class="n">__tablename__</span> <span class="o">=</span> <span class="s2">&quot;authors&quot;</span>
+
+    <span class="nb">id</span><span class="p">:</span> <span class="n">Mapped</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="n">mapped_column</span><span class="p">(</span><span class="n">primary_key</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="n">name</span><span class="p">:</span> <span class="n">Mapped</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span>
+
+    <span class="n">books</span><span class="p">:</span> <span class="n">Mapped</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="s2">&quot;Book&quot;</span><span class="p">]]</span> <span class="o">=</span> <span class="n">relationship</span><span class="p">(</span>
+        <span class="s2">&quot;Book&quot;</span><span class="p">,</span>
+        <span class="n">uselist</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+        <span class="n">back_populates</span><span class="o">=</span><span class="s2">&quot;author&quot;</span><span class="p">,</span>
+    <span class="p">)</span>
+
+
+<span class="k">class</span> <span class="nc">Book</span><span class="p">(</span><span class="n">Base</span><span class="p">):</span>
+    <span class="n">__tablename__</span> <span class="o">=</span> <span class="s2">&quot;books&quot;</span>
+
+    <span class="nb">id</span><span class="p">:</span> <span class="n">Mapped</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="n">mapped_column</span><span class="p">(</span><span class="n">primary_key</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="n">author_id</span><span class="p">:</span> <span class="n">Mapped</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="n">mapped_column</span><span class="p">(</span><span class="n">ForeignKey</span><span class="p">(</span><span class="n">Author</span><span class="o">.</span><span class="n">id</span><span class="p">),</span> <span class="n">nullable</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+    <span class="n">author</span><span class="p">:</span> <span class="n">Mapped</span><span class="p">[</span><span class="n">Author</span><span class="p">]</span> <span class="o">=</span> <span class="n">relationship</span><span class="p">(</span>
+        <span class="s2">&quot;Author&quot;</span><span class="p">,</span>
+        <span class="n">uselist</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+        <span class="n">back_populates</span><span class="o">=</span><span class="s2">&quot;books&quot;</span><span class="p">,</span>
+    <span class="p">)</span>
+
+
+<span class="k">class</span> <span class="nc">BaseFactory</span><span class="p">(</span><span class="n">SQLAlchemyFactory</span><span class="p">[</span><span class="n">T</span><span class="p">]):</span>
+    <span class="n">__is_base_factory__</span> <span class="o">=</span> <span class="kc">True</span>
+    <span class="n">__set_relationships__</span> <span class="o">=</span> <span class="kc">True</span>
+    <span class="n">__randomize_collection_length__</span> <span class="o">=</span> <span class="kc">True</span>
+    <span class="n">__min_collection_length__</span> <span class="o">=</span> <span class="mi">3</span>
+
+
+<span class="k">def</span> <span class="nf">test_custom_sqla_factory</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="n">engine</span> <span class="o">=</span> <span class="n">create_engine</span><span class="p">(</span><span class="s2">&quot;sqlite:///:memory:&quot;</span><span class="p">)</span>
+    <span class="n">Base</span><span class="o">.</span><span class="n">metadata</span><span class="o">.</span><span class="n">create_all</span><span class="p">(</span><span class="n">engine</span><span class="p">)</span>
+    <span class="n">session</span> <span class="o">=</span> <span class="n">Session</span><span class="p">(</span><span class="n">engine</span><span class="p">)</span>
+
+    <span class="n">BaseFactory</span><span class="o">.</span><span class="n">__session__</span> <span class="o">=</span> <span class="n">session</span>  <span class="c1"># Or using a callable that returns a session</span>
+
+    <span class="n">author</span> <span class="o">=</span> <span class="n">BaseFactory</span><span class="o">.</span><span class="n">create_factory</span><span class="p">(</span><span class="n">Author</span><span class="p">)</span><span class="o">.</span><span class="n">create_sync</span><span class="p">()</span>
+    <span class="k">assert</span> <span class="n">author</span><span class="o">.</span><span class="n">id</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
+    <span class="k">assert</span> <span class="n">author</span><span class="o">.</span><span class="n">id</span> <span class="o">==</span> <span class="n">author</span><span class="o">.</span><span class="n">books</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">author_id</span>
+
+    <span class="n">book</span> <span class="o">=</span> <span class="n">BaseFactory</span><span class="o">.</span><span class="n">create_factory</span><span class="p">(</span><span class="n">Book</span><span class="p">)</span><span class="o">.</span><span class="n">create_sync</span><span class="p">()</span>
+    <span class="k">assert</span> <span class="n">book</span><span class="o">.</span><span class="n">id</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
+    <span class="k">assert</span> <span class="n">book</span><span class="o">.</span><span class="n">author</span><span class="o">.</span><span class="n">books</span> <span class="o">==</span> <span class="p">[</span><span class="n">book</span><span class="p">]</span>
+</pre></div>
+</div>
+</div>
+</section>
 <section id="api-reference">
 <h2>API reference<a class="headerlink" href="#api-reference" title="Permalink to this heading">#</a></h2>
 <p>Full API docs are available <a class="reference internal" href="../../reference/factories/sqlalchemy_factory.html#polyfactory.factories.sqlalchemy_factory.SQLAlchemyFactory" title="polyfactory.factories.sqlalchemy_factory.SQLAlchemyFactory"><code class="xref py py-class docutils literal notranslate"><span class="pre">here</span></code></a>.</p>
@@ -963,6 +1030,7 @@ document.write(`
     <ul class="visible nav section-nav flex-column">
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#configuration">Configuration</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#persistence">Persistence</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#adding-global-overrides">Adding global overrides</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#api-reference">API reference</a></li>
 </ul>
   </nav></div>
