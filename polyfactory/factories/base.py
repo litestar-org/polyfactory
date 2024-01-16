@@ -245,10 +245,7 @@ class BaseFactory(ABC, Generic[T]):
         generic_args: Sequence[type[T]] = [
             arg for factory_base in factory_bases for arg in get_args(factory_base) if not isinstance(arg, TypeVar)
         ]
-        if len(generic_args) != 1:
-            return None
-
-        return generic_args[0]
+        return None if len(generic_args) != 1 else generic_args[0]
 
     @classmethod
     def _get_sync_persistence(cls) -> SyncPersistenceProtocol[T]:
