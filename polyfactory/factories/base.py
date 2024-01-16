@@ -175,6 +175,20 @@ class BaseFactory(ABC, Generic[T]):
     """
     Flag indicating whether to use the default value on a specific field, if provided.
     """
+    __extra_providers__: dict[Any, Callable[[], Any]] | None = None
+
+    __config_keys__: tuple[str, ...] = (
+        "__check_model__",
+        "__allow_none_optionals__",
+        "__set_as_default_factory_for_type__",
+        "__faker__",
+        "__random__",
+        "__randomize_collection_length__",
+        "__min_collection_length__",
+        "__max_collection_length__",
+        "__use_defaults__",
+    )
+    """Keys to be considered as config values to pass on to dynamically created factories."""
 
     # cached attributes
     _fields_metadata: list[FieldMeta]
@@ -346,6 +360,13 @@ class BaseFactory(ABC, Generic[T]):
         return CoverageContainerCallable(field_value) if callable(field_value) else field_value
 
     @classmethod
+    def _get_config(cls) -> dict[str, Any]:
+        return {
+            **{key: getattr(cls, key) for key in cls.__config_keys__},
+            "__extra_providers__": cls.get_provider_map(),
+        }
+
+    @classmethod
     def _get_or_create_factory(cls, model: type) -> type[BaseFactory[Any]]:
         """Get a factory from registered factories or generate a factory dynamically.
 
@@ -356,14 +377,16 @@ class BaseFactory(ABC, Generic[T]):
         if factory := BaseFactory._factory_type_mapping.get(model):
             return factory
 
+        config = cls._get_config()
+
         if cls.__base_factory_overrides__:
             for model_ancestor in model.mro():
                 if factory := cls.__base_factory_overrides__.get(model_ancestor):
-                    return factory.create_factory(model)
+                    return factory.create_factory(model, **config)
 
         for factory in reversed(BaseFactory._base_factories):
             if factory.is_supported_type(model):
-                return factory.create_factory(model)
+                return factory.create_factory(model, **config)
 
         msg = f"unsupported model type {model.__name__}"
         raise ParameterException(msg)  # pragma: no cover
@@ -503,6 +526,7 @@ class BaseFactory(ABC, Generic[T]):
             Callable: _create_generic_fn,
             abc.Callable: _create_generic_fn,
             Counter: lambda: Counter(cls.__faker__.pystr()),
+            **(cls.__extra_providers__ or {}),
         }
 
     @classmethod

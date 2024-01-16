@@ -73,6 +73,13 @@ class SQLAlchemyFactory(Generic[T], BaseFactory[T]):
     __session__: ClassVar[Session | Callable[[], Session] | None] = None
     __async_session__: ClassVar[AsyncSession | Callable[[], AsyncSession] | None] = None
 
+    __config_keys__ = (
+        *BaseFactory.__config_keys__,
+        "__set_primary_key__",
+        "__set_foreign_keys__",
+        "__set_relationships__",
+    )
+
     @classmethod
     def get_sqlalchemy_types(cls) -> dict[Any, Callable[[], Any]]:
         """Get mapping of types where column type."""
