@@ -175,7 +175,6 @@ class BaseFactory(ABC, Generic[T]):
     """
     Flag indicating whether to use the default value on a specific field, if provided.
     """
-    __extra_providers__: dict[Any, Callable[[], Any]] | None = None
 
     __config_keys__: tuple[str, ...] = (
         "__check_model__",
@@ -195,6 +194,9 @@ class BaseFactory(ABC, Generic[T]):
     # BaseFactory only attributes
     _factory_type_mapping: ClassVar[dict[Any, type[BaseFactory[Any]]]]
     _base_factories: ClassVar[list[type[BaseFactory[Any]]]]
+
+    # Non-public attributes
+    _extra_providers: dict[Any, Callable[[], Any]] | None = None
 
     def __init_subclass__(cls, *args: Any, **kwargs: Any) -> None:  # noqa: C901
         super().__init_subclass__(*args, **kwargs)
@@ -363,7 +365,7 @@ class BaseFactory(ABC, Generic[T]):
     def _get_config(cls) -> dict[str, Any]:
         return {
             **{key: getattr(cls, key) for key in cls.__config_keys__},
-            "__extra_providers__": cls.get_provider_map(),
+            "_extra_providers": cls.get_provider_map(),
         }
 
     @classmethod
@@ -526,7 +528,7 @@ class BaseFactory(ABC, Generic[T]):
             Callable: _create_generic_fn,
             abc.Callable: _create_generic_fn,
             Counter: lambda: Counter(cls.__faker__.pystr()),
-            **(cls.__extra_providers__ or {}),
+            **(cls._extra_providers or {}),
         }
 
     @classmethod
