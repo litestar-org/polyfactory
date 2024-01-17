@@ -12,7 +12,7 @@ Seeding Randomness
     :caption: Seeding the factory's 'random.Random'
     :language: python
 
-Seeding randomness allows you to control the random generation of values produced by the factory. This affects all ``:class:random.Random``
+Seeding randomness allows you to control the random generation of values produced by the factory. This affects all :class:`random.Random`
 methods as well as faker.
 
 Setting Random
@@ -23,7 +23,7 @@ Setting Random
     :language: python
 
 This configuration option is functionally identical to the previous, with the difference being that here we are setting
-the actual instance of ``:class:random.Random``. This is useful when embedding factories inside more complex logic, such as in
+the actual instance of :class:`random.Random`. This is useful when embedding factories inside more complex logic, such as in
 other libraries, as well as when factories are being dynamically generated.
 
 Setting Faker
