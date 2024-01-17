@@ -8,7 +8,7 @@ try:
 except ImportError:
     NoneType = type(None)  # type: ignore[misc,assignment]
 
-from typing_extensions import get_args, get_origin
+from typing_extensions import TypeAliasType, get_args, get_origin
 
 from polyfactory.constants import TYPE_MAPPING
 from polyfactory.utils.predicates import is_annotated, is_new_type, is_optional, is_safe_subclass, is_union
@@ -65,13 +65,20 @@ def unwrap_annotation(annotation: Any, random: Random) -> Any:
     :returns: The unwrapped annotation.
 
     """
-    while is_optional(annotation) or is_new_type(annotation) or is_annotated(annotation):
+    while (
+        is_optional(annotation)
+        or is_new_type(annotation)
+        or is_annotated(annotation)
+        or isinstance(annotation, TypeAliasType)
+    ):
         if is_new_type(annotation):
             annotation = unwrap_new_type(annotation)
         elif is_optional(annotation):
             annotation = unwrap_optional(annotation)
         elif is_annotated(annotation):
             annotation = unwrap_annotated(annotation, random=random)[0]
+        elif isinstance(annotation, TypeAliasType):
+            annotation = annotation.__value__
 
     return annotation
 
