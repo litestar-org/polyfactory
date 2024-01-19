@@ -1,5 +1,5 @@
 import sys
-from typing import Dict, List, Optional, Set, Tuple
+from typing import Dict, List, Optional, Set, Tuple, Union
 
 import pytest
 from pydantic import VERSION, BaseModel, Field, Json
@@ -133,3 +133,17 @@ def test_use_default_with_non_callable_default() -> None:
     foo = FooFactory.build()
 
     assert foo.default_field == 10
+
+
+def test_union() -> None:
+    class UnionModel(BaseModel):
+        union_field: Union[str, List[str]]
+        complex_union: Union[List[str], List[Union[bool, str]], str]
+        optional_union: Optional[Union[List[str], str]]
+
+    class UnionFactory(ModelFactory):
+        __model__ = UnionModel
+
+    union = UnionFactory.build()
+
+    assert isinstance(union.union_field, str) or isinstance(union.union_field, list)
