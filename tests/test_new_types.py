@@ -1,6 +1,8 @@
+import sys
 from datetime import date
 from decimal import Decimal
-from typing import Any, Dict, List, NewType, Optional, Tuple, Union
+from types import ModuleType
+from typing import Any, Callable, Dict, List, NewType, Optional, Tuple, Union
 
 import pytest
 from pydantic import (
@@ -18,6 +20,7 @@ from pydantic import (
     constr,
 )
 
+from polyfactory.factories.dataclass_factory import DataclassFactory
 from polyfactory.factories.pydantic_factory import ModelFactory
 
 
@@ -137,3 +140,25 @@ def test_constrained_new_types() -> None:
 
     assert isinstance(result.conpositive_float_field, float)
     assert result.conpositive_float_field > 0
+
+
+@pytest.mark.skipif(sys.version_info < (3, 12), reason="3.12 only syntax")
+def test_type_alias(create_module: Callable[[str], ModuleType]) -> None:
+    module = create_module(
+        """
+from typing import Literal
+from dataclasses import dataclass
+
+
+type LiteralAlias = Literal["a", "b"]
+
+
+@dataclass
+class A:
+    field: LiteralAlias
+""",
+    )
+
+    factory = DataclassFactory.create_factory(module.A)  # type: ignore[var-annotated]
+    result = factory.build()
+    assert result.field in {"a", "b"}
