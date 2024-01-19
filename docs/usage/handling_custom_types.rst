@@ -22,3 +22,7 @@ for handling dataclasses:
 .. literalinclude:: /examples/handling_custom_types/test_example_2.py
     :caption: Creating a custom dataclass factory with extended provider map
     :language: python
+
+.. note::
+    If extra configs values are defined for custom base classes, then ``__config_keys__`` should be extended so
+    that these values are correctly passed onto to concrete factories.
