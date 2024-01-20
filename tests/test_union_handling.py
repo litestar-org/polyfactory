@@ -50,7 +50,7 @@ def test_optional_type(allow_none: bool) -> None:
     class A(BaseModel):
         a: Union[str, None]
         b: Optional[str]
-        c: Optional[Union[str, int, list[int]]]
+        c: Optional[Union[str, int, List[int]]]
 
     class AFactory(ModelFactory[A]):
         __model__ = A
