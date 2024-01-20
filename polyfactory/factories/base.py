@@ -693,6 +693,15 @@ class BaseFactory(ABC, Generic[T]):
         if field_meta.constraints:
             return cls.get_constrained_field_value(annotation=unwrapped_annotation, field_meta=field_meta)
 
+        if is_union(field_meta.annotation) and field_meta.children:
+            seen_models = build_context["seen_models"]
+            children = [child for child in field_meta.children if child.annotation not in seen_models]
+
+            # `None` is removed from the children when creating FieldMeta so when `children`
+            # is empty, it must mean that the field meta is an optional type.
+            if children:
+                return cls.get_field_value(cls.__random__.choice(children), field_build_parameters, build_context)
+
         if BaseFactory.is_factory_type(annotation=unwrapped_annotation):
             if not field_build_parameters and unwrapped_annotation in build_context["seen_models"]:
                 return None if is_optional(field_meta.annotation) else Null
@@ -739,10 +748,6 @@ class BaseFactory(ABC, Generic[T]):
                 )
 
             return handle_collection_type(field_meta, origin, cls)
-
-        if is_union(unwrapped_annotation) and field_meta.children:
-            children = [child for child in field_meta.children if child.annotation not in build_context["seen_models"]]
-            return cls.get_field_value(cls.__random__.choice(children))
 
         if is_any(unwrapped_annotation) or isinstance(unwrapped_annotation, TypeVar):
             return create_random_string(cls.__random__, min_length=1, max_length=10)
