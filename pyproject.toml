@@ -106,7 +106,6 @@ test = [
 dev = [
     "mongomock-motor>=0.0.21",
     "aiosqlite>=0.19.0",
-    "rich>=13.7.0",
 ]
 
 [tool.black]
