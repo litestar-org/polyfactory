@@ -18,6 +18,7 @@ from polyfactory.field_meta import Constraints, FieldMeta, Null
 from polyfactory.utils.deprecation import check_for_deprecated_parameters
 from polyfactory.utils.helpers import unwrap_new_type, unwrap_optional
 from polyfactory.utils.predicates import is_optional, is_safe_subclass, is_union
+from polyfactory.utils.types import NoneType
 from polyfactory.value_generators.primitives import create_random_bytes
 
 try:
@@ -251,7 +252,13 @@ class PydanticFieldMeta(FieldMeta):
             annotation = Literal[default_value]  # pyright: ignore  # noqa: PGH003
 
         children: list[FieldMeta] = []
-        if model_field.key_field or model_field.sub_fields:
+
+        # Refer #412.
+        args = get_args(model_field.annotation)
+        if is_optional(model_field.annotation) and len(args) == 2:  # noqa: PLR2004
+            child_annotation = args[0] if args[0] is not NoneType else args[1]
+            children.append(PydanticFieldMeta.from_type(child_annotation))
+        elif model_field.key_field or model_field.sub_fields:
             fields_to_iterate = (
                 ([model_field.key_field, *model_field.sub_fields])
                 if model_field.key_field is not None

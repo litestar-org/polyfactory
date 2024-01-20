@@ -3,15 +3,11 @@ from __future__ import annotations
 import sys
 from typing import TYPE_CHECKING, Any, Mapping
 
-try:
-    from types import NoneType
-except ImportError:
-    NoneType = type(None)  # type: ignore[misc,assignment]
-
 from typing_extensions import TypeAliasType, get_args, get_origin
 
 from polyfactory.constants import TYPE_MAPPING
 from polyfactory.utils.predicates import is_annotated, is_new_type, is_optional, is_safe_subclass, is_union
+from polyfactory.utils.types import NoneType
 
 if TYPE_CHECKING:
     from random import Random
@@ -67,6 +63,7 @@ def unwrap_annotation(annotation: Any, random: Random) -> Any:
     """
     while (
         is_optional(annotation)
+        or is_union(annotation)
         or is_new_type(annotation)
         or is_annotated(annotation)
         or isinstance(annotation, TypeAliasType)
@@ -79,6 +76,8 @@ def unwrap_annotation(annotation: Any, random: Random) -> Any:
             annotation = unwrap_annotated(annotation, random=random)[0]
         elif isinstance(annotation, TypeAliasType):
             annotation = annotation.__value__
+        else:
+            annotation = unwrap_union(annotation, random=random)
 
     return annotation
 

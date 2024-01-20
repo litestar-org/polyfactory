@@ -23,14 +23,6 @@ from ipaddress import (
 from os.path import realpath
 from pathlib import Path
 from random import Random
-
-from polyfactory.field_meta import Null
-
-try:
-    from types import NoneType
-except ImportError:
-    NoneType = type(None)  # type: ignore[misc,assignment]
-
 from typing import (
     TYPE_CHECKING,
     Any,
@@ -58,6 +50,7 @@ from polyfactory.constants import (
     RANDOMIZE_COLLECTION_LENGTH,
 )
 from polyfactory.exceptions import ConfigurationException, MissingBuildKwargException, ParameterException
+from polyfactory.field_meta import Null
 from polyfactory.fields import Fixture, Ignore, PostGenerated, Require, Use
 from polyfactory.utils.helpers import (
     flatten_annotation,
@@ -68,6 +61,7 @@ from polyfactory.utils.helpers import (
 )
 from polyfactory.utils.model_coverage import CoverageContainer, CoverageContainerCallable, resolve_kwargs_coverage
 from polyfactory.utils.predicates import get_type_origin, is_any, is_literal, is_optional, is_safe_subclass, is_union
+from polyfactory.utils.types import NoneType
 from polyfactory.value_generators.complex_types import handle_collection_type, handle_collection_type_coverage
 from polyfactory.value_generators.constrained_collections import (
     handle_constrained_collection,
@@ -693,6 +687,15 @@ class BaseFactory(ABC, Generic[T]):
         if field_meta.constraints:
             return cls.get_constrained_field_value(annotation=unwrapped_annotation, field_meta=field_meta)
 
+        if is_union(field_meta.annotation) and field_meta.children:
+            seen_models = build_context["seen_models"]
+            children = [child for child in field_meta.children if child.annotation not in seen_models]
+
+            # `None` is removed from the children when creating FieldMeta so when `children`
+            # is empty, it must mean that the field meta is an optional type.
+            if children:
+                return cls.get_field_value(cls.__random__.choice(children), field_build_parameters, build_context)
+
         if BaseFactory.is_factory_type(annotation=unwrapped_annotation):
             if not field_build_parameters and unwrapped_annotation in build_context["seen_models"]:
                 return None if is_optional(field_meta.annotation) else Null
@@ -739,10 +742,6 @@ class BaseFactory(ABC, Generic[T]):
                 )
 
             return handle_collection_type(field_meta, origin, cls)
-
-        if is_union(unwrapped_annotation) and field_meta.children:
-            children = [child for child in field_meta.children if child.annotation not in build_context["seen_models"]]
-            return cls.get_field_value(cls.__random__.choice(children))
 
         if is_any(unwrapped_annotation) or isinstance(unwrapped_annotation, TypeVar):
             return create_random_string(cls.__random__, min_length=1, max_length=10)
