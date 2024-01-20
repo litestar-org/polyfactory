@@ -40,7 +40,6 @@ requires-python = ">=3.8,<4.0"
 dependencies = [
     "faker",
     "typing-extensions>=4.6.0",
-    "pydantic==1.10",
 ]
 
 [project.optional-dependencies]
