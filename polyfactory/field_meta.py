@@ -12,10 +12,15 @@ from polyfactory.utils.helpers import (
     get_annotation_metadata,
     normalize_annotation,
     unwrap_annotated,
-    unwrap_args,
     unwrap_new_type,
 )
 from polyfactory.utils.predicates import is_annotated, is_any_annotated
+
+try:
+    from types import NoneType
+except ImportError:
+    NoneType = type(None)  # type: ignore[misc,assignment]
+
 
 if TYPE_CHECKING:
     import datetime
@@ -99,10 +104,7 @@ class FieldMeta:
 
         :returns: a tuple of types.
         """
-        return tuple(
-            TYPE_MAPPING[arg] if arg in TYPE_MAPPING else arg
-            for arg in unwrap_args(self.annotation, random=self.random)
-        )
+        return tuple(TYPE_MAPPING[arg] if arg in TYPE_MAPPING else arg for arg in get_args(self.annotation))
 
     @classmethod
     def from_type(
@@ -168,6 +170,7 @@ class FieldMeta:
                     random=random,
                 )
                 for arg in extended_type_args
+                if arg is not NoneType
             ]
         return field
 
