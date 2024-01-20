@@ -67,6 +67,7 @@ def unwrap_annotation(annotation: Any, random: Random) -> Any:
     """
     while (
         is_optional(annotation)
+        or is_union(annotation)
         or is_new_type(annotation)
         or is_annotated(annotation)
         or isinstance(annotation, TypeAliasType)
@@ -79,6 +80,8 @@ def unwrap_annotation(annotation: Any, random: Random) -> Any:
             annotation = unwrap_annotated(annotation, random=random)[0]
         elif isinstance(annotation, TypeAliasType):
             annotation = annotation.__value__
+        else:
+            annotation = unwrap_union(annotation, random=random)
 
     return annotation
 
