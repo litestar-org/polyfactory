@@ -32,7 +32,7 @@ classifiers = [
     "Typing :: Typed",
 ]
 name = "polyfactory"
-version = "2.14.0"
+version = "2.14.1"
 description = "Mock data generation factories"
 readme = "docs/PYPI_README.md"
 license = {text = "MIT"}
