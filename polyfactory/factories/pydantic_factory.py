@@ -5,6 +5,7 @@ from datetime import timezone
 from functools import partial
 from os.path import realpath
 from pathlib import Path
+from types import NoneType
 from typing import TYPE_CHECKING, Any, ClassVar, ForwardRef, Generic, Mapping, Tuple, TypeVar, cast
 from uuid import NAMESPACE_DNS, uuid1, uuid3, uuid5
 
@@ -251,7 +252,13 @@ class PydanticFieldMeta(FieldMeta):
             annotation = Literal[default_value]  # pyright: ignore  # noqa: PGH003
 
         children: list[FieldMeta] = []
-        if model_field.key_field or model_field.sub_fields:
+
+        # Refer #412.
+        args = get_args(model_field.annotation)
+        if is_optional(model_field.annotation) and len(args) == 2:  # noqa: PLR2004
+            child_annotation = args[0] if args[0] is not NoneType else args[1]
+            children.append(PydanticFieldMeta.from_type(child_annotation))
+        elif model_field.key_field or model_field.sub_fields:
             fields_to_iterate = (
                 ([model_field.key_field, *model_field.sub_fields])
                 if model_field.key_field is not None
