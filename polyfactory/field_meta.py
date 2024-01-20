@@ -15,12 +15,7 @@ from polyfactory.utils.helpers import (
     unwrap_new_type,
 )
 from polyfactory.utils.predicates import is_annotated, is_any_annotated
-
-try:
-    from types import NoneType
-except ImportError:
-    NoneType = type(None)  # type: ignore[misc,assignment]
-
+from polyfactory.utils.types import NoneType
 
 if TYPE_CHECKING:
     import datetime

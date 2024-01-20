@@ -3,15 +3,11 @@ from __future__ import annotations
 import sys
 from typing import TYPE_CHECKING, Any, Mapping
 
-try:
-    from types import NoneType
-except ImportError:
-    NoneType = type(None)  # type: ignore[misc,assignment]
-
 from typing_extensions import TypeAliasType, get_args, get_origin
 
 from polyfactory.constants import TYPE_MAPPING
 from polyfactory.utils.predicates import is_annotated, is_new_type, is_optional, is_safe_subclass, is_union
+from polyfactory.utils.types import NoneType
 
 if TYPE_CHECKING:
     from random import Random

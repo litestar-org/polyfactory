@@ -1,20 +1,12 @@
 from __future__ import annotations
 
 from inspect import isclass
-from typing import Any, Literal, NewType, Optional, TypeVar, Union, get_args
+from typing import Any, Literal, NewType, Optional, TypeVar, get_args
 
 from typing_extensions import Annotated, NotRequired, ParamSpec, Required, TypeGuard, _AnnotatedAlias, get_origin
 
 from polyfactory.constants import TYPE_MAPPING
-
-try:
-    from types import NoneType, UnionType
-
-    UNION_TYPES = {UnionType, Union}
-except ImportError:
-    NoneType = type(None)  # type: ignore[misc,assignment]
-    UNION_TYPES = {Union}
-
+from polyfactory.utils.types import UNION_TYPES, NoneType
 
 P = ParamSpec("P")
 T = TypeVar("T")

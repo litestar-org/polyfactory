@@ -5,7 +5,6 @@ from datetime import timezone
 from functools import partial
 from os.path import realpath
 from pathlib import Path
-from types import NoneType
 from typing import TYPE_CHECKING, Any, ClassVar, ForwardRef, Generic, Mapping, Tuple, TypeVar, cast
 from uuid import NAMESPACE_DNS, uuid1, uuid3, uuid5
 
@@ -19,6 +18,7 @@ from polyfactory.field_meta import Constraints, FieldMeta, Null
 from polyfactory.utils.deprecation import check_for_deprecated_parameters
 from polyfactory.utils.helpers import unwrap_new_type, unwrap_optional
 from polyfactory.utils.predicates import is_optional, is_safe_subclass, is_union
+from polyfactory.utils.types import NoneType
 from polyfactory.value_generators.primitives import create_random_bytes
 
 try:
