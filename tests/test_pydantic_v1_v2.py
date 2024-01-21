@@ -1,8 +1,9 @@
 """Tests to check that usage of pydantic v1 and v2 at the same time works."""
 
-from typing import Annotated, Dict, List, Optional, Type, Union
+from typing import Dict, List, Optional, Type, Union
 
 import pytest
+from typing_extensions import Annotated
 
 import pydantic
 
@@ -13,7 +14,10 @@ if pydantic.VERSION.startswith("1"):
 
 from pydantic import BaseModel as BaseModelV2
 
-from pydantic.v1 import BaseModel as BaseModelV1
+try:
+    from pydantic.v1 import BaseModel as BaseModelV1
+except ImportError:
+    from pydantic import BaseModel as BaseModelV1  # type: ignore[assignment]
 
 
 @pytest.mark.parametrize("base_model", [BaseModelV1, BaseModelV2])
