@@ -46,6 +46,8 @@ if TYPE_CHECKING:
 
 T = TypeVar("T", bound=BaseModel)
 
+_IS_PYDANTIC_V1 = VERSION.startswith("1")
+
 
 class PydanticConstraints(Constraints):
     """Metadata regarding a Pydantic type constraints, if any"""
@@ -295,7 +297,7 @@ class PydanticFieldMeta(FieldMeta):
             constraints=cast("PydanticConstraints", {k: v for k, v in constraints.items() if v is not None}) or None,
         )
 
-    if VERSION.startswith("2"):
+    if not _IS_PYDANTIC_V1:
 
         @classmethod
         def get_constraints_metadata(cls, annotation: Any) -> Sequence[Any]:
@@ -318,11 +320,7 @@ class ModelFactory(Generic[T], BaseFactory[T]):
     def __init_subclass__(cls, *args: Any, **kwargs: Any) -> None:
         super().__init_subclass__(*args, **kwargs)
 
-        if (
-            VERSION.startswith("1")
-            and getattr(cls, "__model__", None)
-            and hasattr(cls.__model__, "update_forward_refs")
-        ):
+        if _IS_PYDANTIC_V1 and getattr(cls, "__model__", None) and hasattr(cls.__model__, "update_forward_refs"):
             with suppress(NameError):  # pragma: no cover
                 cls.__model__.update_forward_refs(**cls.__forward_ref_resolution_type_mapping__)
 
@@ -344,7 +342,7 @@ class ModelFactory(Generic[T], BaseFactory[T]):
 
         """
         if "_fields_metadata" not in cls.__dict__:
-            if VERSION.startswith("1"):
+            if _IS_PYDANTIC_V1:
                 cls._fields_metadata = [
                     PydanticFieldMeta.from_model_field(
                         field,
@@ -457,7 +455,7 @@ class ModelFactory(Generic[T], BaseFactory[T]):
             pydantic.FutureDate: cls.__faker__.future_date,
         }
 
-        if pydantic.VERSION.startswith("1"):
+        if _IS_PYDANTIC_V1:
             # v1 only values - these will raise an exception in v2
             # in pydantic v2 these are all aliases for Annotated with a constraint.
             # we therefore do not need them in v2
