@@ -93,7 +93,7 @@ if TYPE_CHECKING:
 
     from typing_extensions import NotRequired, TypeGuard
 
-T = TypeVar("T", bound=BaseModelV1 | BaseModelV2)
+T = TypeVar("T", bound="BaseModelV1 | BaseModelV2")
 
 _IS_PYDANTIC_V1 = VERSION.startswith("1")
 
