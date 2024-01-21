@@ -14,8 +14,10 @@ from pathlib import Path
 from typing import Callable, Literal, Optional
 from uuid import UUID
 
-import pydantic
 import pytest
+from typing_extensions import TypeAlias
+
+import pydantic
 from pydantic import (
     UUID1,
     UUID3,
@@ -56,7 +58,6 @@ from pydantic import (
     StrictInt,
     StrictStr,
 )
-from typing_extensions import TypeAlias
 
 from polyfactory.exceptions import ParameterException
 from polyfactory.factories.pydantic_factory import ModelFactory

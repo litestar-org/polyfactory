@@ -1,6 +1,7 @@
 from typing import Dict, Union
 
 import pytest
+
 from pydantic import VERSION, BaseModel
 
 from polyfactory.factories.pydantic_factory import ModelFactory

@@ -1,6 +1,7 @@
 from typing import List
 
 import pytest
+
 from pydantic import BaseModel
 
 from polyfactory.exceptions import ParameterException

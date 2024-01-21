@@ -1,8 +1,9 @@
 from typing import Dict, List, Optional
 
 from annotated_types import Ge
-from pydantic import BaseModel
 from typing_extensions import Annotated, NotRequired, Required, TypedDict
+
+from pydantic import BaseModel
 
 from polyfactory.factories import TypedDictFactory
 from polyfactory.factories.pydantic_factory import ModelFactory

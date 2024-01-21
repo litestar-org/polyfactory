@@ -5,6 +5,7 @@ from types import ModuleType
 from typing import Any, Callable, Dict, List, NewType, Optional, Tuple, Union
 
 import pytest
+
 from pydantic import (
     VERSION,
     BaseModel,

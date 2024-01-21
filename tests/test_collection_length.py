@@ -1,6 +1,7 @@
 from typing import Dict, List, Optional, Set, Tuple
 
 import pytest
+
 from pydantic.dataclasses import dataclass
 
 from polyfactory.factories import DataclassFactory

@@ -4,6 +4,7 @@ from dataclasses import dataclass, field
 from typing import List, Optional, Union
 
 import pytest
+
 from pydantic import BaseModel, Field
 
 from polyfactory.factories.dataclass_factory import DataclassFactory

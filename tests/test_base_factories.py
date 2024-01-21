@@ -2,6 +2,7 @@ from dataclasses import dataclass
 from typing import Any, Dict
 
 import pytest
+
 from pydantic.main import BaseModel
 
 from polyfactory.factories import DataclassFactory
