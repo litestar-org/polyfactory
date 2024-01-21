@@ -2,8 +2,9 @@ import sys
 from typing import Dict, List, Optional, Set, Tuple
 
 import pytest
-from pydantic import VERSION, BaseModel, Field, Json
 from typing_extensions import Annotated
+
+from pydantic import VERSION, BaseModel, Field, Json
 
 from polyfactory.factories.pydantic_factory import ModelFactory
 

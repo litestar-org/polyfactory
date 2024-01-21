@@ -3,10 +3,11 @@ from typing import Any, Dict, Generic, Type, TypedDict, TypeVar
 import pytest
 from attrs import define
 from msgspec import Struct
-from pydantic import BaseModel
-from pydantic.generics import GenericModel
 from sqlalchemy import Column, Integer
 from sqlalchemy.orm.decl_api import DeclarativeMeta, registry
+
+from pydantic import BaseModel
+from pydantic.generics import GenericModel
 
 from polyfactory import ConfigurationException
 from polyfactory.factories import TypedDictFactory

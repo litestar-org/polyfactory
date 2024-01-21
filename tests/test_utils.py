@@ -6,6 +6,7 @@ from typing import Any, NewType, Union
 import pytest
 from hypothesis import given
 from hypothesis.strategies import decimals, floats, integers
+
 from pydantic import BaseModel
 
 from polyfactory.factories.pydantic_factory import ModelFactory

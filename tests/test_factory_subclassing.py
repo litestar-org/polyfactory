@@ -1,6 +1,7 @@
 from dataclasses import dataclass
 
 import pytest
+
 from pydantic import BaseModel
 
 from polyfactory import ConfigurationException

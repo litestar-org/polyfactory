@@ -1,6 +1,7 @@
 from typing import List, Optional
 
 import pytest
+
 from pydantic import BaseModel, Field
 
 from polyfactory import ConfigurationException

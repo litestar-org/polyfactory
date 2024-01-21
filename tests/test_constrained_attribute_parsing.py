@@ -4,6 +4,7 @@ from decimal import Decimal
 from typing import Dict, List, Optional, Tuple
 
 import pytest
+
 from pydantic import (
     VERSION,
     BaseModel,

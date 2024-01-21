@@ -23,20 +23,69 @@ from polyfactory.value_generators.primitives import create_random_bytes
 
 try:
     import pydantic
-    from pydantic import VERSION, BaseModel, Json
+    from pydantic import VERSION, Json
     from pydantic.fields import FieldInfo
 except ImportError as e:
     msg = "pydantic is not installed"
     raise MissingDependencyException(msg) from e
 
 try:
-    from pydantic.fields import ModelField  # type: ignore[attr-defined]
-except ImportError:
-    ModelField = Any
-    from pydantic_core import PydanticUndefined as Undefined
+    # pydantic v1
+    from pydantic import (
+        UUID1,
+        UUID3,
+        UUID4,
+        UUID5,
+        AmqpDsn,
+        AnyHttpUrl,
+        AnyUrl,
+        DirectoryPath,
+        FilePath,
+        HttpUrl,
+        KafkaDsn,
+        PostgresDsn,
+        PyObject,
+        RedisDsn,
+    )
+    from pydantic import BaseModel as BaseModelV1
+    from pydantic.color import Color
+    from pydantic.fields import (  # type: ignore[attr-defined]
+        DeferredType,  # pyright: ignore[reportGeneralTypeIssues]
+        ModelField,  # pyright: ignore[reportGeneralTypeIssues]
+        Undefined,  # pyright: ignore[reportGeneralTypeIssues]
+    )
 
-with suppress(ImportError):
+    # prevent unbound variable warnings
+    BaseModelV2 = BaseModelV1
+    UndefinedV2 = Undefined
+except ImportError:
+    # pydantic v2
+
+    # v2 specific imports
+    from pydantic import BaseModel as BaseModelV2
+    from pydantic_core import PydanticUndefined as UndefinedV2
     from pydantic_core import to_json
+
+    from pydantic.v1 import (  # v1 compat imports
+        UUID1,
+        UUID3,
+        UUID4,
+        UUID5,
+        AmqpDsn,
+        AnyHttpUrl,
+        AnyUrl,
+        DirectoryPath,
+        FilePath,
+        HttpUrl,
+        KafkaDsn,
+        PostgresDsn,
+        PyObject,
+        RedisDsn,
+    )
+    from pydantic.v1 import BaseModel as BaseModelV1  # type: ignore[assignment]
+    from pydantic.v1.color import Color  # type: ignore[assignment]
+    from pydantic.v1.fields import DeferredType, ModelField, Undefined
+
 
 if TYPE_CHECKING:
     from random import Random
@@ -44,7 +93,9 @@ if TYPE_CHECKING:
 
     from typing_extensions import NotRequired, TypeGuard
 
-T = TypeVar("T", bound=BaseModel)
+T = TypeVar("T", bound="BaseModelV1 | BaseModelV2")
+
+_IS_PYDANTIC_V1 = VERSION.startswith("1")
 
 
 class PydanticConstraints(Constraints):
@@ -109,11 +160,7 @@ class PydanticFieldMeta(FieldMeta):
         if callable(field_info.default_factory):
             default_value = field_info.default_factory()
         else:
-            default_value = (
-                field_info.default
-                if field_info.default is not Undefined  # pyright: ignore[reportUnboundVariable]
-                else Null
-            )
+            default_value = field_info.default if field_info.default is not UndefinedV2 else Null
 
         annotation = unwrap_new_type(field_info.annotation)
         children: list[FieldMeta,] | None = None
@@ -189,8 +236,6 @@ class PydanticFieldMeta(FieldMeta):
                 ("max_collection_length", max_collection_length),
             ),
         )
-        from pydantic import AmqpDsn, AnyHttpUrl, AnyUrl, HttpUrl, KafkaDsn, PostgresDsn, RedisDsn
-        from pydantic.fields import DeferredType, Undefined  # type: ignore[attr-defined]
 
         if model_field.default is not Undefined:
             default_value = model_field.default
@@ -295,7 +340,7 @@ class PydanticFieldMeta(FieldMeta):
             constraints=cast("PydanticConstraints", {k: v for k, v in constraints.items() if v is not None}) or None,
         )
 
-    if VERSION.startswith("2"):
+    if not _IS_PYDANTIC_V1:
 
         @classmethod
         def get_constraints_metadata(cls, annotation: Any) -> Sequence[Any]:
@@ -319,12 +364,12 @@ class ModelFactory(Generic[T], BaseFactory[T]):
         super().__init_subclass__(*args, **kwargs)
 
         if (
-            VERSION.startswith("1")
-            and getattr(cls, "__model__", None)
+            getattr(cls, "__model__", None)
+            and _is_pydantic_v1_model(cls.__model__)
             and hasattr(cls.__model__, "update_forward_refs")
         ):
             with suppress(NameError):  # pragma: no cover
-                cls.__model__.update_forward_refs(**cls.__forward_ref_resolution_type_mapping__)
+                cls.__model__.update_forward_refs(**cls.__forward_ref_resolution_type_mapping__)  # type: ignore[attr-defined]
 
     @classmethod
     def is_supported_type(cls, value: Any) -> TypeGuard[type[T]]:
@@ -333,7 +378,8 @@ class ModelFactory(Generic[T], BaseFactory[T]):
         :param value: An arbitrary value.
         :returns: A typeguard
         """
-        return is_safe_subclass(value, BaseModel)
+
+        return _is_pydantic_v1_model(value) or _is_pydantic_v2_model(value)
 
     @classmethod
     def get_model_fields(cls) -> list["FieldMeta"]:
@@ -344,14 +390,14 @@ class ModelFactory(Generic[T], BaseFactory[T]):
 
         """
         if "_fields_metadata" not in cls.__dict__:
-            if VERSION.startswith("1"):
+            if _is_pydantic_v1_model(cls.__model__):
                 cls._fields_metadata = [
                     PydanticFieldMeta.from_model_field(
                         field,
                         use_alias=not cls.__model__.__config__.allow_population_by_field_name,  # type: ignore[attr-defined]
                         random=cls.__random__,
                     )
-                    for field in cls.__model__.__fields__.values()  # type: ignore[attr-defined]
+                    for field in cls.__model__.__fields__.values()
                 ]
             else:
                 cls._fields_metadata = [
@@ -359,9 +405,12 @@ class ModelFactory(Generic[T], BaseFactory[T]):
                         field_info=field_info,
                         field_name=field_name,
                         random=cls.__random__,
-                        use_alias=not cls.__model__.model_config.get("populate_by_name", False),
+                        use_alias=not cls.__model__.model_config.get(  # pyright: ignore[reportGeneralTypeIssues]
+                            "populate_by_name",
+                            False,
+                        ),
                     )
-                    for field_name, field_info in cls.__model__.model_fields.items()
+                    for field_name, field_info in cls.__model__.model_fields.items()  # pyright: ignore[reportGeneralTypeIssues]
                 ]
         return cls._fields_metadata
 
@@ -392,13 +441,11 @@ class ModelFactory(Generic[T], BaseFactory[T]):
         processed_kwargs = cls.process_kwargs(**kwargs)
 
         if factory_use_construct:
-            return (
-                cls.__model__.model_construct(**processed_kwargs)
-                if hasattr(cls.__model__, "model_construct")
-                else cls.__model__.construct(**processed_kwargs)
-            )
+            if _is_pydantic_v1_model(cls.__model__):
+                return cls.__model__.construct(**processed_kwargs)  # type: ignore[return-value]
+            return cls.__model__.model_construct(**processed_kwargs)  # type: ignore[return-value]
 
-        return cls.__model__(**processed_kwargs)
+        return cls.__model__(**processed_kwargs)  # type: ignore[return-value]
 
     @classmethod
     def is_custom_root_field(cls, field_meta: FieldMeta) -> bool:
@@ -457,29 +504,28 @@ class ModelFactory(Generic[T], BaseFactory[T]):
             pydantic.FutureDate: cls.__faker__.future_date,
         }
 
-        if pydantic.VERSION.startswith("1"):
-            # v1 only values - these will raise an exception in v2
-            # in pydantic v2 these are all aliases for Annotated with a constraint.
-            # we therefore do not need them in v2
+        # v1 only values
+        mapping.update(
+            {
+                PyObject: lambda: "decimal.Decimal",
+                AmqpDsn: lambda: "amqps://example.com",
+                KafkaDsn: lambda: "kafka://localhost:9092",
+                PostgresDsn: lambda: "postgresql://user:secret@localhost",
+                RedisDsn: lambda: "redis://localhost:6379/0",
+                FilePath: lambda: Path(realpath(__file__)),
+                DirectoryPath: lambda: Path(realpath(__file__)).parent,
+                UUID1: uuid1,
+                UUID3: lambda: uuid3(NAMESPACE_DNS, cls.__faker__.pystr()),
+                UUID4: cls.__faker__.uuid4,
+                UUID5: lambda: uuid5(NAMESPACE_DNS, cls.__faker__.pystr()),
+                Color: cls.__faker__.hex_color,  # pyright: ignore[reportGeneralTypeIssues]
+            },
+        )
+
+        if not _IS_PYDANTIC_V1:
             mapping.update(
                 {
-                    pydantic.PyObject: lambda: "decimal.Decimal",
-                    pydantic.AmqpDsn: lambda: "amqps://example.com",
-                    pydantic.KafkaDsn: lambda: "kafka://localhost:9092",
-                    pydantic.PostgresDsn: lambda: "postgresql://user:secret@localhost",
-                    pydantic.RedisDsn: lambda: "redis://localhost:6379/0",
-                    pydantic.FilePath: lambda: Path(realpath(__file__)),
-                    pydantic.DirectoryPath: lambda: Path(realpath(__file__)).parent,
-                    pydantic.UUID1: uuid1,
-                    pydantic.UUID3: lambda: uuid3(NAMESPACE_DNS, cls.__faker__.pystr()),
-                    pydantic.UUID4: cls.__faker__.uuid4,
-                    pydantic.UUID5: lambda: uuid5(NAMESPACE_DNS, cls.__faker__.pystr()),
-                    pydantic.color.Color: cls.__faker__.hex_color,  # pyright: ignore[reportGeneralTypeIssues]
-                },
-            )
-        else:
-            mapping.update(
-                {
+                    # pydantic v2 specific types
                     pydantic.PastDatetime: cls.__faker__.past_datetime,
                     pydantic.FutureDatetime: cls.__faker__.future_datetime,
                     pydantic.AwareDatetime: partial(cls.__faker__.date_time, timezone.utc),
@@ -489,3 +535,11 @@ class ModelFactory(Generic[T], BaseFactory[T]):
 
         mapping.update(super().get_provider_map())
         return mapping
+
+
+def _is_pydantic_v1_model(model: Any) -> TypeGuard[BaseModelV1]:
+    return is_safe_subclass(model, BaseModelV1)
+
+
+def _is_pydantic_v2_model(model: Any) -> TypeGuard[BaseModelV2]:
+    return not _IS_PYDANTIC_V1 and is_safe_subclass(model, BaseModelV2)

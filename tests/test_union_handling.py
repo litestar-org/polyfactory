@@ -2,8 +2,9 @@ from typing import List, Optional, Tuple, Union
 
 import pytest
 from annotated_types import Ge, MinLen
-from pydantic import BaseModel
 from typing_extensions import Annotated
+
+from pydantic import BaseModel
 
 from polyfactory.factories.pydantic_factory import ModelFactory
 

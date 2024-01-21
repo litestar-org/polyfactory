@@ -2,8 +2,9 @@ from dataclasses import dataclass
 from typing import Literal, Tuple, Union
 
 from annotated_types import Ge, Le, LowerCase, UpperCase
-from pydantic import BaseModel, Field
 from typing_extensions import Annotated
+
+from pydantic import BaseModel, Field
 
 from polyfactory.factories import DataclassFactory
 from polyfactory.factories.pydantic_factory import ModelFactory
