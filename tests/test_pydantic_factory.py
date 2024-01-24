@@ -783,7 +783,7 @@ def test_constrained_attribute_parsing_pydantic_v2() -> None:
     assert result.optional_field is None or len(result.optional_field) >= 1
 
 
-@pytest.mark.skipif(IS_PYDANTIC_V2, reason="pydantic 2 only test")
+@pytest.mark.skipif(IS_PYDANTIC_V1, reason="pydantic 2 only test")
 def test_complex_constrained_attribute_parsing_pydantic_v2() -> None:
     class MyModel(BaseModel):
         conlist_with_model_field: conlist(Person, min_length=3)  # type: ignore[valid-type]
