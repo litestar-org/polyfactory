@@ -1,13 +1,70 @@
 import sys
-from typing import Dict, List, Optional, Set, Tuple
+from collections import Counter, deque
+from datetime import date, datetime, time, timedelta
+from decimal import Decimal
+from ipaddress import (
+    IPv4Address,
+    IPv4Interface,
+    IPv4Network,
+    IPv6Address,
+    IPv6Interface,
+    IPv6Network,
+)
+from pathlib import Path
+from typing import Callable, Dict, List, Optional, Set, Tuple
+from uuid import UUID
 
 import pytest
-from typing_extensions import Annotated
+from typing_extensions import Annotated, TypeAlias
 
-from pydantic import VERSION, BaseModel, Field, Json, ValidationError
+import pydantic
+from pydantic import (
+    UUID1,
+    UUID3,
+    UUID4,
+    UUID5,
+    VERSION,
+    AmqpDsn,
+    AnyHttpUrl,
+    AnyUrl,
+    BaseModel,
+    ByteSize,
+    DirectoryPath,
+    EmailStr,
+    Field,
+    FilePath,
+    FutureDate,
+    HttpUrl,
+    IPvAnyAddress,
+    IPvAnyInterface,
+    IPvAnyNetwork,
+    Json,
+    KafkaDsn,
+    NameEmail,
+    NegativeFloat,
+    NegativeInt,
+    NonNegativeInt,
+    NonPositiveFloat,
+    PastDate,
+    PositiveFloat,
+    PositiveInt,
+    PostgresDsn,
+    RedisDsn,
+    SecretBytes,
+    SecretStr,
+    StrictBool,
+    StrictBytes,
+    StrictFloat,
+    StrictInt,
+    StrictStr,
+    ValidationError,
+)
 
-from polyfactory.factories.pydantic_factory import ModelFactory
+from polyfactory.factories.pydantic_factory import _IS_PYDANTIC_V1, ModelFactory
 from tests.models import PetFactory
+
+IS_PYDANTIC_V1 = _IS_PYDANTIC_V1
+IS_PYDANTIC_V2 = not _IS_PYDANTIC_V1
 
 
 @pytest.mark.skipif(VERSION.startswith("2"), reason="pydantic v1 only functionality")
@@ -190,3 +247,129 @@ def test_build_instance_by_field_name_with_allow_population_by_field_name_flag()
 
     instance = MyFactory.build(special_field="some")
     assert instance.aliased_field == "some"
+
+
+def test_alias_parsing() -> None:
+    class MyModel(BaseModel):
+        aliased_field: str = Field(alias="special_field")
+
+    class MyFactory(ModelFactory):
+        __model__ = MyModel
+
+    assert isinstance(MyFactory.build().aliased_field, str)
+
+
+def test_type_property_parsing() -> None:
+    class Base(BaseModel):
+        if IS_PYDANTIC_V2:
+            MongoDsn_pydantic_type: pydantic.networks.MongoDsn
+            MariaDBDsn_pydantic_type: pydantic.networks.MariaDBDsn
+            CockroachDsn_pydantic_type: pydantic.networks.CockroachDsn
+            MySQLDsn_pydantic_type: pydantic.networks.MySQLDsn
+            PastDatetime_pydantic_type: pydantic.PastDatetime
+            FutureDatetime_pydantic_type: pydantic.FutureDatetime
+            AwareDatetime_pydantic_type: pydantic.AwareDatetime
+            NaiveDatetime_pydantic_type: pydantic.NaiveDatetime
+
+        else:
+            PyObject_pydantic_type: pydantic.types.PyObject
+            Color_pydantic_type: pydantic.color.Color
+
+    class MyModel(Base):
+        object_field: object
+        float_field: float
+        int_field: int
+        bool_field: bool
+        str_field: str
+        bytes_field: bytes
+        # built-in objects
+        dict_field: dict
+        tuple_field: tuple
+        list_field: list
+        set_field: set
+        frozenset_field: frozenset
+        deque_field: deque
+        # standard library objects
+        Path_field: Path
+        Decimal_field: Decimal
+        UUID_field: UUID
+        # datetime
+        datetime_field: datetime
+        date_field: date
+        time_field: time
+        timedelta_field: timedelta
+        # ip addresses
+        IPv4Address_field: IPv4Address
+        IPv4Interface_field: IPv4Interface
+        IPv4Network_field: IPv4Network
+        IPv6Address_field: IPv6Address
+        IPv6Interface_field: IPv6Interface
+        IPv6Network_field: IPv6Network
+        # types
+        Callable_field: Callable
+        # pydantic specific
+        ByteSize_pydantic_type: ByteSize
+        PositiveInt_pydantic_type: PositiveInt
+        FilePath_pydantic_type: FilePath
+        NegativeFloat_pydantic_type: NegativeFloat
+        NegativeInt_pydantic_type: NegativeInt
+        PositiveFloat_pydantic_type: PositiveFloat
+        NonPositiveFloat_pydantic_type: NonPositiveFloat
+        NonNegativeInt_pydantic_type: NonNegativeInt
+        StrictInt_pydantic_type: StrictInt
+        StrictBool_pydantic_type: StrictBool
+        StrictBytes_pydantic_type: StrictBytes
+        StrictFloat_pydantic_type: StrictFloat
+        StrictStr_pydantic_type: StrictStr
+        DirectoryPath_pydantic_type: DirectoryPath
+        EmailStr_pydantic_type: EmailStr
+        NameEmail_pydantic_type: NameEmail
+        Json_pydantic_type: Json
+        AnyUrl_pydantic_type: AnyUrl
+        AnyHttpUrl_pydantic_type: AnyHttpUrl
+        HttpUrl_pydantic_type: HttpUrl
+        PostgresDsn_pydantic_type: PostgresDsn
+        RedisDsn_pydantic_type: RedisDsn
+        UUID1_pydantic_type: UUID1
+        UUID3_pydantic_type: UUID3
+        UUID4_pydantic_type: UUID4
+        UUID5_pydantic_type: UUID5
+        SecretBytes_pydantic_type: SecretBytes
+        SecretStr_pydantic_type: SecretStr
+        IPvAnyAddress_pydantic_type: IPvAnyAddress
+        IPvAnyInterface_pydantic_type: IPvAnyInterface
+        IPvAnyNetwork_pydantic_type: IPvAnyNetwork
+        AmqpDsn_pydantic_type: AmqpDsn
+        KafkaDsn_pydantic_type: KafkaDsn
+        PastDate_pydantic_type: PastDate
+        FutureDate_pydantic_type: FutureDate
+        Counter_pydantic_type: Counter
+
+    class MyFactory(ModelFactory):
+        __model__ = MyModel
+
+    result = MyFactory.build()
+
+    for key in MyFactory.get_provider_map():
+        key_name = key.__name__ if hasattr(key, "__name__") else key._name
+        if hasattr(result, f"{key_name}_field"):
+            assert isinstance(getattr(result, f"{key_name}_field"), key)
+        elif hasattr(result, f"{key_name}_pydantic_type"):
+            assert getattr(result, f"{key_name}_pydantic_type") is not None
+
+
+@pytest.mark.parametrize(
+    "type_",
+    [AnyUrl, HttpUrl, KafkaDsn, PostgresDsn, RedisDsn, AmqpDsn, AnyHttpUrl],
+)
+def test_optional_url_field_parsed_correctly(type_: TypeAlias) -> None:
+    class MyModel(BaseModel):
+        url: Optional[type_]
+
+    class MyFactory(ModelFactory[MyModel]):
+        __model__ = MyModel
+
+    while not (url := MyFactory.build().url):
+        assert not url
+
+    assert MyModel(url=url)  # no validation error raised
