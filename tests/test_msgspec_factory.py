@@ -2,7 +2,7 @@ import datetime as dt
 import sys
 from decimal import Decimal
 from enum import Enum
-from typing import Any, Dict, FrozenSet, Generic, List, NewType, Set, Tuple, Type, TypeVar, Union
+from typing import Any, Dict, FrozenSet, Generic, List, NewType, Optional, Set, Tuple, Type, TypeVar, Union
 from uuid import UUID
 
 import msgspec
@@ -275,3 +275,55 @@ def test_use_default_with_non_callable_default() -> None:
     foo = FooFactory.build()
 
     assert foo.default_field == 10
+
+
+def test_union_types() -> None:
+    class A(Struct):
+        a: Union[List[str], List[int]]
+        b: Union[str, List[int]]
+        c: List[Union[Tuple[int, int], Tuple[str, int]]]
+
+    AFactory = MsgspecFactory.create_factory(A)
+
+    assert AFactory.build()
+
+
+def test_collection_unions_with_models() -> None:
+    class A(Struct):
+        a: int
+
+    class B(Struct):
+        a: str
+
+    class C(Struct):
+        a: Union[List[A], List[B]]
+        b: List[Union[A, B]]
+
+    CFactory = MsgspecFactory.create_factory(C)
+
+    assert CFactory.build()
+
+
+def test_constrained_union_types() -> None:
+    class A(Struct):
+        a: Union[Annotated[List[str], Meta(min_length=10)], Annotated[int, Meta(ge=1000)]]
+        b: Union[List[Annotated[str, Meta(min_length=20)]], int]
+
+    AFactory = MsgspecFactory.create_factory(A)
+
+    assert AFactory.build()
+
+
+@pytest.mark.parametrize("allow_none", (True, False))
+def test_optional_type(allow_none: bool) -> None:
+    class A(Struct):
+        a: Union[str, None]
+        b: Optional[str]
+        c: Optional[Union[str, int, List[int]]]
+
+    class AFactory(MsgspecFactory[A]):
+        __model__ = A
+
+        __allow_none_optionals__ = allow_none
+
+    assert AFactory.build()

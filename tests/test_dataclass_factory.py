@@ -2,8 +2,10 @@ import dataclasses
 from dataclasses import dataclass as vanilla_dataclass
 from dataclasses import field
 from types import ModuleType
-from typing import Callable, Dict, List, Optional, Tuple
+from typing import Callable, Dict, List, Optional, Tuple, Union
 from unittest.mock import ANY
+
+import pytest
 
 from pydantic.dataclasses import dataclass as pydantic_dataclass
 
@@ -234,3 +236,64 @@ def test_use_default_with_non_callable_default() -> None:
     foo = FooFactory.build()
 
     assert foo.default_field == 10
+
+
+def test_union_types() -> None:
+    @vanilla_dataclass
+    class A:
+        a: Union[List[str], List[int]]
+        b: Union[str, List[int]]
+        c: List[Union[Tuple[int, int], Tuple[str, int]]]
+
+    AFactory = DataclassFactory.create_factory(A)
+
+    assert AFactory.build()
+
+
+def test_collection_unions_with_models() -> None:
+    @vanilla_dataclass
+    class A:
+        a: int
+
+    @vanilla_dataclass
+    class B:
+        a: str
+
+    @vanilla_dataclass
+    class C:
+        a: Union[List[A], List[B]]
+        b: List[Union[A, B]]
+
+    CFactory = DataclassFactory.create_factory(C)
+
+    c = CFactory.build()
+
+    assert isinstance(c.a, list)
+    assert all(isinstance(value, A) for value in c.a) or all(isinstance(value, B) for value in c.a)
+
+    assert isinstance(c.b, list)
+    assert all(isinstance(value, (A, B)) for value in c.b)
+
+
+@pytest.mark.parametrize("allow_none", (True, False))
+def test_optional_type(allow_none: bool) -> None:
+    @vanilla_dataclass
+    class A:
+        a: Union[str, None]
+        b: Optional[str]
+        c: Optional[Union[str, int, List[int]]]
+
+    class AFactory(DataclassFactory[A]):
+        __model__ = A
+
+        __allow_none_optionals__ = allow_none
+
+    a = AFactory.build()
+
+    if not allow_none:
+        assert isinstance(a.a, str)
+        assert isinstance(a.b, str)
+        assert isinstance(a.c, (str, int, list))
+
+        if isinstance(a.c, list):
+            assert all(isinstance(value, int) for value in a.c)
