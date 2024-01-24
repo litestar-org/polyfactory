@@ -23,7 +23,6 @@ from pydantic import (
     UUID3,
     UUID4,
     UUID5,
-    VERSION,
     AmqpDsn,
     AnyHttpUrl,
     AnyUrl,
@@ -67,7 +66,7 @@ IS_PYDANTIC_V1 = _IS_PYDANTIC_V1
 IS_PYDANTIC_V2 = not _IS_PYDANTIC_V1
 
 
-@pytest.mark.skipif(VERSION.startswith("2"), reason="pydantic v1 only functionality")
+@pytest.mark.skipif(IS_PYDANTIC_V2, reason="pydantic v1 only functionality")
 def test_const() -> None:
     class A(BaseModel):
         v: int = Field(1, const=True)  # type: ignore[call-arg]
@@ -115,7 +114,7 @@ def test_list_unions() -> None:
     assert isinstance(CFactory.build().c[0], (A, B))
 
 
-@pytest.mark.skipif(VERSION.startswith("1"), reason="only for Pydantic v2")
+@pytest.mark.skipif(IS_PYDANTIC_V1, reason="only for Pydantic v2")
 def test_json_type() -> None:
     class A(BaseModel):
         a: Json[int]
@@ -126,7 +125,7 @@ def test_json_type() -> None:
     assert isinstance(AFactory.build(), A)
 
 
-@pytest.mark.skipif(VERSION.startswith("1"), reason="only for Pydantic v2")
+@pytest.mark.skipif(IS_PYDANTIC_V1, reason="only for Pydantic v2")
 def test_nested_json_type() -> None:
     class A(BaseModel):
         a: int
@@ -207,7 +206,7 @@ def test_factory_use_construct() -> None:
         PetFactory.build(age=invalid_age)
 
 
-@pytest.mark.skipif(VERSION.startswith("2"), reason="pydantic 1 only test")
+@pytest.mark.skipif(IS_PYDANTIC_V2, reason="pydantic 1 only test")
 def test_build_instance_by_field_alias_with_allow_population_by_field_name_flag_pydantic_v1() -> None:
     class MyModel(BaseModel):
         aliased_field: str = Field(..., alias="special_field")
@@ -222,7 +221,7 @@ def test_build_instance_by_field_alias_with_allow_population_by_field_name_flag_
     assert instance.aliased_field == "some"
 
 
-@pytest.mark.skipif(VERSION.startswith("1"), reason="pydantic 2 only test")
+@pytest.mark.skipif(IS_PYDANTIC_V1, reason="pydantic 2 only test")
 def test_build_instance_by_field_alias_with_populate_by_name_flag_pydantic_v2() -> None:
     class MyModel(BaseModel):
         model_config = {"populate_by_name": True}
