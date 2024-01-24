@@ -372,3 +372,17 @@ def test_optional_url_field_parsed_correctly(type_: TypeAlias) -> None:
         assert not url
 
     assert MyModel(url=url)  # no validation error raised
+
+
+@pytest.mark.skipif(IS_PYDANTIC_V2, reason="pydantic 1 only test")
+def test_handles_complex_typing_with_custom_root_type() -> None:
+    class MyModel(BaseModel):
+        __root__: List[int]
+
+    class MyFactory(ModelFactory[MyModel]):
+        __model__ = MyModel
+
+    result = MyFactory.build()
+
+    assert result.__root__
+    assert isinstance(result.__root__, list)
