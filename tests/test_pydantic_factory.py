@@ -4,9 +4,10 @@ from typing import Dict, List, Optional, Set, Tuple
 import pytest
 from typing_extensions import Annotated
 
-from pydantic import VERSION, BaseModel, Field, Json
+from pydantic import VERSION, BaseModel, Field, Json, ValidationError
 
 from polyfactory.factories.pydantic_factory import ModelFactory
+from tests.models import PetFactory
 
 
 @pytest.mark.skipif(VERSION.startswith("2"), reason="pydantic v1 only functionality")
@@ -134,3 +135,58 @@ def test_use_default_with_non_callable_default() -> None:
     foo = FooFactory.build()
 
     assert foo.default_field == 10
+
+
+def test_factory_use_construct() -> None:
+    # factory should pass values without validation
+    invalid_age = "non_valid_age"
+    non_validated_pet = PetFactory.build(factory_use_construct=True, age=invalid_age)
+    assert non_validated_pet.age == invalid_age
+
+    with pytest.raises(ValidationError):
+        PetFactory.build(age=invalid_age)
+
+    with pytest.raises(ValidationError):
+        PetFactory.build(age=invalid_age)
+
+
+@pytest.mark.skipif(VERSION.startswith("2"), reason="pydantic 1 only test")
+def test_build_instance_by_field_alias_with_allow_population_by_field_name_flag_pydantic_v1() -> None:
+    class MyModel(BaseModel):
+        aliased_field: str = Field(..., alias="special_field")
+
+        class Config:
+            allow_population_by_field_name = True
+
+    class MyFactory(ModelFactory):
+        __model__ = MyModel
+
+    instance = MyFactory.build(aliased_field="some")
+    assert instance.aliased_field == "some"
+
+
+@pytest.mark.skipif(VERSION.startswith("1"), reason="pydantic 2 only test")
+def test_build_instance_by_field_alias_with_populate_by_name_flag_pydantic_v2() -> None:
+    class MyModel(BaseModel):
+        model_config = {"populate_by_name": True}
+        aliased_field: str = Field(..., alias="special_field")
+
+    class MyFactory(ModelFactory):
+        __model__ = MyModel
+
+    instance = MyFactory.build(aliased_field="some")
+    assert instance.aliased_field == "some"
+
+
+def test_build_instance_by_field_name_with_allow_population_by_field_name_flag() -> None:
+    class MyModel(BaseModel):
+        aliased_field: str = Field(..., alias="special_field")
+
+        class Config:
+            allow_population_by_field_name = True
+
+    class MyFactory(ModelFactory):
+        __model__ = MyModel
+
+    instance = MyFactory.build(special_field="some")
+    assert instance.aliased_field == "some"
