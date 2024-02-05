@@ -1181,13 +1181,13 @@ Any other field definition will not be checked.</p>
 </section>
 <section id="use-default-values">
 <h2>Use Default Values<a class="headerlink" href="#use-default-values" title="Permalink to this heading">#</a></h2>
-<p>If <code class="docutils literal notranslate"><span class="pre">__use_default__</span></code> is set to <code class="docutils literal notranslate"><span class="pre">True</span></code>, then the default value will be used instead of creating a random value
+<p>If <code class="docutils literal notranslate"><span class="pre">__use_defaults__</span></code> is set to <code class="docutils literal notranslate"><span class="pre">True</span></code>, then the default value will be used instead of creating a random value
 for a given field, provided there’s a default value for that field.</p>
-<p>By default, <code class="docutils literal notranslate"><span class="pre">__use_default__</span></code> is set to <code class="docutils literal notranslate"><span class="pre">False.</span></code> If you need more fine grained control, you can override the
+<p>By default, <code class="docutils literal notranslate"><span class="pre">__use_defaults__</span></code> is set to <code class="docutils literal notranslate"><span class="pre">False.</span></code> If you need more fine grained control, you can override the
 <a class="reference internal" href="../reference/factories/base.html#polyfactory.factories.base.BaseFactory.should_use_default_value" title="polyfactory.factories.base.BaseFactory.should_use_default_value"><code class="xref py py-meth docutils literal notranslate"><span class="pre">should_use_default_value()</span></code></a> classmethod.</p>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
-<p>Setting <code class="docutils literal notranslate"><span class="pre">__use_default__</span></code> has no effect for <code class="docutils literal notranslate"><span class="pre">TypedDictFactory</span></code> since you cannot set default values for
+<p>Setting <code class="docutils literal notranslate"><span class="pre">__use_defaults__</span></code> has no effect for <code class="docutils literal notranslate"><span class="pre">TypedDictFactory</span></code> since you cannot set default values for
 <code class="docutils literal notranslate"><span class="pre">TypedDict</span></code>.</p>
 </div>
 <div class="literal-block-wrapper docutils container" id="id10">
