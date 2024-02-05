@@ -117,14 +117,14 @@ Any other field definition will not be checked.
 Use Default Values
 ------------------
 
-If ``__use_default__`` is set to ``True``, then the default value will be used instead of creating a random value
+If ``__use_defaults__`` is set to ``True``, then the default value will be used instead of creating a random value
 for a given field, provided there's a default value for that field.
 
-By default, ``__use_default__`` is set to ``False.`` If you need more fine grained control, you can override the
+By default, ``__use_defaults__`` is set to ``False.`` If you need more fine grained control, you can override the
 :meth:`~polyfactory.factories.base.BaseFactory.should_use_default_value` classmethod.
 
 .. note::
-    Setting ``__use_default__`` has no effect for ``TypedDictFactory`` since you cannot set default values for
+    Setting ``__use_defaults__`` has no effect for ``TypedDictFactory`` since you cannot set default values for
     ``TypedDict``.
 
 .. literalinclude:: /examples/configuration/test_example_9.py
