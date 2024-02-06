@@ -1,7 +1,7 @@
 import datetime as dt
 from decimal import Decimal
 from enum import Enum
-from typing import Any, Dict, Generic, List, Tuple, TypeVar
+from typing import Any, Dict, Generic, List, Optional, Tuple, TypeVar, Union
 from uuid import UUID
 
 import attrs
@@ -219,3 +219,50 @@ def test_use_default_with_non_callable_default() -> None:
     foo = FooFactory.build()
 
     assert foo.default_field == 10
+
+
+def test_union_types() -> None:
+    @define
+    class A:
+        a: Union[List[str], List[int]]
+        b: Union[str, List[int]]
+        c: List[Union[Tuple[int, int], Tuple[str, int]]]
+
+    AFactory = AttrsFactory.create_factory(A)
+
+    assert AFactory.build()
+
+
+def test_collection_unions_with_models() -> None:
+    @define
+    class A:
+        a: int
+
+    @define
+    class B:
+        a: str
+
+    @define
+    class C:
+        a: Union[List[A], List[B]]
+        b: List[Union[A, B]]
+
+    CFactory = AttrsFactory.create_factory(C)
+
+    assert CFactory.build()
+
+
+@pytest.mark.parametrize("allow_none", (True, False))
+def test_optional_type(allow_none: bool) -> None:
+    @define
+    class A:
+        a: Union[str, None]
+        b: Optional[str]
+        c: Optional[Union[str, int, List[int]]]
+
+    class AFactory(AttrsFactory[A]):
+        __model__ = A
+
+        __allow_none_optionals__ = allow_none
+
+    assert AFactory.build()

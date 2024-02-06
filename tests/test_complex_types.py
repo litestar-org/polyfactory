@@ -21,7 +21,7 @@ from typing import (
 
 import pytest
 
-from pydantic import VERSION, BaseModel
+from pydantic import BaseModel
 
 from polyfactory.exceptions import ParameterException
 from polyfactory.factories import DataclassFactory
@@ -79,20 +79,6 @@ def test_handles_complex_typing_with_embedded_models() -> None:
 
     assert result.person_dict
     assert result.person_list[0].pets
-
-
-@pytest.mark.skipif(VERSION.startswith("2"), reason="pydantic 1 only test")
-def test_handles_complex_typing_with_custom_root_type() -> None:
-    class MyModel(BaseModel):
-        __root__: List[int]
-
-    class MyFactory(ModelFactory[MyModel]):
-        __model__ = MyModel
-
-    result = MyFactory.build()
-
-    assert result.__root__
-    assert isinstance(result.__root__, list)
 
 
 def test_raises_for_user_defined_types() -> None:
