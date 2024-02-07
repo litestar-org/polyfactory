@@ -106,6 +106,7 @@ def test_with_new_type() -> None:
     class User(Struct):
         name: UnixName
         groups: List[UnixName]
+        constrained_name: Annotated[UnixName, Meta(min_length=20)]
 
     class UserFactory(MsgspecFactory[User]):
         __model__ = User
@@ -332,6 +333,20 @@ def test_optional_type(allow_none: bool) -> None:
         __model__ = A
 
         __allow_none_optionals__ = allow_none
+
+    a = AFactory.build()
+    assert msgspec.convert(structs.asdict(a), A) == a
+
+
+def test_annotated_children() -> None:
+    class A(Struct):
+        a: Dict[int, Annotated[str, Meta(min_length=20)]]
+        b: List[Annotated[int, Meta(gt=1000)]]
+        c: Annotated[List[Annotated[int, Meta(gt=1000)]], Meta(min_length=50)]
+        d: Dict[int, Annotated[List[Annotated[str, Meta(min_length=1)]], Meta(min_length=1)]]
+
+    class AFactory(MsgspecFactory[A]):
+        __model__ = A
 
     a = AFactory.build()
     assert msgspec.convert(structs.asdict(a), A) == a
