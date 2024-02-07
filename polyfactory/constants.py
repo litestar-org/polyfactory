@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import sys
 from collections import abc, defaultdict, deque
 from random import Random
 from typing import (
@@ -21,25 +22,44 @@ try:
 except ImportError:
     UnionType = Union  # type: ignore[misc,assignment]
 
+if sys.version_info >= (3, 9):
+    # Mapping of type annotations into concrete types. This is used to normalize python <= 3.9 annotations.
+    TYPE_MAPPING = {
+        DefaultDict: defaultdict,
+        Deque: deque,
+        Dict: dict,
+        FrozenSet: frozenset,
+        Iterable: list,
+        List: list,
+        Mapping: dict,
+        Sequence: list,
+        Set: set,
+        Tuple: tuple,
+        abc.Iterable: list,
+        abc.Mapping: dict,
+        abc.Sequence: list,
+        abc.Set: set,
+        UnionType: Union,
+    }
+else:
+    # For 3.8, we have to keep the types from typing since dict[str] syntax is not supported in 3.8.
+    TYPE_MAPPING = {
+        DefaultDict: DefaultDict,
+        Deque: Deque,
+        Dict: Dict,
+        FrozenSet: FrozenSet,
+        Iterable: List,
+        List: List,
+        Mapping: Dict,
+        Sequence: List,
+        Set: Set,
+        Tuple: Tuple,
+        abc.Iterable: List,
+        abc.Mapping: Dict,
+        abc.Sequence: List,
+        abc.Set: Set,
+    }
 
-# Mapping of type annotations into concrete types. This is used to normalize python <= 3.9 annotations.
-TYPE_MAPPING = {
-    DefaultDict: defaultdict,
-    Deque: deque,
-    Dict: dict,
-    FrozenSet: frozenset,
-    Iterable: list,
-    List: list,
-    Mapping: dict,
-    Sequence: list,
-    Set: set,
-    Tuple: tuple,
-    abc.Iterable: list,
-    abc.Mapping: dict,
-    abc.Sequence: list,
-    abc.Set: set,
-    UnionType: Union,
-}
 
 DEFAULT_RANDOM = Random()
 RANDOMIZE_COLLECTION_LENGTH = False
