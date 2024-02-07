@@ -313,7 +313,7 @@ def test_constrained_union_types() -> None:
         b: Union[List[Annotated[str, Meta(min_length=20)]], int]
         c: Optional[Annotated[int, Meta(ge=1000)]]
         d: Union[Annotated[List[int], Meta(min_length=100)], Annotated[str, Meta(min_length=100)]]
-        e: Optional[Union[Annotated[list[int], Meta(min_length=100)], Annotated[str, Meta(min_length=100)]]]
+        e: Optional[Union[Annotated[List[int], Meta(min_length=100)], Annotated[str, Meta(min_length=100)]]]
         f: Optional[Union[Annotated[List[int], Meta(min_length=100)], str]]
 
     AFactory = MsgspecFactory.create_factory(A, __allow_none_optionals__=False)
