@@ -432,8 +432,12 @@ def test_constrained_union_types() -> None:
     class A(BaseModel):
         a: Union[Annotated[List[str], MinLen(100)], Annotated[int, Ge(1000)]]
         b: Union[List[Annotated[str, MinLen(100)]], int]
+        c: Union[Annotated[List[int], MinLen(100)], None]
+        d: Union[Annotated[List[int], MinLen(100)], Annotated[List[str], MinLen(100)]]
+        e: Optional[Union[Annotated[list[int], MinLen(10)], Annotated[list[str], MinLen(10)]]]
+        f: Optional[Union[Annotated[List[int], MinLen(10)], List[str]]]
 
-    AFactory = ModelFactory.create_factory(A)
+    AFactory = ModelFactory.create_factory(A, __allow_none_optionals__=False)
 
     assert AFactory.build()
 
