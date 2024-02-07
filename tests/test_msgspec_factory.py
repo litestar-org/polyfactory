@@ -279,13 +279,14 @@ def test_use_default_with_non_callable_default() -> None:
 
 def test_union_types() -> None:
     class A(Struct):
-        a: Union[List[str], List[int]]
+        a: Union[List[str], int]
         b: Union[str, List[int]]
-        c: List[Union[Tuple[int, int], Tuple[str, int]]]
+        c: List[Union[Tuple[int, int], float]]
 
     AFactory = MsgspecFactory.create_factory(A)
 
-    assert AFactory.build()
+    a = AFactory.build()
+    assert msgspec.convert(structs.asdict(a), A) == a
 
 
 def test_collection_unions_with_models() -> None:
@@ -296,12 +297,13 @@ def test_collection_unions_with_models() -> None:
         a: str
 
     class C(Struct):
-        a: Union[List[A], List[B]]
-        b: List[Union[A, B]]
+        a: Union[List[A], str]
+        b: List[Union[A, int]]
 
     CFactory = MsgspecFactory.create_factory(C)
 
-    assert CFactory.build()
+    c = CFactory.build()
+    assert msgspec.convert(structs.asdict(c), C) == c
 
 
 def test_constrained_union_types() -> None:
@@ -311,7 +313,8 @@ def test_constrained_union_types() -> None:
 
     AFactory = MsgspecFactory.create_factory(A)
 
-    assert AFactory.build()
+    a = AFactory.build()
+    assert msgspec.convert(structs.asdict(a), A) == a
 
 
 @pytest.mark.parametrize("allow_none", (True, False))
@@ -326,4 +329,5 @@ def test_optional_type(allow_none: bool) -> None:
 
         __allow_none_optionals__ = allow_none
 
-    assert AFactory.build()
+    a = AFactory.build()
+    assert msgspec.convert(structs.asdict(a), A) == a
