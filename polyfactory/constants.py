@@ -22,25 +22,30 @@ try:
 except ImportError:
     UnionType = Union  # type: ignore[misc,assignment]
 
-if sys.version_info >= (3, 9):
-    # Mapping of type annotations into concrete types. This is used to normalize python <= 3.9 annotations.
-    TYPE_MAPPING = {
-        DefaultDict: defaultdict,
-        Deque: deque,
-        Dict: dict,
-        FrozenSet: frozenset,
-        Iterable: list,
-        List: list,
-        Mapping: dict,
-        Sequence: list,
-        Set: set,
-        Tuple: tuple,
-        abc.Iterable: list,
-        abc.Mapping: dict,
-        abc.Sequence: list,
-        abc.Set: set,
-        UnionType: Union,
-    }
+PY_38 = sys.version_info.major == 3 and sys.version_info.minor == 8  # noqa: PLR2004
+
+# Mapping of type annotations into concrete types. This is used to normalize python <= 3.9 annotations.
+INSTANTIABLE_TYPE_MAPPING = {
+    DefaultDict: defaultdict,
+    Deque: deque,
+    Dict: dict,
+    FrozenSet: frozenset,
+    Iterable: list,
+    List: list,
+    Mapping: dict,
+    Sequence: list,
+    Set: set,
+    Tuple: tuple,
+    abc.Iterable: list,
+    abc.Mapping: dict,
+    abc.Sequence: list,
+    abc.Set: set,
+    UnionType: Union,
+}
+
+
+if PY_38:
+    TYPE_MAPPING = INSTANTIABLE_TYPE_MAPPING
 else:
     # For 3.8, we have to keep the types from typing since dict[str] syntax is not supported in 3.8.
     TYPE_MAPPING = {
