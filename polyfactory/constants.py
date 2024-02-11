@@ -44,7 +44,7 @@ INSTANTIABLE_TYPE_MAPPING = {
 }
 
 
-if PY_38:
+if not PY_38:
     TYPE_MAPPING = INSTANTIABLE_TYPE_MAPPING
 else:
     # For 3.8, we have to keep the types from typing since dict[str] syntax is not supported in 3.8.
