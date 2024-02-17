@@ -126,7 +126,7 @@ class SQLAlchemyFactory(Generic[T], BaseFactory[T]):
         elif issubclass(column_type, types.ARRAY):
             annotation = List[column.type.item_type.python_type]  # type: ignore[assignment,name-defined]
         else:
-            annotation = column.type.python_type
+            annotation = column.type.impl.python_type if hasattr(column.type, "impl") else column.type.python_type
 
         if column.nullable:
             annotation = Union[annotation, None]  # type: ignore[assignment]
