@@ -31,7 +31,7 @@ except ImportError as e:
 
 try:
     # pydantic v1
-    from pydantic import (
+    from pydantic import (  # noqa: I001
         UUID1,
         UUID3,
         UUID4,
@@ -44,7 +44,6 @@ try:
         HttpUrl,
         KafkaDsn,
         PostgresDsn,
-        PyObject,
         RedisDsn,
     )
     from pydantic import BaseModel as BaseModelV1
@@ -54,6 +53,10 @@ try:
         ModelField,  # pyright: ignore[reportGeneralTypeIssues]
         Undefined,  # pyright: ignore[reportGeneralTypeIssues]
     )
+
+    # Keep this import last to prevent warnings from pydantic if pydantic v2
+    # is installed.
+    from pydantic import PyObject
 
     # prevent unbound variable warnings
     BaseModelV2 = BaseModelV1
