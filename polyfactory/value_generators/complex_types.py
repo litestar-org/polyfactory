@@ -22,7 +22,7 @@ def handle_collection_type(field_meta: FieldMeta, container_type: type, factory:
     :returns: A built result.
     """
 
-    if PY_38:
+    if PY_38 and container_type in INSTANTIABLE_TYPE_MAPPING:
         container_type = INSTANTIABLE_TYPE_MAPPING[container_type]  # type: ignore[assignment]
 
     container = container_type()
