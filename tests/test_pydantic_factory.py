@@ -17,7 +17,7 @@ from typing import Callable, Dict, List, Literal, Optional, Set, Tuple, Union
 from uuid import UUID
 
 import pytest
-from annotated_types import Ge, Le, LowerCase, MinLen, UpperCase
+from annotated_types import Ge, Gt, Le, LowerCase, MinLen, UpperCase
 from typing_extensions import Annotated, TypeAlias
 
 import pydantic
@@ -432,8 +432,12 @@ def test_constrained_union_types() -> None:
     class A(BaseModel):
         a: Union[Annotated[List[str], MinLen(100)], Annotated[int, Ge(1000)]]
         b: Union[List[Annotated[str, MinLen(100)]], int]
+        c: Union[Annotated[List[int], MinLen(100)], None]
+        d: Union[Annotated[List[int], MinLen(100)], Annotated[List[str], MinLen(100)]]
+        e: Optional[Union[Annotated[List[int], MinLen(10)], Annotated[List[str], MinLen(10)]]]
+        f: Optional[Union[Annotated[List[int], MinLen(10)], List[str]]]
 
-    AFactory = ModelFactory.create_factory(A)
+    AFactory = ModelFactory.create_factory(A, __allow_none_optionals__=False)
 
     assert AFactory.build()
 
@@ -804,3 +808,15 @@ def test_complex_constrained_attribute_parsing_pydantic_v2() -> None:
     assert isinstance(next(iter(result.conlist_with_complex_type[0].values())), tuple)
     assert len(next(iter(result.conlist_with_complex_type[0].values()))) == 3
     assert all(isinstance(v, Person) for v in next(iter(result.conlist_with_complex_type[0].values())))
+
+
+def test_annotated_children() -> None:
+    class A(BaseModel):
+        a: Dict[int, Annotated[str, MinLen(min_length=20)]]
+        b: List[Annotated[int, Gt(gt=1000)]]
+        c: Annotated[List[Annotated[int, Gt(gt=1000)]], MinLen(min_length=50)]
+        d: Dict[int, Annotated[List[Annotated[str, MinLen(1)]], MinLen(1)]]
+
+    AFactory = ModelFactory.create_factory(A)
+
+    assert AFactory.build()

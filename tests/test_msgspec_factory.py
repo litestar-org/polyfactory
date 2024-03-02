@@ -106,6 +106,7 @@ def test_with_new_type() -> None:
     class User(Struct):
         name: UnixName
         groups: List[UnixName]
+        constrained_name: Annotated[UnixName, Meta(min_length=20)]
 
     class UserFactory(MsgspecFactory[User]):
         __model__ = User
@@ -279,13 +280,14 @@ def test_use_default_with_non_callable_default() -> None:
 
 def test_union_types() -> None:
     class A(Struct):
-        a: Union[List[str], List[int]]
+        a: Union[List[str], int]
         b: Union[str, List[int]]
-        c: List[Union[Tuple[int, int], Tuple[str, int]]]
+        c: List[Union[Tuple[int, int], float]]
 
     AFactory = MsgspecFactory.create_factory(A)
 
-    assert AFactory.build()
+    a = AFactory.build()
+    assert msgspec.convert(structs.asdict(a), A) == a
 
 
 def test_collection_unions_with_models() -> None:
@@ -296,22 +298,28 @@ def test_collection_unions_with_models() -> None:
         a: str
 
     class C(Struct):
-        a: Union[List[A], List[B]]
-        b: List[Union[A, B]]
+        a: Union[List[A], str]
+        b: List[Union[A, int]]
 
     CFactory = MsgspecFactory.create_factory(C)
 
-    assert CFactory.build()
+    c = CFactory.build()
+    assert msgspec.convert(structs.asdict(c), C) == c
 
 
 def test_constrained_union_types() -> None:
     class A(Struct):
         a: Union[Annotated[List[str], Meta(min_length=10)], Annotated[int, Meta(ge=1000)]]
         b: Union[List[Annotated[str, Meta(min_length=20)]], int]
+        c: Optional[Annotated[int, Meta(ge=1000)]]
+        d: Union[Annotated[List[int], Meta(min_length=100)], Annotated[str, Meta(min_length=100)]]
+        e: Optional[Union[Annotated[List[int], Meta(min_length=100)], Annotated[str, Meta(min_length=100)]]]
+        f: Optional[Union[Annotated[List[int], Meta(min_length=100)], str]]
 
-    AFactory = MsgspecFactory.create_factory(A)
+    AFactory = MsgspecFactory.create_factory(A, __allow_none_optionals__=False)
 
-    assert AFactory.build()
+    a = AFactory.build()
+    assert msgspec.convert(structs.asdict(a), A) == a
 
 
 @pytest.mark.parametrize("allow_none", (True, False))
@@ -326,4 +334,19 @@ def test_optional_type(allow_none: bool) -> None:
 
         __allow_none_optionals__ = allow_none
 
-    assert AFactory.build()
+    a = AFactory.build()
+    assert msgspec.convert(structs.asdict(a), A) == a
+
+
+def test_annotated_children() -> None:
+    class A(Struct):
+        a: Dict[int, Annotated[str, Meta(min_length=20)]]
+        b: List[Annotated[int, Meta(gt=1000)]]
+        c: Annotated[List[Annotated[int, Meta(gt=1000)]], Meta(min_length=50)]
+        d: Dict[int, Annotated[List[Annotated[str, Meta(min_length=1)]], Meta(min_length=1)]]
+
+    class AFactory(MsgspecFactory[A]):
+        __model__ = A
+
+    a = AFactory.build()
+    assert msgspec.convert(structs.asdict(a), A) == a

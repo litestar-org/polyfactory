@@ -10,11 +10,10 @@ from polyfactory.constants import DEFAULT_RANDOM, TYPE_MAPPING
 from polyfactory.utils.deprecation import check_for_deprecated_parameters
 from polyfactory.utils.helpers import (
     get_annotation_metadata,
-    normalize_annotation,
     unwrap_annotated,
     unwrap_new_type,
 )
-from polyfactory.utils.predicates import is_annotated, is_any_annotated
+from polyfactory.utils.predicates import is_annotated
 from polyfactory.utils.types import NoneType
 
 if TYPE_CHECKING:
@@ -135,14 +134,14 @@ class FieldMeta:
                 ("max_collection_length", max_collection_length),
             ),
         )
-        field_type = normalize_annotation(annotation, random=random)
 
-        if not constraints and is_annotated(annotation):
+        annotated = is_annotated(annotation)
+        if not constraints and annotated:
             metadata = cls.get_constraints_metadata(annotation)
             constraints = cls.parse_constraints(metadata)
 
-        if not is_any_annotated(annotation):
-            annotation = TYPE_MAPPING[field_type] if field_type in TYPE_MAPPING else field_type
+        if annotated:
+            annotation = get_args(annotation)[0]
         elif (origin := get_origin(annotation)) and origin in TYPE_MAPPING:  # pragma: no cover
             container = TYPE_MAPPING[origin]
             annotation = container[get_args(annotation)]  # type: ignore[index]

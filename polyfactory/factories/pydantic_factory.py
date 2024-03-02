@@ -164,39 +164,45 @@ class PydanticFieldMeta(FieldMeta):
 
         annotation = unwrap_new_type(field_info.annotation)
         children: list[FieldMeta,] | None = None
-        constraints: Constraints = {}
         name = field_info.alias if field_info.alias and use_alias else field_name
 
+        constraints: PydanticConstraints
         # pydantic v2 does not always propagate metadata for Union types
-        if not field_info.metadata and is_optional(annotation):
-            field_info = FieldInfo.from_annotation(unwrap_optional(annotation))
-        elif is_union(annotation):
-            children = [
-                cls.from_field_info(
-                    field_info=FieldInfo.from_annotation(arg),
-                    field_name=field_name,
-                    random=random,
-                    use_alias=use_alias,
+        if is_union(annotation):
+            constraints = {}
+            children = []
+            for arg in get_args(annotation):
+                if arg is NoneType:
+                    continue
+                child_field_info = FieldInfo.from_annotation(arg)
+                merged_field_info = FieldInfo.merge_field_infos(field_info, child_field_info)
+                children.append(
+                    cls.from_field_info(
+                        field_name="",
+                        field_info=merged_field_info,
+                        use_alias=use_alias,
+                        random=random,
+                    ),
                 )
-                for arg in get_args(annotation)
-            ]
+        else:
+            metadata, is_json = [], False
+            for m in field_info.metadata:
+                if not is_json and isinstance(m, Json):  # type: ignore[misc]
+                    is_json = True
+                elif m is not None:
+                    metadata.append(m)
 
-        metadata, is_json = [], False
-        for m in field_info.metadata:
-            if not is_json and isinstance(m, Json):  # type: ignore[misc]
-                is_json = True
-            elif m is not None:
-                metadata.append(m)
+            constraints = cast(
+                PydanticConstraints,
+                cls.parse_constraints(metadata=metadata) if metadata else {},
+            )
 
-        constraints = cls.parse_constraints(metadata=metadata) if metadata else {}
-        constraints = cast(PydanticConstraints, constraints)
+            if "url" in constraints:
+                # pydantic uses a sentinel value for url constraints
+                annotation = str
 
-        if "url" in constraints:
-            # pydantic uses a sentinel value for url constraints
-            annotation = str
-
-        if is_json:
-            constraints["json"] = True
+            if is_json:
+                constraints["json"] = True
 
         return PydanticFieldMeta.from_type(
             annotation=annotation,
