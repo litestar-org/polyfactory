@@ -112,7 +112,10 @@ class SQLAlchemyFactory(Generic[T], BaseFactory[T]):
         return isinstance(inspected, (Mapper, InstanceState))
 
     @classmethod
-    def should_column_be_set(cls, column: Column) -> bool:
+    def should_column_be_set(cls, column: Any) -> bool:
+        if not isinstance(column, Column):
+            return False
+
         if not cls.__set_primary_key__ and column.primary_key:
             return False
 

@@ -6,6 +6,7 @@ import pytest
 from sqlalchemy import Column, ForeignKey, Integer, String, create_engine, inspect, orm, types
 from sqlalchemy.engine import Engine
 from sqlalchemy.ext.asyncio import AsyncEngine, AsyncSession, create_async_engine
+from sqlalchemy.ext.hybrid import hybrid_property
 from sqlalchemy.orm import Session
 from sqlalchemy.orm.decl_api import DeclarativeMeta, registry
 
@@ -117,6 +118,37 @@ def test_python_type_handling() -> None:
     assert isinstance(instance.enum_type, Animal)
     assert isinstance(instance.str_array_type, list)
     assert isinstance(instance.str_array_type[0], str)
+
+
+def test_properties() -> None:
+    _registry = registry()
+
+    class Base(metaclass=DeclarativeMeta):
+        __abstract__ = True
+
+        registry = _registry
+        metadata = _registry.metadata
+
+    class Model(Base):
+        __tablename__ = "model"
+
+        id: Any = Column(Integer(), primary_key=True)
+        age: Any = Column(Integer(), nullable=False)
+
+        double_age = orm.column_property(age * 2)
+
+        @hybrid_property
+        def triple_age(self) -> int:
+            return self.age * 3  # type: ignore[no-any-return]
+
+    class ModelFactory(SQLAlchemyFactory[Model]):
+        ...
+
+    instance = ModelFactory.build()
+    assert isinstance(instance, Model)
+    # Expect empty as requires session to be set
+    assert instance.double_age is None
+    assert instance.age * 3 == instance.triple_age
 
 
 @pytest.mark.parametrize(
