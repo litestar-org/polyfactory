@@ -7,8 +7,8 @@ from hypothesis.strategies import integers
 from polyfactory.exceptions import ParameterException
 from polyfactory.value_generators.constrained_numbers import (
     handle_constrained_int,
+    is_almost_multiple_of,
     is_multiply_of_multiple_of_in_range,
-    passes_pydantic_multiple_validator,
 )
 
 
@@ -78,7 +78,7 @@ def test_handle_constrained_int_handles_multiple_of(multiple_of: int) -> None:
             random=Random(),
             multiple_of=multiple_of,
         )
-        assert passes_pydantic_multiple_validator(result, multiple_of)
+        assert is_almost_multiple_of(result, multiple_of)
     else:
         with pytest.raises(ParameterException):
             handle_constrained_int(
@@ -91,15 +91,15 @@ def test_handle_constrained_int_handles_multiple_of(multiple_of: int) -> None:
     integers(min_value=-1000000000, max_value=1000000000),
     integers(min_value=-1000000000, max_value=1000000000),
 )
-def test_handle_constrained_int_handles_multiple_of_with_lt(val1: int, val2: int) -> None:
-    multiple_of, max_value = sorted([val1, val2])
+def test_handle_constrained_int_handles_multiple_of_with_lt(max_value: int, multiple_of: int) -> None:
     if multiple_of != 0:
         result = handle_constrained_int(
             random=Random(),
             multiple_of=multiple_of,
             lt=max_value,
         )
-        assert passes_pydantic_multiple_validator(result, multiple_of)
+        assert result < max_value
+        assert is_almost_multiple_of(result, multiple_of)
     else:
         with pytest.raises(ParameterException):
             handle_constrained_int(
@@ -113,15 +113,15 @@ def test_handle_constrained_int_handles_multiple_of_with_lt(val1: int, val2: int
     integers(min_value=-1000000000, max_value=1000000000),
     integers(min_value=-1000000000, max_value=1000000000),
 )
-def test_handle_constrained_int_handles_multiple_of_with_le(val1: int, val2: int) -> None:
-    multiple_of, max_value = sorted([val1, val2])
+def test_handle_constrained_int_handles_multiple_of_with_le(max_value: int, multiple_of: int) -> None:
     if multiple_of != 0:
         result = handle_constrained_int(
             random=Random(),
             multiple_of=multiple_of,
             le=max_value,
         )
-        assert passes_pydantic_multiple_validator(result, multiple_of)
+        assert result <= max_value
+        assert is_almost_multiple_of(result, multiple_of)
     else:
         with pytest.raises(ParameterException):
             handle_constrained_int(
@@ -135,15 +135,15 @@ def test_handle_constrained_int_handles_multiple_of_with_le(val1: int, val2: int
     integers(min_value=-1000000000, max_value=1000000000),
     integers(min_value=-1000000000, max_value=1000000000),
 )
-def test_handle_constrained_int_handles_multiple_of_with_ge(val1: int, val2: int) -> None:
-    min_value, multiple_of = sorted([val1, val2])
+def test_handle_constrained_int_handles_multiple_of_with_ge(min_value: int, multiple_of: int) -> None:
     if multiple_of != 0:
         result = handle_constrained_int(
             random=Random(),
             multiple_of=multiple_of,
             ge=min_value,
         )
-        assert passes_pydantic_multiple_validator(result, multiple_of)
+        assert min_value <= result
+        assert is_almost_multiple_of(result, multiple_of)
     else:
         with pytest.raises(ParameterException):
             handle_constrained_int(
@@ -157,15 +157,15 @@ def test_handle_constrained_int_handles_multiple_of_with_ge(val1: int, val2: int
     integers(min_value=-1000000000, max_value=1000000000),
     integers(min_value=-1000000000, max_value=1000000000),
 )
-def test_handle_constrained_int_handles_multiple_of_with_gt(val1: int, val2: int) -> None:
-    min_value, multiple_of = sorted([val1, val2])
+def test_handle_constrained_int_handles_multiple_of_with_gt(min_value: int, multiple_of: int) -> None:
     if multiple_of != 0:
         result = handle_constrained_int(
             random=Random(),
             multiple_of=multiple_of,
             gt=min_value,
         )
-        assert passes_pydantic_multiple_validator(result, multiple_of)
+        assert min_value < result
+        assert is_almost_multiple_of(result, multiple_of)
     else:
         with pytest.raises(ParameterException):
             handle_constrained_int(
@@ -180,8 +180,8 @@ def test_handle_constrained_int_handles_multiple_of_with_gt(val1: int, val2: int
     integers(min_value=-1000000000, max_value=1000000000),
     integers(min_value=-1000000000, max_value=1000000000),
 )
-def test_handle_constrained_int_handles_multiple_of_with_ge_and_le(val1: int, val2: int, val3: int) -> None:
-    min_value, multiple_of, max_value = sorted([val1, val2, val3])
+def test_handle_constrained_int_handles_multiple_of_with_ge_and_le(val1: int, val2: int, multiple_of: int) -> None:
+    min_value, max_value = sorted([val1, val2])
     if multiple_of != 0 and is_multiply_of_multiple_of_in_range(
         minimum=min_value,
         maximum=max_value,
@@ -193,7 +193,8 @@ def test_handle_constrained_int_handles_multiple_of_with_ge_and_le(val1: int, va
             ge=min_value,
             le=max_value,
         )
-        assert passes_pydantic_multiple_validator(result, multiple_of)
+        assert min_value <= result <= max_value
+        assert is_almost_multiple_of(result, multiple_of)
     else:
         with pytest.raises(ParameterException):
             handle_constrained_int(

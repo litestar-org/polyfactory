@@ -3,7 +3,7 @@ from random import Random
 from typing import Optional, cast
 
 import pytest
-from hypothesis import given
+from hypothesis import assume, given
 from hypothesis.strategies import decimals, integers
 
 from pydantic import BaseModel, condecimal
@@ -13,9 +13,22 @@ from polyfactory.factories.pydantic_factory import ModelFactory
 from polyfactory.value_generators.constrained_numbers import (
     handle_constrained_decimal,
     handle_decimal_length,
+    is_almost_multiple_of,
     is_multiply_of_multiple_of_in_range,
-    passes_pydantic_multiple_validator,
 )
+
+
+def assume_max_digits(x: Decimal, max_digits: int) -> None:
+    """
+    Signal to Hypothesis that ``x`` should have at most ``max_digits`` significant digits.
+
+    This is different than the ``decimals()`` strategy function's ``places`` keyword argument, which
+    only counts the digits after the decimal point when the number is written without an exponent.
+
+    E.g. 12.51 has 4 significant digits but 2 decimal places.
+    """
+
+    assume(len(x.as_tuple().digits) <= max_digits)
 
 
 def test_handle_constrained_decimal_without_constraints() -> None:
@@ -162,7 +175,7 @@ def test_handle_constrained_decimal_handles_multiple_of(multiple_of: Decimal) ->
             random=Random(),
             multiple_of=multiple_of,
         )
-        assert passes_pydantic_multiple_validator(result, multiple_of)
+        assert is_almost_multiple_of(result, multiple_of)
     else:
         with pytest.raises(ParameterException):
             handle_constrained_decimal(
@@ -185,15 +198,17 @@ def test_handle_constrained_decimal_handles_multiple_of(multiple_of: Decimal) ->
         max_value=1000000000,
     ),
 )
-def test_handle_constrained_decimal_handles_multiple_of_with_lt(val1: Decimal, val2: Decimal) -> None:
-    multiple_of, max_value = sorted([val1, val2])
+def test_handle_constrained_decimal_handles_multiple_of_with_lt(max_value: Decimal, multiple_of: Decimal) -> None:
     if multiple_of != Decimal("0"):
+        assume_max_digits(max_value, 10)
+        assume_max_digits(multiple_of, 10)
         result = handle_constrained_decimal(
             random=Random(),
             multiple_of=multiple_of,
             lt=max_value,
         )
-        assert passes_pydantic_multiple_validator(result, multiple_of)
+        assert result < max_value
+        assert is_almost_multiple_of(result, multiple_of)
     else:
         with pytest.raises(ParameterException):
             handle_constrained_decimal(
@@ -217,15 +232,17 @@ def test_handle_constrained_decimal_handles_multiple_of_with_lt(val1: Decimal, v
         max_value=1000000000,
     ),
 )
-def test_handle_constrained_decimal_handles_multiple_of_with_le(val1: Decimal, val2: Decimal) -> None:
-    multiple_of, max_value = sorted([val1, val2])
+def test_handle_constrained_decimal_handles_multiple_of_with_le(max_value: Decimal, multiple_of: Decimal) -> None:
     if multiple_of != Decimal("0"):
+        assume_max_digits(max_value, 10)
+        assume_max_digits(multiple_of, 10)
         result = handle_constrained_decimal(
             random=Random(),
             multiple_of=multiple_of,
             le=max_value,
         )
-        assert passes_pydantic_multiple_validator(result, multiple_of)
+        assert result <= max_value
+        assert is_almost_multiple_of(result, multiple_of)
     else:
         with pytest.raises(ParameterException):
             handle_constrained_decimal(
@@ -249,15 +266,17 @@ def test_handle_constrained_decimal_handles_multiple_of_with_le(val1: Decimal, v
         max_value=1000000000,
     ),
 )
-def test_handle_constrained_decimal_handles_multiple_of_with_ge(val1: Decimal, val2: Decimal) -> None:
-    min_value, multiple_of = sorted([val1, val2])
+def test_handle_constrained_decimal_handles_multiple_of_with_ge(min_value: Decimal, multiple_of: Decimal) -> None:
     if multiple_of != Decimal("0"):
+        assume_max_digits(min_value, 10)
+        assume_max_digits(multiple_of, 10)
         result = handle_constrained_decimal(
             random=Random(),
             multiple_of=multiple_of,
             ge=min_value,
         )
-        assert passes_pydantic_multiple_validator(result, multiple_of)
+        assert min_value <= result
+        assert is_almost_multiple_of(result, multiple_of)
     else:
         with pytest.raises(ParameterException):
             handle_constrained_decimal(
@@ -281,15 +300,17 @@ def test_handle_constrained_decimal_handles_multiple_of_with_ge(val1: Decimal, v
         max_value=1000000000,
     ),
 )
-def test_handle_constrained_decimal_handles_multiple_of_with_gt(val1: Decimal, val2: Decimal) -> None:
-    min_value, multiple_of = sorted([val1, val2])
+def test_handle_constrained_decimal_handles_multiple_of_with_gt(min_value: Decimal, multiple_of: Decimal) -> None:
     if multiple_of != Decimal("0"):
+        assume_max_digits(min_value, 10)
+        assume_max_digits(multiple_of, 10)
         result = handle_constrained_decimal(
             random=Random(),
             multiple_of=multiple_of,
             gt=min_value,
         )
-        assert passes_pydantic_multiple_validator(result, multiple_of)
+        assert min_value < result
+        assert is_almost_multiple_of(result, multiple_of)
     else:
         with pytest.raises(ParameterException):
             handle_constrained_decimal(
@@ -322,21 +343,25 @@ def test_handle_constrained_decimal_handles_multiple_of_with_gt(val1: Decimal, v
 def test_handle_constrained_decimal_handles_multiple_of_with_ge_and_le(
     val1: Decimal,
     val2: Decimal,
-    val3: Decimal,
+    multiple_of: Decimal,
 ) -> None:
-    min_value, multiple_of, max_value = sorted([val1, val2, val3])
+    min_value, max_value = sorted([val1, val2])
     if multiple_of != Decimal("0") and is_multiply_of_multiple_of_in_range(
         minimum=min_value,
         maximum=max_value,
         multiple_of=multiple_of,
     ):
+        assume_max_digits(min_value, 10)
+        assume_max_digits(max_value, 10)
+        assume_max_digits(multiple_of, 10)
         result = handle_constrained_decimal(
             random=Random(),
             multiple_of=multiple_of,
             ge=min_value,
             le=max_value,
         )
-        assert passes_pydantic_multiple_validator(result, multiple_of)
+        assert min_value <= result <= max_value
+        assert is_almost_multiple_of(result, multiple_of)
     else:
         with pytest.raises(ParameterException):
             handle_constrained_decimal(
