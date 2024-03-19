@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from decimal import Decimal
-from math import ceil, floor, ulp
+from math import ceil, floor, frexp
 from sys import float_info
 from typing import TYPE_CHECKING, Protocol, TypeVar, cast
 
@@ -131,8 +131,12 @@ def get_increment(value: T, t_type: type[T]) -> T:
         # to not be rounded away, but when ``value`` small in magnitude, we need to prevent the
         # incerement from vanishing. ``float_info.epsilon`` is defined as the smallest delta that
         # can be represented between 1.0 and the next largest number, but it's not sufficient for
-        # larger values. ``ulp(x)`` will return smallest delta that can be added to ``x``.
-        return cast("T", max(ulp(value), float_info.epsilon))  # type: ignore[redundant-cast]
+        # larger values. We instead open up the floating-point representation to grab the exponent
+        # and calculate our own increment. This can be replaced with ``math.ulp`` in Python 3.9 and
+        # later.
+        _, exp = frexp(value)
+        increment = float_info.radix ** (exp - float_info.mant_dig + 1)
+        return cast("T", max(increment, float_info.epsilon))
     if t_type == Decimal:
         return cast("T", Decimal("0.001"))  # type: ignore[redundant-cast]
 
