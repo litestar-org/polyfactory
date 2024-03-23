@@ -1,6 +1,7 @@
 from dataclasses import dataclass
 from enum import Enum
-from typing import Any, Callable, Type
+from typing import Any, Callable, Type, Union
+from uuid import UUID
 
 import pytest
 from sqlalchemy import Column, ForeignKey, Integer, String, create_engine, inspect, orm, types
@@ -347,3 +348,45 @@ def test_alias() -> None:
 
     result = ModelFactory.build()
     assert isinstance(result.name, str)
+
+
+@pytest.mark.parametrize("python_type_", (UUID, None))
+@pytest.mark.parametrize(
+    "impl_",
+    (
+        types.Uuid(),
+        types.Uuid(native_uuid=False),
+        types.CHAR(32),
+    ),
+)
+def test_sqlalchemy_custom_type_from_type_decorator(impl_: types.TypeEngine, python_type_: Union[type, None]) -> None:
+    class CustomType(types.TypeDecorator):
+        impl = impl_
+        cache_ok = True
+
+        if python_type_ is not None:
+
+            @property
+            def python_type(self) -> type:
+                return python_type_
+
+    class Base(orm.DeclarativeBase):
+        type_annotation_map = {
+            UUID: CustomType,
+        }
+
+    class Model(Base):
+        __tablename__ = "model_with_custom_types"
+
+        id: orm.Mapped[int] = orm.mapped_column(primary_key=True)
+        custom_type: orm.Mapped[UUID] = orm.mapped_column(type_=CustomType(), nullable=False)
+        custom_type_from_annotation_map: orm.Mapped[UUID]
+
+    class ModelFactory(SQLAlchemyFactory[Model]):
+        __model__ = Model
+
+    instance = ModelFactory.build()
+
+    expected_type = python_type_ if python_type_ is not None else CustomType.impl.python_type
+    assert isinstance(instance.custom_type, expected_type)
+    assert isinstance(instance.custom_type_from_annotation_map, expected_type)
