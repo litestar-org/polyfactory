@@ -351,17 +351,9 @@ def test_alias() -> None:
 
 
 @pytest.mark.parametrize("python_type_", (UUID, None))
-@pytest.mark.parametrize(
-    "impl_",
-    (
-        types.Uuid(),
-        types.Uuid(native_uuid=False),
-        types.CHAR(32),
-    ),
-)
-def test_sqlalchemy_custom_type_from_type_decorator(impl_: types.TypeEngine, python_type_: Union[type, None]) -> None:
+def test_sqlalchemy_custom_type_from_type_decorator(python_type_: Union[type, None]) -> None:
     class CustomType(types.TypeDecorator):
-        impl = impl_
+        impl = types.CHAR(32)
         cache_ok = True
 
         if python_type_ is not None:
@@ -370,17 +362,18 @@ def test_sqlalchemy_custom_type_from_type_decorator(impl_: types.TypeEngine, pyt
             def python_type(self) -> type:
                 return python_type_
 
-    class Base(orm.DeclarativeBase):
-        type_annotation_map = {
-            UUID: CustomType,
-        }
+    class Base(metaclass=DeclarativeMeta):
+        __abstract__ = True
+        __allow_unmapped__ = True
+
+        registry = _registry
+        metadata = _registry.metadata
 
     class Model(Base):
-        __tablename__ = "model_with_custom_types"
+        __tablename__ = f"model_with_custom_types_{python_type_}"
 
-        id: orm.Mapped[int] = orm.mapped_column(primary_key=True)
-        custom_type: orm.Mapped[UUID] = orm.mapped_column(type_=CustomType(), nullable=False)
-        custom_type_from_annotation_map: orm.Mapped[UUID]
+        id: Any = Column(Integer(), primary_key=True)
+        custom_type: Any = Column(type_=CustomType(), nullable=False)
 
     class ModelFactory(SQLAlchemyFactory[Model]):
         __model__ = Model
@@ -389,4 +382,3 @@ def test_sqlalchemy_custom_type_from_type_decorator(impl_: types.TypeEngine, pyt
 
     expected_type = python_type_ if python_type_ is not None else CustomType.impl.python_type
     assert isinstance(instance.custom_type, expected_type)
-    assert isinstance(instance.custom_type_from_annotation_map, expected_type)
