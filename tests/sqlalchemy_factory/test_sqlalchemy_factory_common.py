@@ -48,6 +48,7 @@ class Author(Base):
     id: Any = Column(Integer(), primary_key=True)
     books: Any = orm.relationship(
         "Book",
+        collection_class=list,
         uselist=True,
         back_populates="author",
     )
@@ -142,8 +143,7 @@ def test_properties() -> None:
         def triple_age(self) -> int:
             return self.age * 3  # type: ignore[no-any-return]
 
-    class ModelFactory(SQLAlchemyFactory[Model]):
-        ...
+    class ModelFactory(SQLAlchemyFactory[Model]): ...
 
     instance = ModelFactory.build()
     assert isinstance(instance, Model)

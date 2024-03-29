@@ -19,8 +19,7 @@ class Person:
     _assets: List[Dict[str, Dict[str, Any]]]
 
 
-class PersonFactory(AttrsFactory[Person]):
-    ...
+class PersonFactory(AttrsFactory[Person]): ...
 
 
 def test_person_factory() -> None:

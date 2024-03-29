@@ -6,8 +6,7 @@ from sqlalchemy.orm import DeclarativeBase, Mapped, Session, mapped_column, rela
 from polyfactory.factories.sqlalchemy_factory import SQLAlchemyFactory
 
 
-class Base(DeclarativeBase):
-    ...
+class Base(DeclarativeBase): ...
 
 
 class Author(Base):

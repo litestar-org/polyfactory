@@ -47,8 +47,7 @@ def test_list_extender(number_of_args: int) -> None:
 
 
 def test_set_extender(number_of_args: int) -> None:
-    class Dummy:
-        ...
+    class Dummy: ...
 
     annotation_alias: Any = Set[Dummy]
     type_args = (Dummy,)
@@ -59,8 +58,7 @@ def test_set_extender(number_of_args: int) -> None:
 
 
 def test_frozen_set_extender(number_of_args: int) -> None:
-    class Dummy:
-        ...
+    class Dummy: ...
 
     annotation_alias: Any = FrozenSet[Dummy]
     type_args = (Dummy,)

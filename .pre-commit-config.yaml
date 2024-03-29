@@ -2,7 +2,7 @@ default_language_version:
   python: "3.12"
 repos:
   - repo: https://github.com/compilerla/conventional-pre-commit
-    rev: v3.0.0
+    rev: v3.1.0
     hooks:
       - id: conventional-pre-commit
         stages: [commit-msg]
@@ -18,30 +18,26 @@ repos:
       - id: mixed-line-ending
       - id: trailing-whitespace
   - repo: https://github.com/pdm-project/pdm
-    rev: 2.11.1
+    rev: 2.13.1
     hooks:
       - id: pdm-lock-check
   - repo: https://github.com/charliermarsh/ruff-pre-commit
-    rev: "v0.1.8"
+    rev: "v0.3.4"
     hooks:
       - id: ruff
         args: ["--fix"]
-  - repo: https://github.com/psf/black
-    rev: 23.12.0
-    hooks:
-      - id: black
-        args: [--config=./pyproject.toml]
+      - id: ruff-format
   - repo: https://github.com/codespell-project/codespell
     rev: v2.2.6
     hooks:
       - id: codespell
   - repo: https://github.com/pre-commit/mirrors-prettier
-    rev: "v3.1.0"
+    rev: "v4.0.0-alpha.8"
     hooks:
       - id: prettier
         exclude: ".all-contributorsrc"
   - repo: https://github.com/pre-commit/mirrors-mypy
-    rev: "v1.7.1"
+    rev: "v1.9.0"
     hooks:
       - id: mypy
         exclude: "test_decimal_constraints|examples/fields/test_example_2|examples/configuration|tools/"

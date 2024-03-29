@@ -11,8 +11,7 @@ from polyfactory.factories.dataclass_factory import DataclassFactory
 from polyfactory.factories.pydantic_factory import ModelFactory
 
 
-class _Sentinel:
-    ...
+class _Sentinel: ...
 
 
 @dataclass
