@@ -827,8 +827,7 @@ is only available since version 2.13.0.</p>
     <span class="n">weight</span><span class="p">:</span> <span class="nb">float</span>
 
 
-<span class="k">class</span> <span class="nc">PersonFactory</span><span class="p">(</span><span class="n">TypedDictFactory</span><span class="p">[</span><span class="n">Person</span><span class="p">]):</span>
-    <span class="o">...</span>
+<span class="k">class</span> <span class="nc">PersonFactory</span><span class="p">(</span><span class="n">TypedDictFactory</span><span class="p">[</span><span class="n">Person</span><span class="p">]):</span> <span class="o">...</span>
 
 
 <span class="k">def</span> <span class="nf">test_is_person</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
@@ -856,8 +855,7 @@ is only available since version 2.13.0.</p>
     <span class="n">weight</span><span class="p">:</span> <span class="nb">float</span>
 
 
-<span class="k">class</span> <span class="nc">PersonFactory</span><span class="p">(</span><span class="n">ModelFactory</span><span class="p">[</span><span class="n">Person</span><span class="p">]):</span>
-    <span class="o">...</span>
+<span class="k">class</span> <span class="nc">PersonFactory</span><span class="p">(</span><span class="n">ModelFactory</span><span class="p">[</span><span class="n">Person</span><span class="p">]):</span> <span class="o">...</span>
 
 
 <span class="k">def</span> <span class="nf">test_is_person</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
@@ -889,8 +887,7 @@ dataclasses interface. For example, this is using the pydantic <code class="docu
     <span class="n">weight</span><span class="p">:</span> <span class="nb">float</span>
 
 
-<span class="k">class</span> <span class="nc">PersonFactory</span><span class="p">(</span><span class="n">DataclassFactory</span><span class="p">[</span><span class="n">Person</span><span class="p">]):</span>
-    <span class="o">...</span>
+<span class="k">class</span> <span class="nc">PersonFactory</span><span class="p">(</span><span class="n">DataclassFactory</span><span class="p">[</span><span class="n">Person</span><span class="p">]):</span> <span class="o">...</span>
 
 
 <span class="k">def</span> <span class="nf">test_is_person</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
@@ -928,8 +925,7 @@ dataclasses interface. For example, this is using the pydantic <code class="docu
     <span class="n">_assets</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]]]</span>
 
 
-<span class="k">class</span> <span class="nc">PersonFactory</span><span class="p">(</span><span class="n">AttrsFactory</span><span class="p">[</span><span class="n">Person</span><span class="p">]):</span>
-    <span class="o">...</span>
+<span class="k">class</span> <span class="nc">PersonFactory</span><span class="p">(</span><span class="n">AttrsFactory</span><span class="p">[</span><span class="n">Person</span><span class="p">]):</span> <span class="o">...</span>
 
 
 <span class="k">def</span> <span class="nf">test_person_factory</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
@@ -984,8 +980,7 @@ create a <code class="docutils literal notranslate"><span class="pre">PetFactory
     <span class="n">assets</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]]]</span>
 
 
-<span class="k">class</span> <span class="nc">PersonFactory</span><span class="p">(</span><span class="n">DataclassFactory</span><span class="p">[</span><span class="n">Person</span><span class="p">]):</span>
-    <span class="o">...</span>
+<span class="k">class</span> <span class="nc">PersonFactory</span><span class="p">(</span><span class="n">DataclassFactory</span><span class="p">[</span><span class="n">Person</span><span class="p">]):</span> <span class="o">...</span>
 
 
 <span class="k">def</span> <span class="nf">test_dynamic_factory_generation</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>

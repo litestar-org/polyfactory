@@ -1021,8 +1021,7 @@ Once a factory is generated, it is then cached and reused - when the same type i
     <span class="n">assets</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]]]</span>
 
 
-<span class="k">class</span> <span class="nc">PersonFactory</span><span class="p">(</span><span class="n">DataclassFactory</span><span class="p">[</span><span class="n">Person</span><span class="p">]):</span>
-    <span class="o">...</span>
+<span class="k">class</span> <span class="nc">PersonFactory</span><span class="p">(</span><span class="n">DataclassFactory</span><span class="p">[</span><span class="n">Person</span><span class="p">]):</span> <span class="o">...</span>
 
 
 <span class="k">def</span> <span class="nf">test_dynamic_factory_generation</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
@@ -1074,8 +1073,7 @@ Once a factory is generated, it is then cached and reused - when the same type i
     <span class="n">name</span> <span class="o">=</span> <span class="n">Use</span><span class="p">(</span><span class="n">DataclassFactory</span><span class="o">.</span><span class="n">__random__</span><span class="o">.</span><span class="n">choice</span><span class="p">,</span> <span class="p">[</span><span class="s2">&quot;Roxy&quot;</span><span class="p">,</span> <span class="s2">&quot;Spammy&quot;</span><span class="p">,</span> <span class="s2">&quot;Moshe&quot;</span><span class="p">])</span>
 
 
-<span class="k">class</span> <span class="nc">PersonFactory</span><span class="p">(</span><span class="n">DataclassFactory</span><span class="p">[</span><span class="n">Person</span><span class="p">]):</span>
-    <span class="o">...</span>
+<span class="k">class</span> <span class="nc">PersonFactory</span><span class="p">(</span><span class="n">DataclassFactory</span><span class="p">[</span><span class="n">Person</span><span class="p">]):</span> <span class="o">...</span>
 
 
 <span class="k">def</span> <span class="nf">test_default_pet_factory</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
