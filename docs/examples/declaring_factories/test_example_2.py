@@ -10,8 +10,7 @@ class Person(TypedDict):
     weight: float
 
 
-class PersonFactory(TypedDictFactory[Person]):
-    ...
+class PersonFactory(TypedDictFactory[Person]): ...
 
 
 def test_is_person() -> None:

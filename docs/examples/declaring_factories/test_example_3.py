@@ -10,8 +10,7 @@ class Person(BaseModel):
     weight: float
 
 
-class PersonFactory(ModelFactory[Person]):
-    ...
+class PersonFactory(ModelFactory[Person]): ...
 
 
 def test_is_person() -> None:

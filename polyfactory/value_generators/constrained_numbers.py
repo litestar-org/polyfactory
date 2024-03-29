@@ -190,13 +190,11 @@ def get_constrained_number_range(
 
     if multiple_of is None:
         if minimum is not None and maximum is None:
-            return (
-                (minimum, seed) if minimum == 0 else (minimum, minimum + seed)
-            )  # pyright: ignore[reportGeneralTypeIssues]
+            return (minimum, seed) if minimum == 0 else (minimum, minimum + seed)  # pyright: ignore[reportGeneralTypeIssues]
         if maximum is not None and minimum is None:
             return maximum - seed, maximum
     else:
-        if multiple_of == 0.0:  # TODO: investigate @guacs # noqa: PLR2004, FIX002
+        if multiple_of == 0.0:  # TODO: investigate @guacs # noqa: FIX002
             msg = "multiple_of can not be zero"
             raise ParameterException(msg)
         if (

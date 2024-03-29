@@ -23,8 +23,7 @@ class Profile:
     vehicle: Car | Boat
 
 
-class ProfileFactory(DataclassFactory[Profile]):
-    ...
+class ProfileFactory(DataclassFactory[Profile]): ...
 
 
 def test_profile_coverage() -> None:

@@ -11,8 +11,7 @@ class Person:
     weight: float
 
 
-class PersonFactory(DataclassFactory[Person]):
-    ...
+class PersonFactory(DataclassFactory[Person]): ...
 
 
 def test_is_person() -> None:

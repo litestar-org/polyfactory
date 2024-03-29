@@ -3,8 +3,7 @@ from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column
 from polyfactory.factories.sqlalchemy_factory import SQLAlchemyFactory
 
 
-class Base(DeclarativeBase):
-    ...
+class Base(DeclarativeBase): ...
 
 
 class Author(Base):
@@ -14,8 +13,7 @@ class Author(Base):
     name: Mapped[str]
 
 
-class AuthorFactory(SQLAlchemyFactory[Author]):
-    ...
+class AuthorFactory(SQLAlchemyFactory[Author]): ...
 
 
 def test_sqla_factory() -> None:

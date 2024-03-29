@@ -30,8 +30,7 @@ class Person:
     assets: List[Dict[str, Dict[str, Any]]]
 
 
-class PersonFactory(DataclassFactory[Person]):
-    ...
+class PersonFactory(DataclassFactory[Person]): ...
 
 
 def test_dynamic_factory_generation() -> None:

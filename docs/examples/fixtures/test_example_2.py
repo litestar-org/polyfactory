@@ -17,8 +17,7 @@ class Person:
     birthday: Union[datetime, date]
 
 
-class PersonFactory(DataclassFactory[Person]):
-    ...
+class PersonFactory(DataclassFactory[Person]): ...
 
 
 person_factory_fixture = register_fixture(PersonFactory)

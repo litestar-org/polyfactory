@@ -41,8 +41,7 @@ class Person:
 
 
 # we use our CustomDataclassFactory as a base for the PersonFactory
-class PersonFactory(CustomDataclassFactory[Person]):
-    ...
+class PersonFactory(CustomDataclassFactory[Person]): ...
 
 
 def test_custom_dataclass_base_factory() -> None:

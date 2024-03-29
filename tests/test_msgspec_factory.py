@@ -15,15 +15,13 @@ from polyfactory.factories.msgspec_factory import MsgspecFactory
 
 
 def test_is_supported_type() -> None:
-    class Foo(Struct):
-        ...
+    class Foo(Struct): ...
 
     assert MsgspecFactory.is_supported_type(Foo) is True
 
 
 def test_is_supported_type_without_struct() -> None:
-    class Foo:
-        ...
+    class Foo: ...
 
     assert MsgspecFactory.is_supported_type(Foo) is False
 

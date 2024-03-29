@@ -84,8 +84,7 @@ def test_odmantic_model_inference_ok() -> None:
     class OdmanticModelBase(Model):  # type: ignore
         name: str
 
-    class Foo(OdmanticModelFactory[OdmanticModelBase]):
-        ...
+    class Foo(OdmanticModelFactory[OdmanticModelBase]): ...
 
     assert getattr(Foo, "__model__") is OdmanticModelBase
 
@@ -95,8 +94,7 @@ def test_beanie_model_inference_ok() -> None:
     class BeanieBase(Document):
         name: str
 
-    class Foo(BeanieDocumentFactory[BeanieBase]):
-        ...
+    class Foo(BeanieDocumentFactory[BeanieBase]): ...
 
     assert getattr(Foo, "__model__") is BeanieBase
 
@@ -156,7 +154,6 @@ def test_generic_model_is_not_an_error() -> None:
         val1: T
         val2: P
 
-    class FooFactory(ModelFactory[Foo[str, int]]):
-        ...
+    class FooFactory(ModelFactory[Foo[str, int]]): ...
 
     assert getattr(FooFactory, "__model__") is Foo[str, int]

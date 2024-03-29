@@ -28,8 +28,7 @@ class SocialGroup:
     members: list[Profile]
 
 
-class SocialGroupFactory(DataclassFactory[SocialGroup]):
-    ...
+class SocialGroupFactory(DataclassFactory[SocialGroup]): ...
 
 
 def test_social_group_coverage() -> None:

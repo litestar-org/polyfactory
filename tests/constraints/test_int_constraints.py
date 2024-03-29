@@ -1,7 +1,7 @@
 from random import Random
 
 import pytest
-from hypothesis import HealthCheck, assume, given, settings
+from hypothesis import HealthCheck, given, settings
 from hypothesis.strategies import integers
 
 from polyfactory.exceptions import ParameterException
@@ -68,7 +68,6 @@ def test_handle_constrained_int_handles_ge_with_le(val1: int, val2: int) -> None
         le=max_value,
     )
     assert min_value <= result <= max_value
-    assume(result == max_value)
 
 
 @given(integers(min_value=-1000000000, max_value=1000000000))

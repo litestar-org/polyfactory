@@ -6,8 +6,7 @@ from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column, relationship
 from polyfactory.factories.sqlalchemy_factory import SQLAlchemyFactory
 
 
-class Base(DeclarativeBase):
-    ...
+class Base(DeclarativeBase): ...
 
 
 class Author(Base):
@@ -26,8 +25,7 @@ class Book(Base):
     author_id: Mapped[int] = mapped_column(ForeignKey(Author.id))
 
 
-class AuthorFactory(SQLAlchemyFactory[Author]):
-    ...
+class AuthorFactory(SQLAlchemyFactory[Author]): ...
 
 
 class AuthorFactoryWithRelationship(SQLAlchemyFactory[Author]):

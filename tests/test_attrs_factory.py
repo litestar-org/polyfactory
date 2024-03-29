@@ -15,15 +15,13 @@ pytestmark = [pytest.mark.attrs]
 
 def test_is_supported_type() -> None:
     @define
-    class Foo:
-        ...
+    class Foo: ...
 
     assert AttrsFactory.is_supported_type(Foo) is True
 
 
 def test_is_supported_type_without_struct() -> None:
-    class Foo:
-        ...
+    class Foo: ...
 
     assert AttrsFactory.is_supported_type(Foo) is False
 

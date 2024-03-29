@@ -98,7 +98,7 @@ class FieldMeta:
 
         :returns: a tuple of types.
         """
-        return tuple(TYPE_MAPPING[arg] if arg in TYPE_MAPPING else arg for arg in get_args(self.annotation))
+        return tuple(TYPE_MAPPING.get(arg, arg) for arg in get_args(self.annotation))
 
     @classmethod
     def from_type(

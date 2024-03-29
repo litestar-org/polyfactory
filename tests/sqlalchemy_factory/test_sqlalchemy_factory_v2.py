@@ -10,8 +10,7 @@ if __version__.startswith("1"):
     pytest.importorskip("SQLAlchemy", "2")
 
 
-class Base(orm.DeclarativeBase):
-    ...
+class Base(orm.DeclarativeBase): ...
 
 
 class Author(Base):
@@ -38,8 +37,7 @@ class Book(Base):
 
 
 def test_python_type_handling_v2() -> None:
-    class Base(orm.DeclarativeBase):
-        ...
+    class Base(orm.DeclarativeBase): ...
 
     class Animal(str, Enum):
         DOG = "Dog"
@@ -71,8 +69,7 @@ def test_python_type_handling_v2() -> None:
     tuple(SQLAlchemyFactory.get_sqlalchemy_types().keys()),
 )
 def test_sqlalchemy_type_handlers_v2(type_: types.TypeEngine) -> None:
-    class Base(orm.DeclarativeBase):
-        ...
+    class Base(orm.DeclarativeBase): ...
 
     class Model(Base):
         __tablename__ = "model_with_overriden_type"

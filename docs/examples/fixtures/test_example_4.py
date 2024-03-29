@@ -25,8 +25,7 @@ class ClassRoom:
 
 
 @register_fixture
-class PersonFactory(DataclassFactory[Person]):
-    ...
+class PersonFactory(DataclassFactory[Person]): ...
 
 
 class ClassRoomFactory(DataclassFactory[ClassRoom]):

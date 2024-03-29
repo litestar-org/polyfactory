@@ -37,8 +37,7 @@ class PetFactory(DataclassFactory[Pet]):
     name = Use(DataclassFactory.__random__.choice, ["Roxy", "Spammy", "Moshe"])
 
 
-class PersonFactory(DataclassFactory[Person]):
-    ...
+class PersonFactory(DataclassFactory[Person]): ...
 
 
 def test_default_pet_factory() -> None:

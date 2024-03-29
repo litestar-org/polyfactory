@@ -18,8 +18,7 @@ class Person:
 
 
 @register_fixture
-class PersonFactory(DataclassFactory[Person]):
-    ...
+class PersonFactory(DataclassFactory[Person]): ...
 
 
 def test_person_factory(person_factory: PersonFactory) -> None:
