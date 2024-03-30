@@ -50,7 +50,7 @@ from polyfactory.constants import (
     RANDOMIZE_COLLECTION_LENGTH,
 )
 from polyfactory.exceptions import ConfigurationException, MissingBuildKwargException, ParameterException
-from polyfactory.field_meta import Null
+from polyfactory.field_meta import FieldMeta, Null
 from polyfactory.fields import Fixture, Ignore, PostGenerated, Require, Use
 from polyfactory.utils.helpers import (
     flatten_annotation,
@@ -82,7 +82,7 @@ from polyfactory.value_generators.primitives import create_random_boolean, creat
 if TYPE_CHECKING:
     from typing_extensions import TypeGuard
 
-    from polyfactory.field_meta import Constraints, FieldMeta
+    from polyfactory.field_meta import Constraints
     from polyfactory.persistence import AsyncPersistenceProtocol, SyncPersistenceProtocol
 
 
@@ -914,7 +914,7 @@ class BaseFactory(ABC, Generic[T]):
                 raise ConfigurationException(error_message)
 
     @classmethod
-    def process_kwargs(cls, **kwargs: Any) -> dict[str, Any]:
+    def process_kwargs(cls, **kwargs: Any) -> dict[str, Any]:  # noqa: C901
         """Process the given kwargs and generate values for the factory's model.
 
         :param kwargs: Any build kwargs.
@@ -931,7 +931,12 @@ class BaseFactory(ABC, Generic[T]):
         for field_meta in cls.get_model_fields():
             field_build_parameters = cls.extract_field_build_parameters(field_meta=field_meta, build_args=kwargs)
             if cls.should_set_field_value(field_meta, **kwargs) and not cls.should_use_default_value(field_meta):
-                if hasattr(cls, field_meta.name) and not hasattr(BaseFactory, field_meta.name):
+                field_value = getattr(cls, field_meta.name, Null)
+                if (
+                    field_value is not Null
+                    and not hasattr(BaseFactory, field_meta.name)
+                    and not isinstance(field_value, FieldMeta)
+                ):
                     field_value = getattr(cls, field_meta.name)
                     if isinstance(field_value, Ignore):
                         continue
@@ -950,6 +955,16 @@ class BaseFactory(ABC, Generic[T]):
                         build_context=_build_context,
                     )
                     continue
+
+                if isinstance(field_value, FieldMeta):
+                    if field_value.annotation is not Null:
+                        field_meta.annotation = field_value.annotation
+                        field_meta.children = field_value.children
+
+                    if field_value.constraints:
+                        if field_meta.constraints is None:
+                            field_meta.constraints = {}
+                        field_meta.constraints.update(field_value.constraints)
 
                 field_result = cls.get_field_value(
                     field_meta,

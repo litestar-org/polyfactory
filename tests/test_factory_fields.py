@@ -1,6 +1,6 @@
 import random
 from datetime import datetime, timedelta
-from typing import Any, Optional, Union
+from typing import Any, Literal, Optional, Union
 
 import pytest
 
@@ -9,7 +9,7 @@ from pydantic import BaseModel
 from polyfactory.decorators import post_generated
 from polyfactory.exceptions import ConfigurationException, MissingBuildKwargException
 from polyfactory.factories.pydantic_factory import ModelFactory
-from polyfactory.fields import Ignore, PostGenerated, Require, Use
+from polyfactory.fields import Field, Ignore, PostGenerated, Require, Use
 
 
 def test_use() -> None:
@@ -202,3 +202,24 @@ def test_non_existing_model_fields_raises_with__check__model__(
         match="unknown_field is declared on the factory NoFieldModelFactory but it is not part of the model NoFieldModel",
     ):
         ModelFactory.create_factory(NoFieldModel, bases=None, __check_model__=True, unknown_field=factory_field)
+
+
+def test_field() -> None:
+    class Model(BaseModel):
+        a: int
+        b: Union[str, None]
+        complex_type: list[tuple[int, int]]
+
+    class Factory(ModelFactory[Model]):
+        a = Field(ge=1, le=2)
+        b = Field(annotation=None)
+        complex_type = Field(
+            annotation=list[tuple[Literal[1], Literal[2]]],
+            min_length=2,
+            max_length=2,
+        )
+
+    result = Factory.build()
+    assert 1 <= result.a <= 2
+    assert result.b is None
+    assert result.complex_type == [(1, 2), (1, 2)]

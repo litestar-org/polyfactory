@@ -1,10 +1,14 @@
 from __future__ import annotations
 
-from typing import Any, Callable, Generic, TypedDict, TypeVar, cast
+from typing import TYPE_CHECKING, Any, Callable, Generic, TypedDict, TypeVar, cast
 
-from typing_extensions import ParamSpec
+from typing_extensions import ParamSpec, Unpack
 
 from polyfactory.exceptions import ParameterException
+from polyfactory.field_meta import FieldMeta, Null
+
+if TYPE_CHECKING:
+    from polyfactory.field_meta import Constraints
 
 T = TypeVar("T")
 P = ParamSpec("P")
@@ -114,3 +118,7 @@ class Fixture:
 
         msg = "fixture has not been registered using the register_factory decorator"
         raise ParameterException(msg)
+
+
+def Field(annotation: Any = Null, **constraints: Unpack[Constraints]) -> FieldMeta:  # noqa: N802
+    return FieldMeta.from_type(annotation, constraints=constraints)
