@@ -747,7 +747,7 @@ class BaseFactory(ABC, Generic[T]):
 
             return handle_collection_type(field_meta, origin, cls)
 
-        if is_any(unwrapped_annotation) or isinstance(unwrapped_annotation, TypeVar):
+        if isinstance(unwrapped_annotation, TypeVar):
             return create_random_string(cls.__random__, min_length=1, max_length=10)
 
         if provider := cls.get_provider_map().get(unwrapped_annotation):
