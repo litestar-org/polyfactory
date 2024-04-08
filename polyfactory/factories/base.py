@@ -491,7 +491,7 @@ class BaseFactory(ABC, Generic[T]):
             return lambda *args: None
 
         return {
-            Any: lambda: None,
+            Any: lambda: create_random_string(cls.__random__, min_length=1, max_length=10),
             # primitives
             object: object,
             float: cls.__faker__.pyfloat,
