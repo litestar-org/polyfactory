@@ -3,7 +3,6 @@ from __future__ import annotations
 
 from dataclasses import dataclass, make_dataclass
 from datetime import date
-from types import NoneType
 from typing import Any, Dict, FrozenSet, Iterable, List, Literal, Optional, Set, Tuple, Type, Union
 from uuid import UUID
 
@@ -17,6 +16,7 @@ from polyfactory.exceptions import ParameterException
 from polyfactory.factories.dataclass_factory import DataclassFactory
 from polyfactory.factories.pydantic_factory import ModelFactory
 from polyfactory.factories.typed_dict_factory import TypedDictFactory
+from polyfactory.utils.types import NoneType
 
 
 def test_coverage_count() -> None:
