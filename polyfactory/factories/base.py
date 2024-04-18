@@ -765,7 +765,7 @@ class BaseFactory(ABC, Generic[T]):
         )
 
     @classmethod
-    def get_field_value_coverage(  # noqa: C901
+    def get_field_value_coverage(  # noqa: C901,PLR0912
         cls,
         field_meta: FieldMeta,
         field_build_parameters: Any | None = None,
@@ -809,7 +809,18 @@ class BaseFactory(ABC, Generic[T]):
                 )
 
             elif (origin := get_type_origin(unwrapped_annotation)) and issubclass(origin, Collection):
-                yield handle_collection_type_coverage(field_meta, origin, cls)
+                if not field_meta.children:
+                    msg = "A subclass of Collection should always have children in it's field_meta"
+                    raise ParameterException(msg)
+
+                try:
+                    child_meta = next(meta for meta in field_meta.children if meta.annotation == unwrapped_annotation)
+                except StopIteration:
+                    # We actually want to use the parent in cases where the collection is the parent
+                    # such as tuple
+                    child_meta = field_meta
+
+                yield handle_collection_type_coverage(child_meta, origin, cls)
 
             elif is_any(unwrapped_annotation) or isinstance(unwrapped_annotation, TypeVar):
                 yield create_random_string(cls.__random__, min_length=1, max_length=10)

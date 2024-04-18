@@ -3,15 +3,19 @@ from __future__ import annotations
 
 from dataclasses import dataclass, make_dataclass
 from datetime import date
-from typing import Dict, FrozenSet, List, Literal, Optional, Set, Tuple, Union
+from types import NoneType
+from typing import Any, Dict, FrozenSet, Iterable, List, Literal, Optional, Set, Tuple, Type, Union
 from uuid import UUID
 
 import pytest
 from typing_extensions import TypedDict
 
+from pydantic import BaseModel
+
 from polyfactory.decorators import post_generated
 from polyfactory.exceptions import ParameterException
 from polyfactory.factories.dataclass_factory import DataclassFactory
+from polyfactory.factories.pydantic_factory import ModelFactory
 from polyfactory.factories.typed_dict_factory import TypedDictFactory
 
 
@@ -227,3 +231,137 @@ def test_coverage_optional_field() -> None:
 
     assert isinstance(results[0].i, int)
     assert results[1].i is None
+
+
+def type_exists_at_path_any(objs: Iterable, path: list[int | str], target_type: Type) -> bool:
+    return any(type_exists_at_path(obj, path, target_type) for obj in objs)
+
+
+def type_exists_at_path(obj: Any, path: list[int | str], target_type: Type) -> bool:
+    """Determine if a type exists at a path through a given object
+
+        type_exists_at_path(obj, ["i", "*"], int)
+        returns true if 'obj' contains an iterable attribute called 'i' with an 'int' value
+        '*' is used to mean any of an iterable
+
+        type_exists_at_path(obj, ["i", 5], int)
+        returns true if 'obj' contains an iterable attribute called 'i' with an 'int' value at the index 5
+        Direct indexing is useful for checking tuples
+
+    :param obj: Object to search through
+    :param path: List of either indexes or attr keys to dereferrence
+    :param target_type: Type to match
+
+    :returns: A boolean, True if the type exists at the path, False otherwise
+    """
+    # Handle fully dereferenced item and the end of path
+    if len(path) == 0:
+        return type(obj) == target_type
+
+    if path[0] == "*":
+        if not isinstance(obj, Iterable):
+            return False
+        for piece in obj:
+            if type_exists_at_path(piece, path[1:], target_type):
+                return True
+        return False
+
+    item, success = get_or_index(obj, path[0])
+    if not success:
+        return False
+
+    return type_exists_at_path(item, path[1:], target_type)
+
+
+def get_or_index(obj: Any, idx: int | str) -> tuple[Any, bool]:
+    if isinstance(idx, str):
+        if idx not in dir(obj):
+            return None, False
+
+        return getattr(obj, idx), True
+    if len(obj) < idx:
+        return None, False
+
+    return obj[idx], True
+
+
+def test_coverage_optional_list() -> None:
+    @dataclass
+    class OptionalIntList:
+        i: Optional[list[int]]
+
+    class OptionalIntFactory(DataclassFactory[OptionalIntList]):
+        __model__ = OptionalIntList
+
+    results = list(OptionalIntFactory.coverage())
+
+    assert type_exists_at_path_any(results, ["i"], list)
+    assert type_exists_at_path_any(results, ["i", "*"], int)
+    assert type_exists_at_path_any(results, ["i"], NoneType)
+
+
+def test_pydantic_optional_lists() -> None:
+    class Model(BaseModel):
+        just_a_list: list[int]
+        optional_list: list[int] | None
+        optional_nested_list: list[list[list[int]]] | None
+
+    results = list(ModelFactory._get_or_create_factory(Model).coverage())
+    assert type_exists_at_path_any(results, ["just_a_list"], list)
+    assert type_exists_at_path_any(results, ["optional_list"], list)
+    assert type_exists_at_path_any(results, ["optional_list"], NoneType)
+    assert type_exists_at_path_any(results, ["optional_nested_list"], NoneType)
+    assert type_exists_at_path_any(results, ["optional_nested_list", "*"], list)
+    assert type_exists_at_path_any(results, ["optional_nested_list", "*", "*"], list)
+    assert type_exists_at_path_any(results, ["optional_nested_list", "*", "*", "*"], int)
+
+
+def test_pydantic_tuple_types() -> None:
+    class Model(BaseModel):
+        tii: tuple[int, int]
+
+    results = list(ModelFactory._get_or_create_factory(Model).coverage())
+    assert type_exists_at_path_any(results, ["tii"], tuple)
+    assert type_exists_at_path_any(results, ["tii", 0], int)
+    assert type_exists_at_path_any(results, ["tii", 1], int)
+
+
+def test_pydantic_hetero_tuple_types() -> None:
+    class Model(BaseModel):
+        tis: tuple[int, str]
+
+    results = list(ModelFactory._get_or_create_factory(Model).coverage())
+    assert type_exists_at_path_any(results, ["tis"], tuple)
+    assert type_exists_at_path_any(results, ["tis", 0], int)
+    assert type_exists_at_path_any(results, ["tis", 1], str)
+
+
+def test_pydantic_optional_list_uuid() -> None:
+    class Model(BaseModel):
+        maybe_uuids: list[UUID] | None
+
+    results = list(ModelFactory._get_or_create_factory(Model).coverage())
+    assert type_exists_at_path_any(results, ["maybe_uuids"], list)
+    assert type_exists_at_path_any(results, ["maybe_uuids", "*"], UUID)
+    assert type_exists_at_path_any(results, ["maybe_uuids"], NoneType)
+
+
+def test_pydantic_optional_set_uuid() -> None:
+    class Model(BaseModel):
+        maybe_uuids: set[UUID] | None
+
+    results = list(ModelFactory._get_or_create_factory(Model).coverage())
+    assert type_exists_at_path_any(results, ["maybe_uuids"], set)
+    assert type_exists_at_path_any(results, ["maybe_uuids", "*"], UUID)
+    assert type_exists_at_path_any(results, ["maybe_uuids"], NoneType)
+
+
+def test_pydantic_optional_mixed_collecions() -> None:
+    class Model(BaseModel):
+        maybe_uuids: set[UUID] | None | list[UUID]
+
+    results = list(ModelFactory._get_or_create_factory(Model).coverage())
+    assert type_exists_at_path_any(results, ["maybe_uuids"], set)
+    assert type_exists_at_path_any(results, ["maybe_uuids"], list)
+    assert type_exists_at_path_any(results, ["maybe_uuids", "*"], UUID)
+    assert type_exists_at_path_any(results, ["maybe_uuids"], NoneType)
