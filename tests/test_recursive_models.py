@@ -53,7 +53,7 @@ def test_recursive_pydantic_models(factory_use_construct: bool) -> None:
     factory = ModelFactory.create_factory(PydanticNode)
 
     result = factory.build(factory_use_construct)
-    assert result.child is _Sentinel, "Default is not used"
+    assert result.child is _Sentinel, "Default is not used"  # type: ignore[comparison-overlap]
     assert isinstance(result.union_child, int)
     assert result.optional_child is None
     assert result.list_child == []
