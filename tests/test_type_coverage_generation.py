@@ -17,6 +17,7 @@ from polyfactory.factories.dataclass_factory import DataclassFactory
 from polyfactory.factories.pydantic_factory import ModelFactory
 from polyfactory.factories.typed_dict_factory import TypedDictFactory
 from polyfactory.utils.types import NoneType
+from tests.test_pydantic_factory import IS_PYDANTIC_V1
 
 
 def test_coverage_count() -> None:
@@ -356,6 +357,10 @@ def test_pydantic_optional_set_uuid() -> None:
     assert type_exists_at_path_any(results, ["maybe_uuids"], NoneType)
 
 
+@pytest.mark.skipif(
+    IS_PYDANTIC_V1,
+    reason="This should be possible but more work needs to be done",
+)
 def test_pydantic_optional_mixed_collecions() -> None:
     class Model(BaseModel):
         maybe_uuids: set[UUID] | None | list[UUID]
