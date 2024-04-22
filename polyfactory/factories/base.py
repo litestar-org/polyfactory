@@ -809,12 +809,12 @@ class BaseFactory(ABC, Generic[T]):
                     msg = "A subclass of Collection should always have children in it's field_meta"
                     raise ParameterException(msg)
 
-                try:
-                    child_meta = next(meta for meta in field_meta.children if meta.annotation == unwrapped_annotation)
-                except StopIteration:
-                    # We actually want to use the parent in cases where the collection is the parent
-                    # such as tuple
-                    child_meta = field_meta
+                # We actually want to use the parent in cases where the collection is the parent
+                # such as tuple so default to the parent if this annotation is not present in the children
+                child_meta = next(
+                    (meta for meta in field_meta.children if meta.annotation == unwrapped_annotation),
+                    field_meta,
+                )
 
                 yield handle_collection_type_coverage(child_meta, origin, cls)
 
