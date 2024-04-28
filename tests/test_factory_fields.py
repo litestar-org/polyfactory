@@ -1,6 +1,7 @@
 import random
+from dataclasses import dataclass
 from datetime import datetime, timedelta
-from typing import Any, Optional, Union
+from typing import Any, ClassVar, List, Optional, Union
 
 import pytest
 
@@ -8,6 +9,7 @@ from pydantic import BaseModel
 
 from polyfactory.decorators import post_generated
 from polyfactory.exceptions import ConfigurationException, MissingBuildKwargException
+from polyfactory.factories.dataclass_factory import DataclassFactory
 from polyfactory.factories.pydantic_factory import ModelFactory
 from polyfactory.fields import Ignore, PostGenerated, Require, Use
 
@@ -202,3 +204,18 @@ def test_non_existing_model_fields_raises_with__check__model__(
         match="unknown_field is declared on the factory NoFieldModelFactory but it is not part of the model NoFieldModel",
     ):
         ModelFactory.create_factory(NoFieldModel, bases=None, __check_model__=True, unknown_field=factory_field)
+
+
+def test_mutable_defaults() -> None:
+    @dataclass
+    class A:
+        a: List[str]
+
+    class AFactory(DataclassFactory[A]):
+        a: ClassVar[List[str]] = []
+
+    AFactory.build().a.append("a")
+    assert AFactory.build().a == []
+
+    next(iter(AFactory.coverage())).a.append("value")
+    assert next(iter(AFactory.coverage())).a == []
