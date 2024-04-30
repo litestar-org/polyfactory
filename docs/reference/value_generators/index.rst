@@ -1,7 +1,6 @@
 value_generators
 ================
 
-
 .. toctree::
     :maxdepth: 1
 
