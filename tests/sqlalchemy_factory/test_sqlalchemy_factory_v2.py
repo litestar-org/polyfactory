@@ -73,7 +73,7 @@ def test_pg_dialect_types() -> None:
         __tablename__ = "pgmodel"
         id: orm.Mapped[int] = orm.mapped_column(primary_key=True)
         nested_array_inet: orm.Mapped[List[str]] = orm.mapped_column(type_=ARRAY(INET, dimensions=1))
-        nested_array_cidr: orm.Mapped[list[str]] = orm.mapped_column(type_=ARRAY(CIDR, dimensions=1))
+        nested_array_cidr: orm.Mapped[List[str]] = orm.mapped_column(type_=ARRAY(CIDR, dimensions=1))
         hstore_type: orm.Mapped[dict] = orm.mapped_column(type_=HSTORE)
         pg_json_type: orm.Mapped[dict] = orm.mapped_column(type_=JSON)
         pg_jsonb_type: orm.Mapped[dict] = orm.mapped_column(type_=JSONB)
