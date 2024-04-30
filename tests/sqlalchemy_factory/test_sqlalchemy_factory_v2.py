@@ -1,6 +1,6 @@
 from enum import Enum
 from ipaddress import ip_network
-from typing import Any, List
+from typing import Any, Dict, List
 
 import pytest
 from sqlalchemy import ForeignKey, __version__, orm, types
@@ -74,9 +74,9 @@ def test_pg_dialect_types() -> None:
         id: orm.Mapped[int] = orm.mapped_column(primary_key=True)
         nested_array_inet: orm.Mapped[List[str]] = orm.mapped_column(type_=ARRAY(INET, dimensions=1))
         nested_array_cidr: orm.Mapped[List[str]] = orm.mapped_column(type_=ARRAY(CIDR, dimensions=1))
-        hstore_type: orm.Mapped[dict] = orm.mapped_column(type_=HSTORE)
-        pg_json_type: orm.Mapped[dict] = orm.mapped_column(type_=JSON)
-        pg_jsonb_type: orm.Mapped[dict] = orm.mapped_column(type_=JSONB)
+        hstore_type: orm.Mapped[Dict] = orm.mapped_column(type_=HSTORE)
+        pg_json_type: orm.Mapped[Dict] = orm.mapped_column(type_=JSON)
+        pg_jsonb_type: orm.Mapped[Dict] = orm.mapped_column(type_=JSONB)
 
     class ModelFactory(SQLAlchemyFactory[PgModel]):
         __model__ = PgModel
