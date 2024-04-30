@@ -1,8 +1,10 @@
 from enum import Enum
+from ipaddress import ip_network
 from typing import Any, List
 
 import pytest
 from sqlalchemy import ForeignKey, __version__, orm, types
+from sqlalchemy.dialects.postgresql import ARRAY, CIDR, HSTORE, INET, JSON, JSONB
 
 from polyfactory.factories.sqlalchemy_factory import SQLAlchemyFactory
 
@@ -62,6 +64,32 @@ def test_python_type_handling_v2() -> None:
     assert isinstance(instance.enum_type, Animal)
     assert isinstance(instance.str_array_type, list)
     assert isinstance(instance.str_array_type[0], str)
+
+
+def test_pg_dialect_types() -> None:
+    class Base(orm.DeclarativeBase): ...
+
+    class PgModel(Base):
+        __tablename__ = "pgmodel"
+        id: orm.Mapped[int] = orm.mapped_column(primary_key=True)
+        nested_array_inet: orm.Mapped[List[str]] = orm.mapped_column(type_=ARRAY(INET, dimensions=1))
+        nested_array_cidr: orm.Mapped[list[str]] = orm.mapped_column(type_=ARRAY(CIDR, dimensions=1))
+        hstore_type: orm.Mapped[dict] = orm.mapped_column(type_=HSTORE)
+        pg_json_type: orm.Mapped[dict] = orm.mapped_column(type_=JSON)
+        pg_jsonb_type: orm.Mapped[dict] = orm.mapped_column(type_=JSONB)
+
+    class ModelFactory(SQLAlchemyFactory[PgModel]):
+        __model__ = PgModel
+
+    instance = ModelFactory.build()
+
+    assert isinstance(instance.nested_array_inet[0], str)
+    assert ip_network(instance.nested_array_inet[0])
+    assert isinstance(instance.nested_array_cidr[0], str)
+    assert ip_network(instance.nested_array_cidr[0])
+    assert isinstance(instance.hstore_type, dict)
+    assert isinstance(instance.pg_json_type, dict)
+    assert isinstance(instance.pg_json_type, dict)
 
 
 @pytest.mark.parametrize(
