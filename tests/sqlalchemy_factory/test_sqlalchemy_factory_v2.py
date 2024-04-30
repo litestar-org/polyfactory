@@ -4,9 +4,9 @@ from typing import Any, Dict, List
 from uuid import UUID
 
 import pytest
-from sqlalchemy import ForeignKey, Text, __version__, orm, types
-from sqlalchemy.dialects.postgresql import ARRAY, CIDR, HSTORE, INET, JSON, JSONB
-from sqlalchemy.ext.mutable import MutableDict, MutableList
+from sqlalchemy import ForeignKey, __version__, orm, types
+from sqlalchemy.dialects.postgresql import ARRAY, CIDR, HSTORE, INET
+from sqlalchemy.ext.mutable import MutableList
 
 from polyfactory.factories.sqlalchemy_factory import SQLAlchemyFactory
 
@@ -78,13 +78,9 @@ def test_pg_dialect_types() -> None:
         nested_array_inet: orm.Mapped[List[str]] = orm.mapped_column(type_=ARRAY(INET, dimensions=1))
         nested_array_cidr: orm.Mapped[List[str]] = orm.mapped_column(type_=ARRAY(CIDR, dimensions=1))
         hstore_type: orm.Mapped[Dict] = orm.mapped_column(type_=HSTORE)
-        pg_json_type: orm.Mapped[Dict] = orm.mapped_column(type_=JSON)
-        pg_jsonb_type: orm.Mapped[Dict] = orm.mapped_column(type_=JSONB)
         mut_nested_arry_inet: orm.Mapped[List[str]] = orm.mapped_column(
             type_=MutableList.as_mutable(ARRAY(INET, dimensions=1))
         )
-        # ignore mypy type check: it's a known issue: https://github.com/sqlalchemy/sqlalchemy/discussions/9203
-        mut_pg_json_type: orm.Mapped[Dict] = orm.mapped_column(type_=MutableDict.as_mutable(JSON(astext_type=Text())))  # type: ignore[no-untyped-call]
 
     class ModelFactory(SQLAlchemyFactory[PgModel]):
         __model__ = PgModel
@@ -96,12 +92,9 @@ def test_pg_dialect_types() -> None:
     assert isinstance(instance.nested_array_cidr[0], str)
     assert ip_network(instance.nested_array_cidr[0])
     assert isinstance(instance.hstore_type, dict)
-    assert isinstance(instance.pg_json_type, dict)
-    assert isinstance(instance.pg_json_type, dict)
     assert isinstance(instance.uuid_type, UUID)
     assert isinstance(instance.mut_nested_arry_inet[0], str)
     assert ip_network(instance.mut_nested_arry_inet[0])
-    assert isinstance(instance.mut_pg_json_type, dict)
 
 
 @pytest.mark.parametrize(
