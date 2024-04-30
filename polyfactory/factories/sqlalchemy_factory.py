@@ -127,10 +127,10 @@ class SQLAlchemyFactory(Generic[T], BaseFactory[T]):
     @classmethod
     def get_type_from_column(cls, column: Column) -> type:
         column_type = type(column.type)
-        if column_type in cls.get_sqlalchemy_types():
+        if column_type in (sqla_types := cls.get_sqlalchemy_types()):
             annotation = column_type
         elif issubclass(column_type, postgresql.ARRAY):
-            if type(column.type.item_type) in cls.get_sqlalchemy_types():  # type: ignore[attr-defined]
+            if type(column.type.item_type) in sqla_types:  # type: ignore[attr-defined]
                 annotation = List[type(column.type.item_type)]  # type: ignore  # noqa: PGH003
             else:
                 annotation = List[column.type.item_type.python_type]  # type: ignore[assignment,name-defined]
