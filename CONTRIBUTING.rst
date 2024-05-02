@@ -45,9 +45,9 @@ Docs theme and appearance
 +++++++++++++++++++++++++
 
 We welcome contributions that enhance / improve the appearance and usability of the docs. We use a custom theme that
-inherits the `PyData Sphinx Theme <https://pydata-sphinx-theme.readthedocs.io/en/latest/>`_, which comes
-with a lot of options out of the box. If you wish to contribute to the docs style / setup, or static site generation,
-you should consult the theme docs as a first step.
+inherits the `Shibuya theme <https://shibuya.lepture.com/>`_, which comes with a lot of options out of the box.
+If you wish to contribute to the docs style / setup, or static site generation, you should consult the theme docs
+as a first step.
 
 Running the docs locally
 ++++++++++++++++++++++++
@@ -55,6 +55,7 @@ Running the docs locally
 To run or build the docs locally, you need to first install the required dependencies:
 
 .. code-block:: console
+    :caption: Installing the docs dependencies
 
     pdm install -G:docs
 
@@ -73,11 +74,10 @@ restructure the docs etc., but make sure to follow these guidelines:
   referencing external libraries
 - Provide diagrams using `mermaidjs <https://mermaid.js.org/>`_ where applicable and possible
 
-
 Creating a new release
 ----------------------
 
-1. Increment the version in `pyproject.toml <pyproject.toml>`_
+1. Increment the version in ``pyproject.toml``
     .. note:: The version should follow `semantic versioning <https://semver.org/>`_ and `PEP 440 <https://www.python.org/dev/peps/pep-0440/>`_.
 2. Commit and push.
 3. In GitHub go to the `releases tab <https://github.com/litestar-org/polyfactory/releases>`_
