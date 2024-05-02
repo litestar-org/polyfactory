@@ -26,16 +26,16 @@
             .. image:: https://img.shields.io/codecov/c/github/litestar-org/polyfactory?labelColor=202235&logo=codecov&logoColor=edb641
                :alt: Coverage
 
-            .. image:: https://img.shields.io/pypi/v/litestar?labelColor=202235&color=edb641&logo=python&logoColor=edb641
+            .. image:: https://img.shields.io/pypi/v/polyfactory?labelColor=202235&color=edb641&logo=python&logoColor=edb641
                :alt: PyPI Version
 
             .. image:: https://img.shields.io/github/all-contributors/litestar-org/polyfactory?labelColor=202235&color=edb641&logoColor=edb641
                :alt: Contributor Count
 
-            .. image:: https://img.shields.io/pypi/dm/litestar?logo=python&label=litestar%20downloads&labelColor=202235&color=edb641&logoColor=edb641
+            .. image:: https://img.shields.io/pypi/dm/polyfactory?logo=python&label=polyfactory%20downloads&labelColor=202235&color=edb641&logoColor=edb641
                :alt: PyPI Downloads
 
-            .. image:: https://img.shields.io/pypi/pyversions/litestar?labelColor=202235&color=edb641&logo=python&logoColor=edb641
+            .. image:: https://img.shields.io/pypi/pyversions/polyfactory?labelColor=202235&color=edb641&logo=python&logoColor=edb641
                :alt: Supported Python Versions
 
 .. rst-class:: lead
