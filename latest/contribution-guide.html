@@ -1,0 +1,478 @@
+
+  <!DOCTYPE html>
+<html lang="en" data-accent-color="amber" data-content_root="">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <title>Contributing - Litestar Framework</title>
+    <link rel="shortcut icon" href="_static/favicon.svg"/><link rel="index" title="Index" href="genindex.html" /><link rel="search" title="Search" href="search.html" /><link rel="prev" title="Changelog" href="changelog.html" />
+
+  <script>
+    function setColorMode(t){let e=document.documentElement;e.setAttribute("data-color-mode",t);let a=window.matchMedia&&window.matchMedia("(prefers-color-scheme: dark)").matches,s=t;"auto"===t&&(s=a?"dark":"light"),"light"===s?(e.classList.remove("dark"),e.classList.add("light")):(e.classList.remove("light"),e.classList.add("dark"))}
+    setColorMode(sessionStorage._theme||"auto");
+  </script><link rel="stylesheet" type="text/css" href="_static/pygments.css?v=aecf457f" />
+    <link rel="stylesheet" type="text/css" href="_static/shibuya.css?v=f2d5353f" />
+    <link rel="stylesheet" type="text/css" href="_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="_static/togglebutton.css?v=13237357" />
+    <link rel="stylesheet" type="text/css" href="_static/design-style.1e8bd061cd6da7fc9cf755528e8ffc24.min.css?v=0a3b3ea7" />
+    <link rel="stylesheet" type="text/css" href="_static/sphinx_paramlinks.css" />
+    <link media="print" rel="stylesheet" type="text/css" href="_static/print.css?v=20ff2c19" />
+    <link rel="stylesheet" type="text/css" href="_static/style.css" />
+    <link rel="stylesheet" type="text/css" href="_static/litestar-sphinx-theme.css?v=9fce248e" />
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --sy-f-text: "Inter", var(--sy-f-sys), var(--sy-f-cjk), sans-serif;
+  --sy-f-heading: "Inter", var(--sy-f-sys), var(--sy-f-cjk), sans-serif;
+}
+</style>
+    <meta property="og:type" content="website"/><meta property="og:title" content="Contributing"/>
+<meta name="twitter:card" content="summary"/>
+<meta property="og:image" content="_static/logo-light.svg"/>
+  </head>
+<body><div class="document"><div class="sy-head">
+  <div class="sy-head-blur"></div>
+  <div class="sy-head-inner sy-container mx-auto">
+    <a class="sy-head-brand mr-4" href="/">
+      <img class="light-logo" src="_static/logo-light.svg" alt="polyfactory" height="28" />
+      <img class="dark-logo" src="_static/logo-dark.svg" alt="polyfactory" height="28" />
+      <strong>polyfactory</strong>
+    </a>
+    <div class="sy-head-links" id="NavLinks">
+      <nav class="sy-head-nav">
+
+<ul><li class="link"><a href="index.html">Home</a></li>
+      <li class="link"><button type="button">
+            <span>Community</span>
+            <i class="i-lucide chevron-down"></i>
+          </button>
+        <ul>
+          <li><a href="#">
+                <span>Contributing</span>
+                <small>Learn how to contribute to the Type Lens project</small>
+              </a></li><li><a href="https://github.com/litestar-org/.github?tab=coc-ov-file">
+                <span>Code of Conduct</span>
+                <small>Review the etiquette for interacting with the Litestar community</small>
+              </a></li><li><a href="https://github.com/litestar-org/.github?tab=coc-ov-file#security-ov-file">
+                <span>Security</span>
+                <small>Overview of Litestar's security protocols</small>
+              </a></li></ul>
+      </li>
+      <li class="link"><button type="button">
+            <span>About</span>
+            <i class="i-lucide chevron-down"></i>
+          </button>
+        <ul>
+          <li><a href="https://litestar.dev/about/organization">
+                <span>Litestar Organization</span>
+                <small>Details about the Litestar organization</small>
+              </a></li><li><a href="releases.html">
+                <span>Releases</span>
+                <small>Explore the release process, versioning, and deprecation policy for Litestar</small>
+              </a></li></ul>
+      </li>
+      <li class="link"><button type="button">
+            <span>Release notes</span>
+            <i class="i-lucide chevron-down"></i>
+          </button>
+        <ul>
+          <li><a href="changelog.html">
+                <span>Changelog</span>
+                <small>All changes in the current major version</small>
+              </a></li></ul>
+      </li>
+      <li class="link"><button type="button">
+            <span>Help</span>
+            <i class="i-lucide chevron-down"></i>
+          </button>
+        <ul>
+          <li><a href="https://discord.gg/litestar">
+                <span>Discord Help Forum</span>
+                <small>Dedicated Discord help forum</small>
+              </a></li><li><a href="https://github.com/litestar-org/polyfactory/discussions">
+                <span>GitHub Discussions</span>
+                <small>GitHub Discussions</small>
+              </a></li><li><a href="https://stackoverflow.com/questions/tagged/polyfactory">
+                <span>Stack Overflow</span>
+                <small>We monitor the <code><b>polyfactory</b></code> tag on Stack Overflow</small>
+              </a></li></ul>
+      </li><li class="link">
+          <a href="https://github.com/sponsors/Litestar-Org">
+            <span>Sponsor</span>
+            
+          </a>
+        </li></ul></nav>
+      <div class="sy-head-extra flex items-center print:hidden">
+        
+<form class="searchbox flex items-center" action="search.html" method="get">
+  <input type="text" name="q" placeholder="Search" />
+  <kbd>/</kbd>
+</form>
+        
+  <div class="nav-versions">
+    <button type="button" aria-label="Versions">
+      <span class="md:hidden">Versions</span>
+      <span class="hidden md:inline">latest</span>
+      <i class="i-lucide chevron-down"></i>
+    </button>
+    <div class="nav-versions-choices">
+      <ul><li><a href="/latest">latest</a></li><li><a href="/main">development</a></li></ul></div>
+  </div>
+        
+        <div class="sy-head-socials flex items-center">
+  <a href="https://twitter.com/LitestarAPI" aria-label="X (Twitter)">
+    <i class="i-simpleicons x-twitter"></i>
+  </a>
+    <a href="https://discord.gg/litestar" aria-label="Discord">
+      <i class="i-simpleicons discord"></i>
+    </a>
+</div>
+      </div>
+    </div>
+    <div class="sy-head-actions flex items-center shrink-0 print:hidden">
+      <button class="js-theme theme-switch flex items-center"
+        data-aria-auto="Switch to light color mode"
+        data-aria-light="Switch to dark color mode"
+        data-aria-dark="Switch to auto color mode">
+        <i class="i-lucide theme-icon"></i>
+      </button>
+      <button class="md:hidden flex items-center js-menu" aria-label="Menu" type="button" aria-controls="NavLinks" aria-expanded="false">
+        <div class="hamburger">
+          <span class="hamburger_1"></span>
+          <span class="hamburger_2 -translate-x-2"></span>
+          <span class="hamburger_3 -translate-x-1"></span>
+        </div>
+      </button>
+    </div>
+  </div>
+</div>
+<div class="sy-page sy-container flex mx-auto">
+  <aside id="lside" class="sy-lside md:w-72 md:shrink-0 print:hidden">
+    <div class="sy-lside-inner md:sticky">
+      <div class="sy-scrollbar p-6">
+<div class="sidebar-links">
+  <ul>
+    <li><a class="icon-link" href="https://github.com/orgs/litestar-org/discussions">
+  <span class="icon">
+    <svg viewBox="0 0 24 24" fill="none">
+      <path fill="var(--accent-9)" fill-rule="evenodd" clip-rule="evenodd" d="M11 5a6 6 0 0 0-4.687 9.746c.215.27.315.62.231.954l-.514 2.058a1 1 0 0 0 1.485 1.1l2.848-1.71c.174-.104.374-.15.576-.148H13a6 6 0 0 0 0-12h-2Z"/>
+      <circle fill="white" cx="12" cy="11" r="1"/>
+      <circle fill="white" cx="9" cy="11" r="1"/>
+      <circle fill="white" cx="15" cy="11" r="1"/>
+    </svg>
+  </span>
+  <span class="text">Discussion</span>
+</a></li>
+  </ul>
+</div>
+
+        <div class="globaltoc" data-expand-depth="0"><p class="caption" role="heading" aria-level="3"><span class="caption-text">Documentation</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="usage/index.html">Usage Guide</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="usage/declaring_factories.html">Declaring Factories</a></li>
+<li class="toctree-l2"><a class="reference internal" href="usage/library_factories/index.html">Polyfactory Factories</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="usage/library_factories/sqlalchemy_factory.html">SQLAlchemyFactory</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="usage/configuration.html">Factory Configuration</a></li>
+<li class="toctree-l2"><a class="reference internal" href="usage/fields.html">Factory Fields</a></li>
+<li class="toctree-l2"><a class="reference internal" href="usage/decorators.html">The <code class="docutils literal notranslate"><span class="pre">post_generated</span></code> decorator</a></li>
+<li class="toctree-l2"><a class="reference internal" href="usage/fixtures.html">Pytest fixtures</a></li>
+<li class="toctree-l2"><a class="reference internal" href="usage/handling_custom_types.html">Handling Custom Types</a></li>
+<li class="toctree-l2"><a class="reference internal" href="usage/model_coverage.html">Model coverage generation</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="reference/index.html">API Reference</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="reference/constants.html">constants</a></li>
+<li class="toctree-l2"><a class="reference internal" href="reference/exceptions.html">exceptions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="reference/factories/index.html">factories</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="reference/factories/base.html">base_factory</a></li>
+<li class="toctree-l3"><a class="reference internal" href="reference/factories/dataclass_factory.html">dataclass_factory</a></li>
+<li class="toctree-l3"><a class="reference internal" href="reference/factories/typed_dict_factory.html">typed_dict_factory</a></li>
+<li class="toctree-l3"><a class="reference internal" href="reference/factories/pydantic_factory.html">pydantic_factory</a></li>
+<li class="toctree-l3"><a class="reference internal" href="reference/factories/msgspec_factory.html">msgspec_factory</a></li>
+<li class="toctree-l3"><a class="reference internal" href="reference/factories/odmantic_odm_factory.html">odmantic_odm_factory</a></li>
+<li class="toctree-l3"><a class="reference internal" href="reference/factories/beanie_odm_factory.html">beanie_odm_factory</a></li>
+<li class="toctree-l3"><a class="reference internal" href="reference/factories/attrs_factory.html">attrs_factory</a></li>
+<li class="toctree-l3"><a class="reference internal" href="reference/factories/sqlalchemy_factory.html">sqlalchemy_factory</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="reference/field_meta.html">field_meta</a></li>
+<li class="toctree-l2"><a class="reference internal" href="reference/fields.html">fields</a></li>
+<li class="toctree-l2"><a class="reference internal" href="reference/decorators.html">decorators</a></li>
+<li class="toctree-l2"><a class="reference internal" href="reference/persistence.html">persistence</a></li>
+<li class="toctree-l2"><a class="reference internal" href="reference/pytest_plugin.html">pytest_plugin</a></li>
+<li class="toctree-l2"><a class="reference internal" href="reference/value_generators/index.html">value_generators</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="reference/value_generators/complex_types.html">complex_types</a></li>
+<li class="toctree-l3"><a class="reference internal" href="reference/value_generators/constrained_collections.html">constrained_collections</a></li>
+<li class="toctree-l3"><a class="reference internal" href="reference/value_generators/constrained_dates.html">constrained_dates</a></li>
+<li class="toctree-l3"><a class="reference internal" href="reference/value_generators/constrained_numbers.html">constrained_numbers</a></li>
+<li class="toctree-l3"><a class="reference internal" href="reference/value_generators/constrained_strings.html">constrained_strings</a></li>
+<li class="toctree-l3"><a class="reference internal" href="reference/value_generators/primitives.html">primitives</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<p class="caption" role="heading" aria-level="3"><span class="caption-text">Development</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="changelog.html">Changelog</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Contributing</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/search?q=user%3Alitestar-org+state%3Aopen+label%3A%22good+first+issue%22+++no%3Aassignee+repo%3A%22polyfactory%22&amp;type=issues">Available Issues</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/litestar-org/.github?tab=coc-ov-file#readme">Code of Conduct</a></li>
+</ul>
+
+        </div>
+      </div>
+      
+    </div>
+  </aside>
+  <div class="lside-overlay js-menu" role="button" aria-label="Close left sidebar" aria-controls="lside" aria-expanded="false"></div>
+  <aside id="rside" class="sy-rside pb-3 w-64 shrink-0 order-last">
+    <button class="rside-close js-menu xl:hidden" aria-label="Close Table of Contents" type="button" aria-controls="rside" aria-expanded="false">
+      <i class="i-lucide close"></i>
+    </button>
+    <div class="sy-scrollbar sy-rside-inner px-6 xl:top-16 xl:sticky xl:pl-0 pt-6 pb-4">
+  <div class="localtoc">
+    <h3>On this page</h3>
+    <ul>
+<li><a class="reference internal" href="#setting-up-the-environment">Setting up the environment</a></li>
+<li><a class="reference internal" href="#code-contributions">Code contributions</a><ul>
+<li><a class="reference internal" href="#workflow">Workflow</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#project-documentation">Project documentation</a><ul>
+<li><a class="reference internal" href="#docs-theme-and-appearance">Docs theme and appearance</a></li>
+<li><a class="reference internal" href="#running-the-docs-locally">Running the docs locally</a></li>
+<li><a class="reference internal" href="#writing-and-editing-docs">Writing and editing docs</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#creating-a-new-release">Creating a new release</a></li>
+</ul>
+
+  </div><a class="js-repo-stats repo-stats flex items-center" href="https://github.com/litestar-org/polyfactory"
+  data-type="github" data-user="litestar-org" data-repo="polyfactory">
+  <span class="w-8 flex items-center justify-around shrink-0 text-3xl">
+    <i class="i-simpleicons github"></i>
+  </span>
+  <span class="flex-grow px-2">
+    <span>litestar-org/polyfactory</span>
+    <span class="flex text-sm repo-stats-count">
+      <span class="flex items-center pr-3">
+        <i class="i-lucide star"></i>
+        <strong class="js-repo-stars ml-1">0</strong>
+      </span>
+      <span class="flex items-center">
+        <i class="i-lucide git-fork"></i>
+        <strong class="js-repo-forks ml-1">0</strong>
+      </span>
+    </span>
+  </span>
+</a><div class="edit-this-page">
+  <a href="https://github.com/litestar-org/polyfactory/blob/master/docs/contribution-guide.rst">Edit this page</a>
+</div><div id="ethical-ad-placement" data-ea-publisher="readthedocs"></div>
+    </div>
+  </aside>
+  <div class="rside-overlay js-menu" role="button" aria-label="Close Table of Contents" aria-controls="rside" aria-expanded="false"></div>
+  <main class="sy-main w-full max-sm:max-w-full print:pt-6">
+    <div class="sy-breadcrumbs" role="navigation">
+  <div class="sy-breadcrumbs-inner flex items-center">
+    <div class="md:hidden mr-3">
+      <button class="js-menu" aria-label="Menu" type="button" aria-controls="lside" aria-expanded="false">
+        <i class="i-lucide menu"></i>
+      </button>
+    </div>
+    <ol class="flex-1" itemscope itemtype="https://schema.org/BreadcrumbList">
+      
+      
+      <li itemprop="itemListElement" itemscope itemtype="https://schema.org/ListItem">
+        <a itemprop="item" href="index.html"><span itemprop="name">polyfactory</span></a>
+        <span>/</span>
+        <meta itemprop="position" content="1" />
+      </li>
+      
+      <li itemprop="itemListElement" itemscope itemtype="https://schema.org/ListItem">
+        <strong itemprop="name">Contributing</strong>
+        <meta itemprop="position" content="2" />
+      </li>
+      
+      
+    </ol>
+    <div class="xl:hidden ml-1">
+      <button class="js-menu" aria-label="Show table of contents" type="button" aria-controls="rside"
+        aria-expanded="false">
+        <i class="i-lucide outdent"></i>
+      </button>
+    </div>
+  </div>
+</div>
+    <div class="flex flex-col break-words justify-between">
+      <div class="min-w-0 max-w-6xl px-6 pb-6 pt-8 xl:px-12">
+        <article class="yue" role="main">
+          <section id="contributing">
+<h1>Contributing<a class="headerlink" href="#contributing" title="Permalink to this heading">¶</a></h1>
+<section id="setting-up-the-environment">
+<h2>Setting up the environment<a class="headerlink" href="#setting-up-the-environment" title="Permalink to this heading">¶</a></h2>
+<ol class="arabic simple">
+<li><p>Install <a class="reference external" href="https://pdm.fming.dev/latest/">Pizza Delivery Man</a></p></li>
+<li><p>Run <code class="docutils literal notranslate"><span class="pre">pdm</span> <span class="pre">install</span> <span class="pre">-G:all</span></code> to create a <a class="reference external" href="https://docs.python.org/3/tutorial/venv.html">virtual environment</a> and install
+the dependencies</p></li>
+<li><p>If you’re working on the documentation and need to build it locally, install the extra dependencies with <code class="docutils literal notranslate"><span class="pre">pdm</span> <span class="pre">install</span> <span class="pre">-G:docs</span></code></p></li>
+<li><p>Install <a class="reference external" href="https://pre-commit.com/">pre-commit</a></p></li>
+<li><p>Run <code class="docutils literal notranslate"><span class="pre">pre-commit</span> <span class="pre">install</span></code> to install pre-commit hooks</p></li>
+</ol>
+</section>
+<section id="code-contributions">
+<h2>Code contributions<a class="headerlink" href="#code-contributions" title="Permalink to this heading">¶</a></h2>
+<section id="workflow">
+<h3>Workflow<a class="headerlink" href="#workflow" title="Permalink to this heading">¶</a></h3>
+<ol class="arabic simple">
+<li><p><a class="reference external" href="https://github.com/litestar-org/polyfactory/fork">Fork</a> the <a class="reference external" href="https://github.com/litestar-org/polyfactory">Polyfactory repository</a></p></li>
+<li><p>Clone your fork locally with git</p></li>
+<li><p><a class="reference external" href="#setting-up-the-environment">Set up the environment</a></p></li>
+<li><p>Make your changes</p></li>
+<li><p>(Optional) Run <code class="docutils literal notranslate"><span class="pre">pre-commit</span> <span class="pre">run</span> <span class="pre">--all-files</span></code> to run linters and formatters. This step is optional and will be executed
+automatically by git before you make a commit, but you may want to run it manually in order to apply fixes</p></li>
+<li><p>Commit your changes to git</p></li>
+<li><p>Push the changes to your fork</p></li>
+<li><p>Open a <a class="reference external" href="https://docs.github.com/en/pull-requests">pull request</a>. Give the pull request a descriptive title
+indicating what it changes. If it has a corresponding open issue.
+For example a pull request that fixes issue <code class="docutils literal notranslate"><span class="pre">bug:</span> <span class="pre">Increased</span> <span class="pre">stack</span> <span class="pre">size</span> <span class="pre">making</span> <span class="pre">it</span> <span class="pre">impossible</span> <span class="pre">to</span> <span class="pre">find</span> <span class="pre">needle</span></code>
+could be titled <code class="docutils literal notranslate"><span class="pre">fix:</span> <span class="pre">Make</span> <span class="pre">needles</span> <span class="pre">easier</span> <span class="pre">to</span> <span class="pre">find</span> <span class="pre">by</span> <span class="pre">applying</span> <span class="pre">fire</span> <span class="pre">to</span> <span class="pre">haystack</span></code></p></li>
+</ol>
+<div class="admonition tip">
+<p class="admonition-title">Tip</p>
+<p>Pull requests and commits all need to follow the
+<a class="reference external" href="https://www.conventionalcommits.org">Conventional Commit format</a></p>
+</div>
+</section>
+</section>
+<section id="project-documentation">
+<h2>Project documentation<a class="headerlink" href="#project-documentation" title="Permalink to this heading">¶</a></h2>
+<p>The documentation is located in the <code class="docutils literal notranslate"><span class="pre">/docs</span></code> directory and is built with <a class="reference external" href="https://docutils.sourceforge.io/rst.html">ReST</a>
+and <a class="reference external" href="https://www.sphinx-doc.org/en/master/">Sphinx</a>. If you’re unfamiliar with any of those,
+<a class="reference external" href="https://www.sphinx-doc.org/en/master/usage/restructuredtext/basics.html">ReStructuredText primer</a> and
+<a class="reference external" href="https://www.sphinx-doc.org/en/master/usage/quickstart.html">Sphinx quickstart</a> are recommended reads.</p>
+<section id="docs-theme-and-appearance">
+<h3>Docs theme and appearance<a class="headerlink" href="#docs-theme-and-appearance" title="Permalink to this heading">¶</a></h3>
+<p>We welcome contributions that enhance / improve the appearance and usability of the docs. We use a custom theme that
+inherits the <a class="reference external" href="https://shibuya.lepture.com/">Shibuya theme</a>, which comes with a lot of options out of the box.
+If you wish to contribute to the docs style / setup, or static site generation, you should consult the theme docs
+as a first step.</p>
+</section>
+<section id="running-the-docs-locally">
+<h3>Running the docs locally<a class="headerlink" href="#running-the-docs-locally" title="Permalink to this heading">¶</a></h3>
+<p>To run or build the docs locally, you need to first install the required dependencies:</p>
+<div class="literal-block-wrapper docutils container" id="id1">
+<div class="code-block-caption"><span class="caption-text">Installing the docs dependencies</span><a class="headerlink" href="#id1" title="Permalink to this code">¶</a></div>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span data-line="1"><span class="go">pdm install -G:docs</span>
+</span></pre></div>
+</div>
+</div>
+<p>Then you can serve the documentation with <code class="docutils literal notranslate"><span class="pre">make</span> <span class="pre">docs-serve</span></code>, or build them with <code class="docutils literal notranslate"><span class="pre">make</span> <span class="pre">docs</span></code></p>
+</section>
+<section id="writing-and-editing-docs">
+<h3>Writing and editing docs<a class="headerlink" href="#writing-and-editing-docs" title="Permalink to this heading">¶</a></h3>
+<p>We welcome contributions that enhance / improve the content of the docs. Feel free to add examples, clarify text,
+restructure the docs etc., but make sure to follow these guidelines:</p>
+<ul class="simple">
+<li><p>Write text in idiomatic english, using simple language</p></li>
+<li><p>Keep examples simple and self contained</p></li>
+<li><p>Provide links where applicable</p></li>
+<li><p>Use <a class="reference external" href="https://www.sphinx-doc.org/en/master/usage/extensions/intersphinx.html">intersphinx</a> wherever possible when
+referencing external libraries</p></li>
+<li><p>Provide diagrams using <a class="reference external" href="https://mermaid.js.org/">mermaidjs</a> where applicable and possible</p></li>
+</ul>
+</section>
+</section>
+<section id="creating-a-new-release">
+<h2>Creating a new release<a class="headerlink" href="#creating-a-new-release" title="Permalink to this heading">¶</a></h2>
+<ol class="arabic">
+<li><dl>
+<dt>Increment the version in <code class="docutils literal notranslate"><span class="pre">pyproject.toml</span></code></dt><dd><div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>The version should follow <a class="reference external" href="https://semver.org/">semantic versioning</a> and <a class="reference external" href="https://www.python.org/dev/peps/pep-0440/">PEP 440</a>.</p>
+</div>
+</dd>
+</dl>
+</li>
+<li><p>Commit and push.</p></li>
+<li><p>In GitHub go to the <a class="reference external" href="https://github.com/litestar-org/polyfactory/releases">releases tab</a></p></li>
+<li><p>Pick “<a class="reference external" href="https://github.com/litestar-org/polyfactory/releases/new">Draft a new release</a>”</p></li>
+<li><p>Give it a title and a tag, both <code class="docutils literal notranslate"><span class="pre">vX.X.X</span></code></p></li>
+<li><p>Fill in the release description. You can let GitHub do it for you and then edit as needed.</p></li>
+<li><p>Publish the release.</p></li>
+<li><p>Go to <a class="reference external" href="https://github.com/litestar-org/polyfactory/actions">Actions</a> and approve the workflow</p></li>
+<li><p>Check that the workflow runs successfully</p></li>
+</ol>
+</section>
+</section>
+
+        </article>
+        <button class="back-to-top" type="button">
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+    <path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8v12z"></path>
+  </svg>
+  <span>Back to top</span>
+</button>
+        
+        <div class="navigation flex print:hidden">
+  <div class="navigation-prev">
+    <a href="changelog.html">
+      <i class="i-lucide chevron-left"></i>
+      <div class="page-info">
+        <span>Previous</span>
+        
+        <div class="title">Changelog</div>
+        
+      </div>
+    </a>
+  </div>
+  
+</div>
+        
+      </div>
+    </div>
+  </main>
+</div>
+<footer class="sy-foot">
+  <div class="sy-foot-inner sy-container mx-auto">
+    
+    <div class="sy-foot-reserved md:flex justify-between items-center">
+      <div class="sy-foot-copyright"><p>2024, Litestar Organization</p>
+  
+  <p>
+    Made with
+    
+    <a href="https://www.sphinx-doc.org/">Sphinx</a> and
+    
+    <a href="https://shibuya.lepture.com">Shibuya theme</a>.
+  </p>
+</div>
+      <div class="sy-foot-socials">
+  <a href="https://twitter.com/LitestarAPI" aria-label="X (Twitter)"><i class="i-simpleicons x-twitter"></i></a>
+  <a href="https://discord.gg/litestar" aria-label="Discord"><i class="i-simpleicons discord"></i></a>
+  <a href="https://www.reddit.com/r/LitestarAPI" aria-label="Reddit"><i class="i-simpleicons reddit"></i></a>
+</div>
+    </div>
+  </div>
+</footer></div>
+      <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js?v=513ef7ff"></script>
+      <script src="_static/doctools.js?v=888ff710"></script>
+      <script src="_static/sphinx_highlight.js?v=4825356b"></script>
+      <script src="_static/clipboard.min.js?v=a7894cd8"></script>
+      <script src="_static/copybutton.js?v=f281be69"></script>
+      <script src="_static/litestar-theme.js?v=ab2dcc9e"></script>
+      <script>let toggleHintShow = 'Click to show';</script>
+      <script>let toggleHintHide = 'Click to hide';</script>
+      <script>let toggleOpenOnPrint = 'true';</script>
+      <script src="_static/togglebutton.js?v=4a39c7ea"></script>
+      <script src="_static/design-tabs.js?v=36754332"></script>
+      <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
+      <script src="_static/shibuya.js?v=5f0e4c24"></script>
+      <script src="_static/versioning.js"></script>
+    
+</body>
+</html>

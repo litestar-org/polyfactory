@@ -1,664 +1,178 @@
 
-<!DOCTYPE html>
+  <!DOCTYPE html>
+<html lang="en" data-accent-color="amber" data-content_root="">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <title>constrained_numbers - Litestar Framework</title>
+    <link rel="shortcut icon" href="../../_static/favicon.svg"/><link rel="index" title="Index" href="../../genindex.html" /><link rel="search" title="Search" href="../../search.html" /><link rel="next" title="constrained_strings" href="constrained_strings.html" /><link rel="prev" title="constrained_dates" href="constrained_dates.html" />
 
-
-<html lang="en" data-content_root="" >
-
-  <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
-
-    <title>constrained_numbers &#8212; Polyfactory</title>
-  
-  
-  
-  <script data-cfasync="false">
-    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
-    document.documentElement.dataset.theme = localStorage.getItem("theme") || "light";
-  </script>
-  
-  <!-- Loaded before other Sphinx assets -->
-  <link href="../../_static/styles/theme.css?digest=5b4479735964841361fd" rel="stylesheet" />
-<link href="../../_static/styles/bootstrap.css?digest=5b4479735964841361fd" rel="stylesheet" />
-<link href="../../_static/styles/pydata-sphinx-theme.css?digest=5b4479735964841361fd" rel="stylesheet" />
-
-  
-  <link href="../../_static/vendor/fontawesome/6.1.2/css/all.min.css?digest=5b4479735964841361fd" rel="stylesheet" />
-  <link rel="preload" as="font" type="font/woff2" crossorigin href="../../_static/vendor/fontawesome/6.1.2/webfonts/fa-solid-900.woff2" />
-<link rel="preload" as="font" type="font/woff2" crossorigin href="../../_static/vendor/fontawesome/6.1.2/webfonts/fa-brands-400.woff2" />
-<link rel="preload" as="font" type="font/woff2" crossorigin href="../../_static/vendor/fontawesome/6.1.2/webfonts/fa-regular-400.woff2" />
-
-    <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=a746c00c" />
+  <script>
+    function setColorMode(t){let e=document.documentElement;e.setAttribute("data-color-mode",t);let a=window.matchMedia&&window.matchMedia("(prefers-color-scheme: dark)").matches,s=t;"auto"===t&&(s=a?"dark":"light"),"light"===s?(e.classList.remove("dark"),e.classList.add("light")):(e.classList.remove("light"),e.classList.add("dark"))}
+    setColorMode(sessionStorage._theme||"auto");
+  </script><link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=aecf457f" />
+    <link rel="stylesheet" type="text/css" href="../../_static/shibuya.css?v=f2d5353f" />
     <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="../../_static/togglebutton.css?v=13237357" />
     <link rel="stylesheet" type="text/css" href="../../_static/design-style.1e8bd061cd6da7fc9cf755528e8ffc24.min.css?v=0a3b3ea7" />
-    <link rel="stylesheet" type="text/css" href="../../_static/litestar-sphinx-theme.css?v=9e3812bb" />
-  
-  <!-- Pre-loaded scripts that we'll load fully later -->
-  <link rel="preload" as="script" href="../../_static/scripts/bootstrap.js?digest=5b4479735964841361fd" />
-<link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=5b4479735964841361fd" />
-  <script src="../../_static/vendor/fontawesome/6.1.2/js/all.min.js?digest=5b4479735964841361fd"></script>
-
-    <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js?v=af2ce170"></script>
-    <script src="../../_static/doctools.js?v=888ff710"></script>
-    <script src="../../_static/sphinx_highlight.js?v=4825356b"></script>
-    <script src="../../_static/clipboard.min.js?v=a7894cd8"></script>
-    <script src="../../_static/copybutton.js?v=f281be69"></script>
-    <script src="../../_static/litestar-theme.js?v=ab2dcc9e"></script>
-    <script src="../../_static/design-tabs.js?v=36754332"></script>
-    <script>DOCUMENTATION_OPTIONS.pagename = 'reference/value_generators/constrained_numbers';</script>
-    <link rel="icon" href="../../_static/favicon.png"/>
-    <link rel="index" title="Index" href="../../genindex.html" />
-    <link rel="search" title="Search" href="../../search.html" />
-    <link rel="next" title="constrained_strings" href="constrained_strings.html" />
-    <link rel="prev" title="constrained_dates" href="constrained_dates.html" />
-  <meta name="viewport" content="width=device-width, initial-scale=1"/>
-  <meta name="docsearch:language" content="en"/>
+    <link rel="stylesheet" type="text/css" href="../../_static/sphinx_paramlinks.css" />
+    <link media="print" rel="stylesheet" type="text/css" href="../../_static/print.css?v=20ff2c19" />
+    <link rel="stylesheet" type="text/css" href="../../_static/style.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/litestar-sphinx-theme.css?v=9fce248e" />
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --sy-f-text: "Inter", var(--sy-f-sys), var(--sy-f-cjk), sans-serif;
+  --sy-f-heading: "Inter", var(--sy-f-sys), var(--sy-f-cjk), sans-serif;
+}
+</style>
+    <meta property="og:type" content="website"/><meta property="og:title" content="constrained_numbers"/>
+<meta name="twitter:card" content="summary"/>
+<meta property="og:image" content="_static/logo-light.svg"/>
   </head>
-  
-  
-  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+<body><div class="document"><div class="sy-head">
+  <div class="sy-head-blur"></div>
+  <div class="sy-head-inner sy-container mx-auto">
+    <a class="sy-head-brand mr-4" href="/">
+      <img class="light-logo" src="../../_static/logo-light.svg" alt="polyfactory" height="28" />
+      <img class="dark-logo" src="../../_static/logo-dark.svg" alt="polyfactory" height="28" />
+      <strong>polyfactory</strong>
+    </a>
+    <div class="sy-head-links" id="NavLinks">
+      <nav class="sy-head-nav">
 
-  
-  
-  <a class="skip-link" href="#main-content">Skip to main content</a>
-  
-  <div id="pst-scroll-pixel-helper"></div>
-
-  
-  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
-    <i class="fa-solid fa-arrow-up"></i>
-    Back to top
-  </button>
-
-  
-  <input type="checkbox"
-          class="sidebar-toggle"
-          name="__primary"
-          id="__primary"/>
-  <label class="overlay overlay-primary" for="__primary"></label>
-  
-  <input type="checkbox"
-          class="sidebar-toggle"
-          name="__secondary"
-          id="__secondary"/>
-  <label class="overlay overlay-secondary" for="__secondary"></label>
-  
-  <div class="search-button__wrapper">
-    <div class="search-button__overlay"></div>
-    <div class="search-button__search-container">
-<form class="bd-search d-flex align-items-center"
-      action="../../search.html"
-      method="get">
-  <i class="fa-solid fa-magnifying-glass"></i>
-  <input type="search"
-         class="form-control"
-         name="q"
-         id="search-input"
-         placeholder="Search the docs ..."
-         aria-label="Search the docs ..."
-         autocomplete="off"
-         autocorrect="off"
-         autocapitalize="off"
-         spellcheck="false"/>
-  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
-</form></div>
+<ul><li class="link"><a href="../../index.html">Home</a></li>
+      <li class="link"><button type="button">
+            <span>Community</span>
+            <i class="i-lucide chevron-down"></i>
+          </button>
+        <ul>
+          <li><a href="../../contribution-guide.html">
+                <span>Contributing</span>
+                <small>Learn how to contribute to the Type Lens project</small>
+              </a></li><li><a href="https://github.com/litestar-org/.github?tab=coc-ov-file">
+                <span>Code of Conduct</span>
+                <small>Review the etiquette for interacting with the Litestar community</small>
+              </a></li><li><a href="https://github.com/litestar-org/.github?tab=coc-ov-file#security-ov-file">
+                <span>Security</span>
+                <small>Overview of Litestar's security protocols</small>
+              </a></li></ul>
+      </li>
+      <li class="link"><button type="button">
+            <span>About</span>
+            <i class="i-lucide chevron-down"></i>
+          </button>
+        <ul>
+          <li><a href="https://litestar.dev/about/organization">
+                <span>Litestar Organization</span>
+                <small>Details about the Litestar organization</small>
+              </a></li><li><a href="../../releases.html">
+                <span>Releases</span>
+                <small>Explore the release process, versioning, and deprecation policy for Litestar</small>
+              </a></li></ul>
+      </li>
+      <li class="link"><button type="button">
+            <span>Release notes</span>
+            <i class="i-lucide chevron-down"></i>
+          </button>
+        <ul>
+          <li><a href="../../changelog.html">
+                <span>Changelog</span>
+                <small>All changes in the current major version</small>
+              </a></li></ul>
+      </li>
+      <li class="link"><button type="button">
+            <span>Help</span>
+            <i class="i-lucide chevron-down"></i>
+          </button>
+        <ul>
+          <li><a href="https://discord.gg/litestar">
+                <span>Discord Help Forum</span>
+                <small>Dedicated Discord help forum</small>
+              </a></li><li><a href="https://github.com/litestar-org/polyfactory/discussions">
+                <span>GitHub Discussions</span>
+                <small>GitHub Discussions</small>
+              </a></li><li><a href="https://stackoverflow.com/questions/tagged/polyfactory">
+                <span>Stack Overflow</span>
+                <small>We monitor the <code><b>polyfactory</b></code> tag on Stack Overflow</small>
+              </a></li></ul>
+      </li><li class="link">
+          <a href="https://github.com/sponsors/Litestar-Org">
+            <span>Sponsor</span>
+            
+          </a>
+        </li></ul></nav>
+      <div class="sy-head-extra flex items-center print:hidden">
+        
+<form class="searchbox flex items-center" action="../../search.html" method="get">
+  <input type="text" name="q" placeholder="Search" />
+  <kbd>/</kbd>
+</form>
+        
+  <div class="nav-versions">
+    <button type="button" aria-label="Versions">
+      <span class="md:hidden">Versions</span>
+      <span class="hidden md:inline">latest</span>
+      <i class="i-lucide chevron-down"></i>
+    </button>
+    <div class="nav-versions-choices">
+      <ul><li><a href="/latest">latest</a></li><li><a href="/main">development</a></li></ul></div>
   </div>
-  
-    <nav class="bd-header navbar navbar-expand-lg bd-navbar">
-<div class="bd-header__inner bd-page-width">
-  <label class="sidebar-toggle primary-toggle" for="__primary">
-    <span class="fa-solid fa-bars"></span>
-  </label>
-  
-  
-  <div class=" navbar-header-items__start">
-    
-      <div class="navbar-item">
-
-   
-
-<a class="navbar-brand logo" href="https://polyfactory.litestar.dev">
-  
-  
-  
-  
-  
-    
-    
-      
-    
-    
-    <img src="../../_static/logo.svg" class="logo__image only-light" alt="Polyfactory - Home"/>
-    <script>document.write(`<img src="../../_static/logo.svg" class="logo__image only-dark" alt="Polyfactory - Home"/>`);</script>
-  
-  
-</a></div>
-    
-  </div>
-  
-  <div class=" navbar-header-items">
-    
-    <div class="me-auto navbar-header-items__center">
-      
-        <div class="navbar-item">
-
-
-
-
-    <nav class="hidden lg:flex lg:gap-x-4">
         
-    
-        
-            <a href="../../index.html"
-               class="text-sm font-semibold leading-6 text-gray-900 dark:text-gray-100 hover:!text-litestar-gold select-none cursor-pointer">Documentation</a>
-        
-    
-        
-            
-    <div class="relative">
-        <span type="button"
-                class="flex items-center gap-x-1 text-sm font-semibold leading-6 text-gray-900 dark:text-gray-100 hover:!text-litestar-gold st-dropdown-toggle dropdown-closed select-none cursor-pointer"
-                data-dropdown-state="closed"
-                aria-expanded="false">
-            Community
-            <div class="menu-state-indicator flex">
-                
-    <svg class="h-5 w-5 flex-none text-gray-400" viewBox="0 0 20 20" fill="currentColor"
-     aria-hidden="true">
-    <path fill-rule="evenodd"
-          d="M5.23 7.21a.75.75 0 011.06.02L10 11.168l3.71-3.938a.75.75 0 111.08 1.04l-4.25 4.5a.75.75 0 01-1.08 0l-4.25-4.5a.75.75 0 01.02-1.06z"
-          clip-rule="evenodd"/>
-</svg>
-
-            </div>
-        </span>
-
-        <div class="
-            absolute -left-8 top-full z-10 mt-3
-            w-max max-w-md
-            overflow-hidden rounded-3xl
-            bg-white shadow-lg dark:!bg-zinc-700 ring-1 ring-gray-900/5
-            hidden
-            st-dropdown-menu">
-            <div class="p-4">
-                
-                    
-    
-        <div class="group relative flex items-center gap-x-6 rounded-lg p-4 text-sm leading-6 hover:bg-gray-50 dark:hover:bg-zinc-800">
-            <div class="
-            h-11 w-11 flex flex-none items-center justify-center
-            rounded-lg
-            bg-gray-50 group-hover:bg-white dark:bg-zinc-900 dark:group-hover:bg-zinc-700
-            text-gray-600 dark:text-gray-300 group-hover:text-litestar-gold">
-                
-    <svg class="h-6 w-6" fill="none"
-     viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" aria-hidden="true">
-    <path stroke-linecap="round" stroke-linejoin="round"
-          d="M10.5 6a7.5 7.5 0 107.5 7.5h-7.5V6z"/>
-    <path stroke-linecap="round" stroke-linejoin="round"
-          d="M13.5 10.5H21A7.5 7.5 0 0013.5 3v7.5z"/>
-</svg>
-
-            </div>
-            <div class="flex-auto">
-                
-    <a href="../../contributing.html"
-       class="block font-semibold text-gray-900 dark:text-gray-200 hover:text-litestar-gold dark:hover:text-litestar-gold !no-underline select-none cursor-pointer">
-        Contributing
-        <span class="absolute inset-0"></span>
+        <div class="sy-head-socials flex items-center">
+  <a href="https://twitter.com/LitestarAPI" aria-label="X (Twitter)">
+    <i class="i-simpleicons x-twitter"></i>
+  </a>
+    <a href="https://discord.gg/litestar" aria-label="Discord">
+      <i class="i-simpleicons discord"></i>
     </a>
-
-                <div class="mt-1 text-gray-600 dark:text-gray-300">Learn how to contribute to Polyfactory</div>
-            </div>
-        </div>
-    
-
-                
-                    
-    
-        <div class="group relative flex items-center gap-x-6 rounded-lg p-4 text-sm leading-6 hover:bg-gray-50 dark:hover:bg-zinc-800">
-            <div class="
-            h-11 w-11 flex flex-none items-center justify-center
-            rounded-lg
-            bg-gray-50 group-hover:bg-white dark:bg-zinc-900 dark:group-hover:bg-zinc-700
-            text-gray-600 dark:text-gray-300 group-hover:text-litestar-gold">
-                
-    <svg class="h-6 w-6" fill="none"
-     viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" aria-hidden="true">
-    <path stroke-linecap="round" stroke-linejoin="round"
-          d="M15.042 21.672L13.684 16.6m0 0l-2.51 2.225.569-9.47 5.227 7.917-3.286-.672zM12 2.25V4.5m5.834.166l-1.591 1.591M20.25 10.5H18M7.757 14.743l-1.59 1.59M6 10.5H3.75m4.007-4.243l-1.59-1.59"/>
-</svg>
-
-            </div>
-            <div class="flex-auto">
-                
-    <a href="https://github.com/litestar-org/.github/blob/main/CODE_OF_CONDUCT.md"
-       class="block font-semibold text-gray-900 dark:text-gray-200 hover:text-litestar-gold dark:hover:text-litestar-gold !no-underline select-none cursor-pointer">
-        Code of Conduct
-        <span class="absolute inset-0"></span>
-    </a>
-
-                <div class="mt-1 text-gray-600 dark:text-gray-300">Review the etiquette for interacting with the Litestar community</div>
-            </div>
-        </div>
-    
-
-                
-            </div>
-        </div>
-    </div>
-
-        
-    
-        
-            
-    <div class="relative">
-        <span type="button"
-                class="flex items-center gap-x-1 text-sm font-semibold leading-6 text-gray-900 dark:text-gray-100 hover:!text-litestar-gold st-dropdown-toggle dropdown-closed select-none cursor-pointer"
-                data-dropdown-state="closed"
-                aria-expanded="false">
-            About
-            <div class="menu-state-indicator flex">
-                
-    <svg class="h-5 w-5 flex-none text-gray-400" viewBox="0 0 20 20" fill="currentColor"
-     aria-hidden="true">
-    <path fill-rule="evenodd"
-          d="M5.23 7.21a.75.75 0 011.06.02L10 11.168l3.71-3.938a.75.75 0 111.08 1.04l-4.25 4.5a.75.75 0 01-1.08 0l-4.25-4.5a.75.75 0 01.02-1.06z"
-          clip-rule="evenodd"/>
-</svg>
-
-            </div>
-        </span>
-
-        <div class="
-            absolute -left-8 top-full z-10 mt-3
-            w-max max-w-md
-            overflow-hidden rounded-3xl
-            bg-white shadow-lg dark:!bg-zinc-700 ring-1 ring-gray-900/5
-            hidden
-            st-dropdown-menu">
-            <div class="p-4">
-                
-                    
-    
-        <div class="group relative flex items-center gap-x-6 rounded-lg p-4 text-sm leading-6 hover:bg-gray-50 dark:hover:bg-zinc-800">
-            <div class="
-            h-11 w-11 flex flex-none items-center justify-center
-            rounded-lg
-            bg-gray-50 group-hover:bg-white dark:bg-zinc-900 dark:group-hover:bg-zinc-700
-            text-gray-600 dark:text-gray-300 group-hover:text-litestar-gold">
-                
-    <svg class="h-6 w-6" aria-hidden="true"
-     fill="none" stroke="currentColor" stroke-width="1.5"
-     viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-    <path d="M18 18.72a9.094 9.094 0 003.741-.479 3 3 0 00-4.682-2.72m.94 3.198l.001.031c0 .225-.012.447-.037.666A11.944 11.944 0 0112 21c-2.17 0-4.207-.576-5.963-1.584A6.062 6.062 0 016 18.719m12 0a5.971 5.971 0 00-.941-3.197m0 0A5.995 5.995 0 0012 12.75a5.995 5.995 0 00-5.058 2.772m0 0a3 3 0 00-4.681 2.72 8.986 8.986 0 003.74.477m.94-3.197a5.971 5.971 0 00-.94 3.197M15 6.75a3 3 0 11-6 0 3 3 0 016 0zm6 3a2.25 2.25 0 11-4.5 0 2.25 2.25 0 014.5 0zm-13.5 0a2.25 2.25 0 11-4.5 0 2.25 2.25 0 014.5 0z"
-          stroke-linecap="round" stroke-linejoin="round"></path>
-</svg>
-
-            </div>
-            <div class="flex-auto">
-                
-    <a href="https://litestar.dev/about/organization.html"
-       class="block font-semibold text-gray-900 dark:text-gray-200 hover:text-litestar-gold dark:hover:text-litestar-gold !no-underline select-none cursor-pointer">
-        Litestar Organization
-        <span class="absolute inset-0"></span>
-    </a>
-
-                <div class="mt-1 text-gray-600 dark:text-gray-300">About the Litestar organization</div>
-            </div>
-        </div>
-    
-
-                
-            </div>
-        </div>
-    </div>
-
-        
-    
-
-    </nav>
 </div>
-      
-    </div>
-    
-    
-    <div class="navbar-header-items__end">
-      
-        <div class="navbar-item navbar-persistent--container">
-          
-
-<script>
-document.write(`
-  <button class="btn btn-sm navbar-btn search-button search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
-    <i class="fa-solid fa-magnifying-glass fa-lg"></i>
-  </button>
-`);
-</script>
-        </div>
-      
-        <div class="navbar-item navbar-persistent--container">
-          
-
-<script>
-document.write(`
-  <button class="btn btn-sm navbar-btn theme-switch-button" title="light/dark" aria-label="light/dark" data-bs-placement="bottom" data-bs-toggle="tooltip">
-    <span class="theme-switch nav-link" data-mode="light"><i class="fa-solid fa-sun fa-lg"></i></span>
-    <span class="theme-switch nav-link" data-mode="dark"><i class="fa-solid fa-moon fa-lg"></i></span>
-    <span class="theme-switch nav-link" data-mode="auto"><i class="fa-solid fa-circle-half-stroke fa-lg"></i></span>
-  </button>
-`);
-</script>
-        </div>
-      
-      
-        <div class="navbar-item"><ul class="navbar-icon-links navbar-nav"
-    aria-label="Icon Links">
-        <li class="nav-item">
-          
-          
-          
-          
-          
-          
-          
-          
-          <a href="https://github.com/litestar-org/polyfactory" title="GitHub" class="nav-link" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><span><i class="fa-brands fa-github fa-lg" aria-hidden="true"></i></span>
-            <span class="sr-only">GitHub</span></a>
-        </li>
-        <li class="nav-item">
-          
-          
-          
-          
-          
-          
-          
-          
-          <a href="https://discord.gg/litestar-919193495116337154" title="Discord" class="nav-link" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><span><i class="fa-brands fa-discord fa-lg" aria-hidden="true"></i></span>
-            <span class="sr-only">Discord</span></a>
-        </li>
-</ul></div>
-      
-    </div>
-    
-  </div>
-  
-  
-    <div class="navbar-persistent--mobile">
-
-<script>
-document.write(`
-  <button class="btn btn-sm navbar-btn search-button search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
-    <i class="fa-solid fa-magnifying-glass fa-lg"></i>
-  </button>
-`);
-</script>
-    </div>
-  
-    <div class="navbar-persistent--mobile">
-
-<script>
-document.write(`
-  <button class="btn btn-sm navbar-btn theme-switch-button" title="light/dark" aria-label="light/dark" data-bs-placement="bottom" data-bs-toggle="tooltip">
-    <span class="theme-switch nav-link" data-mode="light"><i class="fa-solid fa-sun fa-lg"></i></span>
-    <span class="theme-switch nav-link" data-mode="dark"><i class="fa-solid fa-moon fa-lg"></i></span>
-    <span class="theme-switch nav-link" data-mode="auto"><i class="fa-solid fa-circle-half-stroke fa-lg"></i></span>
-  </button>
-`);
-</script>
-    </div>
-  
-
-  
-    <label class="sidebar-toggle secondary-toggle" for="__secondary" tabindex="0">
-      <span class="fa-solid fa-outdent"></span>
-    </label>
-  
-</div>
-
-    </nav>
-  
-  <div class="bd-container">
-    <div class="bd-container__inner bd-page-width">
-      
-      <div class="bd-sidebar-primary bd-sidebar">
-        
-
-  
-  <div class="sidebar-header-items sidebar-primary__section">
-    
-    
-      <div class="sidebar-header-items__center">
-        
-          <div class="navbar-item">
-
-
-
-
-    <nav class="hidden lg:flex lg:gap-x-4">
-        
-    
-        
-            <a href="../../index.html"
-               class="text-sm font-semibold leading-6 text-gray-900 dark:text-gray-100 hover:!text-litestar-gold select-none cursor-pointer">Documentation</a>
-        
-    
-        
-            
-    <div class="relative">
-        <span type="button"
-                class="flex items-center gap-x-1 text-sm font-semibold leading-6 text-gray-900 dark:text-gray-100 hover:!text-litestar-gold st-dropdown-toggle dropdown-closed select-none cursor-pointer"
-                data-dropdown-state="closed"
-                aria-expanded="false">
-            Community
-            <div class="menu-state-indicator flex">
-                
-    <svg class="h-5 w-5 flex-none text-gray-400" viewBox="0 0 20 20" fill="currentColor"
-     aria-hidden="true">
-    <path fill-rule="evenodd"
-          d="M5.23 7.21a.75.75 0 011.06.02L10 11.168l3.71-3.938a.75.75 0 111.08 1.04l-4.25 4.5a.75.75 0 01-1.08 0l-4.25-4.5a.75.75 0 01.02-1.06z"
-          clip-rule="evenodd"/>
-</svg>
-
-            </div>
-        </span>
-
-        <div class="
-            absolute -left-8 top-full z-10 mt-3
-            w-max max-w-md
-            overflow-hidden rounded-3xl
-            bg-white shadow-lg dark:!bg-zinc-700 ring-1 ring-gray-900/5
-            hidden
-            st-dropdown-menu">
-            <div class="p-4">
-                
-                    
-    
-        <div class="group relative flex items-center gap-x-6 rounded-lg p-4 text-sm leading-6 hover:bg-gray-50 dark:hover:bg-zinc-800">
-            <div class="
-            h-11 w-11 flex flex-none items-center justify-center
-            rounded-lg
-            bg-gray-50 group-hover:bg-white dark:bg-zinc-900 dark:group-hover:bg-zinc-700
-            text-gray-600 dark:text-gray-300 group-hover:text-litestar-gold">
-                
-    <svg class="h-6 w-6" fill="none"
-     viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" aria-hidden="true">
-    <path stroke-linecap="round" stroke-linejoin="round"
-          d="M10.5 6a7.5 7.5 0 107.5 7.5h-7.5V6z"/>
-    <path stroke-linecap="round" stroke-linejoin="round"
-          d="M13.5 10.5H21A7.5 7.5 0 0013.5 3v7.5z"/>
-</svg>
-
-            </div>
-            <div class="flex-auto">
-                
-    <a href="../../contributing.html"
-       class="block font-semibold text-gray-900 dark:text-gray-200 hover:text-litestar-gold dark:hover:text-litestar-gold !no-underline select-none cursor-pointer">
-        Contributing
-        <span class="absolute inset-0"></span>
-    </a>
-
-                <div class="mt-1 text-gray-600 dark:text-gray-300">Learn how to contribute to Polyfactory</div>
-            </div>
-        </div>
-    
-
-                
-                    
-    
-        <div class="group relative flex items-center gap-x-6 rounded-lg p-4 text-sm leading-6 hover:bg-gray-50 dark:hover:bg-zinc-800">
-            <div class="
-            h-11 w-11 flex flex-none items-center justify-center
-            rounded-lg
-            bg-gray-50 group-hover:bg-white dark:bg-zinc-900 dark:group-hover:bg-zinc-700
-            text-gray-600 dark:text-gray-300 group-hover:text-litestar-gold">
-                
-    <svg class="h-6 w-6" fill="none"
-     viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" aria-hidden="true">
-    <path stroke-linecap="round" stroke-linejoin="round"
-          d="M15.042 21.672L13.684 16.6m0 0l-2.51 2.225.569-9.47 5.227 7.917-3.286-.672zM12 2.25V4.5m5.834.166l-1.591 1.591M20.25 10.5H18M7.757 14.743l-1.59 1.59M6 10.5H3.75m4.007-4.243l-1.59-1.59"/>
-</svg>
-
-            </div>
-            <div class="flex-auto">
-                
-    <a href="https://github.com/litestar-org/.github/blob/main/CODE_OF_CONDUCT.md"
-       class="block font-semibold text-gray-900 dark:text-gray-200 hover:text-litestar-gold dark:hover:text-litestar-gold !no-underline select-none cursor-pointer">
-        Code of Conduct
-        <span class="absolute inset-0"></span>
-    </a>
-
-                <div class="mt-1 text-gray-600 dark:text-gray-300">Review the etiquette for interacting with the Litestar community</div>
-            </div>
-        </div>
-    
-
-                
-            </div>
-        </div>
-    </div>
-
-        
-    
-        
-            
-    <div class="relative">
-        <span type="button"
-                class="flex items-center gap-x-1 text-sm font-semibold leading-6 text-gray-900 dark:text-gray-100 hover:!text-litestar-gold st-dropdown-toggle dropdown-closed select-none cursor-pointer"
-                data-dropdown-state="closed"
-                aria-expanded="false">
-            About
-            <div class="menu-state-indicator flex">
-                
-    <svg class="h-5 w-5 flex-none text-gray-400" viewBox="0 0 20 20" fill="currentColor"
-     aria-hidden="true">
-    <path fill-rule="evenodd"
-          d="M5.23 7.21a.75.75 0 011.06.02L10 11.168l3.71-3.938a.75.75 0 111.08 1.04l-4.25 4.5a.75.75 0 01-1.08 0l-4.25-4.5a.75.75 0 01.02-1.06z"
-          clip-rule="evenodd"/>
-</svg>
-
-            </div>
-        </span>
-
-        <div class="
-            absolute -left-8 top-full z-10 mt-3
-            w-max max-w-md
-            overflow-hidden rounded-3xl
-            bg-white shadow-lg dark:!bg-zinc-700 ring-1 ring-gray-900/5
-            hidden
-            st-dropdown-menu">
-            <div class="p-4">
-                
-                    
-    
-        <div class="group relative flex items-center gap-x-6 rounded-lg p-4 text-sm leading-6 hover:bg-gray-50 dark:hover:bg-zinc-800">
-            <div class="
-            h-11 w-11 flex flex-none items-center justify-center
-            rounded-lg
-            bg-gray-50 group-hover:bg-white dark:bg-zinc-900 dark:group-hover:bg-zinc-700
-            text-gray-600 dark:text-gray-300 group-hover:text-litestar-gold">
-                
-    <svg class="h-6 w-6" aria-hidden="true"
-     fill="none" stroke="currentColor" stroke-width="1.5"
-     viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-    <path d="M18 18.72a9.094 9.094 0 003.741-.479 3 3 0 00-4.682-2.72m.94 3.198l.001.031c0 .225-.012.447-.037.666A11.944 11.944 0 0112 21c-2.17 0-4.207-.576-5.963-1.584A6.062 6.062 0 016 18.719m12 0a5.971 5.971 0 00-.941-3.197m0 0A5.995 5.995 0 0012 12.75a5.995 5.995 0 00-5.058 2.772m0 0a3 3 0 00-4.681 2.72 8.986 8.986 0 003.74.477m.94-3.197a5.971 5.971 0 00-.94 3.197M15 6.75a3 3 0 11-6 0 3 3 0 016 0zm6 3a2.25 2.25 0 11-4.5 0 2.25 2.25 0 014.5 0zm-13.5 0a2.25 2.25 0 11-4.5 0 2.25 2.25 0 014.5 0z"
-          stroke-linecap="round" stroke-linejoin="round"></path>
-</svg>
-
-            </div>
-            <div class="flex-auto">
-                
-    <a href="https://litestar.dev/about/organization.html"
-       class="block font-semibold text-gray-900 dark:text-gray-200 hover:text-litestar-gold dark:hover:text-litestar-gold !no-underline select-none cursor-pointer">
-        Litestar Organization
-        <span class="absolute inset-0"></span>
-    </a>
-
-                <div class="mt-1 text-gray-600 dark:text-gray-300">About the Litestar organization</div>
-            </div>
-        </div>
-    
-
-                
-            </div>
-        </div>
-    </div>
-
-        
-    
-
-    </nav>
-</div>
-        
       </div>
-    
-    
-    
-      <div class="sidebar-header-items__end">
-        
-          <div class="navbar-item"><ul class="navbar-icon-links navbar-nav"
-    aria-label="Icon Links">
-        <li class="nav-item">
-          
-          
-          
-          
-          
-          
-          
-          
-          <a href="https://github.com/litestar-org/polyfactory" title="GitHub" class="nav-link" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><span><i class="fa-brands fa-github fa-lg" aria-hidden="true"></i></span>
-            <span class="sr-only">GitHub</span></a>
-        </li>
-        <li class="nav-item">
-          
-          
-          
-          
-          
-          
-          
-          
-          <a href="https://discord.gg/litestar-919193495116337154" title="Discord" class="nav-link" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><span><i class="fa-brands fa-discord fa-lg" aria-hidden="true"></i></span>
-            <span class="sr-only">Discord</span></a>
-        </li>
-</ul></div>
-        
-      </div>
-    
+    </div>
+    <div class="sy-head-actions flex items-center shrink-0 print:hidden">
+      <button class="js-theme theme-switch flex items-center"
+        data-aria-auto="Switch to light color mode"
+        data-aria-light="Switch to dark color mode"
+        data-aria-dark="Switch to auto color mode">
+        <i class="i-lucide theme-icon"></i>
+      </button>
+      <button class="md:hidden flex items-center js-menu" aria-label="Menu" type="button" aria-controls="NavLinks" aria-expanded="false">
+        <div class="hamburger">
+          <span class="hamburger_1"></span>
+          <span class="hamburger_2 -translate-x-2"></span>
+          <span class="hamburger_3 -translate-x-1"></span>
+        </div>
+      </button>
+    </div>
   </div>
-  
-    <div class="sidebar-primary-items__start sidebar-primary__section">
-        <div class="sidebar-primary-item">
-<nav class="bd-docs-nav bd-links"
-     aria-label="Section Navigation">
-  <p class="bd-links__title" role="heading" aria-level="1">Section Navigation</p>
-  <div class="bd-toc-item navbar-nav"><p aria-level="2" class="caption" role="heading"><span class="caption-text">Documentation</span></p>
-<ul class="current nav bd-sidenav">
-<li class="toctree-l1 has-children"><a class="reference internal" href="../../usage/index.html">Usage Guide</a><input class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-1"><i class="fa-solid fa-chevron-down"></i></label><ul>
+</div>
+<div class="sy-page sy-container flex mx-auto">
+  <aside id="lside" class="sy-lside md:w-72 md:shrink-0 print:hidden">
+    <div class="sy-lside-inner md:sticky">
+      <div class="sy-scrollbar p-6">
+<div class="sidebar-links">
+  <ul>
+    <li><a class="icon-link" href="https://github.com/orgs/litestar-org/discussions">
+  <span class="icon">
+    <svg viewBox="0 0 24 24" fill="none">
+      <path fill="var(--accent-9)" fill-rule="evenodd" clip-rule="evenodd" d="M11 5a6 6 0 0 0-4.687 9.746c.215.27.315.62.231.954l-.514 2.058a1 1 0 0 0 1.485 1.1l2.848-1.71c.174-.104.374-.15.576-.148H13a6 6 0 0 0 0-12h-2Z"/>
+      <circle fill="white" cx="12" cy="11" r="1"/>
+      <circle fill="white" cx="9" cy="11" r="1"/>
+      <circle fill="white" cx="15" cy="11" r="1"/>
+    </svg>
+  </span>
+  <span class="text">Discussion</span>
+</a></li>
+  </ul>
+</div>
+
+        <div class="globaltoc" data-expand-depth="0"><p class="caption" role="heading" aria-level="3"><span class="caption-text">Documentation</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../usage/index.html">Usage Guide</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="../../usage/declaring_factories.html">Declaring Factories</a></li>
-<li class="toctree-l2 has-children"><a class="reference internal" href="../../usage/library_factories/index.html">Polyfactory Factories</a><input class="toctree-checkbox" id="toctree-checkbox-2" name="toctree-checkbox-2" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-2"><i class="fa-solid fa-chevron-down"></i></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../usage/library_factories/index.html">Polyfactory Factories</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="../../usage/library_factories/sqlalchemy_factory.html">SQLAlchemyFactory</a></li>
 </ul>
 </li>
@@ -670,10 +184,10 @@ document.write(`
 <li class="toctree-l2"><a class="reference internal" href="../../usage/model_coverage.html">Model coverage generation</a></li>
 </ul>
 </li>
-<li class="toctree-l1 current active has-children"><a class="reference internal" href="../index.html">API Reference</a><input checked="" class="toctree-checkbox" id="toctree-checkbox-3" name="toctree-checkbox-3" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-3"><i class="fa-solid fa-chevron-down"></i></label><ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="../index.html">API Reference</a><ul class="current">
 <li class="toctree-l2"><a class="reference internal" href="../constants.html">constants</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../exceptions.html">exceptions</a></li>
-<li class="toctree-l2 has-children"><a class="reference internal" href="../factories/index.html">factories</a><input class="toctree-checkbox" id="toctree-checkbox-4" name="toctree-checkbox-4" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-4"><i class="fa-solid fa-chevron-down"></i></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="../factories/index.html">factories</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="../factories/base.html">base_factory</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../factories/dataclass_factory.html">dataclass_factory</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../factories/typed_dict_factory.html">typed_dict_factory</a></li>
@@ -690,11 +204,11 @@ document.write(`
 <li class="toctree-l2"><a class="reference internal" href="../decorators.html">decorators</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../persistence.html">persistence</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../pytest_plugin.html">pytest_plugin</a></li>
-<li class="toctree-l2 current active has-children"><a class="reference internal" href="index.html">value_generators</a><input checked="" class="toctree-checkbox" id="toctree-checkbox-5" name="toctree-checkbox-5" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-5"><i class="fa-solid fa-chevron-down"></i></label><ul class="current">
+<li class="toctree-l2 current"><a class="reference internal" href="index.html">value_generators</a><ul class="current">
 <li class="toctree-l3"><a class="reference internal" href="complex_types.html">complex_types</a></li>
 <li class="toctree-l3"><a class="reference internal" href="constrained_collections.html">constrained_collections</a></li>
 <li class="toctree-l3"><a class="reference internal" href="constrained_dates.html">constrained_dates</a></li>
-<li class="toctree-l3 current active"><a class="current reference internal" href="#">constrained_numbers</a></li>
+<li class="toctree-l3 current"><a class="current reference internal" href="#">constrained_numbers</a></li>
 <li class="toctree-l3"><a class="reference internal" href="constrained_strings.html">constrained_strings</a></li>
 <li class="toctree-l3"><a class="reference internal" href="primitives.html">primitives</a></li>
 </ul>
@@ -702,86 +216,135 @@ document.write(`
 </ul>
 </li>
 </ul>
-<p aria-level="2" class="caption" role="heading"><span class="caption-text">Development</span></p>
-<ul class="nav bd-sidenav">
-<li class="toctree-l1"><a class="reference internal" href="../../contributing.html">Contributing</a></li>
+<p class="caption" role="heading" aria-level="3"><span class="caption-text">Development</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../changelog.html">Changelog</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../contribution-guide.html">Contributing</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/search?q=user%3Alitestar-org+state%3Aopen+label%3A%22good+first+issue%22+++no%3Aassignee+repo%3A%22polyfactory%22&amp;type=issues">Available Issues</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/litestar-org/.github?tab=coc-ov-file#readme">Code of Conduct</a></li>
 </ul>
-</div>
-</nav></div>
-    </div>
-  
-  
-  <div class="sidebar-primary-items__end sidebar-primary__section">
-  </div>
-  
-  <div id="rtd-footer-container"></div>
 
-
+        </div>
       </div>
       
-      <main id="main-content" class="bd-main">
-        
-        
-          <div class="bd-content">
-            <div class="bd-article-container">
-              
-              <div class="bd-header-article">
-<div class="header-article-items header-article__inner">
-  
-    <div class="header-article-items__start">
-      
-        <div class="header-article-item">
-
-
-
-<nav aria-label="Breadcrumb">
-  <ul class="bd-breadcrumbs">
-    
-    <li class="breadcrumb-item breadcrumb-home">
-      <a href="../../index.html" class="nav-link" aria-label="Home">
-        <i class="fa-solid fa-home"></i>
-      </a>
-    </li>
-    
-    <li class="breadcrumb-item"><a href="../index.html" class="nav-link">API Reference</a></li>
-    
-    
-    <li class="breadcrumb-item"><a href="index.html" class="nav-link">value_generators</a></li>
-    
-    <li class="breadcrumb-item active" aria-current="page">constrained_numbers</li>
-  </ul>
-</nav>
-</div>
-      
     </div>
-  
-  
+  </aside>
+  <div class="lside-overlay js-menu" role="button" aria-label="Close left sidebar" aria-controls="lside" aria-expanded="false"></div>
+  <aside id="rside" class="sy-rside pb-3 w-64 shrink-0 order-last">
+    <button class="rside-close js-menu xl:hidden" aria-label="Close Table of Contents" type="button" aria-controls="rside" aria-expanded="false">
+      <i class="i-lucide close"></i>
+    </button>
+    <div class="sy-scrollbar sy-rside-inner px-6 xl:top-16 xl:sticky xl:pl-0 pt-6 pb-4">
+  <div class="localtoc">
+    <h3>On this page</h3>
+    <ul>
+<li><a class="reference internal" href="#polyfactory.value_generators.constrained_numbers.NumberGeneratorProtocol"><code class="docutils literal notranslate"><span class="pre">NumberGeneratorProtocol</span></code></a><ul>
+<li><a class="reference internal" href="#polyfactory.value_generators.constrained_numbers.NumberGeneratorProtocol.__call__"><code class="docutils literal notranslate"><span class="pre">NumberGeneratorProtocol.__call__()</span></code></a></li>
+<li><a class="reference internal" href="#polyfactory.value_generators.constrained_numbers.NumberGeneratorProtocol.__init__"><code class="docutils literal notranslate"><span class="pre">NumberGeneratorProtocol.__init__()</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#polyfactory.value_generators.constrained_numbers.almost_equal_floats"><code class="docutils literal notranslate"><span class="pre">almost_equal_floats()</span></code></a></li>
+<li><a class="reference internal" href="#polyfactory.value_generators.constrained_numbers.is_multiply_of_multiple_of_in_range"><code class="docutils literal notranslate"><span class="pre">is_multiply_of_multiple_of_in_range()</span></code></a></li>
+<li><a class="reference internal" href="#polyfactory.value_generators.constrained_numbers.passes_pydantic_multiple_validator"><code class="docutils literal notranslate"><span class="pre">passes_pydantic_multiple_validator()</span></code></a></li>
+<li><a class="reference internal" href="#polyfactory.value_generators.constrained_numbers.get_increment"><code class="docutils literal notranslate"><span class="pre">get_increment()</span></code></a></li>
+<li><a class="reference internal" href="#polyfactory.value_generators.constrained_numbers.get_value_or_none"><code class="docutils literal notranslate"><span class="pre">get_value_or_none()</span></code></a></li>
+<li><a class="reference internal" href="#polyfactory.value_generators.constrained_numbers.get_constrained_number_range"><code class="docutils literal notranslate"><span class="pre">get_constrained_number_range()</span></code></a></li>
+<li><a class="reference internal" href="#polyfactory.value_generators.constrained_numbers.generate_constrained_number"><code class="docutils literal notranslate"><span class="pre">generate_constrained_number()</span></code></a></li>
+<li><a class="reference internal" href="#polyfactory.value_generators.constrained_numbers.handle_constrained_int"><code class="docutils literal notranslate"><span class="pre">handle_constrained_int()</span></code></a></li>
+<li><a class="reference internal" href="#polyfactory.value_generators.constrained_numbers.handle_constrained_float"><code class="docutils literal notranslate"><span class="pre">handle_constrained_float()</span></code></a></li>
+<li><a class="reference internal" href="#polyfactory.value_generators.constrained_numbers.validate_max_digits"><code class="docutils literal notranslate"><span class="pre">validate_max_digits()</span></code></a></li>
+<li><a class="reference internal" href="#polyfactory.value_generators.constrained_numbers.handle_decimal_length"><code class="docutils literal notranslate"><span class="pre">handle_decimal_length()</span></code></a></li>
+<li><a class="reference internal" href="#polyfactory.value_generators.constrained_numbers.handle_constrained_decimal"><code class="docutils literal notranslate"><span class="pre">handle_constrained_decimal()</span></code></a></li>
+</ul>
+
+  </div><a class="js-repo-stats repo-stats flex items-center" href="https://github.com/litestar-org/polyfactory"
+  data-type="github" data-user="litestar-org" data-repo="polyfactory">
+  <span class="w-8 flex items-center justify-around shrink-0 text-3xl">
+    <i class="i-simpleicons github"></i>
+  </span>
+  <span class="flex-grow px-2">
+    <span>litestar-org/polyfactory</span>
+    <span class="flex text-sm repo-stats-count">
+      <span class="flex items-center pr-3">
+        <i class="i-lucide star"></i>
+        <strong class="js-repo-stars ml-1">0</strong>
+      </span>
+      <span class="flex items-center">
+        <i class="i-lucide git-fork"></i>
+        <strong class="js-repo-forks ml-1">0</strong>
+      </span>
+    </span>
+  </span>
+</a><div class="edit-this-page">
+  <a href="https://github.com/litestar-org/polyfactory/blob/master/docs/reference/value_generators/constrained_numbers.rst">Edit this page</a>
+</div><div id="ethical-ad-placement" data-ea-publisher="readthedocs"></div>
+    </div>
+  </aside>
+  <div class="rside-overlay js-menu" role="button" aria-label="Close Table of Contents" aria-controls="rside" aria-expanded="false"></div>
+  <main class="sy-main w-full max-sm:max-w-full print:pt-6">
+    <div class="sy-breadcrumbs" role="navigation">
+  <div class="sy-breadcrumbs-inner flex items-center">
+    <div class="md:hidden mr-3">
+      <button class="js-menu" aria-label="Menu" type="button" aria-controls="lside" aria-expanded="false">
+        <i class="i-lucide menu"></i>
+      </button>
+    </div>
+    <ol class="flex-1" itemscope itemtype="https://schema.org/BreadcrumbList">
+      
+      
+      <li itemprop="itemListElement" itemscope itemtype="https://schema.org/ListItem">
+        <a itemprop="item" href="../../index.html"><span itemprop="name">polyfactory</span></a>
+        <span>/</span>
+        <meta itemprop="position" content="1" />
+      </li>
+      
+      <li itemprop="itemListElement" itemscope itemtype="https://schema.org/ListItem">
+        <a itemprop="item" href="../index.html"><span itemprop="name">API Reference</span></a>
+        <span>/</span>
+        <meta itemprop="position" content="2" />
+      </li>
+      
+      <li itemprop="itemListElement" itemscope itemtype="https://schema.org/ListItem">
+        <a itemprop="item" href="index.html"><span itemprop="name">value_generators</span></a>
+        <span>/</span>
+        <meta itemprop="position" content="3" />
+      </li>
+      
+      <li itemprop="itemListElement" itemscope itemtype="https://schema.org/ListItem">
+        <strong itemprop="name">constrained_numbers</strong>
+        <meta itemprop="position" content="4" />
+      </li>
+      
+      
+    </ol>
+    <div class="xl:hidden ml-1">
+      <button class="js-menu" aria-label="Show table of contents" type="button" aria-controls="rside"
+        aria-expanded="false">
+        <i class="i-lucide outdent"></i>
+      </button>
+    </div>
+  </div>
 </div>
-</div>
-              
-              
-              
-                
-<div id="searchbox"></div>
-                <article class="bd-article" role="main">
-                  
-  <section id="module-polyfactory.value_generators.constrained_numbers">
-<span id="constrained-numbers"></span><h1>constrained_numbers<a class="headerlink" href="#module-polyfactory.value_generators.constrained_numbers" title="Permalink to this heading">#</a></h1>
+    <div class="flex flex-col break-words justify-between">
+      <div class="min-w-0 max-w-6xl px-6 pb-6 pt-8 xl:px-12">
+        <article class="yue" role="main">
+          <section id="module-polyfactory.value_generators.constrained_numbers">
+<span id="constrained-numbers"></span><h1>constrained_numbers<a class="headerlink" href="#module-polyfactory.value_generators.constrained_numbers" title="Permalink to this heading">¶</a></h1>
 <dl class="py class">
 <dt class="sig sig-object py" id="polyfactory.value_generators.constrained_numbers.NumberGeneratorProtocol">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">polyfactory.value_generators.constrained_numbers.</span></span><span class="sig-name descname"><span class="pre">NumberGeneratorProtocol</span></span><a class="headerlink" href="#polyfactory.value_generators.constrained_numbers.NumberGeneratorProtocol" title="Permalink to this definition">#</a></dt>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">polyfactory.value_generators.constrained_numbers.</span></span><span class="sig-name descname"><span class="pre">NumberGeneratorProtocol</span></span><a class="reference internal" href="../../_modules/polyfactory/value_generators/constrained_numbers.html#NumberGeneratorProtocol"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#polyfactory.value_generators.constrained_numbers.NumberGeneratorProtocol" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Protocol" title="(in Python v3.12)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Protocol</span></code></a>[<code class="xref py py-obj docutils literal notranslate"><span class="pre">T</span></code>]</p>
 <p>Protocol for custom callables used to generate numerical values</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="polyfactory.value_generators.constrained_numbers.NumberGeneratorProtocol.__call__">
-<span class="sig-name descname"><span class="pre">__call__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">random</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Random</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">minimum</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">T</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.12)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">maximum</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">T</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.12)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">T</span></span></span><a class="headerlink" href="#polyfactory.value_generators.constrained_numbers.NumberGeneratorProtocol.__call__" title="Permalink to this definition">#</a></dt>
+<span class="sig-name descname"><span class="pre">__call__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">random</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Random</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">minimum</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">T</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.12)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">maximum</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">T</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.12)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">T</span></span></span><a class="reference internal" href="../../_modules/polyfactory/value_generators/constrained_numbers.html#NumberGeneratorProtocol.__call__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#polyfactory.value_generators.constrained_numbers.NumberGeneratorProtocol.__call__" title="Permalink to this definition">¶</a></dt>
 <dd><p>Signature of the callable.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>random</strong> – An instance of random.</p></li>
-<li><p><strong>minimum</strong> – A minimum value.</p></li>
-<li><p><strong>maximum</strong> – A maximum value.</p></li>
+<li><p><span class="target" id="polyfactory.value_generators.constrained_numbers.NumberGeneratorProtocol.__call__.params.random"></span><strong>random</strong><a class="paramlink headerlink reference internal" href="#polyfactory.value_generators.constrained_numbers.NumberGeneratorProtocol.__call__.params.random">¶</a> – An instance of random.</p></li>
+<li><p><span class="target" id="polyfactory.value_generators.constrained_numbers.NumberGeneratorProtocol.__call__.params.minimum"></span><strong>minimum</strong><a class="paramlink headerlink reference internal" href="#polyfactory.value_generators.constrained_numbers.NumberGeneratorProtocol.__call__.params.minimum">¶</a> – A minimum value.</p></li>
+<li><p><span class="target" id="polyfactory.value_generators.constrained_numbers.NumberGeneratorProtocol.__call__.params.maximum"></span><strong>maximum</strong><a class="paramlink headerlink reference internal" href="#polyfactory.value_generators.constrained_numbers.NumberGeneratorProtocol.__call__.params.maximum">¶</a> – A maximum value.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
@@ -792,21 +355,21 @@ document.write(`
 
 <dl class="py method">
 <dt class="sig sig-object py" id="polyfactory.value_generators.constrained_numbers.NumberGeneratorProtocol.__init__">
-<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#polyfactory.value_generators.constrained_numbers.NumberGeneratorProtocol.__init__" title="Permalink to this definition">#</a></dt>
+<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#polyfactory.value_generators.constrained_numbers.NumberGeneratorProtocol.__init__" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 </dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="polyfactory.value_generators.constrained_numbers.almost_equal_floats">
-<span class="sig-prename descclassname"><span class="pre">polyfactory.value_generators.constrained_numbers.</span></span><span class="sig-name descname"><span class="pre">almost_equal_floats</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">value_1</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.12)"><span class="pre">float</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">value_2</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.12)"><span class="pre">float</span></a></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">delta</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.12)"><span class="pre">float</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">1e-08</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.12)"><span class="pre">bool</span></a></span></span><a class="headerlink" href="#polyfactory.value_generators.constrained_numbers.almost_equal_floats" title="Permalink to this definition">#</a></dt>
+<span class="sig-prename descclassname"><span class="pre">polyfactory.value_generators.constrained_numbers.</span></span><span class="sig-name descname"><span class="pre">almost_equal_floats</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">value_1</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.12)"><span class="pre">float</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">value_2</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.12)"><span class="pre">float</span></a></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">delta</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.12)"><span class="pre">float</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">1e-08</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.12)"><span class="pre">bool</span></a></span></span><a class="reference internal" href="../../_modules/polyfactory/value_generators/constrained_numbers.html#almost_equal_floats"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#polyfactory.value_generators.constrained_numbers.almost_equal_floats" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return True if two floats are almost equal</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>value_1</strong> – A float value.</p></li>
-<li><p><strong>value_2</strong> – A float value.</p></li>
-<li><p><strong>delta</strong> – A minimal delta.</p></li>
+<li><p><span class="target" id="polyfactory.value_generators.constrained_numbers.almost_equal_floats.params.value_1"></span><strong>value_1</strong><a class="paramlink headerlink reference internal" href="#polyfactory.value_generators.constrained_numbers.almost_equal_floats.params.value_1">¶</a> – A float value.</p></li>
+<li><p><span class="target" id="polyfactory.value_generators.constrained_numbers.almost_equal_floats.params.value_2"></span><strong>value_2</strong><a class="paramlink headerlink reference internal" href="#polyfactory.value_generators.constrained_numbers.almost_equal_floats.params.value_2">¶</a> – A float value.</p></li>
+<li><p><span class="target" id="polyfactory.value_generators.constrained_numbers.almost_equal_floats.params.delta"></span><strong>delta</strong><a class="paramlink headerlink reference internal" href="#polyfactory.value_generators.constrained_numbers.almost_equal_floats.params.delta">¶</a> – A minimal delta.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
@@ -817,14 +380,14 @@ document.write(`
 
 <dl class="py function">
 <dt class="sig sig-object py" id="polyfactory.value_generators.constrained_numbers.is_multiply_of_multiple_of_in_range">
-<span class="sig-prename descclassname"><span class="pre">polyfactory.value_generators.constrained_numbers.</span></span><span class="sig-name descname"><span class="pre">is_multiply_of_multiple_of_in_range</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">minimum</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">T</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">maximum</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">T</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">multiple_of</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">T</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.12)"><span class="pre">bool</span></a></span></span><a class="headerlink" href="#polyfactory.value_generators.constrained_numbers.is_multiply_of_multiple_of_in_range" title="Permalink to this definition">#</a></dt>
+<span class="sig-prename descclassname"><span class="pre">polyfactory.value_generators.constrained_numbers.</span></span><span class="sig-name descname"><span class="pre">is_multiply_of_multiple_of_in_range</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">minimum</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">T</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">maximum</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">T</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">multiple_of</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">T</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.12)"><span class="pre">bool</span></a></span></span><a class="reference internal" href="../../_modules/polyfactory/value_generators/constrained_numbers.html#is_multiply_of_multiple_of_in_range"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#polyfactory.value_generators.constrained_numbers.is_multiply_of_multiple_of_in_range" title="Permalink to this definition">¶</a></dt>
 <dd><p>Determine if at least one multiply of <cite>multiple_of</cite> lies in the given range.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>minimum</strong> – T: A minimum value.</p></li>
-<li><p><strong>maximum</strong> – T: A maximum value.</p></li>
-<li><p><strong>multiple_of</strong> – T: A value to use as a base for multiplication.</p></li>
+<li><p><span class="target" id="polyfactory.value_generators.constrained_numbers.is_multiply_of_multiple_of_in_range.params.minimum"></span><strong>minimum</strong><a class="paramlink headerlink reference internal" href="#polyfactory.value_generators.constrained_numbers.is_multiply_of_multiple_of_in_range.params.minimum">¶</a> – T: A minimum value.</p></li>
+<li><p><span class="target" id="polyfactory.value_generators.constrained_numbers.is_multiply_of_multiple_of_in_range.params.maximum"></span><strong>maximum</strong><a class="paramlink headerlink reference internal" href="#polyfactory.value_generators.constrained_numbers.is_multiply_of_multiple_of_in_range.params.maximum">¶</a> – T: A maximum value.</p></li>
+<li><p><span class="target" id="polyfactory.value_generators.constrained_numbers.is_multiply_of_multiple_of_in_range.params.multiple_of"></span><strong>multiple_of</strong><a class="paramlink headerlink reference internal" href="#polyfactory.value_generators.constrained_numbers.is_multiply_of_multiple_of_in_range.params.multiple_of">¶</a> – T: A value to use as a base for multiplication.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
@@ -835,13 +398,13 @@ document.write(`
 
 <dl class="py function">
 <dt class="sig sig-object py" id="polyfactory.value_generators.constrained_numbers.passes_pydantic_multiple_validator">
-<span class="sig-prename descclassname"><span class="pre">polyfactory.value_generators.constrained_numbers.</span></span><span class="sig-name descname"><span class="pre">passes_pydantic_multiple_validator</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">value</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">T</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">multiple_of</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">T</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.12)"><span class="pre">bool</span></a></span></span><a class="headerlink" href="#polyfactory.value_generators.constrained_numbers.passes_pydantic_multiple_validator" title="Permalink to this definition">#</a></dt>
+<span class="sig-prename descclassname"><span class="pre">polyfactory.value_generators.constrained_numbers.</span></span><span class="sig-name descname"><span class="pre">passes_pydantic_multiple_validator</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">value</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">T</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">multiple_of</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">T</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.12)"><span class="pre">bool</span></a></span></span><a class="reference internal" href="../../_modules/polyfactory/value_generators/constrained_numbers.html#passes_pydantic_multiple_validator"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#polyfactory.value_generators.constrained_numbers.passes_pydantic_multiple_validator" title="Permalink to this definition">¶</a></dt>
 <dd><p>Determine whether a given value passes the pydantic multiple_of validation.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>value</strong> – A numeric value.</p></li>
-<li><p><strong>multiple_of</strong> – Another numeric value.</p></li>
+<li><p><span class="target" id="polyfactory.value_generators.constrained_numbers.passes_pydantic_multiple_validator.params.value"></span><strong>value</strong><a class="paramlink headerlink reference internal" href="#polyfactory.value_generators.constrained_numbers.passes_pydantic_multiple_validator.params.value">¶</a> – A numeric value.</p></li>
+<li><p><span class="target" id="polyfactory.value_generators.constrained_numbers.passes_pydantic_multiple_validator.params.multiple_of"></span><strong>multiple_of</strong><a class="paramlink headerlink reference internal" href="#polyfactory.value_generators.constrained_numbers.passes_pydantic_multiple_validator.params.multiple_of">¶</a> – Another numeric value.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
@@ -852,11 +415,11 @@ document.write(`
 
 <dl class="py function">
 <dt class="sig sig-object py" id="polyfactory.value_generators.constrained_numbers.get_increment">
-<span class="sig-prename descclassname"><span class="pre">polyfactory.value_generators.constrained_numbers.</span></span><span class="sig-name descname"><span class="pre">get_increment</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">t_type</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#type" title="(in Python v3.12)"><span class="pre">type</span></a><span class="p"><span class="pre">[</span></span><span class="pre">T</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">T</span></span></span><a class="headerlink" href="#polyfactory.value_generators.constrained_numbers.get_increment" title="Permalink to this definition">#</a></dt>
+<span class="sig-prename descclassname"><span class="pre">polyfactory.value_generators.constrained_numbers.</span></span><span class="sig-name descname"><span class="pre">get_increment</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">t_type</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#type" title="(in Python v3.12)"><span class="pre">type</span></a><span class="p"><span class="pre">[</span></span><span class="pre">T</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">T</span></span></span><a class="reference internal" href="../../_modules/polyfactory/value_generators/constrained_numbers.html#get_increment"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#polyfactory.value_generators.constrained_numbers.get_increment" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get a small increment base to add to constrained values, i.e. lt/gt entries.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>t_type</strong> – A value of type T.</p>
+<dd class="field-odd"><p><span class="target" id="polyfactory.value_generators.constrained_numbers.get_increment.params.t_type"></span><strong>t_type</strong><a class="paramlink headerlink reference internal" href="#polyfactory.value_generators.constrained_numbers.get_increment.params.t_type">¶</a> – A value of type T.</p>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p>An increment T.</p>
@@ -866,14 +429,14 @@ document.write(`
 
 <dl class="py function">
 <dt class="sig sig-object py" id="polyfactory.value_generators.constrained_numbers.get_value_or_none">
-<span class="sig-prename descclassname"><span class="pre">polyfactory.value_generators.constrained_numbers.</span></span><span class="sig-name descname"><span class="pre">get_value_or_none</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">t_type</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#type" title="(in Python v3.12)"><span class="pre">type</span></a><span class="p"><span class="pre">[</span></span><span class="pre">T</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">lt</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">T</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.12)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">le</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">T</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.12)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">gt</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">T</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.12)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ge</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">T</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.12)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.12)"><span class="pre">tuple</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Optional" title="(in Python v3.12)"><span class="pre">Optional</span></a><span class="p"><span class="pre">[</span></span><span class="pre">T</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Optional" title="(in Python v3.12)"><span class="pre">Optional</span></a><span class="p"><span class="pre">[</span></span><span class="pre">T</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#polyfactory.value_generators.constrained_numbers.get_value_or_none" title="Permalink to this definition">#</a></dt>
+<span class="sig-prename descclassname"><span class="pre">polyfactory.value_generators.constrained_numbers.</span></span><span class="sig-name descname"><span class="pre">get_value_or_none</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">t_type</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#type" title="(in Python v3.12)"><span class="pre">type</span></a><span class="p"><span class="pre">[</span></span><span class="pre">T</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">lt</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">T</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.12)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">le</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">T</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.12)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">gt</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">T</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.12)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ge</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">T</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.12)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.12)"><span class="pre">tuple</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Optional" title="(in Python v3.12)"><span class="pre">Optional</span></a><span class="p"><span class="pre">[</span></span><span class="pre">T</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Optional" title="(in Python v3.12)"><span class="pre">Optional</span></a><span class="p"><span class="pre">[</span></span><span class="pre">T</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../../_modules/polyfactory/value_generators/constrained_numbers.html#get_value_or_none"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#polyfactory.value_generators.constrained_numbers.get_value_or_none" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return an optional value.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>equal_value</strong> – An GE/LE value.</p></li>
-<li><p><strong>constrained</strong> – An GT/LT value.</p></li>
-<li><p><strong>increment</strong> – increment</p></li>
+<li><p><span class="target" id="polyfactory.value_generators.constrained_numbers.get_value_or_none.params.equal_value"></span><strong>equal_value</strong><a class="paramlink headerlink reference internal" href="#polyfactory.value_generators.constrained_numbers.get_value_or_none.params.equal_value">¶</a> – An GE/LE value.</p></li>
+<li><p><span class="target" id="polyfactory.value_generators.constrained_numbers.get_value_or_none.params.constrained"></span><strong>constrained</strong><a class="paramlink headerlink reference internal" href="#polyfactory.value_generators.constrained_numbers.get_value_or_none.params.constrained">¶</a> – An GT/LT value.</p></li>
+<li><p><span class="target" id="polyfactory.value_generators.constrained_numbers.get_value_or_none.params.increment"></span><strong>increment</strong><a class="paramlink headerlink reference internal" href="#polyfactory.value_generators.constrained_numbers.get_value_or_none.params.increment">¶</a> – increment</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
@@ -884,18 +447,18 @@ document.write(`
 
 <dl class="py function">
 <dt class="sig sig-object py" id="polyfactory.value_generators.constrained_numbers.get_constrained_number_range">
-<span class="sig-prename descclassname"><span class="pre">polyfactory.value_generators.constrained_numbers.</span></span><span class="sig-name descname"><span class="pre">get_constrained_number_range</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">t_type</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#type" title="(in Python v3.12)"><span class="pre">type</span></a><span class="p"><span class="pre">[</span></span><span class="pre">T</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">random</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Random</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">lt</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">T</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.12)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">le</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">T</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.12)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">gt</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">T</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.12)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ge</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">T</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.12)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">multiple_of</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">T</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.12)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.12)"><span class="pre">tuple</span></a><span class="p"><span class="pre">[</span></span><span class="pre">T</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.12)"><span class="pre">None</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">T</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.12)"><span class="pre">None</span></a><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#polyfactory.value_generators.constrained_numbers.get_constrained_number_range" title="Permalink to this definition">#</a></dt>
+<span class="sig-prename descclassname"><span class="pre">polyfactory.value_generators.constrained_numbers.</span></span><span class="sig-name descname"><span class="pre">get_constrained_number_range</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">t_type</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#type" title="(in Python v3.12)"><span class="pre">type</span></a><span class="p"><span class="pre">[</span></span><span class="pre">T</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">random</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Random</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">lt</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">T</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.12)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">le</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">T</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.12)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">gt</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">T</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.12)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ge</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">T</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.12)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">multiple_of</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">T</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.12)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.12)"><span class="pre">tuple</span></a><span class="p"><span class="pre">[</span></span><span class="pre">T</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.12)"><span class="pre">None</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">T</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.12)"><span class="pre">None</span></a><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../../_modules/polyfactory/value_generators/constrained_numbers.html#get_constrained_number_range"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#polyfactory.value_generators.constrained_numbers.get_constrained_number_range" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return the minimum and maximum values given a field_meta’s constraints.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>t_type</strong> – A primitive constructor - int, float or Decimal.</p></li>
-<li><p><strong>random</strong> – An instance of Random.</p></li>
-<li><p><strong>lt</strong> – Less than value.</p></li>
-<li><p><strong>le</strong> – Less than or equal value.</p></li>
-<li><p><strong>gt</strong> – Greater than value.</p></li>
-<li><p><strong>ge</strong> – Greater than or equal value.</p></li>
-<li><p><strong>multiple_of</strong> – Multiple of value.</p></li>
+<li><p><span class="target" id="polyfactory.value_generators.constrained_numbers.get_constrained_number_range.params.t_type"></span><strong>t_type</strong><a class="paramlink headerlink reference internal" href="#polyfactory.value_generators.constrained_numbers.get_constrained_number_range.params.t_type">¶</a> – A primitive constructor - int, float or Decimal.</p></li>
+<li><p><span class="target" id="polyfactory.value_generators.constrained_numbers.get_constrained_number_range.params.random"></span><strong>random</strong><a class="paramlink headerlink reference internal" href="#polyfactory.value_generators.constrained_numbers.get_constrained_number_range.params.random">¶</a> – An instance of Random.</p></li>
+<li><p><span class="target" id="polyfactory.value_generators.constrained_numbers.get_constrained_number_range.params.lt"></span><strong>lt</strong><a class="paramlink headerlink reference internal" href="#polyfactory.value_generators.constrained_numbers.get_constrained_number_range.params.lt">¶</a> – Less than value.</p></li>
+<li><p><span class="target" id="polyfactory.value_generators.constrained_numbers.get_constrained_number_range.params.le"></span><strong>le</strong><a class="paramlink headerlink reference internal" href="#polyfactory.value_generators.constrained_numbers.get_constrained_number_range.params.le">¶</a> – Less than or equal value.</p></li>
+<li><p><span class="target" id="polyfactory.value_generators.constrained_numbers.get_constrained_number_range.params.gt"></span><strong>gt</strong><a class="paramlink headerlink reference internal" href="#polyfactory.value_generators.constrained_numbers.get_constrained_number_range.params.gt">¶</a> – Greater than value.</p></li>
+<li><p><span class="target" id="polyfactory.value_generators.constrained_numbers.get_constrained_number_range.params.ge"></span><strong>ge</strong><a class="paramlink headerlink reference internal" href="#polyfactory.value_generators.constrained_numbers.get_constrained_number_range.params.ge">¶</a> – Greater than or equal value.</p></li>
+<li><p><span class="target" id="polyfactory.value_generators.constrained_numbers.get_constrained_number_range.params.multiple_of"></span><strong>multiple_of</strong><a class="paramlink headerlink reference internal" href="#polyfactory.value_generators.constrained_numbers.get_constrained_number_range.params.multiple_of">¶</a> – Multiple of value.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
@@ -906,16 +469,16 @@ document.write(`
 
 <dl class="py function">
 <dt class="sig sig-object py" id="polyfactory.value_generators.constrained_numbers.generate_constrained_number">
-<span class="sig-prename descclassname"><span class="pre">polyfactory.value_generators.constrained_numbers.</span></span><span class="sig-name descname"><span class="pre">generate_constrained_number</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">random</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Random</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">minimum</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">T</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.12)"><span class="pre">None</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">maximum</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">T</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.12)"><span class="pre">None</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">multiple_of</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">T</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.12)"><span class="pre">None</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">method</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#polyfactory.value_generators.constrained_numbers.NumberGeneratorProtocol" title="polyfactory.value_generators.constrained_numbers.NumberGeneratorProtocol"><span class="pre">NumberGeneratorProtocol</span></a><span class="p"><span class="pre">[</span></span><span class="pre">T</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">T</span></span></span><a class="headerlink" href="#polyfactory.value_generators.constrained_numbers.generate_constrained_number" title="Permalink to this definition">#</a></dt>
+<span class="sig-prename descclassname"><span class="pre">polyfactory.value_generators.constrained_numbers.</span></span><span class="sig-name descname"><span class="pre">generate_constrained_number</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">random</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Random</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">minimum</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">T</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.12)"><span class="pre">None</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">maximum</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">T</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.12)"><span class="pre">None</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">multiple_of</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">T</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.12)"><span class="pre">None</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">method</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#polyfactory.value_generators.constrained_numbers.NumberGeneratorProtocol" title="polyfactory.value_generators.constrained_numbers.NumberGeneratorProtocol"><span class="pre">NumberGeneratorProtocol</span></a><span class="p"><span class="pre">[</span></span><span class="pre">T</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">T</span></span></span><a class="reference internal" href="../../_modules/polyfactory/value_generators/constrained_numbers.html#generate_constrained_number"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#polyfactory.value_generators.constrained_numbers.generate_constrained_number" title="Permalink to this definition">¶</a></dt>
 <dd><p>Generate a constrained number, output depends on the passed in callbacks.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>random</strong> – An instance of random.</p></li>
-<li><p><strong>minimum</strong> – A minimum value.</p></li>
-<li><p><strong>maximum</strong> – A maximum value.</p></li>
-<li><p><strong>multiple_of</strong> – A multiple of value.</p></li>
-<li><p><strong>method</strong> – A function that generates numbers of type T.</p></li>
+<li><p><span class="target" id="polyfactory.value_generators.constrained_numbers.generate_constrained_number.params.random"></span><strong>random</strong><a class="paramlink headerlink reference internal" href="#polyfactory.value_generators.constrained_numbers.generate_constrained_number.params.random">¶</a> – An instance of random.</p></li>
+<li><p><span class="target" id="polyfactory.value_generators.constrained_numbers.generate_constrained_number.params.minimum"></span><strong>minimum</strong><a class="paramlink headerlink reference internal" href="#polyfactory.value_generators.constrained_numbers.generate_constrained_number.params.minimum">¶</a> – A minimum value.</p></li>
+<li><p><span class="target" id="polyfactory.value_generators.constrained_numbers.generate_constrained_number.params.maximum"></span><strong>maximum</strong><a class="paramlink headerlink reference internal" href="#polyfactory.value_generators.constrained_numbers.generate_constrained_number.params.maximum">¶</a> – A maximum value.</p></li>
+<li><p><span class="target" id="polyfactory.value_generators.constrained_numbers.generate_constrained_number.params.multiple_of"></span><strong>multiple_of</strong><a class="paramlink headerlink reference internal" href="#polyfactory.value_generators.constrained_numbers.generate_constrained_number.params.multiple_of">¶</a> – A multiple of value.</p></li>
+<li><p><span class="target" id="polyfactory.value_generators.constrained_numbers.generate_constrained_number.params.method"></span><strong>method</strong><a class="paramlink headerlink reference internal" href="#polyfactory.value_generators.constrained_numbers.generate_constrained_number.params.method">¶</a> – A function that generates numbers of type T.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
@@ -926,17 +489,17 @@ document.write(`
 
 <dl class="py function">
 <dt class="sig sig-object py" id="polyfactory.value_generators.constrained_numbers.handle_constrained_int">
-<span class="sig-prename descclassname"><span class="pre">polyfactory.value_generators.constrained_numbers.</span></span><span class="sig-name descname"><span class="pre">handle_constrained_int</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">random</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Random</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">multiple_of</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.12)"><span class="pre">int</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.12)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">gt</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.12)"><span class="pre">int</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.12)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ge</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.12)"><span class="pre">int</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.12)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">lt</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.12)"><span class="pre">int</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.12)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">le</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.12)"><span class="pre">int</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.12)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.12)"><span class="pre">int</span></a></span></span><a class="headerlink" href="#polyfactory.value_generators.constrained_numbers.handle_constrained_int" title="Permalink to this definition">#</a></dt>
+<span class="sig-prename descclassname"><span class="pre">polyfactory.value_generators.constrained_numbers.</span></span><span class="sig-name descname"><span class="pre">handle_constrained_int</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">random</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Random</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">multiple_of</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.12)"><span class="pre">int</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.12)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">gt</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.12)"><span class="pre">int</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.12)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ge</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.12)"><span class="pre">int</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.12)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">lt</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.12)"><span class="pre">int</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.12)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">le</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.12)"><span class="pre">int</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.12)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.12)"><span class="pre">int</span></a></span></span><a class="reference internal" href="../../_modules/polyfactory/value_generators/constrained_numbers.html#handle_constrained_int"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#polyfactory.value_generators.constrained_numbers.handle_constrained_int" title="Permalink to this definition">¶</a></dt>
 <dd><p>Handle constrained integers.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>random</strong> – An instance of Random.</p></li>
-<li><p><strong>lt</strong> – Less than value.</p></li>
-<li><p><strong>le</strong> – Less than or equal value.</p></li>
-<li><p><strong>gt</strong> – Greater than value.</p></li>
-<li><p><strong>ge</strong> – Greater than or equal value.</p></li>
-<li><p><strong>multiple_of</strong> – Multiple of value.</p></li>
+<li><p><span class="target" id="polyfactory.value_generators.constrained_numbers.handle_constrained_int.params.random"></span><strong>random</strong><a class="paramlink headerlink reference internal" href="#polyfactory.value_generators.constrained_numbers.handle_constrained_int.params.random">¶</a> – An instance of Random.</p></li>
+<li><p><span class="target" id="polyfactory.value_generators.constrained_numbers.handle_constrained_int.params.lt"></span><strong>lt</strong><a class="paramlink headerlink reference internal" href="#polyfactory.value_generators.constrained_numbers.handle_constrained_int.params.lt">¶</a> – Less than value.</p></li>
+<li><p><span class="target" id="polyfactory.value_generators.constrained_numbers.handle_constrained_int.params.le"></span><strong>le</strong><a class="paramlink headerlink reference internal" href="#polyfactory.value_generators.constrained_numbers.handle_constrained_int.params.le">¶</a> – Less than or equal value.</p></li>
+<li><p><span class="target" id="polyfactory.value_generators.constrained_numbers.handle_constrained_int.params.gt"></span><strong>gt</strong><a class="paramlink headerlink reference internal" href="#polyfactory.value_generators.constrained_numbers.handle_constrained_int.params.gt">¶</a> – Greater than value.</p></li>
+<li><p><span class="target" id="polyfactory.value_generators.constrained_numbers.handle_constrained_int.params.ge"></span><strong>ge</strong><a class="paramlink headerlink reference internal" href="#polyfactory.value_generators.constrained_numbers.handle_constrained_int.params.ge">¶</a> – Greater than or equal value.</p></li>
+<li><p><span class="target" id="polyfactory.value_generators.constrained_numbers.handle_constrained_int.params.multiple_of"></span><strong>multiple_of</strong><a class="paramlink headerlink reference internal" href="#polyfactory.value_generators.constrained_numbers.handle_constrained_int.params.multiple_of">¶</a> – Multiple of value.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
@@ -947,17 +510,17 @@ document.write(`
 
 <dl class="py function">
 <dt class="sig sig-object py" id="polyfactory.value_generators.constrained_numbers.handle_constrained_float">
-<span class="sig-prename descclassname"><span class="pre">polyfactory.value_generators.constrained_numbers.</span></span><span class="sig-name descname"><span class="pre">handle_constrained_float</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">random</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Random</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">multiple_of</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.12)"><span class="pre">float</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.12)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">gt</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.12)"><span class="pre">float</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.12)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ge</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.12)"><span class="pre">float</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.12)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">lt</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.12)"><span class="pre">float</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.12)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">le</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.12)"><span class="pre">float</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.12)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.12)"><span class="pre">float</span></a></span></span><a class="headerlink" href="#polyfactory.value_generators.constrained_numbers.handle_constrained_float" title="Permalink to this definition">#</a></dt>
+<span class="sig-prename descclassname"><span class="pre">polyfactory.value_generators.constrained_numbers.</span></span><span class="sig-name descname"><span class="pre">handle_constrained_float</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">random</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Random</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">multiple_of</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.12)"><span class="pre">float</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.12)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">gt</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.12)"><span class="pre">float</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.12)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ge</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.12)"><span class="pre">float</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.12)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">lt</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.12)"><span class="pre">float</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.12)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">le</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.12)"><span class="pre">float</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.12)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.12)"><span class="pre">float</span></a></span></span><a class="reference internal" href="../../_modules/polyfactory/value_generators/constrained_numbers.html#handle_constrained_float"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#polyfactory.value_generators.constrained_numbers.handle_constrained_float" title="Permalink to this definition">¶</a></dt>
 <dd><p>Handle constrained floats.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>random</strong> – An instance of Random.</p></li>
-<li><p><strong>lt</strong> – Less than value.</p></li>
-<li><p><strong>le</strong> – Less than or equal value.</p></li>
-<li><p><strong>gt</strong> – Greater than value.</p></li>
-<li><p><strong>ge</strong> – Greater than or equal value.</p></li>
-<li><p><strong>multiple_of</strong> – Multiple of value.</p></li>
+<li><p><span class="target" id="polyfactory.value_generators.constrained_numbers.handle_constrained_float.params.random"></span><strong>random</strong><a class="paramlink headerlink reference internal" href="#polyfactory.value_generators.constrained_numbers.handle_constrained_float.params.random">¶</a> – An instance of Random.</p></li>
+<li><p><span class="target" id="polyfactory.value_generators.constrained_numbers.handle_constrained_float.params.lt"></span><strong>lt</strong><a class="paramlink headerlink reference internal" href="#polyfactory.value_generators.constrained_numbers.handle_constrained_float.params.lt">¶</a> – Less than value.</p></li>
+<li><p><span class="target" id="polyfactory.value_generators.constrained_numbers.handle_constrained_float.params.le"></span><strong>le</strong><a class="paramlink headerlink reference internal" href="#polyfactory.value_generators.constrained_numbers.handle_constrained_float.params.le">¶</a> – Less than or equal value.</p></li>
+<li><p><span class="target" id="polyfactory.value_generators.constrained_numbers.handle_constrained_float.params.gt"></span><strong>gt</strong><a class="paramlink headerlink reference internal" href="#polyfactory.value_generators.constrained_numbers.handle_constrained_float.params.gt">¶</a> – Greater than value.</p></li>
+<li><p><span class="target" id="polyfactory.value_generators.constrained_numbers.handle_constrained_float.params.ge"></span><strong>ge</strong><a class="paramlink headerlink reference internal" href="#polyfactory.value_generators.constrained_numbers.handle_constrained_float.params.ge">¶</a> – Greater than or equal value.</p></li>
+<li><p><span class="target" id="polyfactory.value_generators.constrained_numbers.handle_constrained_float.params.multiple_of"></span><strong>multiple_of</strong><a class="paramlink headerlink reference internal" href="#polyfactory.value_generators.constrained_numbers.handle_constrained_float.params.multiple_of">¶</a> – Multiple of value.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
@@ -968,14 +531,14 @@ document.write(`
 
 <dl class="py function">
 <dt class="sig sig-object py" id="polyfactory.value_generators.constrained_numbers.validate_max_digits">
-<span class="sig-prename descclassname"><span class="pre">polyfactory.value_generators.constrained_numbers.</span></span><span class="sig-name descname"><span class="pre">validate_max_digits</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">max_digits</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.12)"><span class="pre">int</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">minimum</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/decimal.html#decimal.Decimal" title="(in Python v3.12)"><span class="pre">Decimal</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.12)"><span class="pre">None</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">decimal_places</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.12)"><span class="pre">int</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.12)"><span class="pre">None</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.12)"><span class="pre">None</span></a></span></span><a class="headerlink" href="#polyfactory.value_generators.constrained_numbers.validate_max_digits" title="Permalink to this definition">#</a></dt>
+<span class="sig-prename descclassname"><span class="pre">polyfactory.value_generators.constrained_numbers.</span></span><span class="sig-name descname"><span class="pre">validate_max_digits</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">max_digits</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.12)"><span class="pre">int</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">minimum</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/decimal.html#decimal.Decimal" title="(in Python v3.12)"><span class="pre">Decimal</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.12)"><span class="pre">None</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">decimal_places</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.12)"><span class="pre">int</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.12)"><span class="pre">None</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.12)"><span class="pre">None</span></a></span></span><a class="reference internal" href="../../_modules/polyfactory/value_generators/constrained_numbers.html#validate_max_digits"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#polyfactory.value_generators.constrained_numbers.validate_max_digits" title="Permalink to this definition">¶</a></dt>
 <dd><p>Validate that max digits is greater than minimum and decimal places.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>max_digits</strong> – The maximal number of digits for the decimal.</p></li>
-<li><p><strong>minimum</strong> – Minimal value.</p></li>
-<li><p><strong>decimal_places</strong> – Number of decimal places</p></li>
+<li><p><span class="target" id="polyfactory.value_generators.constrained_numbers.validate_max_digits.params.max_digits"></span><strong>max_digits</strong><a class="paramlink headerlink reference internal" href="#polyfactory.value_generators.constrained_numbers.validate_max_digits.params.max_digits">¶</a> – The maximal number of digits for the decimal.</p></li>
+<li><p><span class="target" id="polyfactory.value_generators.constrained_numbers.validate_max_digits.params.minimum"></span><strong>minimum</strong><a class="paramlink headerlink reference internal" href="#polyfactory.value_generators.constrained_numbers.validate_max_digits.params.minimum">¶</a> – Minimal value.</p></li>
+<li><p><span class="target" id="polyfactory.value_generators.constrained_numbers.validate_max_digits.params.decimal_places"></span><strong>decimal_places</strong><a class="paramlink headerlink reference internal" href="#polyfactory.value_generators.constrained_numbers.validate_max_digits.params.decimal_places">¶</a> – Number of decimal places</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
@@ -986,14 +549,14 @@ document.write(`
 
 <dl class="py function">
 <dt class="sig sig-object py" id="polyfactory.value_generators.constrained_numbers.handle_decimal_length">
-<span class="sig-prename descclassname"><span class="pre">polyfactory.value_generators.constrained_numbers.</span></span><span class="sig-name descname"><span class="pre">handle_decimal_length</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">generated_decimal</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/decimal.html#decimal.Decimal" title="(in Python v3.12)"><span class="pre">Decimal</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">decimal_places</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.12)"><span class="pre">int</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.12)"><span class="pre">None</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_digits</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.12)"><span class="pre">int</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.12)"><span class="pre">None</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/decimal.html#decimal.Decimal" title="(in Python v3.12)"><span class="pre">Decimal</span></a></span></span><a class="headerlink" href="#polyfactory.value_generators.constrained_numbers.handle_decimal_length" title="Permalink to this definition">#</a></dt>
+<span class="sig-prename descclassname"><span class="pre">polyfactory.value_generators.constrained_numbers.</span></span><span class="sig-name descname"><span class="pre">handle_decimal_length</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">generated_decimal</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/decimal.html#decimal.Decimal" title="(in Python v3.12)"><span class="pre">Decimal</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">decimal_places</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.12)"><span class="pre">int</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.12)"><span class="pre">None</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_digits</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.12)"><span class="pre">int</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.12)"><span class="pre">None</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/decimal.html#decimal.Decimal" title="(in Python v3.12)"><span class="pre">Decimal</span></a></span></span><a class="reference internal" href="../../_modules/polyfactory/value_generators/constrained_numbers.html#handle_decimal_length"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#polyfactory.value_generators.constrained_numbers.handle_decimal_length" title="Permalink to this definition">¶</a></dt>
 <dd><p>Handle the length of the decimal.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>generated_decimal</strong> – A decimal value.</p></li>
-<li><p><strong>decimal_places</strong> – Number of decimal places.</p></li>
-<li><p><strong>max_digits</strong> – Maximal number of digits.</p></li>
+<li><p><span class="target" id="polyfactory.value_generators.constrained_numbers.handle_decimal_length.params.generated_decimal"></span><strong>generated_decimal</strong><a class="paramlink headerlink reference internal" href="#polyfactory.value_generators.constrained_numbers.handle_decimal_length.params.generated_decimal">¶</a> – A decimal value.</p></li>
+<li><p><span class="target" id="polyfactory.value_generators.constrained_numbers.handle_decimal_length.params.decimal_places"></span><strong>decimal_places</strong><a class="paramlink headerlink reference internal" href="#polyfactory.value_generators.constrained_numbers.handle_decimal_length.params.decimal_places">¶</a> – Number of decimal places.</p></li>
+<li><p><span class="target" id="polyfactory.value_generators.constrained_numbers.handle_decimal_length.params.max_digits"></span><strong>max_digits</strong><a class="paramlink headerlink reference internal" href="#polyfactory.value_generators.constrained_numbers.handle_decimal_length.params.max_digits">¶</a> – Maximal number of digits.</p></li>
 </ul>
 </dd>
 </dl>
@@ -1001,19 +564,19 @@ document.write(`
 
 <dl class="py function">
 <dt class="sig sig-object py" id="polyfactory.value_generators.constrained_numbers.handle_constrained_decimal">
-<span class="sig-prename descclassname"><span class="pre">polyfactory.value_generators.constrained_numbers.</span></span><span class="sig-name descname"><span class="pre">handle_constrained_decimal</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">random</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Random</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">multiple_of</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Decimal</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.12)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">decimal_places</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.12)"><span class="pre">int</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.12)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_digits</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.12)"><span class="pre">int</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.12)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">gt</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Decimal</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.12)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ge</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Decimal</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.12)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">lt</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Decimal</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.12)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">le</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Decimal</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.12)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Decimal</span></span></span><a class="headerlink" href="#polyfactory.value_generators.constrained_numbers.handle_constrained_decimal" title="Permalink to this definition">#</a></dt>
+<span class="sig-prename descclassname"><span class="pre">polyfactory.value_generators.constrained_numbers.</span></span><span class="sig-name descname"><span class="pre">handle_constrained_decimal</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">random</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Random</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">multiple_of</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Decimal</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.12)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">decimal_places</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.12)"><span class="pre">int</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.12)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_digits</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.12)"><span class="pre">int</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.12)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">gt</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Decimal</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.12)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ge</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Decimal</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.12)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">lt</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Decimal</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.12)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">le</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Decimal</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.12)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Decimal</span></span></span><a class="reference internal" href="../../_modules/polyfactory/value_generators/constrained_numbers.html#handle_constrained_decimal"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#polyfactory.value_generators.constrained_numbers.handle_constrained_decimal" title="Permalink to this definition">¶</a></dt>
 <dd><p>Handle a constrained decimal.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>random</strong> – An instance of Random.</p></li>
-<li><p><strong>multiple_of</strong> – Multiple of value.</p></li>
-<li><p><strong>decimal_places</strong> – Number of decimal places.</p></li>
-<li><p><strong>max_digits</strong> – Maximal number of digits.</p></li>
-<li><p><strong>lt</strong> – Less than value.</p></li>
-<li><p><strong>le</strong> – Less than or equal value.</p></li>
-<li><p><strong>gt</strong> – Greater than value.</p></li>
-<li><p><strong>ge</strong> – Greater than or equal value.</p></li>
+<li><p><span class="target" id="polyfactory.value_generators.constrained_numbers.handle_constrained_decimal.params.random"></span><strong>random</strong><a class="paramlink headerlink reference internal" href="#polyfactory.value_generators.constrained_numbers.handle_constrained_decimal.params.random">¶</a> – An instance of Random.</p></li>
+<li><p><span class="target" id="polyfactory.value_generators.constrained_numbers.handle_constrained_decimal.params.multiple_of"></span><strong>multiple_of</strong><a class="paramlink headerlink reference internal" href="#polyfactory.value_generators.constrained_numbers.handle_constrained_decimal.params.multiple_of">¶</a> – Multiple of value.</p></li>
+<li><p><span class="target" id="polyfactory.value_generators.constrained_numbers.handle_constrained_decimal.params.decimal_places"></span><strong>decimal_places</strong><a class="paramlink headerlink reference internal" href="#polyfactory.value_generators.constrained_numbers.handle_constrained_decimal.params.decimal_places">¶</a> – Number of decimal places.</p></li>
+<li><p><span class="target" id="polyfactory.value_generators.constrained_numbers.handle_constrained_decimal.params.max_digits"></span><strong>max_digits</strong><a class="paramlink headerlink reference internal" href="#polyfactory.value_generators.constrained_numbers.handle_constrained_decimal.params.max_digits">¶</a> – Maximal number of digits.</p></li>
+<li><p><span class="target" id="polyfactory.value_generators.constrained_numbers.handle_constrained_decimal.params.lt"></span><strong>lt</strong><a class="paramlink headerlink reference internal" href="#polyfactory.value_generators.constrained_numbers.handle_constrained_decimal.params.lt">¶</a> – Less than value.</p></li>
+<li><p><span class="target" id="polyfactory.value_generators.constrained_numbers.handle_constrained_decimal.params.le"></span><strong>le</strong><a class="paramlink headerlink reference internal" href="#polyfactory.value_generators.constrained_numbers.handle_constrained_decimal.params.le">¶</a> – Less than or equal value.</p></li>
+<li><p><span class="target" id="polyfactory.value_generators.constrained_numbers.handle_constrained_decimal.params.gt"></span><strong>gt</strong><a class="paramlink headerlink reference internal" href="#polyfactory.value_generators.constrained_numbers.handle_constrained_decimal.params.gt">¶</a> – Greater than value.</p></li>
+<li><p><span class="target" id="polyfactory.value_generators.constrained_numbers.handle_constrained_decimal.params.ge"></span><strong>ge</strong><a class="paramlink headerlink reference internal" href="#polyfactory.value_generators.constrained_numbers.handle_constrained_decimal.params.ge">¶</a> – Greater than or equal value.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
@@ -1024,124 +587,77 @@ document.write(`
 
 </section>
 
-
-                </article>
-              
-              
-              
-              
-              
-                <footer class="prev-next-footer">
-                  
-<div class="prev-next-area">
-    <a class="left-prev"
-       href="constrained_dates.html"
-       title="previous page">
-      <i class="fa-solid fa-angle-left"></i>
-      <div class="prev-next-info">
-        <p class="prev-next-subtitle">previous</p>
-        <p class="prev-next-title">constrained_dates</p>
-      </div>
-    </a>
-    <a class="right-next"
-       href="constrained_strings.html"
-       title="next page">
-      <div class="prev-next-info">
-        <p class="prev-next-subtitle">next</p>
-        <p class="prev-next-title">constrained_strings</p>
-      </div>
-      <i class="fa-solid fa-angle-right"></i>
-    </a>
-</div>
-                </footer>
-              
-            </div>
-            
-            
-              
-                <div class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
-
-  <div class="sidebar-secondary-item">
-
-  <div class="page-toc tocsection onthispage">
-    <i class="fa-solid fa-list"></i> On this page
-  </div>
-  <nav class="bd-toc-nav page-toc">
-    <ul class="visible nav section-nav flex-column">
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#polyfactory.value_generators.constrained_numbers.NumberGeneratorProtocol"><code class="docutils literal notranslate"><span class="pre">NumberGeneratorProtocol</span></code></a><ul class="visible nav section-nav flex-column">
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#polyfactory.value_generators.constrained_numbers.NumberGeneratorProtocol.__call__"><code class="docutils literal notranslate"><span class="pre">NumberGeneratorProtocol.__call__()</span></code></a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#polyfactory.value_generators.constrained_numbers.NumberGeneratorProtocol.__init__"><code class="docutils literal notranslate"><span class="pre">NumberGeneratorProtocol.__init__()</span></code></a></li>
-</ul>
-</li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#polyfactory.value_generators.constrained_numbers.almost_equal_floats"><code class="docutils literal notranslate"><span class="pre">almost_equal_floats()</span></code></a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#polyfactory.value_generators.constrained_numbers.is_multiply_of_multiple_of_in_range"><code class="docutils literal notranslate"><span class="pre">is_multiply_of_multiple_of_in_range()</span></code></a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#polyfactory.value_generators.constrained_numbers.passes_pydantic_multiple_validator"><code class="docutils literal notranslate"><span class="pre">passes_pydantic_multiple_validator()</span></code></a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#polyfactory.value_generators.constrained_numbers.get_increment"><code class="docutils literal notranslate"><span class="pre">get_increment()</span></code></a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#polyfactory.value_generators.constrained_numbers.get_value_or_none"><code class="docutils literal notranslate"><span class="pre">get_value_or_none()</span></code></a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#polyfactory.value_generators.constrained_numbers.get_constrained_number_range"><code class="docutils literal notranslate"><span class="pre">get_constrained_number_range()</span></code></a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#polyfactory.value_generators.constrained_numbers.generate_constrained_number"><code class="docutils literal notranslate"><span class="pre">generate_constrained_number()</span></code></a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#polyfactory.value_generators.constrained_numbers.handle_constrained_int"><code class="docutils literal notranslate"><span class="pre">handle_constrained_int()</span></code></a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#polyfactory.value_generators.constrained_numbers.handle_constrained_float"><code class="docutils literal notranslate"><span class="pre">handle_constrained_float()</span></code></a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#polyfactory.value_generators.constrained_numbers.validate_max_digits"><code class="docutils literal notranslate"><span class="pre">validate_max_digits()</span></code></a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#polyfactory.value_generators.constrained_numbers.handle_decimal_length"><code class="docutils literal notranslate"><span class="pre">handle_decimal_length()</span></code></a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#polyfactory.value_generators.constrained_numbers.handle_constrained_decimal"><code class="docutils literal notranslate"><span class="pre">handle_constrained_decimal()</span></code></a></li>
-</ul>
-  </nav></div>
-
-</div></div>
-              
-            
-          </div>
-          <footer class="bd-footer-content">
-            
-          </footer>
+        </article>
+        <button class="back-to-top" type="button">
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+    <path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8v12z"></path>
+  </svg>
+  <span>Back to top</span>
+</button>
         
-      </main>
+        <div class="navigation flex print:hidden">
+  <div class="navigation-prev">
+    <a href="constrained_dates.html">
+      <i class="i-lucide chevron-left"></i>
+      <div class="page-info">
+        <span>Previous</span>
+        
+        <div class="title">constrained_dates</div>
+        
+      </div>
+    </a>
+  </div>
+  <div class="navigation-next">
+    <a href="constrained_strings.html">
+      <div class="page-info">
+        <span>Next</span>
+        <div class="title">constrained_strings</div>
+      </div>
+      <i class="i-lucide chevron-right"></i>
+    </a>
+  </div>
+</div>
+        
+      </div>
+    </div>
+  </main>
+</div>
+<footer class="sy-foot">
+  <div class="sy-foot-inner sy-container mx-auto">
+    
+    <div class="sy-foot-reserved md:flex justify-between items-center">
+      <div class="sy-foot-copyright"><p>2024, Litestar Organization</p>
+  
+  <p>
+    Made with
+    
+    <a href="https://www.sphinx-doc.org/">Sphinx</a> and
+    
+    <a href="https://shibuya.lepture.com">Shibuya theme</a>.
+  </p>
+</div>
+      <div class="sy-foot-socials">
+  <a href="https://twitter.com/LitestarAPI" aria-label="X (Twitter)"><i class="i-simpleicons x-twitter"></i></a>
+  <a href="https://discord.gg/litestar" aria-label="Discord"><i class="i-simpleicons discord"></i></a>
+  <a href="https://www.reddit.com/r/LitestarAPI" aria-label="Reddit"><i class="i-simpleicons reddit"></i></a>
+</div>
     </div>
   </div>
-  
-  <!-- Scripts loaded after <body> so the DOM is not blocked -->
-  <script src="../../_static/scripts/bootstrap.js?digest=5b4479735964841361fd"></script>
-<script src="../../_static/scripts/pydata-sphinx-theme.js?digest=5b4479735964841361fd"></script>
-
-  <footer class="bd-footer">
-<div class="bd-footer__inner bd-page-width">
-  
-    <div class="footer-items__start">
-      
-        <div class="footer-item">
-
-  <p class="copyright">
+</footer></div>
+      <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js?v=513ef7ff"></script>
+      <script src="../../_static/doctools.js?v=888ff710"></script>
+      <script src="../../_static/sphinx_highlight.js?v=4825356b"></script>
+      <script src="../../_static/clipboard.min.js?v=a7894cd8"></script>
+      <script src="../../_static/copybutton.js?v=f281be69"></script>
+      <script src="../../_static/litestar-theme.js?v=ab2dcc9e"></script>
+      <script>let toggleHintShow = 'Click to show';</script>
+      <script>let toggleHintHide = 'Click to hide';</script>
+      <script>let toggleOpenOnPrint = 'true';</script>
+      <script src="../../_static/togglebutton.js?v=4a39c7ea"></script>
+      <script src="../../_static/design-tabs.js?v=36754332"></script>
+      <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
+      <script src="../../_static/shibuya.js?v=5f0e4c24"></script>
+      <script src="../../_static/versioning.js"></script>
     
-      © Copyright 2023, Litestar Org.
-      <br/>
-    
-  </p>
-</div>
-      
-        <div class="footer-item">
-
-  <p class="sphinx-version">
-    Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 7.1.2.
-    <br/>
-  </p>
-</div>
-      
-    </div>
-  
-  
-  
-    <div class="footer-items__end">
-      
-        <div class="footer-item">
-<p class="theme-version">
-  Built with the <a href="https://pydata-sphinx-theme.readthedocs.io/en/stable/index.html">PyData Sphinx Theme</a> 0.14.4.
-</p></div>
-      
-    </div>
-  
-</div>
-
-  </footer>
-  </body>
+</body>
 </html>
