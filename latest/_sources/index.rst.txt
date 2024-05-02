@@ -1,56 +1,153 @@
-Polyfactory
-===========
+:layout: landing
+:description: Polyfactory is a simple and powerful mock data generation library.
 
-Polyfactory is a simple and powerful mock data generation library, based around type
-hints and supporting :doc:`dataclasses <python:library/dataclasses>`, :class:`TypedDicts <typing.TypedDict>`,
-Pydantic models, :class:`msgspec Struct's <msgspec.Struct>` and more.
+.. container::
+    :name: home-head
 
-Installation
-------------
+    .. container::
 
-.. code-block:: bash
+        .. image:: https://raw.githubusercontent.com/litestar-org/branding/main/assets/Branding%20-%20SVG%20-%20Transparent/Polyfactory%20-%20Banner%20-%20Inline%20-%20Light.svg
+            :alt: Litestar - Polyfactory
+            :width: 100%
+            :height: 400
 
-    pip install polyfactory
+        .. container:: badges
+           :name: badges
 
-Example
--------
+            .. image:: https://img.shields.io/github/actions/workflow/status/litestar-org/polyfactory/publish.yml?labelColor=202235&logo=github&logoColor=edb641
+               :alt: GitHub Actions Latest Release Workflow Status
 
-.. literalinclude:: /examples/declaring_factories/test_example_1.py
-    :caption: Minimal example using a dataclass
-    :language: python
+            .. image:: https://img.shields.io/github/actions/workflow/status/litestar-org/polyfactory/ci.yml?labelColor=202235&logo=github&logoColor=edb641
+               :alt: GitHub Actions CI Workflow Status
 
-That is it - with almost no work, we are able to create a mock data object fitting the ``Person`` class model definition.
+            .. image:: https://img.shields.io/github/actions/workflow/status/litestar-org/polyfactory/docs.yml?labelColor=202235&logo=github&logoColor=edb641
+               :alt: GitHub Actions Docs Build Workflow Status
 
-This is possible because of the typing information available on the dataclass, which are used as a
-source of truth for data generation.
+            .. image:: https://img.shields.io/codecov/c/github/litestar-org/polyfactory?labelColor=202235&logo=codecov&logoColor=edb641
+               :alt: Coverage
 
-The factory parses the information stored in the dataclass and generates a dictionary of kwargs that are passed to
-the ``Person`` class constructor.
+            .. image:: https://img.shields.io/pypi/v/litestar?labelColor=202235&color=edb641&logo=python&logoColor=edb641
+               :alt: PyPI Version
 
-Relation to ``pydantic-factories``
-----------------------------------
+            .. image:: https://img.shields.io/github/all-contributors/litestar-org/polyfactory?labelColor=202235&color=edb641&logoColor=edb641
+               :alt: Contributor Count
 
-Prior to version 2, this library was known as `pydantic-factories <https://pypi.org/project/pydantic-factories/>`_, a
-name under which it gained quite a bit of popularity.
+            .. image:: https://img.shields.io/pypi/dm/litestar?logo=python&label=litestar%20downloads&labelColor=202235&color=edb641&logoColor=edb641
+               :alt: PyPI Downloads
 
-A main motivator for the 2.0 release was that we wanted to support more than just Pydantic models, something which also
-required a change to its core architecture. As this library would no longer be directly tied to Pydantic, ``polyfactory``
-was chosen as its new name to reflect its capabilities; It can generate mock data for
-:doc:`dataclasses <python:library/dataclasses>`, :class:`TypedDicts <typing.TypedDict>`,
-`Pydantic <https://docs.pydantic.dev/latest/>`_, `Odmantic <https://art049.github.io/odmantic/>`_,
-and `Beanie ODM <https://beanie-odm.dev/>`_ models, as well as custom factories.
+            .. image:: https://img.shields.io/pypi/pyversions/litestar?labelColor=202235&color=edb641&logo=python&logoColor=edb641
+               :alt: Supported Python Versions
+
+.. rst-class:: lead
+
+   Polyfactory is a simple and powerful mock data generation library, based around type
+   hints and supporting :doc:`dataclasses <python:library/dataclasses>`, :class:`TypedDicts <typing.TypedDict>`,
+   Pydantic models, :class:`msgspec Struct's <msgspec.Struct>` and more.
+
+.. container:: buttons
+
+    :doc:`Get Started <getting-started>`
+    `Usage Docs <usage>`_
+    `API Docs <reference>`_
+    `Blog <https://blog.litestar.dev>`_
+
+.. grid:: 1 1 2 2
+    :padding: 0
+    :gutter: 2
+
+    .. grid-item-card:: :octicon:`versions` Changelog
+      :link: changelog
+      :link-type: doc
+
+      The latest updates and enhancements to Polyfactory
+
+    .. grid-item-card:: :octicon:`comment-discussion` Discussions
+      :link: https://github.com/litestar-org/polyfactory/discussions
+
+      Join discussions, pose questions, or share insights.
+
+    .. grid-item-card:: :octicon:`issue-opened` Issues
+      :link: https://github.com/litestar-org/polyfactory/issues
+
+      Report issues or suggest new features.
+
+    .. grid-item-card:: :octicon:`beaker` Contributing
+      :link: contribution-guide
+      :link-type: doc
+
+      Contribute to Litestar's growth with code, docs, and more.
+
+Sponsors
+--------
+
+.. rst-class:: lead
+
+   Litestar is a community-driven, open-source initiative that thrives on the generous contributions of our sponsors,
+   enabling us to pursue innovative developments and continue our mission to provide exceptional tools and resources
+   to our users.
+
+
+A huge thank you to our current sponsors:
+
+.. container::
+   :name: sponsors-section
+
+   .. grid:: 3
+      :class-row: surface
+      :padding: 0
+      :gutter: 2
+
+      .. grid-item-card::
+         :link: https://github.com/scalar/scalar
+
+         .. image:: https://raw.githubusercontent.com/litestar-org/branding/main/assets/sponsors/scalar.svg
+            :alt: Scalar.com
+            :class: sponsor
+
+         `Scalar.com <https://github.com/scalar/scalar>`_
+
+      .. grid-item-card::
+         :link: https://telemetrysports.com/
+
+         .. image:: https://raw.githubusercontent.com/litestar-org/branding/main/assets/sponsors/telemetry-sports/unofficial-telemetry-whitebg.svg
+            :alt: Telemetry Sports
+            :class: sponsor
+
+         `Telemetry Sports <https://telemetrysports.com/>`_
+
+      .. grid-item-card::
+         :link: https://www.stok.kr/
+
+         .. image:: https://avatars.githubusercontent.com/u/144093421
+            :alt: Stok
+            :class: sponsor
+
+         `Stok <https://www.stok.kr/>`_
+
+We invite organizations and individuals to join our sponsorship program.
+By becoming a sponsor on platforms like `Polar <sponsor-polar_>`_, `GitHub <sponsor-github_>`_
+and `Open Collective <sponsor-oc_>`_, you can play a pivotal role in our project's growth.
+
+On top of regular sponsorship, we engage in pledge-based sponsorship opportunities through `Polar <sponsor-polar_>`_,
+where you can pledge an amount towards an issue or feature you would like to see implemented.
+
+
+.. _sponsor-github: https://github.com/sponsors/litestar-org
+.. _sponsor-oc: https://opencollective.com/litestar
+.. _sponsor-polar: https://polar.sh/litestar-org
 
 .. toctree::
     :titlesonly:
     :caption: Documentation
     :hidden:
 
+    getting-started
     usage/index
     reference/index
 
 .. toctree::
     :titlesonly:
-    :caption: Development
+    :caption: Contributing
     :hidden:
 
     changelog
