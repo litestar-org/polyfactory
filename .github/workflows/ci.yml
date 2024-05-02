@@ -88,7 +88,7 @@ jobs:
       - uses: actions/upload-artifact@v4
         if: matrix.python-version == '3.12'
         with:
-          name: coverage-xml
+          name: coverage-data
           path: coverage.xml
 
   build-docs:
@@ -144,7 +144,7 @@ jobs:
       - name: Download Artifacts
         uses: actions/download-artifact@v4
         with:
-          name: coverage-xml
+          name: coverage-data
 
       - name: Fix coverage file for sonarcloud
         run: sed -i "s/home\/runner\/work\/polyfactory\/polyfactory/github\/workspace/g" coverage.xml
