@@ -4,12 +4,16 @@
 .. container::
     :name: home-head
 
+    .. image:: https://raw.githubusercontent.com/litestar-org/branding/main/assets/Branding%20-%20SVG%20-%20Transparent/Badge%20-%20Blue%20and%20Yellow.svg
+        :alt: Litestar Framework
+        :width: 400
+        :height: 400
+
     .. container::
 
-        .. image:: https://raw.githubusercontent.com/litestar-org/branding/main/assets/Branding%20-%20SVG%20-%20Transparent/Polyfactory%20-%20Banner%20-%20Inline%20-%20Light.svg
-            :alt: Litestar - Polyfactory
-            :width: 100%
-            :height: 400
+        .. raw:: html
+
+            <h1>Polyfactory</h1>
 
         .. container:: badges
            :name: badges
