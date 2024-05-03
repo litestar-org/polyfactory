@@ -194,12 +194,6 @@ jobs:
         with:
           name: coverage-data
 
-      - name: Combine coverage files
-        run: |
-          python -Im pip install coverage covdefaults
-          python -Im coverage combine
-          python -Im coverage xml -i
-
       - name: Fix coverage file name
         run: sed -i "s/home\/runner\/work\/polyfactory\/polyfactory/github\/workspace/g" coverage.xml
 
