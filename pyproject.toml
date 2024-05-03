@@ -314,6 +314,7 @@ pydantic_v1 = ["pydantic.v1"]
 "tools/**/*.*" = ["D", "ARG", "EM", "TRY", "G", "FBT", "INP"]
 
 [tool.git-cliff.changelog]
+trim = true
 header = """
 =========
 Changelog
@@ -352,6 +353,9 @@ body = """
           {% if commit.github.pr_number %} in `#{{ commit.github.pr_number }} <https://gihub.com/litestar-org/polyfactory/pull/{{ commit.github.pr_number }}>`_ {%- endif %}\
     {% endfor %}
 {% endfor %}\n
+"""
+footer = """
+Polyfactory Changelog
 """
 
 [tool.git-cliff.git]
