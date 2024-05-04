@@ -82,7 +82,11 @@ docs = [
     "blacken-docs>=1.16.0",
     "sphinx-design>=0.5.0",
     "sphinxcontrib-mermaid>=0.9.2",
-    "litestar-sphinx-theme @ git+https://github.com/litestar-org/litestar-sphinx-theme.git",
+    "sphinx-paramlinks>=0.6.0",
+    "sphinx-togglebutton>=0.3.2",
+    #    "litestar-sphinx-theme @ {root:uri}/../litestar-sphinx-theme", # only needed when working on the theme
+    "litestar-sphinx-theme @ git+https://github.com/litestar-org/litestar-sphinx-theme.git@v3",
+    "git-cliff>=2.2.1",
 ]
 lint = [
     "black>=23.9.1",
@@ -169,6 +173,11 @@ exclude_lines = [
 line-length = 120
 src = ["polyfactory", "tests", "docs/examples"]
 target-version = "py38"
+
+# TODO(#532): Enable with migration to Ruff format
+#[tool.ruff.format]
+#docstring-code-format = true
+#docstring-code-line-length = 88
 
 [tool.ruff.lint]
 select = ["ALL"]
@@ -303,3 +312,92 @@ pydantic_v1 = ["pydantic.v1"]
 ]
 "docs/conf.py" = ["FIX002", "ARG001",]
 "tools/**/*.*" = ["D", "ARG", "EM", "TRY", "G", "FBT", "INP"]
+
+[tool.git-cliff.changelog]
+trim = true
+header = """
+=========
+Changelog
+=========\n
+All commits to this project will be documented in this file.\n
+"""
+# TODO: Fix footers for co-authors
+body = """
+{% if version %}\
+    `Release [v{{ version | trim_start_matches(pat="v") }}] - {{ timestamp | date(format="%Y-%m-%d") }} <https://github.com/litestar-org/polyfactory/releases/tag/v{{ version | trim_start_matches(pat="v") }}>`_
+    ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+    * `See All commits in v{{ version | trim_start_matches(pat="v") }} <https://github.com/litestar-org/polyfactory/commits/v{{ version | trim_start_matches(pat="v") }}>`_
+{% else %}\
+    [unreleased]
+    ------------
+    {% if previous %}\
+        {% if previous.commit_id %}
+            `{{ previous.commit_id | default(value='') | truncate(length=7, end='') }} <https://github.com/litestar-org/polyfactory/commit/{{ previous.commit_id }}>`_ is the last commit in the changelog before unreleased changes.
+        {% endif %}\
+    {% else %}
+        `Initial commit`
+    {% endif %}
+{% endif %}\
+{% if previous %}\
+    {% if previous.commit_id and version %}
+        `{{ previous.commit_id | default(value='') | truncate(length=7, end='') }} <https://github.com/litestar-org/polyfactory/commit/{{ previous.commit_id }}>`_ ... \
+            `{{ commit_id | default(value='') | truncate(length=7, end='') }} <https://github.com/litestar-org/polyfactory/commit/{{ commit_id }}>`_ \
+            | `See diff for {{ version | trim_start_matches(pat="v") }} <https://github.com/litestar-org/polyfactory/compare/{{ previous.commit_id }}...{{ commit_id }}>`_
+    {% endif %}\
+{% endif %}\
+{% for group, commits in commits | group_by(attribute="group") %}
+    {{ group | upper_first }}
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    {% for commit in commits %}
+        * (`{{ commit.id | default(value='') | truncate(length=7, end='') }} <https://github.com/litestar-org/polyfactory/commit/{{ commit.id }}>`_) {% if commit.breaking %}[**breaking**] {% endif %} - {{ commit.message | upper_first }} {% if commit.github.username %} by `@{{ commit.github.username }} <https://github.com/{{ commit.github.username }}>`_ {%- endif %}\
+          {% if commit.github.pr_number %} in `#{{ commit.github.pr_number }} <https://gihub.com/litestar-org/polyfactory/pull/{{ commit.github.pr_number }}>`_ {%- endif %}\
+    {% endfor %}
+{% endfor %}\n
+"""
+footer = """
+Polyfactory Changelog
+"""
+
+[tool.git-cliff.git]
+commit_parsers = [
+  { message = "^feat", group = "Features" },
+  { message = "^fix", group = "Bug Fixes" },
+  { message = "^doc", group = "Documentation" },
+  { message = "^perf", group = "Performance" },
+  { message = "^refactor", group = "Refactor" },
+  { message = "^style", group = "Styling" },
+  { message = "^test", group = "Testing" },
+  { message = "^chore\\(release\\): prepare for", skip = true },
+  { message = "^chore", group = "Miscellaneous Tasks" },
+  { body = ".*security", group = "Security" },
+]
+conventional_commits = true
+filter_commits = false
+filter_unconventional = true
+ignore_tags = ""
+protect_breaking_commits = false
+skip_tags = "v0.1.0-beta.1"
+sort_commits = "oldest"
+split_commits = false
+tag_pattern = "v[0-9]*"
+topo_order = false
+commit_preprocessors = [
+    # Matches a single backtick that is not preceded by another backtick (negative lookbehind)
+    # and not followed by another backtick (negative lookahead).. but these aren't supported
+    # in git cliff regexes. So we have to do it in 3 steps:
+    # Step 1: Replace pairs of backticks with a placeholder (e.g., "DOUBLEBACKTICK")
+    { pattern = "``", replace = "DOUBLEBACKTICK" },
+    # Step 2: Replace single backticks with double backticks
+    { pattern = "`", replace = "``" },
+    # Step 3: Replace the placeholder back to double backticks
+    { pattern = "DOUBLEBACKTICK", replace = "``" },
+    # TODO: Fix Co-authored commits
+]
+link_parsers = [
+    # TODO: Supposedly matches on #1234 but doesn't work?
+    { pattern = "\\(#(\\d+)\\)", href = "https://github.com/litestar-org/polyfactory/issues/$1" },
+]
+
+[tool.git-cliff.remote.github]
+owner = "litestar-org"
+repo = "polyfactory"

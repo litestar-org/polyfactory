@@ -103,7 +103,6 @@ test-examples:            			              	## Run the examples tests
 .PHONY: test-all
 test-all: test test-examples 						## Run all tests
 
-
 .PHONY: check-all
 check-all: lint test-all coverage 					## Run all linting, tests, and coverage checks
 
@@ -128,3 +127,7 @@ docs-serve: docs-clean 								## Serve the docs locally
 docs: docs-clean 									## Dump the existing built docs and rebuild them
 	@echo "=> Building documentation"
 	@$(ENV_PREFIX)sphinx-build -M html docs docs/_build/ -E -a -j auto --keep-going
+
+changelog:
+	@echo "=> Generating changelog"
+	@$(ENV_PREFIX)git-cliff -c pyproject.toml -o docs/changelog.rst --github-repo litestar-org/polyfactory --github-token $(GITHUB_TOKEN)
