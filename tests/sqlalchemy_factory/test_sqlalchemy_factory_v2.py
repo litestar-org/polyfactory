@@ -5,7 +5,8 @@ from uuid import UUID
 
 import pytest
 from sqlalchemy import ForeignKey, __version__, orm, types
-from sqlalchemy.dialects.postgresql import ARRAY, CIDR, HSTORE, INET
+from sqlalchemy.dialects.mysql import JSON as MYSQL_JSON
+from sqlalchemy.dialects.postgresql import ARRAY, CIDR, HSTORE, INET, JSON, JSONB
 from sqlalchemy.ext.mutable import MutableList
 
 from polyfactory.factories.sqlalchemy_factory import SQLAlchemyFactory
@@ -71,8 +72,8 @@ def test_python_type_handling_v2() -> None:
 def test_pg_dialect_types() -> None:
     class Base(orm.DeclarativeBase): ...
 
-    class PgModel(Base):
-        __tablename__ = "pgmodel"
+    class SqlaModel(Base):
+        __tablename__ = "sql_models"
         id: orm.Mapped[int] = orm.mapped_column(primary_key=True)
         uuid_type: orm.Mapped[UUID] = orm.mapped_column(type_=types.UUID)
         nested_array_inet: orm.Mapped[List[str]] = orm.mapped_column(type_=ARRAY(INET, dimensions=1))
@@ -81,12 +82,20 @@ def test_pg_dialect_types() -> None:
         mut_nested_arry_inet: orm.Mapped[List[str]] = orm.mapped_column(
             type_=MutableList.as_mutable(ARRAY(INET, dimensions=1))
         )
+        pg_json_type: orm.Mapped[Dict] = orm.mapped_column(type_=JSON)
+        pg_jsonb_type: orm.Mapped[Dict] = orm.mapped_column(type_=JSONB)
+        common_json_type: orm.Mapped[Dict] = orm.mapped_column(type_=types.JSON)
+        mysql_json: orm.Mapped[Dict] = orm.mapped_column(type_=MYSQL_JSON)
 
-    class ModelFactory(SQLAlchemyFactory[PgModel]):
-        __model__ = PgModel
+        multible_pg_json_type: orm.Mapped[Dict] = orm.mapped_column(type_=JSON)
+        multible_pg_jsonb_type: orm.Mapped[Dict] = orm.mapped_column(type_=JSONB)
+        multible_common_json_type: orm.Mapped[Dict] = orm.mapped_column(type_=types.JSON)
+        multible_mysql_json: orm.Mapped[Dict] = orm.mapped_column(type_=MYSQL_JSON)
+
+    class ModelFactory(SQLAlchemyFactory[SqlaModel]):
+        __model__ = SqlaModel
 
     instance = ModelFactory.build()
-
     assert isinstance(instance.nested_array_inet[0], str)
     assert ip_network(instance.nested_array_inet[0])
     assert isinstance(instance.nested_array_cidr[0], str)
@@ -95,6 +104,14 @@ def test_pg_dialect_types() -> None:
     assert isinstance(instance.uuid_type, UUID)
     assert isinstance(instance.mut_nested_arry_inet[0], str)
     assert ip_network(instance.mut_nested_arry_inet[0])
+    assert isinstance(instance.pg_json_type, dict)
+    assert isinstance(instance.pg_jsonb_type, dict)
+    assert isinstance(instance.common_json_type, dict)
+    assert isinstance(instance.mysql_json, dict)
+    assert isinstance(instance.multible_pg_json_type, dict)
+    assert isinstance(instance.multible_pg_jsonb_type, dict)
+    assert isinstance(instance.multible_common_json_type, dict)
+    assert isinstance(instance.multible_mysql_json, dict)
 
 
 @pytest.mark.parametrize(

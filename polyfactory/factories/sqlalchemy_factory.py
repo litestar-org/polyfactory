@@ -96,6 +96,7 @@ class SQLAlchemyFactory(Generic[T], BaseFactory[T]):
             postgresql.TSRANGE: lambda: (cls.__faker__.past_datetime(), datetime.now()),  # noqa: DTZ005
             postgresql.TSTZRANGE: lambda: (cls.__faker__.past_datetime(), datetime.now()),  # noqa: DTZ005
             postgresql.HSTORE: lambda: cls.__faker__.pydict(),
+            types.JSON: lambda: cls.__faker__.pydict(),
         }
 
     @classmethod
@@ -125,7 +126,8 @@ class SQLAlchemyFactory(Generic[T], BaseFactory[T]):
     @classmethod
     def get_type_from_column(cls, column: Column) -> type:
         column_type = type(column.type)
-        if column_type in (sqla_types := cls.get_sqlalchemy_types()):
+        sqla_types = cls.get_sqlalchemy_types()
+        if column_type in sqla_types:
             annotation = column_type
         elif issubclass(column_type, postgresql.ARRAY):
             if type(column.type.item_type) in sqla_types:  # type: ignore[attr-defined]
