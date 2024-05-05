@@ -4,10 +4,12 @@ from typing import Any, Dict, List
 from uuid import UUID
 
 import pytest
-from sqlalchemy import ForeignKey, __version__, orm, types
+from sqlalchemy import ForeignKey, Text, __version__, orm, types
+from sqlalchemy.dialects.mssql import JSON as MSSQL_JSON
 from sqlalchemy.dialects.mysql import JSON as MYSQL_JSON
 from sqlalchemy.dialects.postgresql import ARRAY, CIDR, HSTORE, INET, JSON, JSONB
-from sqlalchemy.ext.mutable import MutableList
+from sqlalchemy.dialects.sqlite import JSON as SQLITE_JSON
+from sqlalchemy.ext.mutable import MutableDict, MutableList
 
 from polyfactory.factories.sqlalchemy_factory import SQLAlchemyFactory
 
@@ -86,11 +88,19 @@ def test_pg_dialect_types() -> None:
         pg_jsonb_type: orm.Mapped[Dict] = orm.mapped_column(type_=JSONB)
         common_json_type: orm.Mapped[Dict] = orm.mapped_column(type_=types.JSON)
         mysql_json: orm.Mapped[Dict] = orm.mapped_column(type_=MYSQL_JSON)
+        sqlite_json: orm.Mapped[Dict] = orm.mapped_column(type_=SQLITE_JSON)
+        mssql_json: orm.Mapped[Dict] = orm.mapped_column(type_=MSSQL_JSON)
 
-        multible_pg_json_type: orm.Mapped[Dict] = orm.mapped_column(type_=JSON)
-        multible_pg_jsonb_type: orm.Mapped[Dict] = orm.mapped_column(type_=JSONB)
-        multible_common_json_type: orm.Mapped[Dict] = orm.mapped_column(type_=types.JSON)
-        multible_mysql_json: orm.Mapped[Dict] = orm.mapped_column(type_=MYSQL_JSON)
+        multible_pg_json_type: orm.Mapped[Dict] = orm.mapped_column(
+            type_=MutableDict.as_mutable(JSON(astext_type=Text()))  # type: ignore[no-untyped-call]
+        )
+        multible_pg_jsonb_type: orm.Mapped[Dict] = orm.mapped_column(
+            type_=MutableDict.as_mutable(JSONB(astext_type=Text()))  # type: ignore[no-untyped-call]
+        )
+        multible_common_json_type: orm.Mapped[Dict] = orm.mapped_column(type_=MutableDict.as_mutable(types.JSON()))
+        multible_mysql_json: orm.Mapped[Dict] = orm.mapped_column(type_=MutableDict.as_mutable(MYSQL_JSON()))
+        multible_sqlite_json: orm.Mapped[Dict] = orm.mapped_column(type_=MutableDict.as_mutable(SQLITE_JSON()))
+        multible_mssql_json: orm.Mapped[Dict] = orm.mapped_column(type_=MutableDict.as_mutable(MSSQL_JSON()))
 
     class ModelFactory(SQLAlchemyFactory[SqlaModel]):
         __model__ = SqlaModel
@@ -108,10 +118,14 @@ def test_pg_dialect_types() -> None:
     assert isinstance(instance.pg_jsonb_type, dict)
     assert isinstance(instance.common_json_type, dict)
     assert isinstance(instance.mysql_json, dict)
+    assert isinstance(instance.sqlite_json, dict)
+    assert isinstance(instance.mssql_json, dict)
     assert isinstance(instance.multible_pg_json_type, dict)
     assert isinstance(instance.multible_pg_jsonb_type, dict)
     assert isinstance(instance.multible_common_json_type, dict)
     assert isinstance(instance.multible_mysql_json, dict)
+    assert isinstance(instance.multible_sqlite_json, dict)
+    assert isinstance(instance.multible_mssql_json, dict)
 
 
 @pytest.mark.parametrize(

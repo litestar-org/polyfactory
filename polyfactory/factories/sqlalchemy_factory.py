@@ -96,6 +96,7 @@ class SQLAlchemyFactory(Generic[T], BaseFactory[T]):
             postgresql.TSRANGE: lambda: (cls.__faker__.past_datetime(), datetime.now()),  # noqa: DTZ005
             postgresql.TSTZRANGE: lambda: (cls.__faker__.past_datetime(), datetime.now()),  # noqa: DTZ005
             postgresql.HSTORE: lambda: cls.__faker__.pydict(),
+            # `types.JSON` is compatible for sqlachemy extend dialects. Such as `pg.JSON` and `JSONB`
             types.JSON: lambda: cls.__faker__.pydict(),
         }
 
