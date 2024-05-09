@@ -1,6 +1,6 @@
 from dataclasses import dataclass
 from random import Random
-from typing import List, Union, cast
+from typing import List, Union
 
 import pytest
 from faker import Faker
@@ -65,7 +65,7 @@ def test_setting_random_seed_on_faker(seed: int) -> None:
 
         @classmethod
         def foo(cls) -> int:
-            return cast(int, cls.__faker__.random_digit())
+            return cls.__faker__.random_digit()
 
     assert FooFactory.build().foo == RANDINT_MAP[seed]
 

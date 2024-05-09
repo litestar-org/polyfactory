@@ -505,7 +505,7 @@ class BaseFactory(ABC, Generic[T]):
             # standard library objects
             Path: lambda: Path(realpath(__file__)),
             Decimal: cls.__faker__.pydecimal,
-            UUID: lambda: UUID(cls.__faker__.uuid4()),
+            UUID: lambda: UUID(str(cls.__faker__.uuid4())),
             # datetime
             datetime: cls.__faker__.date_time_between,
             date: cls.__faker__.date_this_decade,
@@ -777,7 +777,7 @@ class BaseFactory(ABC, Generic[T]):
 
         """
         if cls.is_ignored_type(field_meta.annotation):
-            return [None]
+            return
 
         for unwrapped_annotation in flatten_annotation(field_meta.annotation):
             if unwrapped_annotation in (None, NoneType):

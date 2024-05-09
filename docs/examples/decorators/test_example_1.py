@@ -1,6 +1,5 @@
 from dataclasses import dataclass, field
 from datetime import datetime, timedelta
-from typing import cast
 
 from polyfactory.decorators import post_generated
 from polyfactory.factories import DataclassFactory
@@ -16,7 +15,7 @@ class DatetimeRangeFactory(DataclassFactory[DatetimeRange]):
     @post_generated
     @classmethod
     def to_dt(cls, from_dt: datetime) -> datetime:
-        return from_dt + cast(timedelta, cls.__faker__.time_delta("+3d"))
+        return from_dt + cls.__faker__.time_delta("+3d")
 
 
 def test_post_generated() -> None:
