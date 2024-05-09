@@ -806,7 +806,7 @@
 </span><span data-line="505">            <span class="c1"># standard library objects</span>
 </span><span data-line="506">            <span class="n">Path</span><span class="p">:</span> <span class="k">lambda</span><span class="p">:</span> <span class="n">Path</span><span class="p">(</span><span class="n">realpath</span><span class="p">(</span><span class="vm">__file__</span><span class="p">)),</span>
 </span><span data-line="507">            <span class="n">Decimal</span><span class="p">:</span> <span class="bp">cls</span><span class="o">.</span><span class="n">__faker__</span><span class="o">.</span><span class="n">pydecimal</span><span class="p">,</span>
-</span><span data-line="508">            <span class="n">UUID</span><span class="p">:</span> <span class="k">lambda</span><span class="p">:</span> <span class="n">UUID</span><span class="p">(</span><span class="bp">cls</span><span class="o">.</span><span class="n">__faker__</span><span class="o">.</span><span class="n">uuid4</span><span class="p">()),</span>
+</span><span data-line="508">            <span class="n">UUID</span><span class="p">:</span> <span class="k">lambda</span><span class="p">:</span> <span class="n">UUID</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="bp">cls</span><span class="o">.</span><span class="n">__faker__</span><span class="o">.</span><span class="n">uuid4</span><span class="p">())),</span>
 </span><span data-line="509">            <span class="c1"># datetime</span>
 </span><span data-line="510">            <span class="n">datetime</span><span class="p">:</span> <span class="bp">cls</span><span class="o">.</span><span class="n">__faker__</span><span class="o">.</span><span class="n">date_time_between</span><span class="p">,</span>
 </span><span data-line="511">            <span class="n">date</span><span class="p">:</span> <span class="bp">cls</span><span class="o">.</span><span class="n">__faker__</span><span class="o">.</span><span class="n">date_this_decade</span><span class="p">,</span>
@@ -1078,7 +1078,7 @@
 </span><span data-line="777">
 </span><span data-line="778"><span class="sd">        &quot;&quot;&quot;</span>
 </span><span data-line="779">        <span class="k">if</span> <span class="bp">cls</span><span class="o">.</span><span class="n">is_ignored_type</span><span class="p">(</span><span class="n">field_meta</span><span class="o">.</span><span class="n">annotation</span><span class="p">):</span>
-</span><span data-line="780">            <span class="k">return</span> <span class="p">[</span><span class="kc">None</span><span class="p">]</span>
+</span><span data-line="780">            <span class="k">return</span>
 </span><span data-line="781">
 </span><span data-line="782">        <span class="k">for</span> <span class="n">unwrapped_annotation</span> <span class="ow">in</span> <span class="n">flatten_annotation</span><span class="p">(</span><span class="n">field_meta</span><span class="o">.</span><span class="n">annotation</span><span class="p">):</span>
 </span><span data-line="783">            <span class="k">if</span> <span class="n">unwrapped_annotation</span> <span class="ow">in</span> <span class="p">(</span><span class="kc">None</span><span class="p">,</span> <span class="n">NoneType</span><span class="p">):</span>
