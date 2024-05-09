@@ -1,14 +1,15 @@
 from dataclasses import dataclass
+from datetime import datetime
 from enum import Enum
 from typing import Any, Callable, Type, Union
 from uuid import UUID
 
 import pytest
-from sqlalchemy import Column, ForeignKey, Integer, String, create_engine, inspect, orm, types
+from sqlalchemy import DECIMAL, Column, DateTime, ForeignKey, Integer, String, create_engine, func, inspect, orm, types
 from sqlalchemy.engine import Engine
 from sqlalchemy.ext.asyncio import AsyncEngine, AsyncSession, create_async_engine
 from sqlalchemy.ext.hybrid import hybrid_property
-from sqlalchemy.orm import Session
+from sqlalchemy.orm import Mapped, Session, mapped_column
 from sqlalchemy.orm.decl_api import DeclarativeMeta, registry
 
 from polyfactory.exceptions import ConfigurationException
@@ -317,7 +318,9 @@ async def test_async_persistence(
     class AsyncModel(Base):
         __tablename__ = "table"
 
-        id: Any = Column(Integer(), primary_key=True)
+        id: Mapped[int] = mapped_column(primary_key=True)
+        test_float: Mapped[float] = mapped_column(DECIMAL)
+        test_datetime: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
 
     await create_tables(async_engine, Base)
 
@@ -328,12 +331,18 @@ async def test_async_persistence(
             __model__ = AsyncModel
 
         result = await Factory.create_async()
+        assert result.test_datetime is not None
+        assert isinstance(result.test_datetime, datetime)
         assert inspect(result).persistent  # type: ignore[union-attr]
+        await session.delete(result)
+        await session.commit()
 
         batch_result = await Factory.create_batch_async(size=2)
         assert len(batch_result) == 2
         for batch_item in batch_result:
             assert inspect(batch_item).persistent  # type: ignore[union-attr]
+            assert batch_item.test_datetime is not None
+            assert isinstance(result.test_datetime, datetime)
 
 
 def test_alias() -> None:
