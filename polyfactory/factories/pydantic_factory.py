@@ -484,7 +484,7 @@ class ModelFactory(Generic[T], BaseFactory[T]):
 
     @classmethod
     def get_provider_map(cls) -> dict[Any, Callable[[], Any]]:
-        mapping = {
+        mapping: dict[Any, Callable[[], Any]] = {
             pydantic.ByteSize: cls.__faker__.pyint,
             pydantic.PositiveInt: cls.__faker__.pyint,
             pydantic.NegativeFloat: lambda: cls.__random__.uniform(-100, -1),
