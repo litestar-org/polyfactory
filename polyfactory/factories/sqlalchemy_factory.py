@@ -95,6 +95,9 @@ class SQLAlchemyFactory(Generic[T], BaseFactory[T]):
             postgresql.NUMRANGE: lambda: tuple(sorted([cls.__faker__.pyint(), cls.__faker__.pyint()])),
             postgresql.TSRANGE: lambda: (cls.__faker__.past_datetime(), datetime.now()),  # noqa: DTZ005
             postgresql.TSTZRANGE: lambda: (cls.__faker__.past_datetime(), datetime.now()),  # noqa: DTZ005
+            postgresql.HSTORE: lambda: cls.__faker__.pydict(),
+            # `types.JSON` is compatible for sqlachemy extend dialects. Such as `pg.JSON` and `JSONB`
+            types.JSON: lambda: cls.__faker__.pydict(),
         }
 
     @classmethod
@@ -124,8 +127,14 @@ class SQLAlchemyFactory(Generic[T], BaseFactory[T]):
     @classmethod
     def get_type_from_column(cls, column: Column) -> type:
         column_type = type(column.type)
-        if column_type in cls.get_sqlalchemy_types():
+        sqla_types = cls.get_sqlalchemy_types()
+        if column_type in sqla_types:
             annotation = column_type
+        elif issubclass(column_type, postgresql.ARRAY):
+            if type(column.type.item_type) in sqla_types:  # type: ignore[attr-defined]
+                annotation = List[type(column.type.item_type)]  # type: ignore[attr-defined,misc]
+            else:
+                annotation = List[column.type.item_type.python_type]  # type: ignore[assignment,name-defined]
         elif issubclass(column_type, types.ARRAY):
             annotation = List[column.type.item_type.python_type]  # type: ignore[assignment,name-defined]
         else:

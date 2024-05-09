@@ -1,8 +1,15 @@
 from enum import Enum
-from typing import Any, List
+from ipaddress import ip_network
+from typing import Any, Dict, List
+from uuid import UUID
 
 import pytest
-from sqlalchemy import ForeignKey, __version__, orm, types
+from sqlalchemy import ForeignKey, Text, __version__, orm, types
+from sqlalchemy.dialects.mssql import JSON as MSSQL_JSON
+from sqlalchemy.dialects.mysql import JSON as MYSQL_JSON
+from sqlalchemy.dialects.postgresql import ARRAY, CIDR, HSTORE, INET, JSON, JSONB
+from sqlalchemy.dialects.sqlite import JSON as SQLITE_JSON
+from sqlalchemy.ext.mutable import MutableDict, MutableList
 
 from polyfactory.factories.sqlalchemy_factory import SQLAlchemyFactory
 
@@ -62,6 +69,63 @@ def test_python_type_handling_v2() -> None:
     assert isinstance(instance.enum_type, Animal)
     assert isinstance(instance.str_array_type, list)
     assert isinstance(instance.str_array_type[0], str)
+
+
+def test_pg_dialect_types() -> None:
+    class Base(orm.DeclarativeBase): ...
+
+    class SqlaModel(Base):
+        __tablename__ = "sql_models"
+        id: orm.Mapped[int] = orm.mapped_column(primary_key=True)
+        uuid_type: orm.Mapped[UUID] = orm.mapped_column(type_=types.UUID)
+        nested_array_inet: orm.Mapped[List[str]] = orm.mapped_column(type_=ARRAY(INET, dimensions=1))
+        nested_array_cidr: orm.Mapped[List[str]] = orm.mapped_column(type_=ARRAY(CIDR, dimensions=1))
+        hstore_type: orm.Mapped[Dict] = orm.mapped_column(type_=HSTORE)
+        mut_nested_arry_inet: orm.Mapped[List[str]] = orm.mapped_column(
+            type_=MutableList.as_mutable(ARRAY(INET, dimensions=1))
+        )
+        pg_json_type: orm.Mapped[Dict] = orm.mapped_column(type_=JSON)
+        pg_jsonb_type: orm.Mapped[Dict] = orm.mapped_column(type_=JSONB)
+        common_json_type: orm.Mapped[Dict] = orm.mapped_column(type_=types.JSON)
+        mysql_json: orm.Mapped[Dict] = orm.mapped_column(type_=MYSQL_JSON)
+        sqlite_json: orm.Mapped[Dict] = orm.mapped_column(type_=SQLITE_JSON)
+        mssql_json: orm.Mapped[Dict] = orm.mapped_column(type_=MSSQL_JSON)
+
+        multible_pg_json_type: orm.Mapped[Dict] = orm.mapped_column(
+            type_=MutableDict.as_mutable(JSON(astext_type=Text()))  # type: ignore[no-untyped-call]
+        )
+        multible_pg_jsonb_type: orm.Mapped[Dict] = orm.mapped_column(
+            type_=MutableDict.as_mutable(JSONB(astext_type=Text()))  # type: ignore[no-untyped-call]
+        )
+        multible_common_json_type: orm.Mapped[Dict] = orm.mapped_column(type_=MutableDict.as_mutable(types.JSON()))
+        multible_mysql_json: orm.Mapped[Dict] = orm.mapped_column(type_=MutableDict.as_mutable(MYSQL_JSON()))
+        multible_sqlite_json: orm.Mapped[Dict] = orm.mapped_column(type_=MutableDict.as_mutable(SQLITE_JSON()))
+        multible_mssql_json: orm.Mapped[Dict] = orm.mapped_column(type_=MutableDict.as_mutable(MSSQL_JSON()))
+
+    class ModelFactory(SQLAlchemyFactory[SqlaModel]):
+        __model__ = SqlaModel
+
+    instance = ModelFactory.build()
+    assert isinstance(instance.nested_array_inet[0], str)
+    assert ip_network(instance.nested_array_inet[0])
+    assert isinstance(instance.nested_array_cidr[0], str)
+    assert ip_network(instance.nested_array_cidr[0])
+    assert isinstance(instance.hstore_type, dict)
+    assert isinstance(instance.uuid_type, UUID)
+    assert isinstance(instance.mut_nested_arry_inet[0], str)
+    assert ip_network(instance.mut_nested_arry_inet[0])
+    assert isinstance(instance.pg_json_type, dict)
+    assert isinstance(instance.pg_jsonb_type, dict)
+    assert isinstance(instance.common_json_type, dict)
+    assert isinstance(instance.mysql_json, dict)
+    assert isinstance(instance.sqlite_json, dict)
+    assert isinstance(instance.mssql_json, dict)
+    assert isinstance(instance.multible_pg_json_type, dict)
+    assert isinstance(instance.multible_pg_jsonb_type, dict)
+    assert isinstance(instance.multible_common_json_type, dict)
+    assert isinstance(instance.multible_mysql_json, dict)
+    assert isinstance(instance.multible_sqlite_json, dict)
+    assert isinstance(instance.multible_mssql_json, dict)
 
 
 @pytest.mark.parametrize(
