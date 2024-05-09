@@ -9,7 +9,7 @@ from sqlalchemy import Column, DateTime, ForeignKey, Integer, String, create_eng
 from sqlalchemy.engine import Engine
 from sqlalchemy.ext.asyncio import AsyncEngine, AsyncSession, create_async_engine
 from sqlalchemy.ext.hybrid import hybrid_property
-from sqlalchemy.orm import Mapped, Session, mapped_column
+from sqlalchemy.orm import Session
 from sqlalchemy.orm.decl_api import DeclarativeMeta, registry
 
 from polyfactory.exceptions import ConfigurationException
@@ -318,8 +318,8 @@ async def test_async_persistence(
     class AsyncModel(Base):
         __tablename__ = "table"
 
-        id: Mapped[int] = mapped_column(primary_key=True)
-        test_datetime: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
+        id: Any = Column(Integer(), primary_key=True)
+        test_datetime: Any = Column(DateTime(timezone=True), server_default=func.now())
 
     await create_tables(async_engine, Base)
 
