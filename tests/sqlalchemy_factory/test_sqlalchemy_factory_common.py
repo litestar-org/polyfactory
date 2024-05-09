@@ -5,7 +5,7 @@ from typing import Any, Callable, Type, Union
 from uuid import UUID
 
 import pytest
-from sqlalchemy import DECIMAL, Column, DateTime, ForeignKey, Integer, String, create_engine, func, inspect, orm, types
+from sqlalchemy import Column, DateTime, ForeignKey, Integer, String, create_engine, func, inspect, orm, types
 from sqlalchemy.engine import Engine
 from sqlalchemy.ext.asyncio import AsyncEngine, AsyncSession, create_async_engine
 from sqlalchemy.ext.hybrid import hybrid_property
@@ -319,7 +319,6 @@ async def test_async_persistence(
         __tablename__ = "table"
 
         id: Mapped[int] = mapped_column(primary_key=True)
-        test_float: Mapped[float] = mapped_column(DECIMAL)
         test_datetime: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
 
     await create_tables(async_engine, Base)
