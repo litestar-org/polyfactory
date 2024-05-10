@@ -101,7 +101,7 @@ class SQLAlchemyFactory(Generic[T], BaseFactory[T]):
             postgresql.HSTORE: lambda: cls.__faker__.pydict(),
             # `types.JSON` is compatible for sqlachemy extend dialects. Such as `pg.JSON` and `JSONB`
             # accept `str,int,float` as basic types in case `sqlalchemy/sql/sqltypes.json.json_serializer` raise error
-            types.JSON: lambda: cls.__faker__.pydict(value_types=[int, str, float]),
+            types.JSON: lambda: cls.__faker__.pydict(),
         }
 
     @classmethod
