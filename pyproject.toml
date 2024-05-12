@@ -350,7 +350,7 @@ body = """
     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
     {% for commit in commits %}
         * (`{{ commit.id | default(value='') | truncate(length=7, end='') }} <https://github.com/litestar-org/polyfactory/commit/{{ commit.id }}>`_) {% if commit.breaking %}[**breaking**] {% endif %} - {{ commit.message | upper_first }} {% if commit.github.username %} by `@{{ commit.github.username }} <https://github.com/{{ commit.github.username }}>`_ {%- endif %}\
-          {% if commit.github.pr_number %} in `#{{ commit.github.pr_number }} <https://gihub.com/litestar-org/polyfactory/pull/{{ commit.github.pr_number }}>`_ {%- endif %}\
+          {% if commit.github.pr_number %} in `#{{ commit.github.pr_number }} <https://github.com/litestar-org/polyfactory/pull/{{ commit.github.pr_number }}>`_ {%- endif %}\
     {% endfor %}
 {% endfor %}\n
 """
