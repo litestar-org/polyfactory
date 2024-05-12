@@ -50,11 +50,14 @@ class SQLAASyncPersistence(AsyncPersistenceProtocol[T]):
     async def save(self, data: T) -> T:
         self.session.add(data)
         await self.session.commit()
+        await self.session.refresh(data)
         return data
 
     async def save_many(self, data: list[T]) -> list[T]:
         self.session.add_all(data)
         await self.session.commit()
+        for batch_item in data:
+            await self.session.refresh(batch_item)
         return data
 
 
