@@ -71,7 +71,7 @@ def test_python_type_handling_v2() -> None:
     assert isinstance(instance.str_array_type[0], str)
 
 
-def test_pg_dialect_types() -> None:
+def test_sqla_dialect_types() -> None:
     class Base(orm.DeclarativeBase): ...
 
     class SqlaModel(Base):
@@ -115,11 +115,23 @@ def test_pg_dialect_types() -> None:
     assert isinstance(instance.mut_nested_arry_inet[0], str)
     assert ip_network(instance.mut_nested_arry_inet[0])
     assert isinstance(instance.pg_json_type, dict)
+    for value in instance.pg_json_type.values():
+        assert isinstance(value, (str, int, bool, float))
     assert isinstance(instance.pg_jsonb_type, dict)
+    for value in instance.pg_jsonb_type.values():
+        assert isinstance(value, (str, int, bool, float))
     assert isinstance(instance.common_json_type, dict)
+    for value in instance.common_json_type.values():
+        assert isinstance(value, (str, int, bool, float))
     assert isinstance(instance.mysql_json, dict)
+    for value in instance.mysql_json.values():
+        assert isinstance(value, (str, int, bool, float))
     assert isinstance(instance.sqlite_json, dict)
+    for value in instance.sqlite_json.values():
+        assert isinstance(value, (str, int, bool, float))
     assert isinstance(instance.mssql_json, dict)
+    for value in instance.mssql_json.values():
+        assert isinstance(value, (str, int, bool, float))
     assert isinstance(instance.multible_pg_json_type, dict)
     assert isinstance(instance.multible_pg_jsonb_type, dict)
     assert isinstance(instance.multible_common_json_type, dict)
