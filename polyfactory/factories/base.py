@@ -30,6 +30,7 @@ from typing import (
     ClassVar,
     Collection,
     Generic,
+    Hashable,
     Iterable,
     Mapping,
     Sequence,
@@ -289,7 +290,7 @@ class BaseFactory(ABC, Generic[T]):
         )
 
     @classmethod
-    def _handle_factory_field(
+    def _handle_factory_field(  # noqa: PLR0911
         cls,
         field_value: Any,
         build_context: BuildContext,
@@ -319,7 +320,10 @@ class BaseFactory(ABC, Generic[T]):
         if isinstance(field_value, Fixture):
             return field_value.to_value()
 
-        return field_value() if callable(field_value) else field_value
+        if callable(field_value):
+            return field_value()
+
+        return field_value if isinstance(field_value, Hashable) else copy.deepcopy(field_value)
 
     @classmethod
     def _handle_factory_field_coverage(
