@@ -10,7 +10,7 @@ from polyfactory.persistence import AsyncPersistenceProtocol, SyncPersistencePro
 
 try:
     from sqlalchemy import Column, inspect, types
-    from sqlalchemy.dialects import mysql, postgresql
+    from sqlalchemy.dialects import mssql, mysql, postgresql, sqlite
     from sqlalchemy.exc import NoInspectionAvailable
     from sqlalchemy.orm import InstanceState, Mapper
 except ImportError as e:
@@ -85,22 +85,28 @@ class SQLAlchemyFactory(Generic[T], BaseFactory[T]):
 
     @classmethod
     def get_sqlalchemy_types(cls) -> dict[Any, Callable[[], Any]]:
-        """Get mapping of types where column type."""
+        """Get mapping of types where column type.
+        for sqlalchemy dialect `JSON` type, accepted only basic types in pydict in case sqlalchemy process `JSON` raise serialize error.
+        """
         return {
             types.TupleType: cls.__faker__.pytuple,
+            mssql.JSON: lambda: cls.__faker__.pydict(value_types=(str, int, bool, float)),
             mysql.YEAR: lambda: cls.__random__.randint(1901, 2155),
-            postgresql.CIDR: lambda: cls.__faker__.ipv4(network=False),
+            mysql.JSON: lambda: cls.__faker__.pydict(value_types=(str, int, bool, float)),
+            postgresql.CIDR: lambda: cls.__faker__.ipv4(network=True),
             postgresql.DATERANGE: lambda: (cls.__faker__.past_date(), date.today()),  # noqa: DTZ011
-            postgresql.INET: lambda: cls.__faker__.ipv4(network=True),
+            postgresql.INET: lambda: cls.__faker__.ipv4(network=False),
             postgresql.INT4RANGE: lambda: tuple(sorted([cls.__faker__.pyint(), cls.__faker__.pyint()])),
             postgresql.INT8RANGE: lambda: tuple(sorted([cls.__faker__.pyint(), cls.__faker__.pyint()])),
             postgresql.MACADDR: lambda: cls.__faker__.hexify(text="^^:^^:^^:^^:^^:^^", upper=True),
             postgresql.NUMRANGE: lambda: tuple(sorted([cls.__faker__.pyint(), cls.__faker__.pyint()])),
             postgresql.TSRANGE: lambda: (cls.__faker__.past_datetime(), datetime.now()),  # noqa: DTZ005
             postgresql.TSTZRANGE: lambda: (cls.__faker__.past_datetime(), datetime.now()),  # noqa: DTZ005
-            postgresql.HSTORE: lambda: cls.__faker__.pydict(),
-            # `types.JSON` is compatible for sqlachemy extend dialects. Such as `pg.JSON` and `JSONB`
-            types.JSON: lambda: cls.__faker__.pydict(),
+            postgresql.HSTORE: lambda: cls.__faker__.pydict(value_types=(str, int, bool, float)),
+            postgresql.JSON: lambda: cls.__faker__.pydict(value_types=(str, int, bool, float)),
+            postgresql.JSONB: lambda: cls.__faker__.pydict(value_types=(str, int, bool, float)),
+            sqlite.JSON: lambda: cls.__faker__.pydict(value_types=(str, int, bool, float)),
+            types.JSON: lambda: cls.__faker__.pydict(value_types=(str, int, bool, float)),
         }
 
     @classmethod
@@ -148,7 +154,6 @@ class SQLAlchemyFactory(Generic[T], BaseFactory[T]):
 
         if column.nullable:
             annotation = Union[annotation, None]  # type: ignore[assignment]
-
         return annotation
 
     @classmethod
