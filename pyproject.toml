@@ -3,11 +3,12 @@ authors = [
     {name = "Na'aman Hirschfeld", email = "nhirschfeld@gmail.com"},
 ]
 maintainers = [
-    {name = "Visakh Unnikrishnan", email = "guacs.guacs@gmail.com"},
-    {name = "Cody Fincher", email = "cody.fincher@gmail.com"},
-    {name = "Janek Nouvertné", email = "provinzkraut@posteo.de"},
-    {name = "Jacob Coffee", email = "jacob@z7x.org"},
-    {name = "Peter Schutt", email = "peter.github@proton.me"},
+    {name = "Visakh Unnikrishnan", email = "guacs@litestar.dev"},
+    {name = "Cody Fincher", email = "cody@litestar.dev"},
+    {name = "Janek Nouvertné", email = "janek@litestar.dev"},
+    {name = "Jacob Coffee", email = "jacob@litestar.dev"},
+    {name = "Peter Schutt", email = "peter@litestar.dev"},
+    {name = "Alc", email = "alc@litestar.dev"},
 ]
 keywords = ["dataclasses", "msgspec", "pydantic", "attrs", "sqlalchemy",]
 classifiers = [
