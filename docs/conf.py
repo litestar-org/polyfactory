@@ -141,6 +141,7 @@ html_context = {
 html_theme_options = {
     "logo_target": "/",
     "github_repo_name": "polyfactory",
+    "github_url": "https://github.com/litestar-org/polyfactory",
     "navigation_with_keys": True,
     "nav_links": [
         {"title": "Home", "url": "index"},
