@@ -15,11 +15,35 @@ Bug Fixes
 
 * (`719495e <https://github.com/litestar-org/polyfactory/commit/719495e6dca5c6938975b6bc0456205d28e2c90d>`_)  - Ignore non-columns types (#510)  by `@adhtruong <https://github.com/adhtruong>`_ in `#510 <https://github.com/litestar-org/polyfactory/pull/510>`_
 * (`bb04b4e <https://github.com/litestar-org/polyfactory/commit/bb04b4e81764289ba5a138c0b82faa73bb4e5257>`_)  - Favour SA mapped type over impl type (#513)  by `@adhtruong <https://github.com/adhtruong>`_ in `#513 <https://github.com/litestar-org/polyfactory/pull/513>`_
+* (`0032b5e <https://github.com/litestar-org/polyfactory/commit/0032b5e962906239ecd4c4bd7276dc0d9e9f142d>`_)  - Add footer to changelog generation  by `@JacobCoffee <https://github.com/JacobCoffee>`_
+* (`5fd7d6c <https://github.com/litestar-org/polyfactory/commit/5fd7d6c2bedb3c602e009618137c6ab215172625>`_)  - Resolve mypy issues (#540)  by `@adhtruong <https://github.com/adhtruong>`_ in `#540 <https://github.com/litestar-org/polyfactory/pull/540>`_
+* (`9e6edab <https://github.com/litestar-org/polyfactory/commit/9e6edabd4ee5242c54f3ddb66e539a415da86901>`_)  - Fix json type error and pg dialect default value e… (#542)  by `@wangxin688 <https://github.com/wangxin688>`_ in `#542 <https://github.com/litestar-org/polyfactory/pull/542>`_
+
+Documentation
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+* (`01d1dbe <https://github.com/litestar-org/polyfactory/commit/01d1dbeb46cc722b075dba85cfd6bcb94505e65d>`_)  - Apply organization theme (#533)  by `@JacobCoffee <https://github.com/JacobCoffee>`_ in `#533 <https://github.com/litestar-org/polyfactory/pull/533>`_
+* (`5a0a5be <https://github.com/litestar-org/polyfactory/commit/5a0a5bed4ddb679868d9365a5ffbcc6c3fed686c>`_)  - Polyfactory landing page (#535)  by `@JacobCoffee <https://github.com/JacobCoffee>`_ in `#535 <https://github.com/litestar-org/polyfactory/pull/535>`_
+* (`2f781ee <https://github.com/litestar-org/polyfactory/commit/2f781eee7f06436661874a4e469c601bb0de6cd4>`_)  - Add wangxin688 as a contributor for code (#544)  by `@allcontributors[bot] <https://github.com/allcontributors[bot]>`_ in `#544 <https://github.com/litestar-org/polyfactory/pull/544>`_
+
+Features
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+* (`1792c19 <https://github.com/litestar-org/polyfactory/commit/1792c19fc100b16b610902c19c90b2031420c57e>`_)  - Support nested type in pg.array types and others (#530)  by `@wangxin688 <https://github.com/wangxin688>`_ in `#530 <https://github.com/litestar-org/polyfactory/pull/530>`_
+* (`013135c <https://github.com/litestar-org/polyfactory/commit/013135c17387e451d88a7b73157ad08333649112>`_)  - Refresh object in async_session after commit to db (#541)  by `@wangxin688 <https://github.com/wangxin688>`_ in `#541 <https://github.com/litestar-org/polyfactory/pull/541>`_
+* (`e4695a7 <https://github.com/litestar-org/polyfactory/commit/e4695a7d16e1a63b7cce036ca653d839ea0104fb>`_)  - Copy mutable args (#529)  by `@adhtruong <https://github.com/adhtruong>`_ in `#529 <https://github.com/litestar-org/polyfactory/pull/529>`_
 
 Miscellaneous Tasks
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 * (`fac9fba <https://github.com/litestar-org/polyfactory/commit/fac9fbad94f0a82a062bfdac11b2da19f906e32f>`_)  - Upgrade dependencies (#517)  by `@adhtruong <https://github.com/adhtruong>`_ in `#517 <https://github.com/litestar-org/polyfactory/pull/517>`_
+* (`3da64f6 <https://github.com/litestar-org/polyfactory/commit/3da64f615056c8d2f11c6bfc55c86877a89c2414>`_)  - Update changelog.rst (#537)  by `@impaktor <https://github.com/impaktor>`_ in `#537 <https://github.com/litestar-org/polyfactory/pull/537>`_
+* (`3e2d22c <https://github.com/litestar-org/polyfactory/commit/3e2d22c5bafc5ed984338be54c3eace3cacc720f>`_)  - Update maintainer emails (#545)  by `@guacs <https://github.com/guacs>`_ in `#545 <https://github.com/litestar-org/polyfactory/pull/545>`_
+
+Ci
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+* (`6507c6d <https://github.com/litestar-org/polyfactory/commit/6507c6d86094dbcf678083e3ce7d06a5b4dd2f60>`_)  - Add codecov coverage, fix badges (#536)  by `@JacobCoffee <https://github.com/JacobCoffee>`_ in `#536 <https://github.com/litestar-org/polyfactory/pull/536>`_
 
 `Release [v2.15.0] - 2024-03-02 <https://github.com/litestar-org/polyfactory/releases/tag/v2.15.0>`_
 ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -689,3 +713,5 @@ Miscellaneous Tasks
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 * (`25570f5 <https://github.com/litestar-org/polyfactory/commit/25570f5929dd644173a90148216c6669cfd0b79f>`_)  - Update polyfactory banner logo  by `@JacobCoffee <https://github.com/JacobCoffee>`_
+
+Polyfactory Changelog
