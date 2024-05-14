@@ -215,8 +215,39 @@ def test_factory_use_construct() -> None:
     with pytest.raises(ValidationError):
         PetFactory.build(age=invalid_age)
 
+
+def test_factory_use_construct_nested() -> None:
+    class Child(BaseModel):
+        a: int = Field(ge=0)
+
+    class Parent(BaseModel):
+        child: Child
+
+    class ParentFactory(ModelFactory[Parent]):
+        __model__ = Parent
+
+    non_validated_parent = ParentFactory.build(factory_use_construct=True, child={"a": -1})
+    assert non_validated_parent.child.a == -1
+
     with pytest.raises(ValidationError):
-        PetFactory.build(age=invalid_age)
+        ParentFactory.build(child={"a": -1})
+
+
+def test_factory_use_construct_nested_list() -> None:
+    class Child(BaseModel):
+        a: int = Field(ge=0)
+
+    class Parent(BaseModel):
+        child: List[Child]
+
+    class ParentFactory(ModelFactory[Parent]):
+        __model__ = Parent
+
+    non_validated_parent = ParentFactory.build(factory_use_construct=True, child=[{"a": -1}])
+    assert non_validated_parent.child[0].a == -1
+
+    with pytest.raises(ValidationError):
+        ParentFactory.build(child=[{"a": -1}])
 
 
 @pytest.mark.skipif(IS_PYDANTIC_V2, reason="pydantic 1 only test")
@@ -624,7 +655,8 @@ def test_complex_constrained_attribute_parsing_pydantic_v1() -> None:
 
 @pytest.mark.skipif(IS_PYDANTIC_V2, reason="pydantic 1 only test")
 def test_nested_constrained_attribute_handling_pydantic_1() -> None:
-    # subclassing the constrained fields is not documented by pydantic, but is supported apparently
+    # subclassing the constrained fields is not documented by pydantic,
+    # but is supported apparently
 
     from pydantic import (
         ConstrainedBytes,
@@ -699,7 +731,8 @@ def test_nested_constrained_attribute_handling_pydantic_1() -> None:
     reason="pydantic 2 only test, does not work correctly in py 3.8",
 )
 def test_nested_constrained_attribute_handling_pydantic_2() -> None:
-    # subclassing the constrained fields is not documented by pydantic, but is supported apparently
+    # subclassing the constrained fields is not documented by pydantic,
+    # but is supported apparently
 
     class MyModel(BaseModel):
         conbytes_list_field: List[conbytes()]  # type: ignore[valid-type]

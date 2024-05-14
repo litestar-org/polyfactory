@@ -14,6 +14,7 @@ from polyfactory.collection_extender import CollectionExtender
 from polyfactory.constants import DEFAULT_RANDOM
 from polyfactory.exceptions import MissingDependencyException
 from polyfactory.factories.base import BaseFactory
+from polyfactory.factories.base import BuildContext as BaseBuildContext
 from polyfactory.field_meta import Constraints, FieldMeta, Null
 from polyfactory.utils.deprecation import check_for_deprecated_parameters
 from polyfactory.utils.helpers import unwrap_new_type, unwrap_optional
@@ -99,6 +100,10 @@ if TYPE_CHECKING:
 T = TypeVar("T", bound="BaseModelV1 | BaseModelV2")
 
 _IS_PYDANTIC_V1 = VERSION.startswith("1")
+
+
+class BuildContext(BaseBuildContext):
+    factory_use_construct: bool
 
 
 class PydanticConstraints(Constraints):
@@ -447,9 +452,13 @@ class ModelFactory(Generic[T], BaseFactory[T]):
         :returns: An instance of type T.
 
         """
+
+        if "_build_context" not in kwargs:
+            kwargs["_build_context"] = BuildContext(seen_models=set(), factory_use_construct=factory_use_construct)
+
         processed_kwargs = cls.process_kwargs(**kwargs)
 
-        if factory_use_construct:
+        if kwargs["_build_context"].get("factory_use_construct"):
             if _is_pydantic_v1_model(cls.__model__):
                 return cls.__model__.construct(**processed_kwargs)  # type: ignore[return-value]
             return cls.__model__.model_construct(**processed_kwargs)  # type: ignore[return-value]
