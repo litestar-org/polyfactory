@@ -307,7 +307,7 @@ def test_pydantic_optional_lists() -> None:
         optional_list: Optional[List[int]]
         optional_nested_list: Optional[List[List[List[int]]]]
 
-    results = list(ModelFactory._get_or_create_factory(Model).coverage())
+    results = list(ModelFactory.create_factory(Model).coverage())
     assert type_exists_at_path_any(results, ["just_a_list"], list)
     assert type_exists_at_path_any(results, ["optional_list"], list)
     assert type_exists_at_path_any(results, ["optional_list"], NoneType)
@@ -321,7 +321,7 @@ def test_pydantic_tuple_types() -> None:
     class Model(BaseModel):
         tii: Tuple[int, int]
 
-    results = list(ModelFactory._get_or_create_factory(Model).coverage())
+    results = list(ModelFactory.create_factory(Model).coverage())
     assert type_exists_at_path_any(results, ["tii"], tuple)
     assert type_exists_at_path_any(results, ["tii", 0], int)
     assert type_exists_at_path_any(results, ["tii", 1], int)
@@ -331,7 +331,7 @@ def test_pydantic_hetero_tuple_types() -> None:
     class Model(BaseModel):
         tis: Tuple[int, str]
 
-    results = list(ModelFactory._get_or_create_factory(Model).coverage())
+    results = list(ModelFactory.create_factory(Model).coverage())
     assert type_exists_at_path_any(results, ["tis"], tuple)
     assert type_exists_at_path_any(results, ["tis", 0], int)
     assert type_exists_at_path_any(results, ["tis", 1], str)
@@ -341,7 +341,7 @@ def test_pydantic_optional_list_uuid() -> None:
     class Model(BaseModel):
         maybe_uuids: Optional[List[UUID]]
 
-    results = list(ModelFactory._get_or_create_factory(Model).coverage())
+    results = list(ModelFactory.create_factory(Model).coverage())
     assert type_exists_at_path_any(results, ["maybe_uuids"], list)
     assert type_exists_at_path_any(results, ["maybe_uuids", "*"], UUID)
     assert type_exists_at_path_any(results, ["maybe_uuids"], NoneType)
@@ -351,7 +351,7 @@ def test_pydantic_optional_set_uuid() -> None:
     class Model(BaseModel):
         maybe_uuids: Optional[Set[UUID]]
 
-    results = list(ModelFactory._get_or_create_factory(Model).coverage())
+    results = list(ModelFactory.create_factory(Model).coverage())
     assert type_exists_at_path_any(results, ["maybe_uuids"], set)
     assert type_exists_at_path_any(results, ["maybe_uuids", "*"], UUID)
     assert type_exists_at_path_any(results, ["maybe_uuids"], NoneType)
@@ -365,7 +365,7 @@ def test_pydantic_optional_mixed_collecions() -> None:
     class Model(BaseModel):
         maybe_uuids: Optional[Union[Set[UUID], List[UUID]]]
 
-    results = list(ModelFactory._get_or_create_factory(Model).coverage())
+    results = list(ModelFactory.create_factory(Model).coverage())
     assert type_exists_at_path_any(results, ["maybe_uuids"], set)
     assert type_exists_at_path_any(results, ["maybe_uuids"], list)
     assert type_exists_at_path_any(results, ["maybe_uuids", "*"], UUID)
