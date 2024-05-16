@@ -301,7 +301,7 @@ def test_coverage_optional_list() -> None:
     assert type_exists_at_path_any(results, ["i"], NoneType)
 
 
-def test_pydantic_optional_lists() -> None:
+def test_optional_lists() -> None:
     class Model(BaseModel):
         just_a_list: List[int]
         optional_list: Optional[List[int]]
@@ -317,7 +317,7 @@ def test_pydantic_optional_lists() -> None:
     assert type_exists_at_path_any(results, ["optional_nested_list", "*", "*", "*"], int)
 
 
-def test_pydantic_tuple_types() -> None:
+def test_tuple_types() -> None:
     class Model(BaseModel):
         tii: Tuple[int, int]
 
@@ -327,7 +327,7 @@ def test_pydantic_tuple_types() -> None:
     assert type_exists_at_path_any(results, ["tii", 1], int)
 
 
-def test_pydantic_hetero_tuple_types() -> None:
+def test_hetero_tuple_types() -> None:
     class Model(BaseModel):
         tis: Tuple[int, str]
 
@@ -337,7 +337,7 @@ def test_pydantic_hetero_tuple_types() -> None:
     assert type_exists_at_path_any(results, ["tis", 1], str)
 
 
-def test_pydantic_optional_list_uuid() -> None:
+def test_optional_list_uuid() -> None:
     class Model(BaseModel):
         maybe_uuids: Optional[List[UUID]]
 
@@ -347,7 +347,7 @@ def test_pydantic_optional_list_uuid() -> None:
     assert type_exists_at_path_any(results, ["maybe_uuids"], NoneType)
 
 
-def test_pydantic_optional_set_uuid() -> None:
+def test_optional_set_uuid() -> None:
     class Model(BaseModel):
         maybe_uuids: Optional[Set[UUID]]
 
@@ -361,7 +361,7 @@ def test_pydantic_optional_set_uuid() -> None:
     IS_PYDANTIC_V1,
     reason="This should be possible but more work needs to be done",
 )
-def test_pydantic_optional_mixed_collecions() -> None:
+def test_optional_mixed_collecions() -> None:
     class Model(BaseModel):
         maybe_uuids: Optional[Union[Set[UUID], List[UUID]]]
 
