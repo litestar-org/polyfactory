@@ -13,7 +13,7 @@ from ipaddress import (
     IPv6Network,
 )
 from pathlib import Path
-from typing import Callable, Dict, List, Literal, Optional, Set, Tuple, Union
+from typing import Callable, Dict, FrozenSet, List, Literal, Optional, Sequence, Set, Tuple, Type, Union
 from uuid import UUID
 
 import pytest
@@ -68,6 +68,7 @@ from pydantic import (
     conlist,
     conset,
     constr,
+    validator,
 )
 
 from polyfactory.factories import DataclassFactory
@@ -216,6 +217,25 @@ def test_factory_use_construct() -> None:
         PetFactory.build(age=invalid_age)
 
 
+def test_factory_use_construct_coverage() -> None:
+    class Foo(BaseModel):
+        invalid: int
+
+        @validator("invalid")
+        @classmethod
+        def always_invalid(cls, v: int) -> None:
+            raise ValueError("invalid by validator")
+
+    class FooFactory(ModelFactory[Foo]):
+        __model__ = Foo
+
+    non_validated = list(FooFactory.coverage(factory_use_construct=True))
+    assert len(non_validated) == 1
+
+    with pytest.raises(ValidationError):
+        FooFactory.build()
+
+
 def test_factory_use_construct_nested() -> None:
     class Child(BaseModel):
         a: int = Field(ge=0)
@@ -233,21 +253,138 @@ def test_factory_use_construct_nested() -> None:
         ParentFactory.build(child={"a": -1})
 
 
-def test_factory_use_construct_nested_list() -> None:
+def test_factory_use_construct_validator() -> None:
+    class Foo(BaseModel):
+        invalid: int
+
+        @validator("invalid")
+        @classmethod
+        def always_invalid(cls, v: int) -> None:
+            raise ValueError("invalid by validator")
+
+    class FooFactory(ModelFactory[Foo]):
+        __model__ = Foo
+
+    non_validated = FooFactory.build(factory_use_construct=True)
+    assert isinstance(non_validated.invalid, int)
+
+    with pytest.raises(ValidationError):
+        FooFactory.build()
+
+
+@pytest.mark.parametrize("sequence_type", (Tuple, List))
+def test_factory_use_construct_nested_sequence(sequence_type: Type[Sequence]) -> None:
     class Child(BaseModel):
         a: int = Field(ge=0)
 
     class Parent(BaseModel):
-        child: List[Child]
+        child: sequence_type[Child]  # type: ignore[valid-type]
 
     class ParentFactory(ModelFactory[Parent]):
         __model__ = Parent
 
     non_validated_parent = ParentFactory.build(factory_use_construct=True, child=[{"a": -1}])
-    assert non_validated_parent.child[0].a == -1
+    assert len(non_validated_parent.child) == 1
 
     with pytest.raises(ValidationError):
         ParentFactory.build(child=[{"a": -1}])
+
+
+@pytest.mark.parametrize("set_type", (FrozenSet, Set))
+def test_factory_use_construct_nested_set(set_type: Union[Type[FrozenSet], Type[Set]]) -> None:
+    class Child(BaseModel):
+        invalid: int = Field()
+
+        @validator("invalid", allow_reuse=True)
+        @classmethod
+        def always_invalid(cls, v: int) -> None:
+            raise ValueError("invalid by validator")
+
+        def __hash__(self) -> int:
+            return hash(self.invalid)
+
+    class Parent(BaseModel):
+        child: set_type[Child]  # type: ignore[valid-type]
+
+    class ParentFactory(ModelFactory[Parent]):
+        __model__ = Parent
+
+    non_validated_parent = ParentFactory.build(factory_use_construct=True)
+    assert len(non_validated_parent.child) == 1
+    assert isinstance(non_validated_parent.child, set_type)
+
+    with pytest.raises(ValidationError):
+        ParentFactory.build()
+
+
+def test_mapping_with_annotated_nested_model() -> None:
+    class ChildValue(BaseModel):
+        a: int = Field(ge=0)
+
+    class Parent(BaseModel):
+        dict_field: Dict[str, ChildValue]
+
+    class ParentFactory(ModelFactory[Parent]):
+        __model__ = Parent
+
+    non_validated_parent = ParentFactory.build(factory_use_construct=True, dict_field={"arb": {"a": -1}})
+
+    assert set(non_validated_parent.dict_field) == {"arb"}
+    # not converted
+    assert non_validated_parent.dict_field["arb"] == {"a": -1}  # type: ignore[comparison-overlap]
+
+    with pytest.raises(ValidationError):
+        assert ParentFactory.build(dict_field={"arb": {"a": -1}})
+
+
+@pytest.mark.skipif(IS_PYDANTIC_V2, reason="pydantic 1 only test")
+def test_factory_use_construct_nested_constraint_list_v1() -> None:
+    class Child(BaseModel):
+        a: int = Field(ge=0)
+
+    class Parent(BaseModel):
+        child: conlist(Child, min_items=1, max_items=4)  # type: ignore[valid-type]
+        child_annotated: Annotated[List[Child], Field(min_items=1, max_items=4)]
+
+    class ParentFactory(ModelFactory[Parent]):
+        __model__ = Parent
+
+    non_validated_parent = ParentFactory.build(
+        factory_use_construct=True, child=[{"a": -1}], child_annotated=[{"a": -2}]
+    )
+    assert non_validated_parent.child[0].a == -1
+    assert non_validated_parent.child_annotated[0].a == -2
+
+    with pytest.raises(ValidationError):
+        ParentFactory.build(child=[{"a": -1}])
+
+    with pytest.raises(ValidationError):
+        ParentFactory.build(child_annotated=[{"a": -1}])
+
+
+@pytest.mark.skipif(IS_PYDANTIC_V1, reason="pydantic 2 only test")
+def test_factory_use_construct_nested_constraint_list_v2() -> None:
+    class Child(BaseModel):
+        a: int = Field(ge=0)
+
+    class Parent(BaseModel):
+        child: conlist(Child, min_length=1, max_length=4)  # type: ignore[valid-type]
+        child_annotated: Annotated[List[Child], Field(min_length=1, max_length=4)]
+
+    class ParentFactory(ModelFactory[Parent]):
+        __model__ = Parent
+
+    non_validated_parent = ParentFactory.build(
+        factory_use_construct=True, child=[{"a": -1}], child_annotated=[{"a": -2}]
+    )
+    assert non_validated_parent.child[0].a == -1
+    assert non_validated_parent.child_annotated[0].a == -2
+
+    with pytest.raises(ValidationError):
+        ParentFactory.build(child=[{"a": -1}])
+
+    with pytest.raises(ValidationError):
+        ParentFactory.build(child_annotated=[{"a": -1}])
 
 
 @pytest.mark.skipif(IS_PYDANTIC_V2, reason="pydantic 1 only test")

@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import copy
 from contextlib import suppress
 from datetime import timezone
 from functools import partial
@@ -13,7 +14,7 @@ from typing_extensions import Literal, get_args, get_origin
 from polyfactory.collection_extender import CollectionExtender
 from polyfactory.constants import DEFAULT_RANDOM
 from polyfactory.exceptions import MissingDependencyException
-from polyfactory.factories.base import BaseFactory
+from polyfactory.factories.base import BaseFactory, BuildContext
 from polyfactory.factories.base import BuildContext as BaseBuildContext
 from polyfactory.field_meta import Constraints, FieldMeta, Null
 from polyfactory.utils.deprecation import check_for_deprecated_parameters
@@ -92,6 +93,7 @@ except ImportError:
 
 
 if TYPE_CHECKING:
+    from collections import abc
     from random import Random
     from typing import Callable, Sequence
 
@@ -102,7 +104,7 @@ T = TypeVar("T", bound="BaseModelV1 | BaseModelV2")
 _IS_PYDANTIC_V1 = VERSION.startswith("1")
 
 
-class BuildContext(BaseBuildContext):
+class PydanticBuildContext(BaseBuildContext):
     factory_use_construct: bool
 
 
@@ -429,13 +431,23 @@ class ModelFactory(Generic[T], BaseFactory[T]):
         return cls._fields_metadata
 
     @classmethod
-    def get_constrained_field_value(cls, annotation: Any, field_meta: FieldMeta) -> Any:
+    def get_constrained_field_value(
+        cls,
+        annotation: Any,
+        field_meta: FieldMeta,
+        field_build_parameters: Any | None = None,
+        build_context: BuildContext | None = None,
+    ) -> Any:
         constraints = cast(PydanticConstraints, field_meta.constraints)
         if constraints.pop("json", None):
-            value = cls.get_field_value(field_meta)
+            value = cls.get_field_value(
+                field_meta, field_build_parameters=field_build_parameters, build_context=build_context
+            )
             return to_json(value)  # pyright: ignore[reportUnboundVariable]
 
-        return super().get_constrained_field_value(annotation, field_meta)
+        return super().get_constrained_field_value(
+            annotation, field_meta, field_build_parameters=field_build_parameters, build_context=build_context
+        )
 
     @classmethod
     def build(
@@ -454,16 +466,64 @@ class ModelFactory(Generic[T], BaseFactory[T]):
         """
 
         if "_build_context" not in kwargs:
-            kwargs["_build_context"] = BuildContext(seen_models=set(), factory_use_construct=factory_use_construct)
+            kwargs["_build_context"] = PydanticBuildContext(
+                seen_models=set(), factory_use_construct=factory_use_construct
+            )
 
         processed_kwargs = cls.process_kwargs(**kwargs)
 
-        if kwargs["_build_context"].get("factory_use_construct"):
-            if _is_pydantic_v1_model(cls.__model__):
-                return cls.__model__.construct(**processed_kwargs)  # type: ignore[return-value]
-            return cls.__model__.model_construct(**processed_kwargs)  # type: ignore[return-value]
+        return cls._create_model(kwargs["_build_context"], **processed_kwargs)
 
-        return cls.__model__(**processed_kwargs)  # type: ignore[return-value]
+    @classmethod
+    def _get_build_context(cls, build_context: BaseBuildContext | PydanticBuildContext | None) -> PydanticBuildContext:
+        """Return a PydanticBuildContext instance. If build_context is None, return a new PydanticBuildContext.
+
+        :returns: PydanticBuildContext
+
+        """
+        if build_context is None:
+            return {"seen_models": set(), "factory_use_construct": False}
+
+        factory_use_construct = bool(build_context.get("factory_use_construct", False))
+
+        return {
+            "seen_models": copy.deepcopy(build_context["seen_models"]),
+            "factory_use_construct": factory_use_construct,
+        }
+
+    @classmethod
+    def _create_model(cls, _build_context: PydanticBuildContext, **kwargs: Any) -> T:
+        """Create an instance of the factory's __model__
+
+        :param _build_context: BuildContext instance.
+        :param kwargs: Model kwargs.
+
+        :returns: An instance of type T.
+
+        """
+        if _build_context.get("factory_use_construct"):
+            if _is_pydantic_v1_model(cls.__model__):
+                return cls.__model__.construct(**kwargs)  # type: ignore[return-value]
+            return cls.__model__.model_construct(**kwargs)  # type: ignore[return-value]
+        return cls.__model__(**kwargs)  # type: ignore[return-value]
+
+    @classmethod
+    def coverage(cls, factory_use_construct: bool = False, **kwargs: Any) -> abc.Iterator[T]:
+        """Build a batch of the factory's Meta.model will full coverage of the sub-types of the model.
+
+        :param kwargs: Any kwargs. If field_meta names are set in kwargs, their values will be used.
+
+        :returns: A iterator of instances of type T.
+
+        """
+
+        if "_build_context" not in kwargs:
+            kwargs["_build_context"] = PydanticBuildContext(
+                seen_models=set(), factory_use_construct=factory_use_construct
+            )
+
+        for data in cls.process_kwargs_coverage(**kwargs):
+            yield cls._create_model(_build_context=kwargs["_build_context"], **data)
 
     @classmethod
     def is_custom_root_field(cls, field_meta: FieldMeta) -> bool:
