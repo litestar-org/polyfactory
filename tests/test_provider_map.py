@@ -1,5 +1,5 @@
 from dataclasses import dataclass
-from typing import Any, Callable, Generic, TypeVar
+from typing import Any, Callable, Dict, Generic, TypeVar
 
 from polyfactory.factories.base import BaseFactory
 from polyfactory.factories.dataclass_factory import DataclassFactory
@@ -21,7 +21,7 @@ def test_provider_map_with_any() -> None:
 
     class FooFactory(DataclassFactory[Foo]):
         @classmethod
-        def get_provider_map(cls) -> dict[Any, Callable[[], Any]]:
+        def get_provider_map(cls) -> Dict[Any, Callable[[], Any]]:
             provider_map = super().get_provider_map()
             provider_map[Any] = lambda: "any"
 
@@ -41,7 +41,7 @@ def test_provider_map_with_typevar() -> None:
 
     class FooFactory(DataclassFactory[Foo]):
         @classmethod
-        def get_provider_map(cls) -> dict[Any, Callable[[], Any]]:
+        def get_provider_map(cls) -> Dict[Any, Callable[[], Any]]:
             provider_map = super().get_provider_map()
             provider_map[T] = lambda: "any"
 
