@@ -495,7 +495,7 @@ class BaseFactory(ABC, Generic[T]):
             return lambda *args: None
 
         return {
-            Any: lambda: None,
+            Any: lambda: create_random_string(cls.__random__, min_length=1, max_length=10),
             # primitives
             object: object,
             float: cls.__faker__.pyfloat,
@@ -772,11 +772,11 @@ class BaseFactory(ABC, Generic[T]):
                 field_meta, origin, cls, field_build_parameters=field_build_parameters, build_context=build_context
             )
 
-        if is_any(unwrapped_annotation) or isinstance(unwrapped_annotation, TypeVar):
-            return create_random_string(cls.__random__, min_length=1, max_length=10)
-
         if provider := cls.get_provider_map().get(unwrapped_annotation):
             return provider()
+
+        if isinstance(unwrapped_annotation, TypeVar):
+            return create_random_string(cls.__random__, min_length=1, max_length=10)
 
         if callable(unwrapped_annotation):
             # if value is a callable we can try to naively call it.
