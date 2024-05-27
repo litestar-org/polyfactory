@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 import sys
-from typing import TYPE_CHECKING, Any, Mapping
+from typing import TYPE_CHECKING, Any, Mapping, get_args, get_origin
 
 from typing_extensions import TypeAliasType
 
@@ -12,14 +12,6 @@ from polyfactory.utils.types import NoneType
 if TYPE_CHECKING:
     from random import Random
     from typing import Sequence
-
-    from typing_extensions import get_args, get_origin
-else:
-    try:
-        # get_args function not returning the origin type as expected for pydantic v1 constrained values, ex. ConstrainedListValue.
-        from pydantic.utils import get_args, get_origin
-    except ImportError:
-        from typing_extensions import get_args, get_origin
 
 
 def unwrap_new_type(annotation: Any) -> Any:
