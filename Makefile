@@ -77,7 +77,7 @@ lock:                                             ## Rebuild lockfiles from scra
 # Tests, Linting, Coverage
 # =============================================================================
 .PHONY: lint
-lint: 												## Runs pre-commit hooks; includes ruff linting, codespell, black
+lint: 												## Runs pre-commit hooks; includes ruff linting, ruff formatting, codespell
 	@echo "=> Running pre-commit process"
 	@$(ENV_PREFIX)pre-commit run --all-files
 	@echo "=> Pre-commit complete"
