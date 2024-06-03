@@ -38,7 +38,6 @@ def handle_constrained_collection(
     """
     min_items = abs(min_items if min_items is not None else (max_items or 0))
     max_items = abs(max_items if max_items is not None else min_items + 1)
-    max_unique_value_attempts = 5
 
     if max_items < min_items:
         msg = "max_items must be larger or equal to min_items"
@@ -52,28 +51,15 @@ def handle_constrained_collection(
             field_build_parameters = [None] * length
 
         for build_parameters in field_build_parameters:
+            value = factory.get_field_value(
+                field_meta,
+                field_build_parameters=build_parameters,
+                build_context=build_context,
+            )
+
             if isinstance(collection, set):
-                # Try to generate a unique value
-                for _ in range(max_unique_value_attempts):
-                    value = factory.get_field_value(
-                        field_meta,
-                        field_build_parameters=build_parameters,
-                        build_context=build_context,
-                    )
-
-                    if value not in collection:
-                        break
-                else:
-                    msg = f"cannot generate a unique value of type: {field_meta.annotation}"
-                    raise ParameterException(msg)
-
                 collection.add(value)
             else:
-                value = factory.get_field_value(
-                    field_meta,
-                    field_build_parameters=build_parameters,
-                    build_context=build_context,
-                )
                 collection.append(value)
         return collection_type(collection)
     except TypeError as e:
