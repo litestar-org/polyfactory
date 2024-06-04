@@ -148,6 +148,9 @@ Thanks goes to these wonderful people ([emoji key](https://allcontributors.org/d
       <td align="center" valign="top" width="14.28%"><a href="https://www.timdumol.com/"><img src="https://avatars.githubusercontent.com/u/49169?v=4?s=100" width="100px;" alt="Tim Joseph Dumol"/><br /><sub><b>Tim Joseph Dumol</b></sub></a><br /><a href="https://github.com/litestar-org/polyfactory/commits?author=TimDumol" title="Documentation">📖</a></td>
       <td align="center" valign="top" width="14.28%"><a href="https://github.com/wangxin688"><img src="https://avatars.githubusercontent.com/u/36665036?v=4?s=100" width="100px;" alt="jeffry"/><br /><sub><b>jeffry</b></sub></a><br /><a href="https://github.com/litestar-org/polyfactory/commits?author=wangxin688" title="Code">💻</a></td>
     </tr>
+    <tr>
+      <td align="center" valign="top" width="14.28%"><a href="https://github.com/Reskov"><img src="https://avatars.githubusercontent.com/u/4832451?v=4?s=100" width="100px;" alt="Sergey Kovalev"/><br /><sub><b>Sergey Kovalev</b></sub></a><br /><a href="https://github.com/litestar-org/polyfactory/commits?author=Reskov" title="Code">💻</a></td>
+    </tr>
   </tbody>
 </table>
 
