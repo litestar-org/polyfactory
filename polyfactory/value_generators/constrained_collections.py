@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from typing import TYPE_CHECKING, Any, Callable, List, Mapping, Sequence, TypeVar, cast
+from typing import TYPE_CHECKING, Any, Callable, List, Mapping, TypeVar, cast
 
 from polyfactory.exceptions import ParameterException
 from polyfactory.field_meta import FieldMeta
@@ -46,14 +46,16 @@ def handle_constrained_collection(
     collection: set[T] | list[T] = set() if (collection_type in (frozenset, set) or unique_items) else []
 
     try:
-        if not isinstance(field_build_parameters, Sequence):
-            length = factory.__random__.randint(min_items, max_items) or 1
-            field_build_parameters = [None] * length
+        length = factory.__random__.randint(min_items, max_items) or 1
+        while (i := len(collection)) < length:
+            if field_build_parameters and len(field_build_parameters) > i:
+                build_params = field_build_parameters[i]
+            else:
+                build_params = None
 
-        for build_parameters in field_build_parameters:
             value = factory.get_field_value(
                 field_meta,
-                field_build_parameters=build_parameters,
+                field_build_parameters=build_params,
                 build_context=build_context,
             )
 
