@@ -66,6 +66,7 @@ class BeanieDocumentFactory(Generic[T], ModelFactory[T]):
 
         :param field_meta: FieldMeta instance.
         :param field_build_parameters: Any build parameters passed to the factory as kwarg values.
+        :param build_context: BuildContext instance.
 
         :returns: An arbitrary value.
 
