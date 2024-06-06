@@ -95,13 +95,6 @@ class BuildContext(TypedDict):
     seen_models: set[type]
 
 
-def _get_build_context(build_context: BuildContext | None) -> BuildContext:
-    if build_context is None:
-        return {"seen_models": set()}
-
-    return copy.deepcopy(build_context)
-
-
 class BaseFactory(ABC, Generic[T]):
     """Base Factory class - this class holds the main logic of the library"""
 
@@ -238,6 +231,17 @@ class BaseFactory(ABC, Generic[T]):
 
         if cls.__set_as_default_factory_for_type__ and hasattr(cls, "__model__"):
             BaseFactory._factory_type_mapping[cls.__model__] = cls
+
+    @classmethod
+    def _get_build_context(cls, build_context: BuildContext | None) -> BuildContext:
+        """Return a BuildContext instance.
+
+        :returns: BuildContext
+        """
+        if build_context is None:
+            return {"seen_models": set()}
+
+        return copy.deepcopy(build_context)
 
     @classmethod
     def _infer_model_type(cls: type[F]) -> type[T] | None:
@@ -562,7 +566,13 @@ class BaseFactory(ABC, Generic[T]):
         )
 
     @classmethod
-    def get_constrained_field_value(cls, annotation: Any, field_meta: FieldMeta) -> Any:  # noqa: C901, PLR0911, PLR0912
+    def get_constrained_field_value(  # noqa: C901, PLR0911, PLR0912
+        cls,
+        annotation: Any,
+        field_meta: FieldMeta,
+        field_build_parameters: Any | None = None,
+        build_context: BuildContext | None = None,
+    ) -> Any:
         try:
             constraints = cast("Constraints", field_meta.constraints)
             if is_safe_subclass(annotation, float):
@@ -622,6 +632,8 @@ class BaseFactory(ABC, Generic[T]):
                         field_meta=field_meta,
                         min_items=constraints.get("min_length"),
                         max_items=constraints.get("max_length"),
+                        field_build_parameters=field_build_parameters,
+                        build_context=build_context,
                     )
                 return handle_constrained_collection(
                     collection_type=collection_type,  # type: ignore[type-var]
@@ -631,6 +643,8 @@ class BaseFactory(ABC, Generic[T]):
                     max_items=constraints.get("max_length"),
                     min_items=constraints.get("min_length"),
                     unique_items=constraints.get("unique_items", False),
+                    field_build_parameters=field_build_parameters,
+                    build_context=build_context,
                 )
 
             if is_safe_subclass(annotation, date):
@@ -673,7 +687,7 @@ class BaseFactory(ABC, Generic[T]):
         :returns: An arbitrary value.
 
         """
-        build_context = _get_build_context(build_context)
+        build_context = cls._get_build_context(build_context)
         if cls.is_ignored_type(field_meta.annotation):
             return None
 
@@ -689,7 +703,12 @@ class BaseFactory(ABC, Generic[T]):
             return cls.__random__.choice(list(unwrapped_annotation))
 
         if field_meta.constraints:
-            return cls.get_constrained_field_value(annotation=unwrapped_annotation, field_meta=field_meta)
+            return cls.get_constrained_field_value(
+                annotation=unwrapped_annotation,
+                field_meta=field_meta,
+                field_build_parameters=field_build_parameters,
+                build_context=build_context,
+            )
 
         if is_union(field_meta.annotation) and field_meta.children:
             seen_models = build_context["seen_models"]
@@ -737,15 +756,21 @@ class BaseFactory(ABC, Generic[T]):
                         field_meta=field_meta.children[0] if field_meta.children else field_meta,
                         min_items=cls.__min_collection_length__,
                         max_items=cls.__max_collection_length__,
+                        field_build_parameters=field_build_parameters,
+                        build_context=build_context,
                     )
                 return handle_constrained_mapping(
                     factory=cls,
                     field_meta=field_meta,
                     min_items=cls.__min_collection_length__,
                     max_items=cls.__max_collection_length__,
+                    field_build_parameters=field_build_parameters,
+                    build_context=build_context,
                 )
 
-            return handle_collection_type(field_meta, origin, cls)
+            return handle_collection_type(
+                field_meta, origin, cls, field_build_parameters=field_build_parameters, build_context=build_context
+            )
 
         if provider := cls.get_provider_map().get(unwrapped_annotation):
             return provider()
@@ -926,7 +951,7 @@ class BaseFactory(ABC, Generic[T]):
         :returns: A dictionary of build results.
 
         """
-        _build_context = _get_build_context(kwargs.pop("_build_context", None))
+        _build_context = cls._get_build_context(kwargs.pop("_build_context", None))
         _build_context["seen_models"].add(cls.__model__)
 
         result: dict[str, Any] = {**kwargs}
@@ -980,7 +1005,7 @@ class BaseFactory(ABC, Generic[T]):
         :returns: A dictionary of build results.
 
         """
-        _build_context = _get_build_context(kwargs.pop("_build_context", None))
+        _build_context = cls._get_build_context(kwargs.pop("_build_context", None))
         _build_context["seen_models"].add(cls.__model__)
 
         result: dict[str, Any] = {**kwargs}
