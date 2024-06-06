@@ -370,25 +370,26 @@
 </span><span data-line="66">
 </span><span data-line="67"><span class="sd">        :param field_meta: FieldMeta instance.</span>
 </span><span data-line="68"><span class="sd">        :param field_build_parameters: Any build parameters passed to the factory as kwarg values.</span>
-</span><span data-line="69">
-</span><span data-line="70"><span class="sd">        :returns: An arbitrary value.</span>
-</span><span data-line="71">
-</span><span data-line="72"><span class="sd">        &quot;&quot;&quot;</span>
-</span><span data-line="73">        <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">field_meta</span><span class="o">.</span><span class="n">annotation</span><span class="p">,</span> <span class="s2">&quot;__name__&quot;</span><span class="p">):</span>
-</span><span data-line="74">            <span class="k">if</span> <span class="s2">&quot;Indexed &quot;</span> <span class="ow">in</span> <span class="n">field_meta</span><span class="o">.</span><span class="n">annotation</span><span class="o">.</span><span class="vm">__name__</span><span class="p">:</span>
-</span><span data-line="75">                <span class="n">base_type</span> <span class="o">=</span> <span class="n">field_meta</span><span class="o">.</span><span class="n">annotation</span><span class="o">.</span><span class="vm">__bases__</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
-</span><span data-line="76">                <span class="n">field_meta</span><span class="o">.</span><span class="n">annotation</span> <span class="o">=</span> <span class="n">base_type</span>
-</span><span data-line="77">
-</span><span data-line="78">            <span class="k">if</span> <span class="s2">&quot;Link&quot;</span> <span class="ow">in</span> <span class="n">field_meta</span><span class="o">.</span><span class="n">annotation</span><span class="o">.</span><span class="vm">__name__</span><span class="p">:</span>
-</span><span data-line="79">                <span class="n">link_class</span> <span class="o">=</span> <span class="n">get_args</span><span class="p">(</span><span class="n">field_meta</span><span class="o">.</span><span class="n">annotation</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
-</span><span data-line="80">                <span class="n">field_meta</span><span class="o">.</span><span class="n">annotation</span> <span class="o">=</span> <span class="n">link_class</span>
+</span><span data-line="69"><span class="sd">        :param build_context: BuildContext instance.</span>
+</span><span data-line="70">
+</span><span data-line="71"><span class="sd">        :returns: An arbitrary value.</span>
+</span><span data-line="72">
+</span><span data-line="73"><span class="sd">        &quot;&quot;&quot;</span>
+</span><span data-line="74">        <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">field_meta</span><span class="o">.</span><span class="n">annotation</span><span class="p">,</span> <span class="s2">&quot;__name__&quot;</span><span class="p">):</span>
+</span><span data-line="75">            <span class="k">if</span> <span class="s2">&quot;Indexed &quot;</span> <span class="ow">in</span> <span class="n">field_meta</span><span class="o">.</span><span class="n">annotation</span><span class="o">.</span><span class="vm">__name__</span><span class="p">:</span>
+</span><span data-line="76">                <span class="n">base_type</span> <span class="o">=</span> <span class="n">field_meta</span><span class="o">.</span><span class="n">annotation</span><span class="o">.</span><span class="vm">__bases__</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+</span><span data-line="77">                <span class="n">field_meta</span><span class="o">.</span><span class="n">annotation</span> <span class="o">=</span> <span class="n">base_type</span>
+</span><span data-line="78">
+</span><span data-line="79">            <span class="k">if</span> <span class="s2">&quot;Link&quot;</span> <span class="ow">in</span> <span class="n">field_meta</span><span class="o">.</span><span class="n">annotation</span><span class="o">.</span><span class="vm">__name__</span><span class="p">:</span>
+</span><span data-line="80">                <span class="n">link_class</span> <span class="o">=</span> <span class="n">get_args</span><span class="p">(</span><span class="n">field_meta</span><span class="o">.</span><span class="n">annotation</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
 </span><span data-line="81">                <span class="n">field_meta</span><span class="o">.</span><span class="n">annotation</span> <span class="o">=</span> <span class="n">link_class</span>
-</span><span data-line="82">
-</span><span data-line="83">        <span class="k">return</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">get_field_value</span><span class="p">(</span>
-</span><span data-line="84">            <span class="n">field_meta</span><span class="o">=</span><span class="n">field_meta</span><span class="p">,</span>
-</span><span data-line="85">            <span class="n">field_build_parameters</span><span class="o">=</span><span class="n">field_build_parameters</span><span class="p">,</span>
-</span><span data-line="86">            <span class="n">build_context</span><span class="o">=</span><span class="n">build_context</span><span class="p">,</span>
-</span><span data-line="87">        <span class="p">)</span></div></div>
+</span><span data-line="82">                <span class="n">field_meta</span><span class="o">.</span><span class="n">annotation</span> <span class="o">=</span> <span class="n">link_class</span>
+</span><span data-line="83">
+</span><span data-line="84">        <span class="k">return</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">get_field_value</span><span class="p">(</span>
+</span><span data-line="85">            <span class="n">field_meta</span><span class="o">=</span><span class="n">field_meta</span><span class="p">,</span>
+</span><span data-line="86">            <span class="n">field_build_parameters</span><span class="o">=</span><span class="n">field_build_parameters</span><span class="p">,</span>
+</span><span data-line="87">            <span class="n">build_context</span><span class="o">=</span><span class="n">build_context</span><span class="p">,</span>
+</span><span data-line="88">        <span class="p">)</span></div></div>
 </span></pre></div>
         </article>
         <button class="back-to-top" type="button">

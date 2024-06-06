@@ -313,106 +313,136 @@
 </span><span data-line="9"><span class="kn">from</span> <span class="nn">polyfactory.utils.model_coverage</span> <span class="kn">import</span> <span class="n">CoverageContainer</span>
 </span><span data-line="10">
 </span><span data-line="11"><span class="k">if</span> <span class="n">TYPE_CHECKING</span><span class="p">:</span>
-</span><span data-line="12">    <span class="kn">from</span> <span class="nn">polyfactory.factories.base</span> <span class="kn">import</span> <span class="n">BaseFactory</span>
+</span><span data-line="12">    <span class="kn">from</span> <span class="nn">polyfactory.factories.base</span> <span class="kn">import</span> <span class="n">BaseFactory</span><span class="p">,</span> <span class="n">BuildContext</span>
 </span><span data-line="13">
 </span><span data-line="14">
-<div class="viewcode-block" id="handle_collection_type"><a class="viewcode-back" href="../../../reference/value_generators/complex_types.html#polyfactory.value_generators.complex_types.handle_collection_type">[docs]</a></span><span data-line="15"><span class="k">def</span> <span class="nf">handle_collection_type</span><span class="p">(</span><span class="n">field_meta</span><span class="p">:</span> <span class="n">FieldMeta</span><span class="p">,</span> <span class="n">container_type</span><span class="p">:</span> <span class="nb">type</span><span class="p">,</span> <span class="n">factory</span><span class="p">:</span> <span class="nb">type</span><span class="p">[</span><span class="n">BaseFactory</span><span class="p">[</span><span class="n">Any</span><span class="p">]])</span> <span class="o">-&gt;</span> <span class="n">Any</span><span class="p">:</span>
-</span><span data-line="16"><span class="w">    </span><span class="sd">&quot;&quot;&quot;Handle generation of container types recursively.</span>
-</span><span data-line="17">
-</span><span data-line="18"><span class="sd">    :param container_type: A type that can accept type arguments.</span>
-</span><span data-line="19"><span class="sd">    :param factory: A factory.</span>
-</span><span data-line="20"><span class="sd">    :param field_meta: A field meta instance.</span>
-</span><span data-line="21">
-</span><span data-line="22"><span class="sd">    :returns: A built result.</span>
-</span><span data-line="23"><span class="sd">    &quot;&quot;&quot;</span>
-</span><span data-line="24">
-</span><span data-line="25">    <span class="k">if</span> <span class="n">PY_38</span> <span class="ow">and</span> <span class="n">container_type</span> <span class="ow">in</span> <span class="n">INSTANTIABLE_TYPE_MAPPING</span><span class="p">:</span>
-</span><span data-line="26">        <span class="n">container_type</span> <span class="o">=</span> <span class="n">INSTANTIABLE_TYPE_MAPPING</span><span class="p">[</span><span class="n">container_type</span><span class="p">]</span>  <span class="c1"># type: ignore[assignment]</span>
-</span><span data-line="27">
-</span><span data-line="28">    <span class="n">container</span> <span class="o">=</span> <span class="n">container_type</span><span class="p">()</span>
-</span><span data-line="29">    <span class="k">if</span> <span class="ow">not</span> <span class="n">field_meta</span><span class="o">.</span><span class="n">children</span><span class="p">:</span>
-</span><span data-line="30">        <span class="k">return</span> <span class="n">container</span>
-</span><span data-line="31">
-</span><span data-line="32">    <span class="k">if</span> <span class="nb">issubclass</span><span class="p">(</span><span class="n">container_type</span><span class="p">,</span> <span class="n">MutableMapping</span><span class="p">)</span> <span class="ow">or</span> <span class="n">is_typeddict</span><span class="p">(</span><span class="n">container_type</span><span class="p">):</span>
-</span><span data-line="33">        <span class="k">for</span> <span class="n">key_field_meta</span><span class="p">,</span> <span class="n">value_field_meta</span> <span class="ow">in</span> <span class="n">cast</span><span class="p">(</span>
-</span><span data-line="34">            <span class="n">Iterable</span><span class="p">[</span><span class="n">Tuple</span><span class="p">[</span><span class="n">FieldMeta</span><span class="p">,</span> <span class="n">FieldMeta</span><span class="p">]],</span>
-</span><span data-line="35">            <span class="nb">zip</span><span class="p">(</span><span class="n">field_meta</span><span class="o">.</span><span class="n">children</span><span class="p">[::</span><span class="mi">2</span><span class="p">],</span> <span class="n">field_meta</span><span class="o">.</span><span class="n">children</span><span class="p">[</span><span class="mi">1</span><span class="p">::</span><span class="mi">2</span><span class="p">]),</span>
-</span><span data-line="36">        <span class="p">):</span>
-</span><span data-line="37">            <span class="n">key</span> <span class="o">=</span> <span class="n">factory</span><span class="o">.</span><span class="n">get_field_value</span><span class="p">(</span><span class="n">key_field_meta</span><span class="p">)</span>
-</span><span data-line="38">            <span class="n">value</span> <span class="o">=</span> <span class="n">factory</span><span class="o">.</span><span class="n">get_field_value</span><span class="p">(</span><span class="n">value_field_meta</span><span class="p">)</span>
-</span><span data-line="39">            <span class="n">container</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">value</span>
-</span><span data-line="40">        <span class="k">return</span> <span class="n">container</span>
-</span><span data-line="41">
-</span><span data-line="42">    <span class="k">if</span> <span class="nb">issubclass</span><span class="p">(</span><span class="n">container_type</span><span class="p">,</span> <span class="n">MutableSequence</span><span class="p">):</span>
-</span><span data-line="43">        <span class="n">container</span><span class="o">.</span><span class="n">extend</span><span class="p">([</span><span class="n">factory</span><span class="o">.</span><span class="n">get_field_value</span><span class="p">(</span><span class="n">subfield_meta</span><span class="p">)</span> <span class="k">for</span> <span class="n">subfield_meta</span> <span class="ow">in</span> <span class="n">field_meta</span><span class="o">.</span><span class="n">children</span><span class="p">])</span>
-</span><span data-line="44">        <span class="k">return</span> <span class="n">container</span>
-</span><span data-line="45">
-</span><span data-line="46">    <span class="k">if</span> <span class="nb">issubclass</span><span class="p">(</span><span class="n">container_type</span><span class="p">,</span> <span class="n">Set</span><span class="p">):</span>
-</span><span data-line="47">        <span class="k">for</span> <span class="n">subfield_meta</span> <span class="ow">in</span> <span class="n">field_meta</span><span class="o">.</span><span class="n">children</span><span class="p">:</span>
-</span><span data-line="48">            <span class="n">container</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">factory</span><span class="o">.</span><span class="n">get_field_value</span><span class="p">(</span><span class="n">subfield_meta</span><span class="p">))</span>
-</span><span data-line="49">        <span class="k">return</span> <span class="n">container</span>
-</span><span data-line="50">
-</span><span data-line="51">    <span class="k">if</span> <span class="nb">issubclass</span><span class="p">(</span><span class="n">container_type</span><span class="p">,</span> <span class="n">AbstractSet</span><span class="p">):</span>
-</span><span data-line="52">        <span class="k">return</span> <span class="n">container</span><span class="o">.</span><span class="n">union</span><span class="p">(</span><span class="n">handle_collection_type</span><span class="p">(</span><span class="n">field_meta</span><span class="p">,</span> <span class="nb">set</span><span class="p">,</span> <span class="n">factory</span><span class="p">))</span>
+<div class="viewcode-block" id="handle_collection_type"><a class="viewcode-back" href="../../../reference/value_generators/complex_types.html#polyfactory.value_generators.complex_types.handle_collection_type">[docs]</a></span><span data-line="15"><span class="k">def</span> <span class="nf">handle_collection_type</span><span class="p">(</span>
+</span><span data-line="16">    <span class="n">field_meta</span><span class="p">:</span> <span class="n">FieldMeta</span><span class="p">,</span>
+</span><span data-line="17">    <span class="n">container_type</span><span class="p">:</span> <span class="nb">type</span><span class="p">,</span>
+</span><span data-line="18">    <span class="n">factory</span><span class="p">:</span> <span class="nb">type</span><span class="p">[</span><span class="n">BaseFactory</span><span class="p">[</span><span class="n">Any</span><span class="p">]],</span>
+</span><span data-line="19">    <span class="n">field_build_parameters</span><span class="p">:</span> <span class="n">Any</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+</span><span data-line="20">    <span class="n">build_context</span><span class="p">:</span> <span class="n">BuildContext</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+</span><span data-line="21"><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Any</span><span class="p">:</span>
+</span><span data-line="22"><span class="w">    </span><span class="sd">&quot;&quot;&quot;Handle generation of container types recursively.</span>
+</span><span data-line="23">
+</span><span data-line="24"><span class="sd">    :param container_type: A type that can accept type arguments.</span>
+</span><span data-line="25"><span class="sd">    :param factory: A factory.</span>
+</span><span data-line="26"><span class="sd">    :param field_meta: A field meta instance.</span>
+</span><span data-line="27"><span class="sd">    :param field_build_parameters: Any build parameters passed to the factory as kwarg values.</span>
+</span><span data-line="28"><span class="sd">    :param build_context: BuildContext data for current build.</span>
+</span><span data-line="29">
+</span><span data-line="30"><span class="sd">    :returns: A built result.</span>
+</span><span data-line="31"><span class="sd">    &quot;&quot;&quot;</span>
+</span><span data-line="32">
+</span><span data-line="33">    <span class="k">if</span> <span class="n">PY_38</span> <span class="ow">and</span> <span class="n">container_type</span> <span class="ow">in</span> <span class="n">INSTANTIABLE_TYPE_MAPPING</span><span class="p">:</span>
+</span><span data-line="34">        <span class="n">container_type</span> <span class="o">=</span> <span class="n">INSTANTIABLE_TYPE_MAPPING</span><span class="p">[</span><span class="n">container_type</span><span class="p">]</span>  <span class="c1"># type: ignore[assignment]</span>
+</span><span data-line="35">
+</span><span data-line="36">    <span class="n">container</span> <span class="o">=</span> <span class="n">container_type</span><span class="p">()</span>
+</span><span data-line="37">    <span class="k">if</span> <span class="ow">not</span> <span class="n">field_meta</span><span class="o">.</span><span class="n">children</span><span class="p">:</span>
+</span><span data-line="38">        <span class="k">return</span> <span class="n">container</span>
+</span><span data-line="39">
+</span><span data-line="40">    <span class="k">if</span> <span class="nb">issubclass</span><span class="p">(</span><span class="n">container_type</span><span class="p">,</span> <span class="n">MutableMapping</span><span class="p">)</span> <span class="ow">or</span> <span class="n">is_typeddict</span><span class="p">(</span><span class="n">container_type</span><span class="p">):</span>
+</span><span data-line="41">        <span class="k">for</span> <span class="n">key_field_meta</span><span class="p">,</span> <span class="n">value_field_meta</span> <span class="ow">in</span> <span class="n">cast</span><span class="p">(</span>
+</span><span data-line="42">            <span class="n">Iterable</span><span class="p">[</span><span class="n">Tuple</span><span class="p">[</span><span class="n">FieldMeta</span><span class="p">,</span> <span class="n">FieldMeta</span><span class="p">]],</span>
+</span><span data-line="43">            <span class="nb">zip</span><span class="p">(</span><span class="n">field_meta</span><span class="o">.</span><span class="n">children</span><span class="p">[::</span><span class="mi">2</span><span class="p">],</span> <span class="n">field_meta</span><span class="o">.</span><span class="n">children</span><span class="p">[</span><span class="mi">1</span><span class="p">::</span><span class="mi">2</span><span class="p">]),</span>
+</span><span data-line="44">        <span class="p">):</span>
+</span><span data-line="45">            <span class="n">key</span> <span class="o">=</span> <span class="n">factory</span><span class="o">.</span><span class="n">get_field_value</span><span class="p">(</span>
+</span><span data-line="46">                <span class="n">key_field_meta</span><span class="p">,</span> <span class="n">field_build_parameters</span><span class="o">=</span><span class="n">field_build_parameters</span><span class="p">,</span> <span class="n">build_context</span><span class="o">=</span><span class="n">build_context</span>
+</span><span data-line="47">            <span class="p">)</span>
+</span><span data-line="48">            <span class="n">value</span> <span class="o">=</span> <span class="n">factory</span><span class="o">.</span><span class="n">get_field_value</span><span class="p">(</span>
+</span><span data-line="49">                <span class="n">value_field_meta</span><span class="p">,</span> <span class="n">field_build_parameters</span><span class="o">=</span><span class="n">field_build_parameters</span><span class="p">,</span> <span class="n">build_context</span><span class="o">=</span><span class="n">build_context</span>
+</span><span data-line="50">            <span class="p">)</span>
+</span><span data-line="51">            <span class="n">container</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">value</span>
+</span><span data-line="52">        <span class="k">return</span> <span class="n">container</span>
 </span><span data-line="53">
-</span><span data-line="54">    <span class="k">if</span> <span class="nb">issubclass</span><span class="p">(</span><span class="n">container_type</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">):</span>
-</span><span data-line="55">        <span class="k">return</span> <span class="n">container_type</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="n">factory</span><span class="o">.</span><span class="n">get_field_value</span><span class="p">,</span> <span class="n">field_meta</span><span class="o">.</span><span class="n">children</span><span class="p">))</span>
-</span><span data-line="56">
-</span><span data-line="57">    <span class="n">msg</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;Unsupported container type: </span><span class="si">{</span><span class="n">container_type</span><span class="si">}</span><span class="s2">&quot;</span>
-</span><span data-line="58">    <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span></div>
-</span><span data-line="59">
-</span><span data-line="60">
-<div class="viewcode-block" id="handle_collection_type_coverage"><a class="viewcode-back" href="../../../reference/value_generators/complex_types.html#polyfactory.value_generators.complex_types.handle_collection_type_coverage">[docs]</a></span><span data-line="61"><span class="k">def</span> <span class="nf">handle_collection_type_coverage</span><span class="p">(</span>
-</span><span data-line="62">    <span class="n">field_meta</span><span class="p">:</span> <span class="n">FieldMeta</span><span class="p">,</span>
-</span><span data-line="63">    <span class="n">container_type</span><span class="p">:</span> <span class="nb">type</span><span class="p">,</span>
-</span><span data-line="64">    <span class="n">factory</span><span class="p">:</span> <span class="nb">type</span><span class="p">[</span><span class="n">BaseFactory</span><span class="p">[</span><span class="n">Any</span><span class="p">]],</span>
-</span><span data-line="65"><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Any</span><span class="p">:</span>
-</span><span data-line="66"><span class="w">    </span><span class="sd">&quot;&quot;&quot;Handle coverage generation of container types recursively.</span>
-</span><span data-line="67">
-</span><span data-line="68"><span class="sd">    :param container_type: A type that can accept type arguments.</span>
-</span><span data-line="69"><span class="sd">    :param factory: A factory.</span>
-</span><span data-line="70"><span class="sd">    :param field_meta: A field meta instance.</span>
-</span><span data-line="71">
-</span><span data-line="72"><span class="sd">    :returns: An unresolved built result.</span>
-</span><span data-line="73"><span class="sd">    &quot;&quot;&quot;</span>
-</span><span data-line="74">    <span class="n">container</span> <span class="o">=</span> <span class="n">container_type</span><span class="p">()</span>
-</span><span data-line="75">    <span class="k">if</span> <span class="ow">not</span> <span class="n">field_meta</span><span class="o">.</span><span class="n">children</span><span class="p">:</span>
-</span><span data-line="76">        <span class="k">return</span> <span class="n">container</span>
-</span><span data-line="77">
-</span><span data-line="78">    <span class="k">if</span> <span class="nb">issubclass</span><span class="p">(</span><span class="n">container_type</span><span class="p">,</span> <span class="n">MutableMapping</span><span class="p">)</span> <span class="ow">or</span> <span class="n">is_typeddict</span><span class="p">(</span><span class="n">container_type</span><span class="p">):</span>
-</span><span data-line="79">        <span class="k">for</span> <span class="n">key_field_meta</span><span class="p">,</span> <span class="n">value_field_meta</span> <span class="ow">in</span> <span class="n">cast</span><span class="p">(</span>
-</span><span data-line="80">            <span class="n">Iterable</span><span class="p">[</span><span class="n">Tuple</span><span class="p">[</span><span class="n">FieldMeta</span><span class="p">,</span> <span class="n">FieldMeta</span><span class="p">]],</span>
-</span><span data-line="81">            <span class="nb">zip</span><span class="p">(</span><span class="n">field_meta</span><span class="o">.</span><span class="n">children</span><span class="p">[::</span><span class="mi">2</span><span class="p">],</span> <span class="n">field_meta</span><span class="o">.</span><span class="n">children</span><span class="p">[</span><span class="mi">1</span><span class="p">::</span><span class="mi">2</span><span class="p">]),</span>
-</span><span data-line="82">        <span class="p">):</span>
-</span><span data-line="83">            <span class="n">key</span> <span class="o">=</span> <span class="n">CoverageContainer</span><span class="p">(</span><span class="n">factory</span><span class="o">.</span><span class="n">get_field_value_coverage</span><span class="p">(</span><span class="n">key_field_meta</span><span class="p">))</span>
-</span><span data-line="84">            <span class="n">value</span> <span class="o">=</span> <span class="n">CoverageContainer</span><span class="p">(</span><span class="n">factory</span><span class="o">.</span><span class="n">get_field_value_coverage</span><span class="p">(</span><span class="n">value_field_meta</span><span class="p">))</span>
-</span><span data-line="85">            <span class="n">container</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">value</span>
-</span><span data-line="86">        <span class="k">return</span> <span class="n">container</span>
-</span><span data-line="87">
-</span><span data-line="88">    <span class="k">if</span> <span class="nb">issubclass</span><span class="p">(</span><span class="n">container_type</span><span class="p">,</span> <span class="n">MutableSequence</span><span class="p">):</span>
-</span><span data-line="89">        <span class="n">container_instance</span> <span class="o">=</span> <span class="n">container_type</span><span class="p">()</span>
-</span><span data-line="90">        <span class="k">for</span> <span class="n">subfield_meta</span> <span class="ow">in</span> <span class="n">field_meta</span><span class="o">.</span><span class="n">children</span><span class="p">:</span>
-</span><span data-line="91">            <span class="n">container_instance</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">factory</span><span class="o">.</span><span class="n">get_field_value_coverage</span><span class="p">(</span><span class="n">subfield_meta</span><span class="p">))</span>
-</span><span data-line="92">
-</span><span data-line="93">        <span class="k">return</span> <span class="n">container_instance</span>
-</span><span data-line="94">
-</span><span data-line="95">    <span class="k">if</span> <span class="nb">issubclass</span><span class="p">(</span><span class="n">container_type</span><span class="p">,</span> <span class="n">Set</span><span class="p">):</span>
-</span><span data-line="96">        <span class="n">set_instance</span> <span class="o">=</span> <span class="n">container_type</span><span class="p">()</span>
-</span><span data-line="97">        <span class="k">for</span> <span class="n">subfield_meta</span> <span class="ow">in</span> <span class="n">field_meta</span><span class="o">.</span><span class="n">children</span><span class="p">:</span>
-</span><span data-line="98">            <span class="n">set_instance</span> <span class="o">=</span> <span class="n">set_instance</span><span class="o">.</span><span class="n">union</span><span class="p">(</span><span class="n">factory</span><span class="o">.</span><span class="n">get_field_value_coverage</span><span class="p">(</span><span class="n">subfield_meta</span><span class="p">))</span>
-</span><span data-line="99">
-</span><span data-line="100">        <span class="k">return</span> <span class="n">set_instance</span>
+</span><span data-line="54">    <span class="k">if</span> <span class="nb">issubclass</span><span class="p">(</span><span class="n">container_type</span><span class="p">,</span> <span class="n">MutableSequence</span><span class="p">):</span>
+</span><span data-line="55">        <span class="n">container</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span>
+</span><span data-line="56">            <span class="p">[</span>
+</span><span data-line="57">                <span class="n">factory</span><span class="o">.</span><span class="n">get_field_value</span><span class="p">(</span>
+</span><span data-line="58">                    <span class="n">subfield_meta</span><span class="p">,</span> <span class="n">field_build_parameters</span><span class="o">=</span><span class="n">field_build_parameters</span><span class="p">,</span> <span class="n">build_context</span><span class="o">=</span><span class="n">build_context</span>
+</span><span data-line="59">                <span class="p">)</span>
+</span><span data-line="60">                <span class="k">for</span> <span class="n">subfield_meta</span> <span class="ow">in</span> <span class="n">field_meta</span><span class="o">.</span><span class="n">children</span>
+</span><span data-line="61">            <span class="p">]</span>
+</span><span data-line="62">        <span class="p">)</span>
+</span><span data-line="63">        <span class="k">return</span> <span class="n">container</span>
+</span><span data-line="64">
+</span><span data-line="65">    <span class="k">if</span> <span class="nb">issubclass</span><span class="p">(</span><span class="n">container_type</span><span class="p">,</span> <span class="n">Set</span><span class="p">):</span>
+</span><span data-line="66">        <span class="k">for</span> <span class="n">subfield_meta</span> <span class="ow">in</span> <span class="n">field_meta</span><span class="o">.</span><span class="n">children</span><span class="p">:</span>
+</span><span data-line="67">            <span class="n">container</span><span class="o">.</span><span class="n">add</span><span class="p">(</span>
+</span><span data-line="68">                <span class="n">factory</span><span class="o">.</span><span class="n">get_field_value</span><span class="p">(</span>
+</span><span data-line="69">                    <span class="n">subfield_meta</span><span class="p">,</span> <span class="n">field_build_parameters</span><span class="o">=</span><span class="n">field_build_parameters</span><span class="p">,</span> <span class="n">build_context</span><span class="o">=</span><span class="n">build_context</span>
+</span><span data-line="70">                <span class="p">)</span>
+</span><span data-line="71">            <span class="p">)</span>
+</span><span data-line="72">        <span class="k">return</span> <span class="n">container</span>
+</span><span data-line="73">
+</span><span data-line="74">    <span class="k">if</span> <span class="nb">issubclass</span><span class="p">(</span><span class="n">container_type</span><span class="p">,</span> <span class="n">AbstractSet</span><span class="p">):</span>
+</span><span data-line="75">        <span class="k">return</span> <span class="n">container</span><span class="o">.</span><span class="n">union</span><span class="p">(</span>
+</span><span data-line="76">            <span class="n">handle_collection_type</span><span class="p">(</span>
+</span><span data-line="77">                <span class="n">field_meta</span><span class="p">,</span> <span class="nb">set</span><span class="p">,</span> <span class="n">factory</span><span class="p">,</span> <span class="n">field_build_parameters</span><span class="o">=</span><span class="n">field_build_parameters</span><span class="p">,</span> <span class="n">build_context</span><span class="o">=</span><span class="n">build_context</span>
+</span><span data-line="78">            <span class="p">)</span>
+</span><span data-line="79">        <span class="p">)</span>
+</span><span data-line="80">
+</span><span data-line="81">    <span class="k">if</span> <span class="nb">issubclass</span><span class="p">(</span><span class="n">container_type</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">):</span>
+</span><span data-line="82">        <span class="k">return</span> <span class="n">container_type</span><span class="p">(</span>
+</span><span data-line="83">            <span class="n">factory</span><span class="o">.</span><span class="n">get_field_value</span><span class="p">(</span><span class="n">child</span><span class="p">,</span> <span class="n">field_build_parameters</span><span class="o">=</span><span class="n">field_build_parameters</span><span class="p">,</span> <span class="n">build_context</span><span class="o">=</span><span class="n">build_context</span><span class="p">)</span>
+</span><span data-line="84">            <span class="k">for</span> <span class="n">child</span> <span class="ow">in</span> <span class="n">field_meta</span><span class="o">.</span><span class="n">children</span>
+</span><span data-line="85">        <span class="p">)</span>
+</span><span data-line="86">
+</span><span data-line="87">    <span class="n">msg</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;Unsupported container type: </span><span class="si">{</span><span class="n">container_type</span><span class="si">}</span><span class="s2">&quot;</span>
+</span><span data-line="88">    <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span></div>
+</span><span data-line="89">
+</span><span data-line="90">
+<div class="viewcode-block" id="handle_collection_type_coverage"><a class="viewcode-back" href="../../../reference/value_generators/complex_types.html#polyfactory.value_generators.complex_types.handle_collection_type_coverage">[docs]</a></span><span data-line="91"><span class="k">def</span> <span class="nf">handle_collection_type_coverage</span><span class="p">(</span>
+</span><span data-line="92">    <span class="n">field_meta</span><span class="p">:</span> <span class="n">FieldMeta</span><span class="p">,</span>
+</span><span data-line="93">    <span class="n">container_type</span><span class="p">:</span> <span class="nb">type</span><span class="p">,</span>
+</span><span data-line="94">    <span class="n">factory</span><span class="p">:</span> <span class="nb">type</span><span class="p">[</span><span class="n">BaseFactory</span><span class="p">[</span><span class="n">Any</span><span class="p">]],</span>
+</span><span data-line="95"><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Any</span><span class="p">:</span>
+</span><span data-line="96"><span class="w">    </span><span class="sd">&quot;&quot;&quot;Handle coverage generation of container types recursively.</span>
+</span><span data-line="97">
+</span><span data-line="98"><span class="sd">    :param container_type: A type that can accept type arguments.</span>
+</span><span data-line="99"><span class="sd">    :param factory: A factory.</span>
+</span><span data-line="100"><span class="sd">    :param field_meta: A field meta instance.</span>
 </span><span data-line="101">
-</span><span data-line="102">    <span class="k">if</span> <span class="nb">issubclass</span><span class="p">(</span><span class="n">container_type</span><span class="p">,</span> <span class="n">AbstractSet</span><span class="p">):</span>
-</span><span data-line="103">        <span class="k">return</span> <span class="n">container</span><span class="o">.</span><span class="n">union</span><span class="p">(</span><span class="n">handle_collection_type_coverage</span><span class="p">(</span><span class="n">field_meta</span><span class="p">,</span> <span class="nb">set</span><span class="p">,</span> <span class="n">factory</span><span class="p">))</span>
-</span><span data-line="104">
-</span><span data-line="105">    <span class="k">if</span> <span class="nb">issubclass</span><span class="p">(</span><span class="n">container_type</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">):</span>
-</span><span data-line="106">        <span class="k">return</span> <span class="n">container_type</span><span class="p">(</span>
-</span><span data-line="107">            <span class="n">CoverageContainer</span><span class="p">(</span><span class="n">factory</span><span class="o">.</span><span class="n">get_field_value_coverage</span><span class="p">(</span><span class="n">subfield_meta</span><span class="p">))</span> <span class="k">for</span> <span class="n">subfield_meta</span> <span class="ow">in</span> <span class="n">field_meta</span><span class="o">.</span><span class="n">children</span>
-</span><span data-line="108">        <span class="p">)</span>
-</span><span data-line="109">
-</span><span data-line="110">    <span class="n">msg</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;Unsupported container type: </span><span class="si">{</span><span class="n">container_type</span><span class="si">}</span><span class="s2">&quot;</span>
-</span><span data-line="111">    <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span></div>
+</span><span data-line="102"><span class="sd">    :returns: An unresolved built result.</span>
+</span><span data-line="103"><span class="sd">    &quot;&quot;&quot;</span>
+</span><span data-line="104">    <span class="n">container</span> <span class="o">=</span> <span class="n">container_type</span><span class="p">()</span>
+</span><span data-line="105">    <span class="k">if</span> <span class="ow">not</span> <span class="n">field_meta</span><span class="o">.</span><span class="n">children</span><span class="p">:</span>
+</span><span data-line="106">        <span class="k">return</span> <span class="n">container</span>
+</span><span data-line="107">
+</span><span data-line="108">    <span class="k">if</span> <span class="nb">issubclass</span><span class="p">(</span><span class="n">container_type</span><span class="p">,</span> <span class="n">MutableMapping</span><span class="p">)</span> <span class="ow">or</span> <span class="n">is_typeddict</span><span class="p">(</span><span class="n">container_type</span><span class="p">):</span>
+</span><span data-line="109">        <span class="k">for</span> <span class="n">key_field_meta</span><span class="p">,</span> <span class="n">value_field_meta</span> <span class="ow">in</span> <span class="n">cast</span><span class="p">(</span>
+</span><span data-line="110">            <span class="n">Iterable</span><span class="p">[</span><span class="n">Tuple</span><span class="p">[</span><span class="n">FieldMeta</span><span class="p">,</span> <span class="n">FieldMeta</span><span class="p">]],</span>
+</span><span data-line="111">            <span class="nb">zip</span><span class="p">(</span><span class="n">field_meta</span><span class="o">.</span><span class="n">children</span><span class="p">[::</span><span class="mi">2</span><span class="p">],</span> <span class="n">field_meta</span><span class="o">.</span><span class="n">children</span><span class="p">[</span><span class="mi">1</span><span class="p">::</span><span class="mi">2</span><span class="p">]),</span>
+</span><span data-line="112">        <span class="p">):</span>
+</span><span data-line="113">            <span class="n">key</span> <span class="o">=</span> <span class="n">CoverageContainer</span><span class="p">(</span><span class="n">factory</span><span class="o">.</span><span class="n">get_field_value_coverage</span><span class="p">(</span><span class="n">key_field_meta</span><span class="p">))</span>
+</span><span data-line="114">            <span class="n">value</span> <span class="o">=</span> <span class="n">CoverageContainer</span><span class="p">(</span><span class="n">factory</span><span class="o">.</span><span class="n">get_field_value_coverage</span><span class="p">(</span><span class="n">value_field_meta</span><span class="p">))</span>
+</span><span data-line="115">            <span class="n">container</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">value</span>
+</span><span data-line="116">        <span class="k">return</span> <span class="n">container</span>
+</span><span data-line="117">
+</span><span data-line="118">    <span class="k">if</span> <span class="nb">issubclass</span><span class="p">(</span><span class="n">container_type</span><span class="p">,</span> <span class="n">MutableSequence</span><span class="p">):</span>
+</span><span data-line="119">        <span class="n">container_instance</span> <span class="o">=</span> <span class="n">container_type</span><span class="p">()</span>
+</span><span data-line="120">        <span class="k">for</span> <span class="n">subfield_meta</span> <span class="ow">in</span> <span class="n">field_meta</span><span class="o">.</span><span class="n">children</span><span class="p">:</span>
+</span><span data-line="121">            <span class="n">container_instance</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">factory</span><span class="o">.</span><span class="n">get_field_value_coverage</span><span class="p">(</span><span class="n">subfield_meta</span><span class="p">))</span>
+</span><span data-line="122">
+</span><span data-line="123">        <span class="k">return</span> <span class="n">container_instance</span>
+</span><span data-line="124">
+</span><span data-line="125">    <span class="k">if</span> <span class="nb">issubclass</span><span class="p">(</span><span class="n">container_type</span><span class="p">,</span> <span class="n">Set</span><span class="p">):</span>
+</span><span data-line="126">        <span class="n">set_instance</span> <span class="o">=</span> <span class="n">container_type</span><span class="p">()</span>
+</span><span data-line="127">        <span class="k">for</span> <span class="n">subfield_meta</span> <span class="ow">in</span> <span class="n">field_meta</span><span class="o">.</span><span class="n">children</span><span class="p">:</span>
+</span><span data-line="128">            <span class="n">set_instance</span> <span class="o">=</span> <span class="n">set_instance</span><span class="o">.</span><span class="n">union</span><span class="p">(</span><span class="n">factory</span><span class="o">.</span><span class="n">get_field_value_coverage</span><span class="p">(</span><span class="n">subfield_meta</span><span class="p">))</span>
+</span><span data-line="129">
+</span><span data-line="130">        <span class="k">return</span> <span class="n">set_instance</span>
+</span><span data-line="131">
+</span><span data-line="132">    <span class="k">if</span> <span class="nb">issubclass</span><span class="p">(</span><span class="n">container_type</span><span class="p">,</span> <span class="n">AbstractSet</span><span class="p">):</span>
+</span><span data-line="133">        <span class="k">return</span> <span class="n">container</span><span class="o">.</span><span class="n">union</span><span class="p">(</span><span class="n">handle_collection_type_coverage</span><span class="p">(</span><span class="n">field_meta</span><span class="p">,</span> <span class="nb">set</span><span class="p">,</span> <span class="n">factory</span><span class="p">))</span>
+</span><span data-line="134">
+</span><span data-line="135">    <span class="k">if</span> <span class="nb">issubclass</span><span class="p">(</span><span class="n">container_type</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">):</span>
+</span><span data-line="136">        <span class="k">return</span> <span class="n">container_type</span><span class="p">(</span>
+</span><span data-line="137">            <span class="n">CoverageContainer</span><span class="p">(</span><span class="n">factory</span><span class="o">.</span><span class="n">get_field_value_coverage</span><span class="p">(</span><span class="n">subfield_meta</span><span class="p">))</span> <span class="k">for</span> <span class="n">subfield_meta</span> <span class="ow">in</span> <span class="n">field_meta</span><span class="o">.</span><span class="n">children</span>
+</span><span data-line="138">        <span class="p">)</span>
+</span><span data-line="139">
+</span><span data-line="140">    <span class="n">msg</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;Unsupported container type: </span><span class="si">{</span><span class="n">container_type</span><span class="si">}</span><span class="s2">&quot;</span>
+</span><span data-line="141">    <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span></div>
 </span></pre></div>
         </article>
         <button class="back-to-top" type="button">

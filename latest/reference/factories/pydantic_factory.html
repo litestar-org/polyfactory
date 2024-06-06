@@ -242,6 +242,7 @@
   <div class="localtoc">
     <h3>On this page</h3>
     <ul>
+<li><a class="reference internal" href="#polyfactory.factories.pydantic_factory.PydanticBuildContext"><code class="docutils literal notranslate"><span class="pre">PydanticBuildContext</span></code></a></li>
 <li><a class="reference internal" href="#polyfactory.factories.pydantic_factory.PydanticConstraints"><code class="docutils literal notranslate"><span class="pre">PydanticConstraints</span></code></a></li>
 <li><a class="reference internal" href="#polyfactory.factories.pydantic_factory.PydanticFieldMeta"><code class="docutils literal notranslate"><span class="pre">PydanticFieldMeta</span></code></a><ul>
 <li><a class="reference internal" href="#polyfactory.factories.pydantic_factory.PydanticFieldMeta.__init__"><code class="docutils literal notranslate"><span class="pre">PydanticFieldMeta.__init__()</span></code></a></li>
@@ -255,6 +256,7 @@
 <li><a class="reference internal" href="#polyfactory.factories.pydantic_factory.ModelFactory.is_supported_type"><code class="docutils literal notranslate"><span class="pre">ModelFactory.is_supported_type()</span></code></a></li>
 <li><a class="reference internal" href="#polyfactory.factories.pydantic_factory.ModelFactory.get_model_fields"><code class="docutils literal notranslate"><span class="pre">ModelFactory.get_model_fields()</span></code></a></li>
 <li><a class="reference internal" href="#polyfactory.factories.pydantic_factory.ModelFactory.build"><code class="docutils literal notranslate"><span class="pre">ModelFactory.build()</span></code></a></li>
+<li><a class="reference internal" href="#polyfactory.factories.pydantic_factory.ModelFactory.coverage"><code class="docutils literal notranslate"><span class="pre">ModelFactory.coverage()</span></code></a></li>
 <li><a class="reference internal" href="#polyfactory.factories.pydantic_factory.ModelFactory.is_custom_root_field"><code class="docutils literal notranslate"><span class="pre">ModelFactory.is_custom_root_field()</span></code></a></li>
 <li><a class="reference internal" href="#polyfactory.factories.pydantic_factory.ModelFactory.should_set_field_value"><code class="docutils literal notranslate"><span class="pre">ModelFactory.should_set_field_value()</span></code></a></li>
 <li><a class="reference internal" href="#polyfactory.factories.pydantic_factory.ModelFactory.get_provider_map"><code class="docutils literal notranslate"><span class="pre">ModelFactory.get_provider_map()</span></code></a></li>
@@ -335,6 +337,12 @@
         <article class="yue" role="main">
           <section id="module-polyfactory.factories.pydantic_factory">
 <span id="pydantic-factory"></span><h1>pydantic_factory<a class="headerlink" href="#module-polyfactory.factories.pydantic_factory" title="Permalink to this heading">¶</a></h1>
+<dl class="py class">
+<dt class="sig sig-object py" id="polyfactory.factories.pydantic_factory.PydanticBuildContext">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">polyfactory.factories.pydantic_factory.</span></span><span class="sig-name descname"><span class="pre">PydanticBuildContext</span></span><a class="reference internal" href="../../_modules/polyfactory/factories/pydantic_factory.html#PydanticBuildContext"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#polyfactory.factories.pydantic_factory.PydanticBuildContext" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="base.html#polyfactory.factories.base.BuildContext" title="polyfactory.factories.base.BuildContext"><code class="xref py py-class docutils literal notranslate"><span class="pre">BuildContext</span></code></a></p>
+</dd></dl>
+
 <dl class="py class">
 <dt class="sig sig-object py" id="polyfactory.factories.pydantic_factory.PydanticConstraints">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">polyfactory.factories.pydantic_factory.</span></span><span class="sig-name descname"><span class="pre">PydanticConstraints</span></span><a class="reference internal" href="../../_modules/polyfactory/factories/pydantic_factory.html#PydanticConstraints"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#polyfactory.factories.pydantic_factory.PydanticConstraints" title="Permalink to this definition">¶</a></dt>
@@ -462,6 +470,20 @@ model. This is supported only for pydantic models.</p></li>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p>An instance of type T.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="polyfactory.factories.pydantic_factory.ModelFactory.coverage">
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">coverage</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">factory_use_construct</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.12)"><span class="pre">bool</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Any</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">abc.Iterator</span><span class="p"><span class="pre">[</span></span><span class="pre">T</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../../_modules/polyfactory/factories/pydantic_factory.html#ModelFactory.coverage"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#polyfactory.factories.pydantic_factory.ModelFactory.coverage" title="Permalink to this definition">¶</a></dt>
+<dd><p>Build a batch of the factory’s Meta.model will full coverage of the sub-types of the model.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><span class="target" id="polyfactory.factories.pydantic_factory.ModelFactory.coverage.params.kwargs"></span><strong>kwargs</strong><a class="paramlink headerlink reference internal" href="#polyfactory.factories.pydantic_factory.ModelFactory.coverage.params.kwargs">¶</a> – Any kwargs. If field_meta names are set in kwargs, their values will be used.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>A iterator of instances of type T.</p>
 </dd>
 </dl>
 </dd></dl>
