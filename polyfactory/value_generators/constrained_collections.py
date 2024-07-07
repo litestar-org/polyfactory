@@ -6,7 +6,7 @@ from polyfactory.exceptions import ParameterException
 from polyfactory.field_meta import FieldMeta
 
 if TYPE_CHECKING:
-    from polyfactory.factories.base import BaseFactory
+    from polyfactory.factories.base import BaseFactory, BuildContext
 
 T = TypeVar("T", list, set, frozenset)
 
@@ -19,6 +19,8 @@ def handle_constrained_collection(
     max_items: int | None = None,
     min_items: int | None = None,
     unique_items: bool = False,
+    field_build_parameters: Any | None = None,
+    build_context: BuildContext | None = None,
 ) -> T:
     """Generate a constrained list or set.
 
@@ -29,6 +31,8 @@ def handle_constrained_collection(
     :param max_items: Maximal number of items.
     :param min_items: Minimal number of items.
     :param unique_items: Whether the items should be unique.
+    :param field_build_parameters: Any build parameters passed to the factory as kwarg values.
+    :param build_context: BuildContext data for current build.
 
     :returns: A collection value.
     """
@@ -43,8 +47,18 @@ def handle_constrained_collection(
 
     try:
         length = factory.__random__.randint(min_items, max_items) or 1
-        while len(collection) < length:
-            value = factory.get_field_value(field_meta)
+        while (i := len(collection)) < length:
+            if field_build_parameters and len(field_build_parameters) > i:
+                build_params = field_build_parameters[i]
+            else:
+                build_params = None
+
+            value = factory.get_field_value(
+                field_meta,
+                field_build_parameters=build_params,
+                build_context=build_context,
+            )
+
             if isinstance(collection, set):
                 collection.add(value)
             else:
@@ -60,6 +74,8 @@ def handle_constrained_mapping(
     field_meta: FieldMeta,
     max_items: int | None = None,
     min_items: int | None = None,
+    field_build_parameters: Any | None = None,
+    build_context: BuildContext | None = None,
 ) -> Mapping[Any, Any]:
     """Generate a constrained mapping.
 
@@ -67,6 +83,8 @@ def handle_constrained_mapping(
     :param field_meta: A field meta instance.
     :param max_items: Maximal number of items.
     :param min_items: Minimal number of items.
+    :param field_build_parameters: Any build parameters passed to the factory as kwarg values.
+    :param build_context: BuildContext data for current build.
 
     :returns: A mapping instance.
     """
@@ -85,8 +103,12 @@ def handle_constrained_mapping(
     key_field_meta = children[0]
     value_field_meta = children[1]
     while len(collection) < length:
-        key = factory.get_field_value(key_field_meta)
-        value = factory.get_field_value(value_field_meta)
+        key = factory.get_field_value(
+            key_field_meta, field_build_parameters=field_build_parameters, build_context=build_context
+        )
+        value = factory.get_field_value(
+            value_field_meta, field_build_parameters=field_build_parameters, build_context=build_context
+        )
         collection[key] = value
 
     return collection

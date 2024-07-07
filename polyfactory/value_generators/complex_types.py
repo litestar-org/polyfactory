@@ -9,15 +9,23 @@ from polyfactory.field_meta import FieldMeta
 from polyfactory.utils.model_coverage import CoverageContainer
 
 if TYPE_CHECKING:
-    from polyfactory.factories.base import BaseFactory
+    from polyfactory.factories.base import BaseFactory, BuildContext
 
 
-def handle_collection_type(field_meta: FieldMeta, container_type: type, factory: type[BaseFactory[Any]]) -> Any:
+def handle_collection_type(
+    field_meta: FieldMeta,
+    container_type: type,
+    factory: type[BaseFactory[Any]],
+    field_build_parameters: Any | None = None,
+    build_context: BuildContext | None = None,
+) -> Any:
     """Handle generation of container types recursively.
 
     :param container_type: A type that can accept type arguments.
     :param factory: A factory.
     :param field_meta: A field meta instance.
+    :param field_build_parameters: Any build parameters passed to the factory as kwarg values.
+    :param build_context: BuildContext data for current build.
 
     :returns: A built result.
     """
@@ -34,25 +42,47 @@ def handle_collection_type(field_meta: FieldMeta, container_type: type, factory:
             Iterable[Tuple[FieldMeta, FieldMeta]],
             zip(field_meta.children[::2], field_meta.children[1::2]),
         ):
-            key = factory.get_field_value(key_field_meta)
-            value = factory.get_field_value(value_field_meta)
+            key = factory.get_field_value(
+                key_field_meta, field_build_parameters=field_build_parameters, build_context=build_context
+            )
+            value = factory.get_field_value(
+                value_field_meta, field_build_parameters=field_build_parameters, build_context=build_context
+            )
             container[key] = value
         return container
 
     if issubclass(container_type, MutableSequence):
-        container.extend([factory.get_field_value(subfield_meta) for subfield_meta in field_meta.children])
+        container.extend(
+            [
+                factory.get_field_value(
+                    subfield_meta, field_build_parameters=field_build_parameters, build_context=build_context
+                )
+                for subfield_meta in field_meta.children
+            ]
+        )
         return container
 
     if issubclass(container_type, Set):
         for subfield_meta in field_meta.children:
-            container.add(factory.get_field_value(subfield_meta))
+            container.add(
+                factory.get_field_value(
+                    subfield_meta, field_build_parameters=field_build_parameters, build_context=build_context
+                )
+            )
         return container
 
     if issubclass(container_type, AbstractSet):
-        return container.union(handle_collection_type(field_meta, set, factory))
+        return container.union(
+            handle_collection_type(
+                field_meta, set, factory, field_build_parameters=field_build_parameters, build_context=build_context
+            )
+        )
 
     if issubclass(container_type, tuple):
-        return container_type(map(factory.get_field_value, field_meta.children))
+        return container_type(
+            factory.get_field_value(child, field_build_parameters=field_build_parameters, build_context=build_context)
+            for child in field_meta.children
+        )
 
     msg = f"Unsupported container type: {container_type}"
     raise NotImplementedError(msg)
