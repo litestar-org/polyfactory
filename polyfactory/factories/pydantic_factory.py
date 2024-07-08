@@ -501,7 +501,7 @@ class ModelFactory(Generic[T], BaseFactory[T]):
         :returns: An instance of type T.
 
         """
-        if _build_context.get("factory_use_construct"):
+        if cls._get_build_context(_build_context).get("factory_use_construct"):
             if _is_pydantic_v1_model(cls.__model__):
                 return cls.__model__.construct(**kwargs)  # type: ignore[return-value]
             return cls.__model__.model_construct(**kwargs)  # type: ignore[return-value]
