@@ -224,6 +224,28 @@ def test_factory_nested_model_collection_coverage() -> None:
     assert isinstance(instance.collection[0], Nested)
 
 
+def test_factory_nested_model_collection_construct_coverage() -> None:
+    class Nested(BaseModel):
+        foo: int
+
+        @validator("foo")
+        @classmethod
+        def always_invalid(cls, v: int) -> None:
+            raise ValueError("invalid by validator")
+
+    class CollectionModel(BaseModel):
+        collection: List[Nested]
+
+    class CollectionModelFactory(ModelFactory[CollectionModel]):
+        __model__ = CollectionModel
+
+    instances = list(CollectionModelFactory.coverage(factory_use_construct=True))
+    assert len(instances) == 1
+    instance = instances[0]
+    assert len(instance.collection) == 1
+    assert isinstance(instance.collection[0], Nested)
+
+
 def test_factory_use_construct() -> None:
     # factory should pass values without validation
     invalid_age = "non_valid_age"
