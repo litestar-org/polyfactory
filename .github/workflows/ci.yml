@@ -65,7 +65,7 @@ jobs:
 
       - name: Install pydantic
         if: matrix.pydantic-version == '1.10'
-        run: pdm add --no-sync -G pydantic "pydantic[email]==1.10.10"
+        run: pdm add --no-sync -G pydantic "pydantic[email]==1.10.17"
 
       - name: Install SQLAlchemy
         if: matrix.sqla-version == '1.4'
