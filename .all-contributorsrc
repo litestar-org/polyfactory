@@ -418,6 +418,15 @@
       "contributions": [
         "code"
       ]
+    },
+    {
+      "login": "Vegemash",
+      "name": "Isaac Jackson",
+      "avatar_url": "https://avatars.githubusercontent.com/u/2470379?v=4",
+      "profile": "https://github.com/Vegemash",
+      "contributions": [
+        "code"
+      ]
     }
   ],
   "contributorsPerLine": 7,
