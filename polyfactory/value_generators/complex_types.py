@@ -92,6 +92,7 @@ def handle_collection_type_coverage(
     field_meta: FieldMeta,
     container_type: type,
     factory: type[BaseFactory[Any]],
+    build_context: BuildContext | None = None,
 ) -> Any:
     """Handle coverage generation of container types recursively.
 
@@ -110,31 +111,34 @@ def handle_collection_type_coverage(
             Iterable[Tuple[FieldMeta, FieldMeta]],
             zip(field_meta.children[::2], field_meta.children[1::2]),
         ):
-            key = CoverageContainer(factory.get_field_value_coverage(key_field_meta))
-            value = CoverageContainer(factory.get_field_value_coverage(value_field_meta))
+            key = CoverageContainer(factory.get_field_value_coverage(key_field_meta, build_context=build_context))
+            value = CoverageContainer(factory.get_field_value_coverage(value_field_meta, build_context=build_context))
             container[key] = value
         return container
 
     if issubclass(container_type, MutableSequence):
         container_instance = container_type()
         for subfield_meta in field_meta.children:
-            container_instance.extend(factory.get_field_value_coverage(subfield_meta))
+            container_instance.extend(factory.get_field_value_coverage(subfield_meta, build_context=build_context))
 
         return container_instance
 
     if issubclass(container_type, Set):
         set_instance = container_type()
         for subfield_meta in field_meta.children:
-            set_instance = set_instance.union(factory.get_field_value_coverage(subfield_meta))
+            set_instance = set_instance.union(
+                factory.get_field_value_coverage(subfield_meta, build_context=build_context)
+            )
 
         return set_instance
 
     if issubclass(container_type, AbstractSet):
-        return container.union(handle_collection_type_coverage(field_meta, set, factory))
+        return container.union(handle_collection_type_coverage(field_meta, set, factory, build_context=build_context))
 
     if issubclass(container_type, tuple):
         return container_type(
-            CoverageContainer(factory.get_field_value_coverage(subfield_meta)) for subfield_meta in field_meta.children
+            CoverageContainer(factory.get_field_value_coverage(subfield_meta, build_context=build_context))
+            for subfield_meta in field_meta.children
         )
 
     msg = f"Unsupported container type: {container_type}"

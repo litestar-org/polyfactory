@@ -845,7 +845,7 @@ class BaseFactory(ABC, Generic[T]):
                     field_meta,
                 )
 
-                yield handle_collection_type_coverage(child_meta, origin, cls)
+                yield handle_collection_type_coverage(child_meta, origin, cls, build_context=build_context)
 
             elif is_any(unwrapped_annotation) or isinstance(unwrapped_annotation, TypeVar):
                 yield create_random_string(cls.__random__, min_length=1, max_length=10)
