@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+from enum import EnumMeta
 from typing import TYPE_CHECKING, Any, Callable, List, Mapping, TypeVar, cast
 
 from polyfactory.exceptions import ParameterException
@@ -38,6 +39,11 @@ def handle_constrained_collection(
     """
     min_items = abs(min_items if min_items is not None else (max_items or 0))
     max_items = abs(max_items if max_items is not None else min_items + 1)
+
+    if isinstance(field_meta.annotation, EnumMeta):
+        max_items = len(field_meta.annotation)
+        if min_items > max_items:
+            min_items = max_items
 
     if max_items < min_items:
         msg = "max_items must be larger or equal to min_items"

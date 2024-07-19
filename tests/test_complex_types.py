@@ -155,6 +155,25 @@ def test_complex_typing_with_enum() -> None:
     assert result.animal_list
 
 
+def test_complex_typing_with_enum_set() -> None:
+    class Animal(str, Enum):
+        DOG = "Dog"
+        CAT = "Cat"
+        MONKEY = "Monkey"
+
+    class MyModel(BaseModel):
+        animal_list: Set[Animal]
+
+    class MyFactory(ModelFactory):
+        __model__ = MyModel
+        __randomize_collection_length__ = True
+        __min_collection_length__ = len(Animal) + 1
+        __min_collection_length__ = len(Animal) + 2
+
+    result = MyFactory.build()
+    assert len(result.animal_list) == len(Animal)
+
+
 def test_union_literal() -> None:
     class MyModel(BaseModel):
         x: Union[int, Literal["a", "b", "c"]]
