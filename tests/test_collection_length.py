@@ -1,10 +1,13 @@
-from typing import Any, Dict, List, Optional, Set, Tuple
+from enum import Enum
+from typing import Any, Dict, FrozenSet, List, Literal, Optional, Set, Tuple
 
 import pytest
 
+from pydantic import BaseModel
 from pydantic.dataclasses import dataclass
 
 from polyfactory.factories import DataclassFactory
+from polyfactory.factories.pydantic_factory import ModelFactory
 
 MIN_MAX_PARAMETERS = ((10, 15), (20, 25), (30, 40), (40, 50))
 
@@ -132,3 +135,45 @@ def test_collection_length_with_optional_allowed(min_val: int, max_val: int) -> 
 
         assert len(foo.foo) >= min_val, len(foo.foo)
         assert len(foo.foo) <= max_val, len(foo.foo)
+
+
+@pytest.mark.parametrize("type_", (List, FrozenSet, Set))
+def test_collection_length_with_literal(type_: type) -> None:
+    @dataclass
+    class MyModel:
+        animal_collection: type_[Literal["Dog", "Cat", "Monkey"]]  # type: ignore
+
+    class MyFactory(DataclassFactory):
+        __model__ = MyModel
+        __randomize_collection_length__ = True
+        __min_collection_length__ = 4
+        __max_collection_length__ = 5
+
+    result = MyFactory.build()
+    if type_ is List:
+        assert len(result.animal_collection) >= MyFactory.__min_collection_length__
+    else:
+        assert len(result.animal_collection) == 1
+
+
+@pytest.mark.parametrize("type_", (List, FrozenSet, Set))
+def test_collection_length_with_enum(type_: type) -> None:
+    class Animal(str, Enum):
+        DOG = "Dog"
+        CAT = "Cat"
+        MONKEY = "Monkey"
+
+    class MyModel(BaseModel):
+        animal_collection: type_[Animal]  # type: ignore
+
+    class MyFactory(ModelFactory):
+        __model__ = MyModel
+        __randomize_collection_length__ = True
+        __min_collection_length__ = len(Animal) + 1
+        __max_collection_length__ = len(Animal) + 2
+
+    result = MyFactory.build()
+    if type_ is List:
+        assert len(result.animal_collection) >= MyFactory.__min_collection_length__
+    else:
+        assert len(result.animal_collection) == len(Animal)
