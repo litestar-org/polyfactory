@@ -46,7 +46,7 @@ def handle_constrained_collection(
     collection: set[T] | list[T] = set() if (collection_type in (frozenset, set) or unique_items) else []
 
     try:
-        length = factory.__random__.randint(min_items, max_items) or 1
+        length = factory.__random__.randint(min_items, max_items)
         while (i := len(collection)) < length:
             if field_build_parameters and len(field_build_parameters) > i:
                 build_params = field_build_parameters[i]
