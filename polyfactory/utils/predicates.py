@@ -3,7 +3,15 @@ from __future__ import annotations
 from inspect import isclass
 from typing import Any, Literal, NewType, Optional, TypeVar, get_args
 
-from typing_extensions import Annotated, NotRequired, ParamSpec, Required, TypeGuard, _AnnotatedAlias, get_origin
+from typing_extensions import (
+    Annotated,
+    NotRequired,
+    ParamSpec,
+    Required,
+    TypeGuard,
+    _AnnotatedAlias,
+    get_origin,
+)
 
 from polyfactory.constants import TYPE_MAPPING
 from polyfactory.utils.types import UNION_TYPES, NoneType

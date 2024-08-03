@@ -33,21 +33,16 @@ IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 from __future__ import annotations
 
 from itertools import chain
-from string import (
-    ascii_letters,
-    ascii_lowercase,
-    ascii_uppercase,
-    digits,
-    printable,
-    punctuation,
-    whitespace,
-)
+from string import ascii_letters, ascii_lowercase, ascii_uppercase, digits, printable, punctuation, whitespace
 from typing import TYPE_CHECKING, Any, Pattern
 
 try:  # >=3.11
     from re._parser import SubPattern, parse
 except ImportError:  # < 3.11
-    from sre_parse import SubPattern, parse  # pylint: disable=deprecated-module
+    from sre_parse import (
+        SubPattern,  # pylint: disable=deprecated-module
+        parse,
+    )
 
 if TYPE_CHECKING:
     from random import Random
@@ -117,12 +112,12 @@ class RegexFactory:
         """
         pattern = string_or_regex.pattern if isinstance(string_or_regex, Pattern) else string_or_regex
         parsed = parse(pattern)
-        result = self._build_string(parsed)  # pyright: ignore[reportGeneralTypeIssues]
+        result = self._build_string(parsed)  # pyright: ignore[reportArgumentType]
         self._cache.clear()
         return result
 
     def _build_string(self, parsed: SubPattern) -> str:
-        return "".join([self._handle_state(state) for state in parsed])  # pyright:ignore[reportGeneralTypeIssues]
+        return "".join([self._handle_state(state) for state in parsed])  # pyright:ignore[reportArgumentType,reportCallIssue]
 
     def _handle_state(self, state: tuple[SubPattern, tuple[Any, ...]]) -> Any:
         opcode, value = state
@@ -145,7 +140,7 @@ class RegexFactory:
         end_range = min(end_range, self._limit)
 
         result = [
-            "".join(self._handle_state(v) for v in list(value))  # pyright: ignore[reportGeneralTypeIssues]
+            "".join(self._handle_state(v) for v in value)  # pyright: ignore[reportCallIssue,reportArgumentType]
             for _ in range(self._random.randint(start_range, max(start_range, end_range)))
         ]
         return "".join(result)

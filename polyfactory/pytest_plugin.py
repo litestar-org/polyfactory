@@ -69,7 +69,7 @@ class FactoryFixture:
 
         fixture_name = self.name or _get_fixture_name(factory.__name__)
         fixture_register = fixture(
-            scope=self.scope,  # pyright: ignore[reportGeneralTypeIssues]
+            scope=self.scope,  # pyright: ignore[reportArgumentType]
             name=fixture_name,
             autouse=self.autouse,
         )

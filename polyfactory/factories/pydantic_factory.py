@@ -51,9 +51,9 @@ try:
     from pydantic import BaseModel as BaseModelV1
     from pydantic.color import Color
     from pydantic.fields import (  # type: ignore[attr-defined]
-        DeferredType,  # pyright: ignore[reportGeneralTypeIssues]
-        ModelField,  # pyright: ignore[reportGeneralTypeIssues]
-        Undefined,  # pyright: ignore[reportGeneralTypeIssues]
+        DeferredType,  # pyright: ignore[attr-defined,reportAttributeAccessIssue]
+        ModelField,  # pyright: ignore[attr-defined,reportAttributeAccessIssue]
+        Undefined,  # pyright: ignore[attr-defined,reportAttributeAccessIssue]
     )
 
     # Keep this import last to prevent warnings from pydantic if pydantic v2
@@ -99,7 +99,7 @@ if TYPE_CHECKING:
 
     from typing_extensions import NotRequired, TypeGuard
 
-T = TypeVar("T", bound="BaseModelV1 | BaseModelV2")
+T = TypeVar("T", bound="BaseModelV1 | BaseModelV2")  # pyright: ignore[reportInvalidTypeForm]
 
 _IS_PYDANTIC_V1 = VERSION.startswith("1")
 
@@ -443,7 +443,7 @@ class ModelFactory(Generic[T], BaseFactory[T]):
             value = cls.get_field_value(
                 field_meta, field_build_parameters=field_build_parameters, build_context=build_context
             )
-            return to_json(value)  # pyright: ignore[reportUnboundVariable]
+            return to_json(value)  # pyright: ignore[reportPossiblyUnboundVariable]
 
         return super().get_constrained_field_value(
             annotation, field_meta, field_build_parameters=field_build_parameters, build_context=build_context
@@ -619,5 +619,5 @@ def _is_pydantic_v1_model(model: Any) -> TypeGuard[BaseModelV1]:
     return is_safe_subclass(model, BaseModelV1)
 
 
-def _is_pydantic_v2_model(model: Any) -> TypeGuard[BaseModelV2]:
+def _is_pydantic_v2_model(model: Any) -> TypeGuard[BaseModelV2]:  # pyright: ignore[reportInvalidTypeForm]
     return not _IS_PYDANTIC_V1 and is_safe_subclass(model, BaseModelV2)
