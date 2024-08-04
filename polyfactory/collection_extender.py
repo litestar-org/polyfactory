@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-import random
 from abc import ABC, abstractmethod
 from collections import deque
 from typing import Any
@@ -54,36 +53,29 @@ class ListLikeExtender(CollectionExtender):
     __types__ = (list, deque)
 
     @staticmethod
-    def _extend_type_args(type_args: tuple[Any, ...], number_of_args: int) -> tuple[Any, ...]:
-        if not type_args:
-            return type_args
-        return tuple(random.choice(type_args) for _ in range(number_of_args))
+    def _extend_type_args(type_args: tuple[Any, ...], _: int) -> tuple[Any, ...]:
+        return type_args
 
 
 class SetExtender(CollectionExtender):
     __types__ = (set, frozenset)
 
     @staticmethod
-    def _extend_type_args(type_args: tuple[Any, ...], number_of_args: int) -> tuple[Any, ...]:
-        if not type_args:
-            return type_args
-        return tuple(random.choice(type_args) for _ in range(number_of_args))
+    def _extend_type_args(type_args: tuple[Any, ...], _: int) -> tuple[Any, ...]:
+        return type_args
 
 
 class DictExtender(CollectionExtender):
     __types__ = (dict,)
 
     @staticmethod
-    def _extend_type_args(type_args: tuple[Any, ...], number_of_args: int) -> tuple[Any, ...]:
-        return type_args * number_of_args
+    def _extend_type_args(type_args: tuple[Any, ...], _: int) -> tuple[Any, ...]:
+        return type_args
 
 
 class FallbackExtender(CollectionExtender):
     __types__ = ()
 
     @staticmethod
-    def _extend_type_args(
-        type_args: tuple[Any, ...],
-        number_of_args: int,  # noqa: ARG004
-    ) -> tuple[Any, ...]:  # - investigate @guacs
+    def _extend_type_args(type_args: tuple[Any, ...], _: int) -> tuple[Any, ...]:
         return type_args
