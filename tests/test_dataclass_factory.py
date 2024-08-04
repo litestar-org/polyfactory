@@ -2,7 +2,7 @@ import dataclasses
 from dataclasses import dataclass as vanilla_dataclass
 from dataclasses import field
 from types import ModuleType
-from typing import Callable, Dict, List, Optional, Tuple, Union
+from typing import Any, Callable, Dict, List, Optional, Tuple, Union
 from unittest.mock import ANY
 
 import pytest
@@ -108,10 +108,6 @@ def test_model_with_embedded_dataclasses() -> None:
     assert result.east.people
 
 
-def function_with_kwargs(first: int, second: float, third: str = "moishe") -> None:
-    pass
-
-
 def test_complex_embedded_dataclass() -> None:
     @vanilla_dataclass
     class VanillaDC:
@@ -133,18 +129,48 @@ def test_complex_embedded_dataclass() -> None:
     assert isinstance(next(iter(next(iter(result.weirdly_nest_field[0].values())).values())), VanillaDC)
 
 
-def test_tuple_ellipsis_in_vanilla_dc() -> None:
+@pytest.mark.parametrize(
+    "factory_config, expected_length",
+    (
+        ({}, 1),
+        (
+            {
+                "__randomize_collection_length__": True,
+                "__min_collection_length__": 3,
+                "__max_collection_length__": 3,
+            },
+            3,
+        ),
+        (
+            {
+                "__randomize_collection_length__": True,
+                "__min_collection_length__": 0,
+                "__max_collection_length__": 0,
+            },
+            0,
+        ),
+    ),
+)
+def test_tuple_in_vanilla_dc(factory_config: Dict[str, Any], expected_length: int) -> None:
     @vanilla_dataclass
     class VanillaDC:
         ids: Tuple[int, ...]
+        field: Tuple[int, str]
 
-    class MyFactory(DataclassFactory[VanillaDC]):
-        __model__ = VanillaDC
-
+    MyFactory = DataclassFactory[VanillaDC].create_factory(VanillaDC, **factory_config)
     result = MyFactory.build()
 
     assert result
-    assert result.ids
+    assert len(result.ids) == expected_length
+    assert len(result.field) == 2
+    assert isinstance(result.field[0], int)
+    assert isinstance(result.field[1], str)
+
+    coverage_results = list(MyFactory.coverage())
+    assert all(len(result.ids) == 1 for result in coverage_results)
+    assert all(len(result.field) == 2 for result in coverage_results)
+    assert all(isinstance(result.field[0], int) for result in coverage_results)
+    assert all(isinstance(result.field[1], str) for result in coverage_results)
 
 
 def test_dataclass_factory_with_future_annotations(create_module: Callable[[str], ModuleType]) -> None:

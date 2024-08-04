@@ -746,8 +746,11 @@ class BaseFactory(ABC, Generic[T]):
             return factory.batch(size=batch_size, _build_context=build_context)
 
         if (origin := get_type_origin(unwrapped_annotation)) and is_safe_subclass(origin, Collection):
-            if cls.__randomize_collection_length__:
-                collection_type = get_collection_type(unwrapped_annotation)
+            collection_type = get_collection_type(unwrapped_annotation)
+            is_fixed_length = collection_type is tuple and (
+                not field_meta.children or field_meta.children[-1].annotation != Ellipsis
+            )
+            if cls.__randomize_collection_length__ and not is_fixed_length:
                 if collection_type is not dict:
                     return handle_constrained_collection(
                         collection_type=collection_type,  # type: ignore[type-var]
@@ -769,7 +772,11 @@ class BaseFactory(ABC, Generic[T]):
                 )
 
             return handle_collection_type(
-                field_meta, origin, cls, field_build_parameters=field_build_parameters, build_context=build_context
+                field_meta,
+                origin,
+                cls,
+                field_build_parameters=field_build_parameters,
+                build_context=build_context,
             )
 
         if provider := cls.get_provider_map().get(unwrapped_annotation):
