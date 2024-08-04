@@ -141,7 +141,7 @@ class SQLAlchemyFactory(Generic[T], BaseFactory[T]):
             annotation = column_type
         elif issubclass(column_type, postgresql.ARRAY):
             if type(column.type.item_type) in sqla_types:  # type: ignore[attr-defined]
-                annotation = List[type(column.type.item_type)]  # type: ignore[attr-defined,misc]
+                annotation = List[type(column.type.item_type)]  # type: ignore[attr-defined,misc,assignment]
             else:
                 annotation = List[column.type.item_type.python_type]  # type: ignore[assignment,name-defined]
         elif issubclass(column_type, types.ARRAY):

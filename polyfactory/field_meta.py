@@ -8,11 +8,7 @@ from typing_extensions import get_args, get_origin
 from polyfactory.collection_extender import CollectionExtender
 from polyfactory.constants import DEFAULT_RANDOM, TYPE_MAPPING
 from polyfactory.utils.deprecation import check_for_deprecated_parameters
-from polyfactory.utils.helpers import (
-    get_annotation_metadata,
-    unwrap_annotated,
-    unwrap_new_type,
-)
+from polyfactory.utils.helpers import get_annotation_metadata, unwrap_annotated, unwrap_new_type
 from polyfactory.utils.predicates import is_annotated
 from polyfactory.utils.types import NoneType
 
@@ -185,7 +181,7 @@ class FieldMeta:
                     constraints["pattern"] = "[[:ascii:]]"
                 elif func is str.isdigit:
                     constraints["pattern"] = "[[:digit:]]"
-            elif is_dataclass(value) and (value_dict := asdict(value)) and ("allowed_schemes" in value_dict):
+            elif is_dataclass(value) and (value_dict := asdict(value)) and ("allowed_schemes" in value_dict):  # type: ignore[call-overload]
                 constraints["url"] = {k: v for k, v in value_dict.items() if v is not None}
             # This is to support `Constraints`, but we can't do a isinstance with `Constraints` since isinstance
             # checks with `TypedDict` is not supported.

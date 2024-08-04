@@ -566,7 +566,7 @@ class BaseFactory(ABC, Generic[T]):
         )
 
     @classmethod
-    def get_constrained_field_value(  # noqa: C901, PLR0911, PLR0912
+    def get_constrained_field_value(  # noqa: C901, PLR0911
         cls,
         annotation: Any,
         field_meta: FieldMeta,
@@ -626,7 +626,7 @@ class BaseFactory(ABC, Generic[T]):
             except ValueError:
                 collection_type = None
             if collection_type is not None:
-                if collection_type == dict:
+                if collection_type is dict:
                     return handle_constrained_mapping(
                         factory=cls,
                         field_meta=field_meta,
@@ -748,7 +748,7 @@ class BaseFactory(ABC, Generic[T]):
         if (origin := get_type_origin(unwrapped_annotation)) and is_safe_subclass(origin, Collection):
             if cls.__randomize_collection_length__:
                 collection_type = get_collection_type(unwrapped_annotation)
-                if collection_type != dict:
+                if collection_type is not dict:
                     return handle_constrained_collection(
                         collection_type=collection_type,  # type: ignore[type-var]
                         factory=cls,

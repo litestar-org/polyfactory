@@ -83,7 +83,7 @@ class CoverageContainerCallable(CoverageContainerBase, Generic[T]):
     def next_value(self) -> T:
         try:
             return self._func(*self._args, **self._kwargs)
-        except Exception as e:  # noqa: BLE001
+        except Exception as e:
             msg = f"Unsupported type: {self._func!r}\n\nEither extend the providers map or add a factory function for this type."
             raise ParameterException(msg) from e
 
