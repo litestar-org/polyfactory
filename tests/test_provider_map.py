@@ -31,6 +31,9 @@ def test_provider_map_with_any() -> None:
 
     assert foo.foo == "any"
 
+    coverage_result = list(FooFactory.coverage())
+    assert all(result.foo == "any" for result in coverage_result)
+
 
 def test_provider_map_with_typevar() -> None:
     T = TypeVar("T")
@@ -48,5 +51,7 @@ def test_provider_map_with_typevar() -> None:
             return provider_map
 
     foo = FooFactory.build()
-
     assert foo.foo == "any"
+
+    coverage_result = list(FooFactory.coverage())
+    assert all(result.foo == "any" for result in coverage_result)
