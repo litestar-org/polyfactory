@@ -5,7 +5,6 @@ from typing import TYPE_CHECKING, Any, Literal, Mapping, Pattern, TypedDict, cas
 
 from typing_extensions import get_args, get_origin
 
-from polyfactory.collection_extender import CollectionExtender
 from polyfactory.constants import DEFAULT_RANDOM, TYPE_MAPPING
 from polyfactory.utils.deprecation import check_for_deprecated_parameters
 from polyfactory.utils.helpers import get_annotation_metadata, unwrap_annotated, unwrap_new_type
@@ -152,14 +151,12 @@ class FieldMeta:
         )
 
         if field.type_args and not field.children:
-            number_of_args = 1
-            extended_type_args = CollectionExtender.extend_type_args(field.annotation, field.type_args, number_of_args)
             field.children = [
                 cls.from_type(
                     annotation=unwrap_new_type(arg),
                     random=random,
                 )
-                for arg in extended_type_args
+                for arg in field.type_args
                 if arg is not NoneType
             ]
         return field
