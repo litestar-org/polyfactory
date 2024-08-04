@@ -355,9 +355,9 @@
 </span><span data-line="51">    <span class="kn">from</span> <span class="nn">pydantic</span> <span class="kn">import</span> <span class="n">BaseModel</span> <span class="k">as</span> <span class="n">BaseModelV1</span>
 </span><span data-line="52">    <span class="kn">from</span> <span class="nn">pydantic.color</span> <span class="kn">import</span> <span class="n">Color</span>
 </span><span data-line="53">    <span class="kn">from</span> <span class="nn">pydantic.fields</span> <span class="kn">import</span> <span class="p">(</span>  <span class="c1"># type: ignore[attr-defined]</span>
-</span><span data-line="54">        <span class="n">DeferredType</span><span class="p">,</span>  <span class="c1"># pyright: ignore[reportGeneralTypeIssues]</span>
-</span><span data-line="55">        <span class="n">ModelField</span><span class="p">,</span>  <span class="c1"># pyright: ignore[reportGeneralTypeIssues]</span>
-</span><span data-line="56">        <span class="n">Undefined</span><span class="p">,</span>  <span class="c1"># pyright: ignore[reportGeneralTypeIssues]</span>
+</span><span data-line="54">        <span class="n">DeferredType</span><span class="p">,</span>  <span class="c1"># pyright: ignore[attr-defined,reportAttributeAccessIssue]</span>
+</span><span data-line="55">        <span class="n">ModelField</span><span class="p">,</span>  <span class="c1"># pyright: ignore[attr-defined,reportAttributeAccessIssue]</span>
+</span><span data-line="56">        <span class="n">Undefined</span><span class="p">,</span>  <span class="c1"># pyright: ignore[attr-defined,reportAttributeAccessIssue]</span>
 </span><span data-line="57">    <span class="p">)</span>
 </span><span data-line="58">
 </span><span data-line="59">    <span class="c1"># Keep this import last to prevent warnings from pydantic if pydantic v2</span>
@@ -403,7 +403,7 @@
 </span><span data-line="99">
 </span><span data-line="100">    <span class="kn">from</span> <span class="nn">typing_extensions</span> <span class="kn">import</span> <span class="n">NotRequired</span><span class="p">,</span> <span class="n">TypeGuard</span>
 </span><span data-line="101">
-</span><span data-line="102"><span class="n">T</span> <span class="o">=</span> <span class="n">TypeVar</span><span class="p">(</span><span class="s2">&quot;T&quot;</span><span class="p">,</span> <span class="n">bound</span><span class="o">=</span><span class="s2">&quot;BaseModelV1 | BaseModelV2&quot;</span><span class="p">)</span>
+</span><span data-line="102"><span class="n">T</span> <span class="o">=</span> <span class="n">TypeVar</span><span class="p">(</span><span class="s2">&quot;T&quot;</span><span class="p">,</span> <span class="n">bound</span><span class="o">=</span><span class="s2">&quot;BaseModelV1 | BaseModelV2&quot;</span><span class="p">)</span>  <span class="c1"># pyright: ignore[reportInvalidTypeForm]</span>
 </span><span data-line="103">
 </span><span data-line="104"><span class="n">_IS_PYDANTIC_V1</span> <span class="o">=</span> <span class="n">VERSION</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;1&quot;</span><span class="p">)</span>
 </span><span data-line="105">
@@ -747,7 +747,7 @@
 </span><span data-line="443">            <span class="n">value</span> <span class="o">=</span> <span class="bp">cls</span><span class="o">.</span><span class="n">get_field_value</span><span class="p">(</span>
 </span><span data-line="444">                <span class="n">field_meta</span><span class="p">,</span> <span class="n">field_build_parameters</span><span class="o">=</span><span class="n">field_build_parameters</span><span class="p">,</span> <span class="n">build_context</span><span class="o">=</span><span class="n">build_context</span>
 </span><span data-line="445">            <span class="p">)</span>
-</span><span data-line="446">            <span class="k">return</span> <span class="n">to_json</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>  <span class="c1"># pyright: ignore[reportUnboundVariable]</span>
+</span><span data-line="446">            <span class="k">return</span> <span class="n">to_json</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>  <span class="c1"># pyright: ignore[reportPossiblyUnboundVariable]</span>
 </span><span data-line="447">
 </span><span data-line="448">        <span class="k">return</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">get_constrained_field_value</span><span class="p">(</span>
 </span><span data-line="449">            <span class="n">annotation</span><span class="p">,</span> <span class="n">field_meta</span><span class="p">,</span> <span class="n">field_build_parameters</span><span class="o">=</span><span class="n">field_build_parameters</span><span class="p">,</span> <span class="n">build_context</span><span class="o">=</span><span class="n">build_context</span>
@@ -923,7 +923,7 @@
 </span><span data-line="619">    <span class="k">return</span> <span class="n">is_safe_subclass</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">BaseModelV1</span><span class="p">)</span>
 </span><span data-line="620">
 </span><span data-line="621">
-</span><span data-line="622"><span class="k">def</span> <span class="nf">_is_pydantic_v2_model</span><span class="p">(</span><span class="n">model</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">TypeGuard</span><span class="p">[</span><span class="n">BaseModelV2</span><span class="p">]:</span>
+</span><span data-line="622"><span class="k">def</span> <span class="nf">_is_pydantic_v2_model</span><span class="p">(</span><span class="n">model</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">TypeGuard</span><span class="p">[</span><span class="n">BaseModelV2</span><span class="p">]:</span>  <span class="c1"># pyright: ignore[reportInvalidTypeForm]</span>
 </span><span data-line="623">    <span class="k">return</span> <span class="ow">not</span> <span class="n">_IS_PYDANTIC_V1</span> <span class="ow">and</span> <span class="n">is_safe_subclass</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">BaseModelV2</span><span class="p">)</span>
 </span></pre></div>
         </article>

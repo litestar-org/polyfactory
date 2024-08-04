@@ -373,7 +373,7 @@
 </span><span data-line="69">
 </span><span data-line="70">        <span class="n">fixture_name</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">name</span> <span class="ow">or</span> <span class="n">_get_fixture_name</span><span class="p">(</span><span class="n">factory</span><span class="o">.</span><span class="vm">__name__</span><span class="p">)</span>
 </span><span data-line="71">        <span class="n">fixture_register</span> <span class="o">=</span> <span class="n">fixture</span><span class="p">(</span>
-</span><span data-line="72">            <span class="n">scope</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">scope</span><span class="p">,</span>  <span class="c1"># pyright: ignore[reportGeneralTypeIssues]</span>
+</span><span data-line="72">            <span class="n">scope</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">scope</span><span class="p">,</span>  <span class="c1"># pyright: ignore[reportArgumentType]</span>
 </span><span data-line="73">            <span class="n">name</span><span class="o">=</span><span class="n">fixture_name</span><span class="p">,</span>
 </span><span data-line="74">            <span class="n">autouse</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">autouse</span><span class="p">,</span>
 </span><span data-line="75">        <span class="p">)</span>

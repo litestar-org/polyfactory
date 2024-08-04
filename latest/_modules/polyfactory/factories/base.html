@@ -870,7 +870,7 @@
 </span><span data-line="566">        <span class="p">)</span></div>
 </span><span data-line="567">
 </span><span data-line="568">    <span class="nd">@classmethod</span>
-</span><span data-line="569">    <span class="k">def</span> <span class="nf">get_constrained_field_value</span><span class="p">(</span>  <span class="c1"># noqa: C901, PLR0911, PLR0912</span>
+</span><span data-line="569">    <span class="k">def</span> <span class="nf">get_constrained_field_value</span><span class="p">(</span>  <span class="c1"># noqa: C901, PLR0911</span>
 </span><span data-line="570">        <span class="bp">cls</span><span class="p">,</span>
 </span><span data-line="571">        <span class="n">annotation</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span>
 </span><span data-line="572">        <span class="n">field_meta</span><span class="p">:</span> <span class="n">FieldMeta</span><span class="p">,</span>
@@ -930,7 +930,7 @@
 </span><span data-line="626">            <span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
 </span><span data-line="627">                <span class="n">collection_type</span> <span class="o">=</span> <span class="kc">None</span>
 </span><span data-line="628">            <span class="k">if</span> <span class="n">collection_type</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-</span><span data-line="629">                <span class="k">if</span> <span class="n">collection_type</span> <span class="o">==</span> <span class="nb">dict</span><span class="p">:</span>
+</span><span data-line="629">                <span class="k">if</span> <span class="n">collection_type</span> <span class="ow">is</span> <span class="nb">dict</span><span class="p">:</span>
 </span><span data-line="630">                    <span class="k">return</span> <span class="n">handle_constrained_mapping</span><span class="p">(</span>
 </span><span data-line="631">                        <span class="n">factory</span><span class="o">=</span><span class="bp">cls</span><span class="p">,</span>
 </span><span data-line="632">                        <span class="n">field_meta</span><span class="o">=</span><span class="n">field_meta</span><span class="p">,</span>
@@ -1052,7 +1052,7 @@
 </span><span data-line="748">        <span class="k">if</span> <span class="p">(</span><span class="n">origin</span> <span class="o">:=</span> <span class="n">get_type_origin</span><span class="p">(</span><span class="n">unwrapped_annotation</span><span class="p">))</span> <span class="ow">and</span> <span class="n">is_safe_subclass</span><span class="p">(</span><span class="n">origin</span><span class="p">,</span> <span class="n">Collection</span><span class="p">):</span>
 </span><span data-line="749">            <span class="k">if</span> <span class="bp">cls</span><span class="o">.</span><span class="n">__randomize_collection_length__</span><span class="p">:</span>
 </span><span data-line="750">                <span class="n">collection_type</span> <span class="o">=</span> <span class="n">get_collection_type</span><span class="p">(</span><span class="n">unwrapped_annotation</span><span class="p">)</span>
-</span><span data-line="751">                <span class="k">if</span> <span class="n">collection_type</span> <span class="o">!=</span> <span class="nb">dict</span><span class="p">:</span>
+</span><span data-line="751">                <span class="k">if</span> <span class="n">collection_type</span> <span class="ow">is</span> <span class="ow">not</span> <span class="nb">dict</span><span class="p">:</span>
 </span><span data-line="752">                    <span class="k">return</span> <span class="n">handle_constrained_collection</span><span class="p">(</span>
 </span><span data-line="753">                        <span class="n">collection_type</span><span class="o">=</span><span class="n">collection_type</span><span class="p">,</span>  <span class="c1"># type: ignore[type-var]</span>
 </span><span data-line="754">                        <span class="n">factory</span><span class="o">=</span><span class="bp">cls</span><span class="p">,</span>
