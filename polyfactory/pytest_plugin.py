@@ -7,12 +7,14 @@ from typing import (
     ClassVar,
     Literal,
     Union,
+    cast,
+    overload,
 )
 
 from pytest import Config, fixture  # noqa: PT013
 
 from polyfactory.exceptions import ParameterException
-from polyfactory.factories.base import BaseFactory
+from polyfactory.factories.base import BaseFactory, F
 from polyfactory.utils.predicates import is_safe_subclass
 
 Scope = Union[
@@ -62,7 +64,7 @@ class FactoryFixture:
         self.autouse = autouse
         self.name = name
 
-    def __call__(self, factory: type[BaseFactory[Any]]) -> Any:
+    def __call__(self, factory: type[F]) -> Callable[[], type[F]]:
         if not is_safe_subclass(factory, BaseFactory):
             msg = f"{factory.__name__} is not a BaseFactory subclass."
             raise ParameterException(msg)
@@ -74,9 +76,9 @@ class FactoryFixture:
             autouse=self.autouse,
         )
 
-        def _factory_fixture() -> type[BaseFactory[Any]]:
+        def _factory_fixture() -> type[F]:
             """The wrapped factory"""
-            return factory
+            return cast(type[F], factory)
 
         _factory_fixture.__doc__ = factory.__doc__
         marker = fixture_register(_factory_fixture)
@@ -84,13 +86,33 @@ class FactoryFixture:
         return marker
 
 
+@overload
 def register_fixture(
-    factory: type[BaseFactory[Any]] | None = None,
+    factory: None = None,
     *,
     scope: Scope = "function",
     autouse: bool = False,
     name: str | None = None,
-) -> Any:
+) -> FactoryFixture: ...
+
+
+@overload
+def register_fixture(
+    factory: type[F],
+    *,
+    scope: Scope = "function",
+    autouse: bool = False,
+    name: str | None = None,
+) -> Callable[[], type[F]]: ...
+
+
+def register_fixture(
+    factory: type[F] | None = None,
+    *,
+    scope: Scope = "function",
+    autouse: bool = False,
+    name: str | None = None,
+) -> FactoryFixture | Callable[[], type[F]]:
     """A decorator that allows registering model factories as fixtures.
 
     :param factory: An optional factory class to decorate.
