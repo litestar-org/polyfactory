@@ -6,6 +6,7 @@ from typing import (
     Callable,
     ClassVar,
     Literal,
+    TypeVar,
     Union,
     cast,
     overload,
@@ -14,14 +15,14 @@ from typing import (
 from pytest import Config, fixture  # noqa: PT013
 
 from polyfactory.exceptions import ParameterException
-from polyfactory.factories.base import BaseFactory, F
+from polyfactory.factories.base import BaseFactory
 from polyfactory.utils.predicates import is_safe_subclass
 
 Scope = Union[
     Literal["session", "package", "module", "class", "function"],
     Callable[[str, Config], Literal["session", "package", "module", "class", "function"]],
 ]
-
+T = TypeVar("T", bound=BaseFactory[Any])
 
 split_pattern_1 = re.compile(r"([A-Z]+)([A-Z][a-z])")
 split_pattern_2 = re.compile(r"([a-z\d])([A-Z])")
@@ -64,7 +65,7 @@ class FactoryFixture:
         self.autouse = autouse
         self.name = name
 
-    def __call__(self, factory: type[F]) -> Callable[[], type[F]]:
+    def __call__(self, factory: type[T]) -> Callable[[], type[T]]:
         if not is_safe_subclass(factory, BaseFactory):
             msg = f"{factory.__name__} is not a BaseFactory subclass."
             raise ParameterException(msg)
@@ -76,9 +77,9 @@ class FactoryFixture:
             autouse=self.autouse,
         )
 
-        def _factory_fixture() -> type[F]:
+        def _factory_fixture() -> type[T]:
             """The wrapped factory"""
-            return cast(type[F], factory)
+            return cast(type[T], factory)
 
         _factory_fixture.__doc__ = factory.__doc__
         marker = fixture_register(_factory_fixture)
@@ -98,21 +99,21 @@ def register_fixture(
 
 @overload
 def register_fixture(
-    factory: type[F],
+    factory: type[T],
     *,
     scope: Scope = "function",
     autouse: bool = False,
     name: str | None = None,
-) -> Callable[[], type[F]]: ...
+) -> Callable[[], type[T]]: ...
 
 
 def register_fixture(
-    factory: type[F] | None = None,
+    factory: type[T] | None = None,
     *,
     scope: Scope = "function",
     autouse: bool = False,
     name: str | None = None,
-) -> FactoryFixture | Callable[[], type[F]]:
+) -> FactoryFixture | Callable[[], type[T]]:
     """A decorator that allows registering model factories as fixtures.
 
     :param factory: An optional factory class to decorate.
