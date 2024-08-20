@@ -6,6 +6,7 @@ from typing import (
     Callable,
     ClassVar,
     Literal,
+    Type,
     TypeVar,
     Union,
     cast,
@@ -79,7 +80,7 @@ class FactoryFixture:
 
         def _factory_fixture() -> type[T]:
             """The wrapped factory"""
-            return cast(type[T], factory)
+            return cast(Type[T], factory)
 
         _factory_fixture.__doc__ = factory.__doc__
         marker = fixture_register(_factory_fixture)
