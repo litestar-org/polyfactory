@@ -339,9 +339,12 @@
 </span><span data-line="21"><span class="k">class</span> <span class="nc">PersonFactory</span><span class="p">(</span><span class="n">DataclassFactory</span><span class="p">[</span><span class="n">Person</span><span class="p">]):</span> <span class="o">...</span>
 </span><span data-line="22">
 </span><span data-line="23">
-</span><span data-line="24"><span class="k">def</span> <span class="nf">test_person_factory</span><span class="p">(</span><span class="n">person_factory</span><span class="p">:</span> <span class="n">PersonFactory</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-</span><span data-line="25">    <span class="n">person_instance</span> <span class="o">=</span> <span class="n">person_factory</span><span class="o">.</span><span class="n">build</span><span class="p">()</span>
-</span><span data-line="26">    <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">person_instance</span><span class="p">,</span> <span class="n">Person</span><span class="p">)</span>
+</span><span data-line="24"><span class="c1"># NOTE: PersonFactory is no more a factory class, it is a callable that returns the decorated factory</span>
+</span><span data-line="25">
+</span><span data-line="26">
+</span><span data-line="27"><span class="k">def</span> <span class="nf">test_person_factory</span><span class="p">(</span><span class="n">person_factory</span><span class="p">:</span> <span class="n">DataclassFactory</span><span class="p">[</span><span class="n">Person</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+</span><span data-line="28">    <span class="n">person_instance</span> <span class="o">=</span> <span class="n">person_factory</span><span class="o">.</span><span class="n">build</span><span class="p">()</span>
+</span><span data-line="29">    <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">person_instance</span><span class="p">,</span> <span class="n">Person</span><span class="p">)</span>
 </span></pre></div>
 </div>
 </div>
