@@ -40,17 +40,18 @@ def handle_constrained_collection(
     min_items = abs(min_items if min_items is not None else (max_items or 0))
     max_items = abs(max_items if max_items is not None else min_items + 1)
 
-    if collection_type in (frozenset, set) or unique_items:
-        if hasattr(field_meta.annotation, "__origin__") and field_meta.annotation.__origin__ is Literal:
-            min_items = 1
-            max_items = 1
-        elif isinstance(field_meta.annotation, EnumMeta):
-            min_items = min(min_items, len(field_meta.annotation))
-            max_items = len(field_meta.annotation)
-
     if max_items < min_items:
         msg = "max_items must be larger or equal to min_items"
         raise ParameterException(msg)
+
+    if collection_type in (frozenset, set) or unique_items:
+        max_field_values = max_items
+        if hasattr(field_meta.annotation, "__origin__") and field_meta.annotation.__origin__ is Literal:
+            max_field_values = len(field_meta.children)
+        elif isinstance(field_meta.annotation, EnumMeta):
+            max_field_values = len(field_meta.annotation)
+        min_items = min(min_items, max_field_values)
+        max_items = min(max_items, max_field_values)
 
     collection: set[T] | list[T] = set() if (collection_type in (frozenset, set) or unique_items) else []
 

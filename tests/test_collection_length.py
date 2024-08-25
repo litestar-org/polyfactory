@@ -1,5 +1,5 @@
 from enum import Enum
-from typing import Any, Dict, FrozenSet, List, Literal, Optional, Set, Tuple
+from typing import Any, Dict, FrozenSet, List, Literal, Optional, Set, Tuple, get_args
 
 import pytest
 
@@ -138,26 +138,34 @@ def test_collection_length_with_optional_allowed(min_val: int, max_val: int) -> 
 
 
 @pytest.mark.parametrize("type_", (List, FrozenSet, Set))
-def test_collection_length_with_literal(type_: type) -> None:
+@pytest.mark.parametrize("min_items", (0, 2, 4))
+@pytest.mark.parametrize("max_inc", (0, 1, 4))
+def test_collection_length_with_literal(type_: type, min_items: int, max_inc: int) -> None:
+    max_items = min_items + max_inc
+    literal_type = Literal["Dog", "Cat", "Monkey"]
+
     @dataclass
     class MyModel:
-        animal_collection: type_[Literal["Dog", "Cat", "Monkey"]]  # type: ignore
+        animal_collection: type_[literal_type]  # type: ignore
 
     class MyFactory(DataclassFactory):
         __model__ = MyModel
         __randomize_collection_length__ = True
-        __min_collection_length__ = 4
-        __max_collection_length__ = 5
+        __min_collection_length__ = min_items
+        __max_collection_length__ = max_items
 
     result = MyFactory.build()
-    if type_ is List:
-        assert len(result.animal_collection) >= MyFactory.__min_collection_length__
-    else:
-        assert len(result.animal_collection) == 1
+    assert len(result.animal_collection) >= min(min_items, len(get_args(literal_type)))
+    if type_ is not List:
+        assert len(result.animal_collection) <= max_items
 
 
 @pytest.mark.parametrize("type_", (List, FrozenSet, Set))
-def test_collection_length_with_enum(type_: type) -> None:
+@pytest.mark.parametrize("min_items", (0, 2, 4))
+@pytest.mark.parametrize("max_inc", (0, 1, 4))
+def test_collection_length_with_enum(type_: type, min_items: int, max_inc: int) -> None:
+    max_items = min_items + max_inc
+
     class Animal(str, Enum):
         DOG = "Dog"
         CAT = "Cat"
@@ -169,11 +177,10 @@ def test_collection_length_with_enum(type_: type) -> None:
     class MyFactory(ModelFactory):
         __model__ = MyModel
         __randomize_collection_length__ = True
-        __min_collection_length__ = len(Animal) + 1
-        __max_collection_length__ = len(Animal) + 2
+        __min_collection_length__ = min_items
+        __max_collection_length__ = max_items
 
     result = MyFactory.build()
-    if type_ is List:
-        assert len(result.animal_collection) >= MyFactory.__min_collection_length__
-    else:
-        assert len(result.animal_collection) == len(Animal)
+    assert len(result.animal_collection) >= min(min_items, len(Animal))
+    if type_ is not List:
+        assert len(result.animal_collection) <= max_items
