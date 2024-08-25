@@ -82,13 +82,14 @@ def handle_collection_type(
         return container_type(
             factory.get_field_value(child, field_build_parameters=field_build_parameters, build_context=build_context)
             for child in field_meta.children
+            if child.annotation != Ellipsis
         )
 
     msg = f"Unsupported container type: {container_type}"
     raise NotImplementedError(msg)
 
 
-def handle_collection_type_coverage(
+def handle_collection_type_coverage(  # noqa: C901, PLR0911
     field_meta: FieldMeta,
     container_type: type,
     factory: type[BaseFactory[Any]],
@@ -136,6 +137,16 @@ def handle_collection_type_coverage(
         return container.union(handle_collection_type_coverage(field_meta, set, factory, build_context=build_context))
 
     if issubclass(container_type, tuple):
+        if field_meta.children[-1].annotation == Ellipsis:
+            return (
+                CoverageContainer(
+                    factory.get_field_value_coverage(
+                        field_meta.children[0],
+                        build_context=build_context,
+                    )
+                ),
+            )
+
         return container_type(
             CoverageContainer(factory.get_field_value_coverage(subfield_meta, build_context=build_context))
             for subfield_meta in field_meta.children

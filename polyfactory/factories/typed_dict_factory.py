@@ -6,7 +6,7 @@ from typing_extensions import (  # type: ignore[attr-defined]
     NotRequired,
     Required,
     TypeGuard,
-    _TypedDictMeta,  # pyright: ignore[reportGeneralTypeIssues]
+    _TypedDictMeta,  # pyright: ignore[reportAttributeAccessIssue]
     get_origin,
     get_type_hints,
     is_typeddict,

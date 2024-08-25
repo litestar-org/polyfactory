@@ -257,7 +257,7 @@ def type_exists_at_path(obj: Any, path: List[Union[int, str]], target_type: Type
     """
     # Handle fully dereferenced item and the end of path
     if len(path) == 0:
-        return type(obj) == target_type
+        return isinstance(obj, target_type)
 
     if path[0] == "*":
         if not isinstance(obj, Iterable):
