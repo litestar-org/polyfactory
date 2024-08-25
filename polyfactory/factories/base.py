@@ -61,7 +61,7 @@ from polyfactory.utils.helpers import (
     unwrap_optional,
 )
 from polyfactory.utils.model_coverage import CoverageContainer, CoverageContainerCallable, resolve_kwargs_coverage
-from polyfactory.utils.predicates import get_type_origin, is_any, is_literal, is_optional, is_safe_subclass, is_union
+from polyfactory.utils.predicates import get_type_origin, is_literal, is_optional, is_safe_subclass, is_union
 from polyfactory.utils.types import NoneType
 from polyfactory.value_generators.complex_types import handle_collection_type, handle_collection_type_coverage
 from polyfactory.value_generators.constrained_collections import (
@@ -746,8 +746,11 @@ class BaseFactory(ABC, Generic[T]):
             return factory.batch(size=batch_size, _build_context=build_context)
 
         if (origin := get_type_origin(unwrapped_annotation)) and is_safe_subclass(origin, Collection):
-            if cls.__randomize_collection_length__:
-                collection_type = get_collection_type(unwrapped_annotation)
+            collection_type = get_collection_type(unwrapped_annotation)
+            is_fixed_length = collection_type is tuple and (
+                not field_meta.children or field_meta.children[-1].annotation != Ellipsis
+            )
+            if cls.__randomize_collection_length__ and not is_fixed_length:
                 if collection_type is not dict:
                     return handle_constrained_collection(
                         collection_type=collection_type,  # type: ignore[type-var]
@@ -769,7 +772,11 @@ class BaseFactory(ABC, Generic[T]):
                 )
 
             return handle_collection_type(
-                field_meta, origin, cls, field_build_parameters=field_build_parameters, build_context=build_context
+                field_meta,
+                origin,
+                cls,
+                field_build_parameters=field_build_parameters,
+                build_context=build_context,
             )
 
         if provider := cls.get_provider_map().get(unwrapped_annotation):
@@ -847,11 +854,11 @@ class BaseFactory(ABC, Generic[T]):
 
                 yield handle_collection_type_coverage(child_meta, origin, cls, build_context=build_context)
 
-            elif is_any(unwrapped_annotation) or isinstance(unwrapped_annotation, TypeVar):
-                yield create_random_string(cls.__random__, min_length=1, max_length=10)
-
             elif provider := cls.get_provider_map().get(unwrapped_annotation):
                 yield CoverageContainerCallable(provider)
+
+            elif isinstance(unwrapped_annotation, TypeVar):
+                yield create_random_string(cls.__random__, min_length=1, max_length=10)
 
             elif callable(unwrapped_annotation):
                 # if value is a callable we can try to naively call it.

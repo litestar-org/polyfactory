@@ -1,7 +1,8 @@
 from __future__ import annotations
 
 import sys
-from typing import TYPE_CHECKING, Any, Mapping
+from collections import deque
+from typing import TYPE_CHECKING, Any, Mapping, Sequence
 
 from typing_extensions import TypeAliasType, get_args, get_origin
 
@@ -11,7 +12,6 @@ from polyfactory.utils.types import NoneType
 
 if TYPE_CHECKING:
     from random import Random
-    from typing import Sequence
 
 
 def unwrap_new_type(annotation: Any) -> Any:
@@ -173,7 +173,7 @@ def get_annotation_metadata(annotation: Any) -> Sequence[Any]:
     return get_args(annotation)[1:]
 
 
-def get_collection_type(annotation: Any) -> type[list | tuple | set | frozenset | dict]:
+def get_collection_type(annotation: Any) -> type[list | tuple | set | frozenset | dict | deque]:  # noqa: PLR0911
     """Get the collection type from the annotation.
 
     :param annotation: A type annotation.
@@ -191,6 +191,10 @@ def get_collection_type(annotation: Any) -> type[list | tuple | set | frozenset 
         return set
     if is_safe_subclass(annotation, frozenset):
         return frozenset
+    if is_safe_subclass(annotation, deque):
+        return deque
+    if is_safe_subclass(annotation, Sequence):
+        return list
 
     msg = f"Unknown collection type - {annotation}"
     raise ValueError(msg)
