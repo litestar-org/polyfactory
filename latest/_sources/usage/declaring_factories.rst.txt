@@ -60,7 +60,7 @@ Or for attrs models:
 Imperative Factory Creation
 ---------------------------
 
-Although the definition of factories is primarily meant to be done imperatively, factories expose the
+Although the definition of factories is primarily meant to be done declaratively, factories expose the
 :meth:`create_factory <polyfactory.factories.base.BaseFactory.create_factory>` method. This method is used internally
 inside factories to dynamically create factories for models. For example, below the ``PersonFactory`` will dynamically
 create a ``PetFactory``:
