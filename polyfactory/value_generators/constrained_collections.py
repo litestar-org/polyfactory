@@ -47,7 +47,8 @@ def handle_constrained_collection(
     if collection_type in (frozenset, set) or unique_items:
         max_field_values = max_items
         if hasattr(field_meta.annotation, "__origin__") and field_meta.annotation.__origin__ is Literal:
-            max_field_values = len(field_meta.children)
+            if field_meta.children is not None:
+                max_field_values = len(field_meta.children)
         elif isinstance(field_meta.annotation, EnumMeta):
             max_field_values = len(field_meta.annotation)
         min_items = min(min_items, max_field_values)
