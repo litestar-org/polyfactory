@@ -156,8 +156,7 @@ def test_collection_length_with_literal(type_: type, min_items: int, max_inc: in
 
     result = MyFactory.build()
     assert len(result.animal_collection) >= min(min_items, len(get_args(literal_type)))
-    if type_ is not List:
-        assert len(result.animal_collection) <= max_items
+    assert len(result.animal_collection) <= max_items
 
 
 @pytest.mark.parametrize("type_", (List, FrozenSet, Set))
@@ -182,5 +181,4 @@ def test_collection_length_with_enum(type_: type, min_items: int, max_inc: int) 
 
     result = MyFactory.build()
     assert len(result.animal_collection) >= min(min_items, len(Animal))
-    if type_ is not List:
-        assert len(result.animal_collection) <= max_items
+    assert len(result.animal_collection) <= max_items
