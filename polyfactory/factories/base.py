@@ -716,8 +716,10 @@ class BaseFactory(ABC, Generic[T]):
 
             # `None` is removed from the children when creating FieldMeta so when `children`
             # is empty, it must mean that the field meta is an optional type.
-            if children:
-                return cls.get_field_value(cls.__random__.choice(children), field_build_parameters, build_context)
+            if not children:
+                return None
+
+            return cls.get_field_value(cls.__random__.choice(children), field_build_parameters, build_context)
 
         if BaseFactory.is_factory_type(annotation=unwrapped_annotation):
             if not field_build_parameters and unwrapped_annotation in build_context["seen_models"]:
