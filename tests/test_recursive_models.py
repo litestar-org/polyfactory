@@ -44,17 +44,19 @@ class PydanticNode(BaseModel):
     value: int
     union_child: Union[PydanticNode, int]  # noqa: UP007
     list_child: List[PydanticNode]  # noqa: UP006
-    optional_child: Union[PydanticNode, None]  # noqa: UP007
+    optional_union_child: Union[PydanticNode, None]  # noqa: UP007
+    optional_child: Optional[PydanticNode]  # noqa: UP007
     child: PydanticNode = Field(default=_Sentinel)  # type: ignore[assignment]
 
 
 @pytest.mark.parametrize("factory_use_construct", (True, False))
 def test_recursive_pydantic_models(factory_use_construct: bool) -> None:
-    factory = ModelFactory.create_factory(PydanticNode)
+    factory = ModelFactory[PydanticNode].create_factory(PydanticNode)
 
     result = factory.build(factory_use_construct)
     assert result.child is _Sentinel, "Default is not used"  # type: ignore[comparison-overlap]
     assert isinstance(result.union_child, int)
+    assert result.optional_union_child is None
     assert result.optional_child is None
     assert result.list_child == []
 
