@@ -34,7 +34,10 @@ def handle_collection_type(
         container_type = INSTANTIABLE_TYPE_MAPPING[container_type]  # type: ignore[assignment]
 
     container = container_type()
-    if not field_meta.children:
+    if field_meta.children is None or any(
+        child_meta.annotation in factory._get_build_context(build_context)["seen_models"]
+        for child_meta in field_meta.children
+    ):
         return container
 
     if issubclass(container_type, MutableMapping) or is_typeddict(container_type):
