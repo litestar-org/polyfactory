@@ -1,18 +1,18 @@
 from __future__ import annotations
 
 from enum import EnumMeta
-from typing import TYPE_CHECKING, Any, Callable, List, Literal, Mapping, TypeVar, cast
+from typing import TYPE_CHECKING, Any, Callable, Literal, Mapping, TypeVar
 
 from polyfactory.exceptions import ParameterException
-from polyfactory.field_meta import FieldMeta
 
 if TYPE_CHECKING:
     from polyfactory.factories.base import BaseFactory, BuildContext
+    from polyfactory.field_meta import FieldMeta
 
 T = TypeVar("T", list, set, frozenset)
 
 
-def handle_constrained_collection(
+def handle_constrained_collection(  # noqa: C901
     collection_type: Callable[..., T],
     factory: type[BaseFactory[Any]],
     field_meta: FieldMeta,
@@ -37,6 +37,10 @@ def handle_constrained_collection(
 
     :returns: A collection value.
     """
+    build_context = factory._get_build_context(build_context)
+    if field_meta.annotation in build_context["seen_models"]:
+        return collection_type()
+
     min_items = abs(min_items if min_items is not None else (max_items or 0))
     max_items = abs(max_items if max_items is not None else min_items + 1)
 
@@ -99,6 +103,12 @@ def handle_constrained_mapping(
 
     :returns: A mapping instance.
     """
+    build_context = factory._get_build_context(build_context)
+    if field_meta.children is None or any(
+        child_meta.annotation in build_context["seen_models"] for child_meta in field_meta.children
+    ):
+        return {}
+
     min_items = abs(min_items if min_items is not None else (max_items or 0))
     max_items = abs(max_items if max_items is not None else min_items + 1)
 
@@ -110,7 +120,7 @@ def handle_constrained_mapping(
 
     collection: dict[Any, Any] = {}
 
-    children = cast(List[FieldMeta], field_meta.children)
+    children = field_meta.children
     key_field_meta = children[0]
     value_field_meta = children[1]
     while len(collection) < length:

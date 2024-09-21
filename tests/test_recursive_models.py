@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from dataclasses import dataclass, field
-from typing import List, Optional, Union
+from typing import Any, Dict, List, Optional, Union
 
 import pytest
 
@@ -47,6 +47,8 @@ class PydanticNode(BaseModel):
     optional_union_child: Union[PydanticNode, None]  # noqa: UP007
     optional_child: Optional[PydanticNode]  # noqa: UP007
     child: PydanticNode = Field(default=_Sentinel)  # type: ignore[assignment]
+    recursive_key: Dict[PydanticNode, Any]  # noqa: UP006
+    recursive_value: Dict[str, PydanticNode]  # noqa: UP006
 
 
 @pytest.mark.parametrize("factory_use_construct", (True, False))
@@ -59,6 +61,8 @@ def test_recursive_pydantic_models(factory_use_construct: bool) -> None:
     assert result.optional_union_child is None
     assert result.optional_child is None
     assert result.list_child == []
+    assert result.recursive_key == {}
+    assert result.recursive_value == {}
 
 
 @dataclass
