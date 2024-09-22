@@ -7,8 +7,82 @@ All commits to this project will be documented in this file.
 [unreleased]
 ------------
 
-`1d1c7f9 <https://github.com/litestar-org/polyfactory/commit/1d1c7f9d02f9c7a8eb977dc0624bf5a045d55ddc>`_ is the last commit in the changelog before unreleased changes.
+`67c5720 <https://github.com/litestar-org/polyfactory/commit/67c57208de5ce993bdb2c7888864ac4e71964511>`_ is the last commit in the changelog before unreleased changes.
 
+
+Bug Fixes
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+* (`24701eb <https://github.com/litestar-org/polyfactory/commit/24701eb593493f7c038709b1327dbf6dd8942e87>`_)  - Constrained 0 length lists (#570)  by `@marcozzxx810 <https://github.com/marcozzxx810>`_ in `#570 <https://github.com/litestar-org/polyfactory/pull/570>`_
+* (`6f5b78c <https://github.com/litestar-org/polyfactory/commit/6f5b78cc5ef3f0fb1037d17d06837af54aac586d>`_)  - Use provider map for any in coverage (#574)  by `@adhtruong <https://github.com/adhtruong>`_ in `#574 <https://github.com/litestar-org/polyfactory/pull/574>`_
+* (`4aaf656 <https://github.com/litestar-org/polyfactory/commit/4aaf656baa5b612fa3b63c6047b653b9b785f60d>`_)  - Tuple randomized length (#573)  by `@adhtruong <https://github.com/adhtruong>`_ in `#573 <https://github.com/litestar-org/polyfactory/pull/573>`_
+* (`9a83ad6 <https://github.com/litestar-org/polyfactory/commit/9a83ad6354d675b42eb514f9354e845490608ba6>`_)  - Adjust min/max items to valid lengths for Set[Enum] fields (#567)  by `@adrianeboyd <https://github.com/adrianeboyd>`_ in `#567 <https://github.com/litestar-org/polyfactory/pull/567>`_
+* (`135d7fe <https://github.com/litestar-org/polyfactory/commit/135d7fea8d939a1fa8c87838d2b705db8968dccd>`_)  - Handle Optional type recursive models (#584)  by `@adhtruong <https://github.com/adhtruong>`_ in `#584 <https://github.com/litestar-org/polyfactory/pull/584>`_
+* (`6440faa <https://github.com/litestar-org/polyfactory/commit/6440faa24abfc34c2d10e31797224f5aec2d43c0>`_)  - Handle recursive collections (#587)  by `@adhtruong <https://github.com/adhtruong>`_ in `#587 <https://github.com/litestar-org/polyfactory/pull/587>`_
+
+Documentation
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+* (`841831d <https://github.com/litestar-org/polyfactory/commit/841831d12f59a0825e490e71fdbc32744c433565>`_)  - Swap word with its antonym to match the context (#575)  by `@UncleGoogle <https://github.com/UncleGoogle>`_ in `#575 <https://github.com/litestar-org/polyfactory/pull/575>`_
+
+Features
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+* (`c0c2704 <https://github.com/litestar-org/polyfactory/commit/c0c27049afc9dd60395d5dd087f47ee700e1a6a7>`_)  - Enhance register_fixture return type annotation (#581)  by `@giulioindev <https://github.com/giulioindev>`_ in `#581 <https://github.com/litestar-org/polyfactory/pull/581>`_
+
+Build
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+* (`d75b1d2 <https://github.com/litestar-org/polyfactory/commit/d75b1d2eee3c042b3bf1ea7b8c2b0b6a744df75d>`_)  - Update pre-commit dependencies (#571)  by `@adhtruong <https://github.com/adhtruong>`_ in `#571 <https://github.com/litestar-org/polyfactory/pull/571>`_
+
+`Release [v2.16.2] - 2024-07-09 <https://github.com/litestar-org/polyfactory/releases/tag/v2.16.2>`_
+----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+* `See All commits in v2.16.2 <https://github.com/litestar-org/polyfactory/commits/v2.16.2>`_
+
+`23281ee <https://github.com/litestar-org/polyfactory/commit/23281eed6c596a7defdc022e8d595cb3f4d2f169>`_ ... `67c5720 <https://github.com/litestar-org/polyfactory/commit/67c57208de5ce993bdb2c7888864ac4e71964511>`_ | `See diff for 2.16.2 <https://github.com/litestar-org/polyfactory/compare/23281eed6c596a7defdc022e8d595cb3f4d2f169...67c57208de5ce993bdb2c7888864ac4e71964511>`_
+
+Bug Fixes
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+* (`3bb97e0 <https://github.com/litestar-org/polyfactory/commit/3bb97e0672d7fadb8532a882e62922b135c81fec>`_)  - Nested model in collection build context (#564)  by `@sam-or <https://github.com/sam-or>`_ in `#564 <https://github.com/litestar-org/polyfactory/pull/564>`_
+
+Miscellaneous Tasks
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+* (`67c5720 <https://github.com/litestar-org/polyfactory/commit/67c57208de5ce993bdb2c7888864ac4e71964511>`_)  - Bump patch version  by `@guacs <https://github.com/guacs>`_
+
+`Release [v2.16.1] - 2024-07-08 <https://github.com/litestar-org/polyfactory/releases/tag/v2.16.1>`_
+----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+* `See All commits in v2.16.1 <https://github.com/litestar-org/polyfactory/commits/v2.16.1>`_
+
+`4928f07 <https://github.com/litestar-org/polyfactory/commit/4928f0735ad58adc63f093062b4938dfc5003ea9>`_ ... `23281ee <https://github.com/litestar-org/polyfactory/commit/23281eed6c596a7defdc022e8d595cb3f4d2f169>`_ | `See diff for 2.16.1 <https://github.com/litestar-org/polyfactory/compare/4928f0735ad58adc63f093062b4938dfc5003ea9...23281eed6c596a7defdc022e8d595cb3f4d2f169>`_
+
+Bug Fixes
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+* (`86869c2 <https://github.com/litestar-org/polyfactory/commit/86869c231255f9269420039b35b3b2f3572a0255>`_)  - Use provider map for generating value for 'Any' (#522)  by `@guacs <https://github.com/guacs>`_ in `#522 <https://github.com/litestar-org/polyfactory/pull/522>`_
+* (`cbe6dfc <https://github.com/litestar-org/polyfactory/commit/cbe6dfce14b1778cf2434a93addeb6936ce3c61b>`_)  - Pydantic factory_use_construct is not propagated to the nested (#549)  by `@Reskov <https://github.com/Reskov>`_ in `#549 <https://github.com/litestar-org/polyfactory/pull/549>`_
+* (`b09bf64 <https://github.com/litestar-org/polyfactory/commit/b09bf64e56ac9bf32ba77b835abbc43ededabd9f>`_)  - Send correct field_meta to avoid over nesting (#527)  by `@Vegemash <https://github.com/Vegemash>`_ in `#527 <https://github.com/litestar-org/polyfactory/pull/527>`_
+
+Documentation
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+* (`740fd34 <https://github.com/litestar-org/polyfactory/commit/740fd345685df6b313f8a4e12e041129b4dcd2e1>`_)  - Link to GitHub repo (#547)  by `@Alc-Alc <https://github.com/Alc-Alc>`_ in `#547 <https://github.com/litestar-org/polyfactory/pull/547>`_
+* (`c34e72e <https://github.com/litestar-org/polyfactory/commit/c34e72e96d0530293739442a48a679dc85ec33fa>`_)  - Add Reskov as a contributor for code (#556)  by `@allcontributors[bot] <https://github.com/allcontributors[bot]>`_ in `#556 <https://github.com/litestar-org/polyfactory/pull/556>`_
+* (`3320989 <https://github.com/litestar-org/polyfactory/commit/3320989ed73265861ec11d09be5c57ed8f06c03f>`_)  - Add Vegemash as a contributor for code (#562)  by `@allcontributors[bot] <https://github.com/allcontributors[bot]>`_ in `#562 <https://github.com/litestar-org/polyfactory/pull/562>`_
+
+Miscellaneous Tasks
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+* (`f8e9318 <https://github.com/litestar-org/polyfactory/commit/f8e93188b447b6c28ee4466da3a128f2edafc5bd>`_)  - Migrate formatting to ruff (#554)  by `@adhtruong <https://github.com/adhtruong>`_ in `#554 <https://github.com/litestar-org/polyfactory/pull/554>`_
+* (`36a9cc1 <https://github.com/litestar-org/polyfactory/commit/36a9cc15d91d6a64e6aecf76757c10b11bc7a87c>`_)  - Bump pydantic (#561)  by `@Vegemash <https://github.com/Vegemash>`_ in `#561 <https://github.com/litestar-org/polyfactory/pull/561>`_
+* (`23281ee <https://github.com/litestar-org/polyfactory/commit/23281eed6c596a7defdc022e8d595cb3f4d2f169>`_)  - Bump patch version  by `@guacs <https://github.com/guacs>`_
+
+`Release [v2.16.0] - 2024-05-13 <https://github.com/litestar-org/polyfactory/releases/tag/v2.16.0>`_
+----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+* `See All commits in v2.16.0 <https://github.com/litestar-org/polyfactory/commits/v2.16.0>`_
+
+`1d1c7f9 <https://github.com/litestar-org/polyfactory/commit/1d1c7f9d02f9c7a8eb977dc0624bf5a045d55ddc>`_ ... `4928f07 <https://github.com/litestar-org/polyfactory/commit/4928f0735ad58adc63f093062b4938dfc5003ea9>`_ | `See diff for 2.16.0 <https://github.com/litestar-org/polyfactory/compare/1d1c7f9d02f9c7a8eb977dc0624bf5a045d55ddc...4928f0735ad58adc63f093062b4938dfc5003ea9>`_
 
 Bug Fixes
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
