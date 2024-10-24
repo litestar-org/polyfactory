@@ -1,7 +1,8 @@
 from dataclasses import dataclass
 from datetime import datetime
+from decimal import Decimal
 from enum import Enum
-from typing import Any, Callable, Type, Union
+from typing import Any, Callable, Type
 from uuid import UUID
 
 import pytest
@@ -11,6 +12,7 @@ from sqlalchemy import (
     DateTime,
     ForeignKey,
     Integer,
+    Numeric,
     String,
     create_engine,
     func,
@@ -247,8 +249,7 @@ def test_relationship_list_resolution() -> None:
     assert isinstance(result.books[0], Book)
 
 
-def test_sqla_factory_create() -> None:
-    engine = create_engine("sqlite:///:memory:")
+def test_sqla_factory_create(engine: Engine) -> None:
     Base.metadata.create_all(engine)
 
     class OverridenSQLAlchemyFactory(SQLAlchemyFactory):
@@ -415,7 +416,7 @@ def test_alias() -> None:
 
 
 @pytest.mark.parametrize("python_type_", (UUID, None))
-def test_sqlalchemy_custom_type_from_type_decorator(python_type_: Union[type, None]) -> None:
+def test_sqlalchemy_custom_type_from_type_decorator(python_type_: type) -> None:
     class CustomType(types.TypeDecorator):
         impl = types.CHAR(32)
         cache_ok = True
@@ -446,3 +447,34 @@ def test_sqlalchemy_custom_type_from_type_decorator(python_type_: Union[type, No
 
     expected_type = python_type_ if python_type_ is not None else CustomType.impl.python_type
     assert isinstance(instance.custom_type, expected_type)
+
+
+def test_constrained_types() -> None:
+    _registry = registry()
+
+    class Base(metaclass=DeclarativeMeta):
+        __abstract__ = True
+        __allow_unmapped__ = True
+
+        registry = _registry
+        metadata = _registry.metadata
+
+    class Model(Base):
+        __tablename__ = "constrained_model"
+
+        id: Any = Column(Integer(), primary_key=True)
+        constrained_string: Any = Column(String(length=1), nullable=False)
+        constrainted_number: Any = Column(
+            Numeric(precision=2, scale=1),
+            nullable=False,
+        )
+
+    class ModelFactory(SQLAlchemyFactory[Model]):
+        __model__ = Model
+
+    instance = ModelFactory.build()
+    assert len(instance.constrained_string) <= 1
+
+    constrained_number: Decimal = instance.constrainted_number
+    assert isinstance(constrained_number, Decimal)
+    assert abs(len(constrained_number.as_tuple().digits) - abs(int(constrained_number.as_tuple().exponent))) <= 2
