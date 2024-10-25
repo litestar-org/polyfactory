@@ -69,7 +69,7 @@ jobs:
 
       - name: Install SQLAlchemy
         if: matrix.sqla-version == '1.4'
-        run: pdm add --no-sync -G sqlalchemy "sqlalchemy==1.4.49"
+        run: pdm add --no-sync -dG sqlalchemy "sqlalchemy[asyncio]==1.4.49"
 
       - name: Install dependencies
         run: pdm sync -G:all
