@@ -1,0 +1,441 @@
+
+  <!DOCTYPE html>
+<html lang="en" data-accent-color="amber" data-content_root="">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <title>typed_dict_factory - Polyfactory</title>
+    <link rel="shortcut icon" href="../../_static/favicon.svg"/><link rel="index" title="Index" href="../../genindex.html" /><link rel="search" title="Search" href="../../search.html" /><link rel="next" title="pydantic_factory" href="pydantic_factory.html" /><link rel="prev" title="dataclass_factory" href="dataclass_factory.html" />
+
+  <script>
+    function setColorMode(t){let e=document.documentElement;e.setAttribute("data-color-mode",t);let a=window.matchMedia&&window.matchMedia("(prefers-color-scheme: dark)").matches,s=t;"auto"===t&&(s=a?"dark":"light"),"light"===s?(e.classList.remove("dark"),e.classList.add("light")):(e.classList.remove("light"),e.classList.add("dark"))}
+    setColorMode(sessionStorage._theme||"auto");
+  </script><link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=aecf457f" />
+    <link rel="stylesheet" type="text/css" href="../../_static/shibuya.css?v=f2d5353f" />
+    <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="../../_static/togglebutton.css?v=13237357" />
+    <link rel="stylesheet" type="text/css" href="../../_static/design-style.1e8bd061cd6da7fc9cf755528e8ffc24.min.css?v=0a3b3ea7" />
+    <link rel="stylesheet" type="text/css" href="../../_static/sphinx_paramlinks.css" />
+    <link media="print" rel="stylesheet" type="text/css" href="../../_static/print.css?v=20ff2c19" />
+    <link rel="stylesheet" type="text/css" href="../../_static/style.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/litestar-sphinx-theme.css?v=9989272a" />
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --sy-f-text: "Inter", var(--sy-f-sys), var(--sy-f-cjk), sans-serif;
+  --sy-f-heading: "Inter", var(--sy-f-sys), var(--sy-f-cjk), sans-serif;
+}
+</style>
+    <meta property="og:type" content="website"/><meta property="og:title" content="typed_dict_factory"/>
+<meta name="twitter:card" content="summary"/>
+<meta property="og:image" content="_static/logo-light.png"/>
+  </head>
+<body><div class="document"><div class="sy-head">
+  <div class="sy-head-blur"></div>
+  <div class="sy-head-inner sy-container mx-auto">
+    <a class="sy-head-brand mr-4" href="/">
+      <img class="light-logo" src="../../_static/logo-light.png" alt="polyfactory" height="28" />
+      <img class="dark-logo" src="../../_static/logo-dark.png" alt="polyfactory" height="28" />
+      <strong>polyfactory</strong>
+    </a>
+    <div class="sy-head-links" id="NavLinks">
+      <nav class="sy-head-nav">
+
+<ul><li class="link"><a href="../../index.html">Home</a></li>
+      <li class="link"><button type="button">
+            <span>Community</span>
+            <i class="i-lucide chevron-down"></i>
+          </button>
+        <ul>
+          <li><a href="../../contribution-guide.html">
+                <span>Contributing</span>
+                <small>Learn how to contribute to the Type Lens project</small>
+              </a></li><li><a href="https://github.com/litestar-org/.github?tab=coc-ov-file">
+                <span>Code of Conduct</span>
+                <small>Review the etiquette for interacting with the Litestar community</small>
+              </a></li><li><a href="https://github.com/litestar-org/.github?tab=coc-ov-file#security-ov-file">
+                <span>Security</span>
+                <small>Overview of Litestar's security protocols</small>
+              </a></li></ul>
+      </li>
+      <li class="link"><button type="button">
+            <span>About</span>
+            <i class="i-lucide chevron-down"></i>
+          </button>
+        <ul>
+          <li><a href="https://litestar.dev/about/organization">
+                <span>Litestar Organization</span>
+                <small>Details about the Litestar organization</small>
+              </a></li><li><a href="../../releases.html">
+                <span>Releases</span>
+                <small>Explore the release process, versioning, and deprecation policy for Litestar</small>
+              </a></li></ul>
+      </li>
+      <li class="link"><button type="button">
+            <span>Release notes</span>
+            <i class="i-lucide chevron-down"></i>
+          </button>
+        <ul>
+          <li><a href="../../changelog.html">
+                <span>Changelog</span>
+                <small>All changes in the current major version</small>
+              </a></li></ul>
+      </li>
+      <li class="link"><button type="button">
+            <span>Help</span>
+            <i class="i-lucide chevron-down"></i>
+          </button>
+        <ul>
+          <li><a href="https://discord.gg/litestar">
+                <span>Discord Help Forum</span>
+                <small>Dedicated Discord help forum</small>
+              </a></li><li><a href="https://github.com/litestar-org/polyfactory/discussions">
+                <span>GitHub Discussions</span>
+                <small>GitHub Discussions</small>
+              </a></li><li><a href="https://stackoverflow.com/questions/tagged/polyfactory">
+                <span>Stack Overflow</span>
+                <small>We monitor the <code><b>polyfactory</b></code> tag on Stack Overflow</small>
+              </a></li></ul>
+      </li><li class="link">
+          <a href="https://github.com/sponsors/Litestar-Org">
+            <span>Sponsor</span>
+            
+          </a>
+        </li></ul></nav>
+      <div class="sy-head-extra flex items-center print:hidden">
+        
+<form class="searchbox flex items-center" action="../../search.html" method="get">
+  <input type="text" name="q" placeholder="Search" />
+  <kbd>/</kbd>
+</form>
+        
+  <div class="nav-versions">
+    <button type="button" aria-label="Versions">
+      <span class="md:hidden">Versions</span>
+      <span class="hidden md:inline">latest</span>
+      <i class="i-lucide chevron-down"></i>
+    </button>
+    <div class="nav-versions-choices">
+      <ul><li><a href="/latest">latest</a></li><li><a href="/main">development</a></li></ul></div>
+  </div>
+        
+        <div class="sy-head-socials flex items-center">
+    <a href="https://github.com/litestar-org/polyfactory" aria-label="GitHub">
+      <i class="i-simpleicons github"></i>
+    </a>
+  <a href="https://twitter.com/LitestarAPI" aria-label="X (Twitter)">
+    <i class="i-simpleicons x-twitter"></i>
+  </a>
+    <a href="https://discord.gg/litestar" aria-label="Discord">
+      <i class="i-simpleicons discord"></i>
+    </a>
+</div>
+      </div>
+    </div>
+    <div class="sy-head-actions flex items-center shrink-0 print:hidden">
+      <button class="js-theme theme-switch flex items-center"
+        data-aria-auto="Switch to light color mode"
+        data-aria-light="Switch to dark color mode"
+        data-aria-dark="Switch to auto color mode">
+        <i class="i-lucide theme-icon"></i>
+      </button>
+      <button class="md:hidden flex items-center js-menu" aria-label="Menu" type="button" aria-controls="NavLinks" aria-expanded="false">
+        <div class="hamburger">
+          <span class="hamburger_1"></span>
+          <span class="hamburger_2 -translate-x-2"></span>
+          <span class="hamburger_3 -translate-x-1"></span>
+        </div>
+      </button>
+    </div>
+  </div>
+</div>
+<div class="sy-page sy-container flex mx-auto">
+  <aside id="lside" class="sy-lside md:w-72 md:shrink-0 print:hidden">
+    <div class="sy-lside-inner md:sticky">
+      <div class="sy-scrollbar p-6">
+<div class="sidebar-links">
+  <ul>
+    <li><a class="icon-link" href="https://github.com/orgs/litestar-org/discussions">
+  <span class="icon">
+    <svg viewBox="0 0 24 24" fill="none">
+      <path fill="var(--accent-9)" fill-rule="evenodd" clip-rule="evenodd" d="M11 5a6 6 0 0 0-4.687 9.746c.215.27.315.62.231.954l-.514 2.058a1 1 0 0 0 1.485 1.1l2.848-1.71c.174-.104.374-.15.576-.148H13a6 6 0 0 0 0-12h-2Z"/>
+      <circle fill="white" cx="12" cy="11" r="1"/>
+      <circle fill="white" cx="9" cy="11" r="1"/>
+      <circle fill="white" cx="15" cy="11" r="1"/>
+    </svg>
+  </span>
+  <span class="text">Discussion</span>
+</a></li>
+  </ul>
+</div>
+
+        <div class="globaltoc" data-expand-depth="0"><p class="caption" role="heading" aria-level="3"><span class="caption-text">Documentation</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../getting-started.html">Getting Started</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../usage/index.html">Usage Guide</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../usage/declaring_factories.html">Declaring Factories</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../usage/library_factories/index.html">Polyfactory Factories</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../usage/library_factories/sqlalchemy_factory.html">SQLAlchemyFactory</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../usage/configuration.html">Factory Configuration</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../usage/fields.html">Factory Fields</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../usage/decorators.html">The <code class="docutils literal notranslate"><span class="pre">post_generated</span></code> decorator</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../usage/fixtures.html">Pytest fixtures</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../usage/handling_custom_types.html">Handling Custom Types</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../usage/model_coverage.html">Model coverage generation</a></li>
+</ul>
+</li>
+<li class="toctree-l1 current"><a class="reference internal" href="../index.html">API Reference</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../constants.html">constants</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../exceptions.html">exceptions</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="index.html">factories</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="base.html">base_factory</a></li>
+<li class="toctree-l3"><a class="reference internal" href="dataclass_factory.html">dataclass_factory</a></li>
+<li class="toctree-l3 current"><a class="current reference internal" href="#">typed_dict_factory</a></li>
+<li class="toctree-l3"><a class="reference internal" href="pydantic_factory.html">pydantic_factory</a></li>
+<li class="toctree-l3"><a class="reference internal" href="msgspec_factory.html">msgspec_factory</a></li>
+<li class="toctree-l3"><a class="reference internal" href="odmantic_odm_factory.html">odmantic_odm_factory</a></li>
+<li class="toctree-l3"><a class="reference internal" href="beanie_odm_factory.html">beanie_odm_factory</a></li>
+<li class="toctree-l3"><a class="reference internal" href="attrs_factory.html">attrs_factory</a></li>
+<li class="toctree-l3"><a class="reference internal" href="sqlalchemy_factory.html">sqlalchemy_factory</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../field_meta.html">field_meta</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../fields.html">fields</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../decorators.html">decorators</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../persistence.html">persistence</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../pytest_plugin.html">pytest_plugin</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../value_generators/index.html">value_generators</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../value_generators/complex_types.html">complex_types</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../value_generators/constrained_collections.html">constrained_collections</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../value_generators/constrained_dates.html">constrained_dates</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../value_generators/constrained_numbers.html">constrained_numbers</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../value_generators/constrained_strings.html">constrained_strings</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../value_generators/primitives.html">primitives</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<p class="caption" role="heading" aria-level="3"><span class="caption-text">Contributing</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../changelog.html">Changelog</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../contribution-guide.html">Contributing</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/search?q=user%3Alitestar-org+state%3Aopen+label%3A%22good+first+issue%22+++no%3Aassignee+repo%3A%22polyfactory%22&amp;type=issues">Available Issues</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/litestar-org/.github?tab=coc-ov-file#readme">Code of Conduct</a></li>
+</ul>
+
+        </div>
+      </div>
+      
+    </div>
+  </aside>
+  <div class="lside-overlay js-menu" role="button" aria-label="Close left sidebar" aria-controls="lside" aria-expanded="false"></div>
+  <aside id="rside" class="sy-rside pb-3 w-64 shrink-0 order-last">
+    <button class="rside-close js-menu xl:hidden" aria-label="Close Table of Contents" type="button" aria-controls="rside" aria-expanded="false">
+      <i class="i-lucide close"></i>
+    </button>
+    <div class="sy-scrollbar sy-rside-inner px-6 xl:top-16 xl:sticky xl:pl-0 pt-6 pb-4">
+  <div class="localtoc">
+    <h3>On this page</h3>
+    <ul>
+<li><a class="reference internal" href="#polyfactory.factories.typed_dict_factory.TypedDictFactory"><code class="docutils literal notranslate"><span class="pre">TypedDictFactory</span></code></a><ul>
+<li><a class="reference internal" href="#polyfactory.factories.typed_dict_factory.TypedDictFactory.__is_base_factory__"><code class="docutils literal notranslate"><span class="pre">TypedDictFactory.__is_base_factory__</span></code></a></li>
+<li><a class="reference internal" href="#polyfactory.factories.typed_dict_factory.TypedDictFactory.is_supported_type"><code class="docutils literal notranslate"><span class="pre">TypedDictFactory.is_supported_type()</span></code></a></li>
+<li><a class="reference internal" href="#polyfactory.factories.typed_dict_factory.TypedDictFactory.get_model_fields"><code class="docutils literal notranslate"><span class="pre">TypedDictFactory.get_model_fields()</span></code></a></li>
+</ul>
+</li>
+</ul>
+
+  </div><a class="js-repo-stats repo-stats flex items-center" href="https://github.com/litestar-org/polyfactory"
+  data-type="github" data-user="litestar-org" data-repo="polyfactory">
+  <span class="w-8 flex items-center justify-around shrink-0 text-3xl">
+    <i class="i-simpleicons github"></i>
+  </span>
+  <span class="flex-grow px-2">
+    <span>litestar-org/polyfactory</span>
+    <span class="flex text-sm repo-stats-count">
+      <span class="flex items-center pr-3">
+        <i class="i-lucide star"></i>
+        <strong class="js-repo-stars ml-1">0</strong>
+      </span>
+      <span class="flex items-center">
+        <i class="i-lucide git-fork"></i>
+        <strong class="js-repo-forks ml-1">0</strong>
+      </span>
+    </span>
+  </span>
+</a><div class="edit-this-page">
+  <a href="https://github.com/litestar-org/polyfactory/blob/master/docs/reference/factories/typed_dict_factory.rst">Edit this page</a>
+</div><div id="ethical-ad-placement" data-ea-publisher="readthedocs"></div>
+    </div>
+  </aside>
+  <div class="rside-overlay js-menu" role="button" aria-label="Close Table of Contents" aria-controls="rside" aria-expanded="false"></div>
+  <main class="sy-main w-full max-sm:max-w-full print:pt-6">
+    <div class="sy-breadcrumbs" role="navigation">
+  <div class="sy-breadcrumbs-inner flex items-center">
+    <div class="md:hidden mr-3">
+      <button class="js-menu" aria-label="Menu" type="button" aria-controls="lside" aria-expanded="false">
+        <i class="i-lucide menu"></i>
+      </button>
+    </div>
+    <ol class="flex-1" itemscope itemtype="https://schema.org/BreadcrumbList">
+      
+      
+      <li itemprop="itemListElement" itemscope itemtype="https://schema.org/ListItem">
+        <a itemprop="item" href="../../index.html"><span itemprop="name">polyfactory</span></a>
+        <span>/</span>
+        <meta itemprop="position" content="1" />
+      </li>
+      
+      <li itemprop="itemListElement" itemscope itemtype="https://schema.org/ListItem">
+        <a itemprop="item" href="../index.html"><span itemprop="name">API Reference</span></a>
+        <span>/</span>
+        <meta itemprop="position" content="2" />
+      </li>
+      
+      <li itemprop="itemListElement" itemscope itemtype="https://schema.org/ListItem">
+        <a itemprop="item" href="index.html"><span itemprop="name">factories</span></a>
+        <span>/</span>
+        <meta itemprop="position" content="3" />
+      </li>
+      
+      <li itemprop="itemListElement" itemscope itemtype="https://schema.org/ListItem">
+        <strong itemprop="name">typed_dict_factory</strong>
+        <meta itemprop="position" content="4" />
+      </li>
+      
+      
+    </ol>
+    <div class="xl:hidden ml-1">
+      <button class="js-menu" aria-label="Show table of contents" type="button" aria-controls="rside"
+        aria-expanded="false">
+        <i class="i-lucide outdent"></i>
+      </button>
+    </div>
+  </div>
+</div>
+    <div class="flex flex-col break-words justify-between">
+      <div class="min-w-0 max-w-6xl px-6 pb-6 pt-8 xl:px-12">
+        <article class="yue" role="main">
+          <section id="module-polyfactory.factories.typed_dict_factory">
+<span id="typed-dict-factory"></span><h1>typed_dict_factory<a class="headerlink" href="#module-polyfactory.factories.typed_dict_factory" title="Permalink to this heading">¶</a></h1>
+<dl class="py class">
+<dt class="sig sig-object py" id="polyfactory.factories.typed_dict_factory.TypedDictFactory">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">polyfactory.factories.typed_dict_factory.</span></span><span class="sig-name descname"><span class="pre">TypedDictFactory</span></span><a class="reference internal" href="../../_modules/polyfactory/factories/typed_dict_factory.html#TypedDictFactory"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#polyfactory.factories.typed_dict_factory.TypedDictFactory" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Generic" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Generic</span></code></a>[<code class="xref py py-obj docutils literal notranslate"><span class="pre">TypedDictT</span></code>], <a class="reference internal" href="base.html#polyfactory.factories.base.BaseFactory" title="polyfactory.factories.base.BaseFactory"><code class="xref py py-class docutils literal notranslate"><span class="pre">BaseFactory</span></code></a>[<code class="xref py py-obj docutils literal notranslate"><span class="pre">TypedDictT</span></code>]</p>
+<p>TypedDict base factory</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="polyfactory.factories.typed_dict_factory.TypedDictFactory.__is_base_factory__">
+<span class="sig-name descname"><span class="pre">__is_base_factory__</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.13)"><span class="pre">bool</span></a></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">True</span></em><a class="headerlink" href="#polyfactory.factories.typed_dict_factory.TypedDictFactory.__is_base_factory__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Flag dictating whether the factory is a ‘base’ factory. Base factories are registered globally as handlers for types.
+For example, the ‘DataclassFactory’, ‘TypedDictFactory’ and ‘ModelFactory’ are all base factories.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="polyfactory.factories.typed_dict_factory.TypedDictFactory.is_supported_type">
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">is_supported_type</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">value</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Any" title="(in Python v3.13)"><span class="pre">Any</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.TypeGuard" title="(in Python v3.13)"><span class="pre">TypeGuard</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/functions.html#type" title="(in Python v3.13)"><span class="pre">type</span></a><span class="p"><span class="pre">[</span></span><span class="pre">TypedDictT</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../../_modules/polyfactory/factories/typed_dict_factory.html#TypedDictFactory.is_supported_type"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#polyfactory.factories.typed_dict_factory.TypedDictFactory.is_supported_type" title="Permalink to this definition">¶</a></dt>
+<dd><p>Determine whether the given value is supported by the factory.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><span class="target" id="polyfactory.factories.typed_dict_factory.TypedDictFactory.is_supported_type.params.value"></span><strong>value</strong><a class="paramlink headerlink reference internal" href="#polyfactory.factories.typed_dict_factory.TypedDictFactory.is_supported_type.params.value">¶</a> – An arbitrary value.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>A typeguard</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="polyfactory.factories.typed_dict_factory.TypedDictFactory.get_model_fields">
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">get_model_fields</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.13)"><span class="pre">list</span></a><span class="p"><span class="pre">[</span></span><a class="reference internal" href="../field_meta.html#polyfactory.field_meta.FieldMeta" title="polyfactory.field_meta.FieldMeta"><span class="pre">polyfactory.field_meta.FieldMeta</span></a><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../../_modules/polyfactory/factories/typed_dict_factory.html#TypedDictFactory.get_model_fields"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#polyfactory.factories.typed_dict_factory.TypedDictFactory.get_model_fields" title="Permalink to this definition">¶</a></dt>
+<dd><p>Retrieve a list of fields from the factory’s model.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>A list of field MetaData instances.</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+
+        </article>
+        <button class="back-to-top" type="button">
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+    <path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8v12z"></path>
+  </svg>
+  <span>Back to top</span>
+</button>
+        
+        <div class="navigation flex print:hidden">
+  <div class="navigation-prev">
+    <a href="dataclass_factory.html">
+      <i class="i-lucide chevron-left"></i>
+      <div class="page-info">
+        <span>Previous</span>
+        
+        <div class="title">dataclass_factory</div>
+        
+      </div>
+    </a>
+  </div>
+  <div class="navigation-next">
+    <a href="pydantic_factory.html">
+      <div class="page-info">
+        <span>Next</span>
+        <div class="title">pydantic_factory</div>
+      </div>
+      <i class="i-lucide chevron-right"></i>
+    </a>
+  </div>
+</div>
+        
+      </div>
+    </div>
+  </main>
+</div>
+<footer class="sy-foot">
+  <div class="sy-foot-inner sy-container mx-auto">
+    
+    <div class="sy-foot-reserved md:flex justify-between items-center">
+      <div class="sy-foot-copyright"><p>2024, Litestar Organization</p>
+  
+  <p>
+    Made with
+    
+    <a href="https://www.sphinx-doc.org/">Sphinx</a> and
+    
+    <a href="https://shibuya.lepture.com">Shibuya theme</a>.
+  </p>
+</div>
+      <div class="sy-foot-socials">
+  <a href="https://github.com/litestar-org/polyfactory" aria-label="GitHub"><i class="i-simpleicons github"></i></a>
+  <a href="https://twitter.com/LitestarAPI" aria-label="X (Twitter)"><i class="i-simpleicons x-twitter"></i></a>
+  <a href="https://discord.gg/litestar" aria-label="Discord"><i class="i-simpleicons discord"></i></a>
+  <a href="https://www.reddit.com/r/LitestarAPI" aria-label="Reddit"><i class="i-simpleicons reddit"></i></a>
+</div>
+    </div>
+  </div>
+</footer></div>
+      <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js?v=98a15777"></script>
+      <script src="../../_static/doctools.js?v=888ff710"></script>
+      <script src="../../_static/sphinx_highlight.js?v=4825356b"></script>
+      <script src="../../_static/clipboard.min.js?v=a7894cd8"></script>
+      <script src="../../_static/copybutton.js?v=f281be69"></script>
+      <script src="../../_static/litestar-theme.js?v=ab2dcc9e"></script>
+      <script>let toggleHintShow = 'Click to show';</script>
+      <script>let toggleHintHide = 'Click to hide';</script>
+      <script>let toggleOpenOnPrint = 'true';</script>
+      <script src="../../_static/togglebutton.js?v=4a39c7ea"></script>
+      <script src="../../_static/design-tabs.js?v=36754332"></script>
+      <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
+      <script src="../../_static/shibuya.js?v=5f0e4c24"></script>
+      <script src="../../_static/versioning.js"></script>
+    
+</body>
+</html>
