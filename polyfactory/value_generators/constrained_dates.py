@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from datetime import date, datetime, timedelta, timezone, tzinfo
-from typing import TYPE_CHECKING, cast
+from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
     from faker import Faker
@@ -38,4 +38,4 @@ def handle_constrained_date(
     elif lt:
         end_date = lt - timedelta(days=1)
 
-    return cast(date, faker.date_between(start_date=start_date, end_date=end_date))
+    return faker.date_between(start_date=start_date, end_date=end_date)  # type: ignore[return-value]
