@@ -8,6 +8,7 @@ from typing_extensions import get_type_hints
 from polyfactory.exceptions import MissingDependencyException
 from polyfactory.factories.base import BaseFactory
 from polyfactory.field_meta import FieldMeta, Null
+from polyfactory.utils.cache import copying_lru_cache
 from polyfactory.value_generators.constrained_numbers import handle_constrained_int
 from polyfactory.value_generators.primitives import create_random_bytes
 
@@ -30,6 +31,7 @@ class MsgspecFactory(Generic[T], BaseFactory[T]):
     __is_base_factory__ = True
 
     @classmethod
+    @copying_lru_cache
     def get_provider_map(cls) -> dict[Any, Callable[[], Any]]:
         def get_msgpack_ext() -> msgspec.msgpack.Ext:
             code = handle_constrained_int(cls.__random__, ge=-128, le=127)
@@ -48,6 +50,7 @@ class MsgspecFactory(Generic[T], BaseFactory[T]):
         return isclass(value) and hasattr(value, "__struct_fields__")
 
     @classmethod
+    @copying_lru_cache
     def get_model_fields(cls) -> list[FieldMeta]:
         fields_meta: list[FieldMeta] = []
 
