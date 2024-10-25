@@ -7,6 +7,7 @@ from polyfactory.exceptions import MissingDependencyException
 from polyfactory.factories.base import BaseFactory
 from polyfactory.field_meta import FieldMeta
 from polyfactory.persistence import AsyncPersistenceProtocol, SyncPersistenceProtocol
+from polyfactory.utils.cache import copying_lru_cache
 
 try:
     from sqlalchemy import Column, inspect, types
@@ -157,6 +158,7 @@ class SQLAlchemyFactory(Generic[T], BaseFactory[T]):
         return annotation
 
     @classmethod
+    @copying_lru_cache
     def get_model_fields(cls) -> list[FieldMeta]:
         fields_meta: list[FieldMeta] = []
 

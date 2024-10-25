@@ -17,6 +17,7 @@ from polyfactory.exceptions import MissingDependencyException
 from polyfactory.factories.base import BaseFactory, BuildContext
 from polyfactory.factories.base import BuildContext as BaseBuildContext
 from polyfactory.field_meta import Constraints, FieldMeta, Null
+from polyfactory.utils.cache import copying_lru_cache
 from polyfactory.utils.deprecation import check_for_deprecated_parameters
 from polyfactory.utils.helpers import unwrap_new_type, unwrap_optional
 from polyfactory.utils.predicates import is_optional, is_safe_subclass, is_union
@@ -398,6 +399,7 @@ class ModelFactory(Generic[T], BaseFactory[T]):
         return _is_pydantic_v1_model(value) or _is_pydantic_v2_model(value)
 
     @classmethod
+    @copying_lru_cache
     def get_model_fields(cls) -> list["FieldMeta"]:
         """Retrieve a list of fields from the factory's model.
 
@@ -405,30 +407,30 @@ class ModelFactory(Generic[T], BaseFactory[T]):
         :returns: A list of field MetaData instances.
 
         """
-        if "_fields_metadata" not in cls.__dict__:
-            if _is_pydantic_v1_model(cls.__model__):
-                cls._fields_metadata = [
-                    PydanticFieldMeta.from_model_field(
-                        field,
-                        use_alias=not cls.__model__.__config__.allow_population_by_field_name,  # type: ignore[attr-defined]
-                        random=cls.__random__,
-                    )
-                    for field in cls.__model__.__fields__.values()
-                ]
-            else:
-                cls._fields_metadata = [
-                    PydanticFieldMeta.from_field_info(
-                        field_info=field_info,
-                        field_name=field_name,
-                        random=cls.__random__,
-                        use_alias=not cls.__model__.model_config.get(  # pyright: ignore[reportGeneralTypeIssues]
-                            "populate_by_name",
-                            False,
-                        ),
-                    )
-                    for field_name, field_info in cls.__model__.model_fields.items()  # pyright: ignore[reportGeneralTypeIssues]
-                ]
-        return cls._fields_metadata
+        fields_metadata: list[FieldMeta]
+        if _is_pydantic_v1_model(cls.__model__):
+            fields_metadata = [
+                PydanticFieldMeta.from_model_field(
+                    field,
+                    use_alias=not cls.__model__.__config__.allow_population_by_field_name,  # type: ignore[attr-defined]
+                    random=cls.__random__,
+                )
+                for field in cls.__model__.__fields__.values()
+            ]
+        else:
+            fields_metadata = [
+                PydanticFieldMeta.from_field_info(
+                    field_info=field_info,
+                    field_name=field_name,
+                    random=cls.__random__,
+                    use_alias=not cls.__model__.model_config.get(  # pyright: ignore[reportGeneralTypeIssues]
+                        "populate_by_name",
+                        False,
+                    ),
+                )
+                for field_name, field_info in cls.__model__.model_fields.items()  # pyright: ignore[reportGeneralTypeIssues]
+            ]
+        return fields_metadata
 
     @classmethod
     def get_constrained_field_value(
@@ -552,6 +554,7 @@ class ModelFactory(Generic[T], BaseFactory[T]):
         )
 
     @classmethod
+    @copying_lru_cache
     def get_provider_map(cls) -> dict[Any, Callable[[], Any]]:
         mapping: dict[Any, Callable[[], Any]] = {
             pydantic.ByteSize: cls.__faker__.pyint,

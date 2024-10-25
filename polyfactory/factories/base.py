@@ -53,6 +53,7 @@ from polyfactory.constants import (
 from polyfactory.exceptions import ConfigurationException, MissingBuildKwargException, ParameterException
 from polyfactory.field_meta import Null
 from polyfactory.fields import Fixture, Ignore, PostGenerated, Require, Use
+from polyfactory.utils.cache import copying_lru_cache
 from polyfactory.utils.helpers import (
     flatten_annotation,
     get_collection_type,
@@ -479,6 +480,7 @@ class BaseFactory(ABC, Generic[T]):
         return value is None
 
     @classmethod
+    @copying_lru_cache
     def get_provider_map(cls) -> dict[Any, Callable[[], Any]]:
         """Map types to callables.
 
