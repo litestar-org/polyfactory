@@ -3,9 +3,12 @@ from __future__ import annotations
 from datetime import date, datetime
 from typing import TYPE_CHECKING, Any, Callable, ClassVar, Generic, List, TypeVar, Union
 
+from sqlalchemy import ARRAY, Numeric, String
+from typing_extensions import Annotated
+
 from polyfactory.exceptions import MissingDependencyException
 from polyfactory.factories.base import BaseFactory
-from polyfactory.field_meta import FieldMeta
+from polyfactory.field_meta import Constraints, FieldMeta
 from polyfactory.persistence import AsyncPersistenceProtocol, SyncPersistenceProtocol
 
 try:
@@ -20,6 +23,7 @@ except ImportError as e:
 if TYPE_CHECKING:
     from sqlalchemy.ext.asyncio import AsyncSession
     from sqlalchemy.orm import Session
+    from sqlalchemy.sql.type_api import TypeEngine
     from typing_extensions import TypeGuard
 
 
@@ -85,8 +89,9 @@ class SQLAlchemyFactory(Generic[T], BaseFactory[T]):
 
     @classmethod
     def get_sqlalchemy_types(cls) -> dict[Any, Callable[[], Any]]:
-        """Get mapping of types where column type.
-        for sqlalchemy dialect `JSON` type, accepted only basic types in pydict in case sqlalchemy process `JSON` raise serialize error.
+        """Get mapping of types where column type should be used directly.
+
+        For sqlalchemy dialect `JSON` type, accepted only basic types in pydict in case sqlalchemy process `JSON` raise serialize error.
         """
         return {
             types.TupleType: cls.__faker__.pytuple,
@@ -107,6 +112,19 @@ class SQLAlchemyFactory(Generic[T], BaseFactory[T]):
             postgresql.JSONB: lambda: cls.__faker__.pydict(value_types=(str, int, bool, float)),
             sqlite.JSON: lambda: cls.__faker__.pydict(value_types=(str, int, bool, float)),
             types.JSON: lambda: cls.__faker__.pydict(value_types=(str, int, bool, float)),
+        }
+
+    @classmethod
+    def get_sqlalchemy_constraints(cls) -> dict[type[TypeEngine], dict[str, str]]:
+        """Get mapping of SQLA type engine to attribute to constraints key."""
+        return {
+            String: {
+                "length": "max_length",
+            },
+            Numeric: {
+                "precision": "max_digits",
+                "scale": "decimal_places",
+            },
         }
 
     @classmethod
@@ -134,26 +152,40 @@ class SQLAlchemyFactory(Generic[T], BaseFactory[T]):
         return bool(cls.__set_foreign_keys__ or not column.foreign_keys)
 
     @classmethod
+    def _get_type_from_type_engine(cls, type_engine: TypeEngine) -> type:
+        if type(type_engine) in cls.get_sqlalchemy_types():
+            return type(type_engine)
+
+        annotation: type
+        try:
+            annotation = type_engine.python_type
+        except NotImplementedError:
+            annotation = type_engine.impl.python_type  # type: ignore[attr-defined]
+
+        constraints: Constraints = {}
+        for type_, constraint_fields in cls.get_sqlalchemy_constraints().items():
+            if not isinstance(type_engine, type_):
+                continue
+            for sqlalchemy_field, constraint_field in constraint_fields.items():
+                if (value := getattr(type_engine, sqlalchemy_field, None)) is not None:
+                    constraints[constraint_field] = value  # type: ignore[literal-required]
+        if constraints:
+            annotation = Annotated[annotation, constraints]  # type: ignore[assignment]
+
+        return annotation
+
+    @classmethod
     def get_type_from_column(cls, column: Column) -> type:
-        column_type = type(column.type)
-        sqla_types = cls.get_sqlalchemy_types()
-        if column_type in sqla_types:
-            annotation = column_type
-        elif issubclass(column_type, postgresql.ARRAY):
-            if type(column.type.item_type) in sqla_types:  # type: ignore[attr-defined]
-                annotation = List[type(column.type.item_type)]  # type: ignore[attr-defined,misc,assignment]
-            else:
-                annotation = List[column.type.item_type.python_type]  # type: ignore[assignment,name-defined]
-        elif issubclass(column_type, types.ARRAY):
-            annotation = List[column.type.item_type.python_type]  # type: ignore[assignment,name-defined]
+        annotation: type
+        if isinstance(column.type, (ARRAY, postgresql.ARRAY)):
+            item_type = cls._get_type_from_type_engine(column.type.item_type)
+            annotation = List[item_type]  # type: ignore[valid-type]
         else:
-            try:
-                annotation = column.type.python_type
-            except NotImplementedError:
-                annotation = column.type.impl.python_type  # type: ignore[attr-defined]
+            annotation = cls._get_type_from_type_engine(column.type)
 
         if column.nullable:
             annotation = Union[annotation, None]  # type: ignore[assignment]
+
         return annotation
 
     @classmethod
