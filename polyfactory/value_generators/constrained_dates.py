@@ -38,4 +38,4 @@ def handle_constrained_date(
     elif lt:
         end_date = lt - timedelta(days=1)
 
-    return faker.date_between(start_date=start_date, end_date=end_date)
+    return faker.date_between(start_date=start_date, end_date=end_date)  # type: ignore[return-value]
