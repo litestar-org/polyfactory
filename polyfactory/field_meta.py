@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from dataclasses import asdict, is_dataclass
+from dataclasses import asdict, dataclass, is_dataclass
 from typing import TYPE_CHECKING, Any, Literal, Mapping, Pattern, TypedDict, cast
 
 from typing_extensions import get_args, get_origin
@@ -55,6 +55,29 @@ class Constraints(TypedDict):
     upper_case: NotRequired[bool]
     url: NotRequired[UrlConstraints]
     uuid_version: NotRequired[Literal[1, 3, 4, 5]]
+
+
+@dataclass(frozen=True)
+class MaxLen:
+    """MaxLen() implies maximum inclusive length,
+    e.g. ``len(value) <= max_length``.
+    """
+
+    max_length: int
+
+
+@dataclass(frozen=True)
+class Precision:
+    """Precision() impies Decimal precision"""
+
+    precision: int
+
+
+@dataclass(frozen=True)
+class DecimalPlaces:
+    """DecimalPlaces() impies Decimal places"""
+
+    decimal_places: int
 
 
 class FieldMeta:

@@ -464,9 +464,14 @@ def test_constrained_types() -> None:
 
         id: Any = Column(Integer(), primary_key=True)
         constrained_string: Any = Column(String(length=1), nullable=False)
+        constrained_nullable_string: Any = Column(String(length=1), nullable=True)
         constrainted_number: Any = Column(
             Numeric(precision=2, scale=1),
             nullable=False,
+        )
+        constrainted_nullable_number: Any = Column(
+            Numeric(precision=2, scale=1),
+            nullable=True,
         )
 
     class ModelFactory(SQLAlchemyFactory[Model]):
@@ -474,6 +479,7 @@ def test_constrained_types() -> None:
 
     instance = ModelFactory.build()
     assert len(instance.constrained_string) <= 1
+    assert instance.constrained_nullable_string is None or len(instance.constrained_nullable_string) <= 1
 
     constrained_number: Decimal = instance.constrainted_number
     assert isinstance(constrained_number, Decimal)

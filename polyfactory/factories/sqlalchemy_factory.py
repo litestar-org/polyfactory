@@ -1,18 +1,17 @@
 from __future__ import annotations
 
 from datetime import date, datetime
-from typing import TYPE_CHECKING, Any, Callable, ClassVar, Generic, List, TypeVar, Union
+from typing import TYPE_CHECKING, Any, Callable, ClassVar, Generic, Hashable, List, TypeVar, Union
 
-from sqlalchemy import ARRAY, Numeric, String
 from typing_extensions import Annotated
 
 from polyfactory.exceptions import MissingDependencyException
 from polyfactory.factories.base import BaseFactory
-from polyfactory.field_meta import Constraints, FieldMeta
+from polyfactory.field_meta import DecimalPlaces, FieldMeta, MaxLen, Precision
 from polyfactory.persistence import AsyncPersistenceProtocol, SyncPersistenceProtocol
 
 try:
-    from sqlalchemy import Column, inspect, types
+    from sqlalchemy import ARRAY, Column, Numeric, String, inspect, types
     from sqlalchemy.dialects import mssql, mysql, postgresql, sqlite
     from sqlalchemy.exc import NoInspectionAvailable
     from sqlalchemy.orm import InstanceState, Mapper
@@ -115,15 +114,15 @@ class SQLAlchemyFactory(Generic[T], BaseFactory[T]):
         }
 
     @classmethod
-    def get_sqlalchemy_constraints(cls) -> dict[type[TypeEngine], dict[str, str]]:
-        """Get mapping of SQLA type engine to attribute to constraints key."""
+    def get_sqlalchemy_constraints(cls) -> dict[type[TypeEngine], dict[str, Callable[[Any], Hashable]]]:
+        """Get mapping of SQLA type engine to attribute to factory for constraint."""
         return {
             String: {
-                "length": "max_length",
+                "length": MaxLen,
             },
             Numeric: {
-                "precision": "max_digits",
-                "scale": "decimal_places",
+                "precision": Precision,
+                "scale": DecimalPlaces,
             },
         }
 
@@ -162,15 +161,16 @@ class SQLAlchemyFactory(Generic[T], BaseFactory[T]):
         except NotImplementedError:
             annotation = type_engine.impl.python_type  # type: ignore[attr-defined]
 
-        constraints: Constraints = {}
+        constraints: list[Any] = []
         for type_, constraint_fields in cls.get_sqlalchemy_constraints().items():
             if not isinstance(type_engine, type_):
                 continue
             for sqlalchemy_field, constraint_field in constraint_fields.items():
                 if (value := getattr(type_engine, sqlalchemy_field, None)) is not None:
-                    constraints[constraint_field] = value  # type: ignore[literal-required]
+                    constraints.append(constraint_field(value))
+
         if constraints:
-            annotation = Annotated[annotation, constraints]  # type: ignore[assignment]
+            annotation = Annotated[annotation, *constraints]  # type: ignore[assignment]
 
         return annotation
 
