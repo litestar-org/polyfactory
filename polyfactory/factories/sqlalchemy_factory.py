@@ -3,7 +3,6 @@ from __future__ import annotations
 from datetime import date, datetime
 from typing import TYPE_CHECKING, Any, Callable, ClassVar, Generic, List, TypeVar, Union
 
-from sqlalchemy import ARRAY, Numeric, String
 from typing_extensions import Annotated
 
 from polyfactory.exceptions import MissingDependencyException
@@ -13,7 +12,7 @@ from polyfactory.persistence import AsyncPersistenceProtocol, SyncPersistencePro
 from polyfactory.utils.types import Frozendict
 
 try:
-    from sqlalchemy import Column, inspect, types
+    from sqlalchemy import ARRAY, Column, Numeric, String, inspect, types
     from sqlalchemy.dialects import mssql, mysql, postgresql, sqlite
     from sqlalchemy.exc import NoInspectionAvailable
     from sqlalchemy.orm import InstanceState, Mapper
