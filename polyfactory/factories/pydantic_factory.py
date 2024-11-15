@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import copy
 from contextlib import suppress
+from dataclasses import is_dataclass
 from datetime import timezone
 from functools import partial
 from os.path import realpath
@@ -55,7 +56,6 @@ try:
         ModelField,  # pyright: ignore[attr-defined,reportAttributeAccessIssue]
         Undefined,  # pyright: ignore[attr-defined,reportAttributeAccessIssue]
     )
-    from pydantic.dataclasses import is_pydantic_dataclass
 
     # Keep this import last to prevent warnings from pydantic if pydantic v2
     # is installed.
@@ -69,7 +69,6 @@ except ImportError:
 
     # v2 specific imports
     from pydantic import BaseModel as BaseModelV2
-    from pydantic.dataclasses import is_pydantic_dataclass
     from pydantic_core import PydanticUndefined as UndefinedV2
     from pydantic_core import to_json
 
@@ -100,6 +99,8 @@ if TYPE_CHECKING:
     from typing import Callable, Sequence
 
     from typing_extensions import NotRequired, TypeGuard
+
+    from pydantic.dataclasses import PydanticDataclass  # pyright: ignore[reportPrivateImportUsage]
 
 ModelT = TypeVar("ModelT", bound="BaseModelV1 | BaseModelV2")  # pyright: ignore[reportInvalidTypeForm]
 T = TypeVar("T")
@@ -632,6 +633,11 @@ def _is_pydantic_v1_model(model: Any) -> TypeGuard[BaseModelV1]:
 
 def _is_pydantic_v2_model(model: Any) -> TypeGuard[BaseModelV2]:  # pyright: ignore[reportInvalidTypeForm]
     return not _IS_PYDANTIC_V1 and is_safe_subclass(model, BaseModelV2)
+
+
+def is_pydantic_dataclass(cls: type[Any]) -> TypeGuard[PydanticDataclass]:
+    # This method is available in the `pydantic.dataclasses` module for python >= 3.9
+    return is_dataclass(cls) and "__pydantic_validator__" in cls.__dict__
 
 
 class PydanticDataclassFactory(ModelFactory[T]):  # type: ignore[type-var]
