@@ -11,8 +11,12 @@ These include:
 
 :class:`TypedDictFactory <polyfactory.factories.typed_dict_factory.TypedDictFactory>`
     a base factory for typed-dicts
+
 :class:`ModelFactory <polyfactory.factories.pydantic_factory.ModelFactory>`
     a base factory for `pydantic <https://docs.pydantic.dev/>`_ models
+
+:class:`PydanticDataclassFactory <polyfactory.factories.pydantic_factory.PydanticDataclassFactory>`
+    a base factory for `pydantic <https://docs.pydantic.dev/latest/concepts/dataclasses/>`_ dataclasses
 
 :class:`BeanieDocumentFactory <polyfactory.factories.beanie_odm_factory.BeanieDocumentFactory>`
     a base factory for `beanie <https://beanie-odm.dev/>`_ documents
