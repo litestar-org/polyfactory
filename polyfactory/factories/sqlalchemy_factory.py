@@ -3,16 +3,16 @@ from __future__ import annotations
 from datetime import date, datetime
 from typing import TYPE_CHECKING, Any, Callable, ClassVar, Generic, List, TypeVar, Union
 
-from sqlalchemy import ARRAY, Numeric, String
 from typing_extensions import Annotated
 
 from polyfactory.exceptions import MissingDependencyException
 from polyfactory.factories.base import BaseFactory
 from polyfactory.field_meta import Constraints, FieldMeta
 from polyfactory.persistence import AsyncPersistenceProtocol, SyncPersistenceProtocol
+from polyfactory.utils.types import Frozendict
 
 try:
-    from sqlalchemy import Column, inspect, types
+    from sqlalchemy import ARRAY, Column, Numeric, String, inspect, types
     from sqlalchemy.dialects import mssql, mysql, postgresql, sqlite
     from sqlalchemy.exc import NoInspectionAvailable
     from sqlalchemy.orm import InstanceState, Mapper
@@ -170,7 +170,7 @@ class SQLAlchemyFactory(Generic[T], BaseFactory[T]):
                 if (value := getattr(type_engine, sqlalchemy_field, None)) is not None:
                     constraints[constraint_field] = value  # type: ignore[literal-required]
         if constraints:
-            annotation = Annotated[annotation, constraints]  # type: ignore[assignment]
+            annotation = Annotated[annotation, Frozendict(constraints)]  # type: ignore[assignment]
 
         return annotation
 
