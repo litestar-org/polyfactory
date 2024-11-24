@@ -1,4 +1,4 @@
-from typing import TYPE_CHECKING, Any, NoReturn, TypeVar, Union
+from typing import TYPE_CHECKING, Any, NoReturn, Union
 
 try:
     from types import NoneType, UnionType
@@ -10,11 +10,7 @@ except ImportError:
     NoneType = type(None)  # type: ignore[misc]
 
 
-K = TypeVar("K")
-V = TypeVar("V")
-
-
-class Frozendict(dict[K, V]):
+class Frozendict(dict):
     def _immutable_error(self, *_: Any, **__: Any) -> NoReturn:
         msg = f"Unable to mutate {type(self).__name__}"
         raise TypeError(msg)
