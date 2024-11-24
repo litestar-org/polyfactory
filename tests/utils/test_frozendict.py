@@ -4,8 +4,8 @@ from polyfactory.utils.types import Frozendict
 
 
 def test_frozendict_immutable() -> None:
-    instance = Frozendict()
-    with pytest.raises(TypeError, match="Unable to set value"):
+    instance = Frozendict({"bar": "foo"})
+    with pytest.raises(TypeError, match="Unable to mutate Frozendict"):
         instance["foo"] = "bar"
 
 
