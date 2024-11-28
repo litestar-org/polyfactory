@@ -6,6 +6,9 @@ on:
     branches:
       - main
 
+env:
+  UV_LOCKED: 1
+
 jobs:
   validate:
     runs-on: ubuntu-latest
@@ -14,10 +17,10 @@ jobs:
 
       - uses: actions/setup-python@v5
         with:
-          python-version: "3.12"
+          python-version: "3.8"
 
       - name: Install Pre-Commit
-        run: python -m pip install pre-commit && pre-commit install
+        run: python -m pip install pre-commit
 
       - name: Load cached Pre-Commit Dependencies
         id: cached-pre-commit-dependencies
@@ -53,38 +56,35 @@ jobs:
       - name: Create cache file
         run: echo '${{ matrix.pydantic-version }}-${{ matrix.sqla-version }}' > ./matrix-file.txt
 
-      - uses: pdm-project/setup-pdm@v4
-        name: Set up PDM
+      - name: Set up python ${{ matrix.python-version }}
+        uses: actions/setup-python@v5
         with:
           python-version: ${{ matrix.python-version }}
-          version: ${{ matrix.python-version == '3.8' && '2.20.1' || ''}}
-          allow-python-prereleases: true
-          cache: true
-          cache-dependency-path: |
-            ./pdm.lock
-            ./matrix-file.txt
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@v4
+        with:
+          version: "0.5.4"
+          enable-cache: true
+          cache-dependency-glob: |
+            uv.lock
+            matrix-file.txt
 
       - name: Install pydantic
         if: matrix.pydantic-version == '1.10'
-        run: pdm add --no-sync -G pydantic "pydantic[email]==1.10.17"
+        run: uv add --group pydantic "pydantic[email]==1.10.17"
 
       - name: Install SQLAlchemy
         if: matrix.sqla-version == '1.4'
-        run: pdm add --no-sync -dG sqlalchemy "sqlalchemy[asyncio]==1.4.49"
-
-      - name: Install dependencies
-        run: pdm sync -G:all
-
-      - name: Set pythonpath
-        run: echo "PYTHONPATH=$PWD" >> $GITHUB_ENV
+        run: uv add --group sqlalchemy "sqlalchemy[asyncio]==1.4.49"
 
       - name: Test
         if: matrix.python-version != '3.12' || matrix.pydantic-version != '2.0' || matrix.sqla-version != '2'
-        run: pdm run pytest tests
+        run: uv run pytest tests
 
       - name: Test with Coverage
         if: matrix.python-version == '3.12' && matrix.pydantic-version == '2.0' && matrix.sqla-version == '2'
-        run: pdm run pytest tests docs/examples --cov=. --cov-report=xml
+        run: uv run pytest tests docs/examples --cov=. --cov-report=xml
 
       - uses: actions/upload-artifact@v4
         if: matrix.python-version == '3.12' && matrix.pydantic-version == '2.0' && matrix.sqla-version == '2'
@@ -114,10 +114,10 @@ jobs:
           cache: true
 
       - name: Install dependencies
-        run: pdm install -G:all
+        run: uv install --include-extras
 
       - name: Build docs
-        run: pdm run make docs
+        run: uv run make docs
 
       - name: Save PR number
         env:
