@@ -57,6 +57,7 @@ jobs:
         name: Set up PDM
         with:
           python-version: ${{ matrix.python-version }}
+          version: ${{ matrix.python-version == '3.8' && '2.20.1' || ''}}
           allow-python-prereleases: true
           cache: true
           cache-dependency-path: |
