@@ -14,7 +14,7 @@ help: 		   										## Display this help text for Makefile
 .PHONY: upgrade
 upgrade:       										## Upgrade all dependencies to the latest stable versions
 	@echo "=> Updating all dependencies"
-	@uv install --upgrade
+	@uv sync --upgrade
 	@echo "=> Dependencies Updated"
 	@uv run pre-commit autoupdate
 	@echo "=> Updated Pre-commit"
@@ -92,7 +92,7 @@ check-all: lint test-all coverage 					## Run all linting, tests, and coverage c
 .PHONY: docs-install
 docs-install: 										## Install docs dependencies
 	@echo "=> Installing documentation dependencies"
-	@uv install --group docs
+	@uv sync --group docs
 	@echo "=> Installed documentation dependencies"
 
 docs-clean: 										## Dump the existing built docs

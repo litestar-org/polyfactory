@@ -116,7 +116,7 @@ jobs:
           enable-cache: true
 
       - name: Install dependencies
-        run: uv install --include-extras
+        run: uv sync --all-extras
 
       - name: Build docs
         run: uv run make docs
