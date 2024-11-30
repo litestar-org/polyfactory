@@ -350,7 +350,7 @@
 <div class="viewcode-block" id="FactoryFixture"><a class="viewcode-back" href="../../reference/pytest_plugin.html#polyfactory.pytest_plugin.FactoryFixture">[docs]</a></span><span data-line="46"><span class="k">class</span> <span class="nc">FactoryFixture</span><span class="p">:</span>
 </span><span data-line="47"><span class="w">    </span><span class="sd">&quot;&quot;&quot;Decorator that creates a pytest fixture from a factory&quot;&quot;&quot;</span>
 </span><span data-line="48">
-</span><span data-line="49">    <span class="vm">__slots__</span> <span class="o">=</span> <span class="p">(</span><span class="s2">&quot;scope&quot;</span><span class="p">,</span> <span class="s2">&quot;autouse&quot;</span><span class="p">,</span> <span class="s2">&quot;name&quot;</span><span class="p">)</span>
+</span><span data-line="49">    <span class="vm">__slots__</span> <span class="o">=</span> <span class="p">(</span><span class="s2">&quot;autouse&quot;</span><span class="p">,</span> <span class="s2">&quot;name&quot;</span><span class="p">,</span> <span class="s2">&quot;scope&quot;</span><span class="p">)</span>
 </span><span data-line="50">
 </span><span data-line="51">    <span class="n">factory_class_map</span><span class="p">:</span> <span class="n">ClassVar</span><span class="p">[</span><span class="nb">dict</span><span class="p">[</span><span class="n">Callable</span><span class="p">,</span> <span class="nb">type</span><span class="p">[</span><span class="n">BaseFactory</span><span class="p">[</span><span class="n">Any</span><span class="p">]]]]</span> <span class="o">=</span> <span class="p">{}</span>
 </span><span data-line="52">

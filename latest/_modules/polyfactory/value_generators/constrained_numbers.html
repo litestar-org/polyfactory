@@ -666,80 +666,76 @@
 </span><span data-line="362">    <span class="n">string_number</span> <span class="o">=</span> <span class="n">string_number</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;-&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">)</span>
 </span><span data-line="363">    <span class="n">whole_numbers</span><span class="p">,</span> <span class="n">decimals</span> <span class="o">=</span> <span class="n">string_number</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;.&quot;</span><span class="p">)</span>
 </span><span data-line="364">
-</span><span data-line="365">    <span class="k">if</span> <span class="p">(</span>
-</span><span data-line="366">        <span class="n">max_digits</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
-</span><span data-line="367">        <span class="ow">and</span> <span class="n">decimal_places</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
-</span><span data-line="368">        <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">whole_numbers</span><span class="p">)</span> <span class="o">+</span> <span class="n">decimal_places</span> <span class="o">&gt;</span> <span class="n">max_digits</span>
-</span><span data-line="369">        <span class="ow">or</span> <span class="p">(</span><span class="n">max_digits</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="n">decimal_places</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">)</span>
-</span><span data-line="370">        <span class="ow">and</span> <span class="n">max_digits</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
-</span><span data-line="371">    <span class="p">):</span>
-</span><span data-line="372">        <span class="n">max_decimals</span> <span class="o">=</span> <span class="n">max_digits</span> <span class="o">-</span> <span class="nb">len</span><span class="p">(</span><span class="n">whole_numbers</span><span class="p">)</span>
-</span><span data-line="373">    <span class="k">elif</span> <span class="n">max_digits</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-</span><span data-line="374">        <span class="n">max_decimals</span> <span class="o">=</span> <span class="n">decimal_places</span>  <span class="c1"># type: ignore[assignment]</span>
-</span><span data-line="375">    <span class="k">else</span><span class="p">:</span>
-</span><span data-line="376">        <span class="n">max_decimals</span> <span class="o">=</span> <span class="n">cast</span><span class="p">(</span><span class="s2">&quot;int&quot;</span><span class="p">,</span> <span class="n">decimal_places</span><span class="p">)</span>
-</span><span data-line="377">
-</span><span data-line="378">    <span class="k">if</span> <span class="n">max_decimals</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">:</span>  <span class="c1"># pyright: ignore[reportOptionalOperand]</span>
-</span><span data-line="379">        <span class="k">return</span> <span class="n">Decimal</span><span class="p">(</span><span class="n">sign</span> <span class="o">+</span> <span class="n">whole_numbers</span><span class="p">[:</span><span class="n">max_decimals</span><span class="p">])</span>
+</span><span data-line="365">    <span class="k">if</span> <span class="p">(</span><span class="n">max_digits</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">decimal_places</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">whole_numbers</span><span class="p">)</span> <span class="o">+</span> <span class="n">decimal_places</span> <span class="o">&gt;</span> <span class="n">max_digits</span><span class="p">)</span> <span class="ow">or</span> <span class="p">(</span>
+</span><span data-line="366">        <span class="p">(</span><span class="n">max_digits</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="n">decimal_places</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">)</span> <span class="ow">and</span> <span class="n">max_digits</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
+</span><span data-line="367">    <span class="p">):</span>
+</span><span data-line="368">        <span class="n">max_decimals</span> <span class="o">=</span> <span class="n">max_digits</span> <span class="o">-</span> <span class="nb">len</span><span class="p">(</span><span class="n">whole_numbers</span><span class="p">)</span>
+</span><span data-line="369">    <span class="k">elif</span> <span class="n">max_digits</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+</span><span data-line="370">        <span class="n">max_decimals</span> <span class="o">=</span> <span class="n">decimal_places</span>  <span class="c1"># type: ignore[assignment]</span>
+</span><span data-line="371">    <span class="k">else</span><span class="p">:</span>
+</span><span data-line="372">        <span class="n">max_decimals</span> <span class="o">=</span> <span class="n">cast</span><span class="p">(</span><span class="s2">&quot;int&quot;</span><span class="p">,</span> <span class="n">decimal_places</span><span class="p">)</span>
+</span><span data-line="373">
+</span><span data-line="374">    <span class="k">if</span> <span class="n">max_decimals</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">:</span>  <span class="c1"># pyright: ignore[reportOptionalOperand]</span>
+</span><span data-line="375">        <span class="k">return</span> <span class="n">Decimal</span><span class="p">(</span><span class="n">sign</span> <span class="o">+</span> <span class="n">whole_numbers</span><span class="p">[:</span><span class="n">max_decimals</span><span class="p">])</span>
+</span><span data-line="376">
+</span><span data-line="377">    <span class="n">decimals</span> <span class="o">=</span> <span class="n">decimals</span><span class="p">[:</span><span class="n">max_decimals</span><span class="p">]</span>
+</span><span data-line="378">    <span class="k">return</span> <span class="n">Decimal</span><span class="p">(</span><span class="n">sign</span> <span class="o">+</span> <span class="n">whole_numbers</span> <span class="o">+</span> <span class="s2">&quot;.&quot;</span> <span class="o">+</span> <span class="n">decimals</span><span class="p">[:</span><span class="n">decimal_places</span><span class="p">])</span></div>
+</span><span data-line="379">
 </span><span data-line="380">
-</span><span data-line="381">    <span class="n">decimals</span> <span class="o">=</span> <span class="n">decimals</span><span class="p">[:</span><span class="n">max_decimals</span><span class="p">]</span>
-</span><span data-line="382">    <span class="k">return</span> <span class="n">Decimal</span><span class="p">(</span><span class="n">sign</span> <span class="o">+</span> <span class="n">whole_numbers</span> <span class="o">+</span> <span class="s2">&quot;.&quot;</span> <span class="o">+</span> <span class="n">decimals</span><span class="p">[:</span><span class="n">decimal_places</span><span class="p">])</span></div>
-</span><span data-line="383">
-</span><span data-line="384">
-<div class="viewcode-block" id="handle_constrained_decimal"><a class="viewcode-back" href="../../../reference/value_generators/constrained_numbers.html#polyfactory.value_generators.constrained_numbers.handle_constrained_decimal">[docs]</a></span><span data-line="385"><span class="k">def</span> <span class="nf">handle_constrained_decimal</span><span class="p">(</span>
-</span><span data-line="386">    <span class="n">random</span><span class="p">:</span> <span class="n">Random</span><span class="p">,</span>
-</span><span data-line="387">    <span class="n">multiple_of</span><span class="p">:</span> <span class="n">Decimal</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-</span><span data-line="388">    <span class="n">decimal_places</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-</span><span data-line="389">    <span class="n">max_digits</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-</span><span data-line="390">    <span class="n">gt</span><span class="p">:</span> <span class="n">Decimal</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-</span><span data-line="391">    <span class="n">ge</span><span class="p">:</span> <span class="n">Decimal</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-</span><span data-line="392">    <span class="n">lt</span><span class="p">:</span> <span class="n">Decimal</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-</span><span data-line="393">    <span class="n">le</span><span class="p">:</span> <span class="n">Decimal</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-</span><span data-line="394"><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Decimal</span><span class="p">:</span>
-</span><span data-line="395"><span class="w">    </span><span class="sd">&quot;&quot;&quot;Handle a constrained decimal.</span>
-</span><span data-line="396">
-</span><span data-line="397"><span class="sd">    :param random: An instance of Random.</span>
-</span><span data-line="398"><span class="sd">    :param multiple_of: Multiple of value.</span>
-</span><span data-line="399"><span class="sd">    :param decimal_places: Number of decimal places.</span>
-</span><span data-line="400"><span class="sd">    :param max_digits: Maximal number of digits.</span>
-</span><span data-line="401"><span class="sd">    :param lt: Less than value.</span>
-</span><span data-line="402"><span class="sd">    :param le: Less than or equal value.</span>
-</span><span data-line="403"><span class="sd">    :param gt: Greater than value.</span>
-</span><span data-line="404"><span class="sd">    :param ge: Greater than or equal value.</span>
+<div class="viewcode-block" id="handle_constrained_decimal"><a class="viewcode-back" href="../../../reference/value_generators/constrained_numbers.html#polyfactory.value_generators.constrained_numbers.handle_constrained_decimal">[docs]</a></span><span data-line="381"><span class="k">def</span> <span class="nf">handle_constrained_decimal</span><span class="p">(</span>
+</span><span data-line="382">    <span class="n">random</span><span class="p">:</span> <span class="n">Random</span><span class="p">,</span>
+</span><span data-line="383">    <span class="n">multiple_of</span><span class="p">:</span> <span class="n">Decimal</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+</span><span data-line="384">    <span class="n">decimal_places</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+</span><span data-line="385">    <span class="n">max_digits</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+</span><span data-line="386">    <span class="n">gt</span><span class="p">:</span> <span class="n">Decimal</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+</span><span data-line="387">    <span class="n">ge</span><span class="p">:</span> <span class="n">Decimal</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+</span><span data-line="388">    <span class="n">lt</span><span class="p">:</span> <span class="n">Decimal</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+</span><span data-line="389">    <span class="n">le</span><span class="p">:</span> <span class="n">Decimal</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+</span><span data-line="390"><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Decimal</span><span class="p">:</span>
+</span><span data-line="391"><span class="w">    </span><span class="sd">&quot;&quot;&quot;Handle a constrained decimal.</span>
+</span><span data-line="392">
+</span><span data-line="393"><span class="sd">    :param random: An instance of Random.</span>
+</span><span data-line="394"><span class="sd">    :param multiple_of: Multiple of value.</span>
+</span><span data-line="395"><span class="sd">    :param decimal_places: Number of decimal places.</span>
+</span><span data-line="396"><span class="sd">    :param max_digits: Maximal number of digits.</span>
+</span><span data-line="397"><span class="sd">    :param lt: Less than value.</span>
+</span><span data-line="398"><span class="sd">    :param le: Less than or equal value.</span>
+</span><span data-line="399"><span class="sd">    :param gt: Greater than value.</span>
+</span><span data-line="400"><span class="sd">    :param ge: Greater than or equal value.</span>
+</span><span data-line="401">
+</span><span data-line="402"><span class="sd">    :returns: A decimal.</span>
+</span><span data-line="403">
+</span><span data-line="404"><span class="sd">    &quot;&quot;&quot;</span>
 </span><span data-line="405">
-</span><span data-line="406"><span class="sd">    :returns: A decimal.</span>
-</span><span data-line="407">
-</span><span data-line="408"><span class="sd">    &quot;&quot;&quot;</span>
-</span><span data-line="409">
-</span><span data-line="410">    <span class="n">minimum</span><span class="p">,</span> <span class="n">maximum</span> <span class="o">=</span> <span class="n">get_constrained_number_range</span><span class="p">(</span>
-</span><span data-line="411">        <span class="n">gt</span><span class="o">=</span><span class="n">gt</span><span class="p">,</span>
-</span><span data-line="412">        <span class="n">ge</span><span class="o">=</span><span class="n">ge</span><span class="p">,</span>
-</span><span data-line="413">        <span class="n">lt</span><span class="o">=</span><span class="n">lt</span><span class="p">,</span>
-</span><span data-line="414">        <span class="n">le</span><span class="o">=</span><span class="n">le</span><span class="p">,</span>
-</span><span data-line="415">        <span class="n">multiple_of</span><span class="o">=</span><span class="n">multiple_of</span><span class="p">,</span>
-</span><span data-line="416">        <span class="n">t_type</span><span class="o">=</span><span class="n">Decimal</span><span class="p">,</span>
-</span><span data-line="417">        <span class="n">random</span><span class="o">=</span><span class="n">random</span><span class="p">,</span>
-</span><span data-line="418">    <span class="p">)</span>
-</span><span data-line="419">
-</span><span data-line="420">    <span class="k">if</span> <span class="n">max_digits</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-</span><span data-line="421">        <span class="n">validate_max_digits</span><span class="p">(</span><span class="n">max_digits</span><span class="o">=</span><span class="n">max_digits</span><span class="p">,</span> <span class="n">minimum</span><span class="o">=</span><span class="n">minimum</span><span class="p">,</span> <span class="n">decimal_places</span><span class="o">=</span><span class="n">decimal_places</span><span class="p">)</span>
-</span><span data-line="422">
-</span><span data-line="423">    <span class="n">generated_decimal</span> <span class="o">=</span> <span class="n">generate_constrained_number</span><span class="p">(</span>
-</span><span data-line="424">        <span class="n">random</span><span class="o">=</span><span class="n">random</span><span class="p">,</span>
-</span><span data-line="425">        <span class="n">minimum</span><span class="o">=</span><span class="n">minimum</span><span class="p">,</span>
-</span><span data-line="426">        <span class="n">maximum</span><span class="o">=</span><span class="n">maximum</span><span class="p">,</span>
-</span><span data-line="427">        <span class="n">multiple_of</span><span class="o">=</span><span class="n">multiple_of</span><span class="p">,</span>
-</span><span data-line="428">        <span class="n">method</span><span class="o">=</span><span class="n">create_random_decimal</span><span class="p">,</span>
-</span><span data-line="429">    <span class="p">)</span>
-</span><span data-line="430">
-</span><span data-line="431">    <span class="k">if</span> <span class="n">max_digits</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">or</span> <span class="n">decimal_places</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-</span><span data-line="432">        <span class="k">return</span> <span class="n">handle_decimal_length</span><span class="p">(</span>
-</span><span data-line="433">            <span class="n">generated_decimal</span><span class="o">=</span><span class="n">generated_decimal</span><span class="p">,</span>
-</span><span data-line="434">            <span class="n">max_digits</span><span class="o">=</span><span class="n">max_digits</span><span class="p">,</span>
-</span><span data-line="435">            <span class="n">decimal_places</span><span class="o">=</span><span class="n">decimal_places</span><span class="p">,</span>
-</span><span data-line="436">        <span class="p">)</span>
-</span><span data-line="437">
-</span><span data-line="438">    <span class="k">return</span> <span class="n">generated_decimal</span></div>
+</span><span data-line="406">    <span class="n">minimum</span><span class="p">,</span> <span class="n">maximum</span> <span class="o">=</span> <span class="n">get_constrained_number_range</span><span class="p">(</span>
+</span><span data-line="407">        <span class="n">gt</span><span class="o">=</span><span class="n">gt</span><span class="p">,</span>
+</span><span data-line="408">        <span class="n">ge</span><span class="o">=</span><span class="n">ge</span><span class="p">,</span>
+</span><span data-line="409">        <span class="n">lt</span><span class="o">=</span><span class="n">lt</span><span class="p">,</span>
+</span><span data-line="410">        <span class="n">le</span><span class="o">=</span><span class="n">le</span><span class="p">,</span>
+</span><span data-line="411">        <span class="n">multiple_of</span><span class="o">=</span><span class="n">multiple_of</span><span class="p">,</span>
+</span><span data-line="412">        <span class="n">t_type</span><span class="o">=</span><span class="n">Decimal</span><span class="p">,</span>
+</span><span data-line="413">        <span class="n">random</span><span class="o">=</span><span class="n">random</span><span class="p">,</span>
+</span><span data-line="414">    <span class="p">)</span>
+</span><span data-line="415">
+</span><span data-line="416">    <span class="k">if</span> <span class="n">max_digits</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+</span><span data-line="417">        <span class="n">validate_max_digits</span><span class="p">(</span><span class="n">max_digits</span><span class="o">=</span><span class="n">max_digits</span><span class="p">,</span> <span class="n">minimum</span><span class="o">=</span><span class="n">minimum</span><span class="p">,</span> <span class="n">decimal_places</span><span class="o">=</span><span class="n">decimal_places</span><span class="p">)</span>
+</span><span data-line="418">
+</span><span data-line="419">    <span class="n">generated_decimal</span> <span class="o">=</span> <span class="n">generate_constrained_number</span><span class="p">(</span>
+</span><span data-line="420">        <span class="n">random</span><span class="o">=</span><span class="n">random</span><span class="p">,</span>
+</span><span data-line="421">        <span class="n">minimum</span><span class="o">=</span><span class="n">minimum</span><span class="p">,</span>
+</span><span data-line="422">        <span class="n">maximum</span><span class="o">=</span><span class="n">maximum</span><span class="p">,</span>
+</span><span data-line="423">        <span class="n">multiple_of</span><span class="o">=</span><span class="n">multiple_of</span><span class="p">,</span>
+</span><span data-line="424">        <span class="n">method</span><span class="o">=</span><span class="n">create_random_decimal</span><span class="p">,</span>
+</span><span data-line="425">    <span class="p">)</span>
+</span><span data-line="426">
+</span><span data-line="427">    <span class="k">if</span> <span class="n">max_digits</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">or</span> <span class="n">decimal_places</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+</span><span data-line="428">        <span class="k">return</span> <span class="n">handle_decimal_length</span><span class="p">(</span>
+</span><span data-line="429">            <span class="n">generated_decimal</span><span class="o">=</span><span class="n">generated_decimal</span><span class="p">,</span>
+</span><span data-line="430">            <span class="n">max_digits</span><span class="o">=</span><span class="n">max_digits</span><span class="p">,</span>
+</span><span data-line="431">            <span class="n">decimal_places</span><span class="o">=</span><span class="n">decimal_places</span><span class="p">,</span>
+</span><span data-line="432">        <span class="p">)</span>
+</span><span data-line="433">
+</span><span data-line="434">    <span class="k">return</span> <span class="n">generated_decimal</span></div>
 </span></pre></div>
         </article>
         <button class="back-to-top" type="button">
