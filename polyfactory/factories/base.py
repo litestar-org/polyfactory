@@ -80,7 +80,15 @@ from polyfactory.value_generators.constrained_url import handle_constrained_url
 from polyfactory.value_generators.constrained_uuid import handle_constrained_uuid
 from polyfactory.value_generators.primitives import create_random_boolean, create_random_bytes, create_random_string
 
+try:
+    from hypothesis import strategies as st
+
+    _HYPOTHESIS_AVAILABLE: bool = True
+except ImportError:
+    _HYPOTHESIS_AVAILABLE = False
+
 if TYPE_CHECKING:
+    from hypothesis.strategies import SearchStrategy
     from typing_extensions import TypeGuard
 
     from polyfactory.field_meta import Constraints, FieldMeta
@@ -1148,6 +1156,55 @@ class BaseFactory(ABC, Generic[T]):
         :returns: A list of instances of type T.
         """
         return await cls._get_async_persistence().save_many(data=cls.batch(size, **kwargs))
+
+    if _HYPOTHESIS_AVAILABLE:
+
+        @classmethod
+        def get_hypothesis_provider_map(cls) -> dict[type, SearchStrategy[Any]]:
+            """Map types to search strategies.
+
+            :notes:
+                - This method is distinct to allow overriding.
+
+
+            :returns: A dictionary mapping types to search strategies.
+
+            """
+            return {}
+
+        @classmethod
+        def get_field_hypothesis_strategy(cls, field_meta: FieldMeta) -> SearchStrategy[Any]:
+            """Return a hypothesis strategy for the given field meta.
+
+            :param field_meta: FieldMeta instance.
+
+            :returns: An instance of SearchStrategy.
+            """
+
+            if strategy := cls.get_hypothesis_provider_map().get(field_meta.annotation, None):
+                return strategy
+
+            return st.from_type(field_meta.annotation)
+
+        @classmethod
+        def build_hypothesis_strategy(cls, **kwargs: SearchStrategy[Any]) -> SearchStrategy[T]:
+            """Build a hypothesis strategy for the factory's __model__
+
+            :param kwargs: Any kwargs. If field names are set in kwargs, their values will be used as the strategy for that field.
+
+            :returns: An instance of SearchStrategy for the factory's __model__.
+
+            """
+            st_kwargs = kwargs
+            cls.get_hypothesis_provider_map()
+
+            for field_meta in cls.get_model_fields():
+                if field_meta.name in st_kwargs:
+                    continue
+
+                st_kwargs[field_meta.name] = cls.get_field_hypothesis_strategy(field_meta)
+
+            return st.builds(cls.__model__, **st_kwargs)
 
 
 def _register_builtin_factories() -> None:
