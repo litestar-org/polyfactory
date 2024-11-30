@@ -7,7 +7,7 @@ from warnings import warn
 
 from typing_extensions import ParamSpec
 
-__all__ = ("deprecated", "warn_deprecation", "check_for_deprecated_parameters")
+__all__ = ("check_for_deprecated_parameters", "deprecated", "warn_deprecation")
 
 
 T = TypeVar("T")

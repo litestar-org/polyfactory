@@ -362,12 +362,8 @@ def handle_decimal_length(
     string_number = string_number.replace("-", "")
     whole_numbers, decimals = string_number.split(".")
 
-    if (
-        max_digits is not None
-        and decimal_places is not None
-        and len(whole_numbers) + decimal_places > max_digits
-        or (max_digits is None or decimal_places is None)
-        and max_digits is not None
+    if (max_digits is not None and decimal_places is not None and len(whole_numbers) + decimal_places > max_digits) or (
+        (max_digits is None or decimal_places is None) and max_digits is not None
     ):
         max_decimals = max_digits - len(whole_numbers)
     elif max_digits is not None:

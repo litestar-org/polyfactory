@@ -60,7 +60,7 @@ class Constraints(TypedDict):
 class FieldMeta:
     """Factory field metadata container. This class is used to store the data about a field of a factory's model."""
 
-    __slots__ = ("name", "annotation", "random", "children", "default", "constraints")
+    __slots__ = ("annotation", "children", "constraints", "default", "name", "random")
 
     annotation: Any
     random: Random
@@ -178,7 +178,7 @@ class FieldMeta:
                     constraints["pattern"] = "[[:ascii:]]"
                 elif func is str.isdigit:
                     constraints["pattern"] = "[[:digit:]]"
-            elif is_dataclass(value) and (value_dict := asdict(value)) and ("allowed_schemes" in value_dict):  # type: ignore[call-overload]
+            elif is_dataclass(value) and (value_dict := asdict(value)) and ("allowed_schemes" in value_dict):  # type: ignore[arg-type]
                 constraints["url"] = {k: v for k, v in value_dict.items() if v is not None}
             # This is to support `Constraints`, but we can't do a isinstance with `Constraints` since isinstance
             # checks with `TypedDict` is not supported.

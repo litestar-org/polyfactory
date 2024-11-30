@@ -10,7 +10,7 @@ from polyfactory import PostGenerated
 class post_generated:  # noqa: N801
     """Descriptor class for wrapping a classmethod into a ``PostGenerated`` field."""
 
-    __slots__ = ("method", "cache")
+    __slots__ = ("cache", "method")
 
     def __init__(self, method: Callable | classmethod) -> None:
         if not isinstance(method, classmethod):

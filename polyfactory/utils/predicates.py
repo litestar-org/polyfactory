@@ -126,7 +126,9 @@ def is_any_annotated(annotation: Any) -> bool:
     :returns: A boolean
     """
 
-    return any(is_annotated(arg) or hasattr(arg, "__args__") and is_any_annotated(arg) for arg in get_args(annotation))
+    return any(
+        is_annotated(arg) or (hasattr(arg, "__args__") and is_any_annotated(arg)) for arg in get_args(annotation)
+    )
 
 
 def get_type_origin(annotation: Any) -> Any:
