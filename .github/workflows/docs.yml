@@ -19,25 +19,29 @@ jobs:
         with:
           python-version: "3.12"
 
-      - uses: pdm-project/setup-pdm@v4
-        name: Set up PDM
+      - name: Set up python ${{ matrix.python-version }}
+        uses: actions/setup-python@v5
         with:
-          python-version: "3.12"
-          allow-python-prereleases: true
-          cache: true
+          python-version: ${{ matrix.python-version }}
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@v4
+        with:
+          version: "0.5.4"
+          enable-cache: true
 
       - name: Install dependencies
-        run: pdm install -G:all
+        run: uv sync --all-extras
 
       - name: Fetch gh pages
         run: git fetch origin gh-pages --depth=1
 
       - name: Build release docs
-        run: pdm run python tools/build_docs.py docs-build
+        run: uv run python tools/build_docs.py docs-build
         if: github.event_name == 'release'
 
       - name: Build dev docs
-        run: pdm run python tools/build_docs.py docs-build
+        run: uv run python tools/build_docs.py docs-build
         if: github.event_name == 'push'
 
       - name: Deploy
