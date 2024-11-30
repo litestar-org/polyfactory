@@ -12,7 +12,7 @@ def test_random_seed() -> None:
         special_id: str = (
             Field(pattern=r"ID-[1-9]{3}\.[1-9]{3}")
             if VERSION.startswith("2")
-            else Field(regex=r"ID-[1-9]{3}\.[1-9]{3}")  # type: ignore[call-arg]
+            else Field(regex=r"ID-[1-9]{3}\.[1-9]{3}")  # type: ignore[call-overload]
         )
 
     class MyModelFactory(ModelFactory):

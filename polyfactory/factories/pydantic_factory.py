@@ -168,7 +168,7 @@ class PydanticFieldMeta(FieldMeta):
             ),
         )
         if callable(field_info.default_factory):
-            default_value = field_info.default_factory()
+            default_value = field_info.default_factory
         else:
             default_value = field_info.default if field_info.default is not UndefinedV2 else Null
 
@@ -256,7 +256,7 @@ class PydanticFieldMeta(FieldMeta):
         if model_field.default is not Undefined:
             default_value = model_field.default
         elif callable(model_field.default_factory):
-            default_value = model_field.default_factory()
+            default_value = model_field.default_factory
         else:
             default_value = model_field.default if model_field.default is not Undefined else Null
 
