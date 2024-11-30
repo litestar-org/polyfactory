@@ -6,8 +6,8 @@ on:
     branches:
       - main
 
-env:
-  UV_LOCKED: 1
+# env:
+#   UV_LOCKED: 1
 
 jobs:
   validate:
@@ -72,11 +72,14 @@ jobs:
 
       - name: Install pydantic
         if: matrix.pydantic-version == '1.10'
-        run: uv lock --upgrade-package --group pydantic "pydantic[email]==1.10.17"
+        run: uv add --group pydantic "pydantic[email]==1.10.17"
 
       - name: Install SQLAlchemy
         if: matrix.sqla-version == '1.4'
-        run: uv lock --upgrade-package --group sqlalchemy "sqlalchemy[asyncio]==1.4.49"
+        run: uv add --group sqlalchemy "sqlalchemy[asyncio]==1.4.49"
+
+      - name: Sync
+        run: uv sync --all-extras
 
       - name: Test
         if: matrix.python-version != '3.12' || matrix.pydantic-version != '2.0' || matrix.sqla-version != '2'

@@ -78,7 +78,7 @@ test:  												## Run the tests
 
 .PHONY: test-examples
 test-examples:            			              	## Run the examples tests
-	pytest docs/examples
+	@uv run pytest docs/examples
 
 .PHONY: test-all
 test-all: test test-examples 						## Run all tests
