@@ -5,7 +5,7 @@
 groups = ["default", "attrs", "beanie", "dev", "docs", "full", "lint", "msgspec", "odmantic", "pydantic", "sqlalchemy", "test"]
 strategy = ["cross_platform"]
 lock_version = "4.5.0"
-content_hash = "sha256:422ed2994a3a0a1085d72803296065b7e63a125a03e359e3b4593261f9070b0e"
+content_hash = "sha256:08c922c77abc5bafdffadf41c13967147a6eed7b7bed8e6f5eace0526b00255d"
 
 [[metadata.targets]]
 requires_python = "~=3.8"
