@@ -3,19 +3,8 @@ from enum import Enum
 from typing import Callable, Literal, Optional
 
 import pytest
-from typing_extensions import TypeAlias
 
-from pydantic import (
-    AmqpDsn,
-    AnyHttpUrl,
-    AnyUrl,
-    BaseConfig,
-    BaseModel,
-    HttpUrl,
-    KafkaDsn,
-    PostgresDsn,
-    RedisDsn,
-)
+from pydantic import AmqpDsn, AnyHttpUrl, AnyUrl, BaseConfig, BaseModel, HttpUrl, KafkaDsn, PostgresDsn, RedisDsn
 
 from polyfactory.exceptions import ParameterException
 from polyfactory.factories.pydantic_factory import ModelFactory
@@ -151,14 +140,13 @@ def test_class_parsing() -> None:
     "type_",
     [AnyUrl, HttpUrl, KafkaDsn, PostgresDsn, RedisDsn, AmqpDsn, AnyHttpUrl],
 )
-def test_optional_url_field_parsed_correctly(type_: TypeAlias) -> None:
+def test_optional_url_field_parsed_correctly(type_: type) -> None:
     class MyModel(BaseModel):
-        url: Optional[type_]
+        url: Optional[type_]  # type: ignore
 
     class MyFactory(ModelFactory[MyModel]):
         __model__ = MyModel
 
     while not (url := MyFactory.build().url):
         assert not url
-
-    assert MyModel(url=url)  # no validation error raised
+        assert MyModel(url=url)  # no validation error raised

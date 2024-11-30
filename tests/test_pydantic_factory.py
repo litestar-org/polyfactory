@@ -4,14 +4,7 @@ from collections import Counter, deque
 from dataclasses import dataclass
 from datetime import date, datetime, time, timedelta
 from decimal import Decimal
-from ipaddress import (
-    IPv4Address,
-    IPv4Interface,
-    IPv4Network,
-    IPv6Address,
-    IPv6Interface,
-    IPv6Network,
-)
+from ipaddress import IPv4Address, IPv4Interface, IPv4Network, IPv6Address, IPv6Interface, IPv6Network
 from pathlib import Path
 from typing import Callable, Dict, FrozenSet, List, Literal, Optional, Sequence, Set, Tuple, Type, Union
 from uuid import UUID
@@ -194,15 +187,17 @@ def test_use_default_with_callable_default() -> None:
     assert foo.default_field == 10
 
 
+@pytest.mark.skipif(IS_PYDANTIC_V1, reason="only for Pydantic v2")
 def test_use_default_with_callable_default_with_arg() -> None:
     class Foo(BaseModel):
-        default_field: int = Field(default_factory=lambda _: 10)
+        other: int
+        default_field: int = Field(default_factory=lambda data: data["other"])
 
     class FooFactory(ModelFactory[Foo]):
         __model__ = Foo
         __use_defaults__ = True
 
-    foo = FooFactory.build()
+    foo = FooFactory.build(other=10)
 
     assert foo.default_field == 10
 
@@ -854,13 +849,7 @@ def test_nested_constrained_attribute_handling_pydantic_1() -> None:
     # subclassing the constrained fields is not documented by pydantic,
     # but is supported apparently
 
-    from pydantic import (
-        ConstrainedBytes,
-        ConstrainedDecimal,
-        ConstrainedFloat,
-        ConstrainedInt,
-        ConstrainedStr,
-    )
+    from pydantic import ConstrainedBytes, ConstrainedDecimal, ConstrainedFloat, ConstrainedInt, ConstrainedStr
 
     class MyConstrainedString(ConstrainedStr):  # type: ignore[misc,valid-type]
         regex = re.compile("^vpc-.*$")
