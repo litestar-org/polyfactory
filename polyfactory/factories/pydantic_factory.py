@@ -168,7 +168,7 @@ class PydanticFieldMeta(FieldMeta):
             ),
         )
         if callable(field_info.default_factory):
-            default_value = field_info.default_factory()
+            default_value = field_info.default_factory
         else:
             default_value = field_info.default if field_info.default is not UndefinedV2 else Null
 
@@ -608,6 +608,14 @@ class ModelFactory(Generic[T], BaseFactory[T]):
                     pydantic.FutureDatetime: cls.__faker__.future_datetime,
                     pydantic.AwareDatetime: partial(cls.__faker__.date_time, timezone.utc),
                     pydantic.NaiveDatetime: cls.__faker__.date_time,
+                    pydantic.networks.AmqpDsn: lambda: "amqps://example.com",
+                    pydantic.networks.KafkaDsn: lambda: "kafka://localhost:9092",
+                    pydantic.networks.PostgresDsn: lambda: "postgresql://user:secret@localhost",
+                    pydantic.networks.RedisDsn: lambda: "redis://localhost:6379/0",
+                    pydantic.networks.MongoDsn: lambda: "mongodb://mongodb0.example.com:27017",
+                    pydantic.networks.MariaDBDsn: lambda: "mariadb://example.com:3306",
+                    pydantic.networks.CockroachDsn: lambda: "cockroachdb://example.com:5432",
+                    pydantic.networks.MySQLDsn: lambda: "mysql://example.com:5432",
                 },
             )
 

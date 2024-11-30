@@ -4,14 +4,7 @@ from collections import Counter, deque
 from dataclasses import dataclass
 from datetime import date, datetime, time, timedelta
 from decimal import Decimal
-from ipaddress import (
-    IPv4Address,
-    IPv4Interface,
-    IPv4Network,
-    IPv6Address,
-    IPv6Interface,
-    IPv6Network,
-)
+from ipaddress import IPv4Address, IPv4Interface, IPv4Network, IPv6Address, IPv6Interface, IPv6Network
 from pathlib import Path
 from typing import Callable, Dict, FrozenSet, List, Literal, Optional, Sequence, Set, Tuple, Type, Union
 from uuid import UUID
@@ -83,7 +76,7 @@ REGEX_PATTERN = r"(a|b|c)zz"
 @pytest.mark.skipif(IS_PYDANTIC_V2, reason="pydantic v1 only functionality")
 def test_const() -> None:
     class A(BaseModel):
-        v: int = Field(1, const=True)  # type: ignore[call-arg]
+        v: int = Field(1, const=True)  # type: ignore[call-overload]
 
     class AFactory(ModelFactory[A]):
         __model__ = A
@@ -190,6 +183,21 @@ def test_use_default_with_callable_default() -> None:
         __use_defaults__ = True
 
     foo = FooFactory.build()
+
+    assert foo.default_field == 10
+
+
+@pytest.mark.skipif(IS_PYDANTIC_V1, reason="only for Pydantic v2")
+def test_use_default_with_callable_default_with_arg() -> None:
+    class Foo(BaseModel):
+        other: int
+        default_field: int = Field(default_factory=lambda data: data["other"])
+
+    class FooFactory(ModelFactory[Foo]):
+        __model__ = Foo
+        __use_defaults__ = True
+
+    foo = FooFactory.build(other=10)
 
     assert foo.default_field == 10
 
@@ -764,12 +772,12 @@ def test_constrained_attribute_parsing_pydantic_v1() -> None:
         constr_field: constr(to_lower=True)  # type: ignore[valid-type]
         str_field1: str = Field(min_length=11)
         str_field2: str = Field(max_length=11)
-        str_field3: str = Field(min_length=8, max_length=11, regex=REGEX_PATTERN)  # type: ignore[call-arg]
+        str_field3: str = Field(min_length=8, max_length=11, regex=REGEX_PATTERN)  # type: ignore[call-overload]
         int_field: int = Field(gt=1, multiple_of=5)
         float_field: float = Field(gt=100, lt=1000)
         decimal_field: Decimal = Field(ge=100, le=1000)
-        list_field: List[str] = Field(min_items=1, max_items=10)  # type: ignore[call-arg]
-        constant_field: int = Field(const=True, default=100)  # type: ignore[call-arg]
+        list_field: List[str] = Field(min_items=1, max_items=10)  # type: ignore[call-overload]
+        constant_field: int = Field(const=True, default=100)  # type: ignore[call-overload]
         optional_field: Optional[constr(min_length=1)]  # type: ignore[valid-type]
 
     class MyFactory(ModelFactory):
@@ -841,13 +849,7 @@ def test_nested_constrained_attribute_handling_pydantic_1() -> None:
     # subclassing the constrained fields is not documented by pydantic,
     # but is supported apparently
 
-    from pydantic import (
-        ConstrainedBytes,
-        ConstrainedDecimal,
-        ConstrainedFloat,
-        ConstrainedInt,
-        ConstrainedStr,
-    )
+    from pydantic import ConstrainedBytes, ConstrainedDecimal, ConstrainedFloat, ConstrainedInt, ConstrainedStr
 
     class MyConstrainedString(ConstrainedStr):  # type: ignore[misc,valid-type]
         regex = re.compile("^vpc-.*$")
