@@ -350,7 +350,7 @@ class PydanticFieldMeta(FieldMeta):
         return PydanticFieldMeta(
             name=name,
             random=random or DEFAULT_RANDOM,
-            annotation=annotation,
+            annotation=annotation,  # pyright: ignore[reportArgumentType]
             children=children or None,
             default=default_value,
             constraints=cast("PydanticConstraints", {k: v for k, v in constraints.items() if v is not None}) or None,

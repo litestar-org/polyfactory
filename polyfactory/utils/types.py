@@ -28,4 +28,4 @@ class Frozendict(dict):
         return hash(tuple(self.items()))
 
 
-__all__ = ("NoneType", "UNION_TYPES", "Frozendict")
+__all__ = ("UNION_TYPES", "Frozendict", "NoneType")

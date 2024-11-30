@@ -46,7 +46,7 @@ def _get_fixture_name(name: str) -> str:
 class FactoryFixture:
     """Decorator that creates a pytest fixture from a factory"""
 
-    __slots__ = ("scope", "autouse", "name")
+    __slots__ = ("autouse", "name", "scope")
 
     factory_class_map: ClassVar[dict[Callable, type[BaseFactory[Any]]]] = {}
 
