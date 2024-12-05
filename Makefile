@@ -27,6 +27,7 @@ install:											## Install the project, dependencies, and pre-commit for loca
 	@if [ "$(VENV_EXISTS)" ]; then echo "=> Removing existing virtual environment"; fi
 	if [ "$(VENV_EXISTS)" ]; then $(MAKE) destroy; fi
 	if [ "$(VENV_EXISTS)" ]; then $(MAKE) clean; fi
+	@uv sync --all-extras
 	@echo "=> Installing pre-commit hooks"
 	pre-commit install --install-hooks
 	@echo "=> Install complete! Note: If you want to re-install re-run 'make install'"
