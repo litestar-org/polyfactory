@@ -1,5 +1,5 @@
 default_language_version:
-  python: "3"
+  python: "3.12"
 repos:
   - repo: https://github.com/compilerla/conventional-pre-commit
     rev: v3.6.0
@@ -17,10 +17,6 @@ repos:
       - id: end-of-file-fixer
       - id: mixed-line-ending
       - id: trailing-whitespace
-  - repo: https://github.com/pdm-project/pdm
-    rev: 2.21.0
-    hooks:
-      - id: pdm-lock-check
   - repo: https://github.com/charliermarsh/ruff-pre-commit
     rev: "v0.8.1"
     hooks:

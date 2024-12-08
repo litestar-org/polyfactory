@@ -20,15 +20,14 @@ jobs:
         with:
           python-version: "3.12"
 
-      - uses: pdm-project/setup-pdm@v4
-        name: Set up PDM
+      - name: Install uv
+        uses: astral-sh/setup-uv@v4
         with:
-          python-version: "3.12"
-          allow-python-prereleases: true
-          cache: true
+          version: "0.5.4"
+          enable-cache: true
 
       - name: Build package
-        run: pdm build
+        run: uv build
 
       - name: Publish package distributions to PyPI
         uses: pypa/gh-action-pypi-publish@release/v1
@@ -38,27 +37,25 @@ jobs:
       contents: write
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - name: Check out repository
+        uses: actions/checkout@v4
 
-      - uses: actions/setup-python@v5
+      - name: Set up Python
+        uses: actions/setup-python@v5
         with:
           python-version: "3.12"
 
-      - uses: pdm-project/setup-pdm@v4
-        name: Set up PDM
+      - name: Install uv
+        uses: astral-sh/setup-uv@v4
         with:
-          python-version: "3.12"
-          allow-python-prereleases: true
-          cache: true
+          version: "0.5.4"
+          enable-cache: true
 
-      - name: Build package
-        run: pdm build
-
-      - name: Install docs dependencies
-        run: pdm install -G:all
+      - name: Install dependencies
+        run: uv sync --all-extras
 
       - name: Build docs
-        run: pdm run make docs
+        run: uv run make docs
 
       - name: Deploy
         uses: JamesIves/github-pages-deploy-action@v4

@@ -4,12 +4,11 @@ Contributing
 Setting up the environment
 --------------------------
 
-1. Install `Pizza Delivery Man <https://pdm.fming.dev/latest/>`_
-2. Run ``pdm install -G:all`` to create a `virtual environment <https://docs.python.org/3/tutorial/venv.html>`_ and install
+1. Install `uv <https://github.com/astral-sh/uv>`_
+2. Run ``uv sync --all-extras`` to create a `virtual environment <https://docs.python.org/3/tutorial/venv.html>`_ and install
    the dependencies
-3. If you're working on the documentation and need to build it locally, install the extra dependencies with ``pdm install -G:docs``
-4. Install `pre-commit <https://pre-commit.com/>`_
-5. Run ``pre-commit install`` to install pre-commit hooks
+3. Install `pre-commit <https://pre-commit.com/>`_
+4. Run ``pre-commit install`` to install pre-commit hooks
 
 Code contributions
 ------------------
@@ -57,7 +56,7 @@ To run or build the docs locally, you need to first install the required depende
 .. code-block:: console
     :caption: Installing the docs dependencies
 
-    pdm install -G:docs
+    uv sync --all-extras
 
 Then you can serve the documentation with ``make docs-serve``, or build them with ``make docs``
 
