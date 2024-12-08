@@ -63,9 +63,11 @@ from pydantic import (
     constr,
     validator,
 )
+from pydantic.dataclasses import dataclass as pydantic_dataclass
 
+from polyfactory.exceptions import ConfigurationException
 from polyfactory.factories import DataclassFactory
-from polyfactory.factories.pydantic_factory import _IS_PYDANTIC_V1, ModelFactory
+from polyfactory.factories.pydantic_factory import _IS_PYDANTIC_V1, ModelFactory, PydanticDataclassFactory
 from tests.models import Person, PetFactory
 
 IS_PYDANTIC_V1 = _IS_PYDANTIC_V1
@@ -1038,3 +1040,49 @@ def test_annotated_children() -> None:
     AFactory = ModelFactory.create_factory(A)
 
     assert AFactory.build()
+
+
+def test_simple_pydantic_dataclass() -> None:
+    @pydantic_dataclass
+    class DataclassModel:
+        a: int
+        b: Annotated[str, MinLen(1)]
+
+    class DataclassModelFactory(PydanticDataclassFactory[DataclassModel]):
+        __model__ = DataclassModel
+
+    instance = DataclassModelFactory.build()
+    assert isinstance(instance, DataclassModel)
+    assert isinstance(instance.a, int)
+    assert isinstance(instance.b, str)
+    assert len(instance.b) >= 1
+
+
+def test_nested_pydantic_dataclass() -> None:
+    @pydantic_dataclass
+    class FooDataclass:
+        content: int
+
+    @pydantic_dataclass
+    class NestedDataclassModel:
+        foo: FooDataclass
+
+    class DataclassModelFactory(PydanticDataclassFactory[NestedDataclassModel]):
+        __model__ = NestedDataclassModel
+
+    instance = DataclassModelFactory.build()
+    assert isinstance(instance, NestedDataclassModel)
+    assert isinstance(instance.foo, FooDataclass)
+    assert isinstance(instance.foo.content, int)
+
+
+def test_pydantic_dataclass_factory_raises_for_std_dataclasses() -> None:
+    @dataclass
+    class DataclassModel:
+        a: int
+        b: str
+
+    with pytest.raises(ConfigurationException):
+
+        class DataclassModelFactory(PydanticDataclassFactory[DataclassModel]):
+            __model__ = DataclassModel
