@@ -20,7 +20,7 @@ class Person:
 class PersonFactory(DataclassFactory[Person]): ...
 
 
-person_factory_fixture = register_fixture(PersonFactory, name="aliased_person_factory")
+aliased_person_factory = register_fixture(PersonFactory, name="aliased_person_factory")
 
 
 def test_person_factory(aliased_person_factory: PersonFactory) -> None:
