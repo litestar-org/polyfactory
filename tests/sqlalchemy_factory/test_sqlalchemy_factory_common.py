@@ -18,6 +18,7 @@ from sqlalchemy import (
     func,
     inspect,
     orm,
+    select,
     text,
     types,
 )
@@ -343,13 +344,15 @@ async def test_async_persistence(
             __async_session__ = session_config(session)
             __model__ = AsyncModel
 
-        result = await Factory.create_async()
-        assert inspect(result).persistent  # type: ignore[union-attr]
+        instance = await Factory.create_async()
+        result = await session.scalar(select(AsyncModel).where(AsyncModel.id == instance.id))
+        assert result
 
         batch_result = await Factory.create_batch_async(size=2)
         assert len(batch_result) == 2
         for batch_item in batch_result:
-            assert inspect(batch_item).persistent  # type: ignore[union-attr]
+            result = await session.scalar(select(AsyncModel).where(AsyncModel.id == batch_item.id))
+            assert result
 
 
 @pytest.mark.parametrize(
@@ -392,8 +395,9 @@ async def test_async_server_default_refresh(
             test_int = Ignore()
             test_bool = Ignore()
 
-        result = await Factory.create_async()
-        assert inspect(result).persistent  # type: ignore[union-attr]
+        instance = await Factory.create_async()
+        result = await session.scalar(select(AsyncRefreshModel).where(AsyncRefreshModel.id == instance.id))
+        assert result
         assert result.test_datetime is not None
         assert isinstance(result.test_datetime, datetime)
         assert result.test_str == "test_str"
