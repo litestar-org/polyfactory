@@ -29,6 +29,7 @@ from typing import (
     Callable,
     ClassVar,
     Collection,
+    Coroutine,
     Generic,
     Hashable,
     Iterable,
@@ -1069,8 +1070,24 @@ class BaseFactory(ABC, Generic[T]):
             yield resolved
 
     @classmethod
+    async def build_async(cls, **kwargs: Any) -> T:
+        """Asynchronously build an instance of the factory's __model__
+
+        :param kwargs: Any kwargs. If field names are set in kwargs, their values will be used.
+
+        :returns: An instance of type T.
+
+        """
+        data: dict[str, Any] = cls.process_kwargs(**kwargs)
+        for k, v in data.items():
+            if isinstance(v, Coroutine):
+                data[k] = await v
+
+        return cast("T", cls.__model__(**data))
+
+    @classmethod
     def build(cls, **kwargs: Any) -> T:
-        """Build an instance of the factory's __model__
+        """Synchronously build an instance of the factory's __model__
 
         :param kwargs: Any kwargs. If field names are set in kwargs, their values will be used.
 
@@ -1081,7 +1098,7 @@ class BaseFactory(ABC, Generic[T]):
 
     @classmethod
     def batch(cls, size: int, **kwargs: Any) -> list[T]:
-        """Build a batch of size n of the factory's Meta.model.
+        """Synchronously build a batch of size n of the factory's Meta.model.
 
         :param size: Size of the batch.
         :param kwargs: Any kwargs. If field_meta names are set in kwargs, their values will be used.
@@ -1090,6 +1107,18 @@ class BaseFactory(ABC, Generic[T]):
 
         """
         return [cls.build(**kwargs) for _ in range(size)]
+
+    @classmethod
+    async def batch_async(cls, size: int, **kwargs: Any) -> list[T]:
+        """Asynchronously build a batch of size n of the factory's Meta.model.
+
+        :param size: Size of the batch.
+        :param kwargs: Any kwargs. If field_meta names are set in kwargs, their values will be used.
+
+        :returns: A list of instances of type T.
+
+        """
+        return [await cls.build_async(**kwargs) for _ in range(size)]
 
     @classmethod
     def coverage(cls, **kwargs: Any) -> abc.Iterator[T]:
@@ -1135,7 +1164,7 @@ class BaseFactory(ABC, Generic[T]):
 
         :returns: An instance of type T.
         """
-        return await cls._get_async_persistence().save(data=cls.build(**kwargs))
+        return await cls._get_async_persistence().save(data=await cls.build_async(**kwargs))
 
     @classmethod
     async def create_batch_async(cls, size: int, **kwargs: Any) -> list[T]:
@@ -1147,7 +1176,7 @@ class BaseFactory(ABC, Generic[T]):
 
         :returns: A list of instances of type T.
         """
-        return await cls._get_async_persistence().save_many(data=cls.batch(size, **kwargs))
+        return await cls._get_async_persistence().save_many(data=await cls.batch_async(size, **kwargs))
 
 
 def _register_builtin_factories() -> None:
