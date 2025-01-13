@@ -33,6 +33,8 @@ from polyfactory.factories.base import BaseFactory
 from polyfactory.factories.sqlalchemy_factory import SQLAlchemyFactory
 from polyfactory.fields import Ignore
 
+from .models import Keyword, User, UserKeywordAssociation
+
 
 @pytest.fixture()
 def engine() -> Engine:
@@ -248,6 +250,29 @@ def test_relationship_list_resolution() -> None:
     result = AuthorFactory.build()
     assert isinstance(result.books, list)
     assert isinstance(result.books[0], Book)
+
+
+def test_association_proxy() -> None:
+    class UserFactory(SQLAlchemyFactory[User]):
+        __set_association_proxy__ = True
+
+    user = UserFactory.build()
+    assert isinstance(user.keywords[0], Keyword)
+    assert isinstance(user.user_keyword_associations[0], UserKeywordAssociation)
+
+
+async def test_complex_association_proxy() -> None:
+    class KeywordFactory(SQLAlchemyFactory[Keyword]): ...
+
+    class ComplexUserFactory(SQLAlchemyFactory[User]):
+        __set_association_proxy__ = True
+
+        keywords = KeywordFactory.batch_async(1)
+
+    user = await ComplexUserFactory.build_async()
+    assert isinstance(user, User)
+    assert isinstance(user.keywords[0], Keyword)
+    assert isinstance(user.user_keyword_associations[0], UserKeywordAssociation)
 
 
 def test_sqla_factory_create(engine: Engine) -> None:

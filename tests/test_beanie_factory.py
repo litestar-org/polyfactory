@@ -38,6 +38,11 @@ class MyOtherDocument(Document):
     document: Link[MyDocument]
 
 
+class ComplexDocument(Document):
+    name: str
+    siblings: List[Link[MyDocument]]
+
+
 class MyFactory(BeanieDocumentFactory):
     __model__ = MyDocument
 
@@ -46,9 +51,13 @@ class MyOtherFactory(BeanieDocumentFactory):
     __model__ = MyOtherDocument
 
 
+class ComplexFactory(BeanieDocumentFactory[ComplexDocument]):
+    siblings = MyFactory.batch_async(1)
+
+
 @pytest.fixture()
 async def beanie_init(mongo_connection: AsyncMongoMockClient) -> None:
-    await init_beanie(database=mongo_connection.db_name, document_models=[MyDocument, MyOtherDocument])
+    await init_beanie(database=mongo_connection.db_name, document_models=[MyDocument, MyOtherDocument, ComplexDocument])
 
 
 async def test_handling_of_beanie_types(beanie_init: Callable) -> None:
@@ -64,6 +73,11 @@ async def test_beanie_persistence_of_single_instance(beanie_init: Callable) -> N
     assert result.name
     assert result.index
     assert isinstance(result.index, str)
+
+
+async def test_beanie_persistence_complex_instance(beanie_init: Callable) -> None:
+    result = await ComplexFactory.create_async()
+    assert isinstance(result.siblings[0], MyDocument)
 
 
 async def test_beanie_persistence_of_multiple_instances(beanie_init: Callable) -> None:

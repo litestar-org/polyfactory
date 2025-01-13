@@ -90,6 +90,7 @@ class SQLAlchemyFactory(Generic[T], BaseFactory[T]):
         "__set_primary_key__",
         "__set_foreign_keys__",
         "__set_relationships__",
+        "__set_association_proxy__",
     )
 
     @classmethod
