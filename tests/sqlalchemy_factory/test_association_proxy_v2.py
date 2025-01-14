@@ -1,3 +1,5 @@
+from typing import List
+
 import pytest
 from sqlalchemy import ForeignKey, __version__, orm
 from sqlalchemy.ext.associationproxy import AssociationProxy, association_proxy
@@ -19,10 +21,10 @@ class User(Base):
     id: Mapped[int] = orm.mapped_column(primary_key=True)
     name: Mapped[str]
 
-    user_keyword_associations: Mapped[list["UserKeywordAssociation"]] = relationship(
+    user_keyword_associations: Mapped[List["UserKeywordAssociation"]] = relationship(
         back_populates="user",
     )
-    keywords: AssociationProxy[list["Keyword"]] = association_proxy(
+    keywords: AssociationProxy[List["Keyword"]] = association_proxy(
         "user_keyword_associations",
         "keyword",
         creator=lambda keyword_obj: UserKeywordAssociation(keyword=keyword_obj),
