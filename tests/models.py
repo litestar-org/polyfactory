@@ -25,7 +25,7 @@ class Person(BaseModel):
     birthday: Union[datetime, date]
 
 
-class PersonFactoryWithoutDefaults(ModelFactory):
+class PersonFactoryWithoutDefaults(ModelFactory[Person]):
     __model__ = Person
 
 
@@ -39,5 +39,5 @@ class PersonFactoryWithDefaults(PersonFactoryWithoutDefaults):
     birthday = datetime(2021 - 33, 1, 1)
 
 
-class PetFactory(ModelFactory):
+class PetFactory(ModelFactory[Pet]):
     __model__ = Pet
