@@ -13,8 +13,6 @@ class Author(Base):
     __tablename__ = "authors"
 
     id: Mapped[int] = mapped_column(primary_key=True)
-    name: Mapped[str]
-
     books: Mapped[List["Book"]] = relationship("Book", uselist=True)
 
 
@@ -25,19 +23,19 @@ class Book(Base):
     author_id: Mapped[int] = mapped_column(ForeignKey(Author.id))
 
 
-class AuthorFactory(SQLAlchemyFactory[Author]): ...
+class BookFactory(SQLAlchemyFactory[Book]): ...
 
 
-class AuthorFactoryWithRelationship(SQLAlchemyFactory[Author]):
-    __set_relationships__ = True
+class BookFactoryWithForeignKey(SQLAlchemyFactory[Book]):
+    __set_foreign_keys__ = True
 
 
 def test_sqla_factory() -> None:
-    author = AuthorFactory.build()
-    assert author.books == []
+    book = BookFactory.build()
+    assert not book.author_id
 
 
-def test_sqla_factory_with_relationship() -> None:
-    author = AuthorFactoryWithRelationship.build()
-    assert isinstance(author, Author)
-    assert isinstance(author.books[0], Book)
+def test_sqla_factory_with_foreign_keys() -> None:
+    book = BookFactoryWithForeignKey.build()
+    assert book.author_id
+    assert isinstance(book.author_id, int)
