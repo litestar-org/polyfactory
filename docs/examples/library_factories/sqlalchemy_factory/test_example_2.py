@@ -32,12 +32,12 @@ class AuthorFactoryWithRelationship(SQLAlchemyFactory[Author]):
     __set_relationships__ = True
 
 
-def test_sqla_factory_without_relationship() -> None:
+def test_sqla_factory() -> None:
     author = AuthorFactory.build()
     assert author.books == []
 
 
-def test_sqla_factory() -> None:
+def test_sqla_factory_with_relationship() -> None:
     author = AuthorFactoryWithRelationship.build()
     assert isinstance(author, Author)
     assert isinstance(author.books[0], Book)
