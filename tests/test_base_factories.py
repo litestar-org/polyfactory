@@ -1,10 +1,12 @@
+from abc import ABC, abstractmethod
 from dataclasses import dataclass
-from typing import Any, Dict
+from typing import Any, Callable, Dict
 
 import pytest
 
 from pydantic.main import BaseModel
 
+from polyfactory.exceptions import ParameterException
 from polyfactory.factories import DataclassFactory
 from polyfactory.factories.base import BaseFactory
 from polyfactory.factories.pydantic_factory import ModelFactory
@@ -96,3 +98,34 @@ def test_create_factory_without_model_reuse_current_factory_model() -> None:
 def test_create_factory_from_base_factory_without_providing_a_model_raises_error() -> None:
     with pytest.raises(TypeError):
         BaseFactory.create_factory()
+
+
+def test_abstract_classes_are_ignored() -> None:
+    @dataclass
+    class Base(ABC):
+        @abstractmethod
+        def f(self) -> int: ...
+
+    @dataclass
+    class Concrete(Base):
+        def f(self) -> int:
+            return 1
+
+    @dataclass
+    class Model:
+        single: Base
+
+    class ModelFactory(DataclassFactory[Model]):
+        @classmethod
+        def get_provider_map(cls) -> Dict[type, Callable[[], Any]]:
+            return {
+                **super().get_provider_map(),
+                Base: Concrete,
+            }
+
+    result = ModelFactory.build()
+    assert isinstance(result, Model)
+    assert isinstance(result.single, Concrete)
+
+    with pytest.raises(ParameterException, match="Unsupported type: "):
+        DataclassFactory.create_factory(Model).build()
