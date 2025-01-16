@@ -74,7 +74,7 @@ class SQLAlchemyFactory(Generic[T], BaseFactory[T]):
 
     __set_primary_key__: ClassVar[bool] = True
     """Configuration to consider primary key columns as a field or not."""
-    __set_foreign_keys__: ClassVar[bool] = True
+    __set_foreign_keys__: ClassVar[bool] = False
     """Configuration to consider columns with foreign keys as a field or not."""
     __set_relationships__: ClassVar[bool] = False
     """Configuration to consider relationships property as a model field or not."""
