@@ -1,15 +1,11 @@
 from typing import Optional
 
-import pytest
-from sqlalchemy import Column, ForeignKey, Integer, String, __version__
+from sqlalchemy import Column, ForeignKey, Integer, String
 from sqlalchemy.ext.associationproxy import association_proxy
 from sqlalchemy.orm import relationship
 from sqlalchemy.orm.decl_api import DeclarativeMeta, registry
 
 from polyfactory.factories.sqlalchemy_factory import SQLAlchemyFactory
-
-if __version__.startswith("2"):
-    pytest.skip(allow_module_level=True)
 
 _registry = registry()
 
@@ -67,7 +63,7 @@ def test_association_proxy() -> None:
     assert isinstance(user.user_keyword_associations[0], UserKeywordAssociation)
 
 
-async def test_complex_association_proxy() -> None:
+def test_complex_association_proxy() -> None:
     class KeywordFactory(SQLAlchemyFactory[Keyword]): ...
 
     class ComplexUserFactory(SQLAlchemyFactory[User]):
