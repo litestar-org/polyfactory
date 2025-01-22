@@ -30,6 +30,7 @@ from typing import (
     Callable,
     ClassVar,
     Collection,
+    Coroutine,
     Generic,
     Hashable,
     Iterable,
@@ -395,6 +396,60 @@ class BaseFactory(ABC, Generic[T]):
 
         msg = f"unsupported model type {model.__name__}"
         raise ParameterException(msg)  # pragma: no cover
+
+    @classmethod
+    def _get_initial_variables(cls, kwargs: Any) -> tuple[dict[str, Any], dict[str, PostGenerated], BuildContext]:
+        """Prepare the given kwargs and generate initial variables for further usage.
+
+        :param kwargs: Any build kwargs.
+
+        :returns: A tuple of build results.
+
+        """
+        _build_context = cls._get_build_context(kwargs.pop("_build_context", None))
+        _build_context["seen_models"].add(cls.__model__)
+
+        result: dict[str, Any] = {**kwargs}
+        generate_post: dict[str, PostGenerated] = {}
+
+        return result, generate_post, _build_context
+
+    @classmethod
+    def _check_special_field(
+        cls,
+        field_meta: FieldMeta,
+        result: dict[str, Any],
+        generate_post: dict[str, PostGenerated],
+        field_build_parameters: Any,
+        build_context: BuildContext,
+    ) -> Any:
+        """Check if a field value is a special type field or get a value defined on the factory class itself.
+
+        :param field_meta: FieldMeta instance.
+        :param result: A dict with result field values.
+        :param generate_post: A dict with post generating values.
+        :param field_build_parameters: Any build parameters passed to the factory as kwarg values.
+        :param build_context: BuildContext data for current build.
+
+        :returns: None or a value defined on the factory class itself.
+        """
+        field_value = getattr(cls, field_meta.name)
+        if isinstance(field_value, Ignore):
+            return None
+
+        if isinstance(field_value, Require) and field_meta.name not in result:
+            msg = f"Require kwarg {field_meta.name} is missing"
+            raise MissingBuildKwargException(msg)
+
+        if isinstance(field_value, PostGenerated):
+            generate_post[field_meta.name] = field_value
+            return None
+
+        return cls._handle_factory_field(
+            field_value=field_value,
+            field_build_parameters=field_build_parameters,
+            build_context=build_context,
+        )
 
     # Public Methods
 
@@ -974,33 +1029,64 @@ class BaseFactory(ABC, Generic[T]):
         :returns: A dictionary of build results.
 
         """
-        _build_context = cls._get_build_context(kwargs.pop("_build_context", None))
-        _build_context["seen_models"].add(cls.__model__)
-
-        result: dict[str, Any] = {**kwargs}
-        generate_post: dict[str, PostGenerated] = {}
+        result, generate_post, _build_context = cls._get_initial_variables(kwargs)
 
         for field_meta in cls.get_model_fields():
             field_build_parameters = cls.extract_field_build_parameters(field_meta=field_meta, build_args=kwargs)
             if cls.should_set_field_value(field_meta, **kwargs) and not cls.should_use_default_value(field_meta):
                 if hasattr(cls, field_meta.name) and not hasattr(BaseFactory, field_meta.name):
-                    field_value = getattr(cls, field_meta.name)
-                    if isinstance(field_value, Ignore):
-                        continue
-
-                    if isinstance(field_value, Require) and field_meta.name not in kwargs:
-                        msg = f"Require kwarg {field_meta.name} is missing"
-                        raise MissingBuildKwargException(msg)
-
-                    if isinstance(field_value, PostGenerated):
-                        generate_post[field_meta.name] = field_value
-                        continue
-
-                    result[field_meta.name] = cls._handle_factory_field(
-                        field_value=field_value,
+                    field_value = cls._check_special_field(
+                        field_meta=field_meta,
+                        result=result,
+                        generate_post=generate_post,
                         field_build_parameters=field_build_parameters,
                         build_context=_build_context,
                     )
+                    if field_value is not None:
+                        result[field_meta.name] = field_value
+                    continue
+
+                field_result = cls.get_field_value(
+                    field_meta,
+                    field_build_parameters=field_build_parameters,
+                    build_context=_build_context,
+                )
+                if field_result is Null:
+                    continue
+
+                result[field_meta.name] = field_result
+
+        for field_name, post_generator in generate_post.items():
+            result[field_name] = post_generator.to_value(field_name, result)
+
+        return result
+
+    @classmethod
+    async def async_process_kwargs(cls, **kwargs: Any) -> dict[str, Any]:
+        """Process the given kwargs and generate values for the factory's model.
+
+        :param kwargs: Any build kwargs.
+
+        :returns: A dictionary of build results.
+
+        """
+        result, generate_post, _build_context = cls._get_initial_variables(kwargs)
+
+        for field_meta in cls.get_model_fields():
+            field_build_parameters = cls.extract_field_build_parameters(field_meta=field_meta, build_args=kwargs)
+            if cls.should_set_field_value(field_meta, **kwargs) and not cls.should_use_default_value(field_meta):
+                if hasattr(cls, field_meta.name) and not hasattr(BaseFactory, field_meta.name):
+                    field_value = cls._check_special_field(
+                        field_meta=field_meta,
+                        result=result,
+                        generate_post=generate_post,
+                        field_build_parameters=field_build_parameters,
+                        build_context=_build_context,
+                    )
+                    if field_value is not None:
+                        if isinstance(field_value, Coroutine):
+                            field_value = await field_value
+                        result[field_meta.name] = field_value
                     continue
 
                 field_result = cls.get_field_value(
@@ -1028,11 +1114,7 @@ class BaseFactory(ABC, Generic[T]):
         :returns: A dictionary of build results.
 
         """
-        _build_context = cls._get_build_context(kwargs.pop("_build_context", None))
-        _build_context["seen_models"].add(cls.__model__)
-
-        result: dict[str, Any] = {**kwargs}
-        generate_post: dict[str, PostGenerated] = {}
+        result, generate_post, _build_context = cls._get_initial_variables(kwargs)
 
         for field_meta in cls.get_model_fields():
             field_build_parameters = cls.extract_field_build_parameters(field_meta=field_meta, build_args=kwargs)
@@ -1083,8 +1165,19 @@ class BaseFactory(ABC, Generic[T]):
         return cast("T", cls.__model__(**cls.process_kwargs(**kwargs)))
 
     @classmethod
+    async def build_async(cls, **kwargs: Any) -> T:
+        """Build asynchronously an instance of the factory's __model__
+
+        :param kwargs: Any kwargs. If field names are set in kwargs, their values will be used.
+
+        :returns: An instance of type T.
+
+        """
+        return cast("T", cls.__model__(**await cls.async_process_kwargs(**kwargs)))
+
+    @classmethod
     def batch(cls, size: int, **kwargs: Any) -> list[T]:
-        """Build a batch of size n of the factory's Meta.model.
+        """Build synchronously a batch of size n of the factory's Meta.model.
 
         :param size: Size of the batch.
         :param kwargs: Any kwargs. If field_meta names are set in kwargs, their values will be used.
@@ -1093,6 +1186,18 @@ class BaseFactory(ABC, Generic[T]):
 
         """
         return [cls.build(**kwargs) for _ in range(size)]
+
+    @classmethod
+    async def batch_async(cls, size: int, **kwargs: Any) -> list[T]:
+        """Build asynchronously a batch of size n of the factory's Meta.model.
+
+        :param size: Size of the batch.
+        :param kwargs: Any kwargs. If field_meta names are set in kwargs, their values will be used.
+
+        :returns: A list of instances of type T.
+
+        """
+        return [await cls.build_async(**kwargs) for _ in range(size)]
 
     @classmethod
     def coverage(cls, **kwargs: Any) -> abc.Iterator[T]:
@@ -1138,7 +1243,7 @@ class BaseFactory(ABC, Generic[T]):
 
         :returns: An instance of type T.
         """
-        return await cls._get_async_persistence().save(data=cls.build(**kwargs))
+        return await cls._get_async_persistence().save(data=await cls.build_async(**kwargs))
 
     @classmethod
     async def create_batch_async(cls, size: int, **kwargs: Any) -> list[T]:
@@ -1150,7 +1255,7 @@ class BaseFactory(ABC, Generic[T]):
 
         :returns: A list of instances of type T.
         """
-        return await cls._get_async_persistence().save_many(data=cls.batch(size, **kwargs))
+        return await cls._get_async_persistence().save_many(data=await cls.batch_async(size, **kwargs))
 
 
 def _register_builtin_factories() -> None:

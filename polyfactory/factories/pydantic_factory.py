@@ -473,6 +473,31 @@ class ModelFactory(Generic[T], BaseFactory[T]):
         return cls._create_model(kwargs["_build_context"], **processed_kwargs)
 
     @classmethod
+    async def build_async(
+        cls,
+        factory_use_construct: bool = False,
+        **kwargs: Any,
+    ) -> T:
+        """Build an instance of the factory's __model__
+
+        :param factory_use_construct: A boolean that determines whether validations will be made when instantiating the
+                model. This is supported only for pydantic models.
+        :param kwargs: Any kwargs. If field_meta names are set in kwargs, their values will be used.
+
+        :returns: An instance of type T.
+
+        """
+
+        if "_build_context" not in kwargs:
+            kwargs["_build_context"] = PydanticBuildContext(
+                seen_models=set(), factory_use_construct=factory_use_construct
+            )
+
+        processed_kwargs = await cls.async_process_kwargs(**kwargs)
+
+        return cls._create_model(kwargs["_build_context"], **processed_kwargs)
+
+    @classmethod
     def _get_build_context(cls, build_context: BaseBuildContext | PydanticBuildContext | None) -> PydanticBuildContext:
         """Return a PydanticBuildContext instance. If build_context is None, return a new PydanticBuildContext.
 
