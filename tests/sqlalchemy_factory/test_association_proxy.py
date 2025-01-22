@@ -1,57 +1,13 @@
-from typing import Optional
-
-from sqlalchemy import Column, ForeignKey, Integer, String
-from sqlalchemy.ext.associationproxy import association_proxy
-from sqlalchemy.orm import relationship
-from sqlalchemy.orm.decl_api import DeclarativeMeta, registry
+from sqlalchemy import (
+    select,
+)
+from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker
 
 from polyfactory.factories.sqlalchemy_factory import SQLAlchemyFactory
-
-_registry = registry()
-
-
-class Base(metaclass=DeclarativeMeta):
-    __abstract__ = True
-    __allow_unmapped__ = True
-
-    registry = _registry
-    metadata = _registry.metadata
+from tests.sqlalchemy_factory.models import Keyword, User, UserKeywordAssociation
 
 
-class User(Base):
-    __tablename__ = "users"
-
-    id = Column(Integer, primary_key=True)
-    name = Column(String)
-
-    user_keyword_associations = relationship(
-        "UserKeywordAssociation",
-        back_populates="user",
-    )
-    keywords = association_proxy(
-        "user_keyword_associations", "keyword", creator=lambda keyword_obj: UserKeywordAssociation(keyword=keyword_obj)
-    )
-
-
-class UserKeywordAssociation(Base):
-    __tablename__ = "user_keyword"
-
-    user_id = Column(Integer, ForeignKey("users.id"), primary_key=True)
-    keyword_id = Column(Integer, ForeignKey("keywords.id"), primary_key=True)
-
-    user = relationship(User, back_populates="user_keyword_associations")
-    keyword = relationship("Keyword")
-
-    # for prevent mypy error: Unexpected keyword argument "keyword" for "UserKeywordAssociation"  [call-arg]
-    def __init__(self, keyword: Optional["Keyword"] = None):
-        self.keyword = keyword
-
-
-class Keyword(Base):
-    __tablename__ = "keywords"
-
-    id = Column(Integer, primary_key=True)
-    keyword = Column(String)
+class KeywordFactory(SQLAlchemyFactory[Keyword]): ...
 
 
 def test_association_proxy() -> None:
@@ -63,17 +19,27 @@ def test_association_proxy() -> None:
     assert isinstance(user.user_keyword_associations[0], UserKeywordAssociation)
 
 
-def test_complex_association_proxy() -> None:
-    class KeywordFactory(SQLAlchemyFactory[Keyword]): ...
-
-    class ComplexUserFactory(SQLAlchemyFactory[User]):
+async def test_async_persistence(
+    async_session_maker: async_sessionmaker[AsyncSession],
+) -> None:
+    class AsyncUserFactory(SQLAlchemyFactory[User]):
         __set_association_proxy__ = True
+        __async_session__ = async_session_maker()
 
-        keywords = KeywordFactory.batch(3)
+    instance = await AsyncUserFactory.create_async()
+    instances = await AsyncUserFactory.create_batch_async(3)
 
-    user = ComplexUserFactory.build()
-    assert isinstance(user, User)
-    assert isinstance(user.keywords[0], Keyword)
-    assert len(user.keywords) == 3
-    assert isinstance(user.user_keyword_associations[0], UserKeywordAssociation)
-    assert len(user.user_keyword_associations) == 3
+    async with async_session_maker.begin() as session:
+        result = await session.scalars(select(User))
+        assert len(result.all()) == 4
+
+        user = await session.get(User, instance.id)
+        assert user
+        assert isinstance(user.keywords[0], Keyword)
+        assert isinstance(user.user_keyword_associations[0], UserKeywordAssociation)
+
+        for instance in instances:
+            user = await session.get(User, instance.id)
+            assert user
+            assert isinstance(user.keywords[0], Keyword)
+            assert isinstance(user.user_keyword_associations[0], UserKeywordAssociation)

@@ -1,29 +1,22 @@
-from dataclasses import dataclass
 from datetime import datetime
 from decimal import Decimal
 from enum import Enum
-from typing import Any, Callable, Type
+from typing import Any, Callable
 from uuid import UUID
 
 import pytest
 from sqlalchemy import (
-    Boolean,
     Column,
-    DateTime,
-    ForeignKey,
     Integer,
     Numeric,
     String,
-    create_engine,
-    func,
     inspect,
     orm,
     select,
-    text,
     types,
 )
 from sqlalchemy.engine import Engine
-from sqlalchemy.ext.asyncio import AsyncEngine, AsyncSession, create_async_engine
+from sqlalchemy.ext.asyncio import AsyncEngine, AsyncSession, async_sessionmaker
 from sqlalchemy.ext.hybrid import hybrid_property
 from sqlalchemy.orm import Session
 from sqlalchemy.orm.decl_api import DeclarativeMeta, registry
@@ -32,65 +25,17 @@ from polyfactory.exceptions import ConfigurationException
 from polyfactory.factories.base import BaseFactory
 from polyfactory.factories.sqlalchemy_factory import SQLAlchemyFactory
 from polyfactory.fields import Ignore
-
-
-@pytest.fixture()
-def engine() -> Engine:
-    return create_engine("sqlite:///:memory:")
-
-
-@pytest.fixture()
-def async_engine() -> AsyncEngine:
-    return create_async_engine("sqlite+aiosqlite:///:memory:")
-
-
-async def create_tables(engine: AsyncEngine, base: Type) -> None:
-    async with engine.connect() as connection:
-        await connection.run_sync(base.metadata.create_all)
-
-
-_registry = registry()
-
-
-class Base(metaclass=DeclarativeMeta):
-    __abstract__ = True
-    __allow_unmapped__ = True
-
-    registry = _registry
-    metadata = _registry.metadata
-
-
-class Author(Base):
-    __tablename__ = "authors"
-
-    id: Any = Column(Integer(), primary_key=True)
-    books: Any = orm.relationship(
-        "Book",
-        collection_class=list,
-        uselist=True,
-        back_populates="author",
-    )
-
-
-class Book(Base):
-    __tablename__ = "books"
-
-    id: Any = Column(Integer(), primary_key=True)
-    author_id: Any = Column(
-        Integer(),
-        ForeignKey(Author.id),
-        nullable=False,
-    )
-    author: Any = orm.relationship(
-        Author,
-        uselist=False,
-        back_populates="books",
-    )
-
-
-@dataclass
-class NonSQLAchemyClass:
-    id: int
+from tests.sqlalchemy_factory.models import (
+    AsyncModel,
+    AsyncRefreshModel,
+    Author,
+    Base,
+    Book,
+    Department,
+    NonSQLAchemyClass,
+    User,
+    _registry,
+)
 
 
 @pytest.mark.parametrize(
@@ -320,36 +265,21 @@ def test_sync_persistence(engine: Engine, session_config: Callable[[Session], An
     ),
 )
 async def test_async_persistence(
-    async_engine: AsyncEngine,
+    async_session_maker: async_sessionmaker[AsyncSession],
     session_config: Callable[[AsyncSession], Any],
 ) -> None:
-    _registry = registry()
+    class Factory(SQLAlchemyFactory[AsyncModel]):
+        __async_session__ = session_config(async_session_maker())
+        __model__ = AsyncModel
 
-    class Base(metaclass=DeclarativeMeta):
-        __abstract__ = True
+    instance = await Factory.create_async()
+    batch_result = await Factory.create_batch_async(size=2)
+    assert len(batch_result) == 2
 
-        registry = _registry
-        metadata = _registry.metadata
-
-    class AsyncModel(Base):
-        __tablename__ = "table"
-
-        id: Any = Column(Integer(), primary_key=True)
-
-    await create_tables(async_engine, Base)
-
-    async with AsyncSession(async_engine) as session:
-
-        class Factory(SQLAlchemyFactory[AsyncModel]):
-            __async_session__ = session_config(session)
-            __model__ = AsyncModel
-
-        instance = await Factory.create_async()
+    async with async_session_maker.begin() as session:
         result = await session.scalar(select(AsyncModel).where(AsyncModel.id == instance.id))
         assert result
 
-        batch_result = await Factory.create_batch_async(size=2)
-        assert len(batch_result) == 2
         for batch_item in batch_result:
             result = await session.scalar(select(AsyncModel).where(AsyncModel.id == batch_item.id))
             assert result
@@ -363,39 +293,20 @@ async def test_async_persistence(
     ),
 )
 async def test_async_server_default_refresh(
-    async_engine: AsyncEngine,
+    async_session_maker: async_sessionmaker[AsyncSession],
     session_config: Callable[[AsyncSession], Any],
 ) -> None:
-    _registry = registry()
+    class Factory(SQLAlchemyFactory[AsyncRefreshModel]):
+        __async_session__ = session_config(async_session_maker())
+        __model__ = AsyncRefreshModel
+        test_datetime = Ignore()
+        test_str = Ignore()
+        test_int = Ignore()
+        test_bool = Ignore()
 
-    class Base(metaclass=DeclarativeMeta):
-        __abstract__ = True
+    instance = await Factory.create_async()
 
-        registry = _registry
-        metadata = _registry.metadata
-
-    class AsyncRefreshModel(Base):
-        __tablename__ = "server_default_test"
-
-        id: Any = Column(Integer(), primary_key=True)
-        test_datetime: Any = Column(DateTime(timezone=True), server_default=func.now(), nullable=False)
-        test_str: Any = Column(String, nullable=False, server_default=text("test_str"))
-        test_int: Any = Column(Integer, nullable=False, server_default=text("123"))
-        test_bool: Any = Column(Boolean, nullable=False, server_default=text("False"))
-
-    await create_tables(async_engine, Base)
-
-    async with AsyncSession(async_engine) as session:
-
-        class Factory(SQLAlchemyFactory[AsyncRefreshModel]):
-            __async_session__ = session_config(session)
-            __model__ = AsyncRefreshModel
-            test_datetime = Ignore()
-            test_str = Ignore()
-            test_int = Ignore()
-            test_bool = Ignore()
-
-        instance = await Factory.create_async()
+    async with async_session_maker.begin() as session:
         result = await session.scalar(select(AsyncRefreshModel).where(AsyncRefreshModel.id == instance.id))
         assert result
         assert result.test_datetime is not None
@@ -403,6 +314,35 @@ async def test_async_server_default_refresh(
         assert result.test_str == "test_str"
         assert result.test_int == 123
         assert result.test_bool is False
+
+
+async def test_async_coroutine_field(async_engine: AsyncEngine) -> None:
+    class UserFactory(SQLAlchemyFactory[User]): ...
+
+    class DepartmentFactory(SQLAlchemyFactory[Department]):
+        __set_foreign_keys__ = True
+
+        @classmethod
+        async def director_id(cls) -> int:
+            async with AsyncSession(async_engine) as session:
+                result = (await session.scalars(select(User.id))).all()
+                return cls.__random__.choice(result)
+
+    async with AsyncSession(async_engine) as session:
+        UserFactory.__async_session__ = session
+        await UserFactory.create_batch_async(5)
+
+    async with AsyncSession(async_engine) as session:
+        DepartmentFactory.__async_session__ = session
+        department = await DepartmentFactory.create_async()
+        user = await session.scalar(select(User).where(User.id == department.director_id))
+        assert isinstance(user, User)
+
+    async with AsyncSession(async_engine) as session:
+        departments = await DepartmentFactory.create_batch_async(3)
+        for department in departments:
+            user = await session.scalar(select(User).where(User.id == department.director_id))
+            assert isinstance(user, User)
 
 
 def test_alias() -> None:
