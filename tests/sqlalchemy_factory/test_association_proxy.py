@@ -1,7 +1,7 @@
 from sqlalchemy import (
     select,
 )
-from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker
+from sqlalchemy.ext.asyncio import AsyncEngine, AsyncSession
 
 from polyfactory.factories.sqlalchemy_factory import SQLAlchemyFactory
 from tests.sqlalchemy_factory.models import Keyword, User, UserKeywordAssociation
@@ -19,17 +19,17 @@ def test_association_proxy() -> None:
     assert isinstance(user.user_keyword_associations[0], UserKeywordAssociation)
 
 
-async def test_async_persistence(
-    async_session_maker: async_sessionmaker[AsyncSession],
-) -> None:
-    class AsyncUserFactory(SQLAlchemyFactory[User]):
-        __set_association_proxy__ = True
-        __async_session__ = async_session_maker()
+async def test_async_persistence(async_engine: AsyncEngine) -> None:
+    async with AsyncSession(async_engine) as session:
 
-    instance = await AsyncUserFactory.create_async()
-    instances = await AsyncUserFactory.create_batch_async(3)
+        class AsyncUserFactory(SQLAlchemyFactory[User]):
+            __set_association_proxy__ = True
+            __async_session__ = session
 
-    async with async_session_maker.begin() as session:
+        instance = await AsyncUserFactory.create_async()
+        instances = await AsyncUserFactory.create_batch_async(3)
+
+    async with AsyncSession(async_engine) as session:
         result = await session.scalars(select(User))
         assert len(result.all()) == 4
 

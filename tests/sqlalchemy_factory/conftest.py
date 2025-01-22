@@ -1,11 +1,9 @@
 from typing import AsyncIterator
 
 import pytest
-from sqlalchemy import (
-    create_engine,
-)
+from sqlalchemy import create_engine
 from sqlalchemy.engine import Engine
-from sqlalchemy.ext.asyncio import AsyncEngine, AsyncSession, async_sessionmaker, create_async_engine
+from sqlalchemy.ext.asyncio import AsyncEngine, create_async_engine
 
 from tests.sqlalchemy_factory.models import Base
 
@@ -18,11 +16,6 @@ def engine() -> Engine:
 @pytest.fixture()
 def async_engine() -> AsyncEngine:
     return create_async_engine("sqlite+aiosqlite:///:memory:")
-
-
-@pytest.fixture()
-def async_session_maker(async_engine: AsyncEngine) -> async_sessionmaker[AsyncSession]:
-    return async_sessionmaker(bind=async_engine, expire_on_commit=False)
 
 
 @pytest.fixture(autouse=True)

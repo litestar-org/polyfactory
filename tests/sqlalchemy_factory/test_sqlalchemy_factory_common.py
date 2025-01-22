@@ -16,7 +16,7 @@ from sqlalchemy import (
     types,
 )
 from sqlalchemy.engine import Engine
-from sqlalchemy.ext.asyncio import AsyncEngine, AsyncSession, async_sessionmaker
+from sqlalchemy.ext.asyncio import AsyncEngine, AsyncSession
 from sqlalchemy.ext.hybrid import hybrid_property
 from sqlalchemy.orm import Session
 from sqlalchemy.orm.decl_api import DeclarativeMeta, registry
@@ -191,6 +191,7 @@ def test_relationship_list_resolution() -> None:
         __set_relationships__ = True
 
     result = AuthorFactory.build()
+    assert result.books is not None
     assert isinstance(result.books, list)
     assert isinstance(result.books[0], Book)
 
@@ -265,18 +266,20 @@ def test_sync_persistence(engine: Engine, session_config: Callable[[Session], An
     ),
 )
 async def test_async_persistence(
-    async_session_maker: async_sessionmaker[AsyncSession],
+    async_engine: AsyncEngine,
     session_config: Callable[[AsyncSession], Any],
 ) -> None:
-    class Factory(SQLAlchemyFactory[AsyncModel]):
-        __async_session__ = session_config(async_session_maker())
-        __model__ = AsyncModel
+    async with AsyncSession(async_engine) as session:
 
-    instance = await Factory.create_async()
-    batch_result = await Factory.create_batch_async(size=2)
-    assert len(batch_result) == 2
+        class Factory(SQLAlchemyFactory[AsyncModel]):
+            __async_session__ = session_config(session)
+            __model__ = AsyncModel
 
-    async with async_session_maker.begin() as session:
+        instance = await Factory.create_async()
+        batch_result = await Factory.create_batch_async(size=2)
+        assert len(batch_result) == 2
+
+    async with AsyncSession(async_engine) as session:
         result = await session.scalar(select(AsyncModel).where(AsyncModel.id == instance.id))
         assert result
 
@@ -293,20 +296,22 @@ async def test_async_persistence(
     ),
 )
 async def test_async_server_default_refresh(
-    async_session_maker: async_sessionmaker[AsyncSession],
+    async_engine: AsyncEngine,
     session_config: Callable[[AsyncSession], Any],
 ) -> None:
-    class Factory(SQLAlchemyFactory[AsyncRefreshModel]):
-        __async_session__ = session_config(async_session_maker())
-        __model__ = AsyncRefreshModel
-        test_datetime = Ignore()
-        test_str = Ignore()
-        test_int = Ignore()
-        test_bool = Ignore()
+    async with AsyncSession(async_engine) as session:
 
-    instance = await Factory.create_async()
+        class Factory(SQLAlchemyFactory[AsyncRefreshModel]):
+            __async_session__ = session_config(session)
+            __model__ = AsyncRefreshModel
+            test_datetime = Ignore()
+            test_str = Ignore()
+            test_int = Ignore()
+            test_bool = Ignore()
 
-    async with async_session_maker.begin() as session:
+        instance = await Factory.create_async()
+
+    async with AsyncSession(async_engine) as session:
         result = await session.scalar(select(AsyncRefreshModel).where(AsyncRefreshModel.id == instance.id))
         assert result
         assert result.test_datetime is not None
