@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import copy
+import inspect
 from abc import ABC, abstractmethod
 from collections import Counter, abc, deque
 from contextlib import suppress
@@ -404,7 +405,9 @@ class BaseFactory(ABC, Generic[T]):
         :param annotation: A type annotation.
         :returns: Boolean dictating whether the annotation is a factory type
         """
-        return any(factory.is_supported_type(annotation) for factory in BaseFactory._base_factories)
+        return not inspect.isabstract(annotation) and any(
+            factory.is_supported_type(annotation) for factory in BaseFactory._base_factories
+        )
 
     @classmethod
     def is_batch_factory_type(cls, annotation: Any) -> bool:

@@ -258,7 +258,7 @@ def test_factory_use_construct() -> None:
     # factory should pass values without validation
     invalid_age = "non_valid_age"
     non_validated_pet = PetFactory.build(factory_use_construct=True, age=invalid_age)
-    assert non_validated_pet.age == invalid_age
+    assert non_validated_pet.age == invalid_age  # type: ignore[comparison-overlap]
 
     with pytest.raises(ValidationError):
         PetFactory.build(age=invalid_age)
