@@ -151,6 +151,7 @@ Thanks goes to these wonderful people ([emoji key](https://allcontributors.org/d
     <tr>
       <td align="center" valign="top" width="14.28%"><a href="https://github.com/Reskov"><img src="https://avatars.githubusercontent.com/u/4832451?v=4?s=100" width="100px;" alt="Sergey Kovalev"/><br /><sub><b>Sergey Kovalev</b></sub></a><br /><a href="https://github.com/litestar-org/polyfactory/commits?author=Reskov" title="Code">💻</a></td>
       <td align="center" valign="top" width="14.28%"><a href="https://github.com/Vegemash"><img src="https://avatars.githubusercontent.com/u/2470379?v=4?s=100" width="100px;" alt="Isaac Jackson"/><br /><sub><b>Isaac Jackson</b></sub></a><br /><a href="https://github.com/litestar-org/polyfactory/commits?author=Vegemash" title="Code">💻</a></td>
+      <td align="center" valign="top" width="14.28%"><a href="https://github.com/nisemenov"><img src="https://avatars.githubusercontent.com/u/117774141?v=4?s=100" width="100px;" alt="Nikita Semenov"/><br /><sub><b>Nikita Semenov</b></sub></a><br /><a href="https://github.com/litestar-org/polyfactory/commits?author=nisemenov" title="Code">💻</a> <a href="https://github.com/litestar-org/polyfactory/commits?author=nisemenov" title="Documentation">📖</a></td>
     </tr>
   </tbody>
 </table>

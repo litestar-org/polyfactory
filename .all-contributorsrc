@@ -427,6 +427,16 @@
       "contributions": [
         "code"
       ]
+    },
+    {
+      "login": "nisemenov",
+      "name": "Nikita Semenov",
+      "avatar_url": "https://avatars.githubusercontent.com/u/117774141?v=4",
+      "profile": "https://github.com/nisemenov",
+      "contributions": [
+        "code",
+        "doc"
+      ]
     }
   ],
   "contributorsPerLine": 7,
