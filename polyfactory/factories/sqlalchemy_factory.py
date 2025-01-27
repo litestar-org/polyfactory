@@ -128,8 +128,8 @@ class SQLAlchemyFactory(Generic[T], BaseFactory[T]):
                 "length": "max_length",
             },
             Numeric: {
-                "precision": "max_digits",
-                "scale": "decimal_places",
+                "precision": "precision",
+                "scale": "scale",
             },
         }
 
