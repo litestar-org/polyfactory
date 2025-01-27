@@ -608,6 +608,8 @@ class BaseFactory(ABC, Generic[T]):
                     ge=cast("Any", constraints.get("ge")),
                     lt=cast("Any", constraints.get("lt")),
                     le=cast("Any", constraints.get("le")),
+                    precision=cast("Any", constraints.get("precision")),
+                    scale=cast("Any", constraints.get("scale", 0)),
                 )
 
             if url_constraints := constraints.get("url"):
