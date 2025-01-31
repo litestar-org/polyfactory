@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from decimal import Decimal
+from decimal import ROUND_DOWN, Decimal, localcontext
 from sys import float_info
 from typing import TYPE_CHECKING, Any, Protocol, TypeVar, cast
 
@@ -135,6 +135,8 @@ def get_value_or_none(
     le: T | None = None,
     gt: T | None = None,
     ge: T | None = None,
+    max_digits: int | None = None,
+    decimal_places: int | None = None,
 ) -> tuple[T | None, T | None]:
     """Return an optional value.
 
@@ -157,6 +159,26 @@ def get_value_or_none(
         maximum_value = lt - get_increment(t_type)
     else:
         maximum_value = None
+
+    if max_digits is not None:
+        max_whole_digits = 10
+        whole_digits = max_digits - decimal_places if decimal_places is not None else max_digits
+        maximum = (
+            Decimal(10**whole_digits - 1) if whole_digits < max_whole_digits else Decimal(10**max_whole_digits - 1)
+        )
+        minimum = maximum * (-1)
+
+        if minimum_value is None or minimum_value < minimum:
+            minimum_value = t_type(minimum)
+        elif minimum_value > maximum:
+            msg = f"minimum value must be less than {maximum}"
+            raise ParameterException(msg)
+
+        if maximum_value is None or maximum_value > maximum:
+            maximum_value = t_type(maximum if maximum > 0 else Decimal(1))
+        elif maximum_value < minimum:
+            msg = f"maximum value must be greater than {minimum}"
+            raise ParameterException(msg)
     return minimum_value, maximum_value
 
 
@@ -168,6 +190,8 @@ def get_constrained_number_range(
     gt: T | None = None,
     ge: T | None = None,
     multiple_of: T | None = None,
+    max_digits: int | None = None,
+    decimal_places: int | None = None,
 ) -> tuple[T | None, T | None]:
     """Return the minimum and maximum values given a field_meta's constraints.
 
@@ -182,7 +206,9 @@ def get_constrained_number_range(
     :returns: a tuple of optional minimum and maximum values.
     """
     seed = t_type(random.random() * 10)
-    minimum, maximum = get_value_or_none(lt=lt, le=le, gt=gt, ge=ge, t_type=t_type)
+    minimum, maximum = get_value_or_none(
+        lt=lt, le=le, gt=gt, ge=ge, t_type=t_type, max_digits=max_digits, decimal_places=decimal_places
+    )
 
     if minimum is not None and maximum is not None and maximum < minimum:
         msg = "maximum value must be greater than minimum value"
@@ -317,7 +343,6 @@ def handle_constrained_float(
 
 def validate_max_digits(
     max_digits: int,
-    minimum: Decimal | None,
     decimal_places: int | None,
 ) -> None:
     """Validate that max digits is greater than minimum and decimal places.
@@ -333,15 +358,8 @@ def validate_max_digits(
         msg = "max_digits must be greater than 0"
         raise ParameterException(msg)
 
-    if minimum is not None:
-        min_str = str(minimum).split(".")[1] if "." in str(minimum) else str(minimum)
-
-        if max_digits <= len(min_str):
-            msg = "minimum is greater than max_digits"
-            raise ParameterException(msg)
-
-    if decimal_places is not None and max_digits <= decimal_places:
-        msg = "max_digits must be greater than decimal places"
+    if decimal_places is not None and max_digits < decimal_places:
+        msg = "max_digits must be greater or equal than decimal places"
         raise ParameterException(msg)
 
 
@@ -357,25 +375,18 @@ def handle_decimal_length(
     :param max_digits: Maximal number of digits.
 
     """
-    string_number = str(generated_decimal)
-    sign = "-" if "-" in string_number else "+"
-    string_number = string_number.replace("-", "")
-    whole_numbers, decimals = string_number.split(".")
-
-    if (max_digits is not None and decimal_places is not None and len(whole_numbers) + decimal_places > max_digits) or (
-        (max_digits is None or decimal_places is None) and max_digits is not None
-    ):
-        max_decimals = max_digits - len(whole_numbers)
-    elif max_digits is not None:
-        max_decimals = decimal_places  # type: ignore[assignment]
-    else:
-        max_decimals = cast("int", decimal_places)
-
-    if max_decimals < 0:  # pyright: ignore[reportOptionalOperand]
-        return Decimal(sign + whole_numbers[:max_decimals])
-
-    decimals = decimals[:max_decimals]
-    return Decimal(sign + whole_numbers + "." + decimals[:decimal_places])
+    with localcontext() as ctx:
+        ctx.rounding = ROUND_DOWN
+        list_decimal = str(generated_decimal).strip("-0").split(".")
+        decimal_parts = 2
+        if len(list_decimal) == decimal_parts:
+            whole, decimals = list_decimal
+            if decimal_places is not None and len(decimals) > decimal_places:
+                return round(generated_decimal, decimal_places)
+            if max_digits is not None and len(whole) + len(decimals) > max_digits:
+                max_decimals = max_digits - len(whole)
+                return round(generated_decimal, max_decimals)
+        return generated_decimal
 
 
 def handle_constrained_decimal(
@@ -402,6 +413,8 @@ def handle_constrained_decimal(
     :returns: A decimal.
 
     """
+    if max_digits is not None:
+        validate_max_digits(max_digits=max_digits, decimal_places=decimal_places)
 
     minimum, maximum = get_constrained_number_range(
         gt=gt,
@@ -409,12 +422,11 @@ def handle_constrained_decimal(
         lt=lt,
         le=le,
         multiple_of=multiple_of,
+        max_digits=max_digits,
+        decimal_places=decimal_places,
         t_type=Decimal,
         random=random,
     )
-
-    if max_digits is not None:
-        validate_max_digits(max_digits=max_digits, minimum=minimum, decimal_places=decimal_places)
 
     generated_decimal = generate_constrained_number(
         random=random,
@@ -424,11 +436,8 @@ def handle_constrained_decimal(
         method=create_random_decimal,
     )
 
-    if max_digits is not None or decimal_places is not None:
-        return handle_decimal_length(
-            generated_decimal=generated_decimal,
-            max_digits=max_digits,
-            decimal_places=decimal_places,
-        )
-
-    return generated_decimal
+    return handle_decimal_length(
+        generated_decimal=generated_decimal,
+        max_digits=max_digits,
+        decimal_places=decimal_places,
+    )
