@@ -202,6 +202,8 @@ def get_constrained_number_range(
     :param gt: Greater than value.
     :param ge: Greater than or equal value.
     :param multiple_of: Multiple of value.
+    :param decimal_places: Number of decimal places.
+    :param max_digits: Maximal number of digits.
 
     :returns: a tuple of optional minimum and maximum values.
     """
@@ -348,18 +350,17 @@ def validate_max_digits(
     """Validate that max digits is greater than minimum and decimal places.
 
     :param max_digits: The maximal number of digits for the decimal.
-    :param minimum: Minimal value.
     :param decimal_places: Number of decimal places
 
     :returns: 'None'
 
     """
     if max_digits <= 0:
-        msg = "max_digits must be greater than 0"
+        msg = "max_digits must be greater than 0 (for the SQL Numeric: the precision must be greater than 0)"
         raise ParameterException(msg)
 
     if decimal_places is not None and max_digits < decimal_places:
-        msg = "max_digits must be greater or equal than decimal places"
+        msg = "max_digits must be greater or equal than decimal places (for the SQL Numeric: the precision must be greater or equal than the scale)"
         raise ParameterException(msg)
 
 
