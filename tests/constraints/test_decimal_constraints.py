@@ -11,7 +11,6 @@ from pydantic import BaseModel, condecimal
 from polyfactory.exceptions import ParameterException
 from polyfactory.factories.pydantic_factory import ModelFactory
 from polyfactory.value_generators.constrained_numbers import (
-    generate_numeric_field_value,
     handle_constrained_decimal,
     handle_decimal_length,
     is_multiply_of_multiple_of_in_range,
@@ -426,38 +425,3 @@ def test_zero_to_one_range() -> None:
 
     assert result.fraction >= Decimal("0")
     assert result.fraction <= Decimal("1")
-
-
-@pytest.mark.parametrize(
-    ("precision", "scale"),
-    ((10, 5), (2, 1), (1, 1), (1, 0)),
-)
-def test_sql_numeric_value(precision: int, scale: int) -> None:
-    for _ in range(100):
-        value = generate_numeric_field_value(random=Random(), precision=precision, scale=scale)
-        non_fractionals = precision - scale
-        list_value = str(value).strip("-").split(".")
-        if scale:
-            left_digits, right_digits = list_value
-            assert len(list_value) == 2
-            assert len(right_digits) == scale
-        else:
-            left_digits = list_value[0]
-            assert len(list_value) == 1
-        assert len(left_digits) == non_fractionals or int(left_digits) == non_fractionals
-
-
-@pytest.mark.parametrize(
-    ("msg", "precision", "scale"),
-    (
-        ("The precision must be a positive integer.", -4, 5),
-        ("The scale must be in the range 0 to precision.", 4, -5),
-        ("The scale must be in the range 0 to precision.", 4, 5),
-    ),
-)
-def test_sql_numeric_value_with_error(msg: str, precision: int, scale: int) -> None:
-    with pytest.raises(
-        ParameterException,
-        match=msg,
-    ):
-        generate_numeric_field_value(random=Random(), precision=precision, scale=scale)

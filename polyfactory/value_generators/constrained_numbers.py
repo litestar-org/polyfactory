@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from decimal import ROUND_DOWN, Decimal, localcontext
+from decimal import Decimal
 from sys import float_info
 from typing import TYPE_CHECKING, Any, Protocol, TypeVar, cast
 
@@ -208,38 +208,6 @@ def get_constrained_number_range(
     return minimum, maximum
 
 
-def generate_numeric_field_value(
-    random: Random,
-    precision: int,
-    scale: int,
-) -> Decimal:
-    """Generate a random SQL standard NUMERIC field value conforming to the given precision and scale.
-
-    :param random: Random instance for reproducibility.
-    :param precision: Total number of significant digits (including fractional).
-    :param scale: Number of fractional digits.
-    :return: A random Decimal value within the valid range for the given precision and scale.
-    """
-    if precision < 0:
-        msg = "The precision must be a positive integer."
-        raise ParameterException(msg)
-    if scale < 0 or scale > precision:
-        msg = "The scale must be in the range 0 to precision."
-        raise ParameterException(msg)
-    with localcontext() as ctx:
-        ctx.rounding = ROUND_DOWN
-        non_fractional = precision - scale
-
-        if non_fractional == 0:
-            left_digits = 0
-        elif non_fractional == 1:
-            left_digits = random.randint(0, 9)
-        else:
-            left_digits = random.randint(10 ** (non_fractional - 1), 10**non_fractional - 1)
-        value = (left_digits + random.random()) * random.choice((-1, 1))
-        return round(Decimal(value), scale)
-
-
 def generate_constrained_number(
     random: Random,
     minimum: T | None,
@@ -419,8 +387,6 @@ def handle_constrained_decimal(
     ge: Decimal | None = None,
     lt: Decimal | None = None,
     le: Decimal | None = None,
-    precision: int | None = None,
-    scale: int = 0,
 ) -> Decimal:
     """Handle a constrained decimal.
 
@@ -436,8 +402,6 @@ def handle_constrained_decimal(
     :returns: A decimal.
 
     """
-    if precision:
-        return generate_numeric_field_value(random=random, precision=precision, scale=scale)
 
     minimum, maximum = get_constrained_number_range(
         gt=gt,
