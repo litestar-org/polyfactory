@@ -15,6 +15,7 @@ try:
     from sqlalchemy import ARRAY, Column, Numeric, String, inspect, types
     from sqlalchemy.dialects import mssql, mysql, postgresql, sqlite
     from sqlalchemy.exc import NoInspectionAvailable
+    from sqlalchemy.ext.associationproxy import AssociationProxy
     from sqlalchemy.orm import InstanceState, Mapper
 except ImportError as e:
     msg = "sqlalchemy is not installed"
@@ -78,6 +79,8 @@ class SQLAlchemyFactory(Generic[T], BaseFactory[T]):
     """Configuration to consider columns with foreign keys as a field or not."""
     __set_relationships__: ClassVar[bool] = False
     """Configuration to consider relationships property as a model field or not."""
+    __set_association_proxy__: ClassVar[bool] = False
+    """Configuration to consider AssociationProxy property as a model field or not."""
 
     __session__: ClassVar[Session | Callable[[], Session] | None] = None
     __async_session__: ClassVar[AsyncSession | Callable[[], AsyncSession] | None] = None
@@ -87,6 +90,7 @@ class SQLAlchemyFactory(Generic[T], BaseFactory[T]):
         "__set_primary_key__",
         "__set_foreign_keys__",
         "__set_relationships__",
+        "__set_association_proxy__",
     )
 
     @classmethod
@@ -215,6 +219,23 @@ class SQLAlchemyFactory(Generic[T], BaseFactory[T]):
                         random=cls.__random__,
                     ),
                 )
+        if cls.__set_association_proxy__:
+            for name, attr in table.all_orm_descriptors.items():
+                if isinstance(attr, AssociationProxy):
+                    target_collection = table.relationships.get(attr.target_collection)
+                    if target_collection:
+                        target_class = target_collection.entity.class_
+                        target_attr = getattr(target_class, attr.value_attr)
+                        if target_attr:
+                            class_ = target_attr.entity.class_
+                            annotation = class_ if not target_collection.uselist else List[class_]  # type: ignore[valid-type]
+                            fields_meta.append(
+                                FieldMeta.from_type(
+                                    name=name,
+                                    annotation=annotation,
+                                    random=cls.__random__,
+                                )
+                            )
 
         return fields_meta
 

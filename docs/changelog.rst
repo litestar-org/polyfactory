@@ -7,8 +7,85 @@ All commits to this project will be documented in this file.
 [unreleased]
 ------------
 
-`67c5720 <https://github.com/litestar-org/polyfactory/commit/67c57208de5ce993bdb2c7888864ac4e71964511>`_ is the last commit in the changelog before unreleased changes.
+`0290580 <https://github.com/litestar-org/polyfactory/commit/029058005ff9681f5b9f3e2adf2030dfb40d21d5>`_ is the last commit in the changelog before unreleased changes.
 
+
+Bug Fixes
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+* (`e1c5b8c <https://github.com/litestar-org/polyfactory/commit/e1c5b8c9f2c63604a3856937e772b4081c77ca90>`_)  - Lock PDM version to support 3.8 (#609)  by `@adhtruong <https://github.com/adhtruong>`_ in `#609 <https://github.com/litestar-org/polyfactory/pull/609>`_
+* (`f526601 <https://github.com/litestar-org/polyfactory/commit/f526601b080479963d431d36545c129be47ad161>`_)  - Pydantic 2.10 compatibility (#613)  by `@adhtruong <https://github.com/adhtruong>`_ in `#613 <https://github.com/litestar-org/polyfactory/pull/613>`_
+* (`1e0c847 <https://github.com/litestar-org/polyfactory/commit/1e0c847deb762a8305edaf03a6e0a2a1e86a266e>`_)  - Update security alert (#615)  by `@adhtruong <https://github.com/adhtruong>`_ in `#615 <https://github.com/litestar-org/polyfactory/pull/615>`_
+* (`135bbc0 <https://github.com/litestar-org/polyfactory/commit/135bbc03370212729350fd098b5d0a1cb227f388>`_)  - Ensure ABC are not considered a factory type (#628)  by `@adhtruong <https://github.com/adhtruong>`_ in `#628 <https://github.com/litestar-org/polyfactory/pull/628>`_
+* (`137bfb9 <https://github.com/litestar-org/polyfactory/commit/137bfb9cb4f50b4b4397949bbf80b86a52483029>`_)  - Added an async context manager in SQLAASyncPersistence (#630)  by `@nisemenov <https://github.com/nisemenov>`_ in `#630 <https://github.com/litestar-org/polyfactory/pull/630>`_
+
+Features
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+* (`42999fa <https://github.com/litestar-org/polyfactory/commit/42999fa015d70bae78ad67f7af160b6be2c2a90e>`_)  - Added __set_association_proxy__ attribute (#629)  by `@nisemenov <https://github.com/nisemenov>`_ in `#629 <https://github.com/litestar-org/polyfactory/pull/629>`_
+
+Miscellaneous Tasks
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+* (`d6a886a <https://github.com/litestar-org/polyfactory/commit/d6a886a4f3b33c77774e14ec190531128ce504c2>`_)  - Bump astral-sh/setup-uv from 4 to 5 (#622)  by `@dependabot[bot] <https://github.com/dependabot[bot]>`_ in `#622 <https://github.com/litestar-org/polyfactory/pull/622>`_
+* (`9db2ee7 <https://github.com/litestar-org/polyfactory/commit/9db2ee726592c8b24b853e5f1d9c22df016be5c3>`_)  - Bump dawidd6/action-download-artifact from 3 to 7 (#619)  by `@dependabot[bot] <https://github.com/dependabot[bot]>`_ in `#619 <https://github.com/litestar-org/polyfactory/pull/619>`_
+
+Refactor
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+* (`a7dda85 <https://github.com/litestar-org/polyfactory/commit/a7dda85319bcefa0df4aef9fc75e6c0813cd7596>`_)  - Update Pydantic imports (#625)  by `@adhtruong <https://github.com/adhtruong>`_ in `#625 <https://github.com/litestar-org/polyfactory/pull/625>`_
+
+Build
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+* (`9ee5852 <https://github.com/litestar-org/polyfactory/commit/9ee585214ea916751e48e36ac52dad6169d82519>`_)  - Update pre-commit dependencies (#614)  by `@adhtruong <https://github.com/adhtruong>`_ in `#614 <https://github.com/litestar-org/polyfactory/pull/614>`_
+* (`9fa4ad9 <https://github.com/litestar-org/polyfactory/commit/9fa4ad913dcbef60440f1c5022581ef352c7cceb>`_)  - Migrate to uv (#612)  by `@adhtruong <https://github.com/adhtruong>`_ in `#612 <https://github.com/litestar-org/polyfactory/pull/612>`_
+* (`d374de5 <https://github.com/litestar-org/polyfactory/commit/d374de52a6524a0eb3126483f6ea25812df59566>`_)  - Support 3.13 (#599)  by `@adhtruong <https://github.com/adhtruong>`_ in `#599 <https://github.com/litestar-org/polyfactory/pull/599>`_
+* (`d2ef554 <https://github.com/litestar-org/polyfactory/commit/d2ef5549a20da966a992f96145d2a46bd4f3d570>`_)  - Change deprecated action (#626)  by `@adhtruong <https://github.com/adhtruong>`_ in `#626 <https://github.com/litestar-org/polyfactory/pull/626>`_
+
+`Release [v2.18.1] - 2024-11-26 <https://github.com/litestar-org/polyfactory/releases/tag/v2.18.1>`_
+----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+* `See All commits in v2.18.1 <https://github.com/litestar-org/polyfactory/commits/v2.18.1>`_
+
+`f7b5d8b <https://github.com/litestar-org/polyfactory/commit/f7b5d8bb9410d40dc6073d9ca7f2cdec878bc419>`_ ... `0290580 <https://github.com/litestar-org/polyfactory/commit/029058005ff9681f5b9f3e2adf2030dfb40d21d5>`_ | `See diff for 2.18.1 <https://github.com/litestar-org/polyfactory/compare/f7b5d8bb9410d40dc6073d9ca7f2cdec878bc419...029058005ff9681f5b9f3e2adf2030dfb40d21d5>`_
+
+Bug Fixes
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+* (`660183b <https://github.com/litestar-org/polyfactory/commit/660183b5f90d4969576baa2be19a9cf70b3d0d1c>`_)  - Handle nullable SQLA constraints (#602)  by `@adhtruong <https://github.com/adhtruong>`_ in `#602 <https://github.com/litestar-org/polyfactory/pull/602>`_
+
+Miscellaneous Tasks
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+* (`0290580 <https://github.com/litestar-org/polyfactory/commit/029058005ff9681f5b9f3e2adf2030dfb40d21d5>`_)  - Bump release version (#608)  by `@adhtruong <https://github.com/adhtruong>`_ in `#608 <https://github.com/litestar-org/polyfactory/pull/608>`_
+
+`Release [v2.18.0] - 2024-11-06 <https://github.com/litestar-org/polyfactory/releases/tag/v2.18.0>`_
+----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+* `See All commits in v2.18.0 <https://github.com/litestar-org/polyfactory/commits/v2.18.0>`_
+
+`37a9894 <https://github.com/litestar-org/polyfactory/commit/37a9894a52c1188a927c8c9cb5b4485b73d062c3>`_ ... `f7b5d8b <https://github.com/litestar-org/polyfactory/commit/f7b5d8bb9410d40dc6073d9ca7f2cdec878bc419>`_ | `See diff for 2.18.0 <https://github.com/litestar-org/polyfactory/compare/37a9894a52c1188a927c8c9cb5b4485b73d062c3...f7b5d8bb9410d40dc6073d9ca7f2cdec878bc419>`_
+
+Bug Fixes
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+* (`c027bbd <https://github.com/litestar-org/polyfactory/commit/c027bbd1c1ff990e02c19cac7d67851c17853469>`_)  - Update docs preview upload (#597)  by `@adhtruong <https://github.com/adhtruong>`_ in `#597 <https://github.com/litestar-org/polyfactory/pull/597>`_
+* (`8d8f6a9 <https://github.com/litestar-org/polyfactory/commit/8d8f6a9b4b2ae525dc41539a88418aabdee1efd1>`_)  - Add SQLA async to test dependencies (#595)  by `@adhtruong <https://github.com/adhtruong>`_ in `#595 <https://github.com/litestar-org/polyfactory/pull/595>`_
+
+Features
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+* (`6abb845 <https://github.com/litestar-org/polyfactory/commit/6abb845ddcc673db3fac253a5084f4726f4f4263>`_)  - Handle SQLA column constraints (#594)  by `@adhtruong <https://github.com/adhtruong>`_ in `#594 <https://github.com/litestar-org/polyfactory/pull/594>`_
+
+Miscellaneous Tasks
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+* (`f7b5d8b <https://github.com/litestar-org/polyfactory/commit/f7b5d8bb9410d40dc6073d9ca7f2cdec878bc419>`_)  - Bump minor version  by `@guacs <https://github.com/guacs>`_
+
+`Release [v2.17.0] - 2024-09-22 <https://github.com/litestar-org/polyfactory/releases/tag/v2.17.0>`_
+----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+* `See All commits in v2.17.0 <https://github.com/litestar-org/polyfactory/commits/v2.17.0>`_
+
+`67c5720 <https://github.com/litestar-org/polyfactory/commit/67c57208de5ce993bdb2c7888864ac4e71964511>`_ ... `37a9894 <https://github.com/litestar-org/polyfactory/commit/37a9894a52c1188a927c8c9cb5b4485b73d062c3>`_ | `See diff for 2.17.0 <https://github.com/litestar-org/polyfactory/compare/67c57208de5ce993bdb2c7888864ac4e71964511...37a9894a52c1188a927c8c9cb5b4485b73d062c3>`_
 
 Bug Fixes
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -29,6 +106,11 @@ Features
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 * (`c0c2704 <https://github.com/litestar-org/polyfactory/commit/c0c27049afc9dd60395d5dd087f47ee700e1a6a7>`_)  - Enhance register_fixture return type annotation (#581)  by `@giulioindev <https://github.com/giulioindev>`_ in `#581 <https://github.com/litestar-org/polyfactory/pull/581>`_
+
+Miscellaneous Tasks
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+* (`37a9894 <https://github.com/litestar-org/polyfactory/commit/37a9894a52c1188a927c8c9cb5b4485b73d062c3>`_)  - Bump release version (#588)  by `@adhtruong <https://github.com/adhtruong>`_ in `#588 <https://github.com/litestar-org/polyfactory/pull/588>`_
 
 Build
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
