@@ -1,8 +1,9 @@
 from __future__ import annotations
 
 from decimal import Decimal
+from math import ceil, floor, frexp
 from sys import float_info
-from typing import TYPE_CHECKING, Any, Protocol, TypeVar, cast
+from typing import TYPE_CHECKING, Protocol, TypeVar, cast
 
 from polyfactory.exceptions import ParameterException
 from polyfactory.value_generators.primitives import create_random_decimal, create_random_float, create_random_integer
@@ -99,8 +100,8 @@ def is_multiply_of_multiple_of_in_range(
     return False
 
 
-def passes_pydantic_multiple_validator(value: T, multiple_of: T) -> bool:
-    """Determine whether a given value passes the pydantic multiple_of validation.
+def is_almost_multiple_of(value: T, multiple_of: T) -> bool:
+    """Determine whether a given ``value`` is a close enough to a multiple of ``multiple_of``.
 
     :param value: A numeric value.
     :param multiple_of: Another numeric value.
@@ -110,23 +111,37 @@ def passes_pydantic_multiple_validator(value: T, multiple_of: T) -> bool:
     """
     if multiple_of == 0:
         return True
-    mod = float(value) / float(multiple_of) % 1
-    return almost_equal_floats(mod, 0.0) or almost_equal_floats(mod, 1.0)
+    mod = value % multiple_of
+    return almost_equal_floats(float(mod), 0.0) or almost_equal_floats(float(abs(mod)), float(abs(multiple_of)))
 
 
-def get_increment(t_type: type[T]) -> T:
+def get_increment(value: T, t_type: type[T]) -> T:
     """Get a small increment base to add to constrained values, i.e. lt/gt entries.
 
-    :param t_type: A value of type T.
+    :param value: A value of type T.
+    :param t_type: The type of ``value``.
 
     :returns: An increment T.
     """
-    values: dict[Any, Any] = {
-        int: 1,
-        float: float_info.epsilon,
-        Decimal: Decimal("0.001"),
-    }
-    return cast("T", values[t_type])
+    # See https://github.com/python/mypy/issues/17045 for why the redundant casts are ignored.
+    if t_type == int:
+        return cast("T", 1)
+    if t_type == float:
+        # When ``value`` is large in magnitude, we need to choose an increment that is large enough
+        # to not be rounded away, but when ``value`` small in magnitude, we need to prevent the
+        # incerement from vanishing. ``float_info.epsilon`` is defined as the smallest delta that
+        # can be represented between 1.0 and the next largest number, but it's not sufficient for
+        # larger values. We instead open up the floating-point representation to grab the exponent
+        # and calculate our own increment. This can be replaced with ``math.ulp`` in Python 3.9 and
+        # later.
+        _, exp = frexp(value)
+        increment = float_info.radix ** (exp - float_info.mant_dig + 1)
+        return cast("T", max(increment, float_info.epsilon))
+    if t_type == Decimal:
+        return cast("T", Decimal("0.001"))  # type: ignore[redundant-cast]
+
+    msg = f"invalid t_type: {t_type}"
+    raise AssertionError(msg)
 
 
 def get_value_or_none(
@@ -147,14 +162,14 @@ def get_value_or_none(
     if ge is not None:
         minimum_value = ge
     elif gt is not None:
-        minimum_value = gt + get_increment(t_type)
+        minimum_value = gt + get_increment(gt, t_type)
     else:
         minimum_value = None
 
     if le is not None:
         maximum_value = le
     elif lt is not None:
-        maximum_value = lt - get_increment(t_type)
+        maximum_value = lt - get_increment(lt, t_type)
     else:
         maximum_value = None
     return minimum_value, maximum_value
@@ -208,33 +223,36 @@ def get_constrained_number_range(
     return minimum, maximum
 
 
-def generate_constrained_number(
+def generate_constrained_multiple_of(
     random: Random,
     minimum: T | None,
     maximum: T | None,
-    multiple_of: T | None,
-    method: "NumberGeneratorProtocol[T]",
+    multiple_of: T,
 ) -> T:
-    """Generate a constrained number, output depends on the passed in callbacks.
+    """Generate a constrained multiple of ``multiple_of``.
 
     :param random: An instance of random.
     :param minimum: A minimum value.
     :param maximum: A maximum value.
     :param multiple_of: A multiple of value.
-    :param method: A function that generates numbers of type T.
 
     :returns: A value of type T.
     """
-    if minimum is None or maximum is None:
-        return multiple_of if multiple_of is not None else method(random=random)
-    if multiple_of is None:
-        return method(random=random, minimum=minimum, maximum=maximum)
-    if multiple_of >= minimum:
-        return multiple_of
-    result = minimum
-    while not passes_pydantic_multiple_validator(result, multiple_of):
-        result = round(method(random=random, minimum=minimum, maximum=maximum) / multiple_of) * multiple_of
-    return result
+
+    # Regardless of the type of ``multiple_of``, we can generate a valid multiple of it by
+    # multiplying it with any integer, which we call a multiplier. We will randomly generate the
+    # multiplier as a random integer, but we need to translate the original bounds, if any, to the
+    # correct bounds on the multiplier so that the resulting product will meet the original
+    # constraints.
+
+    if multiple_of < 0:
+        minimum, maximum = maximum, minimum
+
+    multiplier_min = ceil(minimum / multiple_of) if minimum is not None else None
+    multiplier_max = floor(maximum / multiple_of) if maximum is not None else None
+    multiplier = create_random_integer(random=random, minimum=multiplier_min, maximum=multiplier_max)
+
+    return multiplier * multiple_of
 
 
 def handle_constrained_int(
@@ -267,13 +285,11 @@ def handle_constrained_int(
         multiple_of=multiple_of,
         random=random,
     )
-    return generate_constrained_number(
-        random=random,
-        minimum=minimum,
-        maximum=maximum,
-        multiple_of=multiple_of,
-        method=create_random_integer,
-    )
+
+    if multiple_of is None:
+        return create_random_integer(random=random, minimum=minimum, maximum=maximum)
+
+    return generate_constrained_multiple_of(random=random, minimum=minimum, maximum=maximum, multiple_of=multiple_of)
 
 
 def handle_constrained_float(
@@ -306,13 +322,10 @@ def handle_constrained_float(
         random=random,
     )
 
-    return generate_constrained_number(
-        random=random,
-        minimum=minimum,
-        maximum=maximum,
-        multiple_of=multiple_of,
-        method=create_random_float,
-    )
+    if multiple_of is None:
+        return create_random_float(random=random, minimum=minimum, maximum=maximum)
+
+    return generate_constrained_multiple_of(random=random, minimum=minimum, maximum=maximum, multiple_of=multiple_of)
 
 
 def validate_max_digits(
@@ -416,13 +429,15 @@ def handle_constrained_decimal(
     if max_digits is not None:
         validate_max_digits(max_digits=max_digits, minimum=minimum, decimal_places=decimal_places)
 
-    generated_decimal = generate_constrained_number(
-        random=random,
-        minimum=minimum,
-        maximum=maximum,
-        multiple_of=multiple_of,
-        method=create_random_decimal,
-    )
+    if multiple_of is None:
+        generated_decimal = create_random_decimal(random=random, minimum=minimum, maximum=maximum)
+    else:
+        generated_decimal = generate_constrained_multiple_of(
+            random=random,
+            minimum=minimum,
+            maximum=maximum,
+            multiple_of=multiple_of,
+        )
 
     if max_digits is not None or decimal_places is not None:
         return handle_decimal_length(
