@@ -175,6 +175,8 @@ class SQLAlchemyFactory(Generic[T], BaseFactory[T]):
             for sqlalchemy_field, constraint_field in constraint_fields.items():
                 if (value := getattr(type_engine, sqlalchemy_field, None)) is not None:
                     constraints[constraint_field] = value  # type: ignore[literal-required]
+                if sqlalchemy_field == "precision":
+                    constraints.setdefault("decimal_places", 0)
         if constraints:
             annotation = Annotated[annotation, Frozendict(constraints)]  # type: ignore[assignment]
 
