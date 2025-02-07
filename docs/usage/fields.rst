@@ -79,10 +79,27 @@ callable should be: ``name: str, values: dict[str, Any], *args, **defaults``. Th
 name in the values dictionary.
 
 Factories as Fields
----------------------------
+-------------------
 
 Factories themselves can be used as fields. In this usage, build parameters will be passed to the declared factory.
 
 .. literalinclude:: /examples/fields/test_example_8.py
     :caption: Using a factory as a field
+    :language: python
+
+The Coroutine type field
+------------------------
+
+Any `coroutine <https://docs.python.org/3/library/collections.abc.html#collections.abc.Coroutine>`_ type instances can be used as a factory field (e.g. an explicit call from the database via ORM).
+
+SQLAlchemy example
+++++++++++++++++++
+
+.. literalinclude:: /examples/fields/test_example_sqla_coroutine.py
+    :language: python
+
+Beanie example
+++++++++++++++
+
+.. literalinclude:: /examples/fields/test_example_beanie_coroutine.py
     :language: python

@@ -1,6 +1,4 @@
-from sqlalchemy import (
-    select,
-)
+from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncEngine, AsyncSession
 
 from polyfactory.factories.sqlalchemy_factory import SQLAlchemyFactory
