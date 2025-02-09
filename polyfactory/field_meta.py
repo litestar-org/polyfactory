@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from dataclasses import asdict, is_dataclass
-from typing import TYPE_CHECKING, Any, Literal, Mapping, Pattern, TypedDict, cast
+from typing import TYPE_CHECKING, Any, Hashable, Literal, Mapping, Pattern, TypedDict, cast
 
 from typing_extensions import get_args, get_origin
 
@@ -93,7 +93,10 @@ class FieldMeta:
 
         :returns: a tuple of types.
         """
-        return tuple(TYPE_MAPPING.get(arg, arg) for arg in get_args(self.annotation))
+        return tuple(
+            TYPE_MAPPING.get(arg, arg) if isinstance(arg, Hashable) else arg  # pyright: ignore[reportCallIssue,reportArgumentType]
+            for arg in get_args(self.annotation)
+        )
 
     @classmethod
     def from_type(
