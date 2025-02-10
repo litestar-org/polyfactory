@@ -1,7 +1,5 @@
 from __future__ import annotations
 
-import asyncio
-import concurrent.futures
 import copy
 import inspect
 from abc import ABC, abstractmethod
@@ -45,6 +43,7 @@ from typing import (
 )
 from uuid import UUID
 
+from anyio.from_thread import start_blocking_portal
 from faker import Faker
 from typing_extensions import get_args, get_origin, get_original_bases
 
@@ -454,16 +453,18 @@ class BaseFactory(ABC, Generic[T]):
         )
 
     @classmethod
-    def _run_coroutine_sync(cls, field_value: Any) -> Any:
+    def _run_coroutine_sync(cls, coroutine_field: Coroutine) -> Any:
         """This method ensures that a coroutine field is executed within a new asynchronous event loop.
 
-        :param field_value: A coroutine type field value.
+        :param coroutine_field: A coroutine type field value.
         :returns: The result of execution the provided coroutine.
         """
-        loop = asyncio.new_event_loop()
-        with concurrent.futures.ThreadPoolExecutor() as executor:
-            future = executor.submit(loop.run_until_complete, field_value)
-            return future.result()
+
+        async def await_coroutine(coroutine_field: Coroutine) -> Any:
+            return await coroutine_field
+
+        with start_blocking_portal() as portal:
+            return portal.call(await_coroutine, coroutine_field)
 
     # Public Methods
 

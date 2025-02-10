@@ -58,6 +58,7 @@ repos:
         exclude: "tests"
         additional_dependencies:
           [
+            anyio>=3,
             attrs>=22.2.0,
             beanie,
             faker,
