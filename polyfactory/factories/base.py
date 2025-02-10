@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+import asyncio
+import concurrent.futures
 import copy
 import inspect
 from abc import ABC, abstractmethod
@@ -450,6 +452,18 @@ class BaseFactory(ABC, Generic[T]):
             field_build_parameters=field_build_parameters,
             build_context=build_context,
         )
+
+    @classmethod
+    def _run_coroutine_sync(cls, field_value: Any) -> Any:
+        """This method ensures that a coroutine field is executed within a new asynchronous event loop.
+
+        :param field_value: A coroutine type field value.
+        :returns: The result of execution the provided coroutine.
+        """
+        loop = asyncio.new_event_loop()
+        with concurrent.futures.ThreadPoolExecutor() as executor:
+            future = executor.submit(loop.run_until_complete, field_value)
+            return future.result()
 
     # Public Methods
 
@@ -1043,49 +1057,8 @@ class BaseFactory(ABC, Generic[T]):
                         build_context=_build_context,
                     )
                     if field_value is not None:
-                        result[field_meta.name] = field_value
-                    continue
-
-                field_result = cls.get_field_value(
-                    field_meta,
-                    field_build_parameters=field_build_parameters,
-                    build_context=_build_context,
-                )
-                if field_result is Null:
-                    continue
-
-                result[field_meta.name] = field_result
-
-        for field_name, post_generator in generate_post.items():
-            result[field_name] = post_generator.to_value(field_name, result)
-
-        return result
-
-    @classmethod
-    async def async_process_kwargs(cls, **kwargs: Any) -> dict[str, Any]:
-        """Process the given kwargs and generate values for the factory's model.
-
-        :param kwargs: Any build kwargs.
-
-        :returns: A dictionary of build results.
-
-        """
-        result, generate_post, _build_context = cls._get_initial_variables(kwargs)
-
-        for field_meta in cls.get_model_fields():
-            field_build_parameters = cls.extract_field_build_parameters(field_meta=field_meta, build_args=kwargs)
-            if cls.should_set_field_value(field_meta, **kwargs) and not cls.should_use_default_value(field_meta):
-                if hasattr(cls, field_meta.name) and not hasattr(BaseFactory, field_meta.name):
-                    field_value = cls._check_special_field(
-                        field_meta=field_meta,
-                        result=result,
-                        generate_post=generate_post,
-                        field_build_parameters=field_build_parameters,
-                        build_context=_build_context,
-                    )
-                    if field_value is not None:
                         if isinstance(field_value, Coroutine):
-                            field_value = await field_value
+                            field_value = cls._run_coroutine_sync(field_value)
                         result[field_meta.name] = field_value
                     continue
 
@@ -1165,19 +1138,8 @@ class BaseFactory(ABC, Generic[T]):
         return cast("T", cls.__model__(**cls.process_kwargs(**kwargs)))
 
     @classmethod
-    async def build_async(cls, **kwargs: Any) -> T:
-        """Build asynchronously an instance of the factory's __model__
-
-        :param kwargs: Any kwargs. If field names are set in kwargs, their values will be used.
-
-        :returns: An instance of type T.
-
-        """
-        return cast("T", cls.__model__(**await cls.async_process_kwargs(**kwargs)))
-
-    @classmethod
     def batch(cls, size: int, **kwargs: Any) -> list[T]:
-        """Build synchronously a batch of size n of the factory's Meta.model.
+        """Build a batch of size n of the factory's Meta.model.
 
         :param size: Size of the batch.
         :param kwargs: Any kwargs. If field_meta names are set in kwargs, their values will be used.
@@ -1186,18 +1148,6 @@ class BaseFactory(ABC, Generic[T]):
 
         """
         return [cls.build(**kwargs) for _ in range(size)]
-
-    @classmethod
-    async def batch_async(cls, size: int, **kwargs: Any) -> list[T]:
-        """Build asynchronously a batch of size n of the factory's Meta.model.
-
-        :param size: Size of the batch.
-        :param kwargs: Any kwargs. If field_meta names are set in kwargs, their values will be used.
-
-        :returns: A list of instances of type T.
-
-        """
-        return [await cls.build_async(**kwargs) for _ in range(size)]
 
     @classmethod
     def coverage(cls, **kwargs: Any) -> abc.Iterator[T]:
@@ -1243,7 +1193,7 @@ class BaseFactory(ABC, Generic[T]):
 
         :returns: An instance of type T.
         """
-        return await cls._get_async_persistence().save(data=await cls.build_async(**kwargs))
+        return await cls._get_async_persistence().save(data=cls.build(**kwargs))
 
     @classmethod
     async def create_batch_async(cls, size: int, **kwargs: Any) -> list[T]:
@@ -1255,7 +1205,7 @@ class BaseFactory(ABC, Generic[T]):
 
         :returns: A list of instances of type T.
         """
-        return await cls._get_async_persistence().save_many(data=await cls.batch_async(size, **kwargs))
+        return await cls._get_async_persistence().save_many(data=cls.batch(size, **kwargs))
 
 
 def _register_builtin_factories() -> None:
