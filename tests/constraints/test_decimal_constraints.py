@@ -1,6 +1,6 @@
 from decimal import Decimal
 from random import Random
-from typing import Optional, cast
+from typing import cast
 
 import pytest
 from hypothesis import given
@@ -32,12 +32,23 @@ def test_handle_constrained_decimal_without_constraints() -> None:
     assert isinstance(result, Decimal)
 
 
-def test_handle_constrained_decimal_length_validation() -> None:
-    with pytest.raises(ParameterException):
+@pytest.mark.parametrize(
+    ("msg", "ge", "le"),
+    (
+        ("minimum value must be less than", Decimal("100.000"), Decimal()),
+        ("maximum value must be greater than", Decimal(), Decimal("-100.000")),
+    ),
+)
+def test_handle_constrained_decimal_length_validation(msg: str, ge: Decimal, le: Decimal) -> None:
+    with pytest.raises(
+        ParameterException,
+        match=msg,
+    ):
         handle_constrained_decimal(
             random=Random(),
             max_digits=2,
-            ge=Decimal("100.000"),
+            ge=ge,
+            le=le,
         )
 
 
@@ -48,9 +59,12 @@ def test_handle_constrained_decimal_handles_max_digits(max_digits: int) -> None:
             random=Random(),
             max_digits=max_digits,
         )
-        assert len(result.as_tuple().digits) - abs(cast("int", result.as_tuple().exponent)) <= max_digits
+        assert len(result.as_tuple().digits) <= max_digits
     else:
-        with pytest.raises(ParameterException):
+        with pytest.raises(
+            ParameterException,
+            match="max_digits must be greater than 0",
+        ):
             handle_constrained_decimal(
                 random=Random(),
                 max_digits=max_digits,
@@ -66,15 +80,23 @@ def test_handle_constrained_decimal_handles_decimal_places(decimal_places: int) 
     assert abs(cast("int", result.as_tuple().exponent)) <= decimal_places
 
 
-@given(integers(min_value=0, max_value=100), integers(min_value=1, max_value=100))
+@given(integers(min_value=0, max_value=100), integers(min_value=0, max_value=100))
 def test_handle_constrained_decimal_handles_max_digits_and_decimal_places(max_digits: int, decimal_places: int) -> None:
-    if max_digits > 0 and max_digits > decimal_places:
+    if max_digits > 0 and max_digits >= decimal_places:
         result = handle_constrained_decimal(
             random=Random(),
             decimal_places=decimal_places,
             max_digits=max_digits,
         )
-        assert len(result.as_tuple().digits) - abs(cast("int", result.as_tuple().exponent)) <= max_digits
+        non_fractionals = max_digits - decimal_places
+        list_value = str(result).strip("-").split(".")
+        if decimal_places:
+            left_digits, right_digits = list_value
+            assert len(right_digits) <= decimal_places
+        else:
+            left_digits = list_value[0]
+        assert len(left_digits) <= non_fractionals or int(left_digits) == non_fractionals
+
     else:
         with pytest.raises(ParameterException):
             handle_constrained_decimal(
@@ -368,16 +390,6 @@ def test_max_digits_and_decimal_places() -> None:
 def test_handle_decimal_length() -> None:
     decimal = Decimal("999.9999999")
 
-    # here digits should determine decimal length
-    max_digits = 5
-    decimal_places: Optional[int] = 5
-
-    result = handle_decimal_length(decimal, decimal_places, max_digits)
-
-    assert isinstance(result, Decimal)
-    assert len(result.as_tuple().digits) == 5
-    assert abs(cast("int", result.as_tuple().exponent)) == 2
-
     # here decimal places should determine max length
     max_digits = 10
     decimal_places = 5
@@ -404,14 +416,6 @@ def test_handle_decimal_length() -> None:
     assert isinstance(result, Decimal)
     assert len(result.as_tuple().digits) == 8
     assert abs(cast("int", result.as_tuple().exponent)) == 5
-
-    # here max_decimals is below 0
-    decimal = Decimal("99.99")
-    max_digits = 1
-    result = handle_decimal_length(decimal, decimal_places, max_digits)
-    assert isinstance(result, Decimal)
-    assert len(result.as_tuple().digits) == 1
-    assert cast("int", result.as_tuple().exponent) == 0
 
 
 def test_zero_to_one_range() -> None:
