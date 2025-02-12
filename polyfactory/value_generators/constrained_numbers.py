@@ -346,12 +346,13 @@ def handle_constrained_float(
 
 def validate_max_digits(
     max_digits: int,
+    minimum: Decimal | None,
     decimal_places: int | None,
-    minimum: Decimal | None = None,
 ) -> None:
     """Validate that max digits is greater than minimum and decimal places.
 
     :param max_digits: The maximal number of digits for the decimal.
+    :param minimum: Minimal value.
     :param decimal_places: Number of decimal places
 
     :returns: 'None'
@@ -418,9 +419,6 @@ def handle_constrained_decimal(
     :returns: A decimal.
 
     """
-    if max_digits is not None:
-        validate_max_digits(max_digits=max_digits, decimal_places=decimal_places)
-
     minimum, maximum = get_constrained_number_range(
         gt=gt,
         ge=ge,
@@ -432,6 +430,9 @@ def handle_constrained_decimal(
         t_type=Decimal,
         random=random,
     )
+
+    if max_digits is not None:
+        validate_max_digits(max_digits=max_digits, minimum=minimum, decimal_places=decimal_places)
 
     generated_decimal = generate_constrained_number(
         random=random,
