@@ -40,7 +40,7 @@ readme = "docs/PYPI_README.md"
 license = {text = "MIT"}
 requires-python = ">=3.8,<4.0"
 dependencies = [
-    "faker",
+    "faker>=5.0.0",
     "typing-extensions>=4.6.0",
 ]
 
