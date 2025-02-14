@@ -79,10 +79,20 @@ callable should be: ``name: str, values: dict[str, Any], *args, **defaults``. Th
 name in the values dictionary.
 
 Factories as Fields
----------------------------
+-------------------
 
 Factories themselves can be used as fields. In this usage, build parameters will be passed to the declared factory.
 
 .. literalinclude:: /examples/fields/test_example_8.py
     :caption: Using a factory as a field
     :language: python
+
+Handling Asynchronous Data in Factory Fields
+--------------------------------------------
+
+If you need to populate a factory field with data pre-fetched asynchronously (e.g., from a database using an ORM like SQLAlchemy or Beanie), the recommended approach is to handle the asynchronous call outside the factory and pass the resolved value as a regular argument.
+
+.. literalinclude:: /examples/fields/test_example_sqla_pre_fetched_data.py
+    :caption: SQLAlchemy example
+    :language: python
+    :emphasize-lines: 34-37, 51

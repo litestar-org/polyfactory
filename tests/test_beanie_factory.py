@@ -1,5 +1,5 @@
 from sys import version_info
-from typing import Callable, List
+from typing import List
 
 import pymongo
 import pytest
@@ -46,19 +46,19 @@ class MyOtherFactory(BeanieDocumentFactory):
     __model__ = MyOtherDocument
 
 
-@pytest.fixture()
+@pytest.fixture(autouse=True)
 async def beanie_init(mongo_connection: AsyncMongoMockClient) -> None:
     await init_beanie(database=mongo_connection.db_name, document_models=[MyDocument, MyOtherDocument])
 
 
-async def test_handling_of_beanie_types(beanie_init: Callable) -> None:
+async def test_handling_of_beanie_types() -> None:
     result = MyFactory.build()
     assert result.name
     assert result.index
     assert isinstance(result.index, str)
 
 
-async def test_beanie_persistence_of_single_instance(beanie_init: Callable) -> None:
+async def test_beanie_persistence_of_single_instance() -> None:
     result = await MyFactory.create_async()
     assert result.id
     assert result.name
@@ -66,7 +66,7 @@ async def test_beanie_persistence_of_single_instance(beanie_init: Callable) -> N
     assert isinstance(result.index, str)
 
 
-async def test_beanie_persistence_of_multiple_instances(beanie_init: Callable) -> None:
+async def test_beanie_persistence_of_multiple_instances() -> None:
     result = await MyFactory.create_batch_async(size=3)
     assert len(result) == 3
     for instance in result:
@@ -77,6 +77,6 @@ async def test_beanie_persistence_of_multiple_instances(beanie_init: Callable) -
 
 
 @pytest.mark.skipif(version_info < (3, 11), reason="test isolation issues on lower versions")
-async def test_beanie_links(beanie_init: Callable) -> None:
+async def test_beanie_links() -> None:
     result = await MyOtherFactory.create_async()
     assert isinstance(result.document, MyDocument)
