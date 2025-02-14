@@ -16,7 +16,6 @@ class User(Base):
     __tablename__ = "users"
 
     id: Mapped[int] = mapped_column(primary_key=True)
-    name: Mapped[str]
 
 
 class Department(Base):
@@ -29,12 +28,13 @@ class Department(Base):
 class UserFactory(SQLAlchemyFactory[User]): ...
 
 
-class DepartmentFactory(SQLAlchemyFactory[Department]):
-    @classmethod
-    async def director_id(cls) -> int:
-        async with AsyncSession(async_engine) as session:
-            result = (await session.scalars(select(User.id))).all()
-            return cls.__random__.choice(result)
+class DepartmentFactory(SQLAlchemyFactory[Department]): ...
+
+
+async def get_director_ids() -> int:
+    async with AsyncSession(async_engine) as session:
+        result = (await session.scalars(select(User.id))).all()
+        return UserFactory.__random__.choice(result)
 
 
 async def test_async_coroutine_field() -> None:
@@ -48,6 +48,6 @@ async def test_async_coroutine_field() -> None:
 
     async with AsyncSession(async_engine) as session:
         DepartmentFactory.__async_session__ = session
-        department = await DepartmentFactory.create_async()
+        department = await DepartmentFactory.create_async(director_id=await get_director_ids())
         user = await session.scalar(select(User).where(User.id == department.director_id))
         assert isinstance(user, User)

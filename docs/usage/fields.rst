@@ -87,19 +87,12 @@ Factories themselves can be used as fields. In this usage, build parameters will
     :caption: Using a factory as a field
     :language: python
 
-The Coroutine type field
-------------------------
+Handling Asynchronous Data in Factory Fields
+--------------------------------------------
 
-Any `coroutine <https://docs.python.org/3/library/collections.abc.html#collections.abc.Coroutine>`_ type instances can be used as a factory field (e.g. an explicit call from the database via ORM).
+If you need to populate a factory field with data pre-fetched asynchronously (e.g., from a database using an ORM like SQLAlchemy or Beanie), the recommended approach is to handle the asynchronous call outside the factory and pass the resolved value as a regular argument.
 
-SQLAlchemy example
-++++++++++++++++++
-
-.. literalinclude:: /examples/fields/test_example_sqla_coroutine.py
+.. literalinclude:: /examples/fields/test_example_sqla_pre_fetched_data.py
+    :caption: SQLAlchemy example
     :language: python
-
-Beanie example
-++++++++++++++
-
-.. literalinclude:: /examples/fields/test_example_beanie_coroutine.py
-    :language: python
+    :emphasize-lines: 34-37, 51
