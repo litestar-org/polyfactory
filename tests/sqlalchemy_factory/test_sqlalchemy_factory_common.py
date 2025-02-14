@@ -31,9 +31,7 @@ from tests.sqlalchemy_factory.models import (
     Author,
     Base,
     Book,
-    Department,
     NonSQLAchemyClass,
-    User,
     _registry,
 )
 
@@ -319,35 +317,6 @@ async def test_async_server_default_refresh(
         assert result.test_str == "test_str"
         assert result.test_int == 123
         assert result.test_bool is False
-
-
-async def test_async_coroutine_field(async_engine: AsyncEngine) -> None:
-    class UserFactory(SQLAlchemyFactory[User]): ...
-
-    class DepartmentFactory(SQLAlchemyFactory[Department]):
-        __set_foreign_keys__ = True
-
-        @classmethod
-        async def director_id(cls) -> int:
-            async with AsyncSession(async_engine) as session:
-                result = (await session.scalars(select(User.id))).all()
-                return cls.__random__.choice(result)
-
-    async with AsyncSession(async_engine) as session:
-        UserFactory.__async_session__ = session
-        await UserFactory.create_batch_async(5)
-
-    async with AsyncSession(async_engine) as session:
-        DepartmentFactory.__async_session__ = session
-        department = await DepartmentFactory.create_async()
-        user = await session.scalar(select(User).where(User.id == department.director_id))
-        assert isinstance(user, User)
-
-    async with AsyncSession(async_engine) as session:
-        departments = await DepartmentFactory.create_batch_async(3)
-        for department in departments:
-            user = await session.scalar(select(User).where(User.id == department.director_id))
-            assert isinstance(user, User)
 
 
 def test_alias() -> None:

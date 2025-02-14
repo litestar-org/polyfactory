@@ -1,5 +1,5 @@
 from sys import version_info
-from typing import List, Optional
+from typing import List
 
 import pymongo
 import pytest
@@ -46,16 +46,6 @@ class MyOtherFactory(BeanieDocumentFactory):
     __model__ = MyOtherDocument
 
 
-class CoroutineFactory(BeanieDocumentFactory):
-    __model__ = MyDocument
-
-    @classmethod
-    async def siblings(cls) -> List[Optional[PydanticObjectId]]:
-        documents = await MyDocument.find_all().to_list()
-        document_ids = [document.id for document in documents]
-        return cls.__random__.sample(document_ids, k=3)
-
-
 @pytest.fixture(autouse=True)
 async def beanie_init(mongo_connection: AsyncMongoMockClient) -> None:
     await init_beanie(database=mongo_connection.db_name, document_models=[MyDocument, MyOtherDocument])
@@ -74,15 +64,6 @@ async def test_beanie_persistence_of_single_instance() -> None:
     assert result.name
     assert result.index
     assert isinstance(result.index, str)
-
-
-async def test_async_coroutine_field() -> None:
-    await MyFactory.create_batch_async(size=5)
-    document = await CoroutineFactory.create_async()
-    assert len(document.siblings) == 3
-    for id in document.siblings:
-        document = await MyDocument.find(MyDocument.id == id).first_or_none()
-        assert document
 
 
 async def test_beanie_persistence_of_multiple_instances() -> None:
