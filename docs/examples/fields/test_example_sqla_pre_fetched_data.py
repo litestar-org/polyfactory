@@ -37,7 +37,7 @@ async def get_director_ids() -> int:
         return UserFactory.__random__.choice(result)
 
 
-async def test_async_coroutine_field() -> None:
+async def test_factory_with_pre_fetched_async_data() -> None:
     async with async_engine.begin() as conn:
         await conn.run_sync(Base.metadata.drop_all)
         await conn.run_sync(Base.metadata.create_all)
