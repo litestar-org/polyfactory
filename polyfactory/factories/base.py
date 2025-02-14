@@ -30,7 +30,6 @@ from typing import (
     Callable,
     ClassVar,
     Collection,
-    Coroutine,
     Generic,
     Hashable,
     Iterable,
@@ -43,7 +42,6 @@ from typing import (
 )
 from uuid import UUID
 
-from anyio.from_thread import start_blocking_portal
 from faker import Faker
 from typing_extensions import get_args, get_origin, get_original_bases
 
@@ -451,20 +449,6 @@ class BaseFactory(ABC, Generic[T]):
             field_build_parameters=field_build_parameters,
             build_context=build_context,
         )
-
-    @classmethod
-    def _run_coroutine_sync(cls, coroutine_field: Coroutine) -> Any:
-        """This method ensures that a coroutine field is executed within a new asynchronous event loop.
-
-        :param coroutine_field: A coroutine type field value.
-        :returns: The result of execution the provided coroutine.
-        """
-
-        async def await_coroutine(coroutine_field: Coroutine) -> Any:
-            return await coroutine_field
-
-        with start_blocking_portal() as portal:
-            return portal.call(await_coroutine, coroutine_field)
 
     # Public Methods
 
@@ -1058,8 +1042,6 @@ class BaseFactory(ABC, Generic[T]):
                         build_context=_build_context,
                     )
                     if field_value is not None:
-                        if isinstance(field_value, Coroutine):
-                            field_value = cls._run_coroutine_sync(field_value)
                         result[field_meta.name] = field_value
                     continue
 
