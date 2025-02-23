@@ -27,15 +27,10 @@ repos:
     rev: v2.4.1
     hooks:
       - id: codespell
-  - repo: local
+  - repo: https://github.com/pycontribs/mirrors-prettier
+    rev: "v3.5.2"
     hooks:
       - id: prettier
-        name: prettier
-        entry: prettier --write --ignore-unknown
-        language: node
-        "types": [text]
-        additional_dependencies: ["prettier@3.5.2"]
-        require_serial: false
         exclude: ".all-contributorsrc"
   - repo: https://github.com/pre-commit/mirrors-mypy
     rev: "v1.15.0"
