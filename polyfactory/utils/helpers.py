@@ -147,7 +147,7 @@ def normalize_annotation(annotation: Any, random: Random) -> Any:
         annotation = unwrap_annotated(annotation, random=random)[0]
 
     # we have to maintain compatibility with the older non-subscriptable typings.
-    if sys.version_info <= (3, 9):  # pragma: no cover
+    if sys.version_info < (3, 9):  # pragma: no cover
         return annotation
 
     origin = get_origin(annotation) or annotation
