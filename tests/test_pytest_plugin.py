@@ -46,8 +46,8 @@ def test_register_with_function_error() -> None:
 def test_register_with_class_not_model_factory_error() -> None:
     with pytest.raises(ParameterException):
 
-        @register_fixture  # type: ignore
-        class Foo:
+        @register_fixture
+        class Foo:  # type: ignore[type-var]
             pass
 
 
