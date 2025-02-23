@@ -201,6 +201,9 @@ ignore = [
     "ISC001",  # conflict with formatter
 ]
 
+[tool.ruff.lint.flake8-builtins]
+builtins-allowed-modules = ["types"]
+
 [tool.ruff.lint.pydocstyle]
 convention = "google"
 

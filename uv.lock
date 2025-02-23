@@ -1251,7 +1251,7 @@ requires-dist = [
     { name = "attrs", marker = "extra == 'full'" },
     { name = "beanie", marker = "extra == 'beanie'" },
     { name = "beanie", marker = "extra == 'full'" },
-    { name = "faker" },
+    { name = "faker", specifier = ">=5.0.0" },
     { name = "msgspec", marker = "extra == 'full'" },
     { name = "msgspec", marker = "extra == 'msgspec'" },
     { name = "odmantic", marker = "extra == 'full'" },

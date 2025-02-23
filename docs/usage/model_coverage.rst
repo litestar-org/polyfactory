@@ -11,7 +11,7 @@ As you can see in the above example, the ``Profile`` model has 3 options for ``f
 
 
 .. note::
-    Notice that the same ``Car`` instance is used in the first and final generated example. When the coverage examples for a field are exhausted before another field, values for that field are re-used.
+    Notice that the same ``Car`` instance is used in the first and final generated example. When the coverage examples for a field are exhausted before another field, values for that field are reused.
 
 Notes on collection types
 -------------------------
