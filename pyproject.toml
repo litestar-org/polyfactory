@@ -34,13 +34,13 @@ classifiers = [
     "Typing :: Typed",
 ]
 name = "polyfactory"
-version = "2.18.1"
+version = "2.19.0"
 description = "Mock data generation factories"
 readme = "docs/PYPI_README.md"
 license = {text = "MIT"}
 requires-python = ">=3.8,<4.0"
 dependencies = [
-    "faker",
+    "faker>=5.0.0",
     "typing-extensions>=4.6.0",
 ]
 
@@ -200,6 +200,9 @@ ignore = [
     "COM812",  # conflict with formatter
     "ISC001",  # conflict with formatter
 ]
+
+[tool.ruff.lint.flake8-builtins]
+builtins-allowed-modules = ["types"]
 
 [tool.ruff.lint.pydocstyle]
 convention = "google"
