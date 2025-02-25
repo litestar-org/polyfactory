@@ -51,7 +51,11 @@ pydantic = [
 ]
 msgspec = ["msgspec",]
 odmantic = ["odmantic<1.0.0", "pydantic[email]",]
-beanie = ["beanie", "pydantic[email]",]
+beanie = [
+    "beanie",
+    "pydantic[email]",
+    "pymongo<4.9",
+]
 attrs = ["attrs>=22.2.0",]
 full = ["pydantic", "odmantic", "msgspec", "beanie", "attrs", "sqlalchemy"]
 
