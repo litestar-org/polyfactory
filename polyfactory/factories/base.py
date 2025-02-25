@@ -413,43 +413,6 @@ class BaseFactory(ABC, Generic[T]):
 
         return result, generate_post, _build_context
 
-    @classmethod
-    def _check_special_field(
-        cls,
-        field_meta: FieldMeta,
-        result: dict[str, Any],
-        generate_post: dict[str, PostGenerated],
-        field_build_parameters: Any,
-        build_context: BuildContext,
-    ) -> Any:
-        """Check if a field value is a special type field or get a value defined on the factory class itself.
-
-        :param field_meta: FieldMeta instance.
-        :param result: A dict with result field values.
-        :param generate_post: A dict with post generating values.
-        :param field_build_parameters: Any build parameters passed to the factory as kwarg values.
-        :param build_context: BuildContext data for current build.
-
-        :returns: None or a value defined on the factory class itself.
-        """
-        field_value = getattr(cls, field_meta.name)
-        if isinstance(field_value, Ignore):
-            return None
-
-        if isinstance(field_value, Require) and field_meta.name not in result:
-            msg = f"Require kwarg {field_meta.name} is missing"
-            raise MissingBuildKwargException(msg)
-
-        if isinstance(field_value, PostGenerated):
-            generate_post[field_meta.name] = field_value
-            return None
-
-        return cls._handle_factory_field(
-            field_value=field_value,
-            field_build_parameters=field_build_parameters,
-            build_context=build_context,
-        )
-
     # Public Methods
 
     @classmethod
@@ -1034,15 +997,23 @@ class BaseFactory(ABC, Generic[T]):
             field_build_parameters = cls.extract_field_build_parameters(field_meta=field_meta, build_args=kwargs)
             if cls.should_set_field_value(field_meta, **kwargs) and not cls.should_use_default_value(field_meta):
                 if hasattr(cls, field_meta.name) and not hasattr(BaseFactory, field_meta.name):
-                    field_value = cls._check_special_field(
-                        field_meta=field_meta,
-                        result=result,
-                        generate_post=generate_post,
+                    field_value = getattr(cls, field_meta.name)
+                    if isinstance(field_value, Ignore):
+                        continue
+
+                    if isinstance(field_value, Require) and field_meta.name not in kwargs:
+                        msg = f"Require kwarg {field_meta.name} is missing"
+                        raise MissingBuildKwargException(msg)
+
+                    if isinstance(field_value, PostGenerated):
+                        generate_post[field_meta.name] = field_value
+                        continue
+
+                    result[field_meta.name] = cls._handle_factory_field(
+                        field_value=field_value,
                         field_build_parameters=field_build_parameters,
                         build_context=_build_context,
                     )
-                    if field_value is not None:
-                        result[field_meta.name] = field_value
                     continue
 
                 field_result = cls.get_field_value(
