@@ -16,3 +16,7 @@ class MissingBuildKwargException(FactoryException):
 
 class MissingDependencyException(FactoryException, ImportError):
     """Missing dependency exception - used when a dependency is not installed"""
+
+
+class MissingParamException(FactoryException):
+    """Missing parameter exception - used when a required Param is not provided"""
