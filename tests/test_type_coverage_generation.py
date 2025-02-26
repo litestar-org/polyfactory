@@ -12,10 +12,11 @@ from typing_extensions import TypedDict
 from pydantic import BaseModel
 
 from polyfactory.decorators import post_generated
-from polyfactory.exceptions import ParameterException
+from polyfactory.exceptions import MissingBuildKwargException, ParameterException
 from polyfactory.factories.dataclass_factory import DataclassFactory
 from polyfactory.factories.pydantic_factory import ModelFactory
 from polyfactory.factories.typed_dict_factory import TypedDictFactory
+from polyfactory.fields import Param
 from polyfactory.utils.types import NoneType
 from tests.test_pydantic_factory import IS_PYDANTIC_V1
 
@@ -37,6 +38,83 @@ def test_coverage_count() -> None:
 
     for result in results:
         assert isinstance(result, Profile)
+
+
+def test_coverage_param__from_factory() -> None:
+    value = "Demo"
+
+    @dataclass
+    class Profile:
+        name: str
+        high_score: Union[int, float]
+        dob: date
+        data: Union[str, date, int, float]
+
+    class ProfileFactory(DataclassFactory[Profile]):
+        __model__ = Profile
+        last_name = Param[str](value)
+
+        @post_generated
+        @classmethod
+        def name(cls, last_name: str) -> str:
+            return f"The {last_name}"
+
+    results = list(ProfileFactory.coverage())
+
+    assert len(results) == 4
+
+    for result in results:
+        assert isinstance(result, Profile)
+        assert result.name == f"The {value}"
+
+
+def test_coverage_param__from_kwargs() -> None:
+    value = "Demo"
+
+    @dataclass
+    class Profile:
+        name: str
+        high_score: Union[int, float]
+        dob: date
+        data: Union[str, date, int, float]
+
+    class ProfileFactory(DataclassFactory[Profile]):
+        __model__ = Profile
+        last_name = Param[str]()
+
+        @post_generated
+        @classmethod
+        def name(cls, last_name: str) -> str:
+            return f"The {last_name}"
+
+    results = list(ProfileFactory.coverage(last_name=value))
+
+    assert len(results) == 4
+
+    for result in results:
+        assert isinstance(result, Profile)
+        assert result.name == f"The {value}"
+
+
+def test_coverage_param__from_kwargs__missing() -> None:
+    @dataclass
+    class Profile:
+        name: str
+        high_score: Union[int, float]
+        dob: date
+        data: Union[str, date, int, float]
+
+    class ProfileFactory(DataclassFactory[Profile]):
+        __model__ = Profile
+        last_name = Param[str]()
+
+        @post_generated
+        @classmethod
+        def name(cls, last_name: str) -> str:
+            return f"The {last_name}"
+
+    with pytest.raises(MissingBuildKwargException):
+        list(ProfileFactory.coverage())
 
 
 def test_coverage_tuple() -> None:
