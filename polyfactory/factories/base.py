@@ -51,9 +51,14 @@ from polyfactory.constants import (
     MIN_COLLECTION_LENGTH,
     RANDOMIZE_COLLECTION_LENGTH,
 )
-from polyfactory.exceptions import ConfigurationException, MissingBuildKwargException, ParameterException
+from polyfactory.exceptions import (
+    ConfigurationException,
+    MissingBuildKwargException,
+    MissingParamException,
+    ParameterException,
+)
 from polyfactory.field_meta import Null
-from polyfactory.fields import Fixture, Ignore, PostGenerated, Require, Use
+from polyfactory.fields import BaseParam, Fixture, Ignore, IsNotPassed, PostGenerated, Require, Use
 from polyfactory.utils.helpers import (
     flatten_annotation,
     get_collection_type,
@@ -966,6 +971,30 @@ class BaseFactory(ABC, Generic[T]):
                 raise ConfigurationException(error_message)
 
     @classmethod
+    def _handle_factory_params(cls, params: dict[str, BaseParam], **kwargs: Any) -> dict[str, Any]:
+        """Get the factory parameters.
+
+        :param params: A dict of field name to Param instances.
+        :param kwargs: Any build kwargs.
+
+        :returns: A dict of fieldname mapped to realized Param values.
+        """
+
+        try:
+            return {name: param.to_value(kwargs.get(name, IsNotPassed)) for name, param in params.items()}
+        except MissingParamException as e:
+            msg = "Missing required kwargs"
+            raise MissingBuildKwargException(msg) from e
+
+    @classmethod
+    def get_factory_params(cls) -> dict[str, BaseParam]:
+        """Get the factory parameters.
+
+        :returns: A dict of field name to Param instances.
+        """
+        return {name: item for name, item in cls.__dict__.items() if isinstance(item, BaseParam)}
+
+    @classmethod
     def process_kwargs(cls, **kwargs: Any) -> dict[str, Any]:
         """Process the given kwargs and generate values for the factory's model.
 
@@ -979,6 +1008,9 @@ class BaseFactory(ABC, Generic[T]):
 
         result: dict[str, Any] = {**kwargs}
         generate_post: dict[str, PostGenerated] = {}
+
+        params = cls.get_factory_params()
+        result.update(cls._handle_factory_params(params, **kwargs))
 
         for field_meta in cls.get_model_fields():
             field_build_parameters = cls.extract_field_build_parameters(field_meta=field_meta, build_args=kwargs)
@@ -1016,7 +1048,7 @@ class BaseFactory(ABC, Generic[T]):
         for field_name, post_generator in generate_post.items():
             result[field_name] = post_generator.to_value(field_name, result)
 
-        return result
+        return {key: value for key, value in result.items() if key not in params}
 
     @classmethod
     def process_kwargs_coverage(cls, **kwargs: Any) -> abc.Iterable[dict[str, Any]]:
@@ -1033,6 +1065,9 @@ class BaseFactory(ABC, Generic[T]):
 
         result: dict[str, Any] = {**kwargs}
         generate_post: dict[str, PostGenerated] = {}
+
+        params = cls.get_factory_params()
+        result.update(cls._handle_factory_params(params, **kwargs))
 
         for field_meta in cls.get_model_fields():
             field_build_parameters = cls.extract_field_build_parameters(field_meta=field_meta, build_args=kwargs)
@@ -1069,7 +1104,8 @@ class BaseFactory(ABC, Generic[T]):
         for resolved in resolve_kwargs_coverage(result):
             for field_name, post_generator in generate_post.items():
                 resolved[field_name] = post_generator.to_value(field_name, resolved)
-            yield resolved
+
+            yield {key: value for key, value in resolved.items() if key not in params}
 
     @classmethod
     def build(cls, **kwargs: Any) -> T:

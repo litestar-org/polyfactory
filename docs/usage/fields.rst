@@ -78,6 +78,36 @@ The signature for use is: ``cb: Callable, *args, **defaults``  it can receive an
 callable should be: ``name: str, values: dict[str, Any], *args, **defaults``. The already generated values are mapped by
 name in the values dictionary.
 
+
+The ``Param`` Field
+-------------------
+
+The :class:`Param <polyfactory.fields.Param>` class denotes a constant parameter that can be referenced by other fields at build but is not mapped to the final object. This is useful for passing values needed by other factory fields but that are not part of object being built.
+
+The Param type can either accept a constant value at the definition of the factory, or its value can be set at build time.
+
+If neither a value is provided at the definition of the factory nor at build time, an exception will be raised.
+
+.. literalinclude:: /examples/fields/test_example_9.py
+    :caption: Using the ``Param`` field
+    :language: python
+
+
+The ``CallableParam`` Field
+---------------------------
+
+The :class:`CallableParam <polyfactory.fields.CallableParam>` class denotes a callable parameter with a return value that may be referenced by other fields during build but is not mapped to the final object. Optional keyword arguments may be passed to the callable as part of the field definition on the factory. Any additional keyword arguments passed to the build method will also not be passed to the final object.
+
+The CallableParam type can either accept a callable provided at the definition of the factory, or its value can be passed at build time. The callable is executed at the beginning of build.
+
+If neither a value is provided at the definition of the factory nor at build time, an exception will be raised.
+
+The difference between a Param and a CallableParam is that the CallableParam is always executed at build time. If you need to pass an unmapped callable to the factory that should not automatically be executed at build time, use a Param.
+
+.. literalinclude:: /examples/fields/test_example_10.py
+    :caption: Using the ``CallableParam`` field
+    :language: python
+
 Factories as Fields
 ---------------------------
 
