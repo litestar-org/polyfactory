@@ -205,17 +205,9 @@ def test_handle_constrained_int_handles_multiple_of_with_ge_and_le(val1: int, va
 
 def test_constraint_randomness() -> None:
     random = Random(10)
-    result = handle_constrained_int(
-        random=random,
-    )
-    assert result == 55
-
-    result = handle_constrained_int(
-        random=random,
-    )
-    assert result == 61
-
-    result = handle_constrained_int(
-        random=random,
-    )
-    assert result == 85
+    assert [
+        handle_constrained_int(
+            random=random,
+        )
+        for _ in range(3)
+    ] == [81, 109, 152]
