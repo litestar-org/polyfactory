@@ -6,7 +6,7 @@ from pydantic import BaseModel
 
 from polyfactory.exceptions import ParameterException
 from polyfactory.factories.pydantic_factory import ModelFactory
-from polyfactory.fields import Fixture
+from polyfactory.fields import Fixture, Use
 from polyfactory.pytest_plugin import register_fixture
 from tests.models import Person, PersonFactoryWithoutDefaults
 
@@ -51,12 +51,13 @@ def test_register_with_class_not_model_factory_error() -> None:
             pass
 
 
-def test_using_a_fixture_as_field_value() -> None:
-    class MyModel(BaseModel):
-        best_friend: Person
-        all_friends: List[Person]
-        enemies: List[Person]
+class MyModel(BaseModel):
+    best_friend: Person
+    all_friends: List[Person]
+    enemies: List[Person]
 
+
+def test_using_a_fixture_as_field_value() -> None:
     class MyFactory(ModelFactory[MyModel]):
         __model__ = MyModel
 
@@ -70,15 +71,24 @@ def test_using_a_fixture_as_field_value() -> None:
     assert result.enemies == []
 
 
-def test_using_non_fixture_with_the_fixture_field_raises() -> None:
-    class MyModel(BaseModel):
-        best_friend: Person
-        all_friends: List[Person]
-
+def test_using_factory_directly() -> None:
     class MyFactory(ModelFactory[MyModel]):
         __model__ = MyModel
 
-        best_friend = Fixture(PersonFactoryFixture, name="mike")
+        best_friend = Use(PersonFactoryFixture.build, name="mike")
+        all_friends = Use(PersonFactoryFixture.batch, size=5)
+        enemies = Use(PersonFactoryFixture.batch, size=0)
+
+    result = MyFactory.build()
+    assert result.best_friend.name == "mike"
+    assert len(result.all_friends) == 5
+    assert result.enemies == []
+
+
+def test_using_non_fixture_with_the_fixture_field_raises() -> None:
+    class MyFactory(ModelFactory[MyModel]):
+        __model__ = MyModel
+
         all_friends = Fixture(123)  # type: ignore
 
     with pytest.raises(ParameterException):
