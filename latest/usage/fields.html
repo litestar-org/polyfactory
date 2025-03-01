@@ -217,6 +217,7 @@ data-aria-dark="Switch to auto color mode">
 <li><a class="reference internal" href="#the-require-field">The <code class="docutils literal notranslate"><span class="pre">Require</span></code> Field</a></li>
 <li><a class="reference internal" href="#the-postgenerated-field">The <code class="docutils literal notranslate"><span class="pre">PostGenerated</span></code> Field</a></li>
 <li><a class="reference internal" href="#factories-as-fields">Factories as Fields</a></li>
+<li><a class="reference internal" href="#handling-asynchronous-data-in-factory-fields">Handling Asynchronous Data in Factory Fields</a></li>
 </ul>
 </div><a class="js-repo-stats repo-stats flex items-center" href="https://github.com/litestar-org/polyfactory"
   data-type="github" data-user="litestar-org" data-repo="polyfactory">
@@ -664,6 +665,68 @@ name in the values dictionary.</p>
 </span><span data-line="46">
 </span><span data-line="47">    <span class="n">person_instance_with_pet_name</span> <span class="o">=</span> <span class="n">PersonFactory</span><span class="o">.</span><span class="n">build</span><span class="p">(</span><span class="n">pet</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;Winston&quot;</span><span class="p">})</span>
 </span><span data-line="48">    <span class="k">assert</span> <span class="n">person_instance_with_pet_name</span><span class="o">.</span><span class="n">pet</span><span class="o">.</span><span class="n">name</span> <span class="o">==</span> <span class="s2">&quot;Winston&quot;</span>
+</span></pre></div>
+</div>
+</div>
+</section>
+<section id="handling-asynchronous-data-in-factory-fields">
+<h2>Handling Asynchronous Data in Factory Fields<a class="headerlink" href="#handling-asynchronous-data-in-factory-fields" title="Permalink to this heading">¶</a></h2>
+<p>If you need to populate a factory field with data pre-fetched asynchronously (e.g., from a database using an ORM like SQLAlchemy or Beanie), the recommended approach is to handle the asynchronous call outside the factory and pass the resolved value as a regular argument.</p>
+<div class="literal-block-wrapper docutils container" id="id9">
+<div class="code-block-caption"><span class="caption-text">SQLAlchemy example</span><a class="headerlink" href="#id9" title="Permalink to this code">¶</a></div>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span data-line="1"><span class="kn">from</span> <span class="nn">__future__</span> <span class="kn">import</span> <span class="n">annotations</span>
+</span><span data-line="2">
+</span><span data-line="3"><span class="kn">from</span> <span class="nn">sqlalchemy</span> <span class="kn">import</span> <span class="n">ForeignKey</span><span class="p">,</span> <span class="n">select</span>
+</span><span data-line="4"><span class="kn">from</span> <span class="nn">sqlalchemy.ext.asyncio</span> <span class="kn">import</span> <span class="n">AsyncSession</span><span class="p">,</span> <span class="n">create_async_engine</span>
+</span><span data-line="5"><span class="kn">from</span> <span class="nn">sqlalchemy.orm</span> <span class="kn">import</span> <span class="n">DeclarativeBase</span><span class="p">,</span> <span class="n">Mapped</span><span class="p">,</span> <span class="n">mapped_column</span>
+</span><span data-line="6">
+</span><span data-line="7"><span class="kn">from</span> <span class="nn">polyfactory.factories.sqlalchemy_factory</span> <span class="kn">import</span> <span class="n">SQLAlchemyFactory</span>
+</span><span data-line="8">
+</span><span data-line="9"><span class="n">async_engine</span> <span class="o">=</span> <span class="n">create_async_engine</span><span class="p">(</span><span class="s2">&quot;sqlite+aiosqlite:///:memory:&quot;</span><span class="p">)</span>
+</span><span data-line="10">
+</span><span data-line="11">
+</span><span data-line="12"><span class="k">class</span> <span class="nc">Base</span><span class="p">(</span><span class="n">DeclarativeBase</span><span class="p">):</span> <span class="o">...</span>
+</span><span data-line="13">
+</span><span data-line="14">
+</span><span data-line="15"><span class="k">class</span> <span class="nc">User</span><span class="p">(</span><span class="n">Base</span><span class="p">):</span>
+</span><span data-line="16">    <span class="n">__tablename__</span> <span class="o">=</span> <span class="s2">&quot;users&quot;</span>
+</span><span data-line="17">
+</span><span data-line="18">    <span class="nb">id</span><span class="p">:</span> <span class="n">Mapped</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="n">mapped_column</span><span class="p">(</span><span class="n">primary_key</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+</span><span data-line="19">
+</span><span data-line="20">
+</span><span data-line="21"><span class="k">class</span> <span class="nc">Department</span><span class="p">(</span><span class="n">Base</span><span class="p">):</span>
+</span><span data-line="22">    <span class="n">__tablename__</span> <span class="o">=</span> <span class="s2">&quot;departments&quot;</span>
+</span><span data-line="23">
+</span><span data-line="24">    <span class="nb">id</span><span class="p">:</span> <span class="n">Mapped</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="n">mapped_column</span><span class="p">(</span><span class="n">primary_key</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+</span><span data-line="25">    <span class="n">director_id</span><span class="p">:</span> <span class="n">Mapped</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="n">mapped_column</span><span class="p">(</span><span class="n">ForeignKey</span><span class="p">(</span><span class="s2">&quot;users.id&quot;</span><span class="p">))</span>
+</span><span data-line="26">
+</span><span data-line="27">
+</span><span data-line="28"><span class="k">class</span> <span class="nc">UserFactory</span><span class="p">(</span><span class="n">SQLAlchemyFactory</span><span class="p">[</span><span class="n">User</span><span class="p">]):</span> <span class="o">...</span>
+</span><span data-line="29">
+</span><span data-line="30">
+</span><span data-line="31"><span class="k">class</span> <span class="nc">DepartmentFactory</span><span class="p">(</span><span class="n">SQLAlchemyFactory</span><span class="p">[</span><span class="n">Department</span><span class="p">]):</span> <span class="o">...</span>
+</span><span data-line="32">
+</span><span data-line="33">
+</span><span data-line="34"><span class="hll"><span class="k">async</span> <span class="k">def</span> <span class="nf">get_director_ids</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+</span></span><span data-line="35"><span class="hll">    <span class="k">async</span> <span class="k">with</span> <span class="n">AsyncSession</span><span class="p">(</span><span class="n">async_engine</span><span class="p">)</span> <span class="k">as</span> <span class="n">session</span><span class="p">:</span>
+</span></span><span data-line="36"><span class="hll">        <span class="n">result</span> <span class="o">=</span> <span class="p">(</span><span class="k">await</span> <span class="n">session</span><span class="o">.</span><span class="n">scalars</span><span class="p">(</span><span class="n">select</span><span class="p">(</span><span class="n">User</span><span class="o">.</span><span class="n">id</span><span class="p">)))</span><span class="o">.</span><span class="n">all</span><span class="p">()</span>
+</span></span><span data-line="37"><span class="hll">        <span class="k">return</span> <span class="n">UserFactory</span><span class="o">.</span><span class="n">__random__</span><span class="o">.</span><span class="n">choice</span><span class="p">(</span><span class="n">result</span><span class="p">)</span>
+</span></span><span data-line="38">
+</span><span data-line="39">
+</span><span data-line="40"><span class="k">async</span> <span class="k">def</span> <span class="nf">test_factory_with_pre_fetched_async_data</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+</span><span data-line="41">    <span class="k">async</span> <span class="k">with</span> <span class="n">async_engine</span><span class="o">.</span><span class="n">begin</span><span class="p">()</span> <span class="k">as</span> <span class="n">conn</span><span class="p">:</span>
+</span><span data-line="42">        <span class="k">await</span> <span class="n">conn</span><span class="o">.</span><span class="n">run_sync</span><span class="p">(</span><span class="n">Base</span><span class="o">.</span><span class="n">metadata</span><span class="o">.</span><span class="n">drop_all</span><span class="p">)</span>
+</span><span data-line="43">        <span class="k">await</span> <span class="n">conn</span><span class="o">.</span><span class="n">run_sync</span><span class="p">(</span><span class="n">Base</span><span class="o">.</span><span class="n">metadata</span><span class="o">.</span><span class="n">create_all</span><span class="p">)</span>
+</span><span data-line="44">
+</span><span data-line="45">    <span class="k">async</span> <span class="k">with</span> <span class="n">AsyncSession</span><span class="p">(</span><span class="n">async_engine</span><span class="p">)</span> <span class="k">as</span> <span class="n">session</span><span class="p">:</span>
+</span><span data-line="46">        <span class="n">UserFactory</span><span class="o">.</span><span class="n">__async_session__</span> <span class="o">=</span> <span class="n">session</span>
+</span><span data-line="47">        <span class="k">await</span> <span class="n">UserFactory</span><span class="o">.</span><span class="n">create_batch_async</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span>
+</span><span data-line="48">
+</span><span data-line="49">    <span class="k">async</span> <span class="k">with</span> <span class="n">AsyncSession</span><span class="p">(</span><span class="n">async_engine</span><span class="p">)</span> <span class="k">as</span> <span class="n">session</span><span class="p">:</span>
+</span><span data-line="50">        <span class="n">DepartmentFactory</span><span class="o">.</span><span class="n">__async_session__</span> <span class="o">=</span> <span class="n">session</span>
+</span><span data-line="51"><span class="hll">        <span class="n">department</span> <span class="o">=</span> <span class="k">await</span> <span class="n">DepartmentFactory</span><span class="o">.</span><span class="n">create_async</span><span class="p">(</span><span class="n">director_id</span><span class="o">=</span><span class="k">await</span> <span class="n">get_director_ids</span><span class="p">())</span>
+</span></span><span data-line="52">        <span class="n">user</span> <span class="o">=</span> <span class="k">await</span> <span class="n">session</span><span class="o">.</span><span class="n">scalar</span><span class="p">(</span><span class="n">select</span><span class="p">(</span><span class="n">User</span><span class="p">)</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">User</span><span class="o">.</span><span class="n">id</span> <span class="o">==</span> <span class="n">department</span><span class="o">.</span><span class="n">director_id</span><span class="p">))</span>
+</span><span data-line="53">        <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">user</span><span class="p">,</span> <span class="n">User</span><span class="p">)</span>
 </span></pre></div>
 </div>
 </div>
