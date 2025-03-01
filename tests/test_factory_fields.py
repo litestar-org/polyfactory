@@ -11,7 +11,7 @@ from polyfactory.decorators import post_generated
 from polyfactory.exceptions import ConfigurationException, MissingBuildKwargException
 from polyfactory.factories.dataclass_factory import DataclassFactory
 from polyfactory.factories.pydantic_factory import ModelFactory
-from polyfactory.fields import Ignore, PostGenerated, Require, Use
+from polyfactory.fields import CallableParam, Ignore, Param, PostGenerated, Require, Use
 
 
 def test_use() -> None:
@@ -81,6 +81,98 @@ def test_ignored() -> None:
         name = Ignore()
 
     assert MyFactory.build().name is None
+
+
+def test_param__from_factory() -> None:
+    value: int = 3
+
+    class MyModel(BaseModel):
+        description: str
+
+    class MyFactory(ModelFactory):
+        __model__ = MyModel
+        length = Param[int](value)
+
+        @post_generated
+        @classmethod
+        def description(cls, length: int) -> str:
+            return "abcd"[:length]
+
+    result = MyFactory.build()
+    assert result.description == "abc"
+
+
+def test_param__from_kwargs() -> None:
+    value: int = 3
+
+    class MyModel(BaseModel):
+        description: str
+
+    class MyFactory(ModelFactory):
+        __model__ = MyModel
+        length = Param[int]()
+
+        @post_generated
+        @classmethod
+        def description(cls, length: int) -> str:
+            return "abcd"[:length]
+
+    result = MyFactory.build(length=value)
+    assert result.description == "abc"
+
+
+def test_param__from_kwargs__missing() -> None:
+    class MyModel(BaseModel):
+        description: str
+
+    class MyFactory(ModelFactory):
+        __model__ = MyModel
+        length = Param[int]()
+
+        @post_generated
+        @classmethod
+        def description(cls, length: int) -> str:
+            return "abcd"[:length]
+
+    with pytest.raises(MissingBuildKwargException):
+        MyFactory.build()
+
+
+def test_callable_param__from_factory() -> None:
+    class MyModel(BaseModel):
+        description: str
+
+    class MyFactory(ModelFactory):
+        __model__ = MyModel
+        length = CallableParam(lambda value: value, value=3)
+
+        @post_generated
+        @classmethod
+        def description(cls, length: int) -> str:
+            return "abcd"[:length]
+
+    result = MyFactory.build()
+    assert result.description == "abc"
+
+
+def test_callable_param__from_kwargs() -> None:
+    value1: int = 2
+    value2: int = 1
+
+    class MyModel(BaseModel):
+        description: str
+
+    class MyFactory(ModelFactory):
+        __model__ = MyModel
+        length = CallableParam[int](value1=value1, value2=value2)
+
+        @post_generated
+        @classmethod
+        def description(cls, length: int) -> str:
+            return "abcd"[:length]
+
+    result = MyFactory.build(length=lambda value1, value2: value1 + value2)
+    assert result.description == "abcd"[: value1 + value2]
 
 
 def test_post_generation() -> None:

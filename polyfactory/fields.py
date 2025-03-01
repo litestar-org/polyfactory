@@ -4,9 +4,10 @@ from typing import Any, Callable, Generic, TypedDict, TypeVar, cast
 
 from typing_extensions import ParamSpec
 
-from polyfactory.exceptions import ParameterException
+from polyfactory.exceptions import MissingParamException, ParameterException
 
 T = TypeVar("T")
+U = TypeVar("U")
 P = ParamSpec("P")
 
 
@@ -114,3 +115,121 @@ class Fixture:
 
         msg = "fixture has not been registered using the register_factory decorator"
         raise ParameterException(msg)
+
+
+class NotPassed:
+    """Indicates a parameter was not passed to a factory field and must be
+    passed at build time.
+    """
+
+
+IsNotPassed = NotPassed()
+
+
+class BaseParam(Generic[T, U]):
+    """Base class for parameters.
+
+    This class is used to pass a parameters that can be referenced by other
+    fields but will not be passed to the final object.
+
+    It is generic over the type of the parameter that will be used during build
+    and also the method used to generate that value (e.g. as a constant or a
+    callable).
+    """
+
+    def to_value(self, from_build: U | NotPassed = IsNotPassed) -> T:
+        """Determines the value of the parameter.
+
+        This method must be implemented in subclasses.
+
+        :param from_build: The value passed at build time.
+        :returns: The value
+        :raises: NotImplementedError
+        """
+        msg = "to_value must be implemented in subclasses"
+        raise NotImplementedError(msg)  # pragma: no cover
+
+
+class Param(Generic[T], BaseParam[T, T]):
+    """A constant parameter that can be used by other fields but will not be
+    passed to the final object.
+
+    If a value for the parameter is not passed in the field's definition, it must
+    be passed at build time. Otherwise, a MissingParamException will be raised.
+    """
+
+    __slots__ = ("param",)
+
+    def __init__(self, param: T | NotPassed = IsNotPassed) -> None:
+        """Designate a parameter.
+
+        :param param: A constant or an unpassed value that can be referenced later
+        """
+        self.param = param
+
+    def to_value(self, from_build: T | NotPassed = IsNotPassed) -> T:
+        """Determines the value to use at build time
+
+        If a value was passed to the constructor, it will be used. Otherwise, the value
+        passed at build time will be used. If no value was passed at build time, a
+        MissingParamException will be raised.
+
+        :param args: from_build: The value passed at build time (if any).
+        :returns: The value
+        :raises: MissingParamException
+        """
+        if self.param is IsNotPassed:
+            if from_build is not IsNotPassed:
+                return cast(T, from_build)
+            msg = "Param value was not passed at build time"
+            raise MissingParamException(msg)
+        return cast(T, self.param)
+
+
+class CallableParam(Generic[T], BaseParam[T, Callable[..., T]]):
+    """A callable parameter that can be used by other fields but will not be
+    passed to the final object.
+
+    The callable may be passed optional keyword arguments via the constructor
+    of this class. The callable will be invoked with the passed keyword
+    arguments and any positional arguments passed at build time.
+
+    If a callable for the parameter is not passed in the field's definition, it must
+    be passed at build time. Otherwise, a MissingParamException will be raised.
+    """
+
+    __slots__ = (
+        "kwargs",
+        "param",
+    )
+
+    def __init__(
+        self,
+        param: Callable[..., T] | NotPassed = IsNotPassed,
+        **kwargs: Any,
+    ) -> None:
+        """Designate field as a callable parameter.
+
+        :param param: A callable that will be evaluated at build time.
+        :param kwargs: Any kwargs to pass to the callable.
+        """
+        self.param = param
+        self.kwargs = kwargs
+
+    def to_value(self, from_build: Callable[..., T] | NotPassed = IsNotPassed) -> T:
+        """Determine the value to use at build time.
+
+        If a value was passed to the constructor, it will be used. Otherwise, the value
+        passed at build time will be used. If no value was passed at build time, a
+        MissingParamException will be raised.
+
+        :param args: from_build: The callable passed at build time (if any).
+        :returns: The value
+        :raises: MissingParamException
+        """
+        if self.param is IsNotPassed:
+            if from_build is not IsNotPassed:
+                return cast(Callable[..., T], from_build)(**self.kwargs)
+            msg = "Param value was not passed at build time"
+            raise MissingParamException(msg)
+        return cast(Callable[..., T], self.param)(**self.kwargs)
