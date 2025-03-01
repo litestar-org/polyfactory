@@ -20,13 +20,9 @@ class Person:
 class PersonFactory(DataclassFactory[Person]): ...
 
 
-person_factory_fixture = register_fixture(PersonFactory)
+register_fixture(PersonFactory)
 
 
 def test_person_factory(person_factory: PersonFactory) -> None:
     person_instance = person_factory.build()
     assert isinstance(person_instance, Person)
-
-    # we can still access the factory class itself-
-    another_person_instance = PersonFactory.build()
-    assert isinstance(another_person_instance, Person)

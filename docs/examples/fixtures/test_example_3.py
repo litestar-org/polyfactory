@@ -17,10 +17,8 @@ class Person:
     birthday: Union[datetime, date]
 
 
+@register_fixture(name="aliased_person_factory")
 class PersonFactory(DataclassFactory[Person]): ...
-
-
-person_factory_fixture = register_fixture(PersonFactory, name="aliased_person_factory")
 
 
 def test_person_factory(aliased_person_factory: PersonFactory) -> None:
