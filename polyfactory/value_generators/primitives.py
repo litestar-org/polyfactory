@@ -22,9 +22,12 @@ def create_random_float(
     :returns: A random float.
     """
     if minimum is None:
-        minimum = float(random.randint(0, 100)) if maximum is None else float(maximum) - 100.0
+        if maximum is None:
+            minimum = float(random.randint(0, 100))
+        else:
+            minimum = float(maximum) / 2 if maximum >= 0 else float(maximum) * 2.0
     if maximum is None:
-        maximum = float(minimum) + 1.0 * 2.0 if minimum >= 0 else float(minimum) + 1.0 / 2.0
+        maximum = (float(minimum) + 1.0) * 2.0 if minimum >= 0 else (float(minimum) + 1.0) / 2.0
     return random.uniform(float(minimum), float(maximum))
 
 
