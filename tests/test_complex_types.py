@@ -203,3 +203,13 @@ def test_sequence_dict() -> None:
     result = MyFactory.build()
 
     assert result.sequence_dict
+
+
+def test_build_with_callable() -> None:
+    @dataclass
+    class A:
+        foo: Callable[[str], int]
+
+    factory = DataclassFactory.create_factory(A)
+    with pytest.raises(ParameterException, match="Unsupported type:"):
+        factory.build()

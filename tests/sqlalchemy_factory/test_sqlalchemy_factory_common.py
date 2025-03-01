@@ -402,3 +402,37 @@ def test_constrained_types() -> None:
     constrained_number: Decimal = instance.constrainted_number
     assert isinstance(constrained_number, Decimal)
     assert abs(len(constrained_number.as_tuple().digits) - abs(int(constrained_number.as_tuple().exponent))) <= 2
+
+
+@pytest.mark.parametrize(
+    "numeric",
+    (
+        Numeric(),
+        Numeric(precision=4),
+        Numeric(precision=4, scale=0),
+        Numeric(precision=4, scale=2),
+    ),
+)
+def test_numeric_field(numeric: Numeric) -> None:
+    _registry = registry()
+
+    class Base(metaclass=DeclarativeMeta):
+        __abstract__ = True
+        __allow_unmapped__ = True
+
+        registry = _registry
+        metadata = _registry.metadata
+
+    class NumericModel(Base):
+        __tablename__ = "numerics"
+
+        id: Any = Column(Integer(), primary_key=True)
+        numeric_field: Any = Column(numeric, nullable=False)
+
+    class NumericModelFactory(SQLAlchemyFactory[NumericModel]): ...
+
+    result = NumericModelFactory.get_model_fields()[1]
+    assert result.annotation is Decimal
+    if constraints := result.constraints:
+        assert constraints.get("max_digits") == numeric.precision
+        assert constraints.get("decimal_places") == numeric.scale
