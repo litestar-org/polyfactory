@@ -396,6 +396,23 @@ class BaseFactory(ABC, Generic[T]):
         msg = f"unsupported model type {model.__name__}"
         raise ParameterException(msg)  # pragma: no cover
 
+    @classmethod
+    def _get_initial_variables(cls, kwargs: Any) -> tuple[dict[str, Any], dict[str, PostGenerated], BuildContext]:
+        """Prepare the given kwargs and generate initial variables for further usage.
+
+        :param kwargs: Any build kwargs.
+
+        :returns: A tuple of build results.
+
+        """
+        _build_context = cls._get_build_context(kwargs.pop("_build_context", None))
+        _build_context["seen_models"].add(cls.__model__)
+
+        result: dict[str, Any] = {**kwargs}
+        generate_post: dict[str, PostGenerated] = {}
+
+        return result, generate_post, _build_context
+
     # Public Methods
 
     @classmethod
@@ -974,11 +991,7 @@ class BaseFactory(ABC, Generic[T]):
         :returns: A dictionary of build results.
 
         """
-        _build_context = cls._get_build_context(kwargs.pop("_build_context", None))
-        _build_context["seen_models"].add(cls.__model__)
-
-        result: dict[str, Any] = {**kwargs}
-        generate_post: dict[str, PostGenerated] = {}
+        result, generate_post, _build_context = cls._get_initial_variables(kwargs)
 
         for field_meta in cls.get_model_fields():
             field_build_parameters = cls.extract_field_build_parameters(field_meta=field_meta, build_args=kwargs)
@@ -1028,11 +1041,7 @@ class BaseFactory(ABC, Generic[T]):
         :returns: A dictionary of build results.
 
         """
-        _build_context = cls._get_build_context(kwargs.pop("_build_context", None))
-        _build_context["seen_models"].add(cls.__model__)
-
-        result: dict[str, Any] = {**kwargs}
-        generate_post: dict[str, PostGenerated] = {}
+        result, generate_post, _build_context = cls._get_initial_variables(kwargs)
 
         for field_meta in cls.get_model_fields():
             field_build_parameters = cls.extract_field_build_parameters(field_meta=field_meta, build_args=kwargs)
