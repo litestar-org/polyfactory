@@ -264,11 +264,11 @@ data-aria-dark="Switch to auto color mode">
           <h1>Source code for polyfactory.pytest_plugin</h1><div class="highlight"><pre>
 <span></span><span data-line="1"><span class="kn">from</span> <span class="nn">__future__</span> <span class="kn">import</span> <span class="n">annotations</span>
 </span><span data-line="2">
-</span><span data-line="3"><span class="kn">import</span> <span class="nn">re</span>
-</span><span data-line="4"><span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="p">(</span>
-</span><span data-line="5">    <span class="n">Any</span><span class="p">,</span>
-</span><span data-line="6">    <span class="n">Callable</span><span class="p">,</span>
-</span><span data-line="7">    <span class="n">ClassVar</span><span class="p">,</span>
+</span><span data-line="3"><span class="kn">import</span> <span class="nn">inspect</span>
+</span><span data-line="4"><span class="kn">import</span> <span class="nn">re</span>
+</span><span data-line="5"><span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="p">(</span>
+</span><span data-line="6">    <span class="n">Any</span><span class="p">,</span>
+</span><span data-line="7">    <span class="n">Callable</span><span class="p">,</span>
 </span><span data-line="8">    <span class="n">Literal</span><span class="p">,</span>
 </span><span data-line="9">    <span class="n">Type</span><span class="p">,</span>
 </span><span data-line="10">    <span class="n">TypeVar</span><span class="p">,</span>
@@ -277,7 +277,7 @@ data-aria-dark="Switch to auto color mode">
 </span><span data-line="13">    <span class="n">overload</span><span class="p">,</span>
 </span><span data-line="14"><span class="p">)</span>
 </span><span data-line="15">
-</span><span data-line="16"><span class="kn">from</span> <span class="nn">pytest</span> <span class="kn">import</span> <span class="n">Config</span><span class="p">,</span> <span class="n">fixture</span>  <span class="c1"># noqa: PT013</span>
+</span><span data-line="16"><span class="kn">import</span> <span class="nn">pytest</span>
 </span><span data-line="17">
 </span><span data-line="18"><span class="kn">from</span> <span class="nn">polyfactory.exceptions</span> <span class="kn">import</span> <span class="n">ParameterException</span>
 </span><span data-line="19"><span class="kn">from</span> <span class="nn">polyfactory.factories.base</span> <span class="kn">import</span> <span class="n">BaseFactory</span>
@@ -285,7 +285,7 @@ data-aria-dark="Switch to auto color mode">
 </span><span data-line="21">
 </span><span data-line="22"><span class="n">Scope</span> <span class="o">=</span> <span class="n">Union</span><span class="p">[</span>
 </span><span data-line="23">    <span class="n">Literal</span><span class="p">[</span><span class="s2">&quot;session&quot;</span><span class="p">,</span> <span class="s2">&quot;package&quot;</span><span class="p">,</span> <span class="s2">&quot;module&quot;</span><span class="p">,</span> <span class="s2">&quot;class&quot;</span><span class="p">,</span> <span class="s2">&quot;function&quot;</span><span class="p">],</span>
-</span><span data-line="24">    <span class="n">Callable</span><span class="p">[[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Config</span><span class="p">],</span> <span class="n">Literal</span><span class="p">[</span><span class="s2">&quot;session&quot;</span><span class="p">,</span> <span class="s2">&quot;package&quot;</span><span class="p">,</span> <span class="s2">&quot;module&quot;</span><span class="p">,</span> <span class="s2">&quot;class&quot;</span><span class="p">,</span> <span class="s2">&quot;function&quot;</span><span class="p">]],</span>
+</span><span data-line="24">    <span class="n">Callable</span><span class="p">[[</span><span class="nb">str</span><span class="p">,</span> <span class="n">pytest</span><span class="o">.</span><span class="n">Config</span><span class="p">],</span> <span class="n">Literal</span><span class="p">[</span><span class="s2">&quot;session&quot;</span><span class="p">,</span> <span class="s2">&quot;package&quot;</span><span class="p">,</span> <span class="s2">&quot;module&quot;</span><span class="p">,</span> <span class="s2">&quot;class&quot;</span><span class="p">,</span> <span class="s2">&quot;function&quot;</span><span class="p">]],</span>
 </span><span data-line="25"><span class="p">]</span>
 </span><span data-line="26"><span class="n">T</span> <span class="o">=</span> <span class="n">TypeVar</span><span class="p">(</span><span class="s2">&quot;T&quot;</span><span class="p">,</span> <span class="n">bound</span><span class="o">=</span><span class="n">BaseFactory</span><span class="p">[</span><span class="n">Any</span><span class="p">])</span>
 </span><span data-line="27">
@@ -312,84 +312,82 @@ data-aria-dark="Switch to auto color mode">
 </span><span data-line="48">
 </span><span data-line="49">    <span class="vm">__slots__</span> <span class="o">=</span> <span class="p">(</span><span class="s2">&quot;autouse&quot;</span><span class="p">,</span> <span class="s2">&quot;name&quot;</span><span class="p">,</span> <span class="s2">&quot;scope&quot;</span><span class="p">)</span>
 </span><span data-line="50">
-</span><span data-line="51">    <span class="n">factory_class_map</span><span class="p">:</span> <span class="n">ClassVar</span><span class="p">[</span><span class="nb">dict</span><span class="p">[</span><span class="n">Callable</span><span class="p">,</span> <span class="nb">type</span><span class="p">[</span><span class="n">BaseFactory</span><span class="p">[</span><span class="n">Any</span><span class="p">]]]]</span> <span class="o">=</span> <span class="p">{}</span>
-</span><span data-line="52">
-<div class="viewcode-block" id="FactoryFixture.__init__"><a class="viewcode-back" href="../../reference/pytest_plugin.html#polyfactory.pytest_plugin.FactoryFixture.__init__">[docs]</a></span><span data-line="53">    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
-</span><span data-line="54">        <span class="bp">self</span><span class="p">,</span>
-</span><span data-line="55">        <span class="n">scope</span><span class="p">:</span> <span class="n">Scope</span> <span class="o">=</span> <span class="s2">&quot;function&quot;</span><span class="p">,</span>
-</span><span data-line="56">        <span class="n">autouse</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
-</span><span data-line="57">        <span class="n">name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-</span><span data-line="58">    <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-</span><span data-line="59"><span class="w">        </span><span class="sd">&quot;&quot;&quot;Create a factory fixture decorator</span>
-</span><span data-line="60">
-</span><span data-line="61"><span class="sd">        :param scope: Fixture scope</span>
-</span><span data-line="62"><span class="sd">        :param autouse: Autouse the fixture</span>
-</span><span data-line="63"><span class="sd">        :param name: Fixture name</span>
-</span><span data-line="64"><span class="sd">        &quot;&quot;&quot;</span>
-</span><span data-line="65">        <span class="bp">self</span><span class="o">.</span><span class="n">scope</span> <span class="o">=</span> <span class="n">scope</span>
-</span><span data-line="66">        <span class="bp">self</span><span class="o">.</span><span class="n">autouse</span> <span class="o">=</span> <span class="n">autouse</span>
-</span><span data-line="67">        <span class="bp">self</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="n">name</span></div>
-</span><span data-line="68">
-<div class="viewcode-block" id="FactoryFixture.__call__"><a class="viewcode-back" href="../../reference/pytest_plugin.html#polyfactory.pytest_plugin.FactoryFixture.__call__">[docs]</a></span><span data-line="69">    <span class="k">def</span> <span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">factory</span><span class="p">:</span> <span class="nb">type</span><span class="p">[</span><span class="n">T</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">Callable</span><span class="p">[[],</span> <span class="nb">type</span><span class="p">[</span><span class="n">T</span><span class="p">]]:</span>
-</span><span data-line="70">        <span class="k">if</span> <span class="ow">not</span> <span class="n">is_safe_subclass</span><span class="p">(</span><span class="n">factory</span><span class="p">,</span> <span class="n">BaseFactory</span><span class="p">):</span>
-</span><span data-line="71">            <span class="n">msg</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">factory</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2"> is not a BaseFactory subclass.&quot;</span>
-</span><span data-line="72">            <span class="k">raise</span> <span class="n">ParameterException</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
-</span><span data-line="73">
-</span><span data-line="74">        <span class="n">fixture_name</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">name</span> <span class="ow">or</span> <span class="n">_get_fixture_name</span><span class="p">(</span><span class="n">factory</span><span class="o">.</span><span class="vm">__name__</span><span class="p">)</span>
-</span><span data-line="75">        <span class="n">fixture_register</span> <span class="o">=</span> <span class="n">fixture</span><span class="p">(</span>
-</span><span data-line="76">            <span class="n">scope</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">scope</span><span class="p">,</span>  <span class="c1"># pyright: ignore[reportArgumentType]</span>
-</span><span data-line="77">            <span class="n">name</span><span class="o">=</span><span class="n">fixture_name</span><span class="p">,</span>
-</span><span data-line="78">            <span class="n">autouse</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">autouse</span><span class="p">,</span>
-</span><span data-line="79">        <span class="p">)</span>
-</span><span data-line="80">
-</span><span data-line="81">        <span class="k">def</span> <span class="nf">_factory_fixture</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="nb">type</span><span class="p">[</span><span class="n">T</span><span class="p">]:</span>
-</span><span data-line="82"><span class="w">            </span><span class="sd">&quot;&quot;&quot;The wrapped factory&quot;&quot;&quot;</span>
-</span><span data-line="83">            <span class="k">return</span> <span class="n">cast</span><span class="p">(</span><span class="n">Type</span><span class="p">[</span><span class="n">T</span><span class="p">],</span> <span class="n">factory</span><span class="p">)</span>
-</span><span data-line="84">
-</span><span data-line="85">        <span class="n">_factory_fixture</span><span class="o">.</span><span class="vm">__doc__</span> <span class="o">=</span> <span class="n">factory</span><span class="o">.</span><span class="vm">__doc__</span>
-</span><span data-line="86">        <span class="n">marker</span> <span class="o">=</span> <span class="n">fixture_register</span><span class="p">(</span><span class="n">_factory_fixture</span><span class="p">)</span>
-</span><span data-line="87">        <span class="bp">self</span><span class="o">.</span><span class="n">factory_class_map</span><span class="p">[</span><span class="n">marker</span><span class="p">]</span> <span class="o">=</span> <span class="n">factory</span>
-</span><span data-line="88">        <span class="k">return</span> <span class="n">marker</span></div></div>
-</span><span data-line="89">
-</span><span data-line="90">
-</span><span data-line="91"><span class="nd">@overload</span>
-</span><span data-line="92"><span class="k">def</span> <span class="nf">register_fixture</span><span class="p">(</span>
-</span><span data-line="93">    <span class="n">factory</span><span class="p">:</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-</span><span data-line="94">    <span class="o">*</span><span class="p">,</span>
-</span><span data-line="95">    <span class="n">scope</span><span class="p">:</span> <span class="n">Scope</span> <span class="o">=</span> <span class="s2">&quot;function&quot;</span><span class="p">,</span>
-</span><span data-line="96">    <span class="n">autouse</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
-</span><span data-line="97">    <span class="n">name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-</span><span data-line="98"><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">FactoryFixture</span><span class="p">:</span> <span class="o">...</span>
-</span><span data-line="99">
-</span><span data-line="100">
-</span><span data-line="101"><span class="nd">@overload</span>
-</span><span data-line="102"><span class="k">def</span> <span class="nf">register_fixture</span><span class="p">(</span>
-</span><span data-line="103">    <span class="n">factory</span><span class="p">:</span> <span class="nb">type</span><span class="p">[</span><span class="n">T</span><span class="p">],</span>
-</span><span data-line="104">    <span class="o">*</span><span class="p">,</span>
-</span><span data-line="105">    <span class="n">scope</span><span class="p">:</span> <span class="n">Scope</span> <span class="o">=</span> <span class="s2">&quot;function&quot;</span><span class="p">,</span>
-</span><span data-line="106">    <span class="n">autouse</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
-</span><span data-line="107">    <span class="n">name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-</span><span data-line="108"><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Callable</span><span class="p">[[],</span> <span class="nb">type</span><span class="p">[</span><span class="n">T</span><span class="p">]]:</span> <span class="o">...</span>
-</span><span data-line="109">
-</span><span data-line="110">
-<div class="viewcode-block" id="register_fixture"><a class="viewcode-back" href="../../reference/pytest_plugin.html#polyfactory.pytest_plugin.register_fixture">[docs]</a></span><span data-line="111"><span class="k">def</span> <span class="nf">register_fixture</span><span class="p">(</span>
-</span><span data-line="112">    <span class="n">factory</span><span class="p">:</span> <span class="nb">type</span><span class="p">[</span><span class="n">T</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-</span><span data-line="113">    <span class="o">*</span><span class="p">,</span>
-</span><span data-line="114">    <span class="n">scope</span><span class="p">:</span> <span class="n">Scope</span> <span class="o">=</span> <span class="s2">&quot;function&quot;</span><span class="p">,</span>
-</span><span data-line="115">    <span class="n">autouse</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
-</span><span data-line="116">    <span class="n">name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-</span><span data-line="117"><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">FactoryFixture</span> <span class="o">|</span> <span class="n">Callable</span><span class="p">[[],</span> <span class="nb">type</span><span class="p">[</span><span class="n">T</span><span class="p">]]:</span>
-</span><span data-line="118"><span class="w">    </span><span class="sd">&quot;&quot;&quot;A decorator that allows registering model factories as fixtures.</span>
-</span><span data-line="119">
-</span><span data-line="120"><span class="sd">    :param factory: An optional factory class to decorate.</span>
-</span><span data-line="121"><span class="sd">    :param scope: Pytest scope.</span>
-</span><span data-line="122"><span class="sd">    :param autouse: Auto use fixture.</span>
-</span><span data-line="123"><span class="sd">    :param name: Fixture name.</span>
-</span><span data-line="124">
-</span><span data-line="125"><span class="sd">    :returns: A fixture factory instance.</span>
-</span><span data-line="126"><span class="sd">    &quot;&quot;&quot;</span>
-</span><span data-line="127">    <span class="n">factory_fixture</span> <span class="o">=</span> <span class="n">FactoryFixture</span><span class="p">(</span><span class="n">scope</span><span class="o">=</span><span class="n">scope</span><span class="p">,</span> <span class="n">autouse</span><span class="o">=</span><span class="n">autouse</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="n">name</span><span class="p">)</span>
-</span><span data-line="128">    <span class="k">return</span> <span class="n">factory_fixture</span><span class="p">(</span><span class="n">factory</span><span class="p">)</span> <span class="k">if</span> <span class="n">factory</span> <span class="k">else</span> <span class="n">factory_fixture</span></div>
+<div class="viewcode-block" id="FactoryFixture.__init__"><a class="viewcode-back" href="../../reference/pytest_plugin.html#polyfactory.pytest_plugin.FactoryFixture.__init__">[docs]</a></span><span data-line="51">    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+</span><span data-line="52">        <span class="bp">self</span><span class="p">,</span>
+</span><span data-line="53">        <span class="n">scope</span><span class="p">:</span> <span class="n">Scope</span> <span class="o">=</span> <span class="s2">&quot;function&quot;</span><span class="p">,</span>
+</span><span data-line="54">        <span class="n">autouse</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+</span><span data-line="55">        <span class="n">name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+</span><span data-line="56">    <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+</span><span data-line="57"><span class="w">        </span><span class="sd">&quot;&quot;&quot;Create a factory fixture decorator</span>
+</span><span data-line="58">
+</span><span data-line="59"><span class="sd">        :param scope: Fixture scope</span>
+</span><span data-line="60"><span class="sd">        :param autouse: Autouse the fixture</span>
+</span><span data-line="61"><span class="sd">        :param name: Fixture name</span>
+</span><span data-line="62"><span class="sd">        &quot;&quot;&quot;</span>
+</span><span data-line="63">        <span class="bp">self</span><span class="o">.</span><span class="n">scope</span> <span class="o">=</span> <span class="n">scope</span>
+</span><span data-line="64">        <span class="bp">self</span><span class="o">.</span><span class="n">autouse</span> <span class="o">=</span> <span class="n">autouse</span>
+</span><span data-line="65">        <span class="bp">self</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="n">name</span></div>
+</span><span data-line="66">
+<div class="viewcode-block" id="FactoryFixture.__call__"><a class="viewcode-back" href="../../reference/pytest_plugin.html#polyfactory.pytest_plugin.FactoryFixture.__call__">[docs]</a></span><span data-line="67">    <span class="k">def</span> <span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">factory</span><span class="p">:</span> <span class="nb">type</span><span class="p">[</span><span class="n">T</span><span class="p">],</span> <span class="n">depth</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">type</span><span class="p">[</span><span class="n">T</span><span class="p">]:</span>
+</span><span data-line="68">        <span class="k">if</span> <span class="ow">not</span> <span class="n">is_safe_subclass</span><span class="p">(</span><span class="n">factory</span><span class="p">,</span> <span class="n">BaseFactory</span><span class="p">):</span>
+</span><span data-line="69">            <span class="n">msg</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">factory</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2"> is not a BaseFactory subclass.&quot;</span>
+</span><span data-line="70">            <span class="k">raise</span> <span class="n">ParameterException</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
+</span><span data-line="71">
+</span><span data-line="72">        <span class="n">fixture_name</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">name</span> <span class="ow">or</span> <span class="n">_get_fixture_name</span><span class="p">(</span><span class="n">factory</span><span class="o">.</span><span class="vm">__name__</span><span class="p">)</span>
+</span><span data-line="73">        <span class="n">fixture_register</span> <span class="o">=</span> <span class="n">pytest</span><span class="o">.</span><span class="n">fixture</span><span class="p">(</span>
+</span><span data-line="74">            <span class="n">scope</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">scope</span><span class="p">,</span>  <span class="c1"># pyright: ignore[reportArgumentType]</span>
+</span><span data-line="75">            <span class="n">name</span><span class="o">=</span><span class="n">fixture_name</span><span class="p">,</span>
+</span><span data-line="76">            <span class="n">autouse</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">autouse</span><span class="p">,</span>
+</span><span data-line="77">        <span class="p">)</span>
+</span><span data-line="78">
+</span><span data-line="79">        <span class="k">def</span> <span class="nf">_factory_fixture</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="nb">type</span><span class="p">[</span><span class="n">T</span><span class="p">]:</span>
+</span><span data-line="80"><span class="w">            </span><span class="sd">&quot;&quot;&quot;The wrapped factory&quot;&quot;&quot;</span>
+</span><span data-line="81">            <span class="k">return</span> <span class="n">cast</span><span class="p">(</span><span class="n">Type</span><span class="p">[</span><span class="n">T</span><span class="p">],</span> <span class="n">factory</span><span class="p">)</span>
+</span><span data-line="82">
+</span><span data-line="83">        <span class="n">caller_globals</span> <span class="o">=</span> <span class="n">inspect</span><span class="o">.</span><span class="n">stack</span><span class="p">()[</span><span class="n">depth</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">f_globals</span>
+</span><span data-line="84">        <span class="n">caller_globals</span><span class="p">[</span><span class="n">fixture_name</span><span class="p">]</span> <span class="o">=</span> <span class="n">fixture_register</span><span class="p">(</span><span class="n">_factory_fixture</span><span class="p">)</span>
+</span><span data-line="85">
+</span><span data-line="86">        <span class="k">return</span> <span class="n">factory</span>  <span class="c1"># type: ignore[return-value]</span></div></div>
+</span><span data-line="87">
+</span><span data-line="88">
+</span><span data-line="89"><span class="nd">@overload</span>
+</span><span data-line="90"><span class="k">def</span> <span class="nf">register_fixture</span><span class="p">(</span>
+</span><span data-line="91">    <span class="n">factory</span><span class="p">:</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+</span><span data-line="92">    <span class="o">*</span><span class="p">,</span>
+</span><span data-line="93">    <span class="n">scope</span><span class="p">:</span> <span class="n">Scope</span> <span class="o">=</span> <span class="s2">&quot;function&quot;</span><span class="p">,</span>
+</span><span data-line="94">    <span class="n">autouse</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+</span><span data-line="95">    <span class="n">name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+</span><span data-line="96"><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">FactoryFixture</span><span class="p">:</span> <span class="o">...</span>
+</span><span data-line="97">
+</span><span data-line="98">
+</span><span data-line="99"><span class="nd">@overload</span>
+</span><span data-line="100"><span class="k">def</span> <span class="nf">register_fixture</span><span class="p">(</span>
+</span><span data-line="101">    <span class="n">factory</span><span class="p">:</span> <span class="nb">type</span><span class="p">[</span><span class="n">T</span><span class="p">],</span>
+</span><span data-line="102">    <span class="o">*</span><span class="p">,</span>
+</span><span data-line="103">    <span class="n">scope</span><span class="p">:</span> <span class="n">Scope</span> <span class="o">=</span> <span class="s2">&quot;function&quot;</span><span class="p">,</span>
+</span><span data-line="104">    <span class="n">autouse</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+</span><span data-line="105">    <span class="n">name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+</span><span data-line="106"><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">type</span><span class="p">[</span><span class="n">T</span><span class="p">]:</span> <span class="o">...</span>
+</span><span data-line="107">
+</span><span data-line="108">
+<div class="viewcode-block" id="register_fixture"><a class="viewcode-back" href="../../reference/pytest_plugin.html#polyfactory.pytest_plugin.register_fixture">[docs]</a></span><span data-line="109"><span class="k">def</span> <span class="nf">register_fixture</span><span class="p">(</span>
+</span><span data-line="110">    <span class="n">factory</span><span class="p">:</span> <span class="nb">type</span><span class="p">[</span><span class="n">T</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+</span><span data-line="111">    <span class="o">*</span><span class="p">,</span>
+</span><span data-line="112">    <span class="n">scope</span><span class="p">:</span> <span class="n">Scope</span> <span class="o">=</span> <span class="s2">&quot;function&quot;</span><span class="p">,</span>
+</span><span data-line="113">    <span class="n">autouse</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+</span><span data-line="114">    <span class="n">name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+</span><span data-line="115"><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">type</span><span class="p">[</span><span class="n">T</span><span class="p">]</span> <span class="o">|</span> <span class="n">FactoryFixture</span><span class="p">:</span>
+</span><span data-line="116"><span class="w">    </span><span class="sd">&quot;&quot;&quot;A decorator that allows registering model factories as fixtures.</span>
+</span><span data-line="117">
+</span><span data-line="118"><span class="sd">    :param factory: An optional factory class to decorate.</span>
+</span><span data-line="119"><span class="sd">    :param scope: Pytest scope.</span>
+</span><span data-line="120"><span class="sd">    :param autouse: Auto use fixture.</span>
+</span><span data-line="121"><span class="sd">    :param name: Fixture name.</span>
+</span><span data-line="122">
+</span><span data-line="123"><span class="sd">    :returns: A fixture factory instance.</span>
+</span><span data-line="124"><span class="sd">    &quot;&quot;&quot;</span>
+</span><span data-line="125">    <span class="n">factory_fixture</span> <span class="o">=</span> <span class="n">FactoryFixture</span><span class="p">(</span><span class="n">scope</span><span class="o">=</span><span class="n">scope</span><span class="p">,</span> <span class="n">autouse</span><span class="o">=</span><span class="n">autouse</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="n">name</span><span class="p">)</span>
+</span><span data-line="126">    <span class="k">return</span> <span class="n">factory_fixture</span><span class="p">(</span><span class="n">factory</span><span class="p">,</span> <span class="n">depth</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span> <span class="k">if</span> <span class="n">factory</span> <span class="k">else</span> <span class="n">factory_fixture</span></div>
 </span></pre></div>
         </article><button class="back-to-top" type="button">
   <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
