@@ -5,6 +5,8 @@ from typing import Any, Callable, Generic, TypedDict, TypeVar, cast
 from typing_extensions import ParamSpec
 
 from polyfactory.exceptions import ParameterException
+from polyfactory.utils import deprecation
+from polyfactory.utils.predicates import is_safe_subclass
 
 T = TypeVar("T")
 P = ParamSpec("P")
@@ -87,6 +89,7 @@ class Fixture:
 
     __slots__ = ("kwargs", "ref", "size")
 
+    @deprecation.deprecated(version="2.20.0", alternative="Use factory directly")
     def __init__(self, fixture: Callable, size: int | None = None, **kwargs: Any) -> None:
         """Create a fixture from a factory.
 
@@ -105,12 +108,13 @@ class Fixture:
 
         :returns: The build result.
         """
-        from polyfactory.pytest_plugin import FactoryFixture
+        from polyfactory.factories.base import BaseFactory
 
-        if factory := FactoryFixture.factory_class_map.get(self.ref["value"]):
-            if self.size is not None:
-                return factory.batch(self.size, **self.kwargs)
-            return factory.build(**self.kwargs)
+        factory = self.ref["value"]
+        if not is_safe_subclass(factory, BaseFactory):
+            msg = "fixture has not been registered using the register_factory decorator"
+            raise ParameterException(msg)
 
-        msg = "fixture has not been registered using the register_factory decorator"
-        raise ParameterException(msg)
+        if self.size is not None:
+            return factory.batch(self.size, **self.kwargs)
+        return factory.build(**self.kwargs)
