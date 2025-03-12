@@ -34,11 +34,13 @@ from typing import (
     Hashable,
     Iterable,
     Mapping,
+    Self,
     Sequence,
     Type,
     TypedDict,
     TypeVar,
     cast,
+    overload,
 )
 from uuid import UUID
 
@@ -89,6 +91,7 @@ if TYPE_CHECKING:
 
 
 T = TypeVar("T")
+U = TypeVar("U")
 F = TypeVar("F", bound="BaseFactory[Any]")
 
 
@@ -372,7 +375,7 @@ class BaseFactory(ABC, Generic[T]):
         }
 
     @classmethod
-    def _get_or_create_factory(cls, model: type) -> type[BaseFactory[Any]]:
+    def _get_or_create_factory(cls, model: type[U]) -> type[BaseFactory[U]]:
         """Get a factory from registered factories or generate a factory dynamically.
 
         :param model: A model type.
@@ -553,13 +556,31 @@ class BaseFactory(ABC, Generic[T]):
             **(cls._extra_providers or {}),
         }
 
+    @overload
     @classmethod
     def create_factory(
-        cls: type[F],
-        model: type[T] | None = None,
+        cls,
+        model: None = None,
         bases: tuple[type[BaseFactory[Any]], ...] | None = None,
         **kwargs: Any,
-    ) -> type[F]:
+    ) -> type[Self]: ...
+
+    @overload
+    @classmethod
+    def create_factory(
+        cls,
+        model: type[U],
+        bases: tuple[type[BaseFactory[Any]], ...] | None = None,
+        **kwargs: Any,
+    ) -> type[BaseFactory[U]]: ...
+
+    @classmethod
+    def create_factory(
+        cls,
+        model: type[U] | None = None,
+        bases: tuple[type[BaseFactory[Any]], ...] | None = None,
+        **kwargs: Any,
+    ) -> type[Self | BaseFactory[U]]:
         """Generate a factory for the given type dynamically.
 
         :param model: A type to model. Defaults to current factory __model__ if any.
@@ -572,12 +593,13 @@ class BaseFactory(ABC, Generic[T]):
         """
         if model is None:
             try:
-                model = cls.__model__
+                model = cls.__model__  # pyright: ignore[reportAssignmentType]
             except AttributeError as ex:
                 msg = "A 'model' argument is required when creating a new factory from a base one"
                 raise TypeError(msg) from ex
+
         return cast(
-            "Type[F]",
+            "Type[Self]",
             type(
                 f"{model.__name__}Factory",  # pyright: ignore[reportOptionalMemberAccess]
                 (*(bases or ()), cls),
@@ -1081,7 +1103,7 @@ class BaseFactory(ABC, Generic[T]):
             yield resolved
 
     @classmethod
-    def build(cls, **kwargs: Any) -> T:
+    def build(cls, *_: Any, **kwargs: Any) -> T:
         """Build an instance of the factory's __model__
 
         :param kwargs: Any kwargs. If field names are set in kwargs, their values will be used.

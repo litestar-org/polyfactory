@@ -97,7 +97,11 @@ if TYPE_CHECKING:
 
     from typing_extensions import NotRequired, TypeGuard
 
-T = TypeVar("T", bound="BaseModelV1 | BaseModelV2")  # pyright: ignore[reportInvalidTypeForm]
+    from pydantic import BaseModel
+
+T = TypeVar("T", bound="BaseModel")
+U = TypeVar("U", bound="BaseModel")
+S = TypeVar("S")
 
 _IS_PYDANTIC_V1 = VERSION.startswith("1")
 
@@ -465,7 +469,8 @@ class ModelFactory(Generic[T], BaseFactory[T]):
 
         if "_build_context" not in kwargs:
             kwargs["_build_context"] = PydanticBuildContext(
-                seen_models=set(), factory_use_construct=factory_use_construct
+                seen_models=set(),
+                factory_use_construct=factory_use_construct,
             )
 
         processed_kwargs = cls.process_kwargs(**kwargs)
@@ -502,8 +507,8 @@ class ModelFactory(Generic[T], BaseFactory[T]):
         if cls._get_build_context(_build_context).get("factory_use_construct"):
             if _is_pydantic_v1_model(cls.__model__):
                 return cls.__model__.construct(**kwargs)  # type: ignore[return-value]
-            return cls.__model__.model_construct(**kwargs)  # type: ignore[return-value]
-        return cls.__model__(**kwargs)  # type: ignore[return-value]
+            return cls.__model__.model_construct(**kwargs)
+        return cls.__model__(**kwargs)
 
     @classmethod
     def coverage(cls, factory_use_construct: bool = False, **kwargs: Any) -> abc.Iterator[T]:

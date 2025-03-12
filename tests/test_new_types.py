@@ -160,6 +160,6 @@ class A:
 """,
     )
 
-    factory = DataclassFactory.create_factory(module.A)  # type: ignore[var-annotated]
+    factory = DataclassFactory.create_factory(module.A)
     result = factory.build()
     assert result.field in {"a", "b"}
