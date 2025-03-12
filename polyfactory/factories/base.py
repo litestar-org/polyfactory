@@ -34,7 +34,6 @@ from typing import (
     Hashable,
     Iterable,
     Mapping,
-    Self,
     Sequence,
     Type,
     TypedDict,
@@ -45,7 +44,7 @@ from typing import (
 from uuid import UUID
 
 from faker import Faker
-from typing_extensions import get_args, get_origin, get_original_bases
+from typing_extensions import Self, get_args, get_origin, get_original_bases
 
 from polyfactory.constants import (
     DEFAULT_RANDOM,
