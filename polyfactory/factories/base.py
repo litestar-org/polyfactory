@@ -186,8 +186,12 @@ class BaseFactory(ABC, Generic[T]):
     _factory_type_mapping: ClassVar[dict[Any, type[BaseFactory[Any]]]]
     _base_factories: ClassVar[list[type[BaseFactory[Any]]]]
 
+    _providers: ClassVar[dict[Any, Callable[[], Any]]]
+    "List of type providers that apply to all factories"
+
     # Non-public attributes
     _extra_providers: dict[Any, Callable[[], Any]] | None = None
+    "Used to copy providers from once base factory to another dynamically generated factory for a class"
 
     def __init_subclass__(cls, *args: Any, **kwargs: Any) -> None:  # noqa: C901
         super().__init_subclass__(*args, **kwargs)
@@ -197,6 +201,9 @@ class BaseFactory(ABC, Generic[T]):
 
         if not hasattr(BaseFactory, "_factory_type_mapping"):
             BaseFactory._factory_type_mapping = {}
+
+        if not hasattr(BaseFactory, "_providers"):
+            BaseFactory._providers = {}
 
         if cls.__min_collection_length__ > cls.__max_collection_length__:
             msg = "Minimum collection length shouldn't be greater than maximum collection length"
@@ -418,6 +425,11 @@ class BaseFactory(ABC, Generic[T]):
     # Public Methods
 
     @classmethod
+    def add_provider(cls, provider_type, provider_function) -> None:
+        """Add a provider for a custom type to be available to all factories"""
+        cls._providers[provider_type] = provider_function
+
+    @classmethod
     def is_factory_type(cls, annotation: Any) -> bool:
         """Determine whether a given field is annotated with a type that is supported by a base factory.
 
@@ -502,7 +514,7 @@ class BaseFactory(ABC, Generic[T]):
 
     @classmethod
     def get_provider_map(cls) -> dict[Any, Callable[[], Any]]:
-        """Map types to callables.
+        """Map types to callables which accept no arguments and return a random value of the given type.
 
         :notes:
             - This method is distinct to allow overriding.
@@ -552,6 +564,7 @@ class BaseFactory(ABC, Generic[T]):
             Callable: _create_generic_fn,
             abc.Callable: _create_generic_fn,
             Counter: lambda: Counter(cls.__faker__.pystr()),
+            **(cls._providers or {}),
             **(cls._extra_providers or {}),
         }
 
@@ -834,7 +847,11 @@ class BaseFactory(ABC, Generic[T]):
             with suppress(Exception):
                 return unwrapped_annotation()
 
-        msg = f"Unsupported type: {unwrapped_annotation!r}\n\nEither extend the providers map or add a factory function for this type."
+        msg = (
+            f"Unsupported type: {unwrapped_annotation!r} on field '{field_meta.name}' from class {cls.__name__}."
+            "\n\nEither use 'add_provider', extend the providers map, or add a factory function for the field on the model."
+        )
+
         raise ParameterException(
             msg,
         )
@@ -1126,7 +1143,7 @@ class BaseFactory(ABC, Generic[T]):
 
     @classmethod
     def coverage(cls, **kwargs: Any) -> abc.Iterator[T]:
-        """Build a batch of the factory's Meta.model will full coverage of the sub-types of the model.
+        """Build a batch of the factory's Meta.model with full coverage of the sub-types of the model.
 
         :param kwargs: Any kwargs. If field_meta names are set in kwargs, their values will be used.
 
