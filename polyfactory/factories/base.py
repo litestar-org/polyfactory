@@ -193,7 +193,7 @@ class BaseFactory(ABC, Generic[T]):
     _extra_providers: dict[Any, Callable[[], Any]] | None = None
     "Used to copy providers from once base factory to another dynamically generated factory for a class"
 
-    def __init_subclass__(cls, *args: Any, **kwargs: Any) -> None:  # noqa: C901
+    def __init_subclass__(cls, *args: Any, **kwargs: Any) -> None:  # noqa: C901, PLR0912
         super().__init_subclass__(*args, **kwargs)
 
         if not hasattr(BaseFactory, "_base_factories"):
@@ -425,7 +425,7 @@ class BaseFactory(ABC, Generic[T]):
     # Public Methods
 
     @classmethod
-    def add_provider(cls, provider_type, provider_function) -> None:
+    def add_provider(cls, provider_type: Any, provider_function: Callable[[], Any]) -> None:
         """Add a provider for a custom type to be available to all factories"""
         cls._providers[provider_type] = provider_function
 

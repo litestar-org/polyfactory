@@ -62,7 +62,7 @@ def test_provider_map_with_typevar() -> None:
 
 def test_add_custom_provider() -> None:
     class CustomType:
-        def __init__(self, _) -> None:
+        def __init__(self, _: Any) -> None:
             pass
 
     @dataclass
