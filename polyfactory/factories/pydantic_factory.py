@@ -100,8 +100,6 @@ if TYPE_CHECKING:
     from pydantic import BaseModel
 
 T = TypeVar("T", bound="BaseModel")
-U = TypeVar("U", bound="BaseModel")
-S = TypeVar("S")
 
 _IS_PYDANTIC_V1 = VERSION.startswith("1")
 
