@@ -1038,3 +1038,12 @@ def test_annotated_children() -> None:
     AFactory = ModelFactory.create_factory(A)
 
     assert AFactory.build()
+
+
+@pytest.mark.skipif(IS_PYDANTIC_V1, reason="pydantic 2 only test")
+def test_skip_validation() -> None:
+    class A(BaseModel):
+        a: Annotated[int, pydantic.SkipValidation]
+
+    AFactory = ModelFactory.create_factory(A)
+    assert AFactory.build()
