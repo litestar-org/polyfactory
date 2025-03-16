@@ -49,7 +49,7 @@ def test_build_v1_with_contrained_fields() -> None:
     ConstrainedInt = Annotated[int, Field(ge=100, le=200)]
     ConstrainedStr = Annotated[str, Field(min_length=1, max_length=3)]
 
-    class Foo(pydantic.v1.BaseModel):  # pyright: ignore[reportGeneralTypeIssues]
+    class Foo(BaseModelV1):
         a: ConstrainedInt
         b: ConstrainedStr
         c: Union[ConstrainedInt, ConstrainedStr]
@@ -58,7 +58,7 @@ def test_build_v1_with_contrained_fields() -> None:
         f: List[ConstrainedInt]
         g: Dict[ConstrainedInt, ConstrainedStr]
 
-    ModelFactory.create_factory(Foo).build()  # type: ignore[type-var]
+    ModelFactory.create_factory(Foo).build()
 
 
 def test_build_v2_with_contrained_fields() -> None:
