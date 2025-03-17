@@ -203,7 +203,7 @@ class PydanticFieldMeta(FieldMeta):
                     metadata.append(m)
 
             constraints = cast(
-                PydanticConstraints,
+                "PydanticConstraints",
                 cls.parse_constraints(metadata=metadata) if metadata else {},
             )
 
@@ -438,7 +438,7 @@ class ModelFactory(Generic[T], BaseFactory[T]):
         field_build_parameters: Any | None = None,
         build_context: BuildContext | None = None,
     ) -> Any:
-        constraints = cast(PydanticConstraints, field_meta.constraints)
+        constraints = cast("PydanticConstraints", field_meta.constraints)
         if constraints.pop("json", None):
             value = cls.get_field_value(
                 field_meta, field_build_parameters=field_build_parameters, build_context=build_context

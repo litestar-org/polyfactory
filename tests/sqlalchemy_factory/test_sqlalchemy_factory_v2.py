@@ -92,10 +92,10 @@ def test_sqla_dialect_types() -> None:
         mssql_json: orm.Mapped[Dict] = orm.mapped_column(type_=MSSQL_JSON)
 
         multible_pg_json_type: orm.Mapped[Dict] = orm.mapped_column(
-            type_=MutableDict.as_mutable(JSON(astext_type=Text()))  # type: ignore[no-untyped-call]
+            type_=MutableDict.as_mutable(JSON(astext_type=Text()))
         )
         multible_pg_jsonb_type: orm.Mapped[Dict] = orm.mapped_column(
-            type_=MutableDict.as_mutable(JSONB(astext_type=Text()))  # type: ignore[no-untyped-call]
+            type_=MutableDict.as_mutable(JSONB(astext_type=Text()))
         )
         multible_common_json_type: orm.Mapped[Dict] = orm.mapped_column(type_=MutableDict.as_mutable(types.JSON()))
         multible_mysql_json: orm.Mapped[Dict] = orm.mapped_column(type_=MutableDict.as_mutable(MYSQL_JSON()))

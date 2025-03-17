@@ -247,7 +247,7 @@ class BaseFactory(ABC, Generic[T]):
         return copy.deepcopy(build_context)
 
     @classmethod
-    def _infer_model_type(cls: type[F]) -> type[T] | None:
+    def _infer_model_type(cls) -> type[T] | None:
         """Return model type inferred from class declaration.
         class Foo(ModelFactory[MyModel]):  # <<< MyModel
             ...

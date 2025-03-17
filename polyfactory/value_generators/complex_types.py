@@ -5,11 +5,11 @@ from typing import TYPE_CHECKING, AbstractSet, Any, Iterable, MutableMapping, Mu
 from typing_extensions import is_typeddict
 
 from polyfactory.constants import INSTANTIABLE_TYPE_MAPPING, PY_38
-from polyfactory.field_meta import FieldMeta
 from polyfactory.utils.model_coverage import CoverageContainer
 
 if TYPE_CHECKING:
     from polyfactory.factories.base import BaseFactory, BuildContext
+    from polyfactory.field_meta import FieldMeta
 
 
 def handle_collection_type(
@@ -42,7 +42,7 @@ def handle_collection_type(
 
     if issubclass(container_type, MutableMapping) or is_typeddict(container_type):
         for key_field_meta, value_field_meta in cast(
-            Iterable[Tuple[FieldMeta, FieldMeta]],
+            "Iterable[Tuple[FieldMeta, FieldMeta]]",
             zip(field_meta.children[::2], field_meta.children[1::2]),
         ):
             key = factory.get_field_value(
@@ -112,7 +112,7 @@ def handle_collection_type_coverage(  # noqa: C901, PLR0911
 
     if issubclass(container_type, MutableMapping) or is_typeddict(container_type):
         for key_field_meta, value_field_meta in cast(
-            Iterable[Tuple[FieldMeta, FieldMeta]],
+            "Iterable[Tuple[FieldMeta, FieldMeta]]",
             zip(field_meta.children[::2], field_meta.children[1::2]),
         ):
             key = CoverageContainer(factory.get_field_value_coverage(key_field_meta, build_context=build_context))

@@ -78,7 +78,7 @@ class FactoryFixture:
 
         def _factory_fixture() -> type[T]:
             """The wrapped factory"""
-            return cast(Type[T], factory)
+            return cast("Type[T]", factory)
 
         caller_globals = inspect.stack()[depth][0].f_globals
         caller_globals[fixture_name] = fixture_register(_factory_fixture)
