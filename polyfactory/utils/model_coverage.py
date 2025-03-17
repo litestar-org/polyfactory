@@ -54,7 +54,7 @@ class CoverageContainer(CoverageContainerBase, Generic[T]):
             if value.is_done():
                 # Only move onto the next instance if the sub-container is done
                 self._pos += 1
-            return cast(T, result)
+            return cast("T", result)
 
         self._pos += 1
         return value

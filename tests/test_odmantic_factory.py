@@ -6,15 +6,15 @@ import bson
 import pytest
 from bson import ObjectId
 
+import pydantic
+
+if not pydantic.VERSION.startswith("1"):
+    pytest.skip("only for pydantic v1", allow_module_level=True)
+
+from odmantic import AIOEngine, EmbeddedModel, Model
+
 from polyfactory.decorators import post_generated
-
-try:
-    from odmantic import AIOEngine, EmbeddedModel, Model
-
-    from polyfactory.factories.odmantic_odm_factory import OdmanticModelFactory
-except ImportError:
-    AIOEngine, EmbeddedModel, Model, OdmanticModelFactory = None, None, None, None  # type: ignore
-    pytest.importorskip("odmantic")
+from polyfactory.factories.odmantic_odm_factory import OdmanticModelFactory
 
 
 class OtherEmbeddedDocument(EmbeddedModel):  # type: ignore

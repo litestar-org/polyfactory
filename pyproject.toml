@@ -162,6 +162,7 @@ markers = [
     # Marks tests that use `attrs` library
     "attrs",
 ]
+asyncio_default_fixture_loop_scope = "function"
 
 [tool.coverage.report]
 exclude_lines = [
