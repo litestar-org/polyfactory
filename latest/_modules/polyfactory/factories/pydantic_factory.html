@@ -467,7 +467,7 @@ data-aria-dark="Switch to auto color mode">
 </span><span data-line="203">                    <span class="n">metadata</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">m</span><span class="p">)</span>
 </span><span data-line="204">
 </span><span data-line="205">            <span class="n">constraints</span> <span class="o">=</span> <span class="n">cast</span><span class="p">(</span>
-</span><span data-line="206">                <span class="n">PydanticConstraints</span><span class="p">,</span>
+</span><span data-line="206">                <span class="s2">&quot;PydanticConstraints&quot;</span><span class="p">,</span>
 </span><span data-line="207">                <span class="bp">cls</span><span class="o">.</span><span class="n">parse_constraints</span><span class="p">(</span><span class="n">metadata</span><span class="o">=</span><span class="n">metadata</span><span class="p">)</span> <span class="k">if</span> <span class="n">metadata</span> <span class="k">else</span> <span class="p">{},</span>
 </span><span data-line="208">            <span class="p">)</span>
 </span><span data-line="209">
@@ -702,7 +702,7 @@ data-aria-dark="Switch to auto color mode">
 </span><span data-line="438">        <span class="n">field_build_parameters</span><span class="p">:</span> <span class="n">Any</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
 </span><span data-line="439">        <span class="n">build_context</span><span class="p">:</span> <span class="n">BuildContext</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
 </span><span data-line="440">    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Any</span><span class="p">:</span>
-</span><span data-line="441">        <span class="n">constraints</span> <span class="o">=</span> <span class="n">cast</span><span class="p">(</span><span class="n">PydanticConstraints</span><span class="p">,</span> <span class="n">field_meta</span><span class="o">.</span><span class="n">constraints</span><span class="p">)</span>
+</span><span data-line="441">        <span class="n">constraints</span> <span class="o">=</span> <span class="n">cast</span><span class="p">(</span><span class="s2">&quot;PydanticConstraints&quot;</span><span class="p">,</span> <span class="n">field_meta</span><span class="o">.</span><span class="n">constraints</span><span class="p">)</span>
 </span><span data-line="442">        <span class="k">if</span> <span class="n">constraints</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;json&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">):</span>
 </span><span data-line="443">            <span class="n">value</span> <span class="o">=</span> <span class="bp">cls</span><span class="o">.</span><span class="n">get_field_value</span><span class="p">(</span>
 </span><span data-line="444">                <span class="n">field_meta</span><span class="p">,</span> <span class="n">field_build_parameters</span><span class="o">=</span><span class="n">field_build_parameters</span><span class="p">,</span> <span class="n">build_context</span><span class="o">=</span><span class="n">build_context</span>
