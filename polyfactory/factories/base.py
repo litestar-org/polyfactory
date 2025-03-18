@@ -187,7 +187,7 @@ class BaseFactory(ABC, Generic[T]):
     _base_factories: ClassVar[list[type[BaseFactory[Any]]]]
 
     _providers: ClassVar[dict[Any, Callable[[], Any]]]
-    "List of type providers that apply to all factories"
+    """Mapping of type providers that apply to all factories"""
 
     # Non-public attributes
     _extra_providers: dict[Any, Callable[[], Any]] | None = None
