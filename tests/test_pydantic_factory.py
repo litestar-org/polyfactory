@@ -63,7 +63,9 @@ from pydantic import (
     constr,
     validator,
 )
+from pydantic_core import core_schema
 
+from polyfactory.exceptions import ParameterException
 from polyfactory.factories import DataclassFactory
 from polyfactory.factories.pydantic_factory import _IS_PYDANTIC_V1, ModelFactory
 from tests.models import Person, PetFactory
@@ -632,6 +634,33 @@ def test_union_types() -> None:
     AFactory = ModelFactory.create_factory(A)
 
     assert AFactory.build()
+
+
+def test_optional_custom_type() -> None:
+    class CustomType:
+        def __init__(self, _) -> None:
+            pass
+
+        def __get_pydantic_core_schema__(self, _):
+            # for pydantic to stop complaining
+            return core_schema.str_schema()
+
+    class OptionalFormOne(BaseModel):
+        optional_custom_type: Optional[CustomType]
+
+    class OptionalFormTwo(BaseModel):
+        optional_custom_type_second_form: CustomType | None
+
+    OptionalFormOneFactory = ModelFactory.create_factory(OptionalFormOne)
+
+    # ensure the custom type field name and variant is in the error message
+
+    with pytest.raises(ParameterException, match=r"optional_custom_type__CustomType"):
+        OptionalFormOneFactory.build()
+
+    OptionalFormTwoFactory = ModelFactory.create_factory(OptionalFormTwo)
+    with pytest.raises(ParameterException, match=r"optional_custom_type_second_form__CustomType"):
+        OptionalFormTwoFactory.build()
 
 
 def test_collection_unions_with_models() -> None:
