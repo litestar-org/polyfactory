@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from datetime import date, datetime
-from typing import TYPE_CHECKING, Any, Callable, ClassVar, Generic, List, TypeVar, Union
+from typing import TYPE_CHECKING, Any, Callable, ClassVar, Generic, List, Protocol, TypeVar, Union
 
 from typing_extensions import Annotated
 
@@ -68,6 +68,14 @@ class SQLAASyncPersistence(AsyncPersistenceProtocol[T]):
         return data
 
 
+_T_co = TypeVar("_T_co", covariant=True)
+
+
+class SessionMaker(Protocol[_T_co]):
+    @staticmethod
+    def __call__() -> _T_co: ...
+
+
 class SQLAlchemyFactory(Generic[T], BaseFactory[T]):
     """Base factory for SQLAlchemy models."""
 
@@ -82,8 +90,8 @@ class SQLAlchemyFactory(Generic[T], BaseFactory[T]):
     __set_association_proxy__: ClassVar[bool] = False
     """Configuration to consider AssociationProxy property as a model field or not."""
 
-    __session__: ClassVar[Session | Callable[[], Session] | None] = None
-    __async_session__: ClassVar[AsyncSession | Callable[[], AsyncSession] | None] = None
+    __session__: ClassVar[Session | SessionMaker[Session] | None] = None
+    __async_session__: ClassVar[AsyncSession | SessionMaker[AsyncSession] | None] = None
 
     __config_keys__ = (
         *BaseFactory.__config_keys__,

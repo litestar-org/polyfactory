@@ -52,7 +52,7 @@ repos:
             sqlalchemy>=2,
           ]
   - repo: https://github.com/RobertCraigie/pyright-python
-    rev: v1.1.394
+    rev: v1.1.397
     hooks:
       - id: pyright
         exclude: "tests"
