@@ -6,10 +6,10 @@ from datetime import timezone
 from functools import partial
 from os.path import realpath
 from pathlib import Path
-from typing import TYPE_CHECKING, Any, ClassVar, ForwardRef, Generic, Mapping, Tuple, TypeVar, cast
+from typing import TYPE_CHECKING, Any, ClassVar, ForwardRef, Generic, Mapping, TypeVar, cast
 from uuid import NAMESPACE_DNS, uuid1, uuid3, uuid5
 
-from typing_extensions import Literal, get_args, get_origin
+from typing_extensions import Literal, get_args
 
 from polyfactory.exceptions import MissingDependencyException
 from polyfactory.factories.base import BaseFactory, BuildContext
@@ -308,7 +308,7 @@ class PydanticFieldMeta(FieldMeta):
         if model_field.field_info.const and (
             default_value is None or isinstance(default_value, (int, bool, str, bytes))
         ):
-            annotation = Literal[default_value]  # pyright: ignore  # noqa: PGH003
+            annotation = Literal[default_value]
 
         children: list[FieldMeta] = []
 
@@ -323,17 +323,6 @@ class PydanticFieldMeta(FieldMeta):
                 if model_field.key_field is not None
                 else model_field.sub_fields
             )
-            type_args = tuple(
-                (
-                    sub_field.outer_type_
-                    if isinstance(sub_field.annotation, DeferredType)
-                    else unwrap_new_type(sub_field.annotation)
-                )
-                for sub_field in fields_to_iterate
-            )
-            if get_origin(outer_type) in (tuple, Tuple) and get_args(outer_type)[-1] == Ellipsis:
-                # pydantic removes ellipses from Tuples in sub_fields
-                type_args += (...,)
             children.extend(
                 PydanticFieldMeta.from_model_field(
                     model_field=arg,
