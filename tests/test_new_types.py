@@ -32,6 +32,7 @@ def test_new_types() -> None:
     class MyModel(BaseModel):
         int_field: MyInt
         wrapped_int_field: WrappedInt
+        optional_int_field: MyInt | None
 
     class MyModelFactory(ModelFactory):
         __model__ = MyModel
@@ -39,6 +40,7 @@ def test_new_types() -> None:
     result = MyModelFactory.build()
     assert isinstance(result.int_field, int)
     assert isinstance(result.wrapped_int_field, int)
+    assert isinstance(result.optional_int_field, int) or result.optional_int_field is None
 
 
 def test_complex_new_types() -> None:
