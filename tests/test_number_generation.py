@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 from random import Random
 
 import pytest
@@ -24,6 +26,28 @@ def test_generate_constrained_number(maximum: float, minimum: float, multiple_of
             method=create_random_float,
         ),
     )
+
+
+@pytest.mark.parametrize(
+    "minimum, maximum",
+    (
+        (None, None),
+        (-200, None),
+        (200, None),
+        (None, -200),
+        (None, 200),
+        (-200, 200),
+    ),
+)
+def test_create_random_float_bounds(
+    minimum: float | None,
+    maximum: float | None,
+) -> None:
+    result = create_random_float(Random(), minimum, maximum)
+    if minimum is not None:
+        assert result >= minimum
+    if maximum is not None:
+        assert result <= maximum
 
 
 def test_passes_pydantic_multiple_validator_handles_zero_multiplier() -> None:
