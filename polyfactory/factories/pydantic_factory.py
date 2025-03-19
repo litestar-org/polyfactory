@@ -331,16 +331,15 @@ class PydanticFieldMeta(FieldMeta):
                 )
                 for sub_field in fields_to_iterate
             )
-            type_arg_to_sub_field = dict(zip(type_args, fields_to_iterate))
             if get_origin(outer_type) in (tuple, Tuple) and get_args(outer_type)[-1] == Ellipsis:
                 # pydantic removes ellipses from Tuples in sub_fields
                 type_args += (...,)
             children.extend(
                 PydanticFieldMeta.from_model_field(
-                    model_field=type_arg_to_sub_field[arg],
+                    model_field=arg,
                     use_alias=use_alias,
                 )
-                for arg in type_args
+                for arg in fields_to_iterate
             )
 
         return PydanticFieldMeta(
