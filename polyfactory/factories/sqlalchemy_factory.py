@@ -71,7 +71,7 @@ class SQLAASyncPersistence(AsyncPersistenceProtocol[T]):
 _T_co = TypeVar("_T_co", covariant=True)
 
 
-class SessionMaker(Protocol[_T_co]):
+class _SessionMaker(Protocol[_T_co]):
     @staticmethod
     def __call__() -> _T_co: ...
 
@@ -90,8 +90,8 @@ class SQLAlchemyFactory(Generic[T], BaseFactory[T]):
     __set_association_proxy__: ClassVar[bool] = False
     """Configuration to consider AssociationProxy property as a model field or not."""
 
-    __session__: ClassVar[Session | SessionMaker[Session] | None] = None
-    __async_session__: ClassVar[AsyncSession | SessionMaker[AsyncSession] | None] = None
+    __session__: ClassVar[Session | _SessionMaker[Session] | None] = None
+    __async_session__: ClassVar[AsyncSession | _SessionMaker[AsyncSession] | None] = None
 
     __config_keys__ = (
         *BaseFactory.__config_keys__,
