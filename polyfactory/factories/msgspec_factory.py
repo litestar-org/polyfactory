@@ -66,7 +66,6 @@ class MsgspecFactory(Generic[T], BaseFactory[T]):
                     annotation=annotation,
                     name=field.name,
                     default=default_value,
-                    random=cls.__random__,
                 ),
             )
         return fields_meta

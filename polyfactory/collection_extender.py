@@ -5,6 +5,7 @@ from abc import ABC, abstractmethod
 from collections import deque
 from typing import Any
 
+from polyfactory.utils.deprecation import deprecated
 from polyfactory.utils.predicates import is_safe_subclass
 
 
@@ -28,6 +29,7 @@ class CollectionExtender(ABC):
         )
 
     @classmethod
+    @deprecated("2.20.0")
     def extend_type_args(
         cls,
         annotation_alias: Any,

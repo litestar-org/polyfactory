@@ -35,9 +35,8 @@ install:											## Install the project, dependencies, and pre-commit for loca
 .PHONY: clean
 clean: 												## Cleanup temporary build artifacts
 	@echo "=> Cleaning working directory"
-	@rm -rf .pytest_cache .ruff_cache .hypothesis build/ dist/ .eggs/
+	@rm -rf .pytest_cache .ruff_cache .hypothesis build/ dist/ .eggs/ .egg/
 	@find . -name '*.egg-info' -exec rm -rf {} +
-	@find . -name '*.egg' -exec rm -f {} +
 	@find . -name '*.pyc' -exec rm -f {} +
 	@find . -name '*.pyo' -exec rm -f {} +
 	@find . -name '*~' -exec rm -f {} +
