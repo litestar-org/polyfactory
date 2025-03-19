@@ -63,8 +63,6 @@ from pydantic import (
     constr,
     validator,
 )
-from pydantic_core import core_schema
-
 from polyfactory.exceptions import ParameterException
 from polyfactory.factories import DataclassFactory
 from polyfactory.factories.pydantic_factory import _IS_PYDANTIC_V1, ModelFactory
@@ -636,7 +634,10 @@ def test_union_types() -> None:
     assert AFactory.build()
 
 
+@pytest.mark.skipif(IS_PYDANTIC_V1, reason="pydantic 2 only test")
 def test_optional_custom_type() -> None:
+    from pydantic_core import core_schema
+
     class CustomType:
         def __init__(self, _) -> None:
             pass
