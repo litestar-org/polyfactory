@@ -1071,6 +1071,24 @@ class BaseFactory(ABC, Generic[T]):
         for field_name, post_generator in generate_post.items():
             result[field_name] = post_generator.to_value(field_name, result)
 
+        return cls.post_generate(result)
+
+    @classmethod
+    def post_create(cls, model: T) -> None:
+        """Post-create hook. Helpful for building additional database associations or running logic which requires the
+        fully-created model.
+
+        :param model: The created model instance.
+        """
+        pass
+
+    @classmethod
+    def post_generate(cls, result: dict[str, Any]) -> dict[str, Any]:
+        """Post-generate hook. Helpful for mutating or adding additional fields right before model creation.
+
+        :param result: The kwargs that will be passed to the model.
+        :returns: The (optionally) mutated kwargs.
+        """
         return result
 
     @classmethod
@@ -1131,7 +1149,11 @@ class BaseFactory(ABC, Generic[T]):
         :returns: An instance of type T.
 
         """
-        return cast("T", cls.__model__(**cls.process_kwargs(**kwargs)))
+        created_model = cast("T", cls.__model__(**cls.process_kwargs(**kwargs)))
+
+        cls.post_create(created_model)
+
+        return created_model
 
     @classmethod
     def batch(cls, size: int, **kwargs: Any) -> list[T]:

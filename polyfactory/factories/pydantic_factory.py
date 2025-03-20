@@ -147,7 +147,7 @@ class PydanticFieldMeta(FieldMeta):
         min_collection_length: int | None = None,
         max_collection_length: int | None = None,
     ) -> PydanticFieldMeta:
-        """Create an instance from a pydantic field info.
+        """Create an instance from a pydantic field info. Used by `get_model_fields` to generate field list for a model.
 
         :param field_name: The name of the field.
         :param field_info: A pydantic FieldInfo instance.
@@ -517,7 +517,11 @@ class ModelFactory(Generic[T], BaseFactory[T]):
 
         processed_kwargs = cls.process_kwargs(**kwargs)
 
-        return cls._create_model(kwargs["_build_context"], **processed_kwargs)
+        created_model = cls._create_model(kwargs["_build_context"], **processed_kwargs)
+
+        cls.post_create(created_model)
+
+        return created_model
 
     @classmethod
     def _get_build_context(cls, build_context: BaseBuildContext | PydanticBuildContext | None) -> PydanticBuildContext:
