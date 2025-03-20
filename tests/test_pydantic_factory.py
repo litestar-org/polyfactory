@@ -67,6 +67,7 @@ from pydantic import (
 from polyfactory.exceptions import ParameterException
 from polyfactory.factories import DataclassFactory
 from polyfactory.factories.pydantic_factory import _IS_PYDANTIC_V1, ModelFactory
+from polyfactory.field_meta import FieldMeta
 from tests.models import Person, PetFactory
 
 IS_PYDANTIC_V1 = _IS_PYDANTIC_V1
@@ -650,8 +651,16 @@ def test_optional_custom_type() -> None:
     class OptionalFormOne(BaseModel):
         optional_custom_type: Optional[CustomType]
 
+        @classmethod
+        def should_set_none_value(cls, field_meta: FieldMeta) -> bool:
+            return False
+
     class OptionalFormTwo(BaseModel):
         optional_custom_type_second_form: CustomType | None
+
+        @classmethod
+        def should_set_none_value(cls, field_meta: FieldMeta) -> bool:
+            return False
 
     OptionalFormOneFactory = ModelFactory.create_factory(OptionalFormOne)
 
