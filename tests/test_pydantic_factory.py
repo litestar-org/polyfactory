@@ -6,7 +6,7 @@ from datetime import date, datetime, time, timedelta
 from decimal import Decimal
 from ipaddress import IPv4Address, IPv4Interface, IPv4Network, IPv6Address, IPv6Interface, IPv6Network
 from pathlib import Path
-from typing import Callable, Dict, FrozenSet, List, Literal, Optional, Sequence, Set, Tuple, Type, Union
+from typing import Any, Callable, Dict, FrozenSet, List, Literal, Optional, Sequence, Set, Tuple, Type, Union
 from uuid import UUID
 
 import pytest
@@ -63,6 +63,7 @@ from pydantic import (
     constr,
     validator,
 )
+
 from polyfactory.exceptions import ParameterException
 from polyfactory.factories import DataclassFactory
 from polyfactory.factories.pydantic_factory import _IS_PYDANTIC_V1, ModelFactory
@@ -639,10 +640,10 @@ def test_optional_custom_type() -> None:
     from pydantic_core import core_schema
 
     class CustomType:
-        def __init__(self, _) -> None:
+        def __init__(self, _: Any) -> None:
             pass
 
-        def __get_pydantic_core_schema__(self, _):
+        def __get_pydantic_core_schema__(self, _: Any) -> core_schema.StringSchema:
             # for pydantic to stop complaining
             return core_schema.str_schema()
 
