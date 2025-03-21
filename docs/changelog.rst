@@ -7,8 +7,50 @@ All commits to this project will be documented in this file.
 [unreleased]
 ------------
 
-`0290580 <https://github.com/litestar-org/polyfactory/commit/029058005ff9681f5b9f3e2adf2030dfb40d21d5>`_ is the last commit in the changelog before unreleased changes.
+`de78949 <https://github.com/litestar-org/polyfactory/commit/de789499f8b16b49c9fae5954cfba8ad868fff58>`_ is the last commit in the changelog before unreleased changes.
 
+
+Bug Fixes
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+* (`64fa119 <https://github.com/litestar-org/polyfactory/commit/64fa119f7caa2d8c616e3dc2c50ae9c232616351>`_)  - Allow non-hashable type args (#643)  by `@adhtruong <https://github.com/adhtruong>`_ in `#643 <https://github.com/litestar-org/polyfactory/pull/643>`_
+* (`703aa2e <https://github.com/litestar-org/polyfactory/commit/703aa2ef2d2b2489b0c817f6f0d9e75714e1069b>`_)  - Dont allow faker version less then 5.0.0 (#646)  by `@T0nd0Tara <https://github.com/T0nd0Tara>`_ in `#646 <https://github.com/litestar-org/polyfactory/pull/646>`_
+* (`e4a27ca <https://github.com/litestar-org/polyfactory/commit/e4a27cab597f60f142210eaca66a3f97188810f0>`_)  - Added a generate function to support SQL Numeric field (#636)  by `@nisemenov <https://github.com/nisemenov>`_ in `#636 <https://github.com/litestar-org/polyfactory/pull/636>`_
+* (`da6ad4d <https://github.com/litestar-org/polyfactory/commit/da6ad4d213aec4447e9b3b257ab5fed392f445ae>`_)  - Ignore dataclass types in pydantic field parsing (#660)  by `@adhtruong <https://github.com/adhtruong>`_ in `#660 <https://github.com/litestar-org/polyfactory/pull/660>`_
+
+Documentation
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+* (`3c1e68f <https://github.com/litestar-org/polyfactory/commit/3c1e68ffbfa59d0ed9b9cc41d9b9a17654b841e4>`_)  - Add nisemenov as a contributor for code, and doc (#633)  by `@allcontributors[bot] <https://github.com/allcontributors[bot]>`_ in `#633 <https://github.com/litestar-org/polyfactory/pull/633>`_
+* (`beab66c <https://github.com/litestar-org/polyfactory/commit/beab66cf39a8bf67e3a1ac41cde30ee27ee08be1>`_)  - Add iloveitaly as a contributor for code, and doc (#662)  by `@allcontributors[bot] <https://github.com/allcontributors[bot]>`_ in `#662 <https://github.com/litestar-org/polyfactory/pull/662>`_
+
+Features
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+* (`8c1fe02 <https://github.com/litestar-org/polyfactory/commit/8c1fe0293a525fdd20aaadbbf09f8a31dffcdaf8>`_)  - Described an ability to use async data in factory fields; refactored factories/base and some tests (#641)  by `@nisemenov <https://github.com/nisemenov>`_ in `#641 <https://github.com/litestar-org/polyfactory/pull/641>`_
+* (`ba7cd3f <https://github.com/litestar-org/polyfactory/commit/ba7cd3f382140523d61b35c9ed572c74d8c1ef9f>`_)  - Simplify pytest plugin (#652)  by `@adhtruong <https://github.com/adhtruong>`_ in `#652 <https://github.com/litestar-org/polyfactory/pull/652>`_
+* (`b98ae5d <https://github.com/litestar-org/polyfactory/commit/b98ae5d1c50d24748903e65a8d3b1674f1043f2c>`_)  - Improve create factory typing (#657)  by `@adhtruong <https://github.com/adhtruong>`_ in `#657 <https://github.com/litestar-org/polyfactory/pull/657>`_
+* (`33c72e7 <https://github.com/litestar-org/polyfactory/commit/33c72e7bcd1388756a2235e4d75b74fe0de16d27>`_)  - Add_providers to easily add new type provider (#659)  by `@iloveitaly <https://github.com/iloveitaly>`_ in `#659 <https://github.com/litestar-org/polyfactory/pull/659>`_
+* (`0b5df15 <https://github.com/litestar-org/polyfactory/commit/0b5df15bd324a7ac2079947dd600e899f2b10798>`_)  - Improve random range (#653)  by `@adhtruong <https://github.com/adhtruong>`_ in `#653 <https://github.com/litestar-org/polyfactory/pull/653>`_
+
+Miscellaneous Tasks
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+* (`f5cb818 <https://github.com/litestar-org/polyfactory/commit/f5cb818314bf4887f2caab2c3961d1dd886b68cc>`_)  - Bump dawidd6/action-download-artifact from 7 to 9 (#651)  by `@dependabot[bot] <https://github.com/dependabot[bot]>`_ in `#651 <https://github.com/litestar-org/polyfactory/pull/651>`_
+* (`1c56f09 <https://github.com/litestar-org/polyfactory/commit/1c56f09692214cefcfcd3bc29ba9b74fc18a940f>`_)  - Bump codecov/codecov-action from 4 to 5 (#620)  by `@dependabot[bot] <https://github.com/dependabot[bot]>`_ in `#620 <https://github.com/litestar-org/polyfactory/pull/620>`_
+* (`516dd6d <https://github.com/litestar-org/polyfactory/commit/516dd6d280ee35afda068c7ecaa0d672daf971d1>`_)  - Improve test imports (#661)  by `@adhtruong <https://github.com/adhtruong>`_ in `#661 <https://github.com/litestar-org/polyfactory/pull/661>`_
+
+Build
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+* (`34182d4 <https://github.com/litestar-org/polyfactory/commit/34182d439d5d5f1f1964a961c028859e3b404851>`_)  - Update dependencies and ignores (#648)  by `@adhtruong <https://github.com/adhtruong>`_ in `#648 <https://github.com/litestar-org/polyfactory/pull/648>`_
+* (`396b555 <https://github.com/litestar-org/polyfactory/commit/396b5559ec2a2bbf7818dd15a75b556c18849183>`_)  - Update pyright (#665)  by `@adhtruong <https://github.com/adhtruong>`_ in `#665 <https://github.com/litestar-org/polyfactory/pull/665>`_
+
+`Release [v2.19.0] - 2025-01-29 <https://github.com/litestar-org/polyfactory/releases/tag/v2.19.0>`_
+----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+* `See All commits in v2.19.0 <https://github.com/litestar-org/polyfactory/commits/v2.19.0>`_
+
+`0290580 <https://github.com/litestar-org/polyfactory/commit/029058005ff9681f5b9f3e2adf2030dfb40d21d5>`_ ... `de78949 <https://github.com/litestar-org/polyfactory/commit/de789499f8b16b49c9fae5954cfba8ad868fff58>`_ | `See diff for 2.19.0 <https://github.com/litestar-org/polyfactory/compare/029058005ff9681f5b9f3e2adf2030dfb40d21d5...de789499f8b16b49c9fae5954cfba8ad868fff58>`_
 
 Bug Fixes
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -29,6 +71,7 @@ Miscellaneous Tasks
 
 * (`d6a886a <https://github.com/litestar-org/polyfactory/commit/d6a886a4f3b33c77774e14ec190531128ce504c2>`_)  - Bump astral-sh/setup-uv from 4 to 5 (#622)  by `@dependabot[bot] <https://github.com/dependabot[bot]>`_ in `#622 <https://github.com/litestar-org/polyfactory/pull/622>`_
 * (`9db2ee7 <https://github.com/litestar-org/polyfactory/commit/9db2ee726592c8b24b853e5f1d9c22df016be5c3>`_)  - Bump dawidd6/action-download-artifact from 3 to 7 (#619)  by `@dependabot[bot] <https://github.com/dependabot[bot]>`_ in `#619 <https://github.com/litestar-org/polyfactory/pull/619>`_
+* (`de78949 <https://github.com/litestar-org/polyfactory/commit/de789499f8b16b49c9fae5954cfba8ad868fff58>`_)  - Prep 2.19.0 release (#637)  by `@adhtruong <https://github.com/adhtruong>`_ in `#637 <https://github.com/litestar-org/polyfactory/pull/637>`_
 
 Refactor
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
