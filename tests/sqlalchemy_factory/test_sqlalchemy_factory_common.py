@@ -21,7 +21,7 @@ from sqlalchemy.ext.hybrid import hybrid_property
 from sqlalchemy.orm import Session
 from sqlalchemy.orm.decl_api import DeclarativeMeta, registry
 
-from polyfactory.exceptions import ConfigurationException
+from polyfactory.exceptions import ConfigurationException, ParameterException
 from polyfactory.factories.base import BaseFactory
 from polyfactory.factories.sqlalchemy_factory import SQLAlchemyFactory
 from polyfactory.fields import Ignore
@@ -436,3 +436,29 @@ def test_numeric_field(numeric: Numeric) -> None:
     if constraints := result.constraints:
         assert constraints.get("max_digits") == numeric.precision
         assert constraints.get("decimal_places") == numeric.scale
+
+
+def test_unsupported_type_engine() -> None:
+    class Location(types.TypeEngine): ...
+
+    _registry = registry()
+
+    class Base(metaclass=DeclarativeMeta):
+        __abstract__ = True
+        __allow_unmapped__ = True
+
+        registry = _registry
+        metadata = _registry.metadata
+
+    class Place(Base):
+        __tablename__ = "numerics"
+
+        id: Any = Column(Integer(), primary_key=True)
+        numeric_field: Any = Column(Location, nullable=False)
+
+    factory = SQLAlchemyFactory.create_factory(Place)
+    with pytest.raises(
+        ParameterException,
+        match="Unsupported type engine: Location()",
+    ):
+        factory.build()
