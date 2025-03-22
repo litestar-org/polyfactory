@@ -9,6 +9,7 @@ from typing_extensions import (
     ParamSpec,
     Required,
     TypeGuard,
+    TypeIs,
     _AnnotatedAlias,
     get_origin,
 )
@@ -70,7 +71,7 @@ def is_union(annotation: Any) -> "TypeGuard[Any]":
     return get_type_origin(annotation) in UNION_TYPES
 
 
-def is_optional(annotation: Any) -> "TypeGuard[Any | None]":
+def is_optional(annotation: Any) -> "TypeIs[None]":
     """Determine whether a given annotation is 'typing.Optional'.
 
     :param annotation: A type annotation.
@@ -95,7 +96,7 @@ def is_literal(annotation: Any) -> bool:
     )
 
 
-def is_new_type(annotation: Any) -> "TypeGuard[type[NewType]]":
+def is_new_type(annotation: Any) -> "TypeIs[type[NewType]]":
     """Determine whether a given annotation is 'typing.NewType'.
 
     :param annotation: A type annotation.
