@@ -329,21 +329,20 @@ data-aria-dark="Switch to auto color mode">
 </span><span data-line="65">                    <span class="n">annotation</span><span class="o">=</span><span class="n">annotation</span><span class="p">,</span>
 </span><span data-line="66">                    <span class="n">name</span><span class="o">=</span><span class="n">field</span><span class="o">.</span><span class="n">alias</span><span class="p">,</span>
 </span><span data-line="67">                    <span class="n">default</span><span class="o">=</span><span class="n">default_value</span><span class="p">,</span>
-</span><span data-line="68">                    <span class="n">random</span><span class="o">=</span><span class="bp">cls</span><span class="o">.</span><span class="n">__random__</span><span class="p">,</span>
-</span><span data-line="69">                <span class="p">),</span>
-</span><span data-line="70">            <span class="p">)</span>
-</span><span data-line="71">
-</span><span data-line="72">        <span class="k">return</span> <span class="n">field_metas</span></div>
-</span><span data-line="73">
-<div class="viewcode-block" id="AttrsFactory.resolve_types"><a class="viewcode-back" href="../../../reference/factories/attrs_factory.html#polyfactory.factories.attrs_factory.AttrsFactory.resolve_types">[docs]</a></span><span data-line="74">    <span class="nd">@classmethod</span>
-</span><span data-line="75">    <span class="k">def</span> <span class="nf">resolve_types</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">model</span><span class="p">:</span> <span class="nb">type</span><span class="p">[</span><span class="n">T</span><span class="p">],</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-</span><span data-line="76"><span class="w">        </span><span class="sd">&quot;&quot;&quot;Resolve any strings and forward annotations in type annotations.</span>
-</span><span data-line="77">
-</span><span data-line="78"><span class="sd">        :param model: The model to resolve the type annotations for.</span>
-</span><span data-line="79"><span class="sd">        :param kwargs: Any parameters that need to be passed to `attrs.resolve_types`.</span>
-</span><span data-line="80"><span class="sd">        &quot;&quot;&quot;</span>
-</span><span data-line="81">
-</span><span data-line="82">        <span class="n">attrs</span><span class="o">.</span><span class="n">resolve_types</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div></div>
+</span><span data-line="68">                <span class="p">),</span>
+</span><span data-line="69">            <span class="p">)</span>
+</span><span data-line="70">
+</span><span data-line="71">        <span class="k">return</span> <span class="n">field_metas</span></div>
+</span><span data-line="72">
+<div class="viewcode-block" id="AttrsFactory.resolve_types"><a class="viewcode-back" href="../../../reference/factories/attrs_factory.html#polyfactory.factories.attrs_factory.AttrsFactory.resolve_types">[docs]</a></span><span data-line="73">    <span class="nd">@classmethod</span>
+</span><span data-line="74">    <span class="k">def</span> <span class="nf">resolve_types</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">model</span><span class="p">:</span> <span class="nb">type</span><span class="p">[</span><span class="n">T</span><span class="p">],</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+</span><span data-line="75"><span class="w">        </span><span class="sd">&quot;&quot;&quot;Resolve any strings and forward annotations in type annotations.</span>
+</span><span data-line="76">
+</span><span data-line="77"><span class="sd">        :param model: The model to resolve the type annotations for.</span>
+</span><span data-line="78"><span class="sd">        :param kwargs: Any parameters that need to be passed to `attrs.resolve_types`.</span>
+</span><span data-line="79"><span class="sd">        &quot;&quot;&quot;</span>
+</span><span data-line="80">
+</span><span data-line="81">        <span class="n">attrs</span><span class="o">.</span><span class="n">resolve_types</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div></div>
 </span></pre></div>
         </article><button class="back-to-top" type="button">
   <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">

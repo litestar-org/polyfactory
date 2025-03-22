@@ -478,61 +478,58 @@ data-aria-dark="Switch to auto color mode">
 </span><span data-line="214">            <span class="n">FieldMeta</span><span class="o">.</span><span class="n">from_type</span><span class="p">(</span>
 </span><span data-line="215">                <span class="n">annotation</span><span class="o">=</span><span class="bp">cls</span><span class="o">.</span><span class="n">get_type_from_column</span><span class="p">(</span><span class="n">column</span><span class="p">),</span>
 </span><span data-line="216">                <span class="n">name</span><span class="o">=</span><span class="n">name</span><span class="p">,</span>
-</span><span data-line="217">                <span class="n">random</span><span class="o">=</span><span class="bp">cls</span><span class="o">.</span><span class="n">__random__</span><span class="p">,</span>
-</span><span data-line="218">            <span class="p">)</span>
-</span><span data-line="219">            <span class="k">for</span> <span class="n">name</span><span class="p">,</span> <span class="n">column</span> <span class="ow">in</span> <span class="n">table</span><span class="o">.</span><span class="n">columns</span><span class="o">.</span><span class="n">items</span><span class="p">()</span>
-</span><span data-line="220">            <span class="k">if</span> <span class="bp">cls</span><span class="o">.</span><span class="n">should_column_be_set</span><span class="p">(</span><span class="n">column</span><span class="p">)</span>
-</span><span data-line="221">        <span class="p">)</span>
-</span><span data-line="222">        <span class="k">if</span> <span class="bp">cls</span><span class="o">.</span><span class="n">__set_relationships__</span><span class="p">:</span>
-</span><span data-line="223">            <span class="k">for</span> <span class="n">name</span><span class="p">,</span> <span class="n">relationship</span> <span class="ow">in</span> <span class="n">table</span><span class="o">.</span><span class="n">relationships</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
-</span><span data-line="224">                <span class="n">class_</span> <span class="o">=</span> <span class="n">relationship</span><span class="o">.</span><span class="n">entity</span><span class="o">.</span><span class="n">class_</span>
-</span><span data-line="225">                <span class="n">annotation</span> <span class="o">=</span> <span class="n">class_</span> <span class="k">if</span> <span class="ow">not</span> <span class="n">relationship</span><span class="o">.</span><span class="n">uselist</span> <span class="k">else</span> <span class="n">List</span><span class="p">[</span><span class="n">class_</span><span class="p">]</span>  <span class="c1"># type: ignore[valid-type]</span>
-</span><span data-line="226">                <span class="n">fields_meta</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
-</span><span data-line="227">                    <span class="n">FieldMeta</span><span class="o">.</span><span class="n">from_type</span><span class="p">(</span>
-</span><span data-line="228">                        <span class="n">name</span><span class="o">=</span><span class="n">name</span><span class="p">,</span>
-</span><span data-line="229">                        <span class="n">annotation</span><span class="o">=</span><span class="n">annotation</span><span class="p">,</span>
-</span><span data-line="230">                        <span class="n">random</span><span class="o">=</span><span class="bp">cls</span><span class="o">.</span><span class="n">__random__</span><span class="p">,</span>
-</span><span data-line="231">                    <span class="p">),</span>
-</span><span data-line="232">                <span class="p">)</span>
-</span><span data-line="233">        <span class="k">if</span> <span class="bp">cls</span><span class="o">.</span><span class="n">__set_association_proxy__</span><span class="p">:</span>
-</span><span data-line="234">            <span class="k">for</span> <span class="n">name</span><span class="p">,</span> <span class="n">attr</span> <span class="ow">in</span> <span class="n">table</span><span class="o">.</span><span class="n">all_orm_descriptors</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
-</span><span data-line="235">                <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">attr</span><span class="p">,</span> <span class="n">AssociationProxy</span><span class="p">):</span>
-</span><span data-line="236">                    <span class="n">target_collection</span> <span class="o">=</span> <span class="n">table</span><span class="o">.</span><span class="n">relationships</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">attr</span><span class="o">.</span><span class="n">target_collection</span><span class="p">)</span>
-</span><span data-line="237">                    <span class="k">if</span> <span class="n">target_collection</span><span class="p">:</span>
-</span><span data-line="238">                        <span class="n">target_class</span> <span class="o">=</span> <span class="n">target_collection</span><span class="o">.</span><span class="n">entity</span><span class="o">.</span><span class="n">class_</span>
-</span><span data-line="239">                        <span class="n">target_attr</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">target_class</span><span class="p">,</span> <span class="n">attr</span><span class="o">.</span><span class="n">value_attr</span><span class="p">)</span>
-</span><span data-line="240">                        <span class="k">if</span> <span class="n">target_attr</span><span class="p">:</span>
-</span><span data-line="241">                            <span class="n">class_</span> <span class="o">=</span> <span class="n">target_attr</span><span class="o">.</span><span class="n">entity</span><span class="o">.</span><span class="n">class_</span>
-</span><span data-line="242">                            <span class="n">annotation</span> <span class="o">=</span> <span class="n">class_</span> <span class="k">if</span> <span class="ow">not</span> <span class="n">target_collection</span><span class="o">.</span><span class="n">uselist</span> <span class="k">else</span> <span class="n">List</span><span class="p">[</span><span class="n">class_</span><span class="p">]</span>  <span class="c1"># type: ignore[valid-type]</span>
-</span><span data-line="243">                            <span class="n">fields_meta</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
-</span><span data-line="244">                                <span class="n">FieldMeta</span><span class="o">.</span><span class="n">from_type</span><span class="p">(</span>
-</span><span data-line="245">                                    <span class="n">name</span><span class="o">=</span><span class="n">name</span><span class="p">,</span>
-</span><span data-line="246">                                    <span class="n">annotation</span><span class="o">=</span><span class="n">annotation</span><span class="p">,</span>
-</span><span data-line="247">                                    <span class="n">random</span><span class="o">=</span><span class="bp">cls</span><span class="o">.</span><span class="n">__random__</span><span class="p">,</span>
-</span><span data-line="248">                                <span class="p">)</span>
-</span><span data-line="249">                            <span class="p">)</span>
-</span><span data-line="250">
-</span><span data-line="251">        <span class="k">return</span> <span class="n">fields_meta</span></div>
-</span><span data-line="252">
-</span><span data-line="253">    <span class="nd">@classmethod</span>
-</span><span data-line="254">    <span class="k">def</span> <span class="nf">_get_sync_persistence</span><span class="p">(</span><span class="bp">cls</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">SyncPersistenceProtocol</span><span class="p">[</span><span class="n">T</span><span class="p">]:</span>
-</span><span data-line="255">        <span class="k">if</span> <span class="bp">cls</span><span class="o">.</span><span class="n">__session__</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-</span><span data-line="256">            <span class="k">return</span> <span class="p">(</span>
-</span><span data-line="257">                <span class="n">SQLASyncPersistence</span><span class="p">(</span><span class="bp">cls</span><span class="o">.</span><span class="n">__session__</span><span class="p">())</span>
-</span><span data-line="258">                <span class="k">if</span> <span class="nb">callable</span><span class="p">(</span><span class="bp">cls</span><span class="o">.</span><span class="n">__session__</span><span class="p">)</span>
-</span><span data-line="259">                <span class="k">else</span> <span class="n">SQLASyncPersistence</span><span class="p">(</span><span class="bp">cls</span><span class="o">.</span><span class="n">__session__</span><span class="p">)</span>
-</span><span data-line="260">            <span class="p">)</span>
-</span><span data-line="261">        <span class="k">return</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">_get_sync_persistence</span><span class="p">()</span>
-</span><span data-line="262">
-</span><span data-line="263">    <span class="nd">@classmethod</span>
-</span><span data-line="264">    <span class="k">def</span> <span class="nf">_get_async_persistence</span><span class="p">(</span><span class="bp">cls</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">AsyncPersistenceProtocol</span><span class="p">[</span><span class="n">T</span><span class="p">]:</span>
-</span><span data-line="265">        <span class="k">if</span> <span class="bp">cls</span><span class="o">.</span><span class="n">__async_session__</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-</span><span data-line="266">            <span class="k">return</span> <span class="p">(</span>
-</span><span data-line="267">                <span class="n">SQLAASyncPersistence</span><span class="p">(</span><span class="bp">cls</span><span class="o">.</span><span class="n">__async_session__</span><span class="p">())</span>
-</span><span data-line="268">                <span class="k">if</span> <span class="nb">callable</span><span class="p">(</span><span class="bp">cls</span><span class="o">.</span><span class="n">__async_session__</span><span class="p">)</span>
-</span><span data-line="269">                <span class="k">else</span> <span class="n">SQLAASyncPersistence</span><span class="p">(</span><span class="bp">cls</span><span class="o">.</span><span class="n">__async_session__</span><span class="p">)</span>
-</span><span data-line="270">            <span class="p">)</span>
-</span><span data-line="271">        <span class="k">return</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">_get_async_persistence</span><span class="p">()</span></div>
+</span><span data-line="217">            <span class="p">)</span>
+</span><span data-line="218">            <span class="k">for</span> <span class="n">name</span><span class="p">,</span> <span class="n">column</span> <span class="ow">in</span> <span class="n">table</span><span class="o">.</span><span class="n">columns</span><span class="o">.</span><span class="n">items</span><span class="p">()</span>
+</span><span data-line="219">            <span class="k">if</span> <span class="bp">cls</span><span class="o">.</span><span class="n">should_column_be_set</span><span class="p">(</span><span class="n">column</span><span class="p">)</span>
+</span><span data-line="220">        <span class="p">)</span>
+</span><span data-line="221">        <span class="k">if</span> <span class="bp">cls</span><span class="o">.</span><span class="n">__set_relationships__</span><span class="p">:</span>
+</span><span data-line="222">            <span class="k">for</span> <span class="n">name</span><span class="p">,</span> <span class="n">relationship</span> <span class="ow">in</span> <span class="n">table</span><span class="o">.</span><span class="n">relationships</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+</span><span data-line="223">                <span class="n">class_</span> <span class="o">=</span> <span class="n">relationship</span><span class="o">.</span><span class="n">entity</span><span class="o">.</span><span class="n">class_</span>
+</span><span data-line="224">                <span class="n">annotation</span> <span class="o">=</span> <span class="n">class_</span> <span class="k">if</span> <span class="ow">not</span> <span class="n">relationship</span><span class="o">.</span><span class="n">uselist</span> <span class="k">else</span> <span class="n">List</span><span class="p">[</span><span class="n">class_</span><span class="p">]</span>  <span class="c1"># type: ignore[valid-type]</span>
+</span><span data-line="225">                <span class="n">fields_meta</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+</span><span data-line="226">                    <span class="n">FieldMeta</span><span class="o">.</span><span class="n">from_type</span><span class="p">(</span>
+</span><span data-line="227">                        <span class="n">name</span><span class="o">=</span><span class="n">name</span><span class="p">,</span>
+</span><span data-line="228">                        <span class="n">annotation</span><span class="o">=</span><span class="n">annotation</span><span class="p">,</span>
+</span><span data-line="229">                    <span class="p">),</span>
+</span><span data-line="230">                <span class="p">)</span>
+</span><span data-line="231">        <span class="k">if</span> <span class="bp">cls</span><span class="o">.</span><span class="n">__set_association_proxy__</span><span class="p">:</span>
+</span><span data-line="232">            <span class="k">for</span> <span class="n">name</span><span class="p">,</span> <span class="n">attr</span> <span class="ow">in</span> <span class="n">table</span><span class="o">.</span><span class="n">all_orm_descriptors</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+</span><span data-line="233">                <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">attr</span><span class="p">,</span> <span class="n">AssociationProxy</span><span class="p">):</span>
+</span><span data-line="234">                    <span class="n">target_collection</span> <span class="o">=</span> <span class="n">table</span><span class="o">.</span><span class="n">relationships</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">attr</span><span class="o">.</span><span class="n">target_collection</span><span class="p">)</span>
+</span><span data-line="235">                    <span class="k">if</span> <span class="n">target_collection</span><span class="p">:</span>
+</span><span data-line="236">                        <span class="n">target_class</span> <span class="o">=</span> <span class="n">target_collection</span><span class="o">.</span><span class="n">entity</span><span class="o">.</span><span class="n">class_</span>
+</span><span data-line="237">                        <span class="n">target_attr</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">target_class</span><span class="p">,</span> <span class="n">attr</span><span class="o">.</span><span class="n">value_attr</span><span class="p">)</span>
+</span><span data-line="238">                        <span class="k">if</span> <span class="n">target_attr</span><span class="p">:</span>
+</span><span data-line="239">                            <span class="n">class_</span> <span class="o">=</span> <span class="n">target_attr</span><span class="o">.</span><span class="n">entity</span><span class="o">.</span><span class="n">class_</span>
+</span><span data-line="240">                            <span class="n">annotation</span> <span class="o">=</span> <span class="n">class_</span> <span class="k">if</span> <span class="ow">not</span> <span class="n">target_collection</span><span class="o">.</span><span class="n">uselist</span> <span class="k">else</span> <span class="n">List</span><span class="p">[</span><span class="n">class_</span><span class="p">]</span>  <span class="c1"># type: ignore[valid-type]</span>
+</span><span data-line="241">                            <span class="n">fields_meta</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+</span><span data-line="242">                                <span class="n">FieldMeta</span><span class="o">.</span><span class="n">from_type</span><span class="p">(</span>
+</span><span data-line="243">                                    <span class="n">name</span><span class="o">=</span><span class="n">name</span><span class="p">,</span>
+</span><span data-line="244">                                    <span class="n">annotation</span><span class="o">=</span><span class="n">annotation</span><span class="p">,</span>
+</span><span data-line="245">                                <span class="p">)</span>
+</span><span data-line="246">                            <span class="p">)</span>
+</span><span data-line="247">
+</span><span data-line="248">        <span class="k">return</span> <span class="n">fields_meta</span></div>
+</span><span data-line="249">
+</span><span data-line="250">    <span class="nd">@classmethod</span>
+</span><span data-line="251">    <span class="k">def</span> <span class="nf">_get_sync_persistence</span><span class="p">(</span><span class="bp">cls</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">SyncPersistenceProtocol</span><span class="p">[</span><span class="n">T</span><span class="p">]:</span>
+</span><span data-line="252">        <span class="k">if</span> <span class="bp">cls</span><span class="o">.</span><span class="n">__session__</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+</span><span data-line="253">            <span class="k">return</span> <span class="p">(</span>
+</span><span data-line="254">                <span class="n">SQLASyncPersistence</span><span class="p">(</span><span class="bp">cls</span><span class="o">.</span><span class="n">__session__</span><span class="p">())</span>
+</span><span data-line="255">                <span class="k">if</span> <span class="nb">callable</span><span class="p">(</span><span class="bp">cls</span><span class="o">.</span><span class="n">__session__</span><span class="p">)</span>
+</span><span data-line="256">                <span class="k">else</span> <span class="n">SQLASyncPersistence</span><span class="p">(</span><span class="bp">cls</span><span class="o">.</span><span class="n">__session__</span><span class="p">)</span>
+</span><span data-line="257">            <span class="p">)</span>
+</span><span data-line="258">        <span class="k">return</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">_get_sync_persistence</span><span class="p">()</span>
+</span><span data-line="259">
+</span><span data-line="260">    <span class="nd">@classmethod</span>
+</span><span data-line="261">    <span class="k">def</span> <span class="nf">_get_async_persistence</span><span class="p">(</span><span class="bp">cls</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">AsyncPersistenceProtocol</span><span class="p">[</span><span class="n">T</span><span class="p">]:</span>
+</span><span data-line="262">        <span class="k">if</span> <span class="bp">cls</span><span class="o">.</span><span class="n">__async_session__</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+</span><span data-line="263">            <span class="k">return</span> <span class="p">(</span>
+</span><span data-line="264">                <span class="n">SQLAASyncPersistence</span><span class="p">(</span><span class="bp">cls</span><span class="o">.</span><span class="n">__async_session__</span><span class="p">())</span>
+</span><span data-line="265">                <span class="k">if</span> <span class="nb">callable</span><span class="p">(</span><span class="bp">cls</span><span class="o">.</span><span class="n">__async_session__</span><span class="p">)</span>
+</span><span data-line="266">                <span class="k">else</span> <span class="n">SQLAASyncPersistence</span><span class="p">(</span><span class="bp">cls</span><span class="o">.</span><span class="n">__async_session__</span><span class="p">)</span>
+</span><span data-line="267">            <span class="p">)</span>
+</span><span data-line="268">        <span class="k">return</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">_get_async_persistence</span><span class="p">()</span></div>
 </span></pre></div>
         </article><button class="back-to-top" type="button">
   <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
