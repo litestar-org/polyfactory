@@ -65,7 +65,6 @@ class AttrsFactory(Generic[T], BaseFactory[T]):
                     annotation=annotation,
                     name=field.alias,
                     default=default_value,
-                    random=cls.__random__,
                 ),
             )
 

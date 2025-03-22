@@ -80,6 +80,7 @@ class FieldMeta:
         constraints: Constraints | None = None,
     ) -> None:
         """Create a factory field metadata instance."""
+        check_for_deprecated_parameters("2.20.0", parameters=(("random", random),))
         self.annotation = annotation
         self.random = random or DEFAULT_RANDOM
         self.children = children
@@ -102,7 +103,7 @@ class FieldMeta:
     def from_type(
         cls,
         annotation: Any,
-        random: Random = DEFAULT_RANDOM,
+        random: Random | None = None,
         name: str = "",
         default: Any = Null,
         constraints: Constraints | None = None,
@@ -130,6 +131,7 @@ class FieldMeta:
                 ("randomize_collection_length", randomize_collection_length),
                 ("min_collection_length", min_collection_length),
                 ("max_collection_length", max_collection_length),
+                ("random", random),
             ),
         )
 
@@ -146,7 +148,6 @@ class FieldMeta:
 
         field = cls(
             annotation=annotation,
-            random=random,
             name=name,
             default=default,
             children=children,
@@ -155,12 +156,7 @@ class FieldMeta:
 
         if field.type_args and not field.children:
             field.children = [
-                cls.from_type(
-                    annotation=unwrap_new_type(arg),
-                    random=random,
-                )
-                for arg in field.type_args
-                if arg is not NoneType
+                cls.from_type(annotation=unwrap_new_type(arg)) for arg in field.type_args if arg is not NoneType
             ]
         return field
 

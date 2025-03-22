@@ -432,7 +432,7 @@ def handle_constrained_decimal(
     )
 
     if max_digits is not None:
-        validate_max_digits(max_digits=max_digits, minimum=minimum, decimal_places=decimal_places)
+        validate_max_digits(max_digits=max_digits, minimum=None, decimal_places=decimal_places)
 
     generated_decimal = generate_constrained_number(
         random=random,

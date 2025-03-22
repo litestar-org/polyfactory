@@ -1,6 +1,6 @@
 """Tests to check that usage of pydantic v1 and v2 at the same time works."""
 
-from typing import Dict, List, Optional, Type, Union
+from typing import Dict, List, Optional, Tuple, Type, Union
 
 import pytest
 from typing_extensions import Annotated
@@ -77,3 +77,16 @@ def test_build_v2_with_contrained_fields() -> None:
         g: Dict[ConstrainedInt, ConstrainedStr]
 
     ModelFactory.create_factory(Foo).build()
+
+
+def test_variadic_tuple_length() -> None:
+    class Foo(pydantic.BaseModel):
+        bar: Tuple[int, ...]
+
+    class Factory(ModelFactory[Foo]):
+        __randomize_collection_length__ = True
+        __min_collection_length__ = 7
+        __max_collection_length__ = 8
+
+    result = Factory.build()
+    assert 7 <= len(result.bar) <= 8
