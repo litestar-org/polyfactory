@@ -5,7 +5,7 @@ from typing import TYPE_CHECKING, Any, Callable, ClassVar, Generic, List, Protoc
 
 from typing_extensions import Annotated
 
-from polyfactory.exceptions import MissingDependencyException
+from polyfactory.exceptions import MissingDependencyException, ParameterException
 from polyfactory.factories.base import BaseFactory
 from polyfactory.field_meta import Constraints, FieldMeta
 from polyfactory.persistence import AsyncPersistenceProtocol, SyncPersistenceProtocol
@@ -174,7 +174,10 @@ class SQLAlchemyFactory(Generic[T], BaseFactory[T]):
         try:
             annotation = type_engine.python_type
         except NotImplementedError:
-            annotation = type_engine.impl.python_type  # type: ignore[attr-defined]
+            if not hasattr(type_engine, "impl"):
+                msg = f"Unsupported type engine: {type_engine}.\nOverride get_sqlalchemy_types to support"
+                raise ParameterException(msg) from None
+            annotation = type_engine.impl.python_type  # pyright: ignore[reportAttributeAccessIssue]
 
         constraints: Constraints = {}
         for type_, constraint_fields in cls.get_sqlalchemy_constraints().items():
