@@ -1,7 +1,7 @@
 import random
 from dataclasses import dataclass
 from datetime import datetime, timedelta
-from typing import Any, ClassVar, List, Optional, Union
+from typing import Any, ClassVar, Dict, List, Optional, Union
 
 import pytest
 
@@ -101,7 +101,7 @@ def test_ignored() -> None:
         (lambda: "foo", True, {"value": 3}),
     ],
 )
-def test_param_init(value: Any, is_callable: bool, kwargs: dict[str, Any]) -> None:
+def test_param_init(value: Any, is_callable: bool, kwargs: Dict[str, Any]) -> None:
     param = Param(value, is_callable, **kwargs)  # type: ignore
     assert isinstance(param, Param)
     assert param.param == value
@@ -119,7 +119,7 @@ def test_param_init(value: Any, is_callable: bool, kwargs: dict[str, Any]) -> No
         (1, False, {"value": 3}),
     ],
 )
-def test_param_init_error(value: Any, is_callable: bool, kwargs: dict[str, Any]) -> None:
+def test_param_init_error(value: Any, is_callable: bool, kwargs: Dict[str, Any]) -> None:
     with pytest.raises(
         ParameterException,
     ):
@@ -140,9 +140,9 @@ def test_param_init_error(value: Any, is_callable: bool, kwargs: dict[str, Any])
 def test_param_to_value(
     initval: Any,
     is_cabllable: bool,
-    initkwargs: dict[str, Any],
+    initkwargs: Dict[str, Any],
     buildval: Any,
-    buildkwargs: dict[str, Any],
+    buildkwargs: Dict[str, Any],
     outcome: Any,
 ) -> None:
     assert Param(initval, is_cabllable, **initkwargs).to_value(buildval, **buildkwargs) == outcome
@@ -158,9 +158,9 @@ def test_param_to_value(
 def test_param_to_value_exception(
     initval: Any,
     is_cabllable: bool,
-    initkwargs: dict[str, Any],
+    initkwargs: Dict[str, Any],
     buildval: Any,
-    buildkwargs: dict[str, Any],
+    buildkwargs: Dict[str, Any],
     exc: type[Exception],
 ) -> None:
     with pytest.raises(exc):
