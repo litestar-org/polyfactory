@@ -1,7 +1,7 @@
 import random
 from dataclasses import dataclass
 from datetime import datetime, timedelta
-from typing import Any, ClassVar, Dict, List, Optional, Union
+from typing import Any, ClassVar, Dict, List, Optional, Type, Union
 
 import pytest
 
@@ -161,7 +161,7 @@ def test_param_to_value_exception(
     initkwargs: Dict[str, Any],
     buildval: Any,
     buildkwargs: Dict[str, Any],
-    exc: type[Exception],
+    exc: Type[Exception],
 ) -> None:
     with pytest.raises(exc):
         Param(initval, is_cabllable, **initkwargs).to_value(buildval, **buildkwargs)
