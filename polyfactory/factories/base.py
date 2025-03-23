@@ -8,7 +8,7 @@ from contextlib import suppress
 from datetime import date, datetime, time, timedelta
 from decimal import Decimal
 from enum import EnumMeta
-from functools import partial
+from functools import cache, partial
 from importlib import import_module
 from ipaddress import (
     IPv4Address,
@@ -58,7 +58,7 @@ from polyfactory.exceptions import (
     ParameterException,
 )
 from polyfactory.field_meta import Null
-from polyfactory.fields import BaseParam, Fixture, Ignore, IsNotPassed, PostGenerated, Require, Use
+from polyfactory.fields import Fixture, Ignore, Param, PostGenerated, Require, Use
 from polyfactory.utils.helpers import (
     flatten_annotation,
     get_collection_type,
@@ -226,6 +226,7 @@ class BaseFactory(ABC, Generic[T]):
                     raise ConfigurationException(
                         msg,
                     )
+            cls._check_overlapping_param_names()
             if cls.__check_model__:
                 cls._check_declared_fields_exist_in_model()
         else:
@@ -971,7 +972,7 @@ class BaseFactory(ABC, Generic[T]):
                 raise ConfigurationException(error_message)
 
     @classmethod
-    def _handle_factory_params(cls, params: dict[str, BaseParam], **kwargs: Any) -> dict[str, Any]:
+    def _handle_factory_params(cls, params: dict[str, Param[Any]], **kwargs: Any) -> dict[str, Any]:
         """Get the factory parameters.
 
         :param params: A dict of field name to Param instances.
@@ -981,18 +982,32 @@ class BaseFactory(ABC, Generic[T]):
         """
 
         try:
-            return {name: param.to_value(kwargs.get(name, IsNotPassed)) for name, param in params.items()}
+            return {name: param.to_value(kwargs.get(name, Null)) for name, param in params.items()}
         except MissingParamException as e:
             msg = "Missing required kwargs"
             raise MissingBuildKwargException(msg) from e
 
     @classmethod
-    def get_factory_params(cls) -> dict[str, BaseParam]:
+    @cache
+    def get_factory_params(cls) -> dict[str, Param[Any]]:
         """Get the factory parameters.
 
         :returns: A dict of field name to Param instances.
         """
-        return {name: item for name, item in cls.__dict__.items() if isinstance(item, BaseParam)}
+        return {name: item for name, item in cls.__dict__.items() if isinstance(item, Param)}
+
+    @classmethod
+    def _check_overlapping_param_names(cls) -> None:
+        """Checks if there are overlapping param names with model fields.
+
+
+        :raises: ConfigurationException
+        """
+        model_fields_names = {field_meta.name for field_meta in cls.get_model_fields()}
+        overlapping_params = set(cls.get_factory_params().keys()) & model_fields_names
+        if overlapping_params:
+            msg = f"Factory Params {', '.join(overlapping_params)} overlap with model fields"
+            raise ConfigurationException(msg)
 
     @classmethod
     def process_kwargs(cls, **kwargs: Any) -> dict[str, Any]:
