@@ -8,10 +8,16 @@ import pytest
 from pydantic import BaseModel
 
 from polyfactory.decorators import post_generated
-from polyfactory.exceptions import ConfigurationException, MissingBuildKwargException
+from polyfactory.exceptions import (
+    ConfigurationException,
+    MissingBuildKwargException,
+    MissingParamException,
+    ParameterException,
+)
 from polyfactory.factories.dataclass_factory import DataclassFactory
 from polyfactory.factories.pydantic_factory import ModelFactory
-from polyfactory.fields import CallableParam, Ignore, Param, PostGenerated, Require, Use
+from polyfactory.field_meta import Null
+from polyfactory.fields import Ignore, Param, PostGenerated, Require, Use
 
 
 def test_use() -> None:
@@ -83,7 +89,85 @@ def test_ignored() -> None:
     assert MyFactory.build().name is None
 
 
-def test_param__from_factory() -> None:
+@pytest.mark.parametrize(
+    "value,is_callable,kwargs",
+    [
+        (None, False, {}),
+        (1, False, {}),
+        ("foo", False, {}),
+        (lambda value: value, True, {}),
+        (lambda value1, value2: value1 + value2, True, {}),
+        (lambda: "foo", True, {}),
+        (lambda: "foo", True, {"value": 3}),
+    ],
+)
+def test_param_init(value: Any, is_callable: bool, kwargs: dict[str, Any]) -> None:
+    param = Param(value, is_callable, **kwargs)  # type: ignore
+    assert isinstance(param, Param)
+    assert param.param == value
+    assert param.is_callable == is_callable
+    assert param.kwargs == kwargs
+
+
+@pytest.mark.parametrize(
+    "value,is_callable,kwargs",
+    [
+        (None, True, {}),
+        (1, True, {}),
+        ("foo", True, {}),
+        (Null, False, {"value": 3}),
+        (1, False, {"value": 3}),
+    ],
+)
+def test_param_init_error(value: Any, is_callable: bool, kwargs: dict[str, Any]) -> None:
+    with pytest.raises(
+        ParameterException,
+    ):
+        Param(value, is_callable, **kwargs)
+
+
+@pytest.mark.parametrize(
+    "initval,is_cabllable,initkwargs,buildval,buildkwargs,outcome",
+    [
+        (None, False, {}, Null, {}, None),
+        (1, False, {}, 2, {}, 2),
+        ("foo", False, {}, Null, {}, "foo"),
+        (lambda value: value, True, {}, lambda value: value + 1, {"value": 3}, 4),
+        (lambda value1, value2: value1 + value2, True, {"value1": 2}, Null, {"value2": 1}, 3),
+        (lambda: "foo", True, {}, Null, {}, "foo"),
+    ],
+)
+def test_param_to_value(
+    initval: Any,
+    is_cabllable: bool,
+    initkwargs: dict[str, Any],
+    buildval: Any,
+    buildkwargs: dict[str, Any],
+    outcome: Any,
+) -> None:
+    assert Param(initval, is_cabllable, **initkwargs).to_value(buildval, **buildkwargs) == outcome
+
+
+@pytest.mark.parametrize(
+    "initval,is_cabllable,initkwargs,buildval,buildkwargs,exc",
+    [
+        (Null, False, {}, Null, {}, MissingParamException),
+        (Null, True, {}, 1, {}, TypeError),
+    ],
+)
+def test_param_to_value_exception(
+    initval: Any,
+    is_cabllable: bool,
+    initkwargs: dict[str, Any],
+    buildval: Any,
+    buildkwargs: dict[str, Any],
+    exc: type[Exception],
+) -> None:
+    with pytest.raises(exc):
+        Param(initval, is_cabllable, **initkwargs).to_value(buildval, **buildkwargs)
+
+
+def test_param_from_factory() -> None:
     value: int = 3
 
     class MyModel(BaseModel):
@@ -102,7 +186,7 @@ def test_param__from_factory() -> None:
     assert result.description == "abc"
 
 
-def test_param__from_kwargs() -> None:
+def test_param_from_kwargs() -> None:
     value: int = 3
 
     class MyModel(BaseModel):
@@ -121,7 +205,7 @@ def test_param__from_kwargs() -> None:
     assert result.description == "abc"
 
 
-def test_param__from_kwargs__missing() -> None:
+def test_param_from_kwargs_missing() -> None:
     class MyModel(BaseModel):
         description: str
 
@@ -138,13 +222,13 @@ def test_param__from_kwargs__missing() -> None:
         MyFactory.build()
 
 
-def test_callable_param__from_factory() -> None:
+def test_callable_param_from_factory() -> None:
     class MyModel(BaseModel):
         description: str
 
     class MyFactory(ModelFactory):
         __model__ = MyModel
-        length = CallableParam(lambda value: value, value=3)
+        length = Param(lambda value: value, is_callable=True, value=3)
 
         @post_generated
         @classmethod
@@ -155,7 +239,7 @@ def test_callable_param__from_factory() -> None:
     assert result.description == "abc"
 
 
-def test_callable_param__from_kwargs() -> None:
+def test_callable_param_from_kwargs() -> None:
     value1: int = 2
     value2: int = 1
 
@@ -164,7 +248,7 @@ def test_callable_param__from_kwargs() -> None:
 
     class MyFactory(ModelFactory):
         __model__ = MyModel
-        length = CallableParam[int](value1=value1, value2=value2)
+        length = Param[int](is_callable=True, value1=value1, value2=value2)
 
         @post_generated
         @classmethod
@@ -173,6 +257,22 @@ def test_callable_param__from_kwargs() -> None:
 
     result = MyFactory.build(length=lambda value1, value2: value1 + value2)
     assert result.description == "abcd"[: value1 + value2]
+
+
+def test_param_name_overlaps_model_field() -> None:
+    class MyModel(BaseModel):
+        name: str
+        other: int
+
+    with pytest.raises(ConfigurationException) as exc:
+
+        class MyFactory(ModelFactory):
+            __model__ = MyModel
+            name = Param[str]("foo")
+            other = 1
+
+        assert "name" in str(exc)
+        assert "other" not in str(exc)
 
 
 def test_post_generation() -> None:
