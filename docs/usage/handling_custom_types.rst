@@ -12,6 +12,14 @@ In the above example we override the `get_provider_map` class method, which maps
 returns an appropriate mock value for the type. In the above example, an instance of `CustomSecret` with the hardcoded
 string 'jeronimo'.
 
+Add a Type Provider
+-------------------
+Alternatively, you can add a provider for your custom type to `BaseFactory`.
+
+.. literalinclude:: /examples/handling_custom_types/test_example_3.py
+    :caption: Creating a custom type factory using add_provider
+    :language: python
+
 Creating Custom Base Factories
 ------------------------------
 

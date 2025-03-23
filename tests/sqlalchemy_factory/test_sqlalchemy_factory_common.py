@@ -1,96 +1,39 @@
-from dataclasses import dataclass
 from datetime import datetime
 from decimal import Decimal
 from enum import Enum
-from typing import Any, Callable, Type
+from typing import Any, Callable
 from uuid import UUID
 
 import pytest
 from sqlalchemy import (
-    Boolean,
     Column,
-    DateTime,
-    ForeignKey,
     Integer,
     Numeric,
     String,
-    create_engine,
-    func,
     inspect,
     orm,
     select,
-    text,
     types,
 )
 from sqlalchemy.engine import Engine
-from sqlalchemy.ext.asyncio import AsyncEngine, AsyncSession, create_async_engine
+from sqlalchemy.ext.asyncio import AsyncEngine, AsyncSession
 from sqlalchemy.ext.hybrid import hybrid_property
 from sqlalchemy.orm import Session
 from sqlalchemy.orm.decl_api import DeclarativeMeta, registry
 
-from polyfactory.exceptions import ConfigurationException
+from polyfactory.exceptions import ConfigurationException, ParameterException
 from polyfactory.factories.base import BaseFactory
 from polyfactory.factories.sqlalchemy_factory import SQLAlchemyFactory
 from polyfactory.fields import Ignore
-
-
-@pytest.fixture()
-def engine() -> Engine:
-    return create_engine("sqlite:///:memory:")
-
-
-@pytest.fixture()
-def async_engine() -> AsyncEngine:
-    return create_async_engine("sqlite+aiosqlite:///:memory:")
-
-
-async def create_tables(engine: AsyncEngine, base: Type) -> None:
-    async with engine.connect() as connection:
-        await connection.run_sync(base.metadata.create_all)
-
-
-_registry = registry()
-
-
-class Base(metaclass=DeclarativeMeta):
-    __abstract__ = True
-    __allow_unmapped__ = True
-
-    registry = _registry
-    metadata = _registry.metadata
-
-
-class Author(Base):
-    __tablename__ = "authors"
-
-    id: Any = Column(Integer(), primary_key=True)
-    books: Any = orm.relationship(
-        "Book",
-        collection_class=list,
-        uselist=True,
-        back_populates="author",
-    )
-
-
-class Book(Base):
-    __tablename__ = "books"
-
-    id: Any = Column(Integer(), primary_key=True)
-    author_id: Any = Column(
-        Integer(),
-        ForeignKey(Author.id),
-        nullable=False,
-    )
-    author: Any = orm.relationship(
-        Author,
-        uselist=False,
-        back_populates="books",
-    )
-
-
-@dataclass
-class NonSQLAchemyClass:
-    id: int
+from tests.sqlalchemy_factory.models import (
+    AsyncModel,
+    AsyncRefreshModel,
+    Author,
+    Base,
+    Book,
+    NonSQLAchemyClass,
+    _registry,
+)
 
 
 @pytest.mark.parametrize(
@@ -246,6 +189,7 @@ def test_relationship_list_resolution() -> None:
         __set_relationships__ = True
 
     result = AuthorFactory.build()
+    assert result.books is not None
     assert isinstance(result.books, list)
     assert isinstance(result.books[0], Book)
 
@@ -323,21 +267,6 @@ async def test_async_persistence(
     async_engine: AsyncEngine,
     session_config: Callable[[AsyncSession], Any],
 ) -> None:
-    _registry = registry()
-
-    class Base(metaclass=DeclarativeMeta):
-        __abstract__ = True
-
-        registry = _registry
-        metadata = _registry.metadata
-
-    class AsyncModel(Base):
-        __tablename__ = "table"
-
-        id: Any = Column(Integer(), primary_key=True)
-
-    await create_tables(async_engine, Base)
-
     async with AsyncSession(async_engine) as session:
 
         class Factory(SQLAlchemyFactory[AsyncModel]):
@@ -345,11 +274,13 @@ async def test_async_persistence(
             __model__ = AsyncModel
 
         instance = await Factory.create_async()
+        batch_result = await Factory.create_batch_async(size=2)
+        assert len(batch_result) == 2
+
+    async with AsyncSession(async_engine) as session:
         result = await session.scalar(select(AsyncModel).where(AsyncModel.id == instance.id))
         assert result
 
-        batch_result = await Factory.create_batch_async(size=2)
-        assert len(batch_result) == 2
         for batch_item in batch_result:
             result = await session.scalar(select(AsyncModel).where(AsyncModel.id == batch_item.id))
             assert result
@@ -366,25 +297,6 @@ async def test_async_server_default_refresh(
     async_engine: AsyncEngine,
     session_config: Callable[[AsyncSession], Any],
 ) -> None:
-    _registry = registry()
-
-    class Base(metaclass=DeclarativeMeta):
-        __abstract__ = True
-
-        registry = _registry
-        metadata = _registry.metadata
-
-    class AsyncRefreshModel(Base):
-        __tablename__ = "server_default_test"
-
-        id: Any = Column(Integer(), primary_key=True)
-        test_datetime: Any = Column(DateTime(timezone=True), server_default=func.now(), nullable=False)
-        test_str: Any = Column(String, nullable=False, server_default=text("test_str"))
-        test_int: Any = Column(Integer, nullable=False, server_default=text("123"))
-        test_bool: Any = Column(Boolean, nullable=False, server_default=text("False"))
-
-    await create_tables(async_engine, Base)
-
     async with AsyncSession(async_engine) as session:
 
         class Factory(SQLAlchemyFactory[AsyncRefreshModel]):
@@ -396,6 +308,8 @@ async def test_async_server_default_refresh(
             test_bool = Ignore()
 
         instance = await Factory.create_async()
+
+    async with AsyncSession(async_engine) as session:
         result = await session.scalar(select(AsyncRefreshModel).where(AsyncRefreshModel.id == instance.id))
         assert result
         assert result.test_datetime is not None
@@ -522,3 +436,28 @@ def test_numeric_field(numeric: Numeric) -> None:
     if constraints := result.constraints:
         assert constraints.get("max_digits") == numeric.precision
         assert constraints.get("decimal_places") == numeric.scale
+
+
+def test_unsupported_type_engine() -> None:
+    class Location(types.TypeEngine): ...
+
+    _registry = registry()
+
+    class Base(metaclass=DeclarativeMeta):
+        __abstract__ = True
+        __allow_unmapped__ = True
+
+        registry = _registry
+        metadata = _registry.metadata
+
+    class Place(Base):
+        __tablename__ = "numerics"
+
+        id: Any = Column(Integer(), primary_key=True)
+        numeric_field: Any = Column(Location, nullable=False)
+
+    with pytest.raises(
+        ParameterException,
+        match="Unsupported type engine: Location()",
+    ):
+        SQLAlchemyFactory.create_factory(Place)

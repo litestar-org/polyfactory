@@ -1,10 +1,10 @@
 from __future__ import annotations
 
+import inspect
 import re
 from typing import (
     Any,
     Callable,
-    ClassVar,
     Literal,
     Type,
     TypeVar,
@@ -13,7 +13,7 @@ from typing import (
     overload,
 )
 
-from pytest import Config, fixture  # noqa: PT013
+import pytest
 
 from polyfactory.exceptions import ParameterException
 from polyfactory.factories.base import BaseFactory
@@ -21,7 +21,7 @@ from polyfactory.utils.predicates import is_safe_subclass
 
 Scope = Union[
     Literal["session", "package", "module", "class", "function"],
-    Callable[[str, Config], Literal["session", "package", "module", "class", "function"]],
+    Callable[[str, pytest.Config], Literal["session", "package", "module", "class", "function"]],
 ]
 T = TypeVar("T", bound=BaseFactory[Any])
 
@@ -48,8 +48,6 @@ class FactoryFixture:
 
     __slots__ = ("autouse", "name", "scope")
 
-    factory_class_map: ClassVar[dict[Callable, type[BaseFactory[Any]]]] = {}
-
     def __init__(
         self,
         scope: Scope = "function",
@@ -66,13 +64,13 @@ class FactoryFixture:
         self.autouse = autouse
         self.name = name
 
-    def __call__(self, factory: type[T]) -> Callable[[], type[T]]:
+    def __call__(self, factory: type[T], depth: int = 1) -> type[T]:
         if not is_safe_subclass(factory, BaseFactory):
             msg = f"{factory.__name__} is not a BaseFactory subclass."
             raise ParameterException(msg)
 
         fixture_name = self.name or _get_fixture_name(factory.__name__)
-        fixture_register = fixture(
+        fixture_register = pytest.fixture(
             scope=self.scope,  # pyright: ignore[reportArgumentType]
             name=fixture_name,
             autouse=self.autouse,
@@ -80,12 +78,12 @@ class FactoryFixture:
 
         def _factory_fixture() -> type[T]:
             """The wrapped factory"""
-            return cast(Type[T], factory)
+            return cast("Type[T]", factory)
 
-        _factory_fixture.__doc__ = factory.__doc__
-        marker = fixture_register(_factory_fixture)
-        self.factory_class_map[marker] = factory
-        return marker
+        caller_globals = inspect.stack()[depth][0].f_globals
+        caller_globals[fixture_name] = fixture_register(_factory_fixture)
+
+        return factory  # type: ignore[return-value]
 
 
 @overload
@@ -105,7 +103,7 @@ def register_fixture(
     scope: Scope = "function",
     autouse: bool = False,
     name: str | None = None,
-) -> Callable[[], type[T]]: ...
+) -> type[T]: ...
 
 
 def register_fixture(
@@ -114,7 +112,7 @@ def register_fixture(
     scope: Scope = "function",
     autouse: bool = False,
     name: str | None = None,
-) -> FactoryFixture | Callable[[], type[T]]:
+) -> type[T] | FactoryFixture:
     """A decorator that allows registering model factories as fixtures.
 
     :param factory: An optional factory class to decorate.
@@ -125,4 +123,4 @@ def register_fixture(
     :returns: A fixture factory instance.
     """
     factory_fixture = FactoryFixture(scope=scope, autouse=autouse, name=name)
-    return factory_fixture(factory) if factory else factory_fixture
+    return factory_fixture(factory, depth=2) if factory else factory_fixture

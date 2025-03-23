@@ -1,11 +1,11 @@
 from __future__ import annotations
 
 from datetime import date, datetime
-from typing import TYPE_CHECKING, Any, Callable, ClassVar, Generic, List, TypeVar, Union
+from typing import TYPE_CHECKING, Any, Callable, ClassVar, Generic, List, Protocol, TypeVar, Union
 
 from typing_extensions import Annotated
 
-from polyfactory.exceptions import MissingDependencyException
+from polyfactory.exceptions import MissingDependencyException, ParameterException
 from polyfactory.factories.base import BaseFactory
 from polyfactory.field_meta import Constraints, FieldMeta
 from polyfactory.persistence import AsyncPersistenceProtocol, SyncPersistenceProtocol
@@ -68,6 +68,14 @@ class SQLAASyncPersistence(AsyncPersistenceProtocol[T]):
         return data
 
 
+_T_co = TypeVar("_T_co", covariant=True)
+
+
+class _SessionMaker(Protocol[_T_co]):
+    @staticmethod
+    def __call__() -> _T_co: ...
+
+
 class SQLAlchemyFactory(Generic[T], BaseFactory[T]):
     """Base factory for SQLAlchemy models."""
 
@@ -82,8 +90,8 @@ class SQLAlchemyFactory(Generic[T], BaseFactory[T]):
     __set_association_proxy__: ClassVar[bool] = False
     """Configuration to consider AssociationProxy property as a model field or not."""
 
-    __session__: ClassVar[Session | Callable[[], Session] | None] = None
-    __async_session__: ClassVar[AsyncSession | Callable[[], AsyncSession] | None] = None
+    __session__: ClassVar[Session | _SessionMaker[Session] | None] = None
+    __async_session__: ClassVar[AsyncSession | _SessionMaker[AsyncSession] | None] = None
 
     __config_keys__ = (
         *BaseFactory.__config_keys__,
@@ -166,7 +174,10 @@ class SQLAlchemyFactory(Generic[T], BaseFactory[T]):
         try:
             annotation = type_engine.python_type
         except NotImplementedError:
-            annotation = type_engine.impl.python_type  # type: ignore[attr-defined]
+            if not hasattr(type_engine, "impl"):
+                msg = f"Unsupported type engine: {type_engine}.\nOverride get_sqlalchemy_types to support"
+                raise ParameterException(msg) from None
+            annotation = type_engine.impl.python_type  # pyright: ignore[reportAttributeAccessIssue]
 
         constraints: Constraints = {}
         for type_, constraint_fields in cls.get_sqlalchemy_constraints().items():
@@ -203,7 +214,6 @@ class SQLAlchemyFactory(Generic[T], BaseFactory[T]):
             FieldMeta.from_type(
                 annotation=cls.get_type_from_column(column),
                 name=name,
-                random=cls.__random__,
             )
             for name, column in table.columns.items()
             if cls.should_column_be_set(column)
@@ -216,7 +226,6 @@ class SQLAlchemyFactory(Generic[T], BaseFactory[T]):
                     FieldMeta.from_type(
                         name=name,
                         annotation=annotation,
-                        random=cls.__random__,
                     ),
                 )
         if cls.__set_association_proxy__:
@@ -233,7 +242,6 @@ class SQLAlchemyFactory(Generic[T], BaseFactory[T]):
                                 FieldMeta.from_type(
                                     name=name,
                                     annotation=annotation,
-                                    random=cls.__random__,
                                 )
                             )
 

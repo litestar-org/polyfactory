@@ -6,13 +6,11 @@ from datetime import timezone
 from functools import partial
 from os.path import realpath
 from pathlib import Path
-from typing import TYPE_CHECKING, Any, ClassVar, ForwardRef, Generic, Mapping, Tuple, TypeVar, cast
+from typing import TYPE_CHECKING, Any, ClassVar, ForwardRef, Generic, Mapping, TypeVar, cast
 from uuid import NAMESPACE_DNS, uuid1, uuid3, uuid5
 
-from typing_extensions import Literal, get_args, get_origin
+from typing_extensions import Literal, get_args
 
-from polyfactory.collection_extender import CollectionExtender
-from polyfactory.constants import DEFAULT_RANDOM
 from polyfactory.exceptions import MissingDependencyException
 from polyfactory.factories.base import BaseFactory, BuildContext
 from polyfactory.factories.base import BuildContext as BaseBuildContext
@@ -97,7 +95,9 @@ if TYPE_CHECKING:
 
     from typing_extensions import NotRequired, TypeGuard
 
-T = TypeVar("T", bound="BaseModelV1 | BaseModelV2")  # pyright: ignore[reportInvalidTypeForm]
+    from pydantic import BaseModel
+
+T = TypeVar("T", bound="BaseModel")
 
 _IS_PYDANTIC_V1 = VERSION.startswith("1")
 
@@ -140,7 +140,7 @@ class PydanticFieldMeta(FieldMeta):
         field_name: str,
         field_info: FieldInfo,
         use_alias: bool,
-        random: Random | None,
+        random: Random | None = None,
         randomize_collection_length: bool | None = None,
         min_collection_length: int | None = None,
         max_collection_length: int | None = None,
@@ -163,6 +163,7 @@ class PydanticFieldMeta(FieldMeta):
                 ("randomize_collection_length", randomize_collection_length),
                 ("min_collection_length", min_collection_length),
                 ("max_collection_length", max_collection_length),
+                ("random", random),
             ),
         )
         if callable(field_info.default_factory):
@@ -189,7 +190,6 @@ class PydanticFieldMeta(FieldMeta):
                         field_name="",
                         field_info=merged_field_info,
                         use_alias=use_alias,
-                        random=random,
                     ),
                 )
         else:
@@ -201,7 +201,7 @@ class PydanticFieldMeta(FieldMeta):
                     metadata.append(m)
 
             constraints = cast(
-                PydanticConstraints,
+                "PydanticConstraints",
                 cls.parse_constraints(metadata=metadata) if metadata else {},
             )
 
@@ -218,7 +218,6 @@ class PydanticFieldMeta(FieldMeta):
             constraints=cast("Constraints", {k: v for k, v in constraints.items() if v is not None}) or None,
             default=default_value,
             name=name,
-            random=random or DEFAULT_RANDOM,
         )
 
     @classmethod
@@ -229,7 +228,7 @@ class PydanticFieldMeta(FieldMeta):
         randomize_collection_length: bool | None = None,
         min_collection_length: int | None = None,
         max_collection_length: int | None = None,
-        random: Random = DEFAULT_RANDOM,
+        random: Random | None = None,
     ) -> PydanticFieldMeta:
         """Create an instance from a pydantic model field.
         :param model_field: A pydantic ModelField.
@@ -248,6 +247,7 @@ class PydanticFieldMeta(FieldMeta):
                 ("randomize_collection_length", randomize_collection_length),
                 ("min_collection_length", min_collection_length),
                 ("max_collection_length", max_collection_length),
+                ("random", random),
             ),
         )
 
@@ -308,7 +308,7 @@ class PydanticFieldMeta(FieldMeta):
         if model_field.field_info.const and (
             default_value is None or isinstance(default_value, (int, bool, str, bytes))
         ):
-            annotation = Literal[default_value]  # pyright: ignore  # noqa: PGH003
+            annotation = Literal[default_value]
 
         children: list[FieldMeta] = []
 
@@ -323,31 +323,16 @@ class PydanticFieldMeta(FieldMeta):
                 if model_field.key_field is not None
                 else model_field.sub_fields
             )
-            type_args = tuple(
-                (
-                    sub_field.outer_type_
-                    if isinstance(sub_field.annotation, DeferredType)
-                    else unwrap_new_type(sub_field.annotation)
-                )
-                for sub_field in fields_to_iterate
-            )
-            type_arg_to_sub_field = dict(zip(type_args, fields_to_iterate))
-            if get_origin(outer_type) in (tuple, Tuple) and get_args(outer_type)[-1] == Ellipsis:
-                # pydantic removes ellipses from Tuples in sub_fields
-                type_args += (...,)
-            extended_type_args = CollectionExtender.extend_type_args(annotation, type_args, 1)
             children.extend(
                 PydanticFieldMeta.from_model_field(
-                    model_field=type_arg_to_sub_field[arg],
+                    model_field=arg,
                     use_alias=use_alias,
-                    random=random,
                 )
-                for arg in extended_type_args
+                for arg in fields_to_iterate
             )
 
         return PydanticFieldMeta(
             name=name,
-            random=random or DEFAULT_RANDOM,
             annotation=annotation,  # pyright: ignore[reportArgumentType]
             children=children or None,
             default=default_value,
@@ -409,7 +394,6 @@ class ModelFactory(Generic[T], BaseFactory[T]):
                     PydanticFieldMeta.from_model_field(
                         field,
                         use_alias=not cls.__model__.__config__.allow_population_by_field_name,  # type: ignore[attr-defined]
-                        random=cls.__random__,
                     )
                     for field in cls.__model__.__fields__.values()
                 ]
@@ -418,7 +402,6 @@ class ModelFactory(Generic[T], BaseFactory[T]):
                     PydanticFieldMeta.from_field_info(
                         field_info=field_info,
                         field_name=field_name,
-                        random=cls.__random__,
                         use_alias=not cls.__model__.model_config.get(  # pyright: ignore[reportGeneralTypeIssues]
                             "populate_by_name",
                             False,
@@ -436,7 +419,7 @@ class ModelFactory(Generic[T], BaseFactory[T]):
         field_build_parameters: Any | None = None,
         build_context: BuildContext | None = None,
     ) -> Any:
-        constraints = cast(PydanticConstraints, field_meta.constraints)
+        constraints = cast("PydanticConstraints", field_meta.constraints)
         if constraints.pop("json", None):
             value = cls.get_field_value(
                 field_meta, field_build_parameters=field_build_parameters, build_context=build_context
@@ -465,7 +448,8 @@ class ModelFactory(Generic[T], BaseFactory[T]):
 
         if "_build_context" not in kwargs:
             kwargs["_build_context"] = PydanticBuildContext(
-                seen_models=set(), factory_use_construct=factory_use_construct
+                seen_models=set(),
+                factory_use_construct=factory_use_construct,
             )
 
         processed_kwargs = cls.process_kwargs(**kwargs)
@@ -502,8 +486,8 @@ class ModelFactory(Generic[T], BaseFactory[T]):
         if cls._get_build_context(_build_context).get("factory_use_construct"):
             if _is_pydantic_v1_model(cls.__model__):
                 return cls.__model__.construct(**kwargs)  # type: ignore[return-value]
-            return cls.__model__.model_construct(**kwargs)  # type: ignore[return-value]
-        return cls.__model__(**kwargs)  # type: ignore[return-value]
+            return cls.__model__.model_construct(**kwargs)
+        return cls.__model__(**kwargs)
 
     @classmethod
     def coverage(cls, factory_use_construct: bool = False, **kwargs: Any) -> abc.Iterator[T]:

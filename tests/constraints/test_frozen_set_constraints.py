@@ -1,5 +1,4 @@
 from contextlib import suppress
-from random import Random
 from typing import Any
 
 import pytest
@@ -23,7 +22,7 @@ def test_handle_constrained_set_with_min_items_and_max_items(min_items: int, max
         result = handle_constrained_collection(
             collection_type=frozenset,
             factory=ModelFactory,
-            field_meta=FieldMeta(name="test", annotation=frozenset, random=Random()),
+            field_meta=FieldMeta(name="test", annotation=frozenset),
             item_type=str,
             max_items=max_items,
             min_items=min_items,
@@ -35,7 +34,7 @@ def test_handle_constrained_set_with_min_items_and_max_items(min_items: int, max
             handle_constrained_collection(
                 collection_type=frozenset,
                 factory=ModelFactory,
-                field_meta=FieldMeta(name="test", annotation=frozenset, random=Random()),
+                field_meta=FieldMeta(name="test", annotation=frozenset),
                 item_type=str,
                 max_items=max_items,
                 min_items=min_items,
@@ -51,7 +50,7 @@ def test_handle_constrained_set_with_max_items(
     result = handle_constrained_collection(
         collection_type=frozenset,
         factory=ModelFactory,
-        field_meta=FieldMeta(name="test", annotation=frozenset, random=Random()),
+        field_meta=FieldMeta(name="test", annotation=frozenset),
         item_type=str,
         max_items=max_items,
     )
@@ -67,7 +66,7 @@ def test_handle_constrained_set_with_min_items(
     result = handle_constrained_collection(
         collection_type=frozenset,
         factory=ModelFactory,
-        field_meta=FieldMeta(name="test", annotation=frozenset, random=Random()),
+        field_meta=FieldMeta(name="test", annotation=frozenset),
         item_type=str,
         min_items=min_items,
     )
@@ -80,7 +79,7 @@ def test_handle_constrained_set_with_different_types(t_type: Any) -> None:
         result = handle_constrained_collection(
             collection_type=frozenset,
             factory=ModelFactory,
-            field_meta=FieldMeta(name="test", annotation=frozenset, random=Random()),
+            field_meta=FieldMeta(name="test", annotation=frozenset),
             item_type=t_type,
         )
         assert len(result) >= 0

@@ -39,11 +39,12 @@ from typing import (
     TypedDict,
     TypeVar,
     cast,
+    overload,
 )
 from uuid import UUID
 
 from faker import Faker
-from typing_extensions import get_args, get_origin, get_original_bases
+from typing_extensions import Self, get_args, get_origin, get_original_bases
 
 from polyfactory.constants import (
     DEFAULT_RANDOM,
@@ -94,6 +95,7 @@ if TYPE_CHECKING:
 
 
 T = TypeVar("T")
+U = TypeVar("U")
 F = TypeVar("F", bound="BaseFactory[Any]")
 
 
@@ -189,10 +191,14 @@ class BaseFactory(ABC, Generic[T]):
     _factory_type_mapping: ClassVar[dict[Any, type[BaseFactory[Any]]]]
     _base_factories: ClassVar[list[type[BaseFactory[Any]]]]
 
+    _providers: ClassVar[dict[Any, Callable[[], Any]]]
+    """Mapping of type providers that apply to all factories"""
+
     # Non-public attributes
     _extra_providers: dict[Any, Callable[[], Any]] | None = None
+    """Used to copy providers from once base factory to another dynamically generated factory for a class"""
 
-    def __init_subclass__(cls, *args: Any, **kwargs: Any) -> None:  # noqa: C901
+    def __init_subclass__(cls, *args: Any, **kwargs: Any) -> None:  # noqa: C901, PLR0912
         super().__init_subclass__(*args, **kwargs)
 
         if not hasattr(BaseFactory, "_base_factories"):
@@ -200,6 +206,9 @@ class BaseFactory(ABC, Generic[T]):
 
         if not hasattr(BaseFactory, "_factory_type_mapping"):
             BaseFactory._factory_type_mapping = {}
+
+        if not hasattr(BaseFactory, "_providers"):
+            BaseFactory._providers = {}
 
         if cls.__min_collection_length__ > cls.__max_collection_length__:
             msg = "Minimum collection length shouldn't be greater than maximum collection length"
@@ -251,7 +260,7 @@ class BaseFactory(ABC, Generic[T]):
         return copy.deepcopy(build_context)
 
     @classmethod
-    def _infer_model_type(cls: type[F]) -> type[T] | None:
+    def _infer_model_type(cls) -> type[T] | None:
         """Return model type inferred from class declaration.
         class Foo(ModelFactory[MyModel]):  # <<< MyModel
             ...
@@ -378,7 +387,7 @@ class BaseFactory(ABC, Generic[T]):
         }
 
     @classmethod
-    def _get_or_create_factory(cls, model: type) -> type[BaseFactory[Any]]:
+    def _get_or_create_factory(cls, model: type[U]) -> type[BaseFactory[U]]:
         """Get a factory from registered factories or generate a factory dynamically.
 
         :param model: A model type.
@@ -402,7 +411,29 @@ class BaseFactory(ABC, Generic[T]):
         msg = f"unsupported model type {model.__name__}"
         raise ParameterException(msg)  # pragma: no cover
 
+    @classmethod
+    def _get_initial_variables(cls, kwargs: Any) -> tuple[dict[str, Any], dict[str, PostGenerated], BuildContext]:
+        """Prepare the given kwargs and generate initial variables for further usage.
+
+        :param kwargs: Any build kwargs.
+
+        :returns: A tuple of build results.
+
+        """
+        _build_context = cls._get_build_context(kwargs.pop("_build_context", None))
+        _build_context["seen_models"].add(cls.__model__)
+
+        result: dict[str, Any] = {**kwargs}
+        generate_post: dict[str, PostGenerated] = {}
+
+        return result, generate_post, _build_context
+
     # Public Methods
+
+    @classmethod
+    def add_provider(cls, provider_type: Any, provider_function: Callable[[], Any]) -> None:
+        """Add a provider for a custom type to be available to all factories"""
+        cls._providers[provider_type] = provider_function
 
     @classmethod
     def is_factory_type(cls, annotation: Any) -> bool:
@@ -489,7 +520,7 @@ class BaseFactory(ABC, Generic[T]):
 
     @classmethod
     def get_provider_map(cls) -> dict[Any, Callable[[], Any]]:
-        """Map types to callables.
+        """Map types to callables which accept no arguments and return a random value of the given type.
 
         :notes:
             - This method is distinct to allow overriding.
@@ -539,16 +570,35 @@ class BaseFactory(ABC, Generic[T]):
             Callable: _create_generic_fn,
             abc.Callable: _create_generic_fn,
             Counter: lambda: Counter(cls.__faker__.pystr()),
+            **(cls._providers or {}),
             **(cls._extra_providers or {}),
         }
 
+    @overload
     @classmethod
     def create_factory(
-        cls: type[F],
-        model: type[T] | None = None,
+        cls,
+        model: None = None,
         bases: tuple[type[BaseFactory[Any]], ...] | None = None,
         **kwargs: Any,
-    ) -> type[F]:
+    ) -> type[Self]: ...
+
+    @overload
+    @classmethod
+    def create_factory(
+        cls,
+        model: type[U],
+        bases: tuple[type[BaseFactory[Any]], ...] | None = None,
+        **kwargs: Any,
+    ) -> type[BaseFactory[U]]: ...
+
+    @classmethod
+    def create_factory(
+        cls,
+        model: type[U] | None = None,
+        bases: tuple[type[BaseFactory[Any]], ...] | None = None,
+        **kwargs: Any,
+    ) -> type[Self | BaseFactory[U]]:
         """Generate a factory for the given type dynamically.
 
         :param model: A type to model. Defaults to current factory __model__ if any.
@@ -561,12 +611,13 @@ class BaseFactory(ABC, Generic[T]):
         """
         if model is None:
             try:
-                model = cls.__model__
+                model = cls.__model__  # pyright: ignore[reportAssignmentType]
             except AttributeError as ex:
                 msg = "A 'model' argument is required when creating a new factory from a base one"
                 raise TypeError(msg) from ex
+
         return cast(
-            "Type[F]",
+            "Type[Self]",
             type(
                 f"{model.__name__}Factory",  # pyright: ignore[reportOptionalMemberAccess]
                 (*(bases or ()), cls),
@@ -802,7 +853,11 @@ class BaseFactory(ABC, Generic[T]):
             with suppress(Exception):
                 return unwrapped_annotation()
 
-        msg = f"Unsupported type: {unwrapped_annotation!r}\n\nEither extend the providers map or add a factory function for this type."
+        msg = (
+            f"Unsupported type: {unwrapped_annotation!r} on field '{field_meta.name}' from class {cls.__name__}."
+            "\n\nEither use 'add_provider', extend the providers map, or add a factory function for the field on the model."
+        )
+
         raise ParameterException(
             msg,
         )
@@ -1018,11 +1073,7 @@ class BaseFactory(ABC, Generic[T]):
         :returns: A dictionary of build results.
 
         """
-        _build_context = cls._get_build_context(kwargs.pop("_build_context", None))
-        _build_context["seen_models"].add(cls.__model__)
-
-        result: dict[str, Any] = {**kwargs}
-        generate_post: dict[str, PostGenerated] = {}
+        result, generate_post, _build_context = cls._get_initial_variables(kwargs)
 
         params = cls.get_factory_params()
         result.update(cls._handle_factory_params(params, **kwargs))
@@ -1075,11 +1126,7 @@ class BaseFactory(ABC, Generic[T]):
         :returns: A dictionary of build results.
 
         """
-        _build_context = cls._get_build_context(kwargs.pop("_build_context", None))
-        _build_context["seen_models"].add(cls.__model__)
-
-        result: dict[str, Any] = {**kwargs}
-        generate_post: dict[str, PostGenerated] = {}
+        result, generate_post, _build_context = cls._get_initial_variables(kwargs)
 
         params = cls.get_factory_params()
         result.update(cls._handle_factory_params(params, **kwargs))
@@ -1123,7 +1170,7 @@ class BaseFactory(ABC, Generic[T]):
             yield {key: value for key, value in resolved.items() if key not in params}
 
     @classmethod
-    def build(cls, **kwargs: Any) -> T:
+    def build(cls, *_: Any, **kwargs: Any) -> T:
         """Build an instance of the factory's __model__
 
         :param kwargs: Any kwargs. If field names are set in kwargs, their values will be used.
@@ -1147,7 +1194,7 @@ class BaseFactory(ABC, Generic[T]):
 
     @classmethod
     def coverage(cls, **kwargs: Any) -> abc.Iterator[T]:
-        """Build a batch of the factory's Meta.model will full coverage of the sub-types of the model.
+        """Build a batch of the factory's Meta.model with full coverage of the sub-types of the model.
 
         :param kwargs: Any kwargs. If field_meta names are set in kwargs, their values will be used.
 

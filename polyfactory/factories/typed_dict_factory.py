@@ -12,7 +12,6 @@ from typing_extensions import (  # type: ignore[attr-defined]
     is_typeddict,
 )
 
-from polyfactory.constants import DEFAULT_RANDOM
 from polyfactory.factories.base import BaseFactory
 from polyfactory.field_meta import FieldMeta, Null
 
@@ -52,7 +51,6 @@ class TypedDictFactory(Generic[TypedDictT], BaseFactory[TypedDictT]):
             field_metas.append(
                 FieldMeta.from_type(
                     annotation=annotation,
-                    random=DEFAULT_RANDOM,
                     name=field_name,
                     default=getattr(cls.__model__, field_name, Null),
                 ),

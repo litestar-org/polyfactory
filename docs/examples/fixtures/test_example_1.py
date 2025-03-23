@@ -21,9 +21,10 @@ class Person:
 class PersonFactory(DataclassFactory[Person]): ...
 
 
-# NOTE: PersonFactory is no more a factory class, it is a callable that returns the decorated factory
-
-
-def test_person_factory(person_factory: DataclassFactory[Person]) -> None:
+def test_person_factory(person_factory: PersonFactory) -> None:
     person_instance = person_factory.build()
     assert isinstance(person_instance, Person)
+
+    # The factory class itself can still be used
+    another_person_instance = PersonFactory.build()
+    assert isinstance(another_person_instance, Person)

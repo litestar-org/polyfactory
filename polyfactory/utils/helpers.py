@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import sys
 from collections import deque
+from dataclasses import is_dataclass
 from typing import TYPE_CHECKING, Any, Mapping, Sequence
 
 from typing_extensions import TypeAliasType, get_args, get_origin
@@ -198,3 +199,7 @@ def get_collection_type(annotation: Any) -> type[list | tuple | set | frozenset 
 
     msg = f"Unknown collection type - {annotation}"
     raise ValueError(msg)
+
+
+def is_dataclass_instance(obj: Any) -> bool:
+    return is_dataclass(obj) and not isinstance(obj, type)

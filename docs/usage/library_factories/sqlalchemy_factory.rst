@@ -65,6 +65,15 @@ By combining the above and using other settings, a global base factory can be se
     :language: python
 
 
+Add column type mapping
+-----------------------
+
+Columns types and normally automatically mapped to Python type. This can be overridden for cases where Python type is not available or need to provide extra information to correctly generate.
+
+.. literalinclude:: /examples/library_factories/sqlalchemy_factory/test_example_5.py
+    :caption: Overriding SQLA column type mapping
+    :language: python
+
 API reference
 -------------
 Full API docs are available :class:`here <polyfactory.factories.sqlalchemy_factory.SQLAlchemyFactory>`.

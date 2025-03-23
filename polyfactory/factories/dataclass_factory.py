@@ -51,7 +51,6 @@ class DataclassFactory(Generic[T], BaseFactory[T]):
                     annotation=model_type_hints[field.name],
                     name=field.name,
                     default=default_value,
-                    random=cls.__random__,
                 ),
             )
 

@@ -34,7 +34,7 @@ classifiers = [
     "Typing :: Typed",
 ]
 name = "polyfactory"
-version = "2.19.0"
+version = "2.20.0"
 description = "Mock data generation factories"
 readme = "docs/PYPI_README.md"
 license = {text = "MIT"}
@@ -51,7 +51,11 @@ pydantic = [
 ]
 msgspec = ["msgspec",]
 odmantic = ["odmantic<1.0.0", "pydantic[email]",]
-beanie = ["beanie", "pydantic[email]",]
+beanie = [
+    "beanie",
+    "pydantic[email]",
+    "pymongo<4.9",
+]
 attrs = ["attrs>=22.2.0",]
 full = ["pydantic", "odmantic", "msgspec", "beanie", "attrs", "sqlalchemy"]
 
@@ -158,6 +162,7 @@ markers = [
     # Marks tests that use `attrs` library
     "attrs",
 ]
+asyncio_default_fixture_loop_scope = "function"
 
 [tool.coverage.report]
 exclude_lines = [

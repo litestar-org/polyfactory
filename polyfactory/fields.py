@@ -6,6 +6,8 @@ from typing_extensions import ParamSpec
 
 from polyfactory.exceptions import MissingParamException, ParameterException
 from polyfactory.field_meta import Null
+from polyfactory.utils import deprecation
+from polyfactory.utils.predicates import is_safe_subclass
 
 T = TypeVar("T")
 U = TypeVar("U")
@@ -89,6 +91,7 @@ class Fixture:
 
     __slots__ = ("kwargs", "ref", "size")
 
+    @deprecation.deprecated(version="2.20.0", alternative="Use factory directly")
     def __init__(self, fixture: Callable, size: int | None = None, **kwargs: Any) -> None:
         """Create a fixture from a factory.
 
@@ -107,15 +110,16 @@ class Fixture:
 
         :returns: The build result.
         """
-        from polyfactory.pytest_plugin import FactoryFixture
+        from polyfactory.factories.base import BaseFactory
 
-        if factory := FactoryFixture.factory_class_map.get(self.ref["value"]):
-            if self.size is not None:
-                return factory.batch(self.size, **self.kwargs)
-            return factory.build(**self.kwargs)
+        factory = self.ref["value"]
+        if not is_safe_subclass(factory, BaseFactory):
+            msg = "fixture has not been registered using the register_factory decorator"
+            raise ParameterException(msg)
 
-        msg = "fixture has not been registered using the register_factory decorator"
-        raise ParameterException(msg)
+        if self.size is not None:
+            return factory.batch(self.size, **self.kwargs)
+        return factory.build(**self.kwargs)
 
 
 class Param(Generic[T]):
@@ -163,9 +167,9 @@ class Param(Generic[T]):
             # not we're supposed to call a callable
             if from_build is not Null:
                 return (
-                    cast(T, from_build)
+                    cast("T", from_build)
                     if not self.is_callable
-                    else cast(Callable[..., T], from_build)(**{**self.kwargs, **kwargs})
+                    else cast("Callable[..., T]", from_build)(**{**self.kwargs, **kwargs})
                 )
 
             # Otherwise, raise an exception
@@ -181,7 +185,7 @@ class Param(Generic[T]):
             # override if are passed a callable at build
             if from_build is not Null:
                 if callable(from_build):
-                    return cast(Callable[..., T], from_build)(**{**self.kwargs, **kwargs})
+                    return cast("Callable[..., T]", from_build)(**{**self.kwargs, **kwargs})
 
                 # If we were passed a value at build that isn't a callable, raise
                 # an exception
@@ -189,8 +193,8 @@ class Param(Generic[T]):
                 raise TypeError(msg)
 
             # Otherwise, return the value passed at initialization
-            return cast(Callable[..., T], self.param)(**{**self.kwargs, **kwargs})
+            return cast("Callable[..., T]", self.param)(**{**self.kwargs, **kwargs})
 
         # Inthis case, we are not using a callable, so return either the value
         # passed at build time or initialization
-        return cast(T, self.param) if from_build is Null else cast(T, from_build)
+        return cast("T", self.param) if from_build is Null else cast("T", from_build)

@@ -132,30 +132,6 @@ jobs:
             docs/_build/html
             .pr_number
 
-  sonar:
-    needs:
-      - test
-      - validate
-    if: github.event.pull_request.head.repo.fork == false
-    runs-on: ubuntu-latest
-    steps:
-      - name: Check out repository
-        uses: actions/checkout@v4
-
-      - name: Download Artifacts
-        uses: actions/download-artifact@v4
-        with:
-          name: coverage-data
-
-      - name: Fix coverage file for sonarcloud
-        run: sed -i "s/home\/runner\/work\/polyfactory\/polyfactory/github\/workspace/g" coverage.xml
-
-      - name: SonarCloud Scan
-        uses: sonarsource/sonarqube-scan-action@master
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-
   codeql:
     needs:
       - test
@@ -199,7 +175,7 @@ jobs:
         run: sed -i "s/home\/runner\/work\/polyfactory\/polyfactory/github\/workspace/g" coverage.xml
 
       - name: Upload coverage reports to Codecov
-        uses: codecov/codecov-action@v4
+        uses: codecov/codecov-action@v5
         with:
           files: coverage.xml
           token: ${{ secrets.CODECOV_TOKEN }}
