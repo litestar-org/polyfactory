@@ -8,7 +8,7 @@ from contextlib import suppress
 from datetime import date, datetime, time, timedelta
 from decimal import Decimal
 from enum import EnumMeta
-from functools import cache, partial
+from functools import lru_cache, partial
 from importlib import import_module
 from ipaddress import (
     IPv4Address,
@@ -1043,7 +1043,7 @@ class BaseFactory(ABC, Generic[T]):
             raise MissingBuildKwargException(msg) from e
 
     @classmethod
-    @cache
+    @lru_cache(maxsize=None)
     def get_factory_params(cls) -> dict[str, Param[Any]]:
         """Get the factory parameters.
 
