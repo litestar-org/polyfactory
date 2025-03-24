@@ -195,7 +195,7 @@ class PydanticFieldMeta(FieldMeta):
                     cls.from_field_info(
                         # this is a fake field name, but it makes it possible to debug which type variant
                         # is the source of an exception downstream
-                        field_name=f"{field_name}__{arg.__name__}",
+                        field_name=field_name,
                         field_info=merged_field_info,
                         use_alias=use_alias,
                         random=random,
