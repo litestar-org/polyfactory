@@ -836,6 +836,15 @@ class BaseFactory(ABC, Generic[T]):
             )
 
         if provider := cls.get_provider_map().get(unwrapped_annotation):
+            provider_signature = inspect.signature(provider)
+
+            def has_provider_args(method: Callable):
+                params = inspect.signature(method).parameters
+                return len(params) == 2 and "cls" in params and "field_meta" in params
+
+            if has_provider_args(provider):
+                return provider(cls, field_meta)
+
             return provider()
 
         if isinstance(unwrapped_annotation, TypeVar):
