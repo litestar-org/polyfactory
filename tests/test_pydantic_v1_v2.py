@@ -43,7 +43,7 @@ def test_build(base_model: Type[Union[BaseModelV1, BaseModelV2]]) -> None:
     assert isinstance(foo.c, bool)
 
 
-def test_build_v1_with_contrained_fields() -> None:
+def test_build_v1_with_constrained_fields() -> None:
     from pydantic.v1.fields import Field
 
     ConstrainedInt = Annotated[int, Field(ge=100, le=200)]
@@ -61,7 +61,7 @@ def test_build_v1_with_contrained_fields() -> None:
     ModelFactory.create_factory(Foo).build()
 
 
-def test_build_v2_with_contrained_fields() -> None:
+def test_build_v2_with_constrained_fields() -> None:
     from pydantic.fields import Field
 
     ConstrainedInt = Annotated[int, Field(ge=100, le=200)]

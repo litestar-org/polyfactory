@@ -127,7 +127,7 @@ def test_sqlalchemy_type_handlers(type_: types.TypeEngine) -> None:
         metadata = _registry.metadata
 
     class Model(Base):
-        __tablename__ = "model_with_overriden_type"
+        __tablename__ = "model_with_overridden_type"
 
         id: Any = Column(Integer(), primary_key=True)
         overridden: Any = Column(type_, nullable=False)
@@ -197,23 +197,23 @@ def test_relationship_list_resolution() -> None:
 def test_sqla_factory_create(engine: Engine) -> None:
     Base.metadata.create_all(engine)
 
-    class OverridenSQLAlchemyFactory(SQLAlchemyFactory):
+    class OverriddenSQLAlchemyFactory(SQLAlchemyFactory):
         __is_base_factory__ = True
         __session__ = Session(engine)
         __set_relationships__ = True
 
-    author: Author = OverridenSQLAlchemyFactory.create_factory(Author).create_sync()
+    author: Author = OverriddenSQLAlchemyFactory.create_factory(Author).create_sync()
     assert isinstance(author.books[0], Book)
     assert author.books[0].author is author
 
-    book = OverridenSQLAlchemyFactory.create_factory(Book).create_sync()
+    book = OverriddenSQLAlchemyFactory.create_factory(Book).create_sync()
     assert book.author is not None
     assert book.author.books == [book]
 
-    BaseFactory._base_factories.remove(OverridenSQLAlchemyFactory)
+    BaseFactory._base_factories.remove(OverriddenSQLAlchemyFactory)
 
 
-async def test_invalid_peristence_config_raises() -> None:
+async def test_invalid_persistence_config_raises() -> None:
     class AuthorFactory(SQLAlchemyFactory[Author]):
         __model__ = Author
 
@@ -383,11 +383,11 @@ def test_constrained_types() -> None:
         id: Any = Column(Integer(), primary_key=True)
         constrained_string: Any = Column(String(length=1), nullable=False)
         constrained_nullable_string: Any = Column(String(length=1), nullable=True)
-        constrainted_number: Any = Column(
+        constrained_number: Any = Column(
             Numeric(precision=2, scale=1),
             nullable=False,
         )
-        constrainted_nullable_number: Any = Column(
+        constrained_nullable_number: Any = Column(
             Numeric(precision=2, scale=1),
             nullable=True,
         )
@@ -399,7 +399,7 @@ def test_constrained_types() -> None:
     assert len(instance.constrained_string) <= 1
     assert instance.constrained_nullable_string is None or len(instance.constrained_nullable_string) <= 1
 
-    constrained_number: Decimal = instance.constrainted_number
+    constrained_number: Decimal = instance.constrained_number
     assert isinstance(constrained_number, Decimal)
     assert abs(len(constrained_number.as_tuple().digits) - abs(int(constrained_number.as_tuple().exponent))) <= 2
 
