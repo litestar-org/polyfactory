@@ -72,7 +72,7 @@ class TypedDictBase(TypedDict):
         (TypedDictFactory, TypedDictBase),
     ],
 )
-def test_modeL_inference_ok(base_factory: Type[BaseFactory], generic_arg: Type[Any]) -> None:
+def test_model_inference_ok(base_factory: Type[BaseFactory], generic_arg: Type[Any]) -> None:
     class Foo(base_factory[generic_arg]):  # type: ignore
         ...
 
