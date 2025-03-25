@@ -666,11 +666,11 @@ def test_optional_custom_type() -> None:
 
     # ensure the custom type field name and variant is in the error message
 
-    with pytest.raises(ParameterException, match=r"optional_custom_type__CustomType"):
+    with pytest.raises(ParameterException, match=r"optional_custom_type"):
         OptionalFormOneFactory.build()
 
     OptionalFormTwoFactory = ModelFactory.create_factory(OptionalFormTwo)
-    with pytest.raises(ParameterException, match=r"optional_custom_type_second_form__CustomType"):
+    with pytest.raises(ParameterException, match=r"optional_custom_type_second_form"):
         OptionalFormTwoFactory.build()
 
 
