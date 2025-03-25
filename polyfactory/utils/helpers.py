@@ -29,7 +29,7 @@ def unwrap_new_type(annotation: Any) -> Any:
 
 
 def unwrap_union(annotation: Any, random: Random) -> Any:
-    """Unwraps union types - recursively.
+    """Unwraps union types recursively and picks a random type from each union.
 
     :param annotation: A type annotation, possibly a type union.
     :param random: An instance of random.Random.
@@ -84,7 +84,12 @@ def unwrap_annotation(annotation: Any, random: Random) -> Any:
 
 
 def flatten_annotation(annotation: Any) -> list[Any]:
-    """Flattens an annotation.
+    """Flattens an annotation into an array of possible types. For example:
+
+    * Union[str, int] → [str, int]
+    * Optional[str] → [str, None]
+    * Union[str, Optional[int]] → [str, int, None]
+    * NewType('UserId', int) → [int]
 
     :param annotation: A type annotation.
 
