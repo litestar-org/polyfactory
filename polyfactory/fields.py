@@ -22,6 +22,10 @@ class Require:
     """A factory field that marks an attribute as a required build-time kwarg."""
 
 
+class NeverNone:
+    """A factory field that marks as always generated, even if it's an optional"""
+
+
 class Ignore:
     """A factory field that marks an attribute as ignored."""
 

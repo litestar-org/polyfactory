@@ -54,7 +54,7 @@ from polyfactory.constants import (
 )
 from polyfactory.exceptions import ConfigurationException, MissingBuildKwargException, ParameterException
 from polyfactory.field_meta import Null
-from polyfactory.fields import Fixture, Ignore, PostGenerated, Require, Use
+from polyfactory.fields import Fixture, Ignore, NeverNone, PostGenerated, Require, Use
 from polyfactory.utils.helpers import (
     flatten_annotation,
     get_collection_type,
@@ -334,6 +334,7 @@ class BaseFactory(ABC, Generic[T]):
         if isinstance(field_value, Fixture):
             return field_value.to_value()
 
+        # if a raw lambda is passed, invoke it
         if callable(field_value):
             return field_value()
 
@@ -946,8 +947,12 @@ class BaseFactory(ABC, Generic[T]):
         :returns: A boolean determining whether 'None' should be set for the given field_meta.
 
         """
+        field_value = hasattr(cls, field_meta.name) and getattr(cls, field_meta.name)
+        never_none = field_value and isinstance(field_value, NeverNone)
+
         return (
             cls.__allow_none_optionals__
+            and not never_none
             and is_optional(field_meta.annotation)
             and create_random_boolean(random=cls.__random__)
         )
@@ -1021,12 +1026,14 @@ class BaseFactory(ABC, Generic[T]):
                 f"{field_name} is declared on the factory {cls.__name__}"
                 f" but it is not part of the model {cls.__model__.__name__}"
             )
-            if isinstance(field_value, (Use, PostGenerated, Ignore, Require)):
+            if isinstance(field_value, (Use, PostGenerated, Ignore, Require, NeverNone)):
                 raise ConfigurationException(error_message)
 
     @classmethod
     def process_kwargs(cls, **kwargs: Any) -> dict[str, Any]:
         """Process the given kwargs and generate values for the factory's model.
+
+        If you need to deeply customize field values, you'll want to override this method.
 
         :param kwargs: Any build kwargs.
 
@@ -1038,8 +1045,11 @@ class BaseFactory(ABC, Generic[T]):
         for field_meta in cls.get_model_fields():
             field_build_parameters = cls.extract_field_build_parameters(field_meta=field_meta, build_args=kwargs)
             if cls.should_set_field_value(field_meta, **kwargs) and not cls.should_use_default_value(field_meta):
-                if hasattr(cls, field_meta.name) and not hasattr(BaseFactory, field_meta.name):
-                    field_value = getattr(cls, field_meta.name)
+                field_value = getattr(cls, field_meta.name, None)
+
+                # TODO why do we need the BaseFactory check here, only dunder methods which are ignored would trigger this?
+                # NeverNone should be treated as a normally-generated field
+                if field_value and not hasattr(BaseFactory, field_meta.name) and not isinstance(field_value, NeverNone):
                     if isinstance(field_value, Ignore):
                         continue
 
