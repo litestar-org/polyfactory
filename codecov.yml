@@ -8,4 +8,4 @@ coverage:
       default:
         target: auto
 comment:
-  require_changes: true
+  require_changes: false
