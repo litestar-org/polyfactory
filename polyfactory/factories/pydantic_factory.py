@@ -124,6 +124,7 @@ class PydanticFieldMeta(FieldMeta):
         default: Any = ...,
         children: list[FieldMeta] | None = None,
         constraints: PydanticConstraints | None = None,
+        examples: list[Any] | None = None,
     ) -> None:
         super().__init__(
             name=name,
@@ -133,6 +134,7 @@ class PydanticFieldMeta(FieldMeta):
             children=children,
             constraints=constraints,
         )
+        self.examples = examples
 
     @classmethod
     def from_field_info(
