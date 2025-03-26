@@ -1047,3 +1047,45 @@ def test_skip_validation() -> None:
 
     AFactory = ModelFactory.create_factory(A)
     assert AFactory.build()
+
+
+def test_use_examples__not_defined() -> None:
+    class Payment(BaseModel):
+        amount: int = Field(0)
+        currency: str = Field(None, examples=["USD", "EUR", "INR"])
+
+    class PaymentFactory(ModelFactory[Payment]):
+        __model__ = Payment
+
+    PaymentFactory = ModelFactory.create_factory(Payment)
+    instance = PaymentFactory.build()
+    # it cannot fit the listed items, because faker uses longer strings
+    assert instance.currency not in ["USD", "EUR", "INR"]
+
+
+def test_use_examples__true() -> None:
+    class Payment(BaseModel):
+        amount: int = Field(0)
+        currency: str = Field(None, examples=["USD", "EUR", "INR"])
+
+    class PaymentFactory(ModelFactory[Payment]):
+        __model__ = Payment
+        __use_examples__: True
+
+    PaymentFactory = ModelFactory.create_factory(Payment)
+    instance = PaymentFactory.build()
+    assert instance.currency in ["USD", "EUR", "INR"]
+
+
+def test_use_examples__false() -> None:
+    class Payment(BaseModel):
+        amount: int = Field(0)
+        currency: str = Field(None, examples=["USD", "EUR", "INR"])
+
+    class PaymentFactory(ModelFactory[Payment]):
+        __model__ = Payment
+        __use_examples__: False
+
+    PaymentFactory = ModelFactory.create_factory(Payment)
+    instance = PaymentFactory.build()
+    assert instance.currency not in ["USD", "EUR", "INR"]
