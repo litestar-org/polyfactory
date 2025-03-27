@@ -425,8 +425,7 @@ class ModelFactory(Generic[T], BaseFactory[T]):
         build_context: BuildContext | None = None,
     ) -> Any:
         constraints = cast("PydanticConstraints", field_meta.constraints)
-        if field_meta.examples:
-            return field_meta.examples[0]
+
         if constraints.pop("json", None):
             value = cls.get_field_value(
                 field_meta, field_build_parameters=field_build_parameters, build_context=build_context
@@ -436,6 +435,32 @@ class ModelFactory(Generic[T], BaseFactory[T]):
         return super().get_constrained_field_value(
             annotation, field_meta, field_build_parameters=field_build_parameters, build_context=build_context
         )
+
+    @classmethod
+    def get_field_value(
+        cls,
+        field_meta: PydanticFieldMeta,
+        field_build_parameters: Any | None = None,
+        build_context: BuildContext | None = None,
+    ) -> Any:
+        """Return a field value on the subclass if existing, otherwise returns a mock value.
+
+        :param field_meta: FieldMeta instance.
+        :param field_build_parameters: Any build parameters passed to the factory as kwarg values.
+        :param build_context: BuildContext data for current build.
+
+        :returns: An arbitrary value.
+
+        """
+        result: Any
+
+        if field_meta.examples:
+            result = cls.__random__.choice(field_meta.examples)
+        else:
+            result = super().get_field_value(
+                field_meta=field_meta, field_build_parameters=field_build_parameters, build_context=build_context
+            )
+        return result
 
     @classmethod
     def build(
