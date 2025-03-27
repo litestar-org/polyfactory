@@ -335,13 +335,19 @@ class PydanticFieldMeta(FieldMeta):
                 for arg in fields_to_iterate
             )
 
+        # pydantic field V1 doesn't have examples
+        try:
+            examples = model_field.examples
+        except AttributeError:
+            examples = None
+
         return PydanticFieldMeta(
             name=name,
             annotation=annotation,  # pyright: ignore[reportArgumentType]
             children=children or None,
             default=default_value,
             constraints=cast("PydanticConstraints", {k: v for k, v in constraints.items() if v is not None}) or None,
-            examples=model_field.examples,
+            examples=examples,
         )
 
     if not _IS_PYDANTIC_V1:
