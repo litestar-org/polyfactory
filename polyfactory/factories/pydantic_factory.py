@@ -214,13 +214,15 @@ class PydanticFieldMeta(FieldMeta):
             if is_json:
                 constraints["json"] = True
 
-        return PydanticFieldMeta.from_type(
+        result = PydanticFieldMeta.from_type(
             annotation=annotation,
             children=children,
             constraints=cast("Constraints", {k: v for k, v in constraints.items() if v is not None}) or None,
             default=default_value,
             name=name,
         )
+        result.examples = field_info.examples
+        return result
 
     @classmethod
     def from_model_field(  # pragma: no cover
@@ -339,6 +341,7 @@ class PydanticFieldMeta(FieldMeta):
             children=children or None,
             default=default_value,
             constraints=cast("PydanticConstraints", {k: v for k, v in constraints.items() if v is not None}) or None,
+            examples=model_field.examples,
         )
 
     if not _IS_PYDANTIC_V1:
@@ -422,6 +425,8 @@ class ModelFactory(Generic[T], BaseFactory[T]):
         build_context: BuildContext | None = None,
     ) -> Any:
         constraints = cast("PydanticConstraints", field_meta.constraints)
+        if field_meta.examples:
+            return field_meta.examples[0]
         if constraints.pop("json", None):
             value = cls.get_field_value(
                 field_meta, field_build_parameters=field_build_parameters, build_context=build_context

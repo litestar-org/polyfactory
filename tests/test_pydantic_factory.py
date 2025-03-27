@@ -1057,7 +1057,6 @@ def test_use_examples__not_defined() -> None:
     class PaymentFactory(ModelFactory[Payment]):
         __model__ = Payment
 
-    PaymentFactory = ModelFactory.create_factory(Payment)
     instance = PaymentFactory.build()
     # it cannot fit the listed items, because faker uses longer strings
     assert instance.currency not in ["USD", "EUR", "INR"]
@@ -1072,7 +1071,6 @@ def test_use_examples__true() -> None:
         __model__ = Payment
         __use_examples__: True
 
-    PaymentFactory = ModelFactory.create_factory(Payment)
     instance = PaymentFactory.build()
     assert instance.currency in ["USD", "EUR", "INR"]
 
@@ -1086,6 +1084,5 @@ def test_use_examples__false() -> None:
         __model__ = Payment
         __use_examples__: False
 
-    PaymentFactory = ModelFactory.create_factory(Payment)
     instance = PaymentFactory.build()
     assert instance.currency not in ["USD", "EUR", "INR"]
