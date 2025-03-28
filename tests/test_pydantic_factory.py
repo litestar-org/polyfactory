@@ -1048,6 +1048,7 @@ def test_skip_validation() -> None:
     AFactory = ModelFactory.create_factory(A)
     assert AFactory.build()
 
+
 @pytest.mark.skipif(_IS_PYDANTIC_V1, reason="Pydantic 1 doesn't support examples")
 class TestUseExamples:
     def test_use_examples__not_defined(self) -> None:
@@ -1062,7 +1063,6 @@ class TestUseExamples:
 
         assert instance.currency not in ["USD", "EUR", "INR"]
 
-
     def test_use_examples__true(self) -> None:
         class Payment(BaseModel):
             amount: int = Field(0)
@@ -1073,7 +1073,6 @@ class TestUseExamples:
 
         instance = PaymentFactory.build()
         assert instance.currency in ["USD", "EUR", "INR"]
-
 
     def test_use_examples__false(self) -> None:
         class Payment(BaseModel):
