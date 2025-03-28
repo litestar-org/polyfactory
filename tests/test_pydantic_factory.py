@@ -1052,10 +1052,10 @@ def test_skip_validation() -> None:
 def test_use_examples__not_defined() -> None:
     class Payment(BaseModel):
         amount: int = Field(0)
-        currency: str = Field(None, examples=["USD", "EUR", "INR"])
+        currency: str = Field(examples=["USD", "EUR", "INR"])
 
     class PaymentFactory(ModelFactory[Payment]):
-        __model__ = Payment
+        ...
 
     instance = PaymentFactory.build()
     # it cannot fit the listed items, because faker uses longer strings
@@ -1064,11 +1064,10 @@ def test_use_examples__not_defined() -> None:
 
 def test_use_examples__true() -> None:
     class Payment(BaseModel):
-        amount: int = Field(0)
-        currency: str = Field(None, examples=["USD", "EUR", "INR"])
+        # amount: int = Field(0)
+        currency: str = Field(examples=["USD", "EUR", "INR"])
 
     class PaymentFactory(ModelFactory[Payment]):
-        __model__ = Payment
         __use_examples__: True
 
     instance = PaymentFactory.build()
@@ -1078,10 +1077,9 @@ def test_use_examples__true() -> None:
 def test_use_examples__false() -> None:
     class Payment(BaseModel):
         amount: int = Field(0)
-        currency: str = Field(None, examples=["USD", "EUR", "INR"])
+        currency: str = Field(examples=["USD", "EUR", "INR"])
 
     class PaymentFactory(ModelFactory[Payment]):
-        __model__ = Payment
         __use_examples__: False
 
     instance = PaymentFactory.build()

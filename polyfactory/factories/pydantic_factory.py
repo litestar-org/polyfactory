@@ -369,6 +369,7 @@ class ModelFactory(Generic[T], BaseFactory[T]):
 
     __forward_ref_resolution_type_mapping__: ClassVar[Mapping[str, type]] = {}
     __is_base_factory__ = True
+    __use_examples__ = False
 
     def __init_subclass__(cls, *args: Any, **kwargs: Any) -> None:
         super().__init_subclass__(*args, **kwargs)
@@ -460,7 +461,7 @@ class ModelFactory(Generic[T], BaseFactory[T]):
         """
         result: Any
 
-        if field_meta.examples:
+        if cls.__use_examples__ and field_meta.examples:
             result = cls.__random__.choice(field_meta.examples)
         else:
             result = super().get_field_value(
