@@ -1054,8 +1054,7 @@ def test_use_examples__not_defined() -> None:
         amount: int = Field(0)
         currency: str = Field(examples=["USD", "EUR", "INR"])
 
-    class PaymentFactory(ModelFactory[Payment]):
-        ...
+    class PaymentFactory(ModelFactory[Payment]): ...
 
     instance = PaymentFactory.build()
     # it cannot fit the listed items, because faker uses longer strings
@@ -1064,14 +1063,11 @@ def test_use_examples__not_defined() -> None:
 
 def test_use_examples__true() -> None:
     class Payment(BaseModel):
-        # amount: int = Field(0)
+        amount: int = Field(0)
         currency: str = Field(examples=["USD", "EUR", "INR"])
 
-    # TODO find out why we need to set it on the parent class instead of the user's class
-    ModelFactory.__use_examples__ = True
-
     class PaymentFactory(ModelFactory[Payment]):
-        __use_examples__: True
+        __use_examples__ = True
 
     instance = PaymentFactory.build()
     assert instance.currency in ["USD", "EUR", "INR"]
@@ -1083,7 +1079,7 @@ def test_use_examples__false() -> None:
         currency: str = Field(examples=["USD", "EUR", "INR"])
 
     class PaymentFactory(ModelFactory[Payment]):
-        __use_examples__: False
+        __use_examples__ = False
 
     instance = PaymentFactory.build()
     assert instance.currency not in ["USD", "EUR", "INR"]
