@@ -369,7 +369,15 @@ class ModelFactory(Generic[T], BaseFactory[T]):
 
     __forward_ref_resolution_type_mapping__: ClassVar[Mapping[str, type]] = {}
     __is_base_factory__ = True
-    __use_examples__ = False
+    __use_examples__: ClassVar[bool] = False
+    """
+    Flag indicating whether to use a random example, if provided (Pydantic >=V2)
+    """
+
+    __config_keys__ = (
+        *BaseFactory.__config_keys__,
+        "__use_examples__",
+    )
 
     def __init_subclass__(cls, *args: Any, **kwargs: Any) -> None:
         super().__init_subclass__(*args, **kwargs)

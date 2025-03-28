@@ -166,10 +166,6 @@ class BaseFactory(ABC, Generic[T]):
     """
     Flag indicating whether to use the default value on a specific field, if provided.
     """
-    __use_examples__: ClassVar[bool] = False
-    """
-    Flag indicating whether to use a random example, if provided (Pydantic >=V2)
-    """
 
     __config_keys__: tuple[str, ...] = (
         "__check_model__",
@@ -181,7 +177,6 @@ class BaseFactory(ABC, Generic[T]):
         "__min_collection_length__",
         "__max_collection_length__",
         "__use_defaults__",
-        "__use_examples__",
     )
     """Keys to be considered as config values to pass on to dynamically created factories."""
 

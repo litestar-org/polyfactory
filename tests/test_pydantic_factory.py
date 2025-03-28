@@ -1067,6 +1067,9 @@ def test_use_examples__true() -> None:
         # amount: int = Field(0)
         currency: str = Field(examples=["USD", "EUR", "INR"])
 
+    # TODO find out why we need to set it on the parent class instead of the user's class
+    ModelFactory.__use_examples__ = True
+
     class PaymentFactory(ModelFactory[Payment]):
         __use_examples__: True
 
