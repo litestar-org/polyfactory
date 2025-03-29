@@ -1,7 +1,7 @@
 from datetime import datetime
 from decimal import Decimal
 from enum import Enum
-from typing import Any, Callable
+from typing import Any, Callable, get_args
 from uuid import UUID
 
 import pytest
@@ -432,7 +432,7 @@ def test_numeric_field(numeric: Numeric) -> None:
     class NumericModelFactory(SQLAlchemyFactory[NumericModel]): ...
 
     result = NumericModelFactory.get_model_fields()[1]
-    assert result.annotation is Decimal
+    assert result.annotation is Decimal or get_args(result.annotation)[0] is Decimal
     if constraints := result.constraints:
         assert constraints.get("max_digits") == numeric.precision
         assert constraints.get("decimal_places") == numeric.scale
