@@ -1,8 +1,9 @@
 from abc import ABC, abstractmethod
 from dataclasses import dataclass
-from typing import Annotated, Any, Callable, Dict, NewType
+from typing import Any, Callable, Dict, NewType
 
 import pytest
+from typing_extensions import Annotated
 
 from pydantic.main import BaseModel
 
@@ -143,7 +144,7 @@ def test_annotated_types_used_as_provider() -> None:
 
     class Factory(DataclassFactory[Model]):
         @classmethod
-        def get_provider_map(cls) -> dict[Any, Callable[[], Any]]:
+        def get_provider_map(cls) -> Dict[Any, Callable[[], Any]]:
             return {
                 **super().get_provider_map(),
                 AnnotatedType: lambda: "foo",
