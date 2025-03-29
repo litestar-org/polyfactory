@@ -7,6 +7,7 @@ maintainers = [
   { name = "Jacob Coffee", email = "jacob@litestar.dev" },
   { name = "Peter Schutt", email = "peter@litestar.dev" },
   { name = "Alc", email = "alc@litestar.dev" },
+  { name = 'Andy', email = 'adh.truong@gmail.com' },
 ]
 keywords = ["dataclasses", "msgspec", "pydantic", "attrs", "sqlalchemy"]
 classifiers = [
