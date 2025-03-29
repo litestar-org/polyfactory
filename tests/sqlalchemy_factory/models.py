@@ -85,7 +85,7 @@ class User(Base):
     user_keyword_associations = relationship(
         "UserKeywordAssociation",
         back_populates="user",
-        lazy="selectin",  # codespell:ignore selectin
+        lazy="selectin",
     )
     keywords = association_proxy(
         "user_keyword_associations", "keyword", creator=lambda keyword_obj: UserKeywordAssociation(keyword=keyword_obj)
@@ -99,7 +99,7 @@ class UserKeywordAssociation(Base):
     keyword_id = Column(Integer, ForeignKey("keywords.id"), primary_key=True)
 
     user = relationship(User, back_populates="user_keyword_associations")
-    keyword = relationship("Keyword", lazy="selectin")  # codespell:ignore selectin
+    keyword = relationship("Keyword", lazy="selectin")
 
     # for prevent mypy error: Unexpected keyword argument "keyword" for "UserKeywordAssociation"  [call-arg]
     def __init__(self, keyword: Optional["Keyword"] = None):

@@ -179,7 +179,7 @@ def test_datetime_constraints(t: Union[Type[dt.datetime], Type[dt.time]]) -> Non
         _ = FooFactory.build()
 
 
-def test_inheritence() -> None:
+def test_inheritance() -> None:
     class Foo(Struct):
         int_field: int
 
@@ -196,7 +196,7 @@ def test_inheritence() -> None:
     assert validated_bar == bar
 
 
-def test_inheritence_with_generics() -> None:
+def test_inheritance_with_generics() -> None:
     T = TypeVar("T")
 
     class Foo(Struct, Generic[T]):
