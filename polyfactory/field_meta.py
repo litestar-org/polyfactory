@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import functools
 from dataclasses import asdict
 from typing import TYPE_CHECKING, Any, Hashable, Literal, Mapping, Pattern, TypedDict, cast
 
@@ -60,7 +61,7 @@ class Constraints(TypedDict):
 class FieldMeta:
     """Factory field metadata container. This class is used to store the data about a field of a factory's model."""
 
-    __slots__ = ("annotation", "children", "constraints", "default", "name", "random")
+    __slots__ = ("__dict__", "annotation", "children", "constraints", "default", "name", "random")
 
     annotation: Any
     random: Random
@@ -88,15 +89,18 @@ class FieldMeta:
         self.name = name
         self.constraints = constraints
 
-    @property
+    @functools.cached_property
     def type_args(self) -> tuple[Any, ...]:
         """Return the normalized type args of the annotation, if any.
 
         :returns: a tuple of types.
         """
+        annotation = self.annotation
+        if is_annotated(annotation):
+            annotation = get_args(self.annotation)[0]
         return tuple(
             TYPE_MAPPING.get(arg, arg) if isinstance(arg, Hashable) else arg  # pyright: ignore[reportCallIssue,reportArgumentType]
-            for arg in get_args(self.annotation)
+            for arg in get_args(annotation)
         )
 
     @classmethod
@@ -140,9 +144,7 @@ class FieldMeta:
             metadata = cls.get_constraints_metadata(annotation)
             constraints = cls.parse_constraints(metadata)
 
-        if annotated:
-            annotation = get_args(annotation)[0]
-        elif (origin := get_origin(annotation)) and origin in TYPE_MAPPING:  # pragma: no cover
+        if not annotated and (origin := get_origin(annotation)) and origin in TYPE_MAPPING:
             container = TYPE_MAPPING[origin]
             annotation = container[get_args(annotation)]  # type: ignore[index]
 
