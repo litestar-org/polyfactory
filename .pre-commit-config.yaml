@@ -32,6 +32,11 @@ repos:
     hooks:
       - id: prettier
         exclude: ".all-contributorsrc"
+  - repo: https://github.com/ComPWA/taplo-pre-commit
+    rev: v0.9.3
+    hooks:
+      - id: taplo-format
+        exclude: "uv.lock"
   - repo: https://github.com/pre-commit/mirrors-mypy
     rev: "v1.15.0"
     hooks:
