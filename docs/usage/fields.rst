@@ -78,6 +78,28 @@ The signature for use is: ``cb: Callable, *args, **defaults``  it can receive an
 callable should be: ``name: str, values: dict[str, Any], *args, **defaults``. The already generated values are mapped by
 name in the values dictionary.
 
+
+The ``Param`` Field
+-------------------
+
+The :class:`Param <polyfactory.fields.Param>` class denotes a parameter that can be referenced by other fields at build but whose value is not set on the final object. This is useful for passing values needed by other factory fields but that are not part of object being built.
+
+A Param type can be either a constant or a callable. If a callable is used, it will be executed at the beginning of build and its return value will be used as the value for the field. Optional keyword arguments may be passed to the callable as part of the field definition on the factory. Any additional keyword arguments passed to the Param constructor will also not be mapped into the final object.
+
+The Param type allows for flexibility in that it can either accept a value at the definition of the factory, or its value can be set at build time. If a value is provided at build time, it will take precedence over the value provided at the definition of the factory (if any).
+
+If neither a value is provided at the definition of the factory nor at build time, an exception will be raised. Likewise, a Param cannot have the same name as any other model field.
+
+.. literalinclude:: /examples/fields/test_example_9.py
+    :caption: Using the ``Param`` field with a constant
+    :language: python
+
+.. literalinclude:: /examples/fields/test_example_10.py
+    :caption: Using the ``Param`` field with a callable
+    :language: python
+
+
+
 Factories as Fields
 -------------------
 
