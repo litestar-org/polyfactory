@@ -23,15 +23,20 @@ repos:
       - id: ruff
         args: ["--fix"]
       - id: ruff-format
-  - repo: https://github.com/codespell-project/codespell
-    rev: v2.4.1
+  - repo: https://github.com/crate-ci/typos
+    rev: v1.30.3
     hooks:
-      - id: codespell
+      - id: typos
   - repo: https://github.com/pycontribs/mirrors-prettier
     rev: "v3.5.3"
     hooks:
       - id: prettier
         exclude: ".all-contributorsrc"
+  - repo: https://github.com/ComPWA/taplo-pre-commit
+    rev: v0.9.3
+    hooks:
+      - id: taplo-format
+        exclude: "uv.lock"
   - repo: https://github.com/pre-commit/mirrors-mypy
     rev: "v1.15.0"
     hooks:
