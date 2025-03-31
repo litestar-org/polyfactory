@@ -135,7 +135,7 @@ By default, ``__use_defaults__`` is set to ``False.`` If you need more fine grai
 Use Example Values (Pydantic >= V2)
 -----------------------------------
 
-If ``__use_examples__`` is set to ``True``, then a random value from examples attribute be used for a given field,
+If ``__use_examples__`` is set to ``True``, then a random value from examples attribute will be used for a given field,
 provided there's a non-empty list of examples defined for that field.
 
 By default, ``__use_examples__`` is set to ``False.``
