@@ -472,7 +472,7 @@ class ModelFactory(Generic[T], BaseFactory[T]):
         field_build_parameters: Any | None = None,
         build_context: BuildContext | None = None,
     ) -> Any:
-        """Return a field value on the subclass if existing, otherwise returns a mock value.
+        """Return a value from examples if exists, else random value.
 
         :param field_meta: FieldMeta instance.
         :param field_build_parameters: Any build parameters passed to the factory as kwarg values.
