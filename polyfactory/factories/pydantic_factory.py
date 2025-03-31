@@ -376,9 +376,9 @@ class ModelFactory(Generic[T], BaseFactory[T]):
     ```
     class Payment(BaseModel):
         amount: int = Field(0)
-        currency: str = Field(None, examples=['USD', 'EUR', 'INR'])
+        currency: str = Field(examples=['USD', 'EUR', 'INR'])
 
-    class PaymentFactory(ModelFactory(Payment)):
+    class PaymentFactory(ModelFactory[Payment]):
         __use_examples__ = True
     ```
     ```

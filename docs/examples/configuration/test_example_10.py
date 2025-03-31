@@ -8,5 +8,5 @@ class Payment(BaseModel):
     currency: str = Field(examples=["USD", "EUR", "INR"])
 
 
-class PaymentFactory(ModelFactory(Payment)):
+class PaymentFactory(ModelFactory[Payment]):
     __use_examples__ = True
