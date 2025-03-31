@@ -328,7 +328,7 @@ def type_exists_at_path(obj: Any, path: List[Union[int, str]], target_type: Type
         Direct indexing is useful for checking tuples
 
     :param obj: Object to search through
-    :param path: List of either indexes or attr keys to dereferrence
+    :param path: List of either indexes or attr keys to dereference
     :param target_type: Type to match
 
     :returns: A boolean, True if the type exists at the path, False otherwise
@@ -439,7 +439,7 @@ def test_optional_set_uuid() -> None:
     IS_PYDANTIC_V1,
     reason="This should be possible but more work needs to be done",
 )
-def test_optional_mixed_collecions() -> None:
+def test_optional_mixed_collections() -> None:
     class Model(BaseModel):
         maybe_uuids: Optional[Union[Set[UUID], List[UUID]]]
 

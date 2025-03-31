@@ -1,8 +1,9 @@
 from abc import ABC, abstractmethod
 from dataclasses import dataclass
-from typing import Any, Callable, Dict
+from typing import Any, Callable, Dict, NewType
 
 import pytest
+from typing_extensions import Annotated
 
 from pydantic.main import BaseModel
 
@@ -129,3 +130,32 @@ def test_abstract_classes_are_ignored() -> None:
 
     with pytest.raises(ParameterException, match="Unsupported type: "):
         DataclassFactory.create_factory(Model).build()
+
+
+AnnotatedType = Annotated[str, "foo"]
+CustomNewType = NewType("CustomNewType", str)
+
+
+def test_annotated_types_used_as_provider() -> None:
+    @dataclass
+    class Model:
+        a: AnnotatedType
+        b: CustomNewType
+
+    class Factory(DataclassFactory[Model]):
+        @classmethod
+        def get_provider_map(cls) -> Dict[Any, Callable[[], Any]]:
+            return {
+                **super().get_provider_map(),
+                AnnotatedType: lambda: "foo",
+                CustomNewType: lambda: "bar",
+            }
+
+    result = Factory.build()
+    assert result.a == "foo"
+    assert result.b == "bar"
+
+    result_coverage = list(Factory.coverage())
+    assert len(result_coverage) == 1
+    assert result_coverage[0].a == "foo"
+    assert result_coverage[0].b == "bar"

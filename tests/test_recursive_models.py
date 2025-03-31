@@ -28,7 +28,7 @@ class Node:
             self.child = self
 
 
-def test_recusive_model() -> None:
+def test_recursive_model() -> None:
     factory = DataclassFactory.create_factory(Node)
 
     result = factory.build()
@@ -80,7 +80,7 @@ class Book:
     author: Author = field(default_factory=lambda: _DEFAULT_AUTHOR)
 
 
-def test_recusive_list_model() -> None:
+def test_recursive_list_model() -> None:
     factory = DataclassFactory.create_factory(Author)
     assert factory.build().books[0].author is _DEFAULT_AUTHOR
     assert factory.build(books=[]).books == []

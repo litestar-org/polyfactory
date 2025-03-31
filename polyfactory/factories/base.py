@@ -841,7 +841,8 @@ class BaseFactory(ABC, Generic[T]):
                 build_context=build_context,
             )
 
-        if provider := cls.get_provider_map().get(unwrapped_annotation):
+        provider_map = cls.get_provider_map()
+        if provider := (provider_map.get(field_meta.annotation) or provider_map.get(unwrapped_annotation)):
             return provider()
 
         if isinstance(unwrapped_annotation, TypeVar):
@@ -920,7 +921,10 @@ class BaseFactory(ABC, Generic[T]):
 
                 yield handle_collection_type_coverage(child_meta, origin, cls, build_context=build_context)
 
-            elif provider := cls.get_provider_map().get(unwrapped_annotation):
+            elif provider := (
+                (provider_map := cls.get_provider_map()).get(field_meta.annotation)
+                or provider_map.get(unwrapped_annotation)
+            ):
                 yield CoverageContainerCallable(provider)
 
             elif isinstance(unwrapped_annotation, TypeVar):
