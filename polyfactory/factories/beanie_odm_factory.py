@@ -13,7 +13,7 @@ if TYPE_CHECKING:
     from typing_extensions import TypeGuard
 
     from polyfactory.factories.base import BuildContext
-    from polyfactory.factories.pydantic_factory import PydanticFieldMeta
+    from polyfactory.field_meta import FieldMeta
 
 try:
     from beanie import Document
@@ -58,7 +58,7 @@ class BeanieDocumentFactory(Generic[T], ModelFactory[T]):
     @classmethod
     def get_field_value(
         cls,
-        field_meta: "PydanticFieldMeta",
+        field_meta: "FieldMeta",
         field_build_parameters: Any | None = None,
         build_context: BuildContext | None = None,
     ) -> Any:

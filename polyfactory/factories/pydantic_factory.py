@@ -454,7 +454,7 @@ class ModelFactory(Generic[T], BaseFactory[T]):
     @classmethod
     def get_field_value(
         cls,
-        field_meta: PydanticFieldMeta,
+        field_meta: FieldMeta,
         field_build_parameters: Any | None = None,
         build_context: BuildContext | None = None,
     ) -> Any:
@@ -468,6 +468,8 @@ class ModelFactory(Generic[T], BaseFactory[T]):
 
         """
         result: Any
+
+        field_meta = cast("PydanticFieldMeta", field_meta)
 
         if cls.__use_examples__ and field_meta.examples:
             result = cls.__random__.choice(field_meta.examples)
