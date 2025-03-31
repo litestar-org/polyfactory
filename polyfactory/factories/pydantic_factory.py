@@ -374,7 +374,7 @@ class ModelFactory(Generic[T], BaseFactory[T]):
     Flag indicating whether to use a random example, if provided (Pydantic >=V2)
 
     Example code::
-    
+
         class Payment(BaseModel):
             amount: int = Field(0)
             currency: str = Field(examples=['USD', 'EUR', 'INR'])
