@@ -373,19 +373,18 @@ class ModelFactory(Generic[T], BaseFactory[T]):
     """
     Flag indicating whether to use a random example, if provided (Pydantic >=V2)
 
-    ```
-    class Payment(BaseModel):
-        amount: int = Field(0)
-        currency: str = Field(examples=['USD', 'EUR', 'INR'])
+    Example code::
+    
+        class Payment(BaseModel):
+            amount: int = Field(0)
+            currency: str = Field(examples=['USD', 'EUR', 'INR'])
 
-    class PaymentFactory(ModelFactory[Payment]):
-        __use_examples__ = True
-    ```
-    ```
+        class PaymentFactory(ModelFactory[Payment]):
+            __use_examples__ = True
+
     >>> payment = PaymentFactory.build()
     >>> payment
     Payment(amount=120, currency="EUR")
-    ```
     """
 
     __config_keys__ = (
