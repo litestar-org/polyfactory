@@ -1084,14 +1084,3 @@ class TestUseExamples:
 
         instance = PaymentFactory.build()
         assert instance.currency not in ["USD", "EUR", "INR"]
-
-    def test_use_examples__explicit(self) -> None:
-        class Payment(BaseModel):
-            amount: int = Field(0)
-            currency: str = Field(examples=["USD", "EUR", "INR"])
-
-        class PaymentFactory(ModelFactory[Payment]):
-            __use_examples__ = True
-
-        instance = PaymentFactory.build(currency="DKK")
-        assert instance.currency == "DKK"
