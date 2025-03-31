@@ -8,7 +8,7 @@ from contextlib import suppress
 from datetime import date, datetime, time, timedelta
 from decimal import Decimal
 from enum import EnumMeta
-from functools import partial
+from functools import lru_cache, partial
 from importlib import import_module
 from ipaddress import (
     IPv4Address,
@@ -52,9 +52,14 @@ from polyfactory.constants import (
     MIN_COLLECTION_LENGTH,
     RANDOMIZE_COLLECTION_LENGTH,
 )
-from polyfactory.exceptions import ConfigurationException, MissingBuildKwargException, ParameterException
+from polyfactory.exceptions import (
+    ConfigurationException,
+    MissingBuildKwargException,
+    MissingParamException,
+    ParameterException,
+)
 from polyfactory.field_meta import Null
-from polyfactory.fields import Fixture, Ignore, PostGenerated, Require, Use
+from polyfactory.fields import Fixture, Ignore, Param, PostGenerated, Require, Use
 from polyfactory.utils.helpers import (
     flatten_annotation,
     get_collection_type,
@@ -230,6 +235,7 @@ class BaseFactory(ABC, Generic[T]):
                     raise ConfigurationException(
                         msg,
                     )
+            cls._check_overlapping_param_names()
             if cls.__check_model__:
                 cls._check_declared_fields_exist_in_model()
         else:
@@ -1025,6 +1031,44 @@ class BaseFactory(ABC, Generic[T]):
                 raise ConfigurationException(error_message)
 
     @classmethod
+    def _handle_factory_params(cls, params: dict[str, Param[Any]], **kwargs: Any) -> dict[str, Any]:
+        """Get the factory parameters.
+
+        :param params: A dict of field name to Param instances.
+        :param kwargs: Any build kwargs.
+
+        :returns: A dict of fieldname mapped to realized Param values.
+        """
+
+        try:
+            return {name: param.to_value(kwargs.get(name, Null)) for name, param in params.items()}
+        except MissingParamException as e:
+            msg = "Missing required kwargs"
+            raise MissingBuildKwargException(msg) from e
+
+    @classmethod
+    @lru_cache(maxsize=None)
+    def get_factory_params(cls) -> dict[str, Param[Any]]:
+        """Get the factory parameters.
+
+        :returns: A dict of field name to Param instances.
+        """
+        return {name: item for name, item in cls.__dict__.items() if isinstance(item, Param)}
+
+    @classmethod
+    def _check_overlapping_param_names(cls) -> None:
+        """Checks if there are overlapping param names with model fields.
+
+
+        :raises: ConfigurationException
+        """
+        model_fields_names = {field_meta.name for field_meta in cls.get_model_fields()}
+        overlapping_params = set(cls.get_factory_params().keys()) & model_fields_names
+        if overlapping_params:
+            msg = f"Factory Params {', '.join(overlapping_params)} overlap with model fields"
+            raise ConfigurationException(msg)
+
+    @classmethod
     def process_kwargs(cls, **kwargs: Any) -> dict[str, Any]:
         """Process the given kwargs and generate values for the factory's model.
 
@@ -1034,6 +1078,9 @@ class BaseFactory(ABC, Generic[T]):
 
         """
         result, generate_post, _build_context = cls._get_initial_variables(kwargs)
+
+        params = cls.get_factory_params()
+        result.update(cls._handle_factory_params(params, **kwargs))
 
         for field_meta in cls.get_model_fields():
             field_build_parameters = cls.extract_field_build_parameters(field_meta=field_meta, build_args=kwargs)
@@ -1071,7 +1118,7 @@ class BaseFactory(ABC, Generic[T]):
         for field_name, post_generator in generate_post.items():
             result[field_name] = post_generator.to_value(field_name, result)
 
-        return result
+        return {key: value for key, value in result.items() if key not in params}
 
     @classmethod
     def process_kwargs_coverage(cls, **kwargs: Any) -> abc.Iterable[dict[str, Any]]:
@@ -1084,6 +1131,9 @@ class BaseFactory(ABC, Generic[T]):
 
         """
         result, generate_post, _build_context = cls._get_initial_variables(kwargs)
+
+        params = cls.get_factory_params()
+        result.update(cls._handle_factory_params(params, **kwargs))
 
         for field_meta in cls.get_model_fields():
             field_build_parameters = cls.extract_field_build_parameters(field_meta=field_meta, build_args=kwargs)
@@ -1120,7 +1170,8 @@ class BaseFactory(ABC, Generic[T]):
         for resolved in resolve_kwargs_coverage(result):
             for field_name, post_generator in generate_post.items():
                 resolved[field_name] = post_generator.to_value(field_name, resolved)
-            yield resolved
+
+            yield {key: value for key, value in resolved.items() if key not in params}
 
     @classmethod
     def build(cls, *_: Any, **kwargs: Any) -> T:
