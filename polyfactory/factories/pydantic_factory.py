@@ -369,9 +369,23 @@ class ModelFactory(Generic[T], BaseFactory[T]):
 
     __forward_ref_resolution_type_mapping__: ClassVar[Mapping[str, type]] = {}
     __is_base_factory__ = True
-    __use_examples__: ClassVar[bool] = False
+    __use_examples__: ClassVar[bool] = False  # for backwards compatibility
     """
     Flag indicating whether to use a random example, if provided (Pydantic >=V2)
+
+    ```
+    class Payment(BaseModel):
+        amount: int = Field(0)
+        currency: str = Field(None, examples=['USD', 'EUR', 'INR'])
+
+    class PaymentFactory(ModelFactory(Payment)):
+        __use_examples__ = True
+    ```
+    ```
+    >>> payment = PaymentFactory.build()
+    >>> payment
+    Payment(amount=120, currency="EUR")
+    ```
     """
 
     __config_keys__ = (
