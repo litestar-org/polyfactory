@@ -90,3 +90,17 @@ def test_variadic_tuple_length() -> None:
 
     result = Factory.build()
     assert 7 <= len(result.bar) <= 8
+
+
+def test_build_v1_with_url_and_email_types() -> None:
+    from pydantic.v1 import AnyHttpUrl, AnyUrl, EmailStr, HttpUrl, NameEmail
+
+    class Foo(BaseModelV1):
+        http_url: HttpUrl
+        any_http_url: AnyHttpUrl
+        any_url: AnyUrl
+        email_str: EmailStr
+        name_email: NameEmail
+        composed: Tuple[HttpUrl, AnyHttpUrl, AnyUrl, EmailStr, NameEmail]
+
+    ModelFactory.create_factory(Foo).build()
