@@ -5,10 +5,17 @@ from collections import deque
 from dataclasses import is_dataclass
 from typing import TYPE_CHECKING, Any, Mapping, Sequence
 
-from typing_extensions import TypeAliasType, get_args, get_origin
+from typing_extensions import get_args, get_origin
 
 from polyfactory.constants import TYPE_MAPPING
-from polyfactory.utils.predicates import is_annotated, is_new_type, is_optional, is_safe_subclass, is_union
+from polyfactory.utils.predicates import (
+    is_annotated,
+    is_new_type,
+    is_optional,
+    is_safe_subclass,
+    is_type_alias,
+    is_union,
+)
 from polyfactory.utils.types import NoneType
 
 if TYPE_CHECKING:
@@ -67,7 +74,7 @@ def unwrap_annotation(annotation: Any, random: Random) -> Any:
         or is_union(annotation)
         or is_new_type(annotation)
         or is_annotated(annotation)
-        or isinstance(annotation, TypeAliasType)
+        or is_type_alias(annotation)
     ):
         if is_new_type(annotation):
             annotation = unwrap_new_type(annotation)
@@ -75,7 +82,7 @@ def unwrap_annotation(annotation: Any, random: Random) -> Any:
             annotation = unwrap_optional(annotation)
         elif is_annotated(annotation):
             annotation = unwrap_annotated(annotation, random=random)[0]
-        elif isinstance(annotation, TypeAliasType):
+        elif is_type_alias(annotation):
             annotation = annotation.__value__
         else:
             annotation = unwrap_union(annotation, random=random)
