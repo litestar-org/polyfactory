@@ -107,7 +107,6 @@ dev = [
   "aiosqlite>=0.19.0",
   "sqlalchemy[asyncio]>=1.4.29",
 ]
-build = ["bump-my-version>=1.1.1"]
 
 [tool.bumpversion]
 allow_dirty = true
@@ -422,7 +421,6 @@ link_parsers = [
   # TODO: Supposedly matches on #1234 but doesn't work?
   { pattern = "\\(#(\\d+)\\)", href = "https://github.com/litestar-org/polyfactory/issues/$1" },
 ]
-always_render = true
 
 [tool.git-cliff.remote.github]
 owner = "litestar-org"

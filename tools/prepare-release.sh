@@ -15,4 +15,4 @@ uv run git-cliff \
 	--tag "$bumped_version" \
 	--output docs/changelog.rst
 
-uv run bump-my-version bump --new-version "$bumped_version"
+uvx bump-my-version@1.1.2 bump --new-version "$bumped_version"
