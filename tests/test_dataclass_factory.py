@@ -2,7 +2,7 @@ import dataclasses
 from dataclasses import dataclass as vanilla_dataclass
 from dataclasses import field
 from types import ModuleType
-from typing import Any, Callable, Dict, Iterable, List, Optional, Tuple, TypeVar, Union
+from typing import Any, Callable, Dict, Iterable, List, Optional, Set, Tuple, Type, TypeVar, Union
 from unittest.mock import ANY
 
 import pytest
@@ -325,7 +325,7 @@ def test_collection_unions_with_models() -> None:
 _T = TypeVar("_T")
 
 
-def _get_types(items: Iterable[_T]) -> set[type[_T]]:
+def _get_types(items: Iterable[_T]) -> Set[Type[_T]]:
     return {type(item) for item in items}
 
 
