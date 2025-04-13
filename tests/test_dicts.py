@@ -42,5 +42,5 @@ def test_dict_with_union_random_types() -> None:
     test_obj_1 = MyClassFactory.build()
     test_obj_2 = MyClassFactory.build()
 
-    assert isinstance(next(iter(test_obj_1.val.values())), str)
-    assert isinstance(next(iter(test_obj_2.val.values())), int)
+    assert isinstance(next(iter(test_obj_1.val.values())), int)
+    assert isinstance(next(iter(test_obj_2.val.values())), str)

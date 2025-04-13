@@ -764,7 +764,7 @@ class BaseFactory(ABC, Generic[T]):
                 build_context=build_context,
             )
 
-        if is_union(field_meta.annotation) and field_meta.children:
+        if (is_union(unwrapped_annotation) or is_union(field_meta.annotation)) and field_meta.children:
             seen_models = build_context["seen_models"]
             children = [child for child in field_meta.children if child.annotation not in seen_models]
 
@@ -903,7 +903,7 @@ class BaseFactory(ABC, Generic[T]):
 
             elif (origin := get_type_origin(unwrapped_annotation)) and issubclass(origin, Collection):
                 if not field_meta.children:
-                    msg = "A subclass of Collection should always have children in it's field_meta"
+                    msg = "A subclass of Collection should always have children in its field_meta"
                     raise ParameterException(msg)
 
                 # We actually want to use the parent in cases where the collection is the parent
