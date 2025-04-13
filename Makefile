@@ -53,6 +53,10 @@ destroy: 											## Destroy the virtual environment
 lock:                                             ## Rebuild lockfiles from scratch, updating all dependencies
 	@uv lock
 
+.PHONY: release
+release:
+	./tools/prepare-release.sh
+
 # =============================================================================
 # Tests, Linting, Coverage
 # =============================================================================
@@ -107,7 +111,3 @@ docs-serve: docs-clean 								## Serve the docs locally
 docs: docs-clean 									## Dump the existing built docs and rebuild them
 	@echo "=> Building documentation"
 	@uv run sphinx-build -M html docs docs/_build/ -E -a -j auto --keep-going
-
-changelog:
-	@echo "=> Generating changelog"
-	@uv run git-cliff -c pyproject.toml -o docs/changelog.rst --github-repo litestar-org/polyfactory --github-token $(GITHUB_TOKEN)

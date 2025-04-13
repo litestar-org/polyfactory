@@ -76,9 +76,9 @@ restructure the docs etc., but make sure to follow these guidelines:
 Creating a new release
 ----------------------
 
-1. Increment the version in ``pyproject.toml``
+1. Run `make release` to bump version and commit.
     .. note:: The version should follow `semantic versioning <https://semver.org/>`_ and `PEP 440 <https://www.python.org/dev/peps/pep-0440/>`_.
-2. Commit and push.
+2. Push and create PR.
 3. In GitHub go to the `releases tab <https://github.com/litestar-org/polyfactory/releases>`_
 4. Pick "`Draft a new release <https://github.com/litestar-org/polyfactory/releases/new>`_"
 5. Give it a title and a tag, both ``vX.X.X``
