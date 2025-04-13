@@ -8,7 +8,7 @@ from typing import TYPE_CHECKING, Any, Mapping, Sequence
 from typing_extensions import get_args, get_origin
 
 from polyfactory.constants import TYPE_MAPPING
-from polyfactory.utils.deprecation import check_for_deprecated_parameters
+from polyfactory.utils.deprecation import check_for_deprecated_parameters, deprecated
 from polyfactory.utils.predicates import (
     is_annotated,
     is_new_type,
@@ -36,6 +36,7 @@ def unwrap_new_type(annotation: Any) -> Any:
     return annotation
 
 
+@deprecated("v2.21.0")
 def unwrap_union(annotation: Any, random: Random) -> Any:
     """Unwraps union types - recursively.
 
