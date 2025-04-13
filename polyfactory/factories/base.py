@@ -448,7 +448,7 @@ class BaseFactory(ABC, Generic[T]):
         :returns: Boolean dictating whether the annotation is a batch factory type
         """
         origin = get_type_origin(annotation) or annotation
-        if is_safe_subclass(origin, Sequence) and (args := unwrap_args(annotation, random=cls.__random__)):
+        if is_safe_subclass(origin, Sequence) and (args := unwrap_args(annotation)):
             return len(args) == 1 and BaseFactory.is_factory_type(annotation=args[0])
         return False
 
@@ -748,7 +748,7 @@ class BaseFactory(ABC, Generic[T]):
         if field_build_parameters is None and cls.should_set_none_value(field_meta=field_meta):
             return None
 
-        unwrapped_annotation = unwrap_annotation(field_meta.annotation, random=cls.__random__)
+        unwrapped_annotation = unwrap_annotation(field_meta.annotation)
 
         if is_literal(annotation=unwrapped_annotation) and (literal_args := get_args(unwrapped_annotation)):
             return cls.__random__.choice(literal_args)

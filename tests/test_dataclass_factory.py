@@ -2,7 +2,7 @@ import dataclasses
 from dataclasses import dataclass as vanilla_dataclass
 from dataclasses import field
 from types import ModuleType
-from typing import Any, Callable, Dict, List, Optional, Tuple, Union
+from typing import Any, Callable, Dict, Iterable, List, Optional, Tuple, TypeVar, Union
 from unittest.mock import ANY
 
 import pytest
@@ -270,10 +270,26 @@ def test_union_types() -> None:
         a: Union[List[str], List[int]]
         b: Union[str, List[int]]
         c: List[Union[Tuple[int, int], Tuple[str, int]]]
+        d: Union[str, int]
 
     AFactory = DataclassFactory.create_factory(A)
 
-    assert AFactory.build()
+    results = AFactory.batch(size=20)
+
+    for result in results:
+        assert isinstance(result.a, list)
+        assert len(_get_types(result.a)) == 1
+
+    assert _get_types(result.b for result in results) == {str, list}
+    assert _get_types(result.d for result in results) == {int, str}
+
+    coverage_result = list(AFactory.coverage())
+    for result in coverage_result:
+        assert isinstance(result.a, list)
+        assert len(_get_types(result.a)) == 1
+
+    assert _get_types(result.b for result in coverage_result) == {str, list}
+    assert _get_types(result.d for result in coverage_result) == {int, str}
 
 
 def test_collection_unions_with_models() -> None:
@@ -290,15 +306,27 @@ def test_collection_unions_with_models() -> None:
         a: Union[List[A], List[B]]
         b: List[Union[A, B]]
 
-    CFactory = DataclassFactory.create_factory(C)
+    CFactory = DataclassFactory.create_factory(
+        C,
+        __randomize_collection_length__=True,
+        __min_collection_length__=20,
+        __max_collection_length__=20,
+    )
 
     c = CFactory.build()
 
     assert isinstance(c.a, list)
-    assert all(isinstance(value, A) for value in c.a) or all(isinstance(value, B) for value in c.a)
+    assert _get_types(c.a).issubset((A, B))
 
     assert isinstance(c.b, list)
-    assert all(isinstance(value, (A, B)) for value in c.b)
+    assert _get_types(c.b) == {A, B}
+
+
+_T = TypeVar("_T")
+
+
+def _get_types(items: Iterable[_T]) -> set[type[_T]]:
+    return {type(item) for item in items}
 
 
 @pytest.mark.parametrize("allow_none", (True, False))
