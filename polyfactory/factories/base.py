@@ -55,6 +55,8 @@ from polyfactory.constants import (
 from polyfactory.exceptions import ConfigurationException, MissingBuildKwargException, ParameterException
 from polyfactory.field_meta import Null
 from polyfactory.fields import Fixture, Ignore, PostGenerated, Require, Use
+from polyfactory.utils._internal import is_attribute_overridden
+from polyfactory.utils.deprecation import warn_deprecation
 from polyfactory.utils.helpers import (
     flatten_annotation,
     get_collection_type,
@@ -230,6 +232,13 @@ class BaseFactory(ABC, Generic[T]):
                     raise ConfigurationException(
                         msg,
                     )
+            if is_attribute_overridden(BaseFactory, cls, "__check_model__"):
+                warn_deprecation(
+                    "v2.21.0",
+                    deprecated_name="__check_model__",
+                    kind="default",
+                    alternative="set to `False` explicitly to keep existing behaviour",
+                )
             if cls.__check_model__:
                 cls._check_declared_fields_exist_in_model()
         else:
