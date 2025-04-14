@@ -1050,48 +1050,53 @@ def test_skip_validation() -> None:
 
 
 @pytest.mark.skipif(_IS_PYDANTIC_V1, reason="Pydantic 1 doesn't support examples")
-class TestUseExamples:
-    def test_use_examples__not_defined(self) -> None:
-        class Payment(BaseModel):
-            amount: int = Field(0)
-            currency: str = Field(examples=["USD", "EUR", "INR"])
+def test_use_examples_not_defined() -> None:
+    class Payment(BaseModel):
+        amount: int = Field(0)
+        currency: str = Field(examples=["USD", "EUR", "INR"])
 
-        class PaymentFactory(ModelFactory[Payment]): ...
+    class PaymentFactory(ModelFactory[Payment]): ...
 
-        instance = PaymentFactory.build()
-        # it cannot fit the listed items, because faker uses longer strings
+    instance = PaymentFactory.build()
+    # it cannot fit the listed items, because faker uses longer strings
 
-        assert instance.currency not in ["USD", "EUR", "INR"]
+    assert instance.currency not in ["USD", "EUR", "INR"]
 
-    def test_use_examples__true(self) -> None:
-        class Payment(BaseModel):
-            amount: int = Field(0)
-            currency: str = Field(examples=["USD", "EUR", "INR"])
 
-        class PaymentFactory(ModelFactory[Payment]):
-            __use_examples__ = True
+@pytest.mark.skipif(_IS_PYDANTIC_V1, reason="Pydantic 1 doesn't support examples")
+def test_use_examples_true() -> None:
+    class Payment(BaseModel):
+        amount: int = Field(0)
+        currency: str = Field(examples=["USD", "EUR", "INR"])
 
-        instance = PaymentFactory.build()
-        assert instance.currency in ["USD", "EUR", "INR"]
+    class PaymentFactory(ModelFactory[Payment]):
+        __use_examples__ = True
 
-    def test_use_examples__false(self) -> None:
-        class Payment(BaseModel):
-            amount: int = Field(0)
-            currency: str = Field(examples=["USD", "EUR", "INR"])
+    instance = PaymentFactory.build()
+    assert instance.currency in ["USD", "EUR", "INR"]
 
-        class PaymentFactory(ModelFactory[Payment]):
-            __use_examples__ = False
 
-        instance = PaymentFactory.build()
-        assert instance.currency not in ["USD", "EUR", "INR"]
+@pytest.mark.skipif(_IS_PYDANTIC_V1, reason="Pydantic 1 doesn't support examples")
+def test_use_examples_false() -> None:
+    class Payment(BaseModel):
+        amount: int = Field(0)
+        currency: str = Field(examples=["USD", "EUR", "INR"])
 
-    def test_use_examples__explicit(self) -> None:
-        class Payment(BaseModel):
-            amount: int = Field(0)
-            currency: str = Field(examples=["USD", "EUR", "INR"])
+    class PaymentFactory(ModelFactory[Payment]):
+        __use_examples__ = False
 
-        class PaymentFactory(ModelFactory[Payment]):
-            __use_examples__ = True
+    instance = PaymentFactory.build()
+    assert instance.currency not in ["USD", "EUR", "INR"]
 
-        instance = PaymentFactory.build(currency="DKK")
-        assert instance.currency == "DKK"
+
+@pytest.mark.skipif(_IS_PYDANTIC_V1, reason="Pydantic 1 doesn't support examples")
+def test_use_examples_explicit() -> None:
+    class Payment(BaseModel):
+        amount: int = Field(0)
+        currency: str = Field(examples=["USD", "EUR", "INR"])
+
+    class PaymentFactory(ModelFactory[Payment]):
+        __use_examples__ = True
+
+    instance = PaymentFactory.build(currency="DKK")
+    assert instance.currency == "DKK"
