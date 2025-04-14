@@ -300,12 +300,17 @@ class PydanticFieldMeta(FieldMeta):
         # pydantic v1 has constraints set for these values, but we generate them using faker
         if unwrap_optional(annotation) in (
             AnyUrl,
+            AnyHttpUrl,
             HttpUrl,
+            pydantic_v1.AnyUrl,
+            pydantic_v1.AnyHttpUrl,
+            pydantic_v1.HttpUrl,
             pydantic_v1.KafkaDsn,
             pydantic_v1.PostgresDsn,
             pydantic_v1.RedisDsn,
             pydantic_v1.AmqpDsn,
-            AnyHttpUrl,
+            pydantic_v1.EmailStr,
+            pydantic_v1.NameEmail,
         ):
             constraints = {}
 
@@ -625,6 +630,9 @@ class ModelFactory(Generic[T], BaseFactory[T]):
         # v1 only values
         mapping.update(
             {
+                pydantic_v1.AnyUrl: cls.__faker__.url,
+                pydantic_v1.AnyHttpUrl: cls.__faker__.url,
+                pydantic_v1.HttpUrl: cls.__faker__.url,
                 pydantic_v1.PyObject: lambda: "decimal.Decimal",
                 pydantic_v1.AmqpDsn: lambda: "amqps://example.com",
                 pydantic_v1.KafkaDsn: lambda: "kafka://localhost:9092",
@@ -637,6 +645,8 @@ class ModelFactory(Generic[T], BaseFactory[T]):
                 pydantic_v1.UUID4: cls.__faker__.uuid4,
                 pydantic_v1.UUID5: lambda: uuid5(NAMESPACE_DNS, cls.__faker__.pystr()),
                 Color: cls.__faker__.hex_color,  # pyright: ignore[reportGeneralTypeIssues]
+                pydantic_v1.EmailStr: cls.__faker__.free_email,
+                pydantic_v1.NameEmail: cls.__faker__.free_email,
             },
         )
 

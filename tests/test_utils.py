@@ -1,7 +1,9 @@
 import random
 import sys
+import textwrap
 from decimal import Decimal
-from typing import Any, NewType, Union
+from types import ModuleType
+from typing import Any, Callable, NewType, Union
 
 import pytest
 from hypothesis import given
@@ -10,7 +12,7 @@ from hypothesis.strategies import decimals, floats, integers
 from pydantic import BaseModel
 
 from polyfactory.factories.pydantic_factory import ModelFactory
-from polyfactory.utils.helpers import unwrap_new_type
+from polyfactory.utils.helpers import unwrap_annotation, unwrap_new_type
 from polyfactory.utils.predicates import is_new_type, is_union
 from polyfactory.value_generators.constrained_numbers import (
     is_multiply_of_multiple_of_in_range,
@@ -151,3 +153,33 @@ def test_is_multiply_of_multiple_of_in_range_for_decimals(base_multiple_of: Deci
                 ],
             )
             assert not is_multiply_of_multiple_of_in_range(minimum=minimum, maximum=maximum, multiple_of=multiple_of)
+
+
+def test_unwrap_legacy_type_alias(create_module: Callable[[str], ModuleType]) -> None:
+    """Check that legacy type aliases are properly unwrapped."""
+    module = create_module(
+        textwrap.dedent("""
+        from typing_extensions import TypeAlias
+
+        MyIntLegacyAlias: TypeAlias = int
+        """)
+    )
+
+    unwrapped = unwrap_annotation(module.MyIntLegacyAlias, random=random.SystemRandom())
+    assert unwrapped is int
+
+
+@pytest.mark.skipif(sys.version_info < (3, 12), reason="3.12 only syntax")
+def test_unwrap_pep695_type_alias(create_module: Callable[[str], ModuleType]) -> None:
+    """Check that PEP 695 type aliases are properly unwrapped.
+
+    See issue #683.
+    """
+    module = create_module(
+        textwrap.dedent("""
+        type MyInt = int
+        """)
+    )
+
+    unwrapped = unwrap_annotation(module.MyInt, random=random.SystemRandom())
+    assert unwrapped is int

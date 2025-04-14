@@ -8,10 +8,19 @@ from typing_extensions import (
     NotRequired,
     ParamSpec,
     Required,
+    TypeAliasType,
     TypeGuard,
     _AnnotatedAlias,
     get_origin,
 )
+
+try:
+    from typing import TypeAliasType as typing_TypeAliasType
+
+    AllTypeAliasTypes: tuple[type, ...] = (TypeAliasType, typing_TypeAliasType)
+except ImportError:
+    AllTypeAliasTypes = (TypeAliasType,)
+
 
 from polyfactory.constants import TYPE_MAPPING
 from polyfactory.utils.types import UNION_TYPES, NoneType
@@ -129,6 +138,16 @@ def is_any_annotated(annotation: Any) -> bool:
     return any(
         is_annotated(arg) or (hasattr(arg, "__args__") and is_any_annotated(arg)) for arg in get_args(annotation)
     )
+
+
+def is_type_alias(annotation: Any) -> TypeGuard[TypeAliasType]:
+    """Determine if the given type annotation is a PEP 695 type alias.
+
+    :param annotation: A type annotation.
+
+    :returns: A boolean
+    """
+    return isinstance(annotation, AllTypeAliasTypes)
 
 
 def get_type_origin(annotation: Any) -> Any:
