@@ -335,11 +335,7 @@ class PydanticFieldMeta(FieldMeta):
                 for arg in fields_to_iterate
             )
 
-        # pydantic field V1 doesn't have examples
-        try:
-            examples = model_field.examples
-        except AttributeError:
-            examples = None
+        examples = None
 
         return PydanticFieldMeta(
             name=name,
