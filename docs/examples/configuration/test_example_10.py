@@ -10,3 +10,8 @@ class Payment(BaseModel):
 
 class PaymentFactory(ModelFactory[Payment]):
     __use_examples__ = True
+
+
+def test_use_examples() -> None:
+    instance = PaymentFactory.build()
+    assert instance.currency in ["USD", "EUR", "INR"]

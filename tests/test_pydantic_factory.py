@@ -1090,7 +1090,7 @@ def test_use_examples_false() -> None:
 
 
 @pytest.mark.skipif(_IS_PYDANTIC_V1, reason="Pydantic 1 doesn't support examples")
-def test_use_examples_explicit() -> None:
+def test_use_examples_value_override() -> None:
     class Payment(BaseModel):
         amount: int = Field(0)
         currency: str = Field(examples=["USD", "EUR", "INR"])
