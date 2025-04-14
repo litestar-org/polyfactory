@@ -392,7 +392,7 @@ def test_handle_decimal_length() -> None:
 
     # here decimal places should determine max length
     max_digits = 10
-    decimal_places = 5
+    decimal_places: int | None = 5
 
     result = handle_decimal_length(decimal, decimal_places, max_digits)
     assert isinstance(result, Decimal)
