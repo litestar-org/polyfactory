@@ -23,8 +23,11 @@ class Require:
 
 
 class Ignore:
-    """A factory field that marks an attribute as ignored."""
+    """A factory field that marks an attribute as ignored. This prevents the factory generating any value for this field.
 
+    Useful if you want a field to be set to `None` by default. Note that using `None` as the default value in a factory
+    field definition does *not* work and you must use `Ignore` instead.
+    """
 
 class Use(Generic[P, T]):
     """Factory field used to wrap a callable.
