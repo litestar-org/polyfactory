@@ -4,11 +4,13 @@ from typing import Any, Callable, Generic, TypedDict, TypeVar, cast
 
 from typing_extensions import ParamSpec
 
-from polyfactory.exceptions import ParameterException
+from polyfactory.exceptions import MissingParamException, ParameterException
+from polyfactory.field_meta import Null
 from polyfactory.utils import deprecation
 from polyfactory.utils.predicates import is_safe_subclass
 
 T = TypeVar("T")
+U = TypeVar("U")
 P = ParamSpec("P")
 
 
@@ -118,3 +120,81 @@ class Fixture:
         if self.size is not None:
             return factory.batch(self.size, **self.kwargs)
         return factory.build(**self.kwargs)
+
+
+class Param(Generic[T]):
+    """A constant parameter that can be used by other fields but will not be
+    passed to the final object.
+
+    If a value for the parameter is not passed in the field's definition, it must
+    be passed at build time. Otherwise, a MissingParamException will be raised.
+    """
+
+    __slots__ = ("is_callable", "kwargs", "param")
+
+    def __init__(
+        self, param: T | Callable[..., T] | type[Null] = Null, is_callable: bool = False, **kwargs: Any
+    ) -> None:
+        """Designate a parameter.
+
+        :param param: A constant or an unpassed value that can be referenced later
+        """
+        if param is not Null and is_callable and not callable(param):
+            msg = "If an object is passed to param, a callable must be passed when is_callable is True"
+            raise ParameterException(msg)
+        if not is_callable and kwargs:
+            msg = "kwargs can only be used with callable parameters"
+            raise ParameterException(msg)
+
+        self.param = param
+        self.is_callable = is_callable
+        self.kwargs = kwargs
+
+    def to_value(self, from_build: T | Callable[..., T] | type[Null] = Null, **kwargs: Any) -> T:
+        """Determines the value to use at build time
+
+        If a value was passed to the constructor, it will be used. Otherwise, the value
+        passed at build time will be used. If no value was passed at build time, a
+        MissingParamException will be raised.
+
+        :param args: from_build: The value passed at build time (if any).
+        :returns: The value
+        :raises: MissingParamException
+        """
+        # If no param is passed at initialization, a value must be passed now
+        if self.param is Null:
+            # from_build was passed, so determine the value based on whether or
+            # not we're supposed to call a callable
+            if from_build is not Null:
+                return (
+                    cast("T", from_build)
+                    if not self.is_callable
+                    else cast("Callable[..., T]", from_build)(**{**self.kwargs, **kwargs})
+                )
+
+            # Otherwise, raise an exception
+            msg = (
+                "Expected a parameter value to be passed at build time"
+                if not self.is_callable
+                else "Expected a callable to be passed at build time"
+            )
+            raise MissingParamException(msg)
+        # A param was passed at initialization
+        if self.is_callable:
+            # In this case, we are going to call the callable, but we can still
+            # override if are passed a callable at build
+            if from_build is not Null:
+                if callable(from_build):
+                    return cast("Callable[..., T]", from_build)(**{**self.kwargs, **kwargs})
+
+                # If we were passed a value at build that isn't a callable, raise
+                # an exception
+                msg = "The value passed at build time is not callable"
+                raise TypeError(msg)
+
+            # Otherwise, return the value passed at initialization
+            return cast("Callable[..., T]", self.param)(**{**self.kwargs, **kwargs})
+
+        # Inthis case, we are not using a callable, so return either the value
+        # passed at build time or initialization
+        return cast("T", self.param) if from_build is Null else cast("T", from_build)
