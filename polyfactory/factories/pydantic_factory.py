@@ -124,6 +124,7 @@ class PydanticFieldMeta(FieldMeta):
         default: Any = ...,
         children: list[FieldMeta] | None = None,
         constraints: PydanticConstraints | None = None,
+        examples: list[Any] | None = None,
     ) -> None:
         super().__init__(
             name=name,
@@ -133,6 +134,7 @@ class PydanticFieldMeta(FieldMeta):
             children=children,
             constraints=constraints,
         )
+        self.examples = examples
 
     @classmethod
     def from_field_info(
@@ -212,13 +214,15 @@ class PydanticFieldMeta(FieldMeta):
             if is_json:
                 constraints["json"] = True
 
-        return PydanticFieldMeta.from_type(
+        result = PydanticFieldMeta.from_type(
             annotation=annotation,
             children=children,
             constraints=cast("Constraints", {k: v for k, v in constraints.items() if v is not None}) or None,
             default=default_value,
             name=name,
         )
+        result.examples = field_info.examples
+        return result
 
     @classmethod
     def from_model_field(  # pragma: no cover
@@ -336,12 +340,15 @@ class PydanticFieldMeta(FieldMeta):
                 for arg in fields_to_iterate
             )
 
+        examples = None
+
         return PydanticFieldMeta(
             name=name,
             annotation=annotation,  # pyright: ignore[reportArgumentType]
             children=children or None,
             default=default_value,
             constraints=cast("PydanticConstraints", {k: v for k, v in constraints.items() if v is not None}) or None,
+            examples=examples,
         )
 
     if not _IS_PYDANTIC_V1:
@@ -363,6 +370,28 @@ class ModelFactory(Generic[T], BaseFactory[T]):
 
     __forward_ref_resolution_type_mapping__: ClassVar[Mapping[str, type]] = {}
     __is_base_factory__ = True
+    __use_examples__: ClassVar[bool] = False  # for backwards compatibility
+    """
+    Flag indicating whether to use a random example, if provided (Pydantic >=V2)
+
+    Example code::
+
+        class Payment(BaseModel):
+            amount: int = Field(0)
+            currency: str = Field(examples=['USD', 'EUR', 'INR'])
+
+        class PaymentFactory(ModelFactory[Payment]):
+            __use_examples__ = True
+
+    >>> payment = PaymentFactory.build()
+    >>> payment
+    Payment(amount=120, currency="EUR")
+    """
+
+    __config_keys__ = (
+        *BaseFactory.__config_keys__,
+        "__use_examples__",
+    )
 
     def __init_subclass__(cls, *args: Any, **kwargs: Any) -> None:
         super().__init_subclass__(*args, **kwargs)
@@ -425,6 +454,7 @@ class ModelFactory(Generic[T], BaseFactory[T]):
         build_context: BuildContext | None = None,
     ) -> Any:
         constraints = cast("PydanticConstraints", field_meta.constraints)
+
         if constraints.pop("json", None):
             value = cls.get_field_value(
                 field_meta, field_build_parameters=field_build_parameters, build_context=build_context
@@ -434,6 +464,34 @@ class ModelFactory(Generic[T], BaseFactory[T]):
         return super().get_constrained_field_value(
             annotation, field_meta, field_build_parameters=field_build_parameters, build_context=build_context
         )
+
+    @classmethod
+    def get_field_value(
+        cls,
+        field_meta: FieldMeta,
+        field_build_parameters: Any | None = None,
+        build_context: BuildContext | None = None,
+    ) -> Any:
+        """Return a value from examples if exists, else random value.
+
+        :param field_meta: FieldMeta instance.
+        :param field_build_parameters: Any build parameters passed to the factory as kwarg values.
+        :param build_context: BuildContext data for current build.
+
+        :returns: An arbitrary value.
+
+        """
+        result: Any
+
+        field_meta = cast("PydanticFieldMeta", field_meta)
+
+        if cls.__use_examples__ and field_meta.examples:
+            result = cls.__random__.choice(field_meta.examples)
+        else:
+            result = super().get_field_value(
+                field_meta=field_meta, field_build_parameters=field_build_parameters, build_context=build_context
+            )
+        return result
 
     @classmethod
     def build(
