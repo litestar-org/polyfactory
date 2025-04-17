@@ -6,7 +6,7 @@ from datetime import date, datetime, time, timedelta
 from decimal import Decimal
 from ipaddress import IPv4Address, IPv4Interface, IPv4Network, IPv6Address, IPv6Interface, IPv6Network
 from pathlib import Path
-from typing import Callable, Dict, FrozenSet, List, Literal, Optional, Sequence, Set, Tuple, Type, Union
+from typing import Any, Callable, Dict, FrozenSet, List, Literal, Optional, Sequence, Set, Tuple, Type, Union
 from uuid import UUID
 
 import pytest
@@ -64,8 +64,10 @@ from pydantic import (
     validator,
 )
 
+from polyfactory.exceptions import ParameterException
 from polyfactory.factories import DataclassFactory
 from polyfactory.factories.pydantic_factory import _IS_PYDANTIC_V1, ModelFactory
+from polyfactory.field_meta import FieldMeta
 from tests.models import Person, PetFactory
 
 IS_PYDANTIC_V1 = _IS_PYDANTIC_V1
@@ -632,6 +634,44 @@ def test_union_types() -> None:
     AFactory = ModelFactory.create_factory(A)
 
     assert AFactory.build()
+
+
+@pytest.mark.skipif(IS_PYDANTIC_V1, reason="pydantic 2 only test")
+def test_optional_custom_type() -> None:
+    from pydantic_core import core_schema
+
+    class CustomType:
+        def __init__(self, _: Any) -> None:
+            pass
+
+        def __get_pydantic_core_schema__(self, _: Any) -> core_schema.StringSchema:
+            # for pydantic to stop complaining
+            return core_schema.str_schema()
+
+    class OptionalFormOne(BaseModel):
+        optional_custom_type: Optional[CustomType]
+
+        @classmethod
+        def should_set_none_value(cls, field_meta: FieldMeta) -> bool:
+            return False
+
+    class OptionalFormTwo(BaseModel):
+        optional_custom_type_second_form: CustomType | None
+
+        @classmethod
+        def should_set_none_value(cls, field_meta: FieldMeta) -> bool:
+            return False
+
+    OptionalFormOneFactory = ModelFactory.create_factory(OptionalFormOne)
+
+    # ensure the custom type field name and variant is in the error message
+
+    with pytest.raises(ParameterException, match=r"optional_custom_type__CustomType"):
+        OptionalFormOneFactory.build()
+
+    OptionalFormTwoFactory = ModelFactory.create_factory(OptionalFormTwo)
+    with pytest.raises(ParameterException, match=r"optional_custom_type_second_form__CustomType"):
+        OptionalFormTwoFactory.build()
 
 
 def test_collection_unions_with_models() -> None:
