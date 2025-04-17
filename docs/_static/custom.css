@@ -22,16 +22,18 @@ html.light {
   --sl-color-text-2: var(--sl-color-secondary);
   --sy-c-foot-background: #f0f0f0;
   --yue-c-text: #000;
-  --brand-text-glow: 0 0 10px rgba(32, 34, 53, 0.3),
-    0 0 20px rgba(32, 34, 53, 0.2), 0 0 30px rgba(237, 182, 65, 0.1);
+  --brand-text-glow:
+    0 0 10px rgba(32, 34, 53, 0.3), 0 0 20px rgba(32, 34, 53, 0.2),
+    0 0 30px rgba(237, 182, 65, 0.1);
 }
 
 html.dark {
   --sl-color-text-1: var(--sl-color-secondary);
   --sy-c-foot-background: black;
   --yue-c-text: #fff;
-  --brand-text-glow: 0 0 10px rgba(237, 182, 65, 0.4),
-    0 0 20px rgba(237, 182, 65, 0.3), 0 0 30px rgba(237, 182, 65, 0.2);
+  --brand-text-glow:
+    0 0 10px rgba(237, 182, 65, 0.4), 0 0 20px rgba(237, 182, 65, 0.3),
+    0 0 30px rgba(237, 182, 65, 0.2);
 }
 
 .title-with-logo {
@@ -63,7 +65,9 @@ html[class] .title-with-logo .brand-text {
   hyphens: auto;
   -webkit-hyphens: auto;
   -ms-hyphens: auto;
-  transition: color var(--sl-transition), text-shadow var(--sl-transition);
+  transition:
+    color var(--sl-transition),
+    text-shadow var(--sl-transition);
 }
 
 html.light .title-with-logo .brand-text {
