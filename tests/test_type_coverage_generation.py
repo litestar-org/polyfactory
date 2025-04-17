@@ -202,6 +202,26 @@ def test_coverage_post_generated() -> None:
     assert results[0].i == results[0].j + 10
 
 
+def test_coverage_post_build() -> None:
+    @dataclass
+    class Model:
+        i: int
+        j: int
+
+    class Factory(DataclassFactory[Model]):
+        __model__ = Model
+
+        @classmethod
+        def post_build(cls, model: Model) -> Model:
+            model.i = model.j + 10
+            return model
+
+    results = list(Factory.coverage())
+    assert len(results) == 1
+
+    assert results[0].i == results[0].j + 10
+
+
 class CustomInt:
     def __init__(self, value: int) -> None:
         self.value = value
