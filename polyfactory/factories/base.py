@@ -1074,13 +1074,14 @@ class BaseFactory(ABC, Generic[T]):
         return cls.post_generate(result)
 
     @classmethod
-    def post_create(cls, model: T) -> None:
+    def post_build(cls, model: T) -> T:
         """Post-create hook. Helpful for building additional database associations or running logic which requires the
         fully-created model.
 
         :param model: The created model instance.
+        :returns: The (optionally) mutated model.
         """
-        pass
+        return model
 
     @classmethod
     def post_generate(cls, result: dict[str, Any]) -> dict[str, Any]:
@@ -1151,7 +1152,7 @@ class BaseFactory(ABC, Generic[T]):
         """
         created_model = cast("T", cls.__model__(**cls.process_kwargs(**kwargs)))
 
-        cls.post_create(created_model)
+        cls.post_build(created_model)
 
         return created_model
 
@@ -1178,6 +1179,7 @@ class BaseFactory(ABC, Generic[T]):
         """
         for data in cls.process_kwargs_coverage(**kwargs):
             instance = cls.__model__(**data)
+            cls.post_build(instance)
             yield cast("T", instance)
 
     @classmethod

@@ -519,7 +519,7 @@ class ModelFactory(Generic[T], BaseFactory[T]):
 
         created_model = cls._create_model(kwargs["_build_context"], **processed_kwargs)
 
-        cls.post_create(created_model)
+        cls.post_build(created_model)
 
         return created_model
 
@@ -572,7 +572,11 @@ class ModelFactory(Generic[T], BaseFactory[T]):
             )
 
         for data in cls.process_kwargs_coverage(**kwargs):
-            yield cls._create_model(_build_context=kwargs["_build_context"], **data)
+            created_model = cls._create_model(_build_context=kwargs["_build_context"], **data)
+
+            cls.post_build(created_model)
+
+            yield created_model
 
     @classmethod
     def is_custom_root_field(cls, field_meta: FieldMeta) -> bool:
