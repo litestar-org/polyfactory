@@ -1037,7 +1037,8 @@ class BaseFactory(ABC, Generic[T]):
     def process_kwargs(cls, **kwargs: Any) -> dict[str, Any]:
         """Process the given kwargs and generate values for the factory's model.
 
-        If you need to deeply customize field values, you'll want to override this method.
+        If you need to deeply customize field values, you'll want to override this method. This is where values are
+        generated and assigned for the fields on the model.
 
         :param kwargs: Any build kwargs.
 
@@ -1049,14 +1050,15 @@ class BaseFactory(ABC, Generic[T]):
         for field_meta in cls.get_model_fields():
             field_build_parameters = cls.extract_field_build_parameters(field_meta=field_meta, build_args=kwargs)
             if cls.should_set_field_value(field_meta, **kwargs) and not cls.should_use_default_value(field_meta):
-                field_value = getattr(cls, field_meta.name, None)
+                has_field_value = hasattr(cls, field_meta.name)
+                field_value = has_field_value and getattr(cls, field_meta.name)
 
                 # NeverNone & AlwaysNone should be treated as a normally-generated field, since this changes logic
                 # within get_field_value.
-                excluded_field_value = field_value and isinstance(field_value, (NeverNone, AlwaysNone))
+                excluded_field_value = has_field_value and isinstance(field_value, (NeverNone, AlwaysNone))
 
                 # TODO why do we need the BaseFactory check here, only dunder methods which are ignored would trigger this?  # noqa: FIX002
-                if field_value and not hasattr(BaseFactory, field_meta.name) and not excluded_field_value:
+                if has_field_value and not hasattr(BaseFactory, field_meta.name) and not excluded_field_value:
                     if isinstance(field_value, Ignore):
                         continue
 
