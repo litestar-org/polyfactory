@@ -54,7 +54,7 @@ from polyfactory.constants import (
 )
 from polyfactory.exceptions import ConfigurationException, MissingBuildKwargException, ParameterException
 from polyfactory.field_meta import Null
-from polyfactory.fields import Fixture, Ignore, NeverNone, PostGenerated, Require, Use
+from polyfactory.fields import AlwaysNone, Fixture, Ignore, NeverNone, PostGenerated, Require, Use
 from polyfactory.utils.helpers import (
     flatten_annotation,
     get_collection_type,
@@ -949,6 +949,10 @@ class BaseFactory(ABC, Generic[T]):
         """
         field_value = hasattr(cls, field_meta.name) and getattr(cls, field_meta.name)
         never_none = field_value and isinstance(field_value, NeverNone)
+        always_none = field_value and isinstance(field_value, AlwaysNone)
+
+        if always_none:
+            return True
 
         return (
             cls.__allow_none_optionals__
@@ -1026,7 +1030,7 @@ class BaseFactory(ABC, Generic[T]):
                 f"{field_name} is declared on the factory {cls.__name__}"
                 f" but it is not part of the model {cls.__model__.__name__}"
             )
-            if isinstance(field_value, (Use, PostGenerated, Ignore, Require, NeverNone)):
+            if isinstance(field_value, (Use, PostGenerated, Ignore, Require, NeverNone, AlwaysNone)):
                 raise ConfigurationException(error_message)
 
     @classmethod
@@ -1047,9 +1051,12 @@ class BaseFactory(ABC, Generic[T]):
             if cls.should_set_field_value(field_meta, **kwargs) and not cls.should_use_default_value(field_meta):
                 field_value = getattr(cls, field_meta.name, None)
 
-                # TODO why do we need the BaseFactory check here, only dunder methods which are ignored would trigger this?
-                # NeverNone should be treated as a normally-generated field
-                if field_value and not hasattr(BaseFactory, field_meta.name) and not isinstance(field_value, NeverNone):
+                # NeverNone & AlwaysNone should be treated as a normally-generated field, since this changes logic
+                # within get_field_value.
+                excluded_field_value = field_value and isinstance(field_value, (NeverNone, AlwaysNone))
+
+                # TODO why do we need the BaseFactory check here, only dunder methods which are ignored would trigger this?  # noqa: FIX002
+                if field_value and not hasattr(BaseFactory, field_meta.name) and not excluded_field_value:
                     if isinstance(field_value, Ignore):
                         continue
 
