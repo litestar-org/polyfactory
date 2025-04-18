@@ -22,8 +22,24 @@ class Require:
     """A factory field that marks an attribute as a required build-time kwarg."""
 
 
+class NeverNone:
+    """A factory field that marks as always generated, even if it's an optional."""
+
+
+class AlwaysNone:
+    """A factory field that marks as never generated, setting the value to None, regardless of if it's an optional field
+
+    This is distinct from Ignore() which does not set a value for a field at all. If Ignore() is used and a default value
+    for a field is not set on the underlying model, then the field will not be set at all.
+    """
+
+
 class Ignore:
-    """A factory field that marks an attribute as ignored."""
+    """A factory field that marks an attribute as ignored. This prevents the factory generating any value for this field.
+
+    If you are using this on a pydantic model this will cause the field to be omitted from the resulting pydantic model
+    if there is no default value set for the pydantic field.
+    """
 
 
 class Use(Generic[P, T]):
