@@ -114,6 +114,9 @@ Any other field definition will not be checked.
     :caption: Enable Check Factory Fields
     :language: python
 
+.. note::
+    The default for `__check_model__` is changed to `True` in v3. Set explicitly to disable this check.
+
 Use Default Values
 ------------------
 
@@ -129,4 +132,17 @@ By default, ``__use_defaults__`` is set to ``False.`` If you need more fine grai
 
 .. literalinclude:: /examples/configuration/test_example_9.py
     :caption: Use Default Values
+    :language: python
+
+
+Use Example Values (Pydantic >= V2)
+-----------------------------------
+
+If ``__use_examples__`` is set to ``True``, then a random value from examples attribute will be used for a given field,
+provided there's a non-empty list of examples defined for that field.
+
+By default, ``__use_examples__`` is set to ``False.``
+
+.. literalinclude:: /examples/configuration/test_example_10.py
+    :caption: Use Examples Values
     :language: python

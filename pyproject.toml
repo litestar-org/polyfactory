@@ -33,7 +33,7 @@ classifiers = [
   "Typing :: Typed",
 ]
 name = "polyfactory"
-version = "2.20.0"
+version = "2.21.0"
 description = "Mock data generation factories"
 readme = "docs/PYPI_README.md"
 license = { text = "MIT" }
@@ -108,6 +108,25 @@ dev = [
   "sqlalchemy[asyncio]>=1.4.29",
 ]
 pydantic = ["pydantic[email]>=2.10.4"]
+
+[tool.bumpversion]
+allow_dirty = true
+commit = true
+commit_args = "--no-verify"
+current_version = "2.21.0"
+ignore_missing_files = false
+ignore_missing_version = false
+message = "chore(release): bump to v{new_version}"
+parse = "(?P<major>\\d+)\\.(?P<minor>\\d+)\\.(?P<patch>\\d+)"
+regex = false
+replace = "{new_version}"
+search = "{current_version}"
+serialize = ["{major}.{minor}.{patch}"]
+sign_tags = false
+tag = false
+tag_message = "chore(release): v{new_version}"
+tag_name = "v{new_version}"
+pre_commit_hooks = ["uv sync", "git add uv.lock docs/changelog.rst"]
 
 [tool.mypy]
 exclude = "^tools/.*"
