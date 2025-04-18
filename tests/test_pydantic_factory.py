@@ -1100,3 +1100,20 @@ def test_use_examples_value_override() -> None:
 
     instance = PaymentFactory.build(currency="DKK")
     assert instance.currency == "DKK"
+
+
+def test_post_build_classmethod() -> None:
+    class Model(BaseModel):
+        i: int
+        j: int
+
+    class Factory(ModelFactory[Model]):
+        __model__ = Model
+
+        @classmethod
+        def post_build(cls, model: Model) -> Model:
+            model.i = model.j + 10
+            return model
+
+    result = Factory.build()
+    assert result.i == result.j + 10

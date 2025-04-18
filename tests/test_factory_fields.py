@@ -166,6 +166,25 @@ def test_post_generation_classmethod() -> None:
         assert result.caption == "just this"
 
 
+def test_post_build_classmethod() -> None:
+    @dataclass
+    class Model:
+        i: int
+        j: int
+
+    class Factory(DataclassFactory[Model]):
+        __model__ = Model
+
+        @classmethod
+        def post_build(cls, model: Model) -> Model:
+            model.i = model.j + 10
+            return model
+
+    result = Factory.build()
+
+    assert result.i == result.j + 10
+
+
 @pytest.mark.parametrize(
     "factory_field",
     [
