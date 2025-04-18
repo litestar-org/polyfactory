@@ -115,7 +115,7 @@ class SQLAlchemyFactory(Generic[T], BaseFactory[T]):
                 continue
 
             warn_deprecation(
-                "v2.21.0",
+                "v2.22.0",
                 deprecated_name=key,
                 kind="default",
                 alternative="set to `False` explicitly to keep existing behaviour",

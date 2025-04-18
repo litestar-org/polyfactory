@@ -234,7 +234,7 @@ class BaseFactory(ABC, Generic[T]):
                     )
             if is_attribute_overridden(BaseFactory, cls, "__check_model__"):
                 warn_deprecation(
-                    "v2.21.0",
+                    "v2.22.0",
                     deprecated_name="__check_model__",
                     kind="default",
                     alternative="set to `False` explicitly to keep existing behaviour",
