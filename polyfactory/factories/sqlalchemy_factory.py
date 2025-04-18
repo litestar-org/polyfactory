@@ -9,6 +9,8 @@ from polyfactory.exceptions import MissingDependencyException, ParameterExceptio
 from polyfactory.factories.base import BaseFactory
 from polyfactory.field_meta import Constraints, FieldMeta
 from polyfactory.persistence import AsyncPersistenceProtocol, SyncPersistenceProtocol
+from polyfactory.utils._internal import is_attribute_overridden
+from polyfactory.utils.deprecation import warn_deprecation
 from polyfactory.utils.types import Frozendict
 
 try:
@@ -100,6 +102,24 @@ class SQLAlchemyFactory(Generic[T], BaseFactory[T]):
         "__set_relationships__",
         "__set_association_proxy__",
     )
+
+    @classmethod
+    def __init_subclass__(cls, *args: Any, **kwargs: Any) -> None:
+        super().__init_subclass__(*args, **kwargs)
+
+        for key in (
+            "__set_relationships__",
+            "__set_association_proxy__",
+        ):
+            if is_attribute_overridden(SQLAlchemyFactory, cls, key):
+                continue
+
+            warn_deprecation(
+                "v2.22.0",
+                deprecated_name=key,
+                kind="default",
+                alternative="set to `False` explicitly to keep existing behaviour",
+            )
 
     @classmethod
     def get_sqlalchemy_types(cls) -> dict[Any, Callable[[], Any]]:

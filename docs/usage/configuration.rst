@@ -114,6 +114,9 @@ Any other field definition will not be checked.
     :caption: Enable Check Factory Fields
     :language: python
 
+.. note::
+    The default for `__check_model__` is changed to `True` in v3. Set explicitly to disable this check.
+
 Use Default Values
 ------------------
 
