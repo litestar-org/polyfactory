@@ -457,7 +457,7 @@ class BaseFactory(ABC, Generic[T]):
         :returns: Boolean dictating whether the annotation is a batch factory type
         """
         origin = get_type_origin(annotation) or annotation
-        if is_safe_subclass(origin, Sequence) and (args := unwrap_args(annotation, random=cls.__random__)):
+        if is_safe_subclass(origin, Sequence) and (args := unwrap_args(annotation)):
             return len(args) == 1 and BaseFactory.is_factory_type(annotation=args[0])
         return False
 
@@ -757,7 +757,7 @@ class BaseFactory(ABC, Generic[T]):
         if field_build_parameters is None and cls.should_set_none_value(field_meta=field_meta):
             return None
 
-        unwrapped_annotation = unwrap_annotation(field_meta.annotation, random=cls.__random__)
+        unwrapped_annotation = unwrap_annotation(field_meta.annotation)
 
         if is_literal(annotation=unwrapped_annotation) and (literal_args := get_args(unwrapped_annotation)):
             return cls.__random__.choice(literal_args)
@@ -773,7 +773,7 @@ class BaseFactory(ABC, Generic[T]):
                 build_context=build_context,
             )
 
-        if is_union(field_meta.annotation) and field_meta.children:
+        if (is_union(unwrapped_annotation) or is_union(field_meta.annotation)) and field_meta.children:
             seen_models = build_context["seen_models"]
             children = [child for child in field_meta.children if child.annotation not in seen_models]
 
@@ -912,7 +912,7 @@ class BaseFactory(ABC, Generic[T]):
 
             elif (origin := get_type_origin(unwrapped_annotation)) and issubclass(origin, Collection):
                 if not field_meta.children:
-                    msg = "A subclass of Collection should always have children in it's field_meta"
+                    msg = "A subclass of Collection should always have children in its field_meta"
                     raise ParameterException(msg)
 
                 # We actually want to use the parent in cases where the collection is the parent
