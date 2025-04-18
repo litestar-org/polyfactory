@@ -4,11 +4,47 @@ Changelog
 
 All commits to this project will be documented in this file.
 
-[unreleased]
-------------
+`Release [v2.21.0] - 2025-04-18 <https://github.com/litestar-org/polyfactory/releases/tag/v2.21.0>`_
+----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+* `See All commits in v2.21.0 <https://github.com/litestar-org/polyfactory/commits/v2.21.0>`_
 
-`de78949 <https://github.com/litestar-org/polyfactory/commit/de789499f8b16b49c9fae5954cfba8ad868fff58>`_ is the last commit in the changelog before unreleased changes.
+`0facd26 <https://github.com/litestar-org/polyfactory/commit/0facd26ec2e8915e1769e90ffb55ccccd60aadc5>`_ ... `02fed72 <https://github.com/litestar-org/polyfactory/commit/02fed7258c5b522891a0b8cdbd0491d21bc9bd95>`_ | `See diff for 2.21.0 <https://github.com/litestar-org/polyfactory/compare/0facd26ec2e8915e1769e90ffb55ccccd60aadc5...02fed7258c5b522891a0b8cdbd0491d21bc9bd95>`_
 
+Bug Fixes
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+* (`4ae69c8 <https://github.com/litestar-org/polyfactory/commit/4ae69c81c61e70269c004794abf3abca31700e87>`_)  - Handle pydantic v1 URL and email correctly (#685)  by `@Xdynix <https://github.com/Xdynix>`_ in `#685 <https://github.com/litestar-org/polyfactory/pull/685>`_
+* (`18d8579 <https://github.com/litestar-org/polyfactory/commit/18d857966c2049f9705351f276370c7a4e38c0d5>`_)  - Make type alias detection work with typing_extensions 4.13 (#684)  by `@airwoodix <https://github.com/airwoodix>`_ in `#684 <https://github.com/litestar-org/polyfactory/pull/684>`_
+
+Features
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+* (`9940230 <https://github.com/litestar-org/polyfactory/commit/9940230d3b1958f6f0b14e3157dcdd137af40cea>`_)  - Document overriding SQLA column mapping (#671)  by `@adhtruong <https://github.com/adhtruong>`_ in `#671 <https://github.com/litestar-org/polyfactory/pull/671>`_
+* (`cc789b5 <https://github.com/litestar-org/polyfactory/commit/cc789b55298e6e160f8d14877c7ea5859d72ee4d>`_)  - Support new type and annotated mapping (#680)  by `@adhtruong <https://github.com/adhtruong>`_ in `#680 <https://github.com/litestar-org/polyfactory/pull/680>`_
+* (`36395d9 <https://github.com/litestar-org/polyfactory/commit/36395d94a3a325c3f7db51fc71f0ef9c2edb3f3d>`_)  - Issue 678 use pydantic field examples (#679)  by `@stardust85 <https://github.com/stardust85>`_ in `#679 <https://github.com/litestar-org/polyfactory/pull/679>`_
+* (`02fed72 <https://github.com/litestar-org/polyfactory/commit/02fed7258c5b522891a0b8cdbd0491d21bc9bd95>`_)  - Add release command (#687)  by `@adhtruong <https://github.com/adhtruong>`_ in `#687 <https://github.com/litestar-org/polyfactory/pull/687>`_
+
+Miscellaneous Tasks
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+* (`e0c6941 <https://github.com/litestar-org/polyfactory/commit/e0c6941d3fdf89038484bfe62b80485b897ca439>`_)  - Remove sonar (#672)  by `@adhtruong <https://github.com/adhtruong>`_ in `#672 <https://github.com/litestar-org/polyfactory/pull/672>`_
+
+Refactor
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+* (`00aa862 <https://github.com/litestar-org/polyfactory/commit/00aa862cf96174b4fb845e95afeb0e440f1679ee>`_)  - Deprecate FieldMeta.random (#663)  by `@adhtruong <https://github.com/adhtruong>`_ in `#663 <https://github.com/litestar-org/polyfactory/pull/663>`_
+* (`ade1115 <https://github.com/litestar-org/polyfactory/commit/ade1115b20bb61da698cb2e1561b38a8de20fca3>`_)  - Migrate to typos (#675)  by `@adhtruong <https://github.com/adhtruong>`_ in `#675 <https://github.com/litestar-org/polyfactory/pull/675>`_
+
+Ci
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+* (`c42bf6d <https://github.com/litestar-org/polyfactory/commit/c42bf6dd4aaa2b3625b7dc7d2873bbd5b0a7a70d>`_)  - Add toml formatter (#682)  by `@adhtruong <https://github.com/adhtruong>`_ in `#682 <https://github.com/litestar-org/polyfactory/pull/682>`_
+
+`Release [v2.20.0] - 2025-03-21 <https://github.com/litestar-org/polyfactory/releases/tag/v2.20.0>`_
+----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+* `See All commits in v2.20.0 <https://github.com/litestar-org/polyfactory/commits/v2.20.0>`_
+
+`de78949 <https://github.com/litestar-org/polyfactory/commit/de789499f8b16b49c9fae5954cfba8ad868fff58>`_ ... `0facd26 <https://github.com/litestar-org/polyfactory/commit/0facd26ec2e8915e1769e90ffb55ccccd60aadc5>`_ | `See diff for 2.20.0 <https://github.com/litestar-org/polyfactory/compare/de789499f8b16b49c9fae5954cfba8ad868fff58...0facd26ec2e8915e1769e90ffb55ccccd60aadc5>`_
 
 Bug Fixes
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -39,6 +75,7 @@ Miscellaneous Tasks
 * (`f5cb818 <https://github.com/litestar-org/polyfactory/commit/f5cb818314bf4887f2caab2c3961d1dd886b68cc>`_)  - Bump dawidd6/action-download-artifact from 7 to 9 (#651)  by `@dependabot[bot] <https://github.com/dependabot[bot]>`_ in `#651 <https://github.com/litestar-org/polyfactory/pull/651>`_
 * (`1c56f09 <https://github.com/litestar-org/polyfactory/commit/1c56f09692214cefcfcd3bc29ba9b74fc18a940f>`_)  - Bump codecov/codecov-action from 4 to 5 (#620)  by `@dependabot[bot] <https://github.com/dependabot[bot]>`_ in `#620 <https://github.com/litestar-org/polyfactory/pull/620>`_
 * (`516dd6d <https://github.com/litestar-org/polyfactory/commit/516dd6d280ee35afda068c7ecaa0d672daf971d1>`_)  - Improve test imports (#661)  by `@adhtruong <https://github.com/adhtruong>`_ in `#661 <https://github.com/litestar-org/polyfactory/pull/661>`_
+* (`0facd26 <https://github.com/litestar-org/polyfactory/commit/0facd26ec2e8915e1769e90ffb55ccccd60aadc5>`_)  - Prep 2.20.0 release (#669)  by `@adhtruong <https://github.com/adhtruong>`_ in `#669 <https://github.com/litestar-org/polyfactory/pull/669>`_
 
 Build
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
