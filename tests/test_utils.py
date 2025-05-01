@@ -165,7 +165,7 @@ def test_unwrap_legacy_type_alias(create_module: Callable[[str], ModuleType]) ->
         """)
     )
 
-    unwrapped = unwrap_annotation(module.MyIntLegacyAlias, random=random.SystemRandom())
+    unwrapped = unwrap_annotation(module.MyIntLegacyAlias)
     assert unwrapped is int
 
 
@@ -181,5 +181,5 @@ def test_unwrap_pep695_type_alias(create_module: Callable[[str], ModuleType]) ->
         """)
     )
 
-    unwrapped = unwrap_annotation(module.MyInt, random=random.SystemRandom())
+    unwrapped = unwrap_annotation(module.MyInt)
     assert unwrapped is int
