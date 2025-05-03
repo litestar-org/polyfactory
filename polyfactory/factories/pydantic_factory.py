@@ -15,7 +15,6 @@ from polyfactory.exceptions import MissingDependencyException
 from polyfactory.factories.base import BaseFactory, BuildContext
 from polyfactory.factories.base import BuildContext as BaseBuildContext
 from polyfactory.field_meta import Constraints, FieldMeta, Null
-from polyfactory.utils.deprecation import check_for_deprecated_parameters
 from polyfactory.utils.helpers import unwrap_new_type, unwrap_optional
 from polyfactory.utils.predicates import is_optional, is_safe_subclass, is_union
 from polyfactory.utils.types import NoneType
@@ -90,7 +89,6 @@ except ImportError:
 
 if TYPE_CHECKING:
     from collections import abc
-    from random import Random
     from typing import Callable, Sequence
 
     from typing_extensions import NotRequired, TypeGuard
@@ -120,7 +118,6 @@ class PydanticFieldMeta(FieldMeta):
         *,
         name: str,
         annotation: type,
-        random: Random | None = None,
         default: Any = ...,
         children: list[FieldMeta] | None = None,
         constraints: PydanticConstraints | None = None,
@@ -129,7 +126,6 @@ class PydanticFieldMeta(FieldMeta):
         super().__init__(
             name=name,
             annotation=annotation,
-            random=random,
             default=default,
             children=children,
             constraints=constraints,
@@ -142,32 +138,15 @@ class PydanticFieldMeta(FieldMeta):
         field_name: str,
         field_info: FieldInfo,
         use_alias: bool,
-        random: Random | None = None,
-        randomize_collection_length: bool | None = None,
-        min_collection_length: int | None = None,
-        max_collection_length: int | None = None,
     ) -> PydanticFieldMeta:
         """Create an instance from a pydantic field info.
 
         :param field_name: The name of the field.
         :param field_info: A pydantic FieldInfo instance.
         :param use_alias: Whether to use the field alias.
-        :param random: A random.Random instance.
-        :param randomize_collection_length: Whether to randomize collection length.
-        :param min_collection_length: Minimum collection length.
-        :param max_collection_length: Maximum collection length.
 
         :returns: A PydanticFieldMeta instance.
         """
-        check_for_deprecated_parameters(
-            "2.11.0",
-            parameters=(
-                ("randomize_collection_length", randomize_collection_length),
-                ("min_collection_length", min_collection_length),
-                ("max_collection_length", max_collection_length),
-                ("random", random),
-            ),
-        )
         if callable(field_info.default_factory):
             default_value = field_info.default_factory
         else:
@@ -229,32 +208,13 @@ class PydanticFieldMeta(FieldMeta):
         cls,
         model_field: ModelField,  # pyright: ignore[reportGeneralTypeIssues]
         use_alias: bool,
-        randomize_collection_length: bool | None = None,
-        min_collection_length: int | None = None,
-        max_collection_length: int | None = None,
-        random: Random | None = None,
     ) -> PydanticFieldMeta:
         """Create an instance from a pydantic model field.
         :param model_field: A pydantic ModelField.
         :param use_alias: Whether to use the field alias.
-        :param randomize_collection_length: A boolean flag whether to randomize collections lengths
-        :param min_collection_length: Minimum number of elements in randomized collection
-        :param max_collection_length: Maximum number of elements in randomized collection
-        :param random: An instance of random.Random.
 
         :returns: A PydanticFieldMeta instance.
-
         """
-        check_for_deprecated_parameters(
-            "2.11.0",
-            parameters=(
-                ("randomize_collection_length", randomize_collection_length),
-                ("min_collection_length", min_collection_length),
-                ("max_collection_length", max_collection_length),
-                ("random", random),
-            ),
-        )
-
         if model_field.default is not Undefined:
             default_value = model_field.default
         elif callable(model_field.default_factory):

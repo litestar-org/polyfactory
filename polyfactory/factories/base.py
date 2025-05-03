@@ -54,7 +54,7 @@ from polyfactory.constants import (
 )
 from polyfactory.exceptions import ConfigurationException, MissingBuildKwargException, ParameterException
 from polyfactory.field_meta import Null
-from polyfactory.fields import Fixture, Ignore, PostGenerated, Require, Use
+from polyfactory.fields import Ignore, PostGenerated, Require, Use
 from polyfactory.utils._internal import is_attribute_overridden
 from polyfactory.utils.deprecation import warn_deprecation
 from polyfactory.utils.helpers import (
@@ -313,7 +313,7 @@ class BaseFactory(ABC, Generic[T]):
         )
 
     @classmethod
-    def _handle_factory_field(  # noqa: PLR0911
+    def _handle_factory_field(
         cls,
         field_value: Any,
         build_context: BuildContext,
@@ -338,9 +338,6 @@ class BaseFactory(ABC, Generic[T]):
             return field_value.build(_build_context=build_context)
 
         if isinstance(field_value, Use):
-            return field_value.to_value()
-
-        if isinstance(field_value, Fixture):
             return field_value.to_value()
 
         if callable(field_value):
@@ -376,9 +373,6 @@ class BaseFactory(ABC, Generic[T]):
 
         if isinstance(field_value, Use):
             return field_value.to_value()
-
-        if isinstance(field_value, Fixture):
-            return CoverageContainerCallable(field_value.to_value)
 
         return CoverageContainerCallable(field_value) if callable(field_value) else field_value
 
