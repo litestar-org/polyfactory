@@ -5,7 +5,7 @@ import pymongo
 import pytest
 from beanie import Document, Link, init_beanie
 from beanie.odm.fields import Indexed, PydanticObjectId
-from mongomock_motor import AsyncMongoMockClient
+from mongomock_motor import AsyncMongoMockClient  # type: ignore[import-untyped]
 
 from polyfactory.factories.beanie_odm_factory import BeanieDocumentFactory
 

@@ -2,7 +2,7 @@ default_language_version:
   python: "3.13"
 repos:
   - repo: https://github.com/compilerla/conventional-pre-commit
-    rev: v4.0.0
+    rev: v4.1.0
     hooks:
       - id: conventional-pre-commit
         stages: [commit-msg]
@@ -18,13 +18,13 @@ repos:
       - id: mixed-line-ending
       - id: trailing-whitespace
   - repo: https://github.com/charliermarsh/ruff-pre-commit
-    rev: "v0.11.0"
+    rev: "v0.11.8"
     hooks:
       - id: ruff
         args: ["--fix"]
       - id: ruff-format
   - repo: https://github.com/crate-ci/typos
-    rev: v1.30.3
+    rev: v1.32.0
     hooks:
       - id: typos
   - repo: https://github.com/pycontribs/mirrors-prettier
@@ -37,44 +37,25 @@ repos:
     hooks:
       - id: taplo-format
         exclude: "uv.lock"
-  - repo: https://github.com/pre-commit/mirrors-mypy
-    rev: "v1.15.0"
+  - repo: local
     hooks:
       - id: mypy
+        name: mypy
+        entry: uv run mypy
+        pass_filenames: true
+        require_serial: true
+        args: []
+        language: system
+        types: [python]
         exclude: "test_decimal_constraints|examples/fields/test_example_2|examples/configuration|tools/"
-        additional_dependencies:
-          [
-            attrs>=22.2.0,
-            beanie,
-            faker,
-            hypothesis,
-            mongomock_motor,
-            msgspec,
-            odmantic<1,
-            pydantic>=2,
-            pytest,
-            sphinx,
-            sqlalchemy>=2,
-          ]
-  - repo: https://github.com/RobertCraigie/pyright-python
-    rev: v1.1.397
-    hooks:
       - id: pyright
+        name: pyright
+        entry: uv run pyright
+        pass_filenames: true
+        args: []
+        language: system
+        types: [python]
         exclude: "tests"
-        additional_dependencies:
-          [
-            attrs>=22.2.0,
-            beanie,
-            faker,
-            hypothesis,
-            mongomock_motor,
-            msgspec,
-            odmantic<1,
-            pydantic>=2,
-            pytest,
-            sphinx,
-            sqlalchemy>=2,
-          ]
   - repo: https://github.com/sphinx-contrib/sphinx-lint
     rev: "v1.0.0"
     hooks:

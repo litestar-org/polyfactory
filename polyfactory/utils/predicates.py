@@ -14,7 +14,7 @@ from typing_extensions import (
 )
 
 try:
-    from typing import TypeAliasType as typing_TypeAliasType
+    from typing import TypeAliasType as typing_TypeAliasType  # type: ignore[attr-defined]
 
     AllTypeAliasTypes: tuple[type, ...] = (TypeAliasType, typing_TypeAliasType)
 except ImportError:

@@ -9,7 +9,7 @@ from unittest import mock
 from polyfactory.__metadata__ import __project__, __version__
 
 if TYPE_CHECKING:
-    from sphinx.addnodes import document  # type: ignore[attr-defined]
+    from sphinx.addnodes import document  # pyright: ignore[reportPrivateImportUsage]
     from sphinx.application import Sphinx
 
 for mod_name in ("beanie", "odmantic"):
