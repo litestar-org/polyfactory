@@ -61,3 +61,10 @@ jobs:
         uses: JamesIves/github-pages-deploy-action@v4
         with:
           folder: docs/_build/html
+
+  notify-issues:
+    needs: publish-release
+    name: Notify issues
+    uses: ./.github/workflows/notify-released-issues.yml
+    with:
+      release_tag: ${{ github.event.release.tag_name }}
