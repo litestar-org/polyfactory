@@ -260,7 +260,8 @@ class BaseFactory(ABC, Generic[T]):
         if build_context is None:
             return {"seen_models": set()}
 
-        return copy.copy(build_context) | {
+        return {
+            **build_context,
             "seen_models": copy.copy(build_context["seen_models"]),
         }
 
