@@ -19,7 +19,7 @@ SQLAlchemyFactory allows to override some configuration attributes so that a des
 Relationship
 ++++++++++++
 
-By default, ``__set_relationships__`` is set to ``False``. If it is ``True``, all fields with the SQLAlchemy `relationship() <relationship()_>`_ will be included in the result created by ``build`` method.
+By default, ``__set_relationships__`` is set to ``True``. If it is ``True``, all fields with the SQLAlchemy `relationship() <relationship()_>`_ will be included in the result created by ``build`` method.
 
 .. literalinclude:: /examples/library_factories/sqlalchemy_factory/test_example_2.py
     :caption: Setting relationships
@@ -34,7 +34,7 @@ By default, ``__set_relationships__`` is set to ``False``. If it is ``True``, al
 Association Proxy
 +++++++++++++++++
 
-By default, ``__set_association_proxy__`` is set to ``False``. If it is ``True``, all SQLAlchemy fields mapped to ORM `Association Proxy <Association Proxy_>`_ class will be included in the result created by ``build`` method.
+By default, ``__set_association_proxy__`` is set to ``True``. If it is ``True``, all SQLAlchemy fields mapped to ORM `Association Proxy <Association Proxy_>`_ class will be included in the result created by ``build`` method.
 
 .. literalinclude:: /examples/library_factories/sqlalchemy_factory/test_example_association_proxy.py
     :caption: Setting association_proxy
