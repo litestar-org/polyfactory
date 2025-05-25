@@ -260,7 +260,10 @@ class BaseFactory(ABC, Generic[T]):
         if build_context is None:
             return {"seen_models": set()}
 
-        return copy.deepcopy(build_context)
+        return {
+            **build_context,
+            "seen_models": copy.copy(build_context["seen_models"]),
+        }
 
     @classmethod
     def _infer_model_type(cls) -> type[T] | None:
