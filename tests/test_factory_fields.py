@@ -175,13 +175,13 @@ def test_post_generation_classmethod() -> None:
         Ignore(),
     ],
 )
-def test_non_existing_model_fields_does_not_raise_by_default(
+def test_non_existing_model_fields_do_raise_on_check_model_false(
     factory_field: Union[Use, PostGenerated, Require, Ignore],
 ) -> None:
     class NoFieldModel(BaseModel):
         pass
 
-    ModelFactory.create_factory(NoFieldModel, bases=None, unknown_field=factory_field)
+    ModelFactory.create_factory(NoFieldModel, bases=None, __check_model__=False, unknown_field=factory_field)
 
 
 @pytest.mark.parametrize(
@@ -193,7 +193,7 @@ def test_non_existing_model_fields_does_not_raise_by_default(
         Ignore(),
     ],
 )
-def test_non_existing_model_fields_raises_with__check__model__(
+def test_non_existent_fields_raise(
     factory_field: Union[Use, PostGenerated, Require, Ignore],
 ) -> None:
     class NoFieldModel(BaseModel):
@@ -203,7 +203,7 @@ def test_non_existing_model_fields_raises_with__check__model__(
         ConfigurationException,
         match="unknown_field is declared on the factory NoFieldModelFactory but it is not part of the model NoFieldModel",
     ):
-        ModelFactory.create_factory(NoFieldModel, bases=None, __check_model__=True, unknown_field=factory_field)
+        ModelFactory.create_factory(NoFieldModel, bases=None, unknown_field=factory_field)
 
 
 def test_mutable_defaults() -> None:
