@@ -147,6 +147,7 @@ where you can pledge an amount towards an issue or feature you would like to see
 
     getting-started
     usage/index
+    migration_guide/index
     reference/index
 
 .. toctree::

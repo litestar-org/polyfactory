@@ -9,6 +9,9 @@ from typing_extensions import ParamSpec
 from polyfactory.exceptions import ParameterException
 
 
+def fn() -> None: ...
+
+
 class CoverageContainerBase(ABC):
     """Base class for coverage container implementations.
 
