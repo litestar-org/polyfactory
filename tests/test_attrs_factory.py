@@ -155,7 +155,7 @@ def test_with_inheritance() -> None:
         int_field: int
 
     @define
-    class Child:
+    class Child(Parent):
         str_field: str
 
     class ChildFactory(AttrsFactory[Child]):
