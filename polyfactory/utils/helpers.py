@@ -3,18 +3,20 @@ from __future__ import annotations
 import sys
 from collections import deque
 from dataclasses import is_dataclass
-from typing import TYPE_CHECKING, Any, Mapping, Sequence
+from typing import TYPE_CHECKING, Annotated, Any, Mapping, Sequence, TypeVar, Union
 
-from typing_extensions import get_args, get_origin
+from typing_extensions import TypeAliasType, get_args, get_origin
 
 from polyfactory.constants import TYPE_MAPPING
 from polyfactory.utils.deprecation import check_for_deprecated_parameters, deprecated
 from polyfactory.utils.predicates import (
     is_annotated,
+    is_generic_alias,
     is_new_type,
     is_optional,
     is_safe_subclass,
     is_type_alias,
+    is_type_var,
     is_union,
 )
 from polyfactory.utils.types import NoneType
@@ -208,3 +210,96 @@ def get_collection_type(annotation: Any) -> type[list | tuple | set | frozenset 
 
 def is_dataclass_instance(obj: Any) -> bool:
     return is_dataclass(obj) and not isinstance(obj, type)
+
+
+def resolve_type_alias(type_hint: Any) -> Any:
+    """Convert TypeAliasType and GenericAlias to standard annotations.
+
+    Example:
+        ```
+        # Required Python version >=3.13
+        >> from typing import Annotated
+
+        >> import annotated_types as at
+
+        >> from polyfactory.utils.helpers import resolve_type_alias
+
+        >> type NegativeInt = Annotated[int, annotated_types.Lt(0)]
+        >> type NonEmptyList[T] = Annotated[list[T], annotated_types.Len(1)]
+        >> resolve_type_alias(NonEmptyList[NegativeInt])  # typing.Annotated[list[typing.Annotated[int, Lt(lt=0)]], Len(min_length=1, max_length=None)]
+        >> resolve_type_alias(NonEmptyList[NonEmptyList[NegativeInt]])
+
+        # Recursive type annotation
+        # typing.Annotated[list[typing.Annotated[list[typing.Annotated[int, Lt(lt=0)]], Len(min_length=1, max_length=None)]], Len(min_length=1, max_length=None)]
+        ```
+
+    :param type_hint: Type to convert.
+
+    :returns Expanded type annotation with substituted parameters.
+    """
+    if is_type_alias(type_hint):
+        return type_hint.__value__
+
+    if not is_generic_alias(type_hint):
+        return type_hint
+
+    origin = get_origin(type_hint)
+
+    if is_type_alias(origin):
+        return _process_generic_alias(origin, type_hint)
+
+    args = get_args(type_hint)
+    if args:
+        resolved_args = [resolve_type_alias(arg) for arg in args]
+        if resolved_args != list(args):
+            return origin[*resolved_args]   # type: ignore[index]
+
+    return type_hint
+
+
+def _process_generic_alias(origin: TypeAliasType, type_hint: Any) -> Any:
+    """Process GenericAlias with TypeAliasType."""
+    template = origin.__value__
+
+    type_params = origin.__type_params__
+    type_args = get_args(type_hint)
+
+    if not (type_params and type_args):
+        return template
+
+    resolved_args = [resolve_type_alias(arg) for arg in type_args]
+
+    subs = dict(zip(type_params, resolved_args))
+
+    if get_origin(template) is Annotated:
+        base_type, *metadata = get_args(template)
+        return Annotated[_substitute_types(base_type, subs), *metadata]
+
+    return _substitute_types(template, subs)
+
+
+def _substitute_types(type_hint: Any, subs: dict[TypeVar, Any]) -> Any:
+    """Recursively substitute TypeVar in type.
+
+    Args:
+        type_hint: Type to process.
+        subs: Dictionary of TypeVar -> concrete type substitutions.
+
+    Returns:
+        Type with substituted values.
+    """
+    if is_type_var(type_hint):
+        return subs.get(type_hint, type_hint)
+
+    if is_union(type_hint):
+        args = tuple([_substitute_types(arg, subs) for arg in get_args(type_hint)])
+        return Union[*args]
+
+    origin = get_origin(type_hint)
+    args = get_args(type_hint)
+
+    if origin and args:
+        substituted_args = [_substitute_types(arg, subs) for arg in args]
+        return origin[*substituted_args]
+
+    return type_hint
