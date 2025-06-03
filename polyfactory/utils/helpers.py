@@ -2,8 +2,8 @@ from __future__ import annotations
 
 import sys
 from collections import deque
-from dataclasses import is_dataclass
-from typing import TYPE_CHECKING, Annotated, Any, Mapping, Sequence, TypeVar, Union
+from dataclasses import is_dataclass, dataclass
+from typing import TYPE_CHECKING, Annotated, Any, Mapping, Sequence, TypeVar, Union, ParamSpec, TypeVarTuple
 
 from typing_extensions import TypeAliasType, get_args, get_origin
 
@@ -212,94 +212,117 @@ def is_dataclass_instance(obj: Any) -> bool:
     return is_dataclass(obj) and not isinstance(obj, type)
 
 
-def resolve_type_alias(type_hint: Any) -> Any:
-    """Convert TypeAliasType and GenericAlias to standard annotations.
+@dataclass(slots=True)
+class TypeCompatibilityAdapter:
+    """Adapter for converting modern Python 3.12+ type syntax to standard annotations.
+
+    This adapter handles TypeAliasType and GenericAlias types introduced in Python 3.12+,
+    converting them to standard type annotations when needed. If the input type doesn't
+    contain these modern constructs, it returns the type unchanged.
 
     Example:
         ```
-        # Required Python version >=3.13
+        # Required Python version 3.12+
         >> from typing import Annotated
-
         >> import annotated_types as at
-
-        >> from polyfactory.utils.helpers import resolve_type_alias
+        >> from polyfactory.utils.helpers import TypeCompatibilityAdapter
 
         >> type NegativeInt = Annotated[int, annotated_types.Lt(0)]
         >> type NonEmptyList[T] = Annotated[list[T], annotated_types.Len(1)]
-        >> resolve_type_alias(NonEmptyList[NegativeInt])  # typing.Annotated[list[typing.Annotated[int, Lt(lt=0)]], Len(min_length=1, max_length=None)]
-        >> resolve_type_alias(NonEmptyList[NonEmptyList[NegativeInt]])
 
-        # Recursive type annotation
-        # typing.Annotated[list[typing.Annotated[list[typing.Annotated[int, Lt(lt=0)]], Len(min_length=1, max_length=None)]], Len(min_length=1, max_length=None)]
+        >> adapter = TypeCompatibilityAdapter(NonEmptyList[NegativeInt])
+        >> adapter.normalize()  # typing.Annotated[list[typing.Annotated[int, Lt(lt=0)]], Len(min_length=1, max_length=None)]
+
+        >> adapter = TypeCompatibilityAdapter(list[NegativeInt])
+        >> adapter.normalize()  # list[typing.Annotated[int, Lt(lt=0)]]
+
+        >> adapter = TypeCompatibilityAdapter(NonEmptyList[NonEmptyList[NegativeInt]])
+        >> adapter.normalize()  # Complex nested type properly normalized
+
+        >> adaper = TypeCompatibilityAdapter(list[int])
+        >> adapter.normalize()  # list[int]
         ```
 
-    :param type_hint: Type to convert.
+    :param type_annotation: Type to normalize (convert if needed or pass through).
 
-    :returns Expanded type annotation with substituted parameters.
+    :returns Normalized type annotation with resolved type aliases and substituted parameters.
     """
-    if is_type_alias(type_hint):
-        return type_hint.__value__
 
-    if not is_generic_alias(type_hint):
-        return type_hint
+    type_annotation: Any
 
-    origin = get_origin(type_hint)
+    def normalize(self) -> Any:
+        """Normalize the type annotation by resolving TypeAliasType if present.
+        Returns the original annotation if no conversion is needed.
+        """
+        if is_type_alias(self.type_annotation):
+            return self.type_annotation.__value__
 
-    if is_type_alias(origin):
-        return _process_generic_alias(origin, type_hint)
+        if not is_generic_alias(self.type_annotation):
+            return self.type_annotation
 
-    args = get_args(type_hint)
-    if args:
-        resolved_args = [resolve_type_alias(arg) for arg in args]
-        if resolved_args != list(args):
-            return origin[*resolved_args]   # type: ignore[index]
+        origin = get_origin(self.type_annotation)
 
-    return type_hint
+        if is_type_alias(origin):
+            return self._normalize_generic_type_alias(origin, self.type_annotation)
 
+        args = get_args(self.type_annotation)
+        if args:
+            normalized_args = [TypeCompatibilityAdapter(type_annotation=arg).normalize() for arg in args]
+            if normalized_args != list(args):
+                return origin[*normalized_args]   # type: ignore[index]
 
-def _process_generic_alias(origin: TypeAliasType, type_hint: Any) -> Any:
-    """Process GenericAlias with TypeAliasType."""
-    template = origin.__value__
+        return self.type_annotation
 
-    type_params = origin.__type_params__
-    type_args = get_args(type_hint)
+    def _normalize_generic_type_alias(self, alias_origin: TypeAliasType, full_annotation: Any) -> Any:
+        """Normalize a GenericAlias that has TypeAliasType as its origin.
 
-    if not (type_params and type_args):
-        return template
+        Args:
+            alias_origin: The TypeAliasType origin of the generic alias.
+            full_annotation: The complete annotation including type arguments.
 
-    resolved_args = [resolve_type_alias(arg) for arg in type_args]
+        Returns:
+            Normalized type with substituted type parameters.
+        """
+        template = alias_origin.__value__
 
-    subs = dict(zip(type_params, resolved_args))
+        type_params = alias_origin.__type_params__
+        type_args = get_args(full_annotation)
 
-    if get_origin(template) is Annotated:
-        base_type, *metadata = get_args(template)
-        return Annotated[_substitute_types(base_type, subs), *metadata]
+        if not (type_params and type_args):
+            return template
 
-    return _substitute_types(template, subs)
+        normalized_args = [TypeCompatibilityAdapter(type_annotation=arg).normalize() for arg in type_args]
 
+        param_substitutions = dict(zip(type_params, normalized_args))
 
-def _substitute_types(type_hint: Any, subs: dict[TypeVar, Any]) -> Any:
-    """Recursively substitute TypeVar in type.
+        if get_origin(template) is Annotated:
+            base_type, *metadata = get_args(template)
+            return Annotated[self._apply_type_substitutions(base_type, param_substitutions), *metadata]
 
-    Args:
-        type_hint: Type to process.
-        subs: Dictionary of TypeVar -> concrete type substitutions.
+        return self._apply_type_substitutions(template, param_substitutions)
 
-    Returns:
-        Type with substituted values.
-    """
-    if is_type_var(type_hint):
-        return subs.get(type_hint, type_hint)
+    def _apply_type_substitutions(self, target_type: Any, substitutions: dict[TypeVar | ParamSpec | TypeVarTuple, Any]) -> Any:
+        """Recursively apply type parameter substitutions to a type.
 
-    if is_union(type_hint):
-        args = tuple([_substitute_types(arg, subs) for arg in get_args(type_hint)])
-        return Union[*args]
+        Args:
+            target_type: Type to process.
+            substitutions: Dictionary mapping TypeVar to concrete type substitutions.
 
-    origin = get_origin(type_hint)
-    args = get_args(type_hint)
+        Returns:
+            Type with all type variables substituted with their concrete values.
+        """
+        if is_type_var(target_type):
+            return substitutions.get(target_type, target_type)
 
-    if origin and args:
-        substituted_args = [_substitute_types(arg, subs) for arg in args]
-        return origin[*substituted_args]
+        if is_union(target_type):
+            args = tuple([self._apply_type_substitutions(arg, substitutions) for arg in get_args(target_type)])
+            return Union[*args]
 
-    return type_hint
+        origin = get_origin(target_type)
+        args = get_args(target_type)
+
+        if origin and args:
+            substituted_args = [self._apply_type_substitutions(arg, substitutions) for arg in args]
+            return origin[*substituted_args]
+
+        return target_type

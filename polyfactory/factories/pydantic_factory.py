@@ -5,18 +5,18 @@ from datetime import timezone
 from functools import partial
 from os.path import realpath
 from pathlib import Path
-from typing import TYPE_CHECKING, Any, ClassVar, ForwardRef, Generic, Mapping, TypeVar, cast
+from typing import TYPE_CHECKING, Any, ClassVar, ForwardRef, Generic, Mapping, TypeVar, cast, Annotated, Union, Self
 from uuid import NAMESPACE_DNS, uuid1, uuid3, uuid5
 
-from typing_extensions import Literal, get_args, get_origin
+from typing_extensions import Literal, get_args
 
 from polyfactory.exceptions import MissingDependencyException
 from polyfactory.factories.base import BaseFactory, BuildContext
 from polyfactory.factories.base import BuildContext as BaseBuildContext
 from polyfactory.field_meta import Constraints, FieldMeta, Null
 from polyfactory.utils.deprecation import check_for_deprecated_parameters
-from polyfactory.utils.helpers import resolve_type_alias, unwrap_new_type, unwrap_optional
-from polyfactory.utils.predicates import is_generic_alias, is_optional, is_safe_subclass, is_type_alias, is_union
+from polyfactory.utils.helpers import TypeCompatibilityAdapter, unwrap_new_type, unwrap_optional
+from polyfactory.utils.predicates import is_optional, is_safe_subclass, is_union, is_annotated
 from polyfactory.utils.types import NoneType
 from polyfactory.value_generators.primitives import create_random_bytes
 
@@ -136,6 +136,39 @@ class PydanticFieldMeta(FieldMeta):
         self.examples = examples
 
     @classmethod
+    def from_type(
+        cls,
+        annotation: Any,
+        random: Random | None = None,
+        name: str = "",
+        default: Any = Null,
+        constraints: Constraints | None = None,
+        randomize_collection_length: bool | None = None,
+        min_collection_length: int | None = None,
+        max_collection_length: int | None = None,
+        children: list[FieldMeta] | None = None,
+    ) -> Self:
+        """Create a PydanticFieldMeta from a type annotation.
+
+        Override to ensure Union types never receive constraints.
+        """
+        # Critical: Union types cannot have constraints
+        if constraints and is_union(annotation):
+            constraints = None
+
+        return super().from_type(
+            annotation=annotation,
+            random=random,
+            name=name,
+            default=default,
+            constraints=constraints,
+            randomize_collection_length=randomize_collection_length,
+            min_collection_length=min_collection_length,
+            max_collection_length=max_collection_length,
+            children=children,
+        )
+
+    @classmethod
     def from_field_info(
         cls,
         field_name: str,
@@ -171,32 +204,54 @@ class PydanticFieldMeta(FieldMeta):
         # Default value polyfactory.field_meta.Null
         default_value = cls._get_default_value(field_info)
 
+        field_info = FieldInfo.merge_field_infos(
+            field_info,
+            FieldInfo.from_annotation(cls._normalize_annotation(field_info.annotation))
+        )
         annotation = unwrap_new_type(field_info.annotation)
+
         name = field_info.alias if field_info.alias and use_alias else field_name
         children: list[FieldMeta,] | None = []
 
-        # Check TypeAliasType or TypeAliasType with Generic
-        if is_type_alias(annotation) or (
-            is_generic_alias(annotation) and is_type_alias(get_origin(annotation))
-        ):
-            annotation = resolve_type_alias(annotation)
-            field_info = FieldInfo.from_annotation(annotation)
-
+        constraints: PydanticConstraints
         if is_union(annotation):
+            constraints = {}
             children = cls._handle_union_type(
                 annotation=annotation,
                 field_info=field_info,
                 use_alias=use_alias,
             )
+        else:
+            # Constraints cannot be applied directly to Union or UnionType.
+            # They can only be applied to concrete types within the union.
+            constraints = cls._extract_constraints(field_info)
 
         return cls._handle_regular_type(
             annotation=annotation,
             field_info=field_info,
-            constraints=cls._extract_constraints(field_info),
+            constraints=constraints,
             children=children,
             name=name,
             default_value=default_value
         )
+
+    @classmethod
+    def _normalize_annotation(cls, annotation: Any) -> Any:
+        """Normalize annotation by expanding TypeAliasType and handling edge cases.
+        This method handles the case where TypeAliasType expands to Annotated[Union[...], metadata]
+        by distributing the metadata to union members.
+        """
+        normalized = TypeCompatibilityAdapter(annotation).normalize()
+
+        if is_annotated(normalized):
+            base_type, *metadata = get_args(normalized)
+            if is_union(base_type) and metadata:
+                # Distribute metadata: Annotated[Union[A, B], X] -> Union[Annotated[A, X], Annotated[B, X]]
+                return Union[*(
+                    arg if arg is NoneType else Annotated[arg, *metadata]
+                    for arg in get_args(base_type)
+                )]
+        return normalized
 
     @classmethod
     def _get_default_value(cls, field_info: FieldInfo) -> Any:

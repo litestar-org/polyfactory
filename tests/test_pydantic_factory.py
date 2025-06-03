@@ -1115,3 +1115,43 @@ def test_rebuild() -> None:
         pass
 
     assert isinstance(BaseFactory.build(), Base)
+
+
+@pytest.mark.skipif(sys.version_info < (3, 12), reason="PEP 695 requires Python 3.12+")
+def test_pep695_for_annotation_field_with_union() -> None:
+    import annotated_types as at
+
+    type NegativeInt = Annotated[int, at.Lt(0)]                     # pyright: ignore[reportGeneralTypeIssues]
+    type NonEmptyList[T] = Annotated[list[T] | set[T], at.Len(1)]   # pyright: ignore[reportGeneralTypeIssues]
+
+    class Foo(BaseModel):
+        field: NonEmptyList[NegativeInt]
+
+    ModelFactory.create_factory(Foo).build()
+
+
+@pytest.mark.skipif(sys.version_info < (3, 12), reason="PEP 695 requires Python 3.12+")
+def test_pep695_for_recursive_annotation_field() -> None:
+    import annotated_types as at
+
+    type NegativeInt = Annotated[int, at.Lt(0)]                     # pyright: ignore[reportGeneralTypeIssues]
+    type ListOrDict[T] = list[T] | tuple[T]                            # pyright: ignore[reportGeneralTypeIssues]
+
+    class Foo(BaseModel):
+        field: ListOrDict[ListOrDict[NegativeInt]]
+
+    ModelFactory.create_factory(Foo).build()
+
+
+@pytest.mark.skipif(sys.version_info < (3, 12), reason="PEP 695 requires Python 3.12+")
+def test_pep695_for_annotation_generic_type() -> None:
+    import annotated_types as at
+
+    type NegativeInt = Annotated[int, at.Lt(0)] # pyright: ignore[reportGeneralTypeIssues]
+    type PositiveInt = Annotated[int, at.Ge(0)] # pyright: ignore[reportGeneralTypeIssues]
+
+    class Foo(BaseModel):
+        field: list[NegativeInt | PositiveInt]
+        field2: list[NegativeInt]
+
+    ModelFactory.create_factory(Foo).build()
