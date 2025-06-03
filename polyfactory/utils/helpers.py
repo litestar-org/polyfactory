@@ -2,8 +2,8 @@ from __future__ import annotations
 
 import sys
 from collections import deque
-from dataclasses import is_dataclass, dataclass
-from typing import TYPE_CHECKING, Annotated, Any, Mapping, Sequence, TypeVar, Union, ParamSpec, TypeVarTuple
+from dataclasses import dataclass, is_dataclass
+from typing import TYPE_CHECKING, Annotated, Any, Mapping, ParamSpec, Sequence, TypeVar, TypeVarTuple, Union
 
 from typing_extensions import TypeAliasType, get_args, get_origin
 

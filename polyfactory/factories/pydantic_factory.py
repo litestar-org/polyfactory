@@ -5,7 +5,7 @@ from datetime import timezone
 from functools import partial
 from os.path import realpath
 from pathlib import Path
-from typing import TYPE_CHECKING, Any, ClassVar, ForwardRef, Generic, Mapping, TypeVar, cast, Annotated, Union, Self
+from typing import TYPE_CHECKING, Any, ClassVar, ForwardRef, Generic, Mapping, TypeVar, cast
 from uuid import NAMESPACE_DNS, uuid1, uuid3, uuid5
 
 from typing_extensions import Literal, get_args
@@ -16,7 +16,7 @@ from polyfactory.factories.base import BuildContext as BaseBuildContext
 from polyfactory.field_meta import Constraints, FieldMeta, Null
 from polyfactory.utils.deprecation import check_for_deprecated_parameters
 from polyfactory.utils.helpers import TypeCompatibilityAdapter, unwrap_new_type, unwrap_optional
-from polyfactory.utils.predicates import is_optional, is_safe_subclass, is_union, is_annotated
+from polyfactory.utils.predicates import is_optional, is_safe_subclass, is_union
 from polyfactory.utils.types import NoneType
 from polyfactory.value_generators.primitives import create_random_bytes
 
@@ -136,39 +136,6 @@ class PydanticFieldMeta(FieldMeta):
         self.examples = examples
 
     @classmethod
-    def from_type(
-        cls,
-        annotation: Any,
-        random: Random | None = None,
-        name: str = "",
-        default: Any = Null,
-        constraints: Constraints | None = None,
-        randomize_collection_length: bool | None = None,
-        min_collection_length: int | None = None,
-        max_collection_length: int | None = None,
-        children: list[FieldMeta] | None = None,
-    ) -> Self:
-        """Create a PydanticFieldMeta from a type annotation.
-
-        Override to ensure Union types never receive constraints.
-        """
-        # Critical: Union types cannot have constraints
-        if constraints and is_union(annotation):
-            constraints = None
-
-        return super().from_type(
-            annotation=annotation,
-            random=random,
-            name=name,
-            default=default,
-            constraints=constraints,
-            randomize_collection_length=randomize_collection_length,
-            min_collection_length=min_collection_length,
-            max_collection_length=max_collection_length,
-            children=children,
-        )
-
-    @classmethod
     def from_field_info(
         cls,
         field_name: str,
@@ -206,7 +173,7 @@ class PydanticFieldMeta(FieldMeta):
 
         field_info = FieldInfo.merge_field_infos(
             field_info,
-            FieldInfo.from_annotation(cls._normalize_annotation(field_info.annotation))
+            FieldInfo.from_annotation(TypeCompatibilityAdapter(field_info.annotation).normalize())
         )
         annotation = unwrap_new_type(field_info.annotation)
 
@@ -234,24 +201,6 @@ class PydanticFieldMeta(FieldMeta):
             name=name,
             default_value=default_value
         )
-
-    @classmethod
-    def _normalize_annotation(cls, annotation: Any) -> Any:
-        """Normalize annotation by expanding TypeAliasType and handling edge cases.
-        This method handles the case where TypeAliasType expands to Annotated[Union[...], metadata]
-        by distributing the metadata to union members.
-        """
-        normalized = TypeCompatibilityAdapter(annotation).normalize()
-
-        if is_annotated(normalized):
-            base_type, *metadata = get_args(normalized)
-            if is_union(base_type) and metadata:
-                # Distribute metadata: Annotated[Union[A, B], X] -> Union[Annotated[A, X], Annotated[B, X]]
-                return Union[*(
-                    arg if arg is NoneType else Annotated[arg, *metadata]
-                    for arg in get_args(base_type)
-                )]
-        return normalized
 
     @classmethod
     def _get_default_value(cls, field_info: FieldInfo) -> Any:
