@@ -172,8 +172,7 @@ class PydanticFieldMeta(FieldMeta):
         default_value = cls._get_default_value(field_info)
 
         field_info = FieldInfo.merge_field_infos(
-            field_info,
-            FieldInfo.from_annotation(TypeCompatibilityAdapter(field_info.annotation).normalize())
+            field_info, FieldInfo.from_annotation(TypeCompatibilityAdapter(field_info.annotation).normalize())
         )
         annotation = unwrap_new_type(field_info.annotation)
 
@@ -199,7 +198,7 @@ class PydanticFieldMeta(FieldMeta):
             constraints=constraints,
             children=children,
             name=name,
-            default_value=default_value
+            default_value=default_value,
         )
 
     @classmethod
@@ -235,7 +234,7 @@ class PydanticFieldMeta(FieldMeta):
                 ),
             )
 
-        return children # type: ignore[return-value]
+        return children  # type: ignore[return-value]
 
     @classmethod
     def _handle_regular_type(
@@ -267,7 +266,6 @@ class PydanticFieldMeta(FieldMeta):
 
         result.examples = field_info.examples
         return result
-
 
     @classmethod
     def _extract_constraints(cls, field_info: FieldInfo) -> PydanticConstraints:

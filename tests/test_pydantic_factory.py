@@ -10,7 +10,7 @@ from typing import Callable, Dict, FrozenSet, List, Literal, Optional, Sequence,
 from uuid import UUID
 
 import pytest
-from annotated_types import Ge, Gt, Le, LowerCase, MinLen, UpperCase
+from annotated_types import Ge, Gt, Le, LowerCase, Lt, MaxLen, MinLen, MultipleOf, UpperCase
 from typing_extensions import Annotated, TypeAlias
 
 import pydantic
@@ -1118,40 +1118,189 @@ def test_rebuild() -> None:
 
 
 @pytest.mark.skipif(sys.version_info < (3, 12), reason="PEP 695 requires Python 3.12+")
-def test_pep695_for_annotation_field_with_union() -> None:
-    import annotated_types as at
-
-    type NegativeInt = Annotated[int, at.Lt(0)]                     # pyright: ignore[reportGeneralTypeIssues]
-    type NonEmptyList[T] = Annotated[list[T] | set[T], at.Len(1)]   # pyright: ignore[reportGeneralTypeIssues]
+def test_pep695_basic_type_alias() -> None:
+    """Test basic type alias without generics."""
+    type UserId = int  # pyright: ignore[reportGeneralTypeIssues]
+    type Username = str  # pyright: ignore[reportGeneralTypeIssues]
 
     class Foo(BaseModel):
-        field: NonEmptyList[NegativeInt]
+        id: UserId
+        name: Username
 
     ModelFactory.create_factory(Foo).build()
 
 
 @pytest.mark.skipif(sys.version_info < (3, 12), reason="PEP 695 requires Python 3.12+")
-def test_pep695_for_recursive_annotation_field() -> None:
-    import annotated_types as at
-
-    type NegativeInt = Annotated[int, at.Lt(0)]                     # pyright: ignore[reportGeneralTypeIssues]
-    type ListOrDict[T] = list[T] | tuple[T]                            # pyright: ignore[reportGeneralTypeIssues]
+def test_pep695_generic_type_alias() -> None:
+    """Test generic type alias with single type parameter."""
+    type Container[T] = list[T] | tuple[T]  # pyright: ignore[reportGeneralTypeIssues]
 
     class Foo(BaseModel):
-        field: ListOrDict[ListOrDict[NegativeInt]]
+        strings: Container[str]
+        numbers: Container[int]
 
     ModelFactory.create_factory(Foo).build()
 
 
 @pytest.mark.skipif(sys.version_info < (3, 12), reason="PEP 695 requires Python 3.12+")
-def test_pep695_for_annotation_generic_type() -> None:
-    import annotated_types as at
-
-    type NegativeInt = Annotated[int, at.Lt(0)] # pyright: ignore[reportGeneralTypeIssues]
-    type PositiveInt = Annotated[int, at.Ge(0)] # pyright: ignore[reportGeneralTypeIssues]
+def test_pep695_nested_generic_type_alias() -> None:
+    """Test nested generic type aliases."""
+    type Inner[T] = list[T]  # pyright: ignore[reportGeneralTypeIssues]
+    type Outer[T] = Inner[Inner[T]]  # pyright: ignore[reportGeneralTypeIssues]
 
     class Foo(BaseModel):
-        field: list[NegativeInt | PositiveInt]
-        field2: list[NegativeInt]
+        nested: Outer[int]
+
+    ModelFactory.create_factory(Foo).build()
+
+
+@pytest.mark.skipif(sys.version_info < (3, 12), reason="PEP 695 requires Python 3.12+")
+def test_pep695_annotated_type_alias() -> None:
+    """Test type alias with Annotated types."""
+    type PositiveInt = Annotated[int, Gt(0)]  # pyright: ignore[reportGeneralTypeIssues]
+    type ShortStr = Annotated[str, MaxLen(5)]  # pyright: ignore[reportGeneralTypeIssues]
+
+    class Foo(BaseModel):
+        age: PositiveInt
+        code: ShortStr
+
+    ModelFactory.create_factory(Foo).build()
+
+
+@pytest.mark.skipif(sys.version_info < (3, 12), reason="PEP 695 requires Python 3.12+")
+def test_pep695_union_of_annotated_types() -> None:
+    """Test type alias that is a union of annotated types."""
+    type SmallInt = Annotated[int, Le(10)]  # pyright: ignore[reportGeneralTypeIssues]
+    type LargeInt = Annotated[int, Ge(100)]  # pyright: ignore[reportGeneralTypeIssues]
+    type ExtremeInt = SmallInt | LargeInt  # pyright: ignore[reportGeneralTypeIssues]
+
+    class Foo(BaseModel):
+        value: ExtremeInt
+
+    ModelFactory.create_factory(Foo).build()
+
+
+@pytest.mark.skipif(sys.version_info < (3, 12), reason="PEP 695 requires Python 3.12+")
+def test_pep695_recursive_annotation_field() -> None:
+    """Test the original recursive annotation case."""
+    type NegativeInt = Annotated[int, Lt(0)]  # pyright: ignore[reportGeneralTypeIssues]
+    type NonEmptyIterable[T] = list[T] | tuple[T]  # pyright: ignore[reportGeneralTypeIssues]
+
+    class Foo(BaseModel):
+        field: NonEmptyIterable[NonEmptyIterable[NegativeInt]]
+
+    ModelFactory.create_factory(Foo).build()
+
+
+@pytest.mark.skipif(sys.version_info < (3, 12), reason="PEP 695 requires Python 3.12+")
+def test_pep695_complex_nested_unions() -> None:
+    """Test complex nested unions with constraints."""
+    type NumStr = int | str  # pyright: ignore[reportGeneralTypeIssues]
+    type Container[T] = Annotated[list[T], MinLen(1)] | dict[str, T]  # type: ignore[valid-type] # pyright: ignore[reportGeneralTypeIssues]
+
+    class Foo(BaseModel):
+        data: Container[Container[NumStr]]  # type: ignore[type-arg]
+
+    ModelFactory.create_factory(Foo).build()
+
+
+@pytest.mark.skipif(sys.version_info < (3, 12), reason="PEP 695 requires Python 3.12+")
+def test_pep695_multiple_type_parameters() -> None:
+    """Test type alias with multiple type parameters."""
+    type Pair[T, U] = tuple[T, U] | list[T | U]  # pyright: ignore[reportGeneralTypeIssues]
+
+    class Foo(BaseModel):
+        int_str_pair: Pair[int, str]
+        float_bool_pair: Pair[float, bool]
+
+    ModelFactory.create_factory(Foo).build()
+
+
+@pytest.mark.skipif(sys.version_info < (3, 12), reason="PEP 695 requires Python 3.12+")
+def test_pep695_with_pydantic_field() -> None:
+    """Test type alias with Pydantic Field constraints."""
+    type Score = Annotated[int, Ge(0), Le(100)]  # pyright: ignore[reportGeneralTypeIssues]
+
+    class Foo(BaseModel):
+        test_score: Score = Field(description="Test score between 0 and 100")
+        final_score: Score = Field(default=75)
+
+    ModelFactory.create_factory(Foo).build()
+
+
+@pytest.mark.skipif(sys.version_info < (3, 12), reason="PEP 695 requires Python 3.12+")
+def test_pep695_optional_types() -> None:
+    """Test type alias with optional types."""
+    type MaybeInt = int | None  # pyright: ignore[reportGeneralTypeIssues]
+    type OptionalContainer[T] = list[T] | None  # pyright: ignore[reportGeneralTypeIssues]
+
+    class Foo(BaseModel):
+        maybe_number: MaybeInt
+        maybe_strings: OptionalContainer[str]
+
+    ModelFactory.create_factory(Foo).build()
+
+
+@pytest.mark.skipif(sys.version_info < (3, 12), reason="PEP 695 requires Python 3.12+")
+def test_pep695_annotated_union_distribution() -> None:
+    """Test that Annotated[Union[...], constraint] distributes constraints correctly."""
+    type ConstrainedUnion = Annotated[list[int] | dict[str, int], MinLen(2)]  # pyright: ignore[reportGeneralTypeIssues]
+
+    class Foo(BaseModel):
+        data: ConstrainedUnion
+
+    ModelFactory.create_factory(Foo).build()
+
+
+@pytest.mark.skipif(sys.version_info < (3, 12), reason="PEP 695 requires Python 3.12+")
+def test_pep695_deeply_nested_structure() -> None:
+    """Test deeply nested type aliases."""
+    type Level1[T] = list[T]  # pyright: ignore[reportGeneralTypeIssues]
+    type Level2[T] = Level1[Level1[T]]  # pyright: ignore[reportGeneralTypeIssues]
+    type Level3[T] = dict[str, Level2[T]] | Level2[T]  # pyright: ignore[reportGeneralTypeIssues]
+
+    class Foo(BaseModel):
+        deep_data: Level3[int]
+
+    ModelFactory.create_factory(Foo).build()
+
+
+@pytest.mark.skipif(sys.version_info < (3, 12), reason="PEP 695 requires Python 3.12+")
+def test_pep695_with_decimal_constraints() -> None:
+    """Test type alias with decimal constraints."""
+    from decimal import Decimal
+
+    type Price = Annotated[Decimal, Ge(0), MultipleOf(Decimal("0.01"))]  # pyright: ignore[reportGeneralTypeIssues]
+
+    class Foo(BaseModel):
+        amount: Price
+
+    ModelFactory.create_factory(Foo).build()
+
+
+@pytest.mark.skipif(sys.version_info < (3, 12), reason="PEP 695 requires Python 3.12+")
+def test_pep695_with_nested_constraints() -> None:
+    """Test nested type aliases with various constraint combinations."""
+    type PositiveInt = Annotated[int, Gt(0)]  # pyright: ignore[reportGeneralTypeIssues]
+    type SmallList[T] = Annotated[list[T], MaxLen(5)]  # pyright: ignore[reportGeneralTypeIssues]
+    type Container[T] = SmallList[T] | tuple[T, ...]  # pyright: ignore[reportGeneralTypeIssues]
+
+    class Foo(BaseModel):
+        numbers: Container[PositiveInt]
+        nested: SmallList[Container[int]]
+
+    ModelFactory.create_factory(Foo).build()
+
+
+@pytest.mark.skipif(sys.version_info < (3, 12), reason="PEP 695 requires Python 3.12+")
+def test_pep695_dict_union_types() -> None:
+    """Test type aliases with dict unions."""
+    type IntDict = dict[str, int]  # pyright: ignore[reportGeneralTypeIssues]
+    type StrDict = dict[str, str]  # pyright: ignore[reportGeneralTypeIssues]
+    type MixedDict = IntDict | StrDict  # pyright: ignore[reportGeneralTypeIssues]
+
+    class Foo(BaseModel):
+        data: MixedDict
+        nested: dict[str, MixedDict]
 
     ModelFactory.create_factory(Foo).build()

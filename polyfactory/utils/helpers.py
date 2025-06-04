@@ -239,7 +239,7 @@ class TypeCompatibilityAdapter:
         >> adapter = TypeCompatibilityAdapter(NonEmptyList[NonEmptyList[NegativeInt]])
         >> adapter.normalize()  # Complex nested type properly normalized
 
-        >> adaper = TypeCompatibilityAdapter(list[int])
+        >> adapter = TypeCompatibilityAdapter(list[int])
         >> adapter.normalize()  # list[int]
         ```
 
@@ -269,7 +269,7 @@ class TypeCompatibilityAdapter:
         if args:
             normalized_args = [TypeCompatibilityAdapter(type_annotation=arg).normalize() for arg in args]
             if normalized_args != list(args):
-                return origin[*normalized_args]   # type: ignore[index]
+                return origin[*normalized_args]  # type: ignore[index]
 
         return self.type_annotation
 
@@ -301,7 +301,9 @@ class TypeCompatibilityAdapter:
 
         return self._apply_type_substitutions(template, param_substitutions)
 
-    def _apply_type_substitutions(self, target_type: Any, substitutions: dict[TypeVar | ParamSpec | TypeVarTuple, Any]) -> Any:
+    def _apply_type_substitutions(
+        self, target_type: Any, substitutions: dict[TypeVar | ParamSpec | TypeVarTuple, Any]
+    ) -> Any:
         """Recursively apply type parameter substitutions to a type.
 
         Args:
@@ -320,6 +322,11 @@ class TypeCompatibilityAdapter:
 
         origin = get_origin(target_type)
         args = get_args(target_type)
+
+        if is_type_alias(origin):
+            substituted_args = [self._apply_type_substitutions(arg, substitutions) for arg in args] if args else []
+            substituted_alias = origin[*substituted_args] if substituted_args else origin
+            return TypeCompatibilityAdapter(substituted_alias).normalize()
 
         if origin and args:
             substituted_args = [self._apply_type_substitutions(arg, substitutions) for arg in args]
