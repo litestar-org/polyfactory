@@ -1,10 +1,11 @@
 import sys
 import textwrap
 from types import ModuleType
-from typing import Annotated, Any, Callable, get_args, get_origin
+from typing import Any, Callable, Dict, List, Set, Tuple, get_args, get_origin
 
 import annotated_types as at
 import pytest
+from typing_extensions import Annotated
 
 from polyfactory.utils.helpers import TypeCompatibilityAdapter
 
@@ -134,20 +135,21 @@ class TestTypeCompatibilityAdapter:
         result = TypeCompatibilityAdapter(module.Outer[int]).normalize()
         assert result == list[list[int]]
 
-    @pytest.mark.parametrize(
-        "type_hint,expected",
-        [
-            (int, int),
-            (str, str),
-            (list[int], list[int]),
-            (dict[str, int], dict[str, int]),
-            (tuple[int, ...], tuple[int, ...]),
-            (set[str], set[str]),
-        ],
-        ids=["int", "str", "list", "dict", "tuple", "set"],
-    )
-    def test_builtin_types_unchanged(self, type_hint: type, expected: type) -> None:
-        """Test that built-in types without alias are returned unchanged."""
-        result = TypeCompatibilityAdapter(type_hint).normalize()
 
-        assert result == expected
+@pytest.mark.parametrize(
+    "type_hint,expected",
+    [
+        (int, int),
+        (str, str),
+        (List[int], List[int]),
+        (Dict[str, int], Dict[str, int]),
+        (Tuple[int, ...], Tuple[int, ...]),
+        (Set[str], Set[str]),
+    ],
+    ids=["int", "str", "list", "dict", "tuple", "set"],
+)
+def test_builtin_types_unchanged(type_hint: type, expected: type) -> None:
+    """Test that built-in types without alias are returned unchanged."""
+    result = TypeCompatibilityAdapter(type_hint).normalize()
+
+    assert result == expected

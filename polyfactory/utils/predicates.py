@@ -1,7 +1,6 @@
 from __future__ import annotations
 
 from inspect import isclass
-from types import GenericAlias
 from typing import Any, Literal, NewType, Optional, TypeVar, get_args
 
 from typing_extensions import (
@@ -11,6 +10,7 @@ from typing_extensions import (
     Required,
     TypeAliasType,
     TypeGuard,
+    TypeVarTuple,
     get_origin,
 )
 
@@ -148,17 +148,17 @@ def is_type_alias(annotation: Any) -> TypeGuard[TypeAliasType]:
     return isinstance(annotation, AllTypeAliasTypes)
 
 
-def is_generic_alias(annotation: Any) -> TypeGuard[GenericAlias]:
+def is_generic_alias(annotation: Any) -> bool:
     """Determine if the given type annotation is a generic alias.
 
     :param annotation: A type annotation.
 
     :returns: A boolean
     """
-    return isinstance(annotation, GenericAlias)
+    return hasattr(annotation, "__origin__") and hasattr(annotation, "__args__")
 
 
-def is_type_var(annotation: Any) -> TypeGuard[TypeVar]:
+def is_type_var(annotation: Any) -> bool:
     """Determine if the given type annotation is a TypeVar.
 
     Args:
@@ -167,7 +167,7 @@ def is_type_var(annotation: Any) -> TypeGuard[TypeVar]:
     Returns:
         A boolean.
     """
-    return isinstance(annotation, TypeVar)
+    return isinstance(annotation, (TypeVar, ParamSpec, TypeVarTuple))
 
 
 def get_type_origin(annotation: Any) -> Any:

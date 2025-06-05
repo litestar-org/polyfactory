@@ -3,9 +3,9 @@ from __future__ import annotations
 import sys
 from collections import deque
 from dataclasses import dataclass, is_dataclass
-from typing import TYPE_CHECKING, Annotated, Any, Mapping, ParamSpec, Sequence, TypeVar, TypeVarTuple, Union
+from typing import TYPE_CHECKING, Any, Mapping, Sequence, Union
 
-from typing_extensions import TypeAliasType, get_args, get_origin
+from typing_extensions import Annotated, ParamSpec, TypeAliasType, TypeVar, TypeVarTuple, get_args, get_origin
 
 from polyfactory.constants import TYPE_MAPPING
 from polyfactory.utils.deprecation import check_for_deprecated_parameters, deprecated
@@ -212,7 +212,7 @@ def is_dataclass_instance(obj: Any) -> bool:
     return is_dataclass(obj) and not isinstance(obj, type)
 
 
-@dataclass(slots=True)
+@dataclass
 class TypeCompatibilityAdapter:
     """Adapter for converting modern Python 3.12+ type syntax to standard annotations.
 
@@ -269,9 +269,15 @@ class TypeCompatibilityAdapter:
         if args:
             normalized_args = [TypeCompatibilityAdapter(type_annotation=arg).normalize() for arg in args]
             if normalized_args != list(args):
-                return origin[*normalized_args]  # type: ignore[index]
+                return self._reconstruct_generic_type(origin, normalized_args)
 
         return self.type_annotation
+
+    def _reconstruct_generic_type(self, origin: Any, arguments: list[Any] | tuple[Any]) -> Any:
+        """Reconstruct a generic type with normalized arguments."""
+        if len(arguments) > 1:
+            return origin[tuple(arguments)]
+        return origin[arguments[0]]
 
     def _normalize_generic_type_alias(self, alias_origin: TypeAliasType, full_annotation: Any) -> Any:
         """Normalize a GenericAlias that has TypeAliasType as its origin.
@@ -297,7 +303,7 @@ class TypeCompatibilityAdapter:
 
         if get_origin(template) is Annotated:
             base_type, *metadata = get_args(template)
-            return Annotated[self._apply_type_substitutions(base_type, param_substitutions), *metadata]
+            return Annotated[tuple([self._apply_type_substitutions(base_type, param_substitutions)] + metadata)]
 
         return self._apply_type_substitutions(template, param_substitutions)
 
@@ -318,18 +324,18 @@ class TypeCompatibilityAdapter:
 
         if is_union(target_type):
             args = tuple([self._apply_type_substitutions(arg, substitutions) for arg in get_args(target_type)])
-            return Union[*args]
+            return self._reconstruct_generic_type(Union, args)
 
         origin = get_origin(target_type)
         args = get_args(target_type)
 
         if is_type_alias(origin):
             substituted_args = [self._apply_type_substitutions(arg, substitutions) for arg in args] if args else []
-            substituted_alias = origin[*substituted_args] if substituted_args else origin
+            substituted_alias = origin[tuple(substituted_args)] if substituted_args else origin
             return TypeCompatibilityAdapter(substituted_alias).normalize()
 
         if origin and args:
             substituted_args = [self._apply_type_substitutions(arg, substitutions) for arg in args]
-            return origin[*substituted_args]
+            return self._reconstruct_generic_type(origin, substituted_args)
 
         return target_type
