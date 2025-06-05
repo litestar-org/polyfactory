@@ -1,5 +1,7 @@
 import sys
-from typing import Annotated, Any, get_args, get_origin
+import textwrap
+from types import ModuleType
+from typing import Annotated, Any, Callable, get_args, get_origin
 
 import annotated_types as at
 import pytest
@@ -17,48 +19,96 @@ class TestTypeCompatibilityAdapter:
         assert args[0] == expected_base
         assert isinstance(args[1], expected_metadata_type)
 
-    def test_simple_type_alias(self) -> None:
+    def test_simple_type_alias(self, create_module: Callable[[str], ModuleType]) -> None:
         """Test resolution of simple type alias."""
-        type SimpleInt = int  # pyright: ignore[reportGeneralTypeIssues]
 
-        result = TypeCompatibilityAdapter(SimpleInt).normalize()
+        module = create_module(
+            textwrap.dedent(
+                """
+                type SimpleInt = int
+                """
+            )
+        )
+        result = TypeCompatibilityAdapter(module.SimpleInt).normalize()
 
         assert result is int
 
-    def test_annotated_type_alias(self) -> None:
+    def test_annotated_type_alias(self, create_module: Callable[[str], ModuleType]) -> None:
         """Test resolution of annotated type alias."""
-        type PositiveInt = Annotated[int, at.Gt(0)]  # pyright: ignore[reportGeneralTypeIssues]
-        result = TypeCompatibilityAdapter(PositiveInt).normalize()
+        module = create_module(
+            textwrap.dedent(
+                """
+                from typing import Annotated
+                from annotated_types import Gt
+
+                type PositiveInt = Annotated[int, Gt(0)]
+                """
+            )
+        )
+        result = TypeCompatibilityAdapter(module.PositiveInt).normalize()
         self.assert_annotated_type(result, int, at.Gt)
 
-    def test_generic_type_alias(self) -> None:
+    def test_generic_type_alias(self, create_module: Callable[[str], ModuleType]) -> None:
         """Test resolution of generic type alias with type parameter."""
-        type GenericList[T] = list[T]  # pyright: ignore[reportGeneralTypeIssues]
+        module = create_module(
+            textwrap.dedent(
+                """
+                type GenericList[T] = list[T]
+                """
+            )
+        )
 
-        result = TypeCompatibilityAdapter(GenericList[str]).normalize()
+        result = TypeCompatibilityAdapter(module.GenericList[str]).normalize()
 
         assert result == list[str]
 
-    def test_annotated_generic_type_alias(self) -> None:
+    def test_annotated_generic_type_alias(self, create_module: Callable[[str], ModuleType]) -> None:
         """Test resolution of annotated generic type alias."""
-        type NonEmptyList[T] = Annotated[list[T], at.Len(1)]  # pyright: ignore[reportGeneralTypeIssues]
-        result = TypeCompatibilityAdapter(NonEmptyList[int]).normalize()
+        module = create_module(
+            textwrap.dedent(
+                """
+                from typing import Annotated
+                from annotated_types import Len
+
+                type NonEmptyList[T] = Annotated[list[T], Len(1)]
+                """
+            )
+        )
+        result = TypeCompatibilityAdapter(module.NonEmptyList[int]).normalize()
 
         self.assert_annotated_type(result, list[int], at.Len)
 
-    def test_nested_type_aliases(self) -> None:
+    def test_nested_type_aliases(self, create_module: Callable[[str], ModuleType]) -> None:
         """Test resolution of nested type aliases."""
-        type NegativeInt = Annotated[int, at.Lt(0)]  # pyright: ignore[reportGeneralTypeIssues]
-        type NonEmptyList[T] = Annotated[list[T], at.Len(1)]  # pyright: ignore[reportGeneralTypeIssues]
-        result = TypeCompatibilityAdapter(NonEmptyList[NegativeInt]).normalize()
+        module = create_module(
+            textwrap.dedent(
+                """
+                from typing import Annotated
+                from annotated_types import Lt, Len
+
+                type NegativeInt = Annotated[int, Lt(0)]
+                type NonEmptyList[T] = Annotated[list[T], Len(1)]
+                """
+            )
+        )
+        result = TypeCompatibilityAdapter(module.NonEmptyList[module.NegativeInt]).normalize()
 
         self.assert_annotated_type(result, list[Annotated[int, at.Lt(0)]], at.Len)
 
-    def test_double_nested_type_aliases(self) -> None:
+    def test_double_nested_type_aliases(self, create_module: Callable[[str], ModuleType]) -> None:
         """Test resolution of double nested type aliases."""
-        type NonEmptyList[T] = Annotated[list[T], at.Len(1)]  # pyright: ignore[reportGeneralTypeIssues]
+        module = create_module(
+            textwrap.dedent(
+                """
+                from typing import Annotated
+                from annotated_types import Len
 
-        result = TypeCompatibilityAdapter(NonEmptyList[NonEmptyList[int]]).normalize()
+                type NonEmptyList[T] = Annotated[list[T], Len(1)]
+                """
+            )
+        )
+
+        result = TypeCompatibilityAdapter(module.NonEmptyList[module.NonEmptyList[int]]).normalize()
 
         assert get_origin(result) is Annotated
         outer_list, _ = get_args(result)
@@ -69,6 +119,20 @@ class TestTypeCompatibilityAdapter:
         assert get_origin(inner_annotated) is Annotated
         inner_list, _ = get_args(inner_annotated)
         assert inner_list == list[int]
+
+    def test_nested_generic_type_aliases(self, create_module: Callable[[str], ModuleType]) -> None:
+        """Test nested generic type aliases."""
+        module = create_module(
+            textwrap.dedent(
+                """
+                type Inner[T] = list[T]
+                type Outer[T] = Inner[Inner[T]]
+                """
+            )
+        )
+
+        result = TypeCompatibilityAdapter(module.Outer[int]).normalize()
+        assert result == list[list[int]]
 
     @pytest.mark.parametrize(
         "type_hint,expected",
