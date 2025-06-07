@@ -65,7 +65,14 @@ from polyfactory.utils.helpers import (
     unwrap_optional,
 )
 from polyfactory.utils.model_coverage import CoverageContainer, CoverageContainerCallable, resolve_kwargs_coverage
-from polyfactory.utils.predicates import get_type_origin, is_literal, is_optional, is_safe_subclass, is_union
+from polyfactory.utils.predicates import (
+    get_type_origin,
+    is_literal,
+    is_optional,
+    is_safe_subclass,
+    is_type_var,
+    is_union,
+)
 from polyfactory.utils.types import NoneType
 from polyfactory.value_generators.complex_types import handle_collection_type, handle_collection_type_coverage
 from polyfactory.value_generators.constrained_collections import (
@@ -280,7 +287,7 @@ class BaseFactory(ABC, Generic[T]):
             b for b in get_original_bases(cls) if get_origin(b) and issubclass(get_origin(b), BaseFactory)
         )
         generic_args: Sequence[type[T]] = [
-            arg for factory_base in factory_bases for arg in get_args(factory_base) if not isinstance(arg, TypeVar)
+            arg for factory_base in factory_bases for arg in get_args(factory_base) if not is_type_var(arg)
         ]
         if len(generic_args) != 1:
             return None
@@ -768,14 +775,6 @@ class BaseFactory(ABC, Generic[T]):
         if isinstance(unwrapped_annotation, EnumMeta):
             return cls.__random__.choice(list(unwrapped_annotation))
 
-        if field_meta.constraints:
-            return cls.get_constrained_field_value(
-                annotation=unwrapped_annotation,
-                field_meta=field_meta,
-                field_build_parameters=field_build_parameters,
-                build_context=build_context,
-            )
-
         if (is_union(unwrapped_annotation) or is_union(field_meta.annotation)) and field_meta.children:
             seen_models = build_context["seen_models"]
             children = [child for child in field_meta.children if child.annotation not in seen_models]
@@ -786,6 +785,14 @@ class BaseFactory(ABC, Generic[T]):
                 return None
 
             return cls.get_field_value(cls.__random__.choice(children), field_build_parameters, build_context)
+
+        if field_meta.constraints:
+            return cls.get_constrained_field_value(
+                annotation=unwrapped_annotation,
+                field_meta=field_meta,
+                field_build_parameters=field_build_parameters,
+                build_context=build_context,
+            )
 
         if BaseFactory.is_factory_type(annotation=unwrapped_annotation):
             if not field_build_parameters and unwrapped_annotation in build_context["seen_models"]:
@@ -851,7 +858,7 @@ class BaseFactory(ABC, Generic[T]):
         if provider := (provider_map.get(field_meta.annotation) or provider_map.get(unwrapped_annotation)):
             return provider()
 
-        if isinstance(unwrapped_annotation, TypeVar):
+        if is_type_var(unwrapped_annotation):
             return create_random_string(cls.__random__, min_length=1, max_length=10)
 
         if callable(unwrapped_annotation):
@@ -933,7 +940,7 @@ class BaseFactory(ABC, Generic[T]):
             ):
                 yield CoverageContainerCallable(provider)
 
-            elif isinstance(unwrapped_annotation, TypeVar):
+            elif is_type_var(unwrapped_annotation):
                 yield create_random_string(cls.__random__, min_length=1, max_length=10)
 
             elif callable(unwrapped_annotation):
