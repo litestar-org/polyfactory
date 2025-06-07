@@ -456,9 +456,8 @@ def test_unsupported_type_engine() -> None:
         id: Any = Column(Integer(), primary_key=True)
         numeric_field: Any = Column(Location, nullable=False)
 
-    factory = SQLAlchemyFactory.create_factory(Place)
     with pytest.raises(
         ParameterException,
         match="Unsupported type engine: Location()",
     ):
-        factory.build()
+        SQLAlchemyFactory.create_factory(Place)
