@@ -54,9 +54,7 @@ from polyfactory.constants import (
 )
 from polyfactory.exceptions import ConfigurationException, MissingBuildKwargException, ParameterException
 from polyfactory.field_meta import Null
-from polyfactory.fields import Fixture, Ignore, PostGenerated, Require, Use
-from polyfactory.utils._internal import is_attribute_overridden
-from polyfactory.utils.deprecation import warn_deprecation
+from polyfactory.fields import Ignore, PostGenerated, Require, Use
 from polyfactory.utils.helpers import (
     flatten_annotation,
     get_collection_type,
@@ -117,7 +115,7 @@ class BaseFactory(ABC, Generic[T]):
     The model for the factory.
     This attribute is required for non-base factories and an exception will be raised if it's not set. Can be automatically inferred from the factory generic argument.
     """
-    __check_model__: bool = False
+    __check_model__: bool = True
     """
     Flag dictating whether to check if fields defined on the factory exists on the model or not.
     If 'True', checks will be done against Use, PostGenerated, Ignore, Require constructs fields only.
@@ -205,7 +203,7 @@ class BaseFactory(ABC, Generic[T]):
     _extra_providers: dict[Any, Callable[[], Any]] | None = None
     """Used to copy providers from once base factory to another dynamically generated factory for a class"""
 
-    def __init_subclass__(cls, *args: Any, **kwargs: Any) -> None:  # noqa: C901, PLR0912
+    def __init_subclass__(cls, *args: Any, **kwargs: Any) -> None:
         super().__init_subclass__(*args, **kwargs)
 
         if not hasattr(BaseFactory, "_base_factories"):
@@ -219,36 +217,10 @@ class BaseFactory(ABC, Generic[T]):
 
         if cls.__min_collection_length__ > cls.__max_collection_length__:
             msg = "Minimum collection length shouldn't be greater than maximum collection length"
-            raise ConfigurationException(
-                msg,
-            )
+            raise ConfigurationException(msg)
 
         if "__is_base_factory__" not in cls.__dict__ or not cls.__is_base_factory__:
-            model: type[T] | None = getattr(cls, "__model__", None) or cls._infer_model_type()
-            if not model:
-                msg = f"required configuration attribute '__model__' is not set on {cls.__name__}"
-                raise ConfigurationException(
-                    msg,
-                )
-            cls.__model__ = model
-            if not cls.is_supported_type(model):
-                for factory in BaseFactory._base_factories:
-                    if factory.is_supported_type(model):
-                        msg = f"{cls.__name__} does not support {model.__name__}, but this type is supported by the {factory.__name__} base factory class. To resolve this error, subclass the factory from {factory.__name__} instead of {cls.__name__}"
-                        raise ConfigurationException(
-                            msg,
-                        )
-                    msg = f"Model type {model.__name__} is not supported. To support it, register an appropriate base factory and subclass it for your factory."
-                    raise ConfigurationException(
-                        msg,
-                    )
-            if not is_attribute_overridden(BaseFactory, cls, "__check_model__"):
-                warn_deprecation(
-                    "v2.22.0",
-                    deprecated_name="__check_model__",
-                    kind="default",
-                    alternative="set to `False` explicitly to keep existing behaviour",
-                )
+            cls._init_model()
             if cls.__check_model__:
                 cls._check_declared_fields_exist_in_model()
         else:
@@ -260,6 +232,27 @@ class BaseFactory(ABC, Generic[T]):
 
         if cls.__set_as_default_factory_for_type__ and hasattr(cls, "__model__"):
             BaseFactory._factory_type_mapping[cls.__model__] = cls
+
+    @classmethod
+    def _init_model(cls) -> None:
+        model: type[T] | None = getattr(cls, "__model__", None) or cls._infer_model_type()
+        if not model:
+            msg = f"required configuration attribute '__model__' is not set on {cls.__name__}"
+            raise ConfigurationException(
+                msg,
+            )
+        cls.__model__ = model
+        if not cls.is_supported_type(model):
+            for factory in BaseFactory._base_factories:
+                if factory.is_supported_type(model):
+                    msg = f"{cls.__name__} does not support {model.__name__}, but this type is supported by the {factory.__name__} base factory class. To resolve this error, subclass the factory from {factory.__name__} instead of {cls.__name__}"
+                    raise ConfigurationException(
+                        msg,
+                    )
+                msg = f"Model type {model.__name__} is not supported. To support it, register an appropriate base factory and subclass it for your factory."
+                raise ConfigurationException(
+                    msg,
+                )
 
     @classmethod
     def _get_build_context(cls, build_context: BuildContext | None) -> BuildContext:
@@ -326,7 +319,7 @@ class BaseFactory(ABC, Generic[T]):
         )
 
     @classmethod
-    def _handle_factory_field(  # noqa: PLR0911
+    def _handle_factory_field(
         cls,
         field_value: Any,
         build_context: BuildContext,
@@ -351,9 +344,6 @@ class BaseFactory(ABC, Generic[T]):
             return field_value.build(_build_context=build_context)
 
         if isinstance(field_value, Use):
-            return field_value.to_value()
-
-        if isinstance(field_value, Fixture):
             return field_value.to_value()
 
         if callable(field_value):
@@ -389,9 +379,6 @@ class BaseFactory(ABC, Generic[T]):
 
         if isinstance(field_value, Use):
             return field_value.to_value()
-
-        if isinstance(field_value, Fixture):
-            return CoverageContainerCallable(field_value.to_value)
 
         return CoverageContainerCallable(field_value) if callable(field_value) else field_value
 
