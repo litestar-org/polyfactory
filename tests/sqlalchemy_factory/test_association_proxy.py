@@ -10,6 +10,7 @@ class KeywordFactory(SQLAlchemyFactory[Keyword]): ...
 
 def test_association_proxy() -> None:
     class UserFactory(SQLAlchemyFactory[User]):
+        __set_relationships__ = False
         __set_association_proxy__ = True
 
     user = UserFactory.build()
@@ -21,6 +22,7 @@ async def test_async_persistence(async_engine: AsyncEngine) -> None:
     async with AsyncSession(async_engine) as session:
 
         class AsyncUserFactory(SQLAlchemyFactory[User]):
+            __set_relationships__ = False
             __set_association_proxy__ = True
             __async_session__ = session
 

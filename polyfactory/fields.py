@@ -4,10 +4,6 @@ from typing import Any, Callable, Generic, TypedDict, TypeVar, cast
 
 from typing_extensions import ParamSpec
 
-from polyfactory.exceptions import ParameterException
-from polyfactory.utils import deprecation
-from polyfactory.utils.predicates import is_safe_subclass
-
 T = TypeVar("T")
 P = ParamSpec("P")
 
@@ -82,39 +78,3 @@ class PostGenerated:
         :returns: An arbitrary value.
         """
         return self.fn["value"](name, values, *self.args, **self.kwargs)
-
-
-class Fixture:
-    """Factory field to create a pytest fixture from a factory."""
-
-    __slots__ = ("kwargs", "ref", "size")
-
-    @deprecation.deprecated(version="2.20.0", alternative="Use factory directly")
-    def __init__(self, fixture: Callable, size: int | None = None, **kwargs: Any) -> None:
-        """Create a fixture from a factory.
-
-        :param fixture: A factory that was registered as a fixture.
-        :param size: Optional batch size.
-        :param kwargs: Any build kwargs.
-        """
-        self.ref: WrappedCallable = {"value": fixture}
-        self.size = size
-        self.kwargs = kwargs
-
-    def to_value(self) -> Any:
-        """Call the factory's build or batch method.
-
-        :raises: ParameterException
-
-        :returns: The build result.
-        """
-        from polyfactory.factories.base import BaseFactory
-
-        factory = self.ref["value"]
-        if not is_safe_subclass(factory, BaseFactory):
-            msg = "fixture has not been registered using the register_factory decorator"
-            raise ParameterException(msg)
-
-        if self.size is not None:
-            return factory.batch(self.size, **self.kwargs)
-        return factory.build(**self.kwargs)
