@@ -5,7 +5,6 @@ from sys import float_info
 from typing import TYPE_CHECKING, Any, Protocol, TypeVar, cast
 
 from polyfactory.exceptions import ParameterException
-from polyfactory.utils.deprecation import check_for_deprecated_parameters
 from polyfactory.value_generators.primitives import create_random_decimal, create_random_float, create_random_integer
 
 if TYPE_CHECKING:
@@ -346,7 +345,6 @@ def handle_constrained_float(
 
 def validate_max_digits(
     max_digits: int,
-    minimum: Decimal | None,
     decimal_places: int | None,
 ) -> None:
     """Validate that max digits is greater than minimum and decimal places.
@@ -358,8 +356,6 @@ def validate_max_digits(
     :returns: 'None'
 
     """
-    check_for_deprecated_parameters("2.19.1", parameters=(("minimum", minimum),))
-
     if max_digits <= 0:
         msg = "max_digits must be greater than 0"
         raise ParameterException(msg)
@@ -432,7 +428,7 @@ def handle_constrained_decimal(
     )
 
     if max_digits is not None:
-        validate_max_digits(max_digits=max_digits, minimum=None, decimal_places=decimal_places)
+        validate_max_digits(max_digits=max_digits, decimal_places=decimal_places)
 
     generated_decimal = generate_constrained_number(
         random=random,
