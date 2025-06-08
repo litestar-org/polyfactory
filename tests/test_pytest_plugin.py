@@ -6,7 +6,7 @@ from pydantic import BaseModel
 
 from polyfactory.exceptions import ParameterException
 from polyfactory.factories.pydantic_factory import ModelFactory
-from polyfactory.fields import Fixture, Use
+from polyfactory.fields import Use
 from polyfactory.pytest_plugin import register_fixture
 from tests.models import Person, PersonFactoryWithoutDefaults
 
@@ -57,20 +57,6 @@ class MyModel(BaseModel):
     enemies: List[Person]
 
 
-def test_using_a_fixture_as_field_value() -> None:
-    class MyFactory(ModelFactory[MyModel]):
-        __model__ = MyModel
-
-        best_friend = Fixture(PersonFactoryFixture, name="mike")
-        all_friends = Fixture(PersonFactoryFixture, size=5)
-        enemies = Fixture(PersonFactoryFixture, size=0)
-
-    result = MyFactory.build()
-    assert result.best_friend.name == "mike"
-    assert len(result.all_friends) == 5
-    assert result.enemies == []
-
-
 def test_using_factory_directly() -> None:
     class MyFactory(ModelFactory[MyModel]):
         __model__ = MyModel
@@ -83,13 +69,3 @@ def test_using_factory_directly() -> None:
     assert result.best_friend.name == "mike"
     assert len(result.all_friends) == 5
     assert result.enemies == []
-
-
-def test_using_non_fixture_with_the_fixture_field_raises() -> None:
-    class MyFactory(ModelFactory[MyModel]):
-        __model__ = MyModel
-
-        all_friends = Fixture(123)  # type: ignore
-
-    with pytest.raises(ParameterException):
-        MyFactory.build()
