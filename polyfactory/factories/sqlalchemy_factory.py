@@ -9,8 +9,6 @@ from polyfactory.exceptions import MissingDependencyException, ParameterExceptio
 from polyfactory.factories.base import BaseFactory
 from polyfactory.field_meta import Constraints, FieldMeta
 from polyfactory.persistence import AsyncPersistenceProtocol, SyncPersistenceProtocol
-from polyfactory.utils._internal import is_attribute_overridden
-from polyfactory.utils.deprecation import warn_deprecation
 from polyfactory.utils.types import Frozendict
 
 try:
@@ -87,9 +85,9 @@ class SQLAlchemyFactory(Generic[T], BaseFactory[T]):
     """Configuration to consider primary key columns as a field or not."""
     __set_foreign_keys__: ClassVar[bool] = True
     """Configuration to consider columns with foreign keys as a field or not."""
-    __set_relationships__: ClassVar[bool] = False
+    __set_relationships__: ClassVar[bool] = True
     """Configuration to consider relationships property as a model field or not."""
-    __set_association_proxy__: ClassVar[bool] = False
+    __set_association_proxy__: ClassVar[bool] = True
     """Configuration to consider AssociationProxy property as a model field or not."""
 
     __session__: ClassVar[Session | _SessionMaker[Session] | None] = None
@@ -102,24 +100,6 @@ class SQLAlchemyFactory(Generic[T], BaseFactory[T]):
         "__set_relationships__",
         "__set_association_proxy__",
     )
-
-    @classmethod
-    def __init_subclass__(cls, *args: Any, **kwargs: Any) -> None:
-        super().__init_subclass__(*args, **kwargs)
-
-        for key in (
-            "__set_relationships__",
-            "__set_association_proxy__",
-        ):
-            if is_attribute_overridden(SQLAlchemyFactory, cls, key):
-                continue
-
-            warn_deprecation(
-                "v2.22.0",
-                deprecated_name=key,
-                kind="default",
-                alternative="set to `False` explicitly to keep existing behaviour",
-            )
 
     @classmethod
     def get_sqlalchemy_types(cls) -> dict[Any, Callable[[], Any]]:
