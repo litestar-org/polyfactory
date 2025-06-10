@@ -1,6 +1,7 @@
 from enum import Enum
 from typing import Any, Dict, FrozenSet, List, Literal, Optional, Set, Tuple, get_args
 
+import annotated_types as at
 import pytest
 
 from pydantic import BaseModel
@@ -9,7 +10,22 @@ from pydantic.dataclasses import dataclass
 from polyfactory.factories import DataclassFactory
 from polyfactory.factories.pydantic_factory import ModelFactory
 
+from typing import Annotated
+
 MIN_MAX_PARAMETERS = ((10, 15), (20, 25), (30, 40), (40, 50))
+
+
+def test_annotated_type_length() -> None:
+    @dataclass
+    class Foo:
+        foo: Annotated[List[int], at.Len(1)]
+    class FooFactory(DataclassFactory[Foo]):
+        __model__ = Foo
+        __randomize_collection_length__ = True
+
+    for _ in range(10):
+        foo = FooFactory.build()
+        assert len(foo.foo) == 1, len(foo.foo)
 
 
 @pytest.mark.parametrize("type_", (List, Set))
