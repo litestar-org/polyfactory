@@ -2,18 +2,15 @@ from enum import Enum
 from typing import Any, Dict, FrozenSet, List, Literal, Optional, Set, Tuple, get_args
 
 import pytest
-
 from annotated_types import Len
-
 from hypothesis import given, strategies
+from typing_extensions import Annotated
 
 from pydantic import BaseModel
 from pydantic.dataclasses import dataclass
 
 from polyfactory.factories import DataclassFactory
 from polyfactory.factories.pydantic_factory import ModelFactory
-
-from typing_extensions import Annotated
 
 MIN_MAX_PARAMETERS = ((10, 15), (20, 25), (30, 40), (40, 50))
 
