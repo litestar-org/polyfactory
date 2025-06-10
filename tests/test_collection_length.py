@@ -1,8 +1,11 @@
 from enum import Enum
 from typing import Any, Dict, FrozenSet, List, Literal, Optional, Set, Tuple, get_args
 
-import annotated_types as at
 import pytest
+
+from annotated_types import Len
+
+from hypothesis import given, strategies
 
 from pydantic import BaseModel
 from pydantic.dataclasses import dataclass
@@ -10,22 +13,33 @@ from pydantic.dataclasses import dataclass
 from polyfactory.factories import DataclassFactory
 from polyfactory.factories.pydantic_factory import ModelFactory
 
-from typing import Annotated
+from typing_extensions import Annotated
 
 MIN_MAX_PARAMETERS = ((10, 15), (20, 25), (30, 40), (40, 50))
 
 
-def test_annotated_type_length() -> None:
-    @dataclass
-    class Foo:
-        foo: Annotated[List[int], at.Len(1)]
-    class FooFactory(DataclassFactory[Foo]):
-        __model__ = Foo
-        __randomize_collection_length__ = True
+@given(strategies.integers(min_value=1, max_value=10))
+def test_annotated_type_collection_length(collection_length: int) -> None:
+    class Foo(BaseModel):
+        foo: Annotated[List[int], Len(collection_length)]
 
-    for _ in range(10):
-        foo = FooFactory.build()
-        assert len(foo.foo) == 1, len(foo.foo)
+    class FooFactory(ModelFactory):
+        __model__ = Foo
+
+    foo = FooFactory.build()
+    assert len(foo.foo) == collection_length, len(foo.foo)
+
+
+@given(strategies.integers(min_value=1, max_value=10))
+def test_annotated_type_mapping_length(items_length: int) -> None:
+    class Foo(BaseModel):
+        foo: Annotated[Dict[str, int], Len(items_length)]
+
+    class FooFactory(ModelFactory):
+        __model__ = Foo
+
+    foo = FooFactory.build()
+    assert len(foo.foo) == items_length, len(foo.foo)
 
 
 @pytest.mark.parametrize("type_", (List, Set))
