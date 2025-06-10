@@ -1120,6 +1120,7 @@ def test_rebuild() -> None:
 
 
 @pytest.mark.skipif(sys.version_info < (3, 12), reason="PEP 695 requires Python 3.12+")
+@pytest.mark.skipif(IS_PYDANTIC_V1, reason="only for Pydantic v2")
 def test_pep695_basic_type_alias(create_module: Callable[[str], ModuleType]) -> None:
     """Test basic type alias without generics."""
     module = create_module(
@@ -1138,6 +1139,7 @@ def test_pep695_basic_type_alias(create_module: Callable[[str], ModuleType]) -> 
 
 
 @pytest.mark.skipif(sys.version_info < (3, 12), reason="PEP 695 requires Python 3.12+")
+@pytest.mark.skipif(IS_PYDANTIC_V1, reason="only for Pydantic v2")
 def test_pep695_generic_type_alias(create_module: Callable[[str], ModuleType]) -> None:
     """Test generic type alias with single type parameter."""
     module = create_module(
@@ -1155,6 +1157,7 @@ def test_pep695_generic_type_alias(create_module: Callable[[str], ModuleType]) -
 
 
 @pytest.mark.skipif(sys.version_info < (3, 12), reason="PEP 695 requires Python 3.12+")
+@pytest.mark.skipif(IS_PYDANTIC_V1, reason="only for Pydantic v2")
 def test_pep695_nested_generic_type_alias(create_module: Callable[[str], ModuleType]) -> None:
     """Test nested generic type aliases."""
     module = create_module(
@@ -1172,6 +1175,7 @@ def test_pep695_nested_generic_type_alias(create_module: Callable[[str], ModuleT
 
 
 @pytest.mark.skipif(sys.version_info < (3, 12), reason="PEP 695 requires Python 3.12+")
+@pytest.mark.skipif(IS_PYDANTIC_V1, reason="only for Pydantic v2")
 def test_pep695_annotated_type_alias(create_module: Callable[[str], ModuleType]) -> None:
     """Test type alias with Annotated types."""
     module = create_module(
@@ -1192,6 +1196,7 @@ def test_pep695_annotated_type_alias(create_module: Callable[[str], ModuleType])
 
 
 @pytest.mark.skipif(sys.version_info < (3, 12), reason="PEP 695 requires Python 3.12+")
+@pytest.mark.skipif(IS_PYDANTIC_V1, reason="only for Pydantic v2")
 def test_pep695_union_of_annotated_types(create_module: Callable[[str], ModuleType]) -> None:
     """Test type alias that is a union of annotated types."""
     module = create_module(
@@ -1212,6 +1217,7 @@ def test_pep695_union_of_annotated_types(create_module: Callable[[str], ModuleTy
 
 
 @pytest.mark.skipif(sys.version_info < (3, 12), reason="PEP 695 requires Python 3.12+")
+@pytest.mark.skipif(IS_PYDANTIC_V1, reason="only for Pydantic v2")
 def test_pep695_recursive_annotation_field(create_module: Callable[[str], ModuleType]) -> None:
     """Test the original recursive annotation case."""
     module = create_module(
@@ -1231,6 +1237,7 @@ def test_pep695_recursive_annotation_field(create_module: Callable[[str], Module
 
 
 @pytest.mark.skipif(sys.version_info < (3, 12), reason="PEP 695 requires Python 3.12+")
+@pytest.mark.skipif(IS_PYDANTIC_V1, reason="only for Pydantic v2")
 def test_pep695_complex_nested_unions(create_module: Callable[[str], ModuleType]) -> None:
     """Test complex nested unions with constraints."""
     module = create_module(
@@ -1250,6 +1257,7 @@ def test_pep695_complex_nested_unions(create_module: Callable[[str], ModuleType]
 
 
 @pytest.mark.skipif(sys.version_info < (3, 12), reason="PEP 695 requires Python 3.12+")
+@pytest.mark.skipif(IS_PYDANTIC_V1, reason="only for Pydantic v2")
 def test_pep695_multiple_type_parameters(create_module: Callable[[str], ModuleType]) -> None:
     """Test type alias with multiple type parameters."""
     module = create_module(
@@ -1267,6 +1275,7 @@ def test_pep695_multiple_type_parameters(create_module: Callable[[str], ModuleTy
 
 
 @pytest.mark.skipif(sys.version_info < (3, 12), reason="PEP 695 requires Python 3.12+")
+@pytest.mark.skipif(IS_PYDANTIC_V1, reason="only for Pydantic v2")
 def test_pep695_with_pydantic_field(create_module: Callable[[str], ModuleType]) -> None:
     """Test type alias with Pydantic Field constraints."""
     module = create_module(
@@ -1286,6 +1295,7 @@ def test_pep695_with_pydantic_field(create_module: Callable[[str], ModuleType]) 
 
 
 @pytest.mark.skipif(sys.version_info < (3, 12), reason="PEP 695 requires Python 3.12+")
+@pytest.mark.skipif(IS_PYDANTIC_V1, reason="only for Pydantic v2")
 def test_pep695_optional_types(create_module: Callable[[str], ModuleType]) -> None:
     """Test type alias with optional types."""
     module = create_module(
@@ -1304,6 +1314,7 @@ def test_pep695_optional_types(create_module: Callable[[str], ModuleType]) -> No
 
 
 @pytest.mark.skipif(sys.version_info < (3, 12), reason="PEP 695 requires Python 3.12+")
+@pytest.mark.skipif(IS_PYDANTIC_V1, reason="only for Pydantic v2")
 def test_pep695_annotated_union_distribution(create_module: Callable[[str], ModuleType]) -> None:
     """Test that Annotated[Union[...], constraint] distributes constraints correctly."""
     module = create_module(
@@ -1322,6 +1333,7 @@ def test_pep695_annotated_union_distribution(create_module: Callable[[str], Modu
 
 
 @pytest.mark.skipif(sys.version_info < (3, 12), reason="PEP 695 requires Python 3.12+")
+@pytest.mark.skipif(IS_PYDANTIC_V1, reason="only for Pydantic v2")
 def test_pep695_deeply_nested_structure(create_module: Callable[[str], ModuleType]) -> None:
     """Test deeply nested type aliases."""
     module = create_module(
@@ -1340,6 +1352,7 @@ def test_pep695_deeply_nested_structure(create_module: Callable[[str], ModuleTyp
 
 
 @pytest.mark.skipif(sys.version_info < (3, 12), reason="PEP 695 requires Python 3.12+")
+@pytest.mark.skipif(IS_PYDANTIC_V1, reason="only for Pydantic v2")
 def test_pep695_with_decimal_constraints(create_module: Callable[[str], ModuleType]) -> None:
     """Test type alias with decimal constraints."""
     module = create_module(
@@ -1359,6 +1372,7 @@ def test_pep695_with_decimal_constraints(create_module: Callable[[str], ModuleTy
 
 
 @pytest.mark.skipif(sys.version_info < (3, 12), reason="PEP 695 requires Python 3.12+")
+@pytest.mark.skipif(IS_PYDANTIC_V1, reason="only for Pydantic v2")
 def test_pep695_with_nested_constraints(create_module: Callable[[str], ModuleType]) -> None:
     """Test nested type aliases with various constraint combinations."""
     module = create_module(
@@ -1380,6 +1394,7 @@ def test_pep695_with_nested_constraints(create_module: Callable[[str], ModuleTyp
 
 
 @pytest.mark.skipif(sys.version_info < (3, 12), reason="PEP 695 requires Python 3.12+")
+@pytest.mark.skipif(IS_PYDANTIC_V1, reason="only for Pydantic v2")
 def test_pep695_dict_union_types(create_module: Callable[[str], ModuleType]) -> None:
     """Test type aliases with dict unions."""
     module = create_module(

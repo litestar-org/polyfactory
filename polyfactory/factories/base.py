@@ -775,6 +775,14 @@ class BaseFactory(ABC, Generic[T]):
         if isinstance(unwrapped_annotation, EnumMeta):
             return cls.__random__.choice(list(unwrapped_annotation))
 
+        if field_meta.constraints:
+            return cls.get_constrained_field_value(
+                annotation=unwrapped_annotation,
+                field_meta=field_meta,
+                field_build_parameters=field_build_parameters,
+                build_context=build_context,
+            )
+
         if (is_union(unwrapped_annotation) or is_union(field_meta.annotation)) and field_meta.children:
             seen_models = build_context["seen_models"]
             children = [child for child in field_meta.children if child.annotation not in seen_models]
@@ -786,13 +794,6 @@ class BaseFactory(ABC, Generic[T]):
 
             return cls.get_field_value(cls.__random__.choice(children), field_build_parameters, build_context)
 
-        if field_meta.constraints:
-            return cls.get_constrained_field_value(
-                annotation=unwrapped_annotation,
-                field_meta=field_meta,
-                field_build_parameters=field_build_parameters,
-                build_context=build_context,
-            )
 
         if BaseFactory.is_factory_type(annotation=unwrapped_annotation):
             if not field_build_parameters and unwrapped_annotation in build_context["seen_models"]:
