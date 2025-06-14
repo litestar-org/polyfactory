@@ -181,14 +181,21 @@ class PydanticFieldMeta(FieldMeta):
         if is_union(annotation):
             constraints = {}
             children = []
+
+            # create a child for each of the possible union values
             for arg in get_args(annotation):
+                # don't add the NoneType in an optional to the list of children
                 if arg is NoneType:
                     continue
                 child_field_info = FieldInfo.from_annotation(arg)
                 merged_field_info = FieldInfo.merge_field_infos(field_info, child_field_info)
+
                 children.append(
+                    # recurse for each element of the union
                     cls.from_field_info(
-                        field_name="",
+                        # this is a fake field name, but it makes it possible to debug which type variant
+                        # is the source of an exception downstream
+                        field_name=field_name,
                         field_info=merged_field_info,
                         use_alias=use_alias,
                     ),
