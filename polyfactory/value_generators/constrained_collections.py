@@ -42,7 +42,7 @@ def handle_constrained_collection(  # noqa: C901
         return collection_type()
 
     min_items = abs(min_items if min_items is not None else (max_items or 0))
-    max_items = abs(max_items if max_items is not None else min_items + 1)
+    max_items = abs(max_items) if max_items is not None else min_items
 
     if max_items < min_items:
         msg = "max_items must be larger or equal to min_items"
@@ -110,13 +110,13 @@ def handle_constrained_mapping(
         return {}
 
     min_items = abs(min_items if min_items is not None else (max_items or 0))
-    max_items = abs(max_items if max_items is not None else min_items + 1)
+    max_items = abs(max_items) if max_items is not None else min_items
 
     if max_items < min_items:
         msg = "max_items must be larger or equal to min_items"
         raise ParameterException(msg)
 
-    length = factory.__random__.randint(min_items, max_items) or 1
+    length = factory.__random__.randint(min_items, max_items)
 
     collection: dict[Any, Any] = {}
 
