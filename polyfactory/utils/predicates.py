@@ -115,7 +115,7 @@ def is_new_type(annotation: Any) -> "TypeGuard[type[NewType]]":
 
 
 def is_annotated(annotation: Any) -> bool:
-    """Determine whether a given annotation is 'typing.Annotated', or a similar typing annotation such as Optional.
+    """Determine whether a given annotation is 'typing.Annotated'.
 
     :param annotation: A type annotation.
 
