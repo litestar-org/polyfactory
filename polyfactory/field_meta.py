@@ -170,7 +170,7 @@ class FieldMeta:
 
         for value in metadata:
             if is_annotated(value):
-                _, inner_metadata = unwrap_annotated(value, random=DEFAULT_RANDOM)
+                _, inner_metadata = unwrap_annotated(value)
                 constraints.update(cast("dict[str, Any]", cls.parse_constraints(metadata=inner_metadata)))
             elif func := getattr(value, "func", None):
                 if func is str.islower:

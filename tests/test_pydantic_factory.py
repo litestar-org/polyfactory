@@ -1145,3 +1145,18 @@ def test_use_examples_value_override() -> None:
 
     instance = PaymentFactory.build(currency="DKK")
     assert instance.currency == "DKK"
+
+
+class Base(BaseModel):
+    nested: "Nested"
+
+
+class Nested(BaseModel):
+    value: int
+
+
+def test_rebuild() -> None:
+    class BaseFactory(ModelFactory[Base]):
+        pass
+
+    assert isinstance(BaseFactory.build(), Base)

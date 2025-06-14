@@ -1169,7 +1169,7 @@ wheels = [
 
 [[package]]
 name = "polyfactory"
-version = "2.20.0"
+version = "2.21.0"
 source = { editable = "." }
 dependencies = [
     { name = "faker" },
@@ -1238,6 +1238,9 @@ lint = [
     { name = "shellcheck-py" },
     { name = "sourcery" },
 ]
+pydantic = [
+    { name = "pydantic", extra = ["email"] },
+]
 test = [
     { name = "annotated-types" },
     { name = "hypothesis" },
@@ -1296,6 +1299,7 @@ lint = [
     { name = "shellcheck-py", specifier = ">=0.9.0.5" },
     { name = "sourcery", specifier = ">=1.9.0" },
 ]
+pydantic = [{ name = "pydantic", extras = ["email"], specifier = ">=2.10.4" }]
 test = [
     { name = "annotated-types", specifier = ">=0.5.0" },
     { name = "hypothesis", specifier = ">=6.86.2" },

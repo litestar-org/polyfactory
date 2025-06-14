@@ -8,6 +8,7 @@ from typing import TYPE_CHECKING, Any, Mapping, Sequence
 from typing_extensions import get_args, get_origin
 
 from polyfactory.constants import TYPE_MAPPING
+from polyfactory.utils.deprecation import check_for_deprecated_parameters, deprecated
 from polyfactory.utils.predicates import (
     is_annotated,
     is_new_type,
@@ -35,6 +36,7 @@ def unwrap_new_type(annotation: Any) -> Any:
     return annotation
 
 
+@deprecated("v2.21.0")
 def unwrap_union(annotation: Any, random: Random) -> Any:
     """Unwraps union types recursively and picks a random type from each union.
 
@@ -60,7 +62,7 @@ def unwrap_optional(annotation: Any) -> Any:
     return annotation
 
 
-def unwrap_annotation(annotation: Any, random: Random) -> Any:
+def unwrap_annotation(annotation: Any, random: Random | None = None) -> Any:
     """Unwraps an annotation.
 
     :param annotation: A type annotation.
@@ -69,23 +71,16 @@ def unwrap_annotation(annotation: Any, random: Random) -> Any:
     :returns: The unwrapped annotation.
 
     """
-    while (
-        is_optional(annotation)
-        or is_union(annotation)
-        or is_new_type(annotation)
-        or is_annotated(annotation)
-        or is_type_alias(annotation)
-    ):
+    check_for_deprecated_parameters("2.21.0", parameters=(("random", random),))
+    while is_optional(annotation) or is_new_type(annotation) or is_annotated(annotation) or is_type_alias(annotation):
         if is_new_type(annotation):
             annotation = unwrap_new_type(annotation)
         elif is_optional(annotation):
             annotation = unwrap_optional(annotation)
         elif is_annotated(annotation):
-            annotation = unwrap_annotated(annotation, random=random)[0]
+            annotation = unwrap_annotated(annotation)[0]
         elif is_type_alias(annotation):
             annotation = annotation.__value__
-        else:
-            annotation = unwrap_union(annotation, random=random)
 
     return annotation
 
@@ -119,7 +114,7 @@ def flatten_annotation(annotation: Any) -> list[Any]:
     return flat
 
 
-def unwrap_args(annotation: Any, random: Random) -> tuple[Any, ...]:
+def unwrap_args(annotation: Any, random: Random | None = None) -> tuple[Any, ...]:
     """Unwrap the annotation and return any type args.
 
     :param annotation: A type annotation
@@ -128,11 +123,11 @@ def unwrap_args(annotation: Any, random: Random) -> tuple[Any, ...]:
     :returns: A tuple of type args.
 
     """
+    check_for_deprecated_parameters("2.21.0", parameters=(("random", random),))
+    return get_args(unwrap_annotation(annotation=annotation))
 
-    return get_args(unwrap_annotation(annotation=annotation, random=random))
 
-
-def unwrap_annotated(annotation: Any, random: Random) -> tuple[Any, list[Any]]:
+def unwrap_annotated(annotation: Any, random: Random | None = None) -> tuple[Any, list[Any]]:
     """Unwrap an annotated type and return a tuple of type args and optional metadata.
 
     :param annotation: An annotated type annotation
@@ -141,11 +136,12 @@ def unwrap_annotated(annotation: Any, random: Random) -> tuple[Any, list[Any]]:
     :returns: A tuple of type args.
 
     """
+    check_for_deprecated_parameters("2.21.0", parameters=(("random", random),))
     args = [arg for arg in get_args(annotation) if arg is not None]
-    return unwrap_annotation(args[0], random=random), args[1:]
+    return unwrap_annotation(args[0]), args[1:]
 
 
-def normalize_annotation(annotation: Any, random: Random) -> Any:
+def normalize_annotation(annotation: Any, random: Random | None = None) -> Any:
     """Normalize an annotation.
 
     :param annotation: A type annotation.
@@ -153,11 +149,13 @@ def normalize_annotation(annotation: Any, random: Random) -> Any:
     :returns: A normalized type annotation.
 
     """
+    check_for_deprecated_parameters("2.21.0", parameters=(("random", random),))
+
     if is_new_type(annotation):
         annotation = unwrap_new_type(annotation)
 
     if is_annotated(annotation):
-        annotation = unwrap_annotated(annotation, random=random)[0]
+        annotation = unwrap_annotated(annotation)[0]
 
     # we have to maintain compatibility with the older non-subscriptable typings.
     if sys.version_info < (3, 9):  # pragma: no cover
@@ -169,7 +167,7 @@ def normalize_annotation(annotation: Any, random: Random) -> Any:
         origin = TYPE_MAPPING[origin]
 
     if args := get_args(annotation):
-        args = tuple(normalize_annotation(arg, random=random) for arg in args)
+        args = tuple(normalize_annotation(arg) for arg in args)
         return origin[args] if origin is not type else annotation
 
     return origin

@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-import copy
 from contextlib import suppress
 from datetime import timezone
 from functools import partial
@@ -403,13 +402,16 @@ class ModelFactory(Generic[T], BaseFactory[T]):
     def __init_subclass__(cls, *args: Any, **kwargs: Any) -> None:
         super().__init_subclass__(*args, **kwargs)
 
-        if (
-            getattr(cls, "__model__", None)
-            and _is_pydantic_v1_model(cls.__model__)
-            and hasattr(cls.__model__, "update_forward_refs")
-        ):
+        model = getattr(cls, "__model__", None)
+        if model is None:
+            return
+
+        if _is_pydantic_v1_model(model) and hasattr(cls.__model__, "update_forward_refs"):
             with suppress(NameError):  # pragma: no cover
-                cls.__model__.update_forward_refs(**cls.__forward_ref_resolution_type_mapping__)  # type: ignore[attr-defined]
+                cls.__model__.update_forward_refs(**cls.__forward_ref_resolution_type_mapping__)
+
+        if _is_pydantic_v2_model(model):
+            model.model_rebuild()
 
     @classmethod
     def is_supported_type(cls, value: Any) -> TypeGuard[type[T]]:
@@ -533,15 +535,11 @@ class ModelFactory(Generic[T], BaseFactory[T]):
         :returns: PydanticBuildContext
 
         """
-        if build_context is None:
-            return {"seen_models": set(), "factory_use_construct": False}
+        build_context = cast("PydanticBuildContext", super()._get_build_context(build_context))
+        if build_context.get("factory_use_construct") is None:
+            build_context["factory_use_construct"] = False
 
-        factory_use_construct = bool(build_context.get("factory_use_construct", False))
-
-        return {
-            "seen_models": copy.deepcopy(build_context["seen_models"]),
-            "factory_use_construct": factory_use_construct,
-        }
+        return build_context
 
     @classmethod
     def _create_model(cls, _build_context: PydanticBuildContext, **kwargs: Any) -> T:
@@ -553,7 +551,7 @@ class ModelFactory(Generic[T], BaseFactory[T]):
         :returns: An instance of type T.
 
         """
-        if cls._get_build_context(_build_context).get("factory_use_construct"):
+        if _build_context.get("factory_use_construct"):
             if _is_pydantic_v1_model(cls.__model__):
                 return cls.__model__.construct(**kwargs)  # type: ignore[return-value]
             return cls.__model__.model_construct(**kwargs)
