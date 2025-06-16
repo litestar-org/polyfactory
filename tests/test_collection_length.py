@@ -15,7 +15,7 @@ MIN_MAX_PARAMETERS = ((10, 15), (20, 25), (30, 40), (40, 50))
 
 
 @pytest.mark.parametrize("type_", (List[int], Dict[int, int]))
-@pytest.mark.parametrize("length", (0, 1, 2, 3, 4, 5))
+@pytest.mark.parametrize("length", range(1, 10))
 def test_annotated_type_collection_length(type_: type, length: int) -> None:
     class Foo(BaseModel):
         foo: Annotated[type_, Len(length)]  # type: ignore
