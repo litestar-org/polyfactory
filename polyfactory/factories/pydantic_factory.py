@@ -272,7 +272,7 @@ class PydanticFieldMeta(FieldMeta):
 
         # In pydantic v1, we need to check if the annotation is directly annotated to properly extract constraints
         # from the metadata, as v1 doesn't automatically propagate constraints like v2 does
-        annotation_constraints = {}
+        annotation_constraints: Constraints = {}
         if is_annotated(model_field.annotation):
             annotation_metadata = cls.get_constraints_metadata(model_field.annotation)
             annotation_constraints = cls.parse_constraints(annotation_metadata) if annotation_metadata else {}
