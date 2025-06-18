@@ -10,7 +10,6 @@ from typing_extensions import (
     Required,
     TypeAliasType,
     TypeGuard,
-    TypeVarTuple,
     get_origin,
 )
 
@@ -158,7 +157,7 @@ def is_generic_alias(annotation: Any) -> bool:
     return hasattr(annotation, "__origin__") and hasattr(annotation, "__args__")
 
 
-def is_type_var(annotation: Any) -> bool:
+def is_type_var(annotation: Any) -> TypeGuard[TypeVar]:
     """Determine if the given type annotation is a TypeVar.
 
     Args:
@@ -167,7 +166,7 @@ def is_type_var(annotation: Any) -> bool:
     Returns:
         A boolean.
     """
-    return isinstance(annotation, (TypeVar, ParamSpec, TypeVarTuple))
+    return isinstance(annotation, TypeVar)
 
 
 def get_type_origin(annotation: Any) -> Any:

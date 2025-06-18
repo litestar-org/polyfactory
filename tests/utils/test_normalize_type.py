@@ -7,11 +7,11 @@ import annotated_types as at
 import pytest
 from typing_extensions import Annotated
 
-from polyfactory.utils.helpers import TypeCompatibilityAdapter
+from polyfactory.utils.normalize_type import normalize_type
 
 
 @pytest.mark.skipif(sys.version_info < (3, 12), reason="PEP 695 requires Python 3.12+")
-class TestTypeCompatibilityAdapter:
+class TestNormalizeTypePep695:
     @staticmethod
     def assert_annotated_type(result: Any, expected_base: type, expected_metadata_type: type) -> None:
         """Assert that result is an Annotated type with expected base and metadata types."""
@@ -30,7 +30,7 @@ class TestTypeCompatibilityAdapter:
                 """
             )
         )
-        result = TypeCompatibilityAdapter(module.SimpleInt).normalize()
+        result = normalize_type(module.SimpleInt)
 
         assert result is int
 
@@ -46,7 +46,7 @@ class TestTypeCompatibilityAdapter:
                 """
             )
         )
-        result = TypeCompatibilityAdapter(module.PositiveInt).normalize()
+        result = normalize_type(module.PositiveInt)
         self.assert_annotated_type(result, int, at.Gt)
 
     def test_generic_type_alias(self, create_module: Callable[[str], ModuleType]) -> None:
@@ -59,7 +59,7 @@ class TestTypeCompatibilityAdapter:
             )
         )
 
-        result = TypeCompatibilityAdapter(module.GenericList[str]).normalize()
+        result = normalize_type(module.GenericList[str])
 
         assert result == list[str]
 
@@ -75,7 +75,7 @@ class TestTypeCompatibilityAdapter:
                 """
             )
         )
-        result = TypeCompatibilityAdapter(module.NonEmptyList[int]).normalize()
+        result = normalize_type(module.NonEmptyList[int])
 
         self.assert_annotated_type(result, list[int], at.Len)
 
@@ -92,7 +92,7 @@ class TestTypeCompatibilityAdapter:
                 """
             )
         )
-        result = TypeCompatibilityAdapter(module.NonEmptyList[module.NegativeInt]).normalize()
+        result = normalize_type(module.NonEmptyList[module.NegativeInt])
 
         self.assert_annotated_type(result, list[Annotated[int, at.Lt(0)]], at.Len)
 
@@ -109,7 +109,7 @@ class TestTypeCompatibilityAdapter:
             )
         )
 
-        result = TypeCompatibilityAdapter(module.NonEmptyList[module.NonEmptyList[int]]).normalize()
+        result = normalize_type(module.NonEmptyList[module.NonEmptyList[int]])
 
         assert get_origin(result) is Annotated
         outer_list, _ = get_args(result)
@@ -132,7 +132,7 @@ class TestTypeCompatibilityAdapter:
             )
         )
 
-        result = TypeCompatibilityAdapter(module.Outer[int]).normalize()
+        result = normalize_type(module.Outer[int])
         assert result == list[list[int]]
 
 
@@ -150,6 +150,7 @@ class TestTypeCompatibilityAdapter:
 )
 def test_builtin_types_unchanged(type_hint: type, expected: type) -> None:
     """Test that built-in types without alias are returned unchanged."""
-    result = TypeCompatibilityAdapter(type_hint).normalize()
+    result = normalize_type(type_hint)
 
     assert result == expected
+

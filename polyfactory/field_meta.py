@@ -9,6 +9,7 @@ from typing_extensions import get_args, get_origin
 from polyfactory.constants import DEFAULT_RANDOM, TYPE_MAPPING
 from polyfactory.utils.deprecation import check_for_deprecated_parameters
 from polyfactory.utils.helpers import get_annotation_metadata, is_dataclass_instance, unwrap_annotated, unwrap_new_type
+from polyfactory.utils.normalize_type import normalize_type
 from polyfactory.utils.predicates import is_annotated
 from polyfactory.utils.types import NoneType
 
@@ -139,6 +140,7 @@ class FieldMeta:
             ),
         )
 
+        annotation = normalize_type(annotation)
         annotated = is_annotated(annotation)
         if not constraints and annotated:
             metadata = cls.get_constraints_metadata(annotation)

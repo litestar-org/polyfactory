@@ -15,7 +15,8 @@ from polyfactory.factories.base import BaseFactory, BuildContext
 from polyfactory.factories.base import BuildContext as BaseBuildContext
 from polyfactory.field_meta import Constraints, FieldMeta, Null
 from polyfactory.utils.deprecation import check_for_deprecated_parameters
-from polyfactory.utils.helpers import TypeCompatibilityAdapter, unwrap_new_type, unwrap_optional
+from polyfactory.utils.helpers import unwrap_new_type, unwrap_optional
+from polyfactory.utils.normalize_type import normalize_type
 from polyfactory.utils.predicates import is_optional, is_safe_subclass, is_union
 from polyfactory.utils.types import NoneType
 from polyfactory.value_generators.primitives import create_random_bytes
@@ -167,127 +168,65 @@ class PydanticFieldMeta(FieldMeta):
                 ("random", random),
             ),
         )
-
-        # Default value polyfactory.field_meta.Null
-        default_value = cls._get_default_value(field_info)
-
         field_info = FieldInfo.merge_field_infos(
-            field_info, FieldInfo.from_annotation(TypeCompatibilityAdapter(field_info.annotation).normalize())
+            field_info, FieldInfo.from_annotation(normalize_type(field_info.annotation))
         )
-        annotation = unwrap_new_type(field_info.annotation)
 
+        if callable(field_info.default_factory):
+            default_value = field_info.default_factory
+        else:
+            default_value = field_info.default if field_info.default is not UndefinedV2 else Null
+
+        annotation = unwrap_new_type(field_info.annotation)
+        children: list[FieldMeta,] | None = None
         name = field_info.alias if field_info.alias and use_alias else field_name
-        children: list[FieldMeta,] | None = []
 
         constraints: PydanticConstraints
+        # pydantic v2 does not always propagate metadata for Union types
         if is_union(annotation):
             constraints = {}
-            children = cls._handle_union_type(
-                annotation=annotation,
-                field_info=field_info,
-                use_alias=use_alias,
-            )
+            children = []
+            for arg in get_args(annotation):
+                if arg is NoneType:
+                    continue
+                child_field_info = FieldInfo.from_annotation(arg)
+                merged_field_info = FieldInfo.merge_field_infos(field_info, child_field_info)
+                children.append(
+                    cls.from_field_info(
+                        field_name="",
+                        field_info=merged_field_info,
+                        use_alias=use_alias,
+                    ),
+                )
         else:
-            # Constraints cannot be applied directly to Union or UnionType.
-            # They can only be applied to concrete types within the union.
-            constraints = cls._extract_constraints(field_info)
+            metadata, is_json = [], False
+            for m in field_info.metadata:
+                if not is_json and isinstance(m, Json):  # type: ignore[misc]
+                    is_json = True
+                elif m is not None:
+                    metadata.append(m)
 
-        return cls._handle_regular_type(
-            annotation=annotation,
-            field_info=field_info,
-            constraints=constraints,
-            children=children,
-            name=name,
-            default_value=default_value,
-        )
-
-    @classmethod
-    def _get_default_value(cls, field_info: FieldInfo) -> Any:
-        """Extract default value from field info."""
-        if callable(field_info.default_factory):
-            return field_info.default_factory
-
-        return field_info.default if field_info.default is not UndefinedV2 else Null
-
-    @classmethod
-    def _handle_union_type(
-        cls,
-        annotation: Any,
-        field_info: FieldInfo,
-        use_alias: bool,
-    ) -> list[FieldMeta]:
-        """Handle union type annotations."""
-        children = []
-
-        for arg in get_args(annotation):
-            if arg is NoneType:
-                continue
-
-            child_field_info = FieldInfo.from_annotation(arg)
-            merged_field_info = FieldInfo.merge_field_infos(field_info, child_field_info)
-
-            children.append(
-                cls.from_field_info(
-                    field_name="",
-                    field_info=merged_field_info,
-                    use_alias=use_alias,
-                ),
+            constraints = cast(
+                "PydanticConstraints",
+                cls.parse_constraints(metadata=metadata) if metadata else {},
             )
 
-        return children  # type: ignore[return-value]
+            if "url" in constraints:
+                # pydantic uses a sentinel value for url constraints
+                annotation = str
 
-    @classmethod
-    def _handle_regular_type(
-        cls,
-        annotation: Any,
-        field_info: FieldInfo,
-        constraints: PydanticConstraints,
-        children: list[FieldMeta] | None,
-        name: str,
-        default_value: Any,
-    ) -> PydanticFieldMeta:
-        """Handle regular (non-union, non-alias) type annotations."""
+            if is_json:
+                constraints["json"] = True
 
-        if "url" in constraints:
-            annotation = str
-
-        cleaned_constraints = cast(
-            "Constraints",
-            {k: v for k, v in constraints.items() if v is not None} or None,
-        )
-
-        result = PydanticFieldMeta.from_type(
+        result = super().from_type(
             annotation=annotation,
-            constraints=cleaned_constraints,
-            children=children or None,
+            children=children,
+            constraints=cast("Constraints", {k: v for k, v in constraints.items() if v is not None}) or None,
             default=default_value,
             name=name,
         )
-
         result.examples = field_info.examples
         return result
-
-    @classmethod
-    def _extract_constraints(cls, field_info: FieldInfo) -> PydanticConstraints:
-        """Extract constraints from field info metadata."""
-        metadata = []
-        is_json = False
-
-        for m in field_info.metadata:
-            if not is_json and isinstance(m, Json):  # type: ignore[misc]
-                is_json = True
-            elif m is not None:
-                metadata.append(m)
-
-        constraints = cast(
-            "PydanticConstraints",
-            cls.parse_constraints(metadata=metadata) if metadata else {},
-        )
-
-        if is_json:
-            constraints["json"] = True
-
-        return constraints
 
     @classmethod
     def from_model_field(  # pragma: no cover
