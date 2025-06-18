@@ -71,7 +71,7 @@ def __handle_generic_type_alias(origin: Any, args: tuple) -> Any:
 
     if get_origin(template) is Annotated:
         base_type, *metadata = get_args(template)
-        template_result = Annotated[tuple([__apply_substitutions(base_type, substitutions)] + metadata)]    # type: ignore[valid-type]
+        template_result = Annotated[tuple([__apply_substitutions(base_type, substitutions)] + metadata)]  # type: ignore[valid-type]
     else:
         template_result = __apply_substitutions(template, substitutions)
 

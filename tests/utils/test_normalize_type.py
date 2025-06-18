@@ -153,4 +153,3 @@ def test_builtin_types_unchanged(type_hint: type, expected: type) -> None:
     result = normalize_type(type_hint)
 
     assert result == expected
-
