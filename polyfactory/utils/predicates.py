@@ -147,6 +147,28 @@ def is_type_alias(annotation: Any) -> TypeGuard[TypeAliasType]:
     return isinstance(annotation, AllTypeAliasTypes)
 
 
+def is_generic_alias(annotation: Any) -> bool:
+    """Determine if the given type annotation is a generic alias.
+
+    :param annotation: A type annotation.
+
+    :returns: A boolean
+    """
+    return hasattr(annotation, "__origin__") and hasattr(annotation, "__args__")
+
+
+def is_type_var(annotation: Any) -> TypeGuard[TypeVar]:
+    """Determine if the given type annotation is a TypeVar.
+
+    Args:
+        annotation: A type annotation.
+
+    Returns:
+        A boolean.
+    """
+    return isinstance(annotation, TypeVar)
+
+
 def get_type_origin(annotation: Any) -> Any:
     """Get the type origin of an annotation - safely.
 

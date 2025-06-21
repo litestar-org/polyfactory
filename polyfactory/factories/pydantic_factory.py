@@ -16,6 +16,7 @@ from polyfactory.factories.base import BuildContext as BaseBuildContext
 from polyfactory.field_meta import Constraints, FieldMeta, Null
 from polyfactory.utils.deprecation import check_for_deprecated_parameters
 from polyfactory.utils.helpers import unwrap_new_type, unwrap_optional
+from polyfactory.utils.normalize_type import normalize_type
 from polyfactory.utils.predicates import is_annotated, is_optional, is_safe_subclass, is_union
 from polyfactory.utils.types import NoneType
 from polyfactory.value_generators.primitives import create_random_bytes
@@ -167,6 +168,10 @@ class PydanticFieldMeta(FieldMeta):
                 ("random", random),
             ),
         )
+        field_info = FieldInfo.merge_field_infos(
+            field_info, FieldInfo.from_annotation(normalize_type(field_info.annotation))
+        )
+
         if callable(field_info.default_factory):
             default_value = field_info.default_factory
         else:
@@ -220,7 +225,7 @@ class PydanticFieldMeta(FieldMeta):
             if is_json:
                 constraints["json"] = True
 
-        result = PydanticFieldMeta.from_type(
+        result = super().from_type(
             annotation=annotation,
             children=children,
             constraints=cast("Constraints", {k: v for k, v in constraints.items() if v is not None}) or None,
