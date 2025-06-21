@@ -146,6 +146,8 @@ class FieldMeta:
             metadata = cls.get_constraints_metadata(annotation)
             constraints = cls.parse_constraints(metadata)
 
+        # annotations can take many forms: Optional, an Annotated type, or anything with __args__
+        # in order to normalize the annotation, we need to unwrap the annotation.
         if not annotated and (origin := get_origin(annotation)) and origin in TYPE_MAPPING:
             container = TYPE_MAPPING[origin]
             annotation = container[get_args(annotation)]  # type: ignore[index]
