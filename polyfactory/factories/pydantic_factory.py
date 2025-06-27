@@ -457,7 +457,7 @@ class ModelFactory(Generic[T], BaseFactory[T]):
                         field_info=field_info,
                         field_name=field_name,
                         use_alias=not cls.__model__.model_config.get(  # pyright: ignore[reportGeneralTypeIssues]
-                            "populate_by_name",
+                            "validate_by_name",
                             False,
                         ),
                     )
