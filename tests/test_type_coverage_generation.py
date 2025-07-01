@@ -223,7 +223,7 @@ def test_coverage_parameter_exception() -> None:
 def test_coverage_optional_field() -> None:
     @dataclass
     class OptionalInt:
-        i: int | None
+        i: Union[int, None]
 
     class OptionalIntFactory(DataclassFactory[OptionalInt]):
         __model__ = OptionalInt
@@ -290,7 +290,7 @@ def get_or_index(obj: Any, idx: Union[int, str]) -> tuple[Any, bool]:
 def test_coverage_optional_list() -> None:
     @dataclass
     class OptionalIntList:
-        i: list[int] | None
+        i: Union[list[int], None]
 
     class OptionalIntFactory(DataclassFactory[OptionalIntList]):
         __model__ = OptionalIntList
