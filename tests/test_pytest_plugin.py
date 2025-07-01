@@ -1,5 +1,3 @@
-from typing import List
-
 import pytest
 
 from pydantic import BaseModel
@@ -53,8 +51,8 @@ def test_register_with_class_not_model_factory_error() -> None:
 
 class MyModel(BaseModel):
     best_friend: Person
-    all_friends: List[Person]
-    enemies: List[Person]
+    all_friends: list[Person]
+    enemies: list[Person]
 
 
 def test_using_factory_directly() -> None:

@@ -1,4 +1,4 @@
-from typing import Dict, Union
+from typing import Union
 
 import pytest
 
@@ -12,8 +12,8 @@ def test_passing_nested_dict() -> None:
         val: str
 
     class MyClass(BaseModel):
-        my_mapping_obj: Dict[str, MyMappedClass]
-        my_mapping_str: Dict[str, str]
+        my_mapping_obj: dict[str, MyMappedClass]
+        my_mapping_str: dict[str, str]
 
     class MyClassFactory(ModelFactory[MyClass]):
         __model__ = MyClass
@@ -32,7 +32,7 @@ def test_passing_nested_dict() -> None:
 )
 def test_dict_with_union_random_types() -> None:
     class MyClass(BaseModel):
-        val: Dict[str, Union[int, str]]
+        val: dict[str, Union[int, str]]
 
     class MyClassFactory(ModelFactory[MyClass]):
         __model__ = MyClass

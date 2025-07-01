@@ -1,8 +1,9 @@
 from __future__ import annotations
 
 import functools
+from collections.abc import Hashable, Mapping
 from dataclasses import asdict
-from typing import TYPE_CHECKING, Any, Hashable, Literal, Mapping, Pattern, TypedDict, cast
+from typing import TYPE_CHECKING, Any, Literal, TypedDict, cast
 
 from typing_extensions import get_args, get_origin
 
@@ -19,9 +20,10 @@ from polyfactory.utils.types import NoneType
 
 if TYPE_CHECKING:
     import datetime
+    from collections.abc import Sequence
     from decimal import Decimal
     from random import Random
-    from typing import Sequence
+    from re import Pattern
 
     from typing_extensions import NotRequired, Self
 
@@ -105,7 +107,7 @@ class FieldMeta:
         if is_annotated(annotation):
             annotation = get_args(self.annotation)[0]
         return tuple(
-            TYPE_MAPPING.get(arg, arg) if isinstance(arg, Hashable) else arg  # pyright: ignore[reportCallIssue,reportArgumentType]
+            TYPE_MAPPING.get(arg, arg) if isinstance(arg, Hashable) else arg  # type: ignore[call-overload]
             for arg in get_args(annotation)
         )
 

@@ -1,9 +1,9 @@
 from __future__ import annotations
 
-import sys
 from collections import deque
+from collections.abc import Mapping, Sequence
 from dataclasses import is_dataclass
-from typing import Any, Mapping, Sequence
+from typing import Any
 
 from typing_extensions import get_args, get_origin
 
@@ -133,8 +133,6 @@ def normalize_annotation(annotation: Any) -> Any:
         annotation = unwrap_annotated(annotation)[0]
 
     # we have to maintain compatibility with the older non-subscriptable typings.
-    if sys.version_info < (3, 9):  # pragma: no cover
-        return annotation
 
     origin = get_origin(annotation) or annotation
 

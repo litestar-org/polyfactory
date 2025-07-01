@@ -1,9 +1,7 @@
 from __future__ import annotations
 
 from datetime import date, datetime
-from typing import TYPE_CHECKING, Any, Callable, ClassVar, Generic, List, Protocol, TypeVar, Union
-
-from typing_extensions import Annotated
+from typing import TYPE_CHECKING, Annotated, Any, Callable, ClassVar, Generic, Protocol, TypeVar, Union
 
 from polyfactory.exceptions import MissingDependencyException, ParameterException
 from polyfactory.factories.base import BaseFactory
@@ -196,7 +194,7 @@ class SQLAlchemyFactory(Generic[T], BaseFactory[T]):
         annotation: type
         if isinstance(column.type, (ARRAY, postgresql.ARRAY)):
             item_type = cls._get_type_from_type_engine(column.type.item_type)
-            annotation = List[item_type]  # type: ignore[valid-type]
+            annotation = list[item_type]  # type: ignore[valid-type]
         else:
             annotation = cls._get_type_from_type_engine(column.type)
 
@@ -221,7 +219,7 @@ class SQLAlchemyFactory(Generic[T], BaseFactory[T]):
         if cls.__set_relationships__:
             for name, relationship in table.relationships.items():
                 class_ = relationship.entity.class_
-                annotation = class_ if not relationship.uselist else List[class_]  # type: ignore[valid-type]
+                annotation = class_ if not relationship.uselist else list[class_]  # type: ignore[valid-type]
                 fields_meta.append(
                     FieldMeta.from_type(
                         name=name,
@@ -237,7 +235,7 @@ class SQLAlchemyFactory(Generic[T], BaseFactory[T]):
                         target_attr = getattr(target_class, attr.value_attr)
                         if target_attr:
                             class_ = target_attr.entity.class_
-                            annotation = class_ if not target_collection.uselist else List[class_]  # type: ignore[valid-type]
+                            annotation = class_ if not target_collection.uselist else list[class_]  # type: ignore[valid-type]
                             fields_meta.append(
                                 FieldMeta.from_type(
                                     name=name,

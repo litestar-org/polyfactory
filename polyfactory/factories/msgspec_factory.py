@@ -1,9 +1,7 @@
 from __future__ import annotations
 
 from inspect import isclass
-from typing import TYPE_CHECKING, Any, Callable, Generic, TypeVar
-
-from typing_extensions import get_type_hints
+from typing import TYPE_CHECKING, Any, Callable, Generic, TypeVar, get_type_hints
 
 from polyfactory.exceptions import MissingDependencyException
 from polyfactory.factories.base import BaseFactory
