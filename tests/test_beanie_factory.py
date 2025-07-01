@@ -1,5 +1,4 @@
 from sys import version_info
-from typing import List
 
 import pymongo
 import pytest
@@ -19,7 +18,7 @@ class MyDocument(Document):
     id: PydanticObjectId
     name: str
     index: Indexed(str, pymongo.DESCENDING)  # type: ignore
-    siblings: List[PydanticObjectId]
+    siblings: list[PydanticObjectId]
 
 
 class MyOtherDocument(Document):

@@ -1,9 +1,9 @@
 from __future__ import annotations
 
 from dataclasses import MISSING, fields, is_dataclass
-from typing import Any, Generic
+from typing import Any, Generic, get_type_hints
 
-from typing_extensions import TypeGuard, get_type_hints
+from typing_extensions import TypeGuard
 
 from polyfactory.factories.base import BaseFactory, T
 from polyfactory.field_meta import FieldMeta, Null

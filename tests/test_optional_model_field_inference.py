@@ -1,4 +1,4 @@
-from typing import Any, Dict, Generic, Type, TypedDict, TypeVar
+from typing import Any, Generic, TypedDict, TypeVar
 
 import pytest
 from attrs import define
@@ -39,7 +39,7 @@ class AttrsBase:
 
 
 class ModelBase(BaseModel):
-    dict_field: Dict[str, int]
+    dict_field: dict[str, int]
 
 
 class MsgspecBase(Struct):
@@ -72,7 +72,7 @@ class TypedDictBase(TypedDict):
         (TypedDictFactory, TypedDictBase),
     ],
 )
-def test_modeL_inference_ok(base_factory: Type[BaseFactory], generic_arg: Type[Any]) -> None:
+def test_modeL_inference_ok(base_factory: type[BaseFactory], generic_arg: type[Any]) -> None:
     class Foo(base_factory[generic_arg]):  # type: ignore
         ...
 
@@ -109,7 +109,7 @@ def test_beanie_model_inference_ok() -> None:
         TypedDictFactory,
     ],
 )
-def test_model_without_generic_type_inference_error(base_factory: Type[BaseFactory]) -> None:
+def test_model_without_generic_type_inference_error(base_factory: type[BaseFactory]) -> None:
     with pytest.raises(ConfigurationException):
 
         class Foo(base_factory):  # type: ignore
@@ -126,7 +126,7 @@ def test_model_without_generic_type_inference_error(base_factory: Type[BaseFacto
         TypedDictFactory,
     ],
 )
-def test_model_type_error(base_factory: Type[BaseFactory]) -> None:
+def test_model_type_error(base_factory: type[BaseFactory]) -> None:
     with pytest.raises(ConfigurationException):
 
         class Foo(base_factory[int]):  # type: ignore
