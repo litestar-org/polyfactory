@@ -19,7 +19,7 @@ class Node:
     value: int
     union_child: Union[Node, int]  # noqa: UP007
     list_child: list[Node]
-    optional_child: Node | None
+    optional_child: Union[Node, None]  # noqa: UP007
     child: Node = field(default=_Sentinel)  # type: ignore[assignment]
 
     def __post_init__(self) -> None:
@@ -45,7 +45,7 @@ class PydanticNode(BaseModel):
     union_child: Union[PydanticNode, int]  # noqa: UP007
     list_child: list[PydanticNode]
     optional_union_child: Union[PydanticNode, None]  # noqa: UP007
-    optional_child: PydanticNode | None
+    optional_child: Union[PydanticNode, None]  # noqa: UP007
     child: PydanticNode = Field(default=_Sentinel)  # type: ignore[assignment]
     recursive_key: dict[PydanticNode, Any]
     recursive_value: dict[str, PydanticNode]
