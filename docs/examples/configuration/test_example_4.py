@@ -1,6 +1,5 @@
 from asyncio import sleep
 from dataclasses import dataclass
-from typing import Dict, List
 from uuid import UUID
 
 from polyfactory import AsyncPersistenceProtocol, SyncPersistenceProtocol
@@ -14,7 +13,7 @@ class Person:
 
 
 # we will use a dictionary to persist values for the example
-mock_db: Dict[UUID, Person] = {}
+mock_db: dict[UUID, Person] = {}
 
 
 class SyncPersistenceHandler(SyncPersistenceProtocol[Person]):
@@ -24,7 +23,7 @@ class SyncPersistenceHandler(SyncPersistenceProtocol[Person]):
         mock_db[data.id] = data
         return data
 
-    def save_many(self, data: List[Person]) -> List[Person]:
+    def save_many(self, data: list[Person]) -> list[Person]:
         # same as for save, here we should store the list in persistence.
         # in this case, we use the same dictionary.
         for person in data:
@@ -40,7 +39,7 @@ class AsyncPersistenceHandler(AsyncPersistenceProtocol[Person]):
         await sleep(0.0001)
         return data
 
-    async def save_many(self, data: List[Person]) -> List[Person]:
+    async def save_many(self, data: list[Person]) -> list[Person]:
         # same as for the async save, here we should store the list in persistence using async logic.
         # we again store in dict, and mock async using sleep.
         for person in data:

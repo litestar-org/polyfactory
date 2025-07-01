@@ -1,5 +1,5 @@
 import sys
-from typing import Any, List
+from typing import Any
 
 import pytest
 from hypothesis import given
@@ -67,7 +67,7 @@ def test_handle_constrained_list_with_min_items(
     result = handle_constrained_collection(
         collection_type=list,
         factory=ModelFactory,
-        field_meta=PydanticFieldMeta.from_type(List[str], name="test"),
+        field_meta=PydanticFieldMeta.from_type(list[str], name="test"),
         item_type=str,
         min_items=min_items,
     )
@@ -80,7 +80,7 @@ def test_handle_constrained_list_with_min_items(
 )
 @pytest.mark.parametrize("t_type", tuple(ModelFactory.get_provider_map()))
 def test_handle_constrained_list_with_different_types(t_type: Any) -> None:
-    field_meta = PydanticFieldMeta.from_type(List[t_type], name="test")
+    field_meta = PydanticFieldMeta.from_type(list[t_type], name="test")
     result = handle_constrained_collection(
         collection_type=list,
         factory=ModelFactory,
@@ -91,7 +91,7 @@ def test_handle_constrained_list_with_different_types(t_type: Any) -> None:
 
 
 def test_handle_unique_items() -> None:
-    field_meta = PydanticFieldMeta.from_type(List[str], name="test", constraints={"unique_items": True})
+    field_meta = PydanticFieldMeta.from_type(list[str], name="test", constraints={"unique_items": True})
     result = handle_constrained_collection(
         collection_type=list,
         factory=ModelFactory,

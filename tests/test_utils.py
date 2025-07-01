@@ -132,7 +132,7 @@ def test_is_multiply_of_multiple_of_in_range_for_int(base_multiple_of: int, mult
 
 @pytest.mark.skip(reason="fails on edge cases")
 @given(
-    decimals(min_value=Decimal("-1000000000"), max_value=Decimal("1000000000")),
+    decimals(min_value=Decimal(-1000000000), max_value=Decimal(1000000000)),
     integers(min_value=-100000, max_value=100000),
 )
 def test_is_multiply_of_multiple_of_in_range_for_decimals(base_multiple_of: Decimal, multiplier: int) -> None:

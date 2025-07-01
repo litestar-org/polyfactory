@@ -1,5 +1,5 @@
 from datetime import date, timedelta
-from typing import Dict, Optional
+from typing import Optional
 
 import pytest
 from hypothesis import given
@@ -22,7 +22,7 @@ def test_handle_constrained_date(
     end_date: date,
 ) -> None:
     if start_date != end_date:
-        kwargs: Dict[str, date] = {}
+        kwargs: dict[str, date] = {}
         if start:
             kwargs[start] = start_date
         if end:

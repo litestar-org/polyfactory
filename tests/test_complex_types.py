@@ -1,20 +1,13 @@
+from collections import defaultdict, deque
+from collections.abc import Iterable, Sequence
 from dataclasses import dataclass
 from enum import Enum
 from typing import (
     Any,
     Callable,
-    DefaultDict,
-    Deque,
-    Dict,
-    FrozenSet,
     Generic,
-    Iterable,
-    List,
     Literal,
     Optional,
-    Sequence,
-    Set,
-    Tuple,
     TypeVar,
     Union,
 )
@@ -31,21 +24,21 @@ from tests.models import Person
 
 def test_handles_complex_typing() -> None:
     class MyModel(BaseModel):
-        nested_dict: Dict[str, Dict[Union[int, str], Dict[Any, List[Dict[str, str]]]]]
-        dict_str_any: Dict[str, Any]
-        nested_list: List[List[List[Dict[str, List[Any]]]]]
+        nested_dict: dict[str, dict[Union[int, str], dict[Any, list[dict[str, str]]]]]
+        dict_str_any: dict[str, Any]
+        nested_list: list[list[list[dict[str, list[Any]]]]]
         sequence_literal: Sequence[Literal[1, 2, 3]]
-        sequence_dict: Sequence[Dict[str, Any]]
+        sequence_dict: Sequence[dict[str, Any]]
         iterable_float: Iterable[float]
-        tuple_ellipsis: Tuple[int, ...]
-        tuple_str_str: Tuple[str, str]
-        default_dict: DefaultDict[str, List[Dict[str, int]]]
-        deque: Deque[List[Dict[str, int]]]
-        set_union: Set[Union[str, int]]
-        frozen_set: FrozenSet[str]
-        plain_list: List[Any]
-        plain_set: Set[Any]
-        plain_dict: Dict[str, Any]
+        tuple_ellipsis: tuple[int, ...]
+        tuple_str_str: tuple[str, str]
+        default_dict: defaultdict[str, list[dict[str, int]]]
+        deque: deque[list[dict[str, int]]]
+        set_union: set[Union[str, int]]
+        frozen_set: frozenset[str]
+        plain_list: list[Any]
+        plain_set: set[Any]
+        plain_dict: dict[str, Any]
 
     class MyFactory(ModelFactory):
         __model__ = MyModel
@@ -69,8 +62,8 @@ def test_handles_complex_typing() -> None:
 
 def test_handles_complex_typing_with_embedded_models() -> None:
     class MyModel(BaseModel):
-        person_dict: Dict[str, Person]
-        person_list: List[Person]
+        person_dict: dict[str, Person]
+        person_list: list[Person]
 
     class MyFactory(ModelFactory):
         __model__ = MyModel
@@ -87,7 +80,7 @@ def test_raises_for_user_defined_types() -> None:
             self.value = value
 
     class MyModel(BaseModel):
-        my_class_field: Dict[str, MyClass]
+        my_class_field: dict[str, MyClass]
 
         class Config:
             arbitrary_types_allowed = True
@@ -103,10 +96,10 @@ def test_randomizes_optional_returns() -> None:
     """this is a flaky test - because it depends on randomness, hence it's been re-ran multiple times."""
 
     class MyModel(BaseModel):
-        optional_1: Optional[List[str]]
-        optional_2: Optional[Dict[str, str]]
-        optional_3: Optional[Set[str]]
-        optional_4: Optional[Dict[int, str]]
+        optional_1: Optional[list[str]]
+        optional_2: Optional[dict[str, str]]
+        optional_3: Optional[set[str]]
+        optional_4: Optional[dict[int, str]]
 
     class MyFactory(ModelFactory):
         __model__ = MyModel
@@ -146,7 +139,7 @@ def test_complex_typing_with_enum() -> None:
         MONKEY = "Monkey"
 
     class MyModel(BaseModel):
-        animal_list: List[Animal]
+        animal_list: list[Animal]
 
     class MyFactory(ModelFactory):
         __model__ = MyModel
@@ -195,7 +188,7 @@ def test_non_collection_generic() -> None:
 def test_sequence_dict() -> None:
     @dataclass
     class MyModel:
-        sequence_dict: Sequence[Dict]
+        sequence_dict: Sequence[dict]
 
     class MyFactory(DataclassFactory):
         __model__ = MyModel

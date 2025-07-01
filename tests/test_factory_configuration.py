@@ -1,5 +1,5 @@
 from dataclasses import dataclass
-from typing import Any, Callable, Dict, List, Type
+from typing import Any, Callable
 
 from typing_extensions import TypeGuard
 
@@ -15,7 +15,7 @@ def test_setting_set_as_default_factory_for_type_on_base_factory() -> None:
         __set_as_default_factory_for_type__ = True
 
         @classmethod
-        def is_supported_type(cls, value: Any) -> TypeGuard[Type[T]]:
+        def is_supported_type(cls, value: Any) -> TypeGuard[type[T]]:
             # Set this as false since this factory will be injected into the
             # list of base factories, but this obviously shouldn't be ran
             # for any of the types.
@@ -29,12 +29,12 @@ def test_inheriting_config() -> None:
 
     @dataclass
     class Child:
-        a: List[int]
+        a: list[int]
         custom_type: CustomType
 
     @dataclass
     class Parent:
-        children: List[Child]
+        children: list[Child]
 
     class ParentFactory(DataclassFactory[Parent]):
         __randomize_collection_length__ = True
@@ -42,7 +42,7 @@ def test_inheriting_config() -> None:
         __max_collection_length__ = 5
 
         @classmethod
-        def get_provider_map(cls) -> Dict[Any, Callable[[], Any]]:
+        def get_provider_map(cls) -> dict[Any, Callable[[], Any]]:
             return {
                 **super().get_provider_map(),
                 int: lambda: 42,
