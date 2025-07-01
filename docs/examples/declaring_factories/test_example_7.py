@@ -1,5 +1,5 @@
 from datetime import date, datetime
-from typing import Any, Dict, List, Union
+from typing import Any, Union
 from uuid import UUID
 
 import attrs
@@ -11,12 +11,12 @@ from polyfactory.factories.attrs_factory import AttrsFactory
 class Person:
     id: UUID
     name: str
-    hobbies: List[str]
+    hobbies: list[str]
     age: Union[float, int]
     # an aliased variable
     birthday: Union[datetime, date] = attrs.field(alias="date_of_birth")
     # a "private" variable
-    _assets: List[Dict[str, Dict[str, Any]]]
+    _assets: list[dict[str, dict[str, Any]]]
 
 
 class PersonFactory(AttrsFactory[Person]): ...

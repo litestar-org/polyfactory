@@ -1,6 +1,6 @@
 from enum import Enum
 from ipaddress import ip_network
-from typing import Any, Dict, List
+from typing import Any
 from uuid import UUID
 
 import pytest
@@ -24,7 +24,7 @@ class Author(Base):
     __tablename__ = "authors"
 
     id: orm.Mapped[int] = orm.mapped_column(primary_key=True)
-    books: orm.Mapped[List["Book"]] = orm.relationship(
+    books: orm.Mapped[list["Book"]] = orm.relationship(
         "Book",
         uselist=True,
         back_populates="author",
@@ -56,7 +56,7 @@ def test_python_type_handling_v2() -> None:
         id: orm.Mapped[int] = orm.mapped_column(primary_key=True)
         str_type: orm.Mapped[str]
         enum_type: orm.Mapped[Animal]
-        str_array_type: orm.Mapped[List[str]] = orm.mapped_column(
+        str_array_type: orm.Mapped[list[str]] = orm.mapped_column(
             type_=types.ARRAY(types.String),
         )
 
@@ -78,29 +78,29 @@ def test_sqla_dialect_types() -> None:
         __tablename__ = "sql_models"
         id: orm.Mapped[int] = orm.mapped_column(primary_key=True)
         uuid_type: orm.Mapped[UUID] = orm.mapped_column(type_=types.UUID)
-        nested_array_inet: orm.Mapped[List[str]] = orm.mapped_column(type_=ARRAY(INET, dimensions=1))
-        nested_array_cidr: orm.Mapped[List[str]] = orm.mapped_column(type_=ARRAY(CIDR, dimensions=1))
-        hstore_type: orm.Mapped[Dict] = orm.mapped_column(type_=HSTORE)
-        mut_nested_array_inet: orm.Mapped[List[str]] = orm.mapped_column(
+        nested_array_inet: orm.Mapped[list[str]] = orm.mapped_column(type_=ARRAY(INET, dimensions=1))
+        nested_array_cidr: orm.Mapped[list[str]] = orm.mapped_column(type_=ARRAY(CIDR, dimensions=1))
+        hstore_type: orm.Mapped[dict] = orm.mapped_column(type_=HSTORE)
+        mut_nested_array_inet: orm.Mapped[list[str]] = orm.mapped_column(
             type_=MutableList.as_mutable(ARRAY(INET, dimensions=1))
         )
-        pg_json_type: orm.Mapped[Dict] = orm.mapped_column(type_=JSON)
-        pg_jsonb_type: orm.Mapped[Dict] = orm.mapped_column(type_=JSONB)
-        common_json_type: orm.Mapped[Dict] = orm.mapped_column(type_=types.JSON)
-        mysql_json: orm.Mapped[Dict] = orm.mapped_column(type_=MYSQL_JSON)
-        sqlite_json: orm.Mapped[Dict] = orm.mapped_column(type_=SQLITE_JSON)
-        mssql_json: orm.Mapped[Dict] = orm.mapped_column(type_=MSSQL_JSON)
+        pg_json_type: orm.Mapped[dict] = orm.mapped_column(type_=JSON)
+        pg_jsonb_type: orm.Mapped[dict] = orm.mapped_column(type_=JSONB)
+        common_json_type: orm.Mapped[dict] = orm.mapped_column(type_=types.JSON)
+        mysql_json: orm.Mapped[dict] = orm.mapped_column(type_=MYSQL_JSON)
+        sqlite_json: orm.Mapped[dict] = orm.mapped_column(type_=SQLITE_JSON)
+        mssql_json: orm.Mapped[dict] = orm.mapped_column(type_=MSSQL_JSON)
 
-        multable_pg_json_type: orm.Mapped[Dict] = orm.mapped_column(
+        multable_pg_json_type: orm.Mapped[dict] = orm.mapped_column(
             type_=MutableDict.as_mutable(JSON(astext_type=Text()))
         )
-        multable_pg_jsonb_type: orm.Mapped[Dict] = orm.mapped_column(
+        multable_pg_jsonb_type: orm.Mapped[dict] = orm.mapped_column(
             type_=MutableDict.as_mutable(JSONB(astext_type=Text()))
         )
-        multable_common_json_type: orm.Mapped[Dict] = orm.mapped_column(type_=MutableDict.as_mutable(types.JSON()))
-        multable_mysql_json: orm.Mapped[Dict] = orm.mapped_column(type_=MutableDict.as_mutable(MYSQL_JSON()))
-        multable_sqlite_json: orm.Mapped[Dict] = orm.mapped_column(type_=MutableDict.as_mutable(SQLITE_JSON()))
-        multable_mssql_json: orm.Mapped[Dict] = orm.mapped_column(type_=MutableDict.as_mutable(MSSQL_JSON()))
+        multable_common_json_type: orm.Mapped[dict] = orm.mapped_column(type_=MutableDict.as_mutable(types.JSON()))
+        multable_mysql_json: orm.Mapped[dict] = orm.mapped_column(type_=MutableDict.as_mutable(MYSQL_JSON()))
+        multable_sqlite_json: orm.Mapped[dict] = orm.mapped_column(type_=MutableDict.as_mutable(SQLITE_JSON()))
+        multable_mssql_json: orm.Mapped[dict] = orm.mapped_column(type_=MutableDict.as_mutable(MSSQL_JSON()))
 
     class ModelFactory(SQLAlchemyFactory[SqlaModel]):
         __model__ = SqlaModel

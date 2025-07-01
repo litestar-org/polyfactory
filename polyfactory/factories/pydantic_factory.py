@@ -5,7 +5,7 @@ from datetime import timezone
 from functools import partial
 from os.path import realpath
 from pathlib import Path
-from typing import TYPE_CHECKING, Any, ClassVar, ForwardRef, Generic, Mapping, TypeVar, cast
+from typing import TYPE_CHECKING, Any, ClassVar, ForwardRef, Generic, TypeVar, cast
 from uuid import NAMESPACE_DNS, uuid1, uuid3, uuid5
 
 from typing_extensions import Literal, get_args
@@ -89,7 +89,8 @@ except ImportError:
 
 if TYPE_CHECKING:
     from collections import abc
-    from typing import Callable, Sequence
+    from collections.abc import Mapping, Sequence
+    from typing import Callable
 
     from typing_extensions import NotRequired, TypeGuard
 

@@ -1,7 +1,7 @@
 import random
 from dataclasses import dataclass
 from datetime import datetime, timedelta
-from typing import Any, ClassVar, List, Optional, Union
+from typing import Any, ClassVar, Optional, Union
 
 import pytest
 
@@ -209,10 +209,10 @@ def test_non_existent_fields_raise(
 def test_mutable_defaults() -> None:
     @dataclass
     class A:
-        a: List[str]
+        a: list[str]
 
     class AFactory(DataclassFactory[A]):
-        a: ClassVar[List[str]] = []
+        a: ClassVar[list[str]] = []
 
     AFactory.build().a.append("a")
     assert AFactory.build().a == []

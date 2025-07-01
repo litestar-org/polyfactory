@@ -1,18 +1,9 @@
 from __future__ import annotations
 
 from collections import abc, defaultdict, deque
+from collections.abc import Iterable, Mapping, Sequence
 from random import Random
 from typing import (
-    DefaultDict,
-    Deque,
-    Dict,
-    FrozenSet,
-    Iterable,
-    List,
-    Mapping,
-    Sequence,
-    Set,
-    Tuple,
     Union,
 )
 
@@ -24,16 +15,16 @@ except ImportError:
 
 # Mapping of type annotations into concrete types.
 TYPE_MAPPING = {
-    DefaultDict: defaultdict,
-    Deque: deque,
-    Dict: dict,
-    FrozenSet: frozenset,
+    defaultdict: defaultdict,
+    deque: deque,
+    dict: dict,
+    frozenset: frozenset,
     Iterable: list,
-    List: list,
+    list: list,
     Mapping: dict,
     Sequence: list,
-    Set: set,
-    Tuple: tuple,
+    set: set,
+    tuple: tuple,
     abc.Iterable: list,
     abc.Mapping: dict,
     abc.Sequence: list,

@@ -1,6 +1,8 @@
 from __future__ import annotations
 
-from typing import TYPE_CHECKING, AbstractSet, Any, Iterable, MutableMapping, MutableSequence, Set, Tuple, cast
+from collections.abc import Iterable, MutableMapping, MutableSequence
+from collections.abc import Set as AbstractSet
+from typing import TYPE_CHECKING, Any, cast
 
 from typing_extensions import is_typeddict
 
@@ -37,7 +39,7 @@ def handle_collection_type(
 
     if issubclass(container_type, MutableMapping) or is_typeddict(container_type):
         for key_field_meta, value_field_meta in cast(
-            "Iterable[Tuple[FieldMeta, FieldMeta]]",
+            "Iterable[tuple[FieldMeta, FieldMeta]]",
             zip(field_meta.children[::2], field_meta.children[1::2]),
         ):
             key = factory.get_field_value(
@@ -60,7 +62,7 @@ def handle_collection_type(
         )
         return container
 
-    if issubclass(container_type, Set):
+    if issubclass(container_type, set):
         for subfield_meta in field_meta.children:
             container.add(
                 factory.get_field_value(
@@ -107,7 +109,7 @@ def handle_collection_type_coverage(  # noqa: C901, PLR0911
 
     if issubclass(container_type, MutableMapping) or is_typeddict(container_type):
         for key_field_meta, value_field_meta in cast(
-            "Iterable[Tuple[FieldMeta, FieldMeta]]",
+            "Iterable[tuple[FieldMeta, FieldMeta]]",
             zip(field_meta.children[::2], field_meta.children[1::2]),
         ):
             key = CoverageContainer(factory.get_field_value_coverage(key_field_meta, build_context=build_context))
@@ -122,7 +124,7 @@ def handle_collection_type_coverage(  # noqa: C901, PLR0911
 
         return container_instance
 
-    if issubclass(container_type, Set):
+    if issubclass(container_type, set):
         set_instance = container_type()
         for subfield_meta in field_meta.children:
             set_instance = set_instance.union(

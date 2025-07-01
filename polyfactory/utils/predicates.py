@@ -1,10 +1,9 @@
 from __future__ import annotations
 
 from inspect import isclass
-from typing import Any, Literal, NewType, Optional, TypeVar, get_args
+from typing import Annotated, Any, Literal, NewType, Optional, TypeVar, get_args
 
 from typing_extensions import (
-    Annotated,
     NotRequired,
     ParamSpec,
     Required,

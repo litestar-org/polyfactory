@@ -1,5 +1,4 @@
 from dataclasses import dataclass as vanilla_dataclass
-from typing import List
 
 from typing_extensions import TypedDict
 
@@ -20,7 +19,7 @@ class B(BaseModel):
 
 class C(BaseModel):
     b: B
-    b_list: List[B]
+    b_list: list[B]
 
 
 def test_auto_register_model_factory() -> None:
@@ -63,7 +62,7 @@ def test_dataclass_model_factory_auto_registration() -> None:
 
     class UpperModel(BaseModel):
         nested_field: DataClass
-        nested_list_field: List[DataClass]
+        nested_list_field: list[DataClass]
 
     class UpperModelFactory(ModelFactory):
         __model__ = UpperModel
@@ -85,7 +84,7 @@ def test_typeddict_model_factory_auto_registration() -> None:
 
     class UpperSchema(BaseModel):
         nested_field: TD
-        nested_list_field: List[TD]
+        nested_list_field: list[TD]
 
     class UpperModelFactory(ModelFactory):
         __model__ = UpperSchema
