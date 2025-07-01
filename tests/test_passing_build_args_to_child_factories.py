@@ -1,4 +1,5 @@
-from typing import List, Mapping, Optional
+from collections.abc import Mapping
+from typing import Optional
 
 from pydantic import BaseModel
 
@@ -19,19 +20,19 @@ class Material(BaseModel):
 class Toy(BaseModel):
     name: str
     weight: float
-    materials: List[Material]
+    materials: list[Material]
 
 
 class Pet(BaseModel):
     name: str
     age: int
-    toys: List[Toy]
+    toys: list[Toy]
 
 
 class Person(BaseModel):
     name: str
     age: int
-    pets: List[Pet]
+    pets: list[Pet]
     address: Address
 
 

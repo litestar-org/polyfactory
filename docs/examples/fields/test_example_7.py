@@ -1,12 +1,12 @@
 from dataclasses import dataclass, field
 from datetime import datetime, timedelta
-from typing import Any, Dict
+from typing import Any
 
 from polyfactory import PostGenerated
 from polyfactory.factories import DataclassFactory
 
 
-def add_timedelta(name: str, values: Dict[str, datetime], *args: Any, **kwargs: Any) -> datetime:
+def add_timedelta(name: str, values: dict[str, datetime], *args: Any, **kwargs: Any) -> datetime:
     delta = timedelta(days=1)
     return values["from_dt"] + delta
 

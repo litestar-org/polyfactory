@@ -1,7 +1,7 @@
 from dataclasses import dataclass
 from datetime import date, datetime
 from enum import Enum
-from typing import Any, Dict, List, Union
+from typing import Any, Union
 from uuid import UUID
 
 from polyfactory.factories import DataclassFactory
@@ -23,11 +23,11 @@ class Pet:
 class Person:
     id: UUID
     name: str
-    hobbies: List[str]
+    hobbies: list[str]
     age: Union[float, int]
     birthday: Union[datetime, date]
     pet: Pet
-    assets: List[Dict[str, Dict[str, Any]]]
+    assets: list[dict[str, dict[str, Any]]]
 
 
 class PetFactory(DataclassFactory[Pet]):

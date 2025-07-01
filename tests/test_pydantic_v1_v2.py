@@ -1,9 +1,8 @@
 """Tests to check that usage of pydantic v1 and v2 at the same time works."""
 
-from typing import Dict, List, Optional, Tuple, Type, Union
+from typing import Annotated, Optional, Union
 
 import pytest
-from typing_extensions import Annotated
 
 import pydantic
 
@@ -21,7 +20,7 @@ except ImportError:
 
 
 @pytest.mark.parametrize("base_model", [BaseModelV1, BaseModelV2])
-def test_is_supported_type(base_model: Type[Union[BaseModelV1, BaseModelV2]]) -> None:
+def test_is_supported_type(base_model: type[Union[BaseModelV1, BaseModelV2]]) -> None:
     class Foo(base_model):  # type: ignore[valid-type, misc]
         ...
 
@@ -29,7 +28,7 @@ def test_is_supported_type(base_model: Type[Union[BaseModelV1, BaseModelV2]]) ->
 
 
 @pytest.mark.parametrize("base_model", [BaseModelV1, BaseModelV2])
-def test_build(base_model: Type[Union[BaseModelV1, BaseModelV2]]) -> None:
+def test_build(base_model: type[Union[BaseModelV1, BaseModelV2]]) -> None:
     class Foo(base_model):  # type: ignore[valid-type, misc]
         a: int
         b: str
@@ -55,8 +54,8 @@ def test_build_v1_with_constrained_fields() -> None:
         c: Union[ConstrainedInt, ConstrainedStr]
         d: Optional[ConstrainedInt]
         e: Optional[Union[ConstrainedInt, ConstrainedStr]]
-        f: List[ConstrainedInt]
-        g: Dict[ConstrainedInt, ConstrainedStr]
+        f: list[ConstrainedInt]
+        g: dict[ConstrainedInt, ConstrainedStr]
 
     ModelFactory.create_factory(Foo).build()
 
@@ -73,15 +72,15 @@ def test_build_v2_with_constrained_fields() -> None:
         c: Union[ConstrainedInt, ConstrainedStr]
         d: Optional[ConstrainedInt]
         e: Optional[Union[ConstrainedInt, ConstrainedStr]]
-        f: List[ConstrainedInt]
-        g: Dict[ConstrainedInt, ConstrainedStr]
+        f: list[ConstrainedInt]
+        g: dict[ConstrainedInt, ConstrainedStr]
 
     ModelFactory.create_factory(Foo).build()
 
 
 def test_variadic_tuple_length() -> None:
     class Foo(pydantic.BaseModel):
-        bar: Tuple[int, ...]
+        bar: tuple[int, ...]
 
     class Factory(ModelFactory[Foo]):
         __randomize_collection_length__ = True
@@ -101,6 +100,6 @@ def test_build_v1_with_url_and_email_types() -> None:
         any_url: AnyUrl
         email_str: EmailStr
         name_email: NameEmail
-        composed: Tuple[HttpUrl, AnyHttpUrl, AnyUrl, EmailStr, NameEmail]
+        composed: tuple[HttpUrl, AnyHttpUrl, AnyUrl, EmailStr, NameEmail]
 
     ModelFactory.create_factory(Foo).build()
