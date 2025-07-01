@@ -1,4 +1,6 @@
 import dataclasses
+import sys
+import textwrap
 from dataclasses import dataclass as vanilla_dataclass
 from dataclasses import field
 from types import ModuleType
@@ -351,3 +353,23 @@ def test_optional_type(allow_none: bool) -> None:
 
         if isinstance(a.c, list):
             assert all(isinstance(value, int) for value in a.c)
+
+
+@pytest.mark.skipif(sys.version_info < (3, 12), reason="PEP 695 requires Python 3.12+")
+def test_pep695_dict_union_types(create_module: Callable[[str], ModuleType]) -> None:
+    """Test type aliases with dict unions."""
+    module = create_module(
+        textwrap.dedent("""
+            from dataclasses import dataclass
+
+            type IntDict = dict[str, int]
+            type StrDict = dict[str, str]
+            type MixedDict = IntDict | StrDict
+
+            @dataclass
+            class Foo:
+                data: MixedDict
+                nested: dict[str, MixedDict]
+        """)
+    )
+    DataclassFactory.create_factory(module.Foo).build()
