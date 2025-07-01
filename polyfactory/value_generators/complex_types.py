@@ -4,7 +4,6 @@ from typing import TYPE_CHECKING, AbstractSet, Any, Iterable, MutableMapping, Mu
 
 from typing_extensions import is_typeddict
 
-from polyfactory.constants import INSTANTIABLE_TYPE_MAPPING, PY_38
 from polyfactory.utils.model_coverage import CoverageContainer
 
 if TYPE_CHECKING:
@@ -29,10 +28,6 @@ def handle_collection_type(
 
     :returns: A built result.
     """
-
-    if PY_38 and container_type in INSTANTIABLE_TYPE_MAPPING:
-        container_type = INSTANTIABLE_TYPE_MAPPING[container_type]  # type: ignore[assignment]
-
     container = container_type()
     if field_meta.children is None or any(
         child_meta.annotation in factory._get_build_context(build_context)["seen_models"]
