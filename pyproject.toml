@@ -42,7 +42,7 @@ dependencies = ["faker>=5.0.0", "typing-extensions>=4.6.0"]
 
 [project.optional-dependencies]
 sqlalchemy = ["sqlalchemy>=1.4.29"]
-pydantic = ["pydantic[email]>=1.10"]
+pydantic = ["eval-type-backport>=0.2.2", "pydantic[email]>=1.10"]
 msgspec = ["msgspec"]
 odmantic = ["odmantic<1.0.0", "pydantic[email]"]
 beanie = ["beanie", "pydantic[email]", "pymongo<4.9"]
