@@ -2,7 +2,7 @@ import random
 import warnings
 from dataclasses import dataclass
 from datetime import datetime, timedelta
-from typing import Any, ClassVar, List, Optional, Union
+from typing import Any, ClassVar, Optional, Union
 
 import pytest
 
@@ -235,10 +235,10 @@ def test_check_model_overridden_no_deprecation() -> None:
 def test_mutable_defaults() -> None:
     @dataclass
     class A:
-        a: List[str]
+        a: list[str]
 
     class AFactory(DataclassFactory[A]):
-        a: ClassVar[List[str]] = []
+        a: ClassVar[list[str]] = []
 
     AFactory.build().a.append("a")
     assert AFactory.build().a == []

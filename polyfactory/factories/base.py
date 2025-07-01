@@ -4,6 +4,7 @@ import copy
 import inspect
 from abc import ABC, abstractmethod
 from collections import Counter, abc, deque
+from collections.abc import Collection, Hashable, Iterable, Mapping, Sequence
 from contextlib import suppress
 from datetime import date, datetime, time, timedelta
 from decimal import Decimal
@@ -29,13 +30,7 @@ from typing import (
     Any,
     Callable,
     ClassVar,
-    Collection,
     Generic,
-    Hashable,
-    Iterable,
-    Mapping,
-    Sequence,
-    Type,
     TypedDict,
     TypeVar,
     cast,
@@ -620,7 +615,7 @@ class BaseFactory(ABC, Generic[T]):
                 raise TypeError(msg) from ex
 
         return cast(
-            "Type[Self]",
+            "type[Self]",
             type(
                 f"{model.__name__}Factory",  # pyright: ignore[reportOptionalMemberAccess]
                 (*(bases or ()), cls),

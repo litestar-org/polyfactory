@@ -1,5 +1,3 @@
-from typing import List
-
 from sqlalchemy import ForeignKey
 from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column, relationship
 
@@ -15,7 +13,7 @@ class Author(Base):
     id: Mapped[int] = mapped_column(primary_key=True)
     name: Mapped[str]
 
-    books: Mapped[List["Book"]] = relationship("Book", uselist=True)
+    books: Mapped[list["Book"]] = relationship("Book", uselist=True)
 
 
 class Book(Base):
