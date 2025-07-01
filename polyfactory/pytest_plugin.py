@@ -6,7 +6,6 @@ from typing import (
     Any,
     Callable,
     Literal,
-    Type,
     TypeVar,
     Union,
     cast,
@@ -78,7 +77,7 @@ class FactoryFixture:
 
         def _factory_fixture() -> type[T]:
             """The wrapped factory"""
-            return cast("Type[T]", factory)
+            return cast("type[T]", factory)
 
         caller_globals = inspect.stack()[depth][0].f_globals
         caller_globals[fixture_name] = fixture_register(_factory_fixture)

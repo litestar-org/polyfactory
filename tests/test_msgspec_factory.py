@@ -2,13 +2,12 @@ import datetime as dt
 import sys
 from decimal import Decimal
 from enum import Enum
-from typing import Any, Dict, FrozenSet, Generic, List, NewType, Optional, Set, Tuple, Type, TypeVar, Union
+from typing import Annotated, Any, Generic, NewType, Optional, TypeVar, Union
 from uuid import UUID
 
 import msgspec
 import pytest
 from msgspec import Meta, Struct, structs
-from typing_extensions import Annotated
 
 from polyfactory.exceptions import ParameterException
 from polyfactory.factories.msgspec_factory import MsgspecFactory
@@ -34,10 +33,10 @@ def test_with_basic_types_without_constraints() -> None:
         str_field: str
         bytse_field: bytes
         bytearray_field: bytearray
-        tuple_field: Tuple[int, str]
-        tuple_with_variadic_args: Tuple[int, ...]
-        list_field: List[int]
-        dict_field: Dict[str, int]
+        tuple_field: tuple[int, str]
+        tuple_with_variadic_args: tuple[int, ...]
+        list_field: list[int]
+        dict_field: dict[str, int]
         datetime_field: dt.datetime
         date_field: dt.date
         time_field: dt.time
@@ -65,8 +64,8 @@ def test_other_basic_types() -> None:
         BAR = "bar"
 
     class Foo(Struct):
-        set_field: Set[int]
-        frozenset_field: FrozenSet[int]
+        set_field: set[int]
+        frozenset_field: frozenset[int]
         enum_type: SampleEnum
 
     class FooFactory(MsgspecFactory[Foo]):
@@ -103,7 +102,7 @@ def test_with_new_type() -> None:
 
     class User(Struct):
         name: UnixName
-        groups: List[UnixName]
+        groups: list[UnixName]
         constrained_name: Annotated[UnixName, Meta(min_length=20)]
 
     class UserFactory(MsgspecFactory[User]):
@@ -138,8 +137,8 @@ def test_with_constraints() -> None:
         float_field: Annotated[float, msgspec.Meta(ge=10, le=500, multiple_of=2)]
         str_field: Annotated[str, msgspec.Meta(min_length=100, max_length=500, pattern=r"\w")]
         bytes_field: Annotated[bytes, msgspec.Meta(min_length=100, max_length=500)]
-        tuple_field: Annotated[Tuple[int, ...], msgspec.Meta(min_length=10, max_length=100)]
-        list_field: Annotated[List[int], msgspec.Meta(min_length=10, max_length=100)]
+        tuple_field: Annotated[tuple[int, ...], msgspec.Meta(min_length=10, max_length=100)]
+        list_field: Annotated[list[int], msgspec.Meta(min_length=10, max_length=100)]
 
     class FooFactory(MsgspecFactory[Foo]):
         __model__ = Foo
@@ -154,7 +153,7 @@ def test_with_constraints() -> None:
 @pytest.mark.skipif(sys.version_info < (3, 9), reason="flaky in 3.8")
 def test_dict_constraints() -> None:
     class Foo(Struct):
-        dict_field: Annotated[Dict[str, int], msgspec.Meta(min_length=1)]
+        dict_field: Annotated[dict[str, int], msgspec.Meta(min_length=1)]
 
     class FooFactory(MsgspecFactory[Foo]):
         __model__ = Foo
@@ -168,7 +167,7 @@ def test_dict_constraints() -> None:
 
 @pytest.mark.skipif(sys.version_info < (3, 9), reason="flaky in 3.8")
 @pytest.mark.parametrize("t", (dt.datetime, dt.time))
-def test_datetime_constraints(t: Union[Type[dt.datetime], Type[dt.time]]) -> None:
+def test_datetime_constraints(t: Union[type[dt.datetime], type[dt.time]]) -> None:
     class Foo(Struct):
         date_field: Annotated[t, msgspec.Meta(tz=True)]  # type: ignore[valid-type]
 
@@ -220,10 +219,10 @@ def test_sequence_with_constrained_item_types() -> None:
     ConstrainedInt = Annotated[int, Meta(ge=100, le=200)]
 
     class Foo(Struct):
-        list_field: List[ConstrainedInt]
-        tuple_field: Tuple[ConstrainedInt]
-        variable_tuple_field: Tuple[ConstrainedInt, ...]
-        set_field: Set[ConstrainedInt]
+        list_field: list[ConstrainedInt]
+        tuple_field: tuple[ConstrainedInt]
+        variable_tuple_field: tuple[ConstrainedInt, ...]
+        set_field: set[ConstrainedInt]
 
     class FooFactory(MsgspecFactory[Foo]):
         __model__ = Foo
@@ -239,7 +238,7 @@ def test_mapping_with_constrained_item_types() -> None:
     ConstrainedStr = Annotated[str, Meta(min_length=1, max_length=3)]
 
     class Foo(Struct):
-        dict_field = Dict[ConstrainedStr, ConstrainedInt]
+        dict_field = dict[ConstrainedStr, ConstrainedInt]
 
     class FooFactory(MsgspecFactory[Foo]):
         __model__ = Foo
@@ -278,9 +277,9 @@ def test_use_default_with_non_callable_default() -> None:
 
 def test_union_types() -> None:
     class A(Struct):
-        a: Union[List[str], int]
-        b: Union[str, List[int]]
-        c: List[Union[Tuple[int, int], float]]
+        a: Union[list[str], int]
+        b: Union[str, list[int]]
+        c: list[Union[tuple[int, int], float]]
 
     AFactory = MsgspecFactory.create_factory(A)
 
@@ -296,8 +295,8 @@ def test_collection_unions_with_models() -> None:
         a: str
 
     class C(Struct):
-        a: Union[List[A], str]
-        b: List[Union[A, int]]
+        a: Union[list[A], str]
+        b: list[Union[A, int]]
 
     CFactory = MsgspecFactory.create_factory(C)
 
@@ -307,12 +306,12 @@ def test_collection_unions_with_models() -> None:
 
 def test_constrained_union_types() -> None:
     class A(Struct):
-        a: Union[Annotated[List[str], Meta(min_length=10)], Annotated[int, Meta(ge=1000)]]
-        b: Union[List[Annotated[str, Meta(min_length=20)]], int]
+        a: Union[Annotated[list[str], Meta(min_length=10)], Annotated[int, Meta(ge=1000)]]
+        b: Union[list[Annotated[str, Meta(min_length=20)]], int]
         c: Optional[Annotated[int, Meta(ge=1000)]]
-        d: Union[Annotated[List[int], Meta(min_length=100)], Annotated[str, Meta(min_length=100)]]
-        e: Optional[Union[Annotated[List[int], Meta(min_length=100)], Annotated[str, Meta(min_length=100)]]]
-        f: Optional[Union[Annotated[List[int], Meta(min_length=100)], str]]
+        d: Union[Annotated[list[int], Meta(min_length=100)], Annotated[str, Meta(min_length=100)]]
+        e: Optional[Union[Annotated[list[int], Meta(min_length=100)], Annotated[str, Meta(min_length=100)]]]
+        f: Optional[Union[Annotated[list[int], Meta(min_length=100)], str]]
 
     AFactory = MsgspecFactory.create_factory(A, __allow_none_optionals__=False)
 
@@ -325,7 +324,7 @@ def test_optional_type(allow_none: bool) -> None:
     class A(Struct):
         a: Union[str, None]
         b: Optional[str]
-        c: Optional[Union[str, int, List[int]]]
+        c: Optional[Union[str, int, list[int]]]
 
     class AFactory(MsgspecFactory[A]):
         __model__ = A
@@ -338,10 +337,10 @@ def test_optional_type(allow_none: bool) -> None:
 
 def test_annotated_children() -> None:
     class A(Struct):
-        a: Dict[int, Annotated[str, Meta(min_length=20)]]
-        b: List[Annotated[int, Meta(gt=1000)]]
-        c: Annotated[List[Annotated[int, Meta(gt=1000)]], Meta(min_length=50)]
-        d: Dict[int, Annotated[List[Annotated[str, Meta(min_length=1)]], Meta(min_length=1)]]
+        a: dict[int, Annotated[str, Meta(min_length=20)]]
+        b: list[Annotated[int, Meta(gt=1000)]]
+        c: Annotated[list[Annotated[int, Meta(gt=1000)]], Meta(min_length=50)]
+        d: dict[int, Annotated[list[Annotated[str, Meta(min_length=1)]], Meta(min_length=1)]]
 
     class AFactory(MsgspecFactory[A]):
         __model__ = A

@@ -2,7 +2,8 @@ from __future__ import annotations
 
 from abc import ABC, abstractmethod
 from collections.abc import Callable, Iterable, Iterator, Mapping, MutableSequence
-from typing import AbstractSet, Any, Generic, Set, TypeVar, cast
+from collections.abc import Set as AbstractSet
+from typing import Any, Generic, TypeVar, cast
 
 from typing_extensions import ParamSpec
 
@@ -117,7 +118,7 @@ def _resolve_next(unresolved: Any) -> tuple[Any, bool]:  # noqa: C901
             result = tuple(result)
         return result, done_status
 
-    if isinstance(unresolved, Set):
+    if isinstance(unresolved, set):
         result = type(unresolved)()
         done_status = True
         for value in unresolved:

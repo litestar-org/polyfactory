@@ -2,7 +2,7 @@ import sys
 from datetime import date
 from decimal import Decimal
 from types import ModuleType
-from typing import Any, Callable, Dict, List, NewType, Optional, Tuple, Union
+from typing import Any, Callable, NewType, Optional, Union
 
 import pytest
 
@@ -51,12 +51,12 @@ def test_complex_new_types() -> None:
     MyNestedModel = NewType("MyNestedModel", NestedModel)
 
     class MyModel(BaseModel):
-        list_int_field: List[MyInt]
+        list_int_field: list[MyInt]
         union_field: Union[MyInt, MyStr]
         optional_str_field: Optional[MyStr]
-        tuple_str_str: Tuple[MyStr, MyStr]
-        dict_field: Dict[MyStr, Any]
-        complex_dict_field: Dict[MyStr, Dict[Union[MyInt, MyStr], MyInt]]
+        tuple_str_str: tuple[MyStr, MyStr]
+        dict_field: dict[MyStr, Any]
+        complex_dict_field: dict[MyStr, dict[Union[MyInt, MyStr], MyInt]]
         nested_model_field: MyNestedModel
 
     class MyModelFactory(ModelFactory):

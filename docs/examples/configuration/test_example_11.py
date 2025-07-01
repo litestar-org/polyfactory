@@ -1,12 +1,12 @@
 from __future__ import annotations
 
 from dataclasses import dataclass
-from typing import List, Union
+from typing import Union
 
 from polyfactory.factories import DataclassFactory
 
 # Define a recursive type using forward reference
-RecursiveType = Union[List["RecursiveType"], int]
+RecursiveType = Union[list["RecursiveType"], int]
 
 
 @dataclass
