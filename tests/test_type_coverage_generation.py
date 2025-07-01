@@ -1,3 +1,4 @@
+# ruff: noqa: UP007
 from __future__ import annotations
 
 from collections.abc import Iterable
@@ -24,9 +25,9 @@ def test_coverage_count() -> None:
     @dataclass
     class Profile:
         name: str
-        high_score: int | float
+        high_score: Union[int, float]
         dob: date
-        data: str | date | int | float
+        data: Union[str, date, int, float]
 
     class ProfileFactory(DataclassFactory[Profile]):
         __model__ = Profile
@@ -42,7 +43,7 @@ def test_coverage_count() -> None:
 def test_coverage_tuple() -> None:
     @dataclass
     class Pair:
-        tuple_: tuple[int | str, tuple[int | float, int]]
+        tuple_: tuple[Union[int, str], tuple[Union[int, float], int]]
 
     class TupleFactory(DataclassFactory[Pair]):
         __model__ = Pair
@@ -104,8 +105,8 @@ def test_coverage_dict() -> None:
     @dataclass
     class Thesaurus:
         dict_simple: dict[str, int]
-        dict_more_key_types: dict[str | int | float, int | str]
-        dict_more_value_types: dict[str, int | str]
+        dict_more_key_types: dict[Union[str, int, float], Union[int, str]]
+        dict_more_value_types: dict[str, Union[int, str]]
 
     class ThesaurusFactory(DataclassFactory[Thesaurus]):
         __model__ = Thesaurus
@@ -119,7 +120,7 @@ def test_coverage_dict() -> None:
 def test_coverage_recursive() -> None:
     @dataclass
     class Recursive:
-        r: Recursive | None
+        r: Union[Recursive, None]
 
     class RecursiveFactory(DataclassFactory[Recursive]):
         __model__ = Recursive
@@ -132,8 +133,8 @@ def test_coverage_typed_dict() -> None:
     class TypedThesaurus(TypedDict):
         number: int
         string: str
-        union: int | str
-        collection: list[int | str]
+        union: Union[int, str]
+        collection: list[Union[int, str]]
 
     class TypedThesaurusFactory(TypedDictFactory[TypedThesaurus]):
         __model__ = TypedThesaurus
@@ -151,8 +152,8 @@ def test_coverage_typed_dict_field() -> None:
     class TypedThesaurus(TypedDict):
         number: int
         string: str
-        union: int | str
-        collection: list[int | str]
+        union: Union[int, str]
+        collection: list[Union[int, str]]
 
     class TypedThesaurusFactory(TypedDictFactory[TypedThesaurus]):
         __model__ = TypedThesaurus
@@ -171,7 +172,7 @@ def test_coverage_values_unique() -> None:
     @dataclass
     class Unique:
         uuid: UUID
-        data: int | str
+        data: Union[int, str]
 
     class UniqueFactory(DataclassFactory[Unique]):
         __model__ = Unique
@@ -234,11 +235,11 @@ def test_coverage_optional_field() -> None:
     assert results[1].i is None
 
 
-def type_exists_at_path_any(objs: Iterable, path: list[int | str], target_type: type) -> bool:
+def type_exists_at_path_any(objs: Iterable, path: list[Union[int, str]], target_type: type) -> bool:
     return any(type_exists_at_path(obj, path, target_type) for obj in objs)
 
 
-def type_exists_at_path(obj: Any, path: list[int | str], target_type: type) -> bool:
+def type_exists_at_path(obj: Any, path: list[Union[int, str]], target_type: type) -> bool:
     """Determine if a type exists at a path through a given object
 
         type_exists_at_path(obj, ["i", "*"], int)
@@ -274,7 +275,7 @@ def type_exists_at_path(obj: Any, path: list[int | str], target_type: type) -> b
     return type_exists_at_path(item, path[1:], target_type)
 
 
-def get_or_index(obj: Any, idx: int | str) -> tuple[Any, bool]:
+def get_or_index(obj: Any, idx: Union[int, str]) -> tuple[Any, bool]:
     if isinstance(idx, str):
         if idx not in dir(obj):
             return None, False
@@ -363,7 +364,7 @@ def test_optional_set_uuid() -> None:
 )
 def test_optional_mixed_collections() -> None:
     class Model(BaseModel):
-        maybe_uuids: set[UUID] | list[UUID] | None
+        maybe_uuids: Union[set[UUID], list[UUID]] | None
 
     results = list(ModelFactory.create_factory(Model).coverage())
     assert type_exists_at_path_any(results, ["maybe_uuids"], set)
