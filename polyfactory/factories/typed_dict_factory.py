@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from typing import Any, Generic, TypeVar, get_args
+from typing import Any, Generic, TypeVar, get_args, get_type_hints
 
 from typing_extensions import (  # type: ignore[attr-defined]
     NotRequired,
@@ -8,7 +8,6 @@ from typing_extensions import (  # type: ignore[attr-defined]
     TypeGuard,
     _TypedDictMeta,  # pyright: ignore[reportAttributeAccessIssue]
     get_origin,
-    get_type_hints,
     is_typeddict,
 )
 

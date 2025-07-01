@@ -1,9 +1,8 @@
 from abc import ABC, abstractmethod
 from dataclasses import dataclass
-from typing import Any, Callable, Dict, NewType
+from typing import Annotated, Any, Callable, NewType
 
 import pytest
-from typing_extensions import Annotated
 
 from pydantic.main import BaseModel
 
@@ -26,7 +25,7 @@ def test_multiple_base_factories() -> None:
         __is_base_factory__ = True
 
         @classmethod
-        def get_provider_map(cls) -> Dict[Any, Any]:
+        def get_provider_map(cls) -> dict[Any, Any]:
             return {Foo: lambda: Foo("foo"), **super().get_provider_map()}
 
     # noinspection PyUnusedLocal
@@ -60,7 +59,7 @@ def test_multiple_base_pydantic_factories(override_BaseModel: bool) -> None:
         __is_base_factory__ = True
 
         @classmethod
-        def get_provider_map(cls) -> Dict[Any, Any]:
+        def get_provider_map(cls) -> dict[Any, Any]:
             return {Foo: lambda: Foo("foo"), **super().get_provider_map()}
 
     # noinspection PyUnusedLocal
@@ -118,7 +117,7 @@ def test_abstract_classes_are_ignored() -> None:
 
     class ModelFactory(DataclassFactory[Model]):
         @classmethod
-        def get_provider_map(cls) -> Dict[type, Callable[[], Any]]:
+        def get_provider_map(cls) -> dict[type, Callable[[], Any]]:
             return {
                 **super().get_provider_map(),
                 Base: Concrete,
@@ -144,7 +143,7 @@ def test_annotated_types_used_as_provider() -> None:
 
     class Factory(DataclassFactory[Model]):
         @classmethod
-        def get_provider_map(cls) -> Dict[Any, Callable[[], Any]]:
+        def get_provider_map(cls) -> dict[Any, Callable[[], Any]]:
             return {
                 **super().get_provider_map(),
                 AnnotatedType: lambda: "foo",

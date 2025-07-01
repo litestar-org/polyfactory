@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from typing import TYPE_CHECKING, Callable, Pattern, TypeVar, Union, cast
+from typing import TYPE_CHECKING, Callable, TypeVar, Union, cast
 
 from polyfactory.exceptions import ParameterException
 from polyfactory.value_generators.primitives import create_random_bytes, create_random_string
@@ -10,6 +10,7 @@ T = TypeVar("T", bound=Union[bytes, str])
 
 if TYPE_CHECKING:
     from random import Random
+    from re import Pattern
 
 
 def _validate_length(
