@@ -1,12 +1,14 @@
 import re
 import sys
+import textwrap
 from collections import Counter, deque
 from dataclasses import dataclass
 from datetime import date, datetime, time, timedelta
 from decimal import Decimal
 from ipaddress import IPv4Address, IPv4Interface, IPv4Network, IPv6Address, IPv6Interface, IPv6Network
 from pathlib import Path
-from typing import Callable, Dict, FrozenSet, List, Literal, Optional, Sequence, Set, Tuple, Type, Union
+from types import ModuleType
+from typing import Any, Callable, Dict, FrozenSet, List, Literal, Optional, Sequence, Set, Tuple, Type, Union
 from uuid import UUID
 
 import pytest
@@ -64,8 +66,10 @@ from pydantic import (
     validator,
 )
 
+from polyfactory.exceptions import ParameterException
 from polyfactory.factories import DataclassFactory
 from polyfactory.factories.pydantic_factory import _IS_PYDANTIC_V1, ModelFactory
+from polyfactory.field_meta import FieldMeta
 from tests.models import Person, PetFactory
 
 IS_PYDANTIC_V1 = _IS_PYDANTIC_V1
@@ -634,6 +638,49 @@ def test_union_types() -> None:
     assert AFactory.build()
 
 
+@pytest.mark.skipif(sys.version_info < (3, 10), reason="requires modern union types")
+@pytest.mark.skipif(IS_PYDANTIC_V1, reason="pydantic 2 only test")
+def test_optional_custom_type() -> None:
+    from pydantic_core import core_schema
+
+    class CustomType:
+        def __init__(self, _: Any) -> None:
+            pass
+
+        def __get_pydantic_core_schema__(self, _: Any) -> core_schema.StringSchema:
+            # for pydantic to stop complaining
+            return core_schema.str_schema()
+
+    class OptionalFormOne(BaseModel):
+        optional_custom_type: Optional[CustomType]
+
+        @classmethod
+        def should_set_none_value(cls, field_meta: FieldMeta) -> bool:
+            return False
+
+    class OptionalFormOneFactory(ModelFactory[OptionalFormOne]):
+        @classmethod
+        def should_set_none_value(cls, field_meta: FieldMeta) -> bool:
+            return False
+
+    class OptionalFormTwo(BaseModel):
+        # this is represented differently than `Optional[None]` internally
+        optional_custom_type_second_form: CustomType | None
+
+    class OptionalFormTwoFactory(ModelFactory[OptionalFormTwo]):
+        @classmethod
+        def should_set_none_value(cls, field_meta: FieldMeta) -> bool:
+            return False
+
+    # ensure the custom type field name and variant is in the error message
+
+    with pytest.raises(ParameterException, match=r"optional_custom_type"):
+        OptionalFormOneFactory.build()
+
+    with pytest.raises(ParameterException, match=r"optional_custom_type_second_form"):
+        OptionalFormTwoFactory.build()
+
+
 def test_collection_unions_with_models() -> None:
     class A(BaseModel):
         a: int
@@ -1115,3 +1162,297 @@ def test_rebuild() -> None:
         pass
 
     assert isinstance(BaseFactory.build(), Base)
+
+
+@pytest.mark.skipif(sys.version_info < (3, 12), reason="PEP 695 requires Python 3.12+")
+@pytest.mark.skipif(IS_PYDANTIC_V1, reason="only for Pydantic v2")
+def test_pep695_basic_type_alias(create_module: Callable[[str], ModuleType]) -> None:
+    """Test basic type alias without generics."""
+    module = create_module(
+        textwrap.dedent("""
+            from pydantic import BaseModel
+
+            type UserId = int
+            type Username = str
+
+            class Foo(BaseModel):
+                id: UserId
+                name: Username
+        """)
+    )
+    ModelFactory.create_factory(module.Foo).build()
+
+
+@pytest.mark.skipif(sys.version_info < (3, 12), reason="PEP 695 requires Python 3.12+")
+@pytest.mark.skipif(IS_PYDANTIC_V1, reason="only for Pydantic v2")
+def test_pep695_generic_type_alias(create_module: Callable[[str], ModuleType]) -> None:
+    """Test generic type alias with single type parameter."""
+    module = create_module(
+        textwrap.dedent("""
+            from pydantic import BaseModel
+
+            type Container[T] = list[T] | tuple[T]
+
+            class Foo(BaseModel):
+                strings: Container[str]
+                numbers: Container[int]
+        """)
+    )
+    ModelFactory.create_factory(module.Foo).build()
+
+
+@pytest.mark.skipif(sys.version_info < (3, 12), reason="PEP 695 requires Python 3.12+")
+@pytest.mark.skipif(IS_PYDANTIC_V1, reason="only for Pydantic v2")
+def test_pep695_nested_generic_type_alias(create_module: Callable[[str], ModuleType]) -> None:
+    """Test nested generic type aliases."""
+    module = create_module(
+        textwrap.dedent("""
+            from pydantic import BaseModel
+
+            type Inner[T] = list[T]
+            type Outer[T] = Inner[Inner[T]]
+
+            class Foo(BaseModel):
+                nested: Outer[int]
+        """)
+    )
+    ModelFactory.create_factory(module.Foo).build()
+
+
+@pytest.mark.skipif(sys.version_info < (3, 12), reason="PEP 695 requires Python 3.12+")
+@pytest.mark.skipif(IS_PYDANTIC_V1, reason="only for Pydantic v2")
+def test_pep695_annotated_type_alias(create_module: Callable[[str], ModuleType]) -> None:
+    """Test type alias with Annotated types."""
+    module = create_module(
+        textwrap.dedent("""
+            from typing import Annotated
+            from annotated_types import Gt, MaxLen
+            from pydantic import BaseModel
+
+            type PositiveInt = Annotated[int, Gt(0)]
+            type ShortStr = Annotated[str, MaxLen(5)]
+
+            class Foo(BaseModel):
+                age: PositiveInt
+                code: ShortStr
+        """)
+    )
+    ModelFactory.create_factory(module.Foo).build()
+
+
+@pytest.mark.skipif(sys.version_info < (3, 12), reason="PEP 695 requires Python 3.12+")
+@pytest.mark.skipif(IS_PYDANTIC_V1, reason="only for Pydantic v2")
+def test_pep695_union_of_annotated_types(create_module: Callable[[str], ModuleType]) -> None:
+    """Test type alias that is a union of annotated types."""
+    module = create_module(
+        textwrap.dedent("""
+            from typing import Annotated
+            from annotated_types import Le, Ge
+            from pydantic import BaseModel
+
+            type SmallInt = Annotated[int, Le(10)]
+            type LargeInt = Annotated[int, Ge(100)]
+            type ExtremeInt = SmallInt | LargeInt
+
+            class Foo(BaseModel):
+                value: ExtremeInt
+        """)
+    )
+    ModelFactory.create_factory(module.Foo).build()
+
+
+@pytest.mark.skipif(sys.version_info < (3, 12), reason="PEP 695 requires Python 3.12+")
+@pytest.mark.skipif(IS_PYDANTIC_V1, reason="only for Pydantic v2")
+def test_pep695_recursive_annotation_field(create_module: Callable[[str], ModuleType]) -> None:
+    """Test the original recursive annotation case."""
+    module = create_module(
+        textwrap.dedent("""
+            from typing import Annotated
+            from annotated_types import Lt
+            from pydantic import BaseModel
+
+            type NegativeInt = Annotated[int, Lt(0)]
+            type NonEmptyIterable[T] = list[T] | tuple[T]
+
+            class Foo(BaseModel):
+                field: NonEmptyIterable[NonEmptyIterable[NegativeInt]]
+        """)
+    )
+    ModelFactory.create_factory(module.Foo).build()
+
+
+@pytest.mark.skipif(sys.version_info < (3, 12), reason="PEP 695 requires Python 3.12+")
+@pytest.mark.skipif(IS_PYDANTIC_V1, reason="only for Pydantic v2")
+def test_pep695_complex_nested_unions(create_module: Callable[[str], ModuleType]) -> None:
+    """Test complex nested unions with constraints."""
+    module = create_module(
+        textwrap.dedent("""
+            from typing import Annotated
+            from annotated_types import MinLen
+            from pydantic import BaseModel
+
+            type NumStr = int | str
+            type Container[T] = Annotated[list[T], MinLen(1)] | dict[str, T]
+
+            class Foo(BaseModel):
+                data: Container[Container[NumStr]]
+        """)
+    )
+    ModelFactory.create_factory(module.Foo).build()
+
+
+@pytest.mark.skipif(sys.version_info < (3, 12), reason="PEP 695 requires Python 3.12+")
+@pytest.mark.skipif(IS_PYDANTIC_V1, reason="only for Pydantic v2")
+def test_pep695_multiple_type_parameters(create_module: Callable[[str], ModuleType]) -> None:
+    """Test type alias with multiple type parameters."""
+    module = create_module(
+        textwrap.dedent("""
+            from pydantic import BaseModel
+
+            type Pair[T, U] = tuple[T, U] | list[T | U]
+
+            class Foo(BaseModel):
+                int_str_pair: Pair[int, str]
+                float_bool_pair: Pair[float, bool]
+        """)
+    )
+    ModelFactory.create_factory(module.Foo).build()
+
+
+@pytest.mark.skipif(sys.version_info < (3, 12), reason="PEP 695 requires Python 3.12+")
+@pytest.mark.skipif(IS_PYDANTIC_V1, reason="only for Pydantic v2")
+def test_pep695_with_pydantic_field(create_module: Callable[[str], ModuleType]) -> None:
+    """Test type alias with Pydantic Field constraints."""
+    module = create_module(
+        textwrap.dedent("""
+            from typing import Annotated
+            from annotated_types import Ge, Le
+            from pydantic import BaseModel, Field
+
+            type Score = Annotated[int, Ge(0), Le(100)]
+
+            class Foo(BaseModel):
+                test_score: Score = Field(description="Test score between 0 and 100")
+                final_score: Score = Field(default=75)
+        """)
+    )
+    ModelFactory.create_factory(module.Foo).build()
+
+
+@pytest.mark.skipif(sys.version_info < (3, 12), reason="PEP 695 requires Python 3.12+")
+@pytest.mark.skipif(IS_PYDANTIC_V1, reason="only for Pydantic v2")
+def test_pep695_optional_types(create_module: Callable[[str], ModuleType]) -> None:
+    """Test type alias with optional types."""
+    module = create_module(
+        textwrap.dedent("""
+            from pydantic import BaseModel
+
+            type MaybeInt = int | None
+            type OptionalContainer[T] = list[T] | None
+
+            class Foo(BaseModel):
+                maybe_number: MaybeInt
+                maybe_strings: OptionalContainer[str]
+        """)
+    )
+    ModelFactory.create_factory(module.Foo).build()
+
+
+@pytest.mark.skipif(sys.version_info < (3, 12), reason="PEP 695 requires Python 3.12+")
+@pytest.mark.skipif(IS_PYDANTIC_V1, reason="only for Pydantic v2")
+def test_pep695_annotated_union_distribution(create_module: Callable[[str], ModuleType]) -> None:
+    """Test that Annotated[Union[...], constraint] distributes constraints correctly."""
+    module = create_module(
+        textwrap.dedent("""
+            from typing import Annotated
+            from annotated_types import MinLen
+            from pydantic import BaseModel
+
+            type ConstrainedUnion = Annotated[list[int] | dict[str, int], MinLen(2)]
+
+            class Foo(BaseModel):
+                data: ConstrainedUnion
+        """)
+    )
+    ModelFactory.create_factory(module.Foo).build()
+
+
+@pytest.mark.skipif(sys.version_info < (3, 12), reason="PEP 695 requires Python 3.12+")
+@pytest.mark.skipif(IS_PYDANTIC_V1, reason="only for Pydantic v2")
+def test_pep695_deeply_nested_structure(create_module: Callable[[str], ModuleType]) -> None:
+    """Test deeply nested type aliases."""
+    module = create_module(
+        textwrap.dedent("""
+            from pydantic import BaseModel
+
+            type Level1[T] = list[T]
+            type Level2[T] = Level1[Level1[T]]
+            type Level3[T] = dict[str, Level2[T]] | Level2[T]
+
+            class Foo(BaseModel):
+                deep_data: Level3[int]
+        """)
+    )
+    ModelFactory.create_factory(module.Foo).build()
+
+
+@pytest.mark.skipif(sys.version_info < (3, 12), reason="PEP 695 requires Python 3.12+")
+@pytest.mark.skipif(IS_PYDANTIC_V1, reason="only for Pydantic v2")
+def test_pep695_with_decimal_constraints(create_module: Callable[[str], ModuleType]) -> None:
+    """Test type alias with decimal constraints."""
+    module = create_module(
+        textwrap.dedent("""
+            from typing import Annotated
+            from decimal import Decimal
+            from annotated_types import Ge, MultipleOf
+            from pydantic import BaseModel
+
+            type Price = Annotated[Decimal, Ge(0), MultipleOf(Decimal("0.01"))]
+
+            class Foo(BaseModel):
+                amount: Price
+        """)
+    )
+    ModelFactory.create_factory(module.Foo).build()
+
+
+@pytest.mark.skipif(sys.version_info < (3, 12), reason="PEP 695 requires Python 3.12+")
+@pytest.mark.skipif(IS_PYDANTIC_V1, reason="only for Pydantic v2")
+def test_pep695_with_nested_constraints(create_module: Callable[[str], ModuleType]) -> None:
+    """Test nested type aliases with various constraint combinations."""
+    module = create_module(
+        textwrap.dedent("""
+            from typing import Annotated
+            from annotated_types import Gt, MaxLen
+            from pydantic import BaseModel
+
+            type PositiveInt = Annotated[int, Gt(0)]
+            type SmallList[T] = Annotated[list[T], MaxLen(5)]
+            type Container[T] = SmallList[T] | tuple[T, ...]
+
+            class Foo(BaseModel):
+                numbers: Container[PositiveInt]
+                nested: SmallList[Container[int]]
+        """)
+    )
+    ModelFactory.create_factory(module.Foo).build()
+
+
+@pytest.mark.skipif(sys.version_info < (3, 12), reason="PEP 695 requires Python 3.12+")
+@pytest.mark.skipif(IS_PYDANTIC_V1, reason="only for Pydantic v2")
+def test_pep695_dict_union_types(create_module: Callable[[str], ModuleType]) -> None:
+    """Test type aliases with dict unions."""
+    module = create_module(
+        textwrap.dedent("""
+            from pydantic import BaseModel
+
+            type IntDict = dict[str, int]
+            type StrDict = dict[str, str]
+            type MixedDict = IntDict | StrDict
+
+            class Foo(BaseModel):
+                data: MixedDict
+                nested: dict[str, MixedDict]
+        """)
+    )
+    ModelFactory.create_factory(module.Foo).build()
