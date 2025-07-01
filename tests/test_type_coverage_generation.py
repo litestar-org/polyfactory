@@ -4,7 +4,7 @@ from __future__ import annotations
 from collections.abc import Iterable
 from dataclasses import dataclass, make_dataclass
 from datetime import date
-from typing import Any, Literal, Union
+from typing import Any, Literal, Optional, Union
 from uuid import UUID
 
 import pytest
@@ -305,8 +305,8 @@ def test_coverage_optional_list() -> None:
 def test_optional_lists() -> None:
     class Model(BaseModel):
         just_a_list: list[int]
-        optional_list: list[int] | None
-        optional_nested_list: list[list[list[int]]] | None
+        optional_list: Optional[list[int]]
+        optional_nested_list: Optional[list[list[list[int]]]]
 
     results = list(ModelFactory.create_factory(Model).coverage())
     assert type_exists_at_path_any(results, ["just_a_list"], list)
@@ -340,7 +340,7 @@ def test_hetero_tuple_types() -> None:
 
 def test_optional_list_uuid() -> None:
     class Model(BaseModel):
-        maybe_uuids: list[UUID] | None
+        maybe_uuids: Optional[list[UUID]]
 
     results = list(ModelFactory.create_factory(Model).coverage())
     assert type_exists_at_path_any(results, ["maybe_uuids"], list)
@@ -350,7 +350,7 @@ def test_optional_list_uuid() -> None:
 
 def test_optional_set_uuid() -> None:
     class Model(BaseModel):
-        maybe_uuids: set[UUID] | None
+        maybe_uuids: Optional[set[UUID]]
 
     results = list(ModelFactory.create_factory(Model).coverage())
     assert type_exists_at_path_any(results, ["maybe_uuids"], set)
