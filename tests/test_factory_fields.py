@@ -1,4 +1,5 @@
 import random
+import warnings
 from dataclasses import dataclass
 from datetime import datetime, timedelta
 from typing import Any, ClassVar, List, Optional, Union
@@ -204,6 +205,31 @@ def test_non_existing_model_fields_raises_with__check__model__(
         match="unknown_field is declared on the factory NoFieldModelFactory but it is not part of the model NoFieldModel",
     ):
         ModelFactory.create_factory(NoFieldModel, bases=None, __check_model__=True, unknown_field=factory_field)
+
+
+def test_check_model_deprecation() -> None:
+    with pytest.warns(DeprecationWarning, match=r"Use of deprecated default '__check_model__'"):
+
+        class MyModel(BaseModel):
+            name: str
+
+        class MyFactory(ModelFactory[MyModel]): ...
+
+
+def test_check_model_overridden_no_deprecation() -> None:
+    with warnings.catch_warnings():
+        warnings.simplefilter("error")
+        warnings.filterwarnings(
+            "ignore",
+            category=DeprecationWarning,
+            message=r"Failing to pass a value to the 'type_params' parameter of 'typing._eval_type' is deprecated",
+        )
+
+        class MyModel(BaseModel):
+            name: str
+
+        class MyFactory(ModelFactory[MyModel]):
+            __check_model__ = False
 
 
 def test_mutable_defaults() -> None:
