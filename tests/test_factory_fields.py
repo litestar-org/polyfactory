@@ -219,6 +219,11 @@ def test_check_model_deprecation() -> None:
 def test_check_model_overridden_no_deprecation() -> None:
     with warnings.catch_warnings():
         warnings.simplefilter("error")
+        warnings.filterwarnings(
+            "ignore",
+            category=DeprecationWarning,
+            message=r"Failing to pass a value to the 'type_params' parameter of 'typing._eval_type' is deprecated",
+        )
 
         class MyModel(BaseModel):
             name: str
