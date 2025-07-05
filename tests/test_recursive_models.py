@@ -5,7 +5,8 @@ from typing import Any, Dict, Iterable, List, Optional, TypeVar, Union
 
 import pytest
 
-from pydantic import BaseModel, Field, JsonValue
+from pydantic import BaseModel, Field
+from pydantic import __version__ as pydantic_version
 
 from polyfactory.factories.dataclass_factory import DataclassFactory
 from polyfactory.factories.pydantic_factory import ModelFactory
@@ -90,7 +91,10 @@ def test_recursive_list_model() -> None:
     assert book_factory.build(author=None).author is None
 
 
+@pytest.mark.skipif(pydantic_version.startswith("1"), reason="Pydantic v2+ is required for JsonValue")
 def test_recursive_type_annotation() -> None:
+    from pydantic import JsonValue
+
     class RecursiveTypeModel(BaseModel):
         json_value: JsonValue
 
