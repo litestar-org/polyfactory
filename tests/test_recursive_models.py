@@ -107,7 +107,7 @@ def test_recursive_type_annotation() -> None:
     assert _get_types(result.json_value for result in factory.coverage()) == valid_types
 
 
-RecursiveType = list["RecursiveType"] | int
+RecursiveType = Union[List["RecursiveType"], int]
 
 
 def test_recursive_model_with_forward_ref() -> None:
