@@ -1,11 +1,11 @@
 from __future__ import annotations
 
 from dataclasses import dataclass, field
-from typing import Any, Dict, List, Optional, Union
+from typing import Any, Dict, Iterable, List, Optional, TypeVar, Union
 
 import pytest
 
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, JsonValue
 
 from polyfactory.factories.dataclass_factory import DataclassFactory
 from polyfactory.factories.pydantic_factory import ModelFactory
@@ -88,3 +88,40 @@ def test_recursive_list_model() -> None:
     book_factory = DataclassFactory.create_factory(Book)
     assert book_factory.build().author.books == []
     assert book_factory.build(author=None).author is None
+
+
+def test_recursive_type_annotation() -> None:
+    class RecursiveTypeModel(BaseModel):
+        json_value: JsonValue
+
+    factory = ModelFactory.create_factory(RecursiveTypeModel)
+    results = factory.batch(50)
+
+    valid_types = {int, str, bool, float, dict, list, type(None)}
+
+    assert _get_types(result.json_value for result in results) == valid_types
+    assert _get_types(result.json_value for result in factory.coverage()) == valid_types
+
+
+RecursiveType = list["RecursiveType"] | int
+
+
+def test_recursive_model_with_forward_ref() -> None:
+    @dataclass
+    class RecursiveTypeModel:
+        json_value: RecursiveType
+
+    factory = DataclassFactory.create_factory(RecursiveTypeModel)
+    results = factory.batch(50)
+
+    valid_types = {int, list}
+
+    assert _get_types(result.json_value for result in results) == valid_types
+    assert _get_types(result.json_value for result in factory.coverage()) == valid_types
+
+
+_T = TypeVar("_T")
+
+
+def _get_types(items: Iterable[_T]) -> set[type[_T]]:
+    return {type(item) for item in items}
