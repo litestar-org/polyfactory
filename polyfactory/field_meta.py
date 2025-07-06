@@ -85,6 +85,7 @@ class FieldMeta:
         default: Any = Null,
         children: list[FieldMeta] | None = None,
         constraints: Constraints | None = None,
+        required: bool = True,
     ) -> None:
         """Create a factory field metadata instance."""
         self.annotation = annotation
@@ -92,6 +93,7 @@ class FieldMeta:
         self.default = default
         self.name = name
         self.constraints = constraints
+        self.required = required
 
     def __repr__(self) -> str:
         """Return a string representation of the field meta."""
@@ -119,6 +121,7 @@ class FieldMeta:
         default: Any = Null,
         constraints: Constraints | None = None,
         children: list[FieldMeta] | None = None,
+        required: bool = True,
     ) -> Self:
         """Builder method to create a FieldMeta from a type annotation.
 
@@ -147,6 +150,7 @@ class FieldMeta:
             default=default,
             children=children,
             constraints=constraints,
+            required=required,
         )
 
         if field.type_args and not field.children:

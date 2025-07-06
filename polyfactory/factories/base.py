@@ -273,7 +273,6 @@ class BaseFactory(ABC, Generic[T]):
 
         :returns: Inferred model type or None
         """
-
         factory_bases: Iterable[type[BaseFactory[T]]] = (
             b for b in get_original_bases(cls) if (orig := get_origin(b)) and issubclass(orig, BaseFactory)
         )
@@ -752,6 +751,9 @@ class BaseFactory(ABC, Generic[T]):
         if field_build_parameters is None and cls.should_set_none_value(field_meta=field_meta):
             return None
 
+        if not field_meta.required and create_random_boolean(cls.__random__):
+            return Null
+
         unwrapped_annotation = unwrap_annotation(field_meta.annotation)
         unwrapped_annotation = cls._resolve_forward_references(unwrapped_annotation)
 
@@ -880,6 +882,9 @@ class BaseFactory(ABC, Generic[T]):
         """
         if cls.is_ignored_type(field_meta.annotation):
             return
+
+        if not field_meta.required:
+            yield Null
 
         for unwrapped_annotation in flatten_annotation(field_meta.annotation):
             unwrapped_annotation = cls._resolve_forward_references(unwrapped_annotation)  # noqa: PLW2901
@@ -1013,7 +1018,6 @@ class BaseFactory(ABC, Generic[T]):
     @abstractmethod
     def get_model_fields(cls) -> list[FieldMeta]:  # pragma: no cover
         """Retrieve a list of fields from the factory's model.
-
 
         :returns: A list of field MetaData instances.
 
