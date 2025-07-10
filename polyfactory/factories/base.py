@@ -284,7 +284,9 @@ class BaseFactory(ABC, Generic[T]):
         """
 
         factory_bases: Iterable[type[BaseFactory[T]]] = (
-            b for b in get_original_bases(cls) if get_origin(b) and issubclass(get_origin(b), BaseFactory)
+            b
+            for b in get_original_bases(cls)
+            if (orig := get_origin(b)) and issubclass(orig, BaseFactory)
         )
         generic_args: Sequence[type[T]] = [
             arg for factory_base in factory_bases for arg in get_args(factory_base) if not is_type_var(arg)
