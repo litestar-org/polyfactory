@@ -222,6 +222,7 @@ data-aria-dark="Switch to auto color mode">
 <li><a class="reference internal" href="#check-factory-fields">Check Factory Fields</a></li>
 <li><a class="reference internal" href="#use-default-values">Use Default Values</a></li>
 <li><a class="reference internal" href="#use-example-values-pydantic-v2">Use Example Values (Pydantic &gt;= V2)</a></li>
+<li><a class="reference internal" href="#forward-references">Forward References</a></li>
 </ul>
 </div><a class="js-repo-stats repo-stats flex items-center" href="https://github.com/litestar-org/polyfactory"
   data-type="github" data-user="litestar-org" data-repo="polyfactory">
@@ -765,6 +766,47 @@ provided there’s a non-empty list of examples defined for that field.</p>
 </span><span data-line="17">    <span class="k">assert</span> <span class="n">instance</span><span class="o">.</span><span class="n">currency</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;USD&quot;</span><span class="p">,</span> <span class="s2">&quot;EUR&quot;</span><span class="p">,</span> <span class="s2">&quot;INR&quot;</span><span class="p">]</span>
 </span></pre></div>
 </div>
+</div>
+</section>
+<section id="forward-references">
+<h2>Forward References<a class="headerlink" href="#forward-references" title="Permalink to this heading">¶</a></h2>
+<p>The <code class="docutils literal notranslate"><span class="pre">__forward_references__</span></code> configuration allows you to resolve forward references in type annotations.
+This is useful when dealing with recursive types that cannot be resolved automatically.</p>
+<p>By default, <code class="docutils literal notranslate"><span class="pre">__forward_references__</span></code> is set to an empty dictionary. You can provide a mapping of
+forward reference names to their resolved types.</p>
+<div class="literal-block-wrapper docutils container" id="id12">
+<div class="code-block-caption"><span class="caption-text">Forward References Configuration</span><a class="headerlink" href="#id12" title="Permalink to this code">¶</a></div>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span data-line="1"><span class="kn">from</span> <span class="nn">__future__</span> <span class="kn">import</span> <span class="n">annotations</span>
+</span><span data-line="2">
+</span><span data-line="3"><span class="kn">from</span> <span class="nn">dataclasses</span> <span class="kn">import</span> <span class="n">dataclass</span>
+</span><span data-line="4"><span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">List</span><span class="p">,</span> <span class="n">Union</span>
+</span><span data-line="5">
+</span><span data-line="6"><span class="kn">from</span> <span class="nn">polyfactory.factories</span> <span class="kn">import</span> <span class="n">DataclassFactory</span>
+</span><span data-line="7">
+</span><span data-line="8"><span class="c1"># Define a recursive type using forward reference</span>
+</span><span data-line="9"><span class="n">RecursiveType</span> <span class="o">=</span> <span class="n">Union</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="s2">&quot;RecursiveType&quot;</span><span class="p">],</span> <span class="nb">int</span><span class="p">]</span>
+</span><span data-line="10">
+</span><span data-line="11">
+</span><span data-line="12"><span class="nd">@dataclass</span>
+</span><span data-line="13"><span class="k">class</span> <span class="nc">RecursiveTypeModel</span><span class="p">:</span>
+</span><span data-line="14">    <span class="n">recursive_value</span><span class="p">:</span> <span class="n">RecursiveType</span>
+</span><span data-line="15">
+</span><span data-line="16">
+</span><span data-line="17"><span class="k">class</span> <span class="nc">RecursiveTypeModelFactory</span><span class="p">(</span><span class="n">DataclassFactory</span><span class="p">[</span><span class="n">RecursiveTypeModel</span><span class="p">]):</span>
+</span><span data-line="18">    <span class="n">__forward_references__</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;RecursiveType&quot;</span><span class="p">:</span> <span class="nb">int</span><span class="p">}</span>
+</span><span data-line="19">
+</span><span data-line="20">
+</span><span data-line="21"><span class="k">def</span> <span class="nf">test_forward_references</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+</span><span data-line="22">    <span class="n">factory</span> <span class="o">=</span> <span class="n">RecursiveTypeModelFactory</span><span class="p">()</span>
+</span><span data-line="23">    <span class="n">result</span> <span class="o">=</span> <span class="n">factory</span><span class="o">.</span><span class="n">build</span><span class="p">()</span><span class="o">.</span><span class="n">recursive_value</span>
+</span><span data-line="24">    <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">result</span><span class="p">,</span> <span class="nb">int</span><span class="p">)</span> <span class="ow">or</span> <span class="p">(</span><span class="nb">isinstance</span><span class="p">(</span><span class="n">result</span><span class="p">,</span> <span class="nb">list</span><span class="p">)</span> <span class="ow">and</span> <span class="nb">all</span><span class="p">(</span><span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="nb">int</span><span class="p">)</span> <span class="k">for</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">result</span><span class="p">))</span>
+</span></pre></div>
+</div>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>The Pydantic ModelFactory has a default forward reference mapping for <code class="docutils literal notranslate"><span class="pre">JsonValue</span></code> to resolve to <code class="docutils literal notranslate"><span class="pre">str</span></code>
+to avoid recursive issues with Pydantic’s JsonValue type.</p>
 </div>
 </section>
 </section>
