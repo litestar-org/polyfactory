@@ -12,11 +12,10 @@ from polyfactory.utils.helpers import (
     get_annotation_metadata,
     is_dataclass_instance,
     unwrap_annotated,
-    unwrap_forward_ref,
     unwrap_new_type,
 )
 from polyfactory.utils.normalize_type import normalize_type
-from polyfactory.utils.predicates import is_annotated, is_forward_ref
+from polyfactory.utils.predicates import is_annotated
 from polyfactory.utils.types import NoneType
 
 if TYPE_CHECKING:
@@ -145,9 +144,6 @@ class FieldMeta:
                 ("random", random),
             ),
         )
-
-        if is_forward_ref(annotation):
-            annotation = unwrap_forward_ref(annotation)
 
         annotation = normalize_type(annotation)
         annotated = is_annotated(annotation)

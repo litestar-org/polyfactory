@@ -115,7 +115,10 @@ def test_recursive_model_with_forward_ref() -> None:
     class RecursiveTypeModel:
         json_value: RecursiveType
 
-    factory = DataclassFactory.create_factory(RecursiveTypeModel)
+    factory = DataclassFactory.create_factory(
+        RecursiveTypeModel,
+        __forward_references__={"RecursiveType": int},
+    )
     results = factory.batch(50)
 
     valid_types = {int, list}

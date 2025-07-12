@@ -182,7 +182,7 @@ def get_type_origin(annotation: Any) -> Any:
     return mapped_type if (mapped_type := TYPE_MAPPING.get(origin)) else origin
 
 
-def is_forward_ref(annotation: Any) -> bool:
+def is_forward_ref(annotation: Any) -> TypeGuard[ForwardRef]:
     """Determine if the given type annotation is a ForwardRef.
 
     :param annotation: A type annotation.

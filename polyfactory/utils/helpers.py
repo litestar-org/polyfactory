@@ -85,22 +85,6 @@ def unwrap_annotation(annotation: Any, random: Random | None = None) -> Any:
     return annotation
 
 
-def unwrap_forward_ref(annotation: Any) -> Any:
-    """Unwrap a ForwardRef.
-
-    :param annotation: A type annotation.
-
-    :returns: The unwrapped annotation.
-    """
-
-    try:
-        annotation = annotation._evaluate(globals(), locals(), set(), recursive_guard=set())
-    except (NameError, AttributeError, TypeError):
-        annotation = Any
-
-    return annotation
-
-
 def flatten_annotation(annotation: Any) -> list[Any]:
     """Flattens an annotation into an array of possible types. For example:
 
