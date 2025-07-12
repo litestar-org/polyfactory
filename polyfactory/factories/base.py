@@ -67,6 +67,7 @@ from polyfactory.utils.helpers import (
 from polyfactory.utils.model_coverage import CoverageContainer, CoverageContainerCallable, resolve_kwargs_coverage
 from polyfactory.utils.predicates import (
     get_type_origin,
+    is_forward_ref,
     is_literal,
     is_optional,
     is_safe_subclass,
@@ -175,6 +176,7 @@ class BaseFactory(ABC, Generic[T]):
     """
     Flag indicating whether to use the default value on a specific field, if provided.
     """
+    __forward_references__: ClassVar[dict[str, Any]] = {}
 
     __config_keys__: tuple[str, ...] = (
         "__check_model__",
@@ -186,6 +188,7 @@ class BaseFactory(ABC, Generic[T]):
         "__min_collection_length__",
         "__max_collection_length__",
         "__use_defaults__",
+        "__forward_references__",
     )
     """Keys to be considered as config values to pass on to dynamically created factories."""
 
@@ -768,6 +771,10 @@ class BaseFactory(ABC, Generic[T]):
             return None
 
         unwrapped_annotation = unwrap_annotation(field_meta.annotation)
+        if is_forward_ref(unwrapped_annotation):
+            unwrapped_annotation = cls.__forward_references__.get(
+                unwrapped_annotation.__forward_arg__, unwrapped_annotation
+            )
 
         if is_literal(annotation=unwrapped_annotation) and (literal_args := get_args(unwrapped_annotation)):
             return cls.__random__.choice(literal_args)
@@ -896,6 +903,11 @@ class BaseFactory(ABC, Generic[T]):
             return
 
         for unwrapped_annotation in flatten_annotation(field_meta.annotation):
+            if is_forward_ref(unwrapped_annotation):
+                unwrapped_annotation = cls.__forward_references__.get(  # noqa: PLW2901
+                    unwrapped_annotation.__forward_arg__, unwrapped_annotation
+                )
+
             if unwrapped_annotation in (None, NoneType):
                 yield None
 
