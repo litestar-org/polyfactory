@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from inspect import isclass
-from typing import Any, Literal, NewType, Optional, TypeVar, get_args
+from typing import Any, ForwardRef, Literal, NewType, Optional, TypeVar, get_args
 
 from typing_extensions import (
     Annotated,
@@ -180,3 +180,13 @@ def get_type_origin(annotation: Any) -> Any:
     if origin in (Annotated, Required, NotRequired):
         origin = get_args(annotation)[0]
     return mapped_type if (mapped_type := TYPE_MAPPING.get(origin)) else origin
+
+
+def is_forward_ref(annotation: Any) -> TypeGuard[ForwardRef]:
+    """Determine if the given type annotation is a ForwardRef.
+
+    :param annotation: A type annotation.
+
+    :returns: A boolean.
+    """
+    return isinstance(annotation, ForwardRef)

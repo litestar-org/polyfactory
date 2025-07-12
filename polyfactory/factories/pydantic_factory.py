@@ -404,6 +404,11 @@ class ModelFactory(Generic[T], BaseFactory[T]):
     >>> payment
     Payment(amount=120, currency="EUR")
     """
+    if not _IS_PYDANTIC_V1:
+        __forward_references__: ClassVar[dict[str, Any]] = {
+            # Resolve to str to avoid recursive issues
+            "JsonValue": str,
+        }
 
     __config_keys__ = (
         *BaseFactory.__config_keys__,
