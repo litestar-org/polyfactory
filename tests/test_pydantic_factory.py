@@ -461,9 +461,9 @@ def test_build_instance_by_field_alias_with_allow_population_by_field_name_flag_
 
 
 @pytest.mark.skipif(IS_PYDANTIC_V1, reason="pydantic 2 only test")
-def test_build_instance_by_field_alias_with_populate_by_name_flag_pydantic_v2() -> None:
+def test_build_instance_by_field_alias_with_validate_by_name_flag_pydantic_v2() -> None:
     class MyModel(BaseModel):
-        model_config = {"populate_by_name": True}
+        model_config = {"validate_by_name": True}
         aliased_field: str = Field(..., alias="special_field")
 
     class MyFactory(ModelFactory):
