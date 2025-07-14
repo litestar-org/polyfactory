@@ -2,18 +2,19 @@ import re
 import sys
 import textwrap
 from collections import Counter, deque
+from collections.abc import Sequence
 from dataclasses import dataclass
 from datetime import date, datetime, time, timedelta
 from decimal import Decimal
 from ipaddress import IPv4Address, IPv4Interface, IPv4Network, IPv6Address, IPv6Interface, IPv6Network
 from pathlib import Path
 from types import ModuleType
-from typing import Any, Callable, Dict, FrozenSet, List, Literal, Optional, Sequence, Set, Tuple, Type, Union
+from typing import Annotated, Any, Callable, Literal, Optional, Union
 from uuid import UUID
 
 import pytest
 from annotated_types import Ge, Gt, Le, LowerCase, MinLen, UpperCase
-from typing_extensions import Annotated, TypeAlias
+from typing_extensions import TypeAlias
 
 import pydantic
 from pydantic import (
@@ -154,10 +155,10 @@ def test_sequence_with_annotated_item_types() -> None:
     ConstrainedInt = Annotated[int, Field(ge=100, le=200)]
 
     class Foo(BaseModel):
-        list_field: List[ConstrainedInt]
-        tuple_field: Tuple[ConstrainedInt]
-        variable_tuple_field: Tuple[ConstrainedInt, ...]
-        set_field: Set[ConstrainedInt]
+        list_field: list[ConstrainedInt]
+        tuple_field: tuple[ConstrainedInt]
+        variable_tuple_field: tuple[ConstrainedInt, ...]
+        set_field: set[ConstrainedInt]
 
     class FooFactory(ModelFactory[Foo]):
         __model__ = Foo
@@ -170,7 +171,7 @@ def test_mapping_with_annotated_item_types() -> None:
     ConstrainedStr = Annotated[str, Field(min_length=1, max_length=3)]
 
     class Foo(BaseModel):
-        dict_field: Dict[ConstrainedStr, ConstrainedInt]
+        dict_field: dict[ConstrainedStr, ConstrainedInt]
 
     class FooFactory(ModelFactory[Foo]):
         __model__ = Foo
@@ -224,7 +225,7 @@ def test_factory_nested_model_collection_coverage() -> None:
         foo: int
 
     class CollectionModel(BaseModel):
-        collection: List[Nested]
+        collection: list[Nested]
 
     class CollectionModelFactory(ModelFactory[CollectionModel]):
         __model__ = CollectionModel
@@ -246,7 +247,7 @@ def test_factory_nested_model_collection_construct_coverage() -> None:
             raise ValueError("invalid by validator")
 
     class CollectionModel(BaseModel):
-        collection: List[Nested]
+        collection: list[Nested]
 
     class CollectionModelFactory(ModelFactory[CollectionModel]):
         __model__ = CollectionModel
@@ -323,8 +324,8 @@ def test_factory_use_construct_validator() -> None:
         FooFactory.build()
 
 
-@pytest.mark.parametrize("sequence_type", (Tuple, List))
-def test_factory_use_construct_nested_sequence(sequence_type: Type[Sequence]) -> None:
+@pytest.mark.parametrize("sequence_type", (tuple, list))
+def test_factory_use_construct_nested_sequence(sequence_type: type[Sequence]) -> None:
     class Child(BaseModel):
         a: int = Field(ge=0)
 
@@ -341,8 +342,8 @@ def test_factory_use_construct_nested_sequence(sequence_type: Type[Sequence]) ->
         ParentFactory.build(child=[{"a": -1}])
 
 
-@pytest.mark.parametrize("set_type", (FrozenSet, Set))
-def test_factory_use_construct_nested_set(set_type: Union[Type[FrozenSet], Type[Set]]) -> None:
+@pytest.mark.parametrize("set_type", (frozenset, set))
+def test_factory_use_construct_nested_set(set_type: Union[type[frozenset], type[set]]) -> None:
     class Child(BaseModel):
         invalid: int = Field()
 
@@ -373,7 +374,7 @@ def test_mapping_with_annotated_nested_model() -> None:
         a: int = Field(ge=0)
 
     class Parent(BaseModel):
-        dict_field: Dict[str, ChildValue]
+        dict_field: dict[str, ChildValue]
 
     class ParentFactory(ModelFactory[Parent]):
         __model__ = Parent
@@ -402,7 +403,7 @@ def test_factory_use_construct_nested_constraint_list_v1() -> None:
 
     class Parent(BaseModel):
         child: conlist(Child, min_items=1, max_items=4)  # type: ignore[valid-type]
-        child_annotated: Annotated[List[Child], Field(min_items=1, max_items=4)]
+        child_annotated: Annotated[list[Child], Field(min_items=1, max_items=4)]
 
     class ParentFactory(ModelFactory[Parent]):
         __model__ = Parent
@@ -427,7 +428,7 @@ def test_factory_use_construct_nested_constraint_list_v2() -> None:
 
     class Parent(BaseModel):
         child: conlist(Child, min_length=1, max_length=4)  # type: ignore[valid-type]
-        child_annotated: Annotated[List[Child], Field(min_length=1, max_length=4)]
+        child_annotated: Annotated[list[Child], Field(min_length=1, max_length=4)]
 
     class ParentFactory(ModelFactory[Parent]):
         __model__ = Parent
@@ -616,7 +617,7 @@ def test_optional_url_field_parsed_correctly(type_: TypeAlias) -> None:
 @pytest.mark.skipif(IS_PYDANTIC_V2, reason="pydantic 1 only test")
 def test_handles_complex_typing_with_custom_root_type() -> None:
     class MyModel(BaseModel):
-        __root__: List[int]
+        __root__: list[int]
 
     class MyFactory(ModelFactory[MyModel]):
         __model__ = MyModel
@@ -629,9 +630,9 @@ def test_handles_complex_typing_with_custom_root_type() -> None:
 
 def test_union_types() -> None:
     class A(BaseModel):
-        a: Union[List[str], List[int]]
-        b: Union[str, List[int]]
-        c: List[Union[Tuple[int, int], Tuple[str, int]]]
+        a: Union[list[str], list[int]]
+        b: Union[str, list[int]]
+        c: list[Union[tuple[int, int], tuple[str, int]]]
 
     AFactory = ModelFactory.create_factory(A)
 
@@ -689,8 +690,8 @@ def test_collection_unions_with_models() -> None:
         a: str
 
     class C(BaseModel):
-        a: Union[List[A], List[B]]
-        b: List[Union[A, B]]
+        a: Union[list[A], list[B]]
+        b: list[Union[A, B]]
 
     CFactory = ModelFactory.create_factory(C)
 
@@ -699,12 +700,12 @@ def test_collection_unions_with_models() -> None:
 
 def test_constrained_union_types() -> None:
     class A(BaseModel):
-        a: Union[Annotated[List[str], MinLen(100)], Annotated[int, Ge(1000)]]
-        b: Union[List[Annotated[str, MinLen(100)]], int]
-        c: Union[Annotated[List[int], MinLen(100)], None]
-        d: Union[Annotated[List[int], MinLen(100)], Annotated[List[str], MinLen(100)]]
-        e: Optional[Union[Annotated[List[int], MinLen(10)], Annotated[List[str], MinLen(10)]]]
-        f: Optional[Union[Annotated[List[int], MinLen(10)], List[str]]]
+        a: Union[Annotated[list[str], MinLen(100)], Annotated[int, Ge(1000)]]
+        b: Union[list[Annotated[str, MinLen(100)]], int]
+        c: Union[Annotated[list[int], MinLen(100)], None]
+        d: Union[Annotated[list[int], MinLen(100)], Annotated[list[str], MinLen(100)]]
+        e: Optional[Union[Annotated[list[int], MinLen(10)], Annotated[list[str], MinLen(10)]]]
+        f: Optional[Union[Annotated[list[int], MinLen(10)], list[str]]]
 
     AFactory = ModelFactory.create_factory(A, __allow_none_optionals__=False)
 
@@ -716,7 +717,7 @@ def test_optional_type(allow_none: bool) -> None:
     class A(BaseModel):
         a: Union[str, None]
         b: Optional[str]
-        c: Optional[Union[str, int, List[int]]]
+        c: Optional[Union[str, int, list[int]]]
 
     class AFactory(ModelFactory[A]):
         __model__ = A
@@ -768,7 +769,7 @@ def test_predicated_fields() -> None:
 
 def test_tuple_with_annotated_constraints() -> None:
     class Location(BaseModel):
-        long_lat: Tuple[Annotated[float, Ge(-180), Le(180)], Annotated[float, Ge(-90), Le(90)]]
+        long_lat: tuple[Annotated[float, Ge(-180), Le(180)], Annotated[float, Ge(-90), Le(90)]]
 
     class LocationFactory(ModelFactory[Location]):
         __model__ = Location
@@ -778,7 +779,7 @@ def test_tuple_with_annotated_constraints() -> None:
 
 def test_optional_tuple_with_annotated_constraints() -> None:
     class Location(BaseModel):
-        long_lat: Union[Tuple[Annotated[float, Ge(-180), Le(180)], Annotated[float, Ge(-90), Le(90)]], None]
+        long_lat: Union[tuple[Annotated[float, Ge(-180), Le(180)], Annotated[float, Ge(-90), Le(90)]], None]
 
     class LocationFactory(ModelFactory[Location]):
         __model__ = Location
@@ -788,7 +789,7 @@ def test_optional_tuple_with_annotated_constraints() -> None:
 
 def test_legacy_tuple_with_annotated_constraints() -> None:
     class Location(BaseModel):
-        long_lat: Tuple[Annotated[float, Ge(-180), Le(180)], Annotated[float, Ge(-90), Le(90)]]
+        long_lat: tuple[Annotated[float, Ge(-180), Le(180)], Annotated[float, Ge(-90), Le(90)]]
 
     class LocationFactory(ModelFactory[Location]):
         __model__ = Location
@@ -798,7 +799,7 @@ def test_legacy_tuple_with_annotated_constraints() -> None:
 
 def test_legacy_optional_tuple_with_annotated_constraints() -> None:
     class Location(BaseModel):
-        long_lat: Union[Tuple[Annotated[float, Ge(-180), Le(180)], Annotated[float, Ge(-90), Le(90)]], None]
+        long_lat: Union[tuple[Annotated[float, Ge(-180), Le(180)], Annotated[float, Ge(-90), Le(90)]], None]
 
     class LocationFactory(ModelFactory[Location]):
         __model__ = Location
@@ -823,7 +824,7 @@ def test_constrained_attribute_parsing_pydantic_v1() -> None:
         int_field: int = Field(gt=1, multiple_of=5)
         float_field: float = Field(gt=100, lt=1000)
         decimal_field: Decimal = Field(ge=100, le=1000)
-        list_field: List[str] = Field(min_items=1, max_items=10)  # type: ignore[call-overload]
+        list_field: list[str] = Field(min_items=1, max_items=10)  # type: ignore[call-overload]
         constant_field: int = Field(const=True, default=100)  # type: ignore[call-overload]
         optional_field: Optional[constr(min_length=1)]  # type: ignore[valid-type]
 
@@ -873,7 +874,7 @@ def test_complex_constrained_attribute_parsing_pydantic_v1() -> None:
     class MyModel(BaseModel):
         conlist_with_model_field: conlist(Person, min_items=3)  # type: ignore[valid-type]
         conlist_with_complex_type: conlist(  # type: ignore[valid-type]
-            Dict[str, Tuple[Person, Person, Person]],
+            dict[str, tuple[Person, Person, Person]],
             min_items=1,
         )
 
@@ -914,25 +915,25 @@ def test_nested_constrained_attribute_handling_pydantic_1() -> None:
         ge = Decimal("11.0")
 
     class MyModel(BaseModel):
-        conbytes_list_field: List[conbytes()]  # type: ignore[valid-type]
-        condecimal_list_field: List[condecimal()]  # type: ignore[valid-type]
-        confloat_list_field: List[confloat()]  # type: ignore[valid-type]
-        conint_list_field: List[conint()]  # type: ignore[valid-type]
-        conlist_list_field: List[conlist(str)]  # type: ignore[valid-type]
-        conset_list_field: List[conset(str)]  # type: ignore[valid-type]
-        constr_list_field: List[constr(to_lower=True)]  # type: ignore[valid-type]
+        conbytes_list_field: list[conbytes()]  # type: ignore[valid-type]
+        condecimal_list_field: list[condecimal()]  # type: ignore[valid-type]
+        confloat_list_field: list[confloat()]  # type: ignore[valid-type]
+        conint_list_field: list[conint()]  # type: ignore[valid-type]
+        conlist_list_field: list[conlist(str)]  # type: ignore[valid-type]
+        conset_list_field: list[conset(str)]  # type: ignore[valid-type]
+        constr_list_field: list[constr(to_lower=True)]  # type: ignore[valid-type]
 
-        my_bytes_list_field: List[MyConstrainedBytes]
-        my_decimal_list_field: List[MyConstrainedDecimal]
-        my_float_list_field: List[MyConstrainedFloat]
-        my_int_list_field: List[MyConstrainedInt]
-        my_str_list_field: List[MyConstrainedString]
+        my_bytes_list_field: list[MyConstrainedBytes]
+        my_decimal_list_field: list[MyConstrainedDecimal]
+        my_float_list_field: list[MyConstrainedFloat]
+        my_int_list_field: list[MyConstrainedInt]
+        my_str_list_field: list[MyConstrainedString]
 
-        my_bytes_dict_field: Dict[str, MyConstrainedBytes]
-        my_decimal_dict_field: Dict[str, MyConstrainedDecimal]
-        my_float_dict_field: Dict[str, MyConstrainedFloat]
-        my_int_dict_field: Dict[str, MyConstrainedInt]
-        my_str_dict_field: Dict[str, MyConstrainedString]
+        my_bytes_dict_field: dict[str, MyConstrainedBytes]
+        my_decimal_dict_field: dict[str, MyConstrainedDecimal]
+        my_float_dict_field: dict[str, MyConstrainedFloat]
+        my_int_dict_field: dict[str, MyConstrainedInt]
+        my_str_dict_field: dict[str, MyConstrainedString]
 
     class MyFactory(ModelFactory):
         __model__ = MyModel
@@ -967,13 +968,13 @@ def test_nested_constrained_attribute_handling_pydantic_2() -> None:
     # but is supported apparently
 
     class MyModel(BaseModel):
-        conbytes_list_field: List[conbytes()]  # type: ignore[valid-type]
-        condecimal_list_field: List[condecimal()]  # type: ignore[valid-type]
-        confloat_list_field: List[confloat()]  # type: ignore[valid-type]
-        conint_list_field: List[conint()]  # type: ignore[valid-type]
-        conlist_list_field: List[conlist(str)]  # type: ignore[valid-type]
-        conset_list_field: List[conset(str)]  # type: ignore[valid-type]
-        constr_list_field: List[constr(to_lower=True)]  # type: ignore[valid-type]
+        conbytes_list_field: list[conbytes()]  # type: ignore[valid-type]
+        condecimal_list_field: list[condecimal()]  # type: ignore[valid-type]
+        confloat_list_field: list[confloat()]  # type: ignore[valid-type]
+        conint_list_field: list[conint()]  # type: ignore[valid-type]
+        conlist_list_field: list[conlist(str)]  # type: ignore[valid-type]
+        conset_list_field: list[conset(str)]  # type: ignore[valid-type]
+        constr_list_field: list[constr(to_lower=True)]  # type: ignore[valid-type]
 
     class MyFactory(ModelFactory):
         __model__ = MyModel
@@ -1009,7 +1010,7 @@ def test_constrained_attribute_parsing_pydantic_v2() -> None:
         int_field: int = Field(gt=1, multiple_of=5)
         float_field: float = Field(gt=100, lt=1000)
         decimal_field: Decimal = Field(ge=100, le=1000)
-        list_field: List[str] = Field(min_length=1, max_length=10)
+        list_field: list[str] = Field(min_length=1, max_length=10)
         optional_field: Optional[constr(min_length=1)]  # type: ignore[valid-type]
 
     class MyFactory(ModelFactory):
@@ -1057,7 +1058,7 @@ def test_complex_constrained_attribute_parsing_pydantic_v2() -> None:
     class MyModel(BaseModel):
         conlist_with_model_field: conlist(Person, min_length=3)  # type: ignore[valid-type]
         conlist_with_complex_type: conlist(  # type: ignore[valid-type]
-            Dict[str, Tuple[Person, Person, Person]],
+            dict[str, tuple[Person, Person, Person]],
             min_length=1,
         )
 
@@ -1077,10 +1078,10 @@ def test_complex_constrained_attribute_parsing_pydantic_v2() -> None:
 
 def test_annotated_children() -> None:
     class A(BaseModel):
-        a: Dict[int, Annotated[str, MinLen(min_length=20)]]
-        b: List[Annotated[int, Gt(gt=1000)]]
-        c: Annotated[List[Annotated[int, Gt(gt=1000)]], MinLen(min_length=50)]
-        d: Dict[int, Annotated[List[Annotated[str, MinLen(1)]], MinLen(1)]]
+        a: dict[int, Annotated[str, MinLen(min_length=20)]]
+        b: list[Annotated[int, Gt(gt=1000)]]
+        c: Annotated[list[Annotated[int, Gt(gt=1000)]], MinLen(min_length=50)]
+        d: dict[int, Annotated[list[Annotated[str, MinLen(1)]], MinLen(1)]]
 
     AFactory = ModelFactory.create_factory(A)
 

@@ -1,8 +1,8 @@
 from __future__ import annotations
 
-from typing import Any, Mapping, Union
+from typing import TYPE_CHECKING, Annotated, Any, Union
 
-from typing_extensions import Annotated, get_args, get_origin
+from typing_extensions import get_args, get_origin
 
 from polyfactory.utils.predicates import (
     is_generic_alias,
@@ -10,6 +10,9 @@ from polyfactory.utils.predicates import (
     is_type_var,
     is_union,
 )
+
+if TYPE_CHECKING:
+    from collections.abc import Mapping
 
 
 def normalize_type(type_annotation: Any) -> Any:
@@ -71,7 +74,7 @@ def __handle_generic_type_alias(origin: Any, args: tuple) -> Any:
 
     if get_origin(template) is Annotated:
         base_type, *metadata = get_args(template)
-        template_result = Annotated[tuple([__apply_substitutions(base_type, substitutions)] + metadata)]  # type: ignore[valid-type]
+        template_result = Annotated[(__apply_substitutions(base_type, substitutions), *metadata)]  # type: ignore[valid-type]
     else:
         template_result = __apply_substitutions(template, substitutions)
 

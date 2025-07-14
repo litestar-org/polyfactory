@@ -1,6 +1,6 @@
 from dataclasses import dataclass
 from random import Random
-from typing import List, Union
+from typing import Union
 
 import pytest
 from faker import Faker
@@ -8,10 +8,10 @@ from faker.config import AVAILABLE_LOCALES
 
 from polyfactory.factories.dataclass_factory import DataclassFactory
 
-FakerLocaleType = Union[str, List[str]]
+FakerLocaleType = Union[str, list[str]]
 
 RANDINT_MAP = {i: Random(i).randint(0, 10) for i in range(3)}
-FAKER_LOCALES: List[FakerLocaleType] = [
+FAKER_LOCALES: list[FakerLocaleType] = [
     AVAILABLE_LOCALES[0],
     AVAILABLE_LOCALES[1],
     AVAILABLE_LOCALES[2],
