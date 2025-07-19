@@ -95,6 +95,10 @@ class FieldMeta:
         self.name = name
         self.constraints = constraints
 
+    def __repr__(self) -> str:
+        """Return a string representation of the field meta."""
+        return f"FieldMeta(name={self.name!r}, annotation={self.annotation!r}, default={self.default!r}, children={self.children!r}, constraints={self.constraints!r})"
+
     @functools.cached_property
     def type_args(self) -> tuple[Any, ...]:
         """Return the normalized type args of the annotation, if any.

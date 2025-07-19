@@ -771,10 +771,7 @@ class BaseFactory(ABC, Generic[T]):
             return None
 
         unwrapped_annotation = unwrap_annotation(field_meta.annotation)
-        if is_forward_ref(unwrapped_annotation):
-            unwrapped_annotation = cls.__forward_references__.get(
-                unwrapped_annotation.__forward_arg__, unwrapped_annotation
-            )
+        unwrapped_annotation = cls._resolve_forward_references(unwrapped_annotation)
 
         if is_literal(annotation=unwrapped_annotation) and (literal_args := get_args(unwrapped_annotation)):
             return cls.__random__.choice(literal_args)
@@ -903,10 +900,7 @@ class BaseFactory(ABC, Generic[T]):
             return
 
         for unwrapped_annotation in flatten_annotation(field_meta.annotation):
-            if is_forward_ref(unwrapped_annotation):
-                unwrapped_annotation = cls.__forward_references__.get(  # noqa: PLW2901
-                    unwrapped_annotation.__forward_arg__, unwrapped_annotation
-                )
+            unwrapped_annotation = cls._resolve_forward_references(unwrapped_annotation)  # noqa: PLW2901
 
             if unwrapped_annotation in (None, NoneType):
                 yield None
@@ -964,6 +958,21 @@ class BaseFactory(ABC, Generic[T]):
                 raise ParameterException(
                     msg,
                 )
+
+    @classmethod
+    def _resolve_forward_references(cls, annotation: Any) -> Any:
+        """Resolve forward references in the factory's model."""
+        if not cls.__forward_references__:
+            return annotation
+
+        if is_forward_ref(annotation):
+            return cls.__forward_references__.get(annotation.__forward_arg__, annotation)
+
+        # This is a workaround when forward references are resolved to strings
+        if isinstance(annotation, str):
+            return cls.__forward_references__.get(annotation, annotation)
+
+        return annotation
 
     @classmethod
     def should_set_none_value(cls, field_meta: FieldMeta) -> bool:
