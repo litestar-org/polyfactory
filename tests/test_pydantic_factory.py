@@ -1459,6 +1459,7 @@ def test_pep695_dict_union_types(create_module: Callable[[str], ModuleType]) -> 
     ModelFactory.create_factory(module.Foo).build()
 
 
+@pytest.mark.skipif(IS_PYDANTIC_V1, reason="pydantic 2 only test")
 def test_alias_overrides() -> None:
     """Test that type aliases can be overridden."""
 
