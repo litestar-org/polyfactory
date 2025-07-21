@@ -26,6 +26,7 @@ from pydantic import (
     AnyUrl,
     BaseModel,
     ByteSize,
+    ConfigDict,
     DirectoryPath,
     EmailStr,
     Field,
@@ -1456,3 +1457,21 @@ def test_pep695_dict_union_types(create_module: Callable[[str], ModuleType]) -> 
         """)
     )
     ModelFactory.create_factory(module.Foo).build()
+
+
+@pytest.mark.skipif(IS_PYDANTIC_V1, reason="pydantic 2 only test")
+def test_alias_overrides() -> None:
+    """Test that type aliases can be overridden."""
+
+    class Foo(BaseModel):
+        model_config = ConfigDict(alias_generator=lambda x: x.upper())
+
+        name: str  # type: ignore[pydantic-alias]
+
+    class FooFactory(ModelFactory[Foo]):
+        __check_model__ = True
+
+        NAME = "John"
+
+    instance = FooFactory.build()
+    assert instance.name == "John"  # Should use the overridden alias
