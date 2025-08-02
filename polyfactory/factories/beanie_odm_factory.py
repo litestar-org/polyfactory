@@ -29,7 +29,7 @@ class BeaniePersistenceHandler(Generic[T], AsyncPersistenceProtocol[T]):
 
     async def save(self, data: T) -> T:
         """Persist a single instance in mongoDB."""
-        return await data.insert()  # pyright: ignore[reportGeneralTypeIssues]
+        return await data.insert()  # type: ignore[no-any-return]
 
     async def save_many(self, data: list[T]) -> list[T]:
         """Persist multiple instances in mongoDB.
