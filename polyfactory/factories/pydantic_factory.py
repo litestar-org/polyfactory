@@ -169,7 +169,9 @@ class PydanticFieldMeta(FieldMeta):
             ),
         )
         field_info = FieldInfo.merge_field_infos(
-            field_info, FieldInfo.from_annotation(normalize_type(field_info.annotation))
+            field_info,
+            FieldInfo.from_annotation(normalize_type(field_info.annotation)),
+            alias=field_info.alias,
         )
 
         if callable(field_info.default_factory):
