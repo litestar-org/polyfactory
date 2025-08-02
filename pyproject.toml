@@ -33,7 +33,7 @@ classifiers = [
   "Typing :: Typed",
 ]
 name = "polyfactory"
-version = "2.22.1"
+version = "2.22.2"
 description = "Mock data generation factories"
 readme = "docs/PYPI_README.md"
 license = { text = "MIT" }
@@ -113,7 +113,7 @@ pydantic = ["pydantic[email]>=2.10.4"]
 allow_dirty = true
 commit = true
 commit_args = "--no-verify"
-current_version = "2.22.1"
+current_version = "2.22.2"
 ignore_missing_files = false
 ignore_missing_version = false
 message = "chore(release): bump to v{new_version}"
