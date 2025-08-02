@@ -1,5 +1,5 @@
 from datetime import date, datetime
-from typing import List, Optional, Union
+from typing import Optional, Union
 from uuid import uuid4
 
 from pydantic import UUID4, BaseModel
@@ -18,10 +18,10 @@ class Pet(BaseModel):
 class Person(BaseModel):
     id: UUID4
     name: str
-    hobbies: Optional[List[str]]
-    nicks: List[str]
+    hobbies: Optional[list[str]]
+    nicks: list[str]
     age: Union[float, int]
-    pets: List[Pet]
+    pets: list[Pet]
     birthday: Union[datetime, date]
 
 
@@ -33,9 +33,9 @@ class PersonFactoryWithDefaults(PersonFactoryWithoutDefaults):
     id = uuid4()
     name = "moishe"
     hobbies = ["fishing"]
-    nicks: List[str] = []
+    nicks: list[str] = []
     age = 33
-    pets: List[Pet] = []
+    pets: list[Pet] = []
     birthday = datetime(2021 - 33, 1, 1)
 
 

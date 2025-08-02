@@ -1,16 +1,12 @@
 from __future__ import annotations
 
 from datetime import date, datetime
-from typing import TYPE_CHECKING, Any, Callable, ClassVar, Generic, List, Protocol, TypeVar, Union
-
-from typing_extensions import Annotated
+from typing import TYPE_CHECKING, Annotated, Any, Callable, ClassVar, Generic, Protocol, TypeVar, Union
 
 from polyfactory.exceptions import MissingDependencyException, ParameterException
 from polyfactory.factories.base import BaseFactory
 from polyfactory.field_meta import Constraints, FieldMeta
 from polyfactory.persistence import AsyncPersistenceProtocol, SyncPersistenceProtocol
-from polyfactory.utils._internal import is_attribute_overridden
-from polyfactory.utils.deprecation import warn_deprecation
 from polyfactory.utils.types import Frozendict
 
 try:
@@ -87,9 +83,9 @@ class SQLAlchemyFactory(Generic[T], BaseFactory[T]):
     """Configuration to consider primary key columns as a field or not."""
     __set_foreign_keys__: ClassVar[bool] = True
     """Configuration to consider columns with foreign keys as a field or not."""
-    __set_relationships__: ClassVar[bool] = False
+    __set_relationships__: ClassVar[bool] = True
     """Configuration to consider relationships property as a model field or not."""
-    __set_association_proxy__: ClassVar[bool] = False
+    __set_association_proxy__: ClassVar[bool] = True
     """Configuration to consider AssociationProxy property as a model field or not."""
 
     __session__: ClassVar[Session | _SessionMaker[Session] | None] = None
@@ -102,24 +98,6 @@ class SQLAlchemyFactory(Generic[T], BaseFactory[T]):
         "__set_relationships__",
         "__set_association_proxy__",
     )
-
-    @classmethod
-    def __init_subclass__(cls, *args: Any, **kwargs: Any) -> None:
-        super().__init_subclass__(*args, **kwargs)
-
-        for key in (
-            "__set_relationships__",
-            "__set_association_proxy__",
-        ):
-            if is_attribute_overridden(SQLAlchemyFactory, cls, key):
-                continue
-
-            warn_deprecation(
-                "v2.22.0",
-                deprecated_name=key,
-                kind="default",
-                alternative="set to `False` explicitly to keep existing behaviour",
-            )
 
     @classmethod
     def get_sqlalchemy_types(cls) -> dict[Any, Callable[[], Any]]:
@@ -216,7 +194,7 @@ class SQLAlchemyFactory(Generic[T], BaseFactory[T]):
         annotation: type
         if isinstance(column.type, (ARRAY, postgresql.ARRAY)):
             item_type = cls._get_type_from_type_engine(column.type.item_type)
-            annotation = List[item_type]  # type: ignore[valid-type]
+            annotation = list[item_type]  # type: ignore[valid-type]
         else:
             annotation = cls._get_type_from_type_engine(column.type)
 
@@ -241,7 +219,7 @@ class SQLAlchemyFactory(Generic[T], BaseFactory[T]):
         if cls.__set_relationships__:
             for name, relationship in table.relationships.items():
                 class_ = relationship.entity.class_
-                annotation = class_ if not relationship.uselist else List[class_]  # type: ignore[valid-type]
+                annotation = class_ if not relationship.uselist else list[class_]  # type: ignore[valid-type]
                 fields_meta.append(
                     FieldMeta.from_type(
                         name=name,
@@ -257,7 +235,7 @@ class SQLAlchemyFactory(Generic[T], BaseFactory[T]):
                         target_attr = getattr(target_class, attr.value_attr)
                         if target_attr:
                             class_ = target_attr.entity.class_
-                            annotation = class_ if not target_collection.uselist else List[class_]  # type: ignore[valid-type]
+                            annotation = class_ if not target_collection.uselist else list[class_]  # type: ignore[valid-type]
                             fields_meta.append(
                                 FieldMeta.from_type(
                                     name=name,
