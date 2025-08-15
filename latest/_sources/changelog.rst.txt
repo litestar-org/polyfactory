@@ -4,17 +4,34 @@ Changelog
 
 All commits to this project will be documented in this file.
 
+`Release [v2.22.2] - 2025-08-15 <https://github.com/litestar-org/polyfactory/releases/tag/v2.22.2>`_
+----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+* `See All commits in v2.22.2 <https://github.com/litestar-org/polyfactory/commits/v2.22.2>`_
+
+`a14ac7f <https://github.com/litestar-org/polyfactory/commit/a14ac7ff61769df18d509799f8d94c7581e482dd>`_ ... `8e14c35 <https://github.com/litestar-org/polyfactory/commit/8e14c35ee46a8203844ec45728a8d65f7e847869>`_ | `See diff for 2.22.2 <https://github.com/litestar-org/polyfactory/compare/a14ac7ff61769df18d509799f8d94c7581e482dd...8e14c35ee46a8203844ec45728a8d65f7e847869>`_
+
+Bug Fixes
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+* (`6dcd191 <https://github.com/litestar-org/polyfactory/commit/6dcd19134da6b17b97ee4ee04a514db2d1f166c9>`_)  - Pydantic alias handling (#737)  by `@adhtruong <https://github.com/adhtruong>`_ in `#737 <https://github.com/litestar-org/polyfactory/pull/737>`_
+* (`8e14c35 <https://github.com/litestar-org/polyfactory/commit/8e14c35ee46a8203844ec45728a8d65f7e847869>`_)  - Allow specifying forward references when as string (#735)  by `@adhtruong <https://github.com/adhtruong>`_ in `#735 <https://github.com/litestar-org/polyfactory/pull/735>`_
+
 `Release [v2.22.1] - 2025-07-14 <https://github.com/litestar-org/polyfactory/releases/tag/v2.22.1>`_
 ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 * `See All commits in v2.22.1 <https://github.com/litestar-org/polyfactory/commits/v2.22.1>`_
 
-`f270b0f <https://github.com/litestar-org/polyfactory/commit/f270b0fb46f36b32db0a1c9f9d2cea25c59b8f22>`_ ... `9fa5c66 <https://github.com/litestar-org/polyfactory/commit/9fa5c66e224a6ca25f7dbfbae908ca8149c64657>`_ | `See diff for 2.22.1 <https://github.com/litestar-org/polyfactory/compare/f270b0fb46f36b32db0a1c9f9d2cea25c59b8f22...9fa5c66e224a6ca25f7dbfbae908ca8149c64657>`_
+`f270b0f <https://github.com/litestar-org/polyfactory/commit/f270b0fb46f36b32db0a1c9f9d2cea25c59b8f22>`_ ... `a14ac7f <https://github.com/litestar-org/polyfactory/commit/a14ac7ff61769df18d509799f8d94c7581e482dd>`_ | `See diff for 2.22.1 <https://github.com/litestar-org/polyfactory/compare/f270b0fb46f36b32db0a1c9f9d2cea25c59b8f22...a14ac7ff61769df18d509799f8d94c7581e482dd>`_
 
 Bug Fixes
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 * (`90d372c <https://github.com/litestar-org/polyfactory/commit/90d372c495b2105341e5334398bc56a02d563f33>`_)  - Handle recursive types that use ForwardRef (#728)  by `@adhtruong <https://github.com/adhtruong>`_ in `#728 <https://github.com/litestar-org/polyfactory/pull/728>`_
 * (`9fa5c66 <https://github.com/litestar-org/polyfactory/commit/9fa5c66e224a6ca25f7dbfbae908ca8149c64657>`_)  - Deprecation error not silenced when overridden (#724)  by `@adhtruong <https://github.com/adhtruong>`_ in `#724 <https://github.com/litestar-org/polyfactory/pull/724>`_
+
+Miscellaneous Tasks
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+* (`a14ac7f <https://github.com/litestar-org/polyfactory/commit/a14ac7ff61769df18d509799f8d94c7581e482dd>`_)  - Bump to v2.22.1 (#732)  by `@adhtruong <https://github.com/adhtruong>`_ in `#732 <https://github.com/litestar-org/polyfactory/pull/732>`_
 
 `Release [v2.22.0] - 2025-07-01 <https://github.com/litestar-org/polyfactory/releases/tag/v2.22.0>`_
 ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
