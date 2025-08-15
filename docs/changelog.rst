@@ -4,7 +4,7 @@ Changelog
 
 All commits to this project will be documented in this file.
 
-`Release [v2.22.2] - 2025-08-02 <https://github.com/litestar-org/polyfactory/releases/tag/v2.22.2>`_
+`Release [v2.22.2] - 2025-08-15 <https://github.com/litestar-org/polyfactory/releases/tag/v2.22.2>`_
 ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 * `See All commits in v2.22.2 <https://github.com/litestar-org/polyfactory/commits/v2.22.2>`_
 
