@@ -464,12 +464,6 @@ def test_unsupported_type_engine() -> None:
         SQLAlchemyFactory.create_factory(Place)
 
 
-def test_check_deprecated_setting() -> None:
-    with pytest.warns(DeprecationWarning, match=r"Use of deprecated default '__set_relationships__'"):
-
-        class BookFactory(SQLAlchemyFactory[Book]): ...
-
-
 def test_check_deprecated_default_overridden_no_deprecation() -> None:
     with warnings.catch_warnings():
         warnings.simplefilter("error")

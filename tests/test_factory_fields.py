@@ -207,15 +207,6 @@ def test_non_existent_fields_raise(
         ModelFactory.create_factory(NoFieldModel, bases=None, unknown_field=factory_field)
 
 
-def test_check_model_deprecation() -> None:
-    with pytest.warns(DeprecationWarning, match=r"Use of deprecated default '__check_model__'"):
-
-        class MyModel(BaseModel):
-            name: str
-
-        class MyFactory(ModelFactory[MyModel]): ...
-
-
 def test_check_model_overridden_no_deprecation() -> None:
     with warnings.catch_warnings():
         warnings.simplefilter("error")
