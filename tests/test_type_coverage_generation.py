@@ -228,7 +228,7 @@ def test_coverage_optional_field() -> None:
         __model__ = OptionalInt
 
     results = list(OptionalIntFactory.coverage())
-    assert len(results) == 2
+    assert len(results) == 2, results
 
     assert isinstance(results[0].i, int)
     assert results[1].i is None

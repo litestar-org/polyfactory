@@ -4,11 +4,40 @@ Changelog
 
 All commits to this project will be documented in this file.
 
+`Release [v2.22.2] - 2025-08-15 <https://github.com/litestar-org/polyfactory/releases/tag/v2.22.2>`_
+----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+* `See All commits in v2.22.2 <https://github.com/litestar-org/polyfactory/commits/v2.22.2>`_
+
+`a14ac7f <https://github.com/litestar-org/polyfactory/commit/a14ac7ff61769df18d509799f8d94c7581e482dd>`_ ... `8e14c35 <https://github.com/litestar-org/polyfactory/commit/8e14c35ee46a8203844ec45728a8d65f7e847869>`_ | `See diff for 2.22.2 <https://github.com/litestar-org/polyfactory/compare/a14ac7ff61769df18d509799f8d94c7581e482dd...8e14c35ee46a8203844ec45728a8d65f7e847869>`_
+
+Bug Fixes
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+* (`6dcd191 <https://github.com/litestar-org/polyfactory/commit/6dcd19134da6b17b97ee4ee04a514db2d1f166c9>`_)  - Pydantic alias handling (#737)  by `@adhtruong <https://github.com/adhtruong>`_ in `#737 <https://github.com/litestar-org/polyfactory/pull/737>`_
+* (`8e14c35 <https://github.com/litestar-org/polyfactory/commit/8e14c35ee46a8203844ec45728a8d65f7e847869>`_)  - Allow specifying forward references when as string (#735)  by `@adhtruong <https://github.com/adhtruong>`_ in `#735 <https://github.com/litestar-org/polyfactory/pull/735>`_
+
+`Release [v2.22.1] - 2025-07-14 <https://github.com/litestar-org/polyfactory/releases/tag/v2.22.1>`_
+----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+* `See All commits in v2.22.1 <https://github.com/litestar-org/polyfactory/commits/v2.22.1>`_
+
+`f270b0f <https://github.com/litestar-org/polyfactory/commit/f270b0fb46f36b32db0a1c9f9d2cea25c59b8f22>`_ ... `a14ac7f <https://github.com/litestar-org/polyfactory/commit/a14ac7ff61769df18d509799f8d94c7581e482dd>`_ | `See diff for 2.22.1 <https://github.com/litestar-org/polyfactory/compare/f270b0fb46f36b32db0a1c9f9d2cea25c59b8f22...a14ac7ff61769df18d509799f8d94c7581e482dd>`_
+
+Bug Fixes
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+* (`90d372c <https://github.com/litestar-org/polyfactory/commit/90d372c495b2105341e5334398bc56a02d563f33>`_)  - Handle recursive types that use ForwardRef (#728)  by `@adhtruong <https://github.com/adhtruong>`_ in `#728 <https://github.com/litestar-org/polyfactory/pull/728>`_
+* (`9fa5c66 <https://github.com/litestar-org/polyfactory/commit/9fa5c66e224a6ca25f7dbfbae908ca8149c64657>`_)  - Deprecation error not silenced when overridden (#724)  by `@adhtruong <https://github.com/adhtruong>`_ in `#724 <https://github.com/litestar-org/polyfactory/pull/724>`_
+
+Miscellaneous Tasks
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+* (`a14ac7f <https://github.com/litestar-org/polyfactory/commit/a14ac7ff61769df18d509799f8d94c7581e482dd>`_)  - Bump to v2.22.1 (#732)  by `@adhtruong <https://github.com/adhtruong>`_ in `#732 <https://github.com/litestar-org/polyfactory/pull/732>`_
+
 `Release [v2.22.0] - 2025-07-01 <https://github.com/litestar-org/polyfactory/releases/tag/v2.22.0>`_
 ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 * `See All commits in v2.22.0 <https://github.com/litestar-org/polyfactory/commits/v2.22.0>`_
 
-`203310b <https://github.com/litestar-org/polyfactory/commit/203310bfa4a8054efb59c1bda34715d4196a7954>`_ ... `c7a7b44 <https://github.com/litestar-org/polyfactory/commit/c7a7b4426126d0134d531fc4db34199d39c46298>`_ | `See diff for 2.22.0 <https://github.com/litestar-org/polyfactory/compare/203310bfa4a8054efb59c1bda34715d4196a7954...c7a7b4426126d0134d531fc4db34199d39c46298>`_
+`203310b <https://github.com/litestar-org/polyfactory/commit/203310bfa4a8054efb59c1bda34715d4196a7954>`_ ... `f270b0f <https://github.com/litestar-org/polyfactory/commit/f270b0fb46f36b32db0a1c9f9d2cea25c59b8f22>`_ | `See diff for 2.22.0 <https://github.com/litestar-org/polyfactory/compare/203310bfa4a8054efb59c1bda34715d4196a7954...f270b0fb46f36b32db0a1c9f9d2cea25c59b8f22>`_
 
 Bug Fixes
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -37,6 +66,7 @@ Miscellaneous Tasks
 * (`aff32a0 <https://github.com/litestar-org/polyfactory/commit/aff32a03de6c2b2282b2a28db88d03fb67ffb150>`_)  - Bump astral-sh/setup-uv from 5 to 6 (#696)  by `@dependabot[bot] <https://github.com/dependabot[bot]>`_ in `#696 <https://github.com/litestar-org/polyfactory/pull/696>`_
 * (`d03aa1b <https://github.com/litestar-org/polyfactory/commit/d03aa1bfb6221d87cf5d83ad184beaf2d4d77178>`_)  - Bump dawidd6/action-download-artifact from 9 to 10 (#709)  by `@dependabot[bot] <https://github.com/dependabot[bot]>`_ in `#709 <https://github.com/litestar-org/polyfactory/pull/709>`_
 * (`0cd86d2 <https://github.com/litestar-org/polyfactory/commit/0cd86d2bf93efaddc1c994e21ead4714273182ec>`_)  - Bump dawidd6/action-download-artifact from 10 to 11 (#714)  by `@dependabot[bot] <https://github.com/dependabot[bot]>`_ in `#714 <https://github.com/litestar-org/polyfactory/pull/714>`_
+* (`f270b0f <https://github.com/litestar-org/polyfactory/commit/f270b0fb46f36b32db0a1c9f9d2cea25c59b8f22>`_)  - Bump to v2.22.0 (#722)  by `@adhtruong <https://github.com/adhtruong>`_ in `#722 <https://github.com/litestar-org/polyfactory/pull/722>`_
 
 Performance
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -204,7 +234,7 @@ Features
 Miscellaneous Tasks
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-* (`f7b5d8b <https://github.com/litestar-org/polyfactory/commit/f7b5d8bb9410d40dc6073d9ca7f2cdec878bc419>`_)  - Bump minor version  by `@guacs <https://github.com/guacs>`_
+* (`f7b5d8b <https://github.com/litestar-org/polyfactory/commit/f7b5d8bb9410d40dc6073d9ca7f2cdec878bc419>`_)  - Bump minor version  by `@vkcku <https://github.com/vkcku>`_
 
 `Release [v2.17.0] - 2024-09-22 <https://github.com/litestar-org/polyfactory/releases/tag/v2.17.0>`_
 ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -256,7 +286,7 @@ Bug Fixes
 Miscellaneous Tasks
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-* (`67c5720 <https://github.com/litestar-org/polyfactory/commit/67c57208de5ce993bdb2c7888864ac4e71964511>`_)  - Bump patch version  by `@guacs <https://github.com/guacs>`_
+* (`67c5720 <https://github.com/litestar-org/polyfactory/commit/67c57208de5ce993bdb2c7888864ac4e71964511>`_)  - Bump patch version  by `@vkcku <https://github.com/vkcku>`_
 
 `Release [v2.16.1] - 2024-07-08 <https://github.com/litestar-org/polyfactory/releases/tag/v2.16.1>`_
 ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -267,7 +297,7 @@ Miscellaneous Tasks
 Bug Fixes
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-* (`86869c2 <https://github.com/litestar-org/polyfactory/commit/86869c231255f9269420039b35b3b2f3572a0255>`_)  - Use provider map for generating value for 'Any' (#522)  by `@guacs <https://github.com/guacs>`_ in `#522 <https://github.com/litestar-org/polyfactory/pull/522>`_
+* (`86869c2 <https://github.com/litestar-org/polyfactory/commit/86869c231255f9269420039b35b3b2f3572a0255>`_)  - Use provider map for generating value for 'Any' (#522)  by `@vkcku <https://github.com/vkcku>`_ in `#522 <https://github.com/litestar-org/polyfactory/pull/522>`_
 * (`cbe6dfc <https://github.com/litestar-org/polyfactory/commit/cbe6dfce14b1778cf2434a93addeb6936ce3c61b>`_)  - Pydantic factory_use_construct is not propagated to the nested (#549)  in `#549 <https://github.com/litestar-org/polyfactory/pull/549>`_
 * (`b09bf64 <https://github.com/litestar-org/polyfactory/commit/b09bf64e56ac9bf32ba77b835abbc43ededabd9f>`_)  - Send correct field_meta to avoid over nesting (#527)  by `@Vegemash <https://github.com/Vegemash>`_ in `#527 <https://github.com/litestar-org/polyfactory/pull/527>`_
 
@@ -283,7 +313,7 @@ Miscellaneous Tasks
 
 * (`f8e9318 <https://github.com/litestar-org/polyfactory/commit/f8e93188b447b6c28ee4466da3a128f2edafc5bd>`_)  - Migrate formatting to ruff (#554)  by `@adhtruong <https://github.com/adhtruong>`_ in `#554 <https://github.com/litestar-org/polyfactory/pull/554>`_
 * (`36a9cc1 <https://github.com/litestar-org/polyfactory/commit/36a9cc15d91d6a64e6aecf76757c10b11bc7a87c>`_)  - Bump pydantic (#561)  by `@Vegemash <https://github.com/Vegemash>`_ in `#561 <https://github.com/litestar-org/polyfactory/pull/561>`_
-* (`23281ee <https://github.com/litestar-org/polyfactory/commit/23281eed6c596a7defdc022e8d595cb3f4d2f169>`_)  - Bump patch version  by `@guacs <https://github.com/guacs>`_
+* (`23281ee <https://github.com/litestar-org/polyfactory/commit/23281eed6c596a7defdc022e8d595cb3f4d2f169>`_)  - Bump patch version  by `@vkcku <https://github.com/vkcku>`_
 
 `Release [v2.16.0] - 2024-05-13 <https://github.com/litestar-org/polyfactory/releases/tag/v2.16.0>`_
 ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -319,7 +349,7 @@ Miscellaneous Tasks
 
 * (`fac9fba <https://github.com/litestar-org/polyfactory/commit/fac9fbad94f0a82a062bfdac11b2da19f906e32f>`_)  - Upgrade dependencies (#517)  by `@adhtruong <https://github.com/adhtruong>`_ in `#517 <https://github.com/litestar-org/polyfactory/pull/517>`_
 * (`3da64f6 <https://github.com/litestar-org/polyfactory/commit/3da64f615056c8d2f11c6bfc55c86877a89c2414>`_)  - Update changelog.rst (#537)  by `@impaktor <https://github.com/impaktor>`_ in `#537 <https://github.com/litestar-org/polyfactory/pull/537>`_
-* (`3e2d22c <https://github.com/litestar-org/polyfactory/commit/3e2d22c5bafc5ed984338be54c3eace3cacc720f>`_)  - Update maintainer emails (#545)  by `@guacs <https://github.com/guacs>`_ in `#545 <https://github.com/litestar-org/polyfactory/pull/545>`_
+* (`3e2d22c <https://github.com/litestar-org/polyfactory/commit/3e2d22c5bafc5ed984338be54c3eace3cacc720f>`_)  - Update maintainer emails (#545)  by `@vkcku <https://github.com/vkcku>`_ in `#545 <https://github.com/litestar-org/polyfactory/pull/545>`_
 
 Ci
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -336,7 +366,7 @@ Bug Fixes
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 * (`c4e3d91 <https://github.com/litestar-org/polyfactory/commit/c4e3d919368d158f839a6ea6278a28007fb7f5dc>`_)  - Prefer ``sqlalchemy.type.impl`` if it exists (#502)  by `@cofin <https://github.com/cofin>`_ in `#502 <https://github.com/litestar-org/polyfactory/pull/502>`_
-* (`0f8f9e8 <https://github.com/litestar-org/polyfactory/commit/0f8f9e8d0dbd6156ef55d2d61dc6831c4e59c0b0>`_)  - Handle constrained unions properly (#499)  by `@guacs <https://github.com/guacs>`_ in `#499 <https://github.com/litestar-org/polyfactory/pull/499>`_
+* (`0f8f9e8 <https://github.com/litestar-org/polyfactory/commit/0f8f9e8d0dbd6156ef55d2d61dc6831c4e59c0b0>`_)  - Handle constrained unions properly (#499)  by `@vkcku <https://github.com/vkcku>`_ in `#499 <https://github.com/litestar-org/polyfactory/pull/499>`_
 
 Documentation
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -347,23 +377,23 @@ Documentation
 Features
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-* (`46ecdc6 <https://github.com/litestar-org/polyfactory/commit/46ecdc67f998464d82cf834ff048376283e29ac8>`_)  - Support Pydantic v1 and v2 simultaneously (#492)  by `@guacs <https://github.com/guacs>`_ in `#492 <https://github.com/litestar-org/polyfactory/pull/492>`_
+* (`46ecdc6 <https://github.com/litestar-org/polyfactory/commit/46ecdc67f998464d82cf834ff048376283e29ac8>`_)  - Support Pydantic v1 and v2 simultaneously (#492)  by `@vkcku <https://github.com/vkcku>`_ in `#492 <https://github.com/litestar-org/polyfactory/pull/492>`_
 
 Miscellaneous Tasks
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 * (`1078230 <https://github.com/litestar-org/polyfactory/commit/10782304e0d835a5583e7360a4712fae76749c4a>`_)  - Bump pdm-project/setup-pdm from 3 to 4 (#496)  by `@dependabot[bot] <https://github.com/dependabot[bot]>`_ in `#496 <https://github.com/litestar-org/polyfactory/pull/496>`_
-* (`1d1c7f9 <https://github.com/litestar-org/polyfactory/commit/1d1c7f9d02f9c7a8eb977dc0624bf5a045d55ddc>`_)  - Release v2.15.0  by `@guacs <https://github.com/guacs>`_
+* (`1d1c7f9 <https://github.com/litestar-org/polyfactory/commit/1d1c7f9d02f9c7a8eb977dc0624bf5a045d55ddc>`_)  - Release v2.15.0  by `@vkcku <https://github.com/vkcku>`_
 
 Refactor
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-* (`2acfdc6 <https://github.com/litestar-org/polyfactory/commit/2acfdc6ab96f3ecb504c9c89960198fc8a1effd9>`_)  - Change order of imports for pydantic v1 (#509)  by `@guacs <https://github.com/guacs>`_ in `#509 <https://github.com/litestar-org/polyfactory/pull/509>`_
+* (`2acfdc6 <https://github.com/litestar-org/polyfactory/commit/2acfdc6ab96f3ecb504c9c89960198fc8a1effd9>`_)  - Change order of imports for pydantic v1 (#509)  by `@vkcku <https://github.com/vkcku>`_ in `#509 <https://github.com/litestar-org/polyfactory/pull/509>`_
 
 Testing
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-* (`1ae2d52 <https://github.com/litestar-org/polyfactory/commit/1ae2d528b018ac4d6773b423f3ab8af8d91f4f7b>`_)  - Refactor the tests to move tests to correct places (#495)  by `@guacs <https://github.com/guacs>`_ in `#495 <https://github.com/litestar-org/polyfactory/pull/495>`_
+* (`1ae2d52 <https://github.com/litestar-org/polyfactory/commit/1ae2d528b018ac4d6773b423f3ab8af8d91f4f7b>`_)  - Refactor the tests to move tests to correct places (#495)  by `@vkcku <https://github.com/vkcku>`_ in `#495 <https://github.com/litestar-org/polyfactory/pull/495>`_
 
 `Release [v2.14.1] - 2024-01-20 <https://github.com/litestar-org/polyfactory/releases/tag/v2.14.1>`_
 ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -374,12 +404,12 @@ Testing
 Bug Fixes
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-* (`fa50e20 <https://github.com/litestar-org/polyfactory/commit/fa50e20a333b0778119c4256558e05088b26b5c4>`_)  - Handle unions properly (#491)  by `@guacs <https://github.com/guacs>`_ in `#491 <https://github.com/litestar-org/polyfactory/pull/491>`_
+* (`fa50e20 <https://github.com/litestar-org/polyfactory/commit/fa50e20a333b0778119c4256558e05088b26b5c4>`_)  - Handle unions properly (#491)  by `@vkcku <https://github.com/vkcku>`_ in `#491 <https://github.com/litestar-org/polyfactory/pull/491>`_
 
 Miscellaneous Tasks
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-* (`b44c68b <https://github.com/litestar-org/polyfactory/commit/b44c68b0c1d8c253f828edbbfc88c3f39ec2fdca>`_)  - Bump patch version  by `@guacs <https://github.com/guacs>`_
+* (`b44c68b <https://github.com/litestar-org/polyfactory/commit/b44c68b0c1d8c253f828edbbfc88c3f39ec2fdca>`_)  - Bump patch version  by `@vkcku <https://github.com/vkcku>`_
 
 `Release [v2.14.0] - 2024-01-19 <https://github.com/litestar-org/polyfactory/releases/tag/v2.14.0>`_
 ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -391,7 +421,7 @@ Bug Fixes
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 * (`fb4e50a <https://github.com/litestar-org/polyfactory/commit/fb4e50acaa0796ed7164457c6c767c3351530a81>`_)  - Add min version to typing-extensions (#471)  by `@hsorsky <https://github.com/hsorsky>`_ in `#471 <https://github.com/litestar-org/polyfactory/pull/471>`_
-* (`40538c9 <https://github.com/litestar-org/polyfactory/commit/40538c9a0a4e9ec72b6a8864fc4e6f1293715603>`_)  - Set as default type for factory only if model is defined (#479)  by `@guacs <https://github.com/guacs>`_ in `#479 <https://github.com/litestar-org/polyfactory/pull/479>`_
+* (`40538c9 <https://github.com/litestar-org/polyfactory/commit/40538c9a0a4e9ec72b6a8864fc4e6f1293715603>`_)  - Set as default type for factory only if model is defined (#479)  by `@vkcku <https://github.com/vkcku>`_ in `#479 <https://github.com/litestar-org/polyfactory/pull/479>`_
 
 Documentation
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -404,7 +434,7 @@ Documentation
 Features
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-* (`b33e662 <https://github.com/litestar-org/polyfactory/commit/b33e6621ee6add4fdd2e327834401830f6771d4b>`_)  - Allow use of the default value based on configuration (#472)  by `@guacs <https://github.com/guacs>`_ in `#472 <https://github.com/litestar-org/polyfactory/pull/472>`_
+* (`b33e662 <https://github.com/litestar-org/polyfactory/commit/b33e6621ee6add4fdd2e327834401830f6771d4b>`_)  - Allow use of the default value based on configuration (#472)  by `@vkcku <https://github.com/vkcku>`_ in `#472 <https://github.com/litestar-org/polyfactory/pull/472>`_
 * (`80bd012 <https://github.com/litestar-org/polyfactory/commit/80bd012fbfb3d22e087dafd68173e633ec727175>`_)  - Add recursion guard (#468)  by `@adhtruong <https://github.com/adhtruong>`_ in `#468 <https://github.com/litestar-org/polyfactory/pull/468>`_
 * (`c7556e8 <https://github.com/litestar-org/polyfactory/commit/c7556e8e5eafaebfdc0dded747ae4e8a144b7cc7>`_)  - Pass on factory config (#483)  by `@adhtruong <https://github.com/adhtruong>`_ in `#483 <https://github.com/litestar-org/polyfactory/pull/483>`_
 * (`94ad561 <https://github.com/litestar-org/polyfactory/commit/94ad5611772e2bed977b693a030f517b3567a6ea>`_)  - Support type alias (#487)  by `@adhtruong <https://github.com/adhtruong>`_ in `#487 <https://github.com/litestar-org/polyfactory/pull/487>`_
@@ -412,9 +442,9 @@ Features
 Miscellaneous Tasks
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-* (`bb433a4 <https://github.com/litestar-org/polyfactory/commit/bb433a4291ede8147858585ebf0cff9c7cc53eb1>`_)  - Update pre commit (#478)  by `@guacs <https://github.com/guacs>`_ in `#478 <https://github.com/litestar-org/polyfactory/pull/478>`_
+* (`bb433a4 <https://github.com/litestar-org/polyfactory/commit/bb433a4291ede8147858585ebf0cff9c7cc53eb1>`_)  - Update pre commit (#478)  by `@vkcku <https://github.com/vkcku>`_ in `#478 <https://github.com/litestar-org/polyfactory/pull/478>`_
 * (`2b57706 <https://github.com/litestar-org/polyfactory/commit/2b57706fbd4b9120d5a31643e51098cac65df1da>`_)  - Bump actions/cache from 3 to 4 (#488)  by `@dependabot[bot] <https://github.com/dependabot[bot]>`_ in `#488 <https://github.com/litestar-org/polyfactory/pull/488>`_
-* (`83f2992 <https://github.com/litestar-org/polyfactory/commit/83f299231d631e5a361a515616b0d88daa1d3fd7>`_)  - Bump minor version  by `@guacs <https://github.com/guacs>`_
+* (`83f2992 <https://github.com/litestar-org/polyfactory/commit/83f299231d631e5a361a515616b0d88daa1d3fd7>`_)  - Bump minor version  by `@vkcku <https://github.com/vkcku>`_
 
 `Release [v2.13.0] - 2023-12-19 <https://github.com/litestar-org/polyfactory/releases/tag/v2.13.0>`_
 ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -426,7 +456,7 @@ Bug Fixes
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 * (`b479e4a <https://github.com/litestar-org/polyfactory/commit/b479e4af4617d108cbd90890cbda4408ee51ba4a>`_)  - Flatten_annotation behaviour for Optional (#440)  by `@sam-or <https://github.com/sam-or>`_ in `#440 <https://github.com/litestar-org/polyfactory/pull/440>`_
-* (`6961eaa <https://github.com/litestar-org/polyfactory/commit/6961eaa3b65fc63b716e854bd2eb28b5bc96e029>`_)  - Don't blindly suppress ValueError (#450)  by `@guacs <https://github.com/guacs>`_ in `#450 <https://github.com/litestar-org/polyfactory/pull/450>`_
+* (`6961eaa <https://github.com/litestar-org/polyfactory/commit/6961eaa3b65fc63b716e854bd2eb28b5bc96e029>`_)  - Don't blindly suppress ValueError (#450)  by `@vkcku <https://github.com/vkcku>`_ in `#450 <https://github.com/litestar-org/polyfactory/pull/450>`_
 
 Features
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -442,8 +472,8 @@ Miscellaneous Tasks
 * (`2695880 <https://github.com/litestar-org/polyfactory/commit/2695880a444406c21942b80ad9472ab0212dd98c>`_)  - Bump dawidd6/action-download-artifact from 2 to 3 (#459)  by `@dependabot[bot] <https://github.com/dependabot[bot]>`_ in `#459 <https://github.com/litestar-org/polyfactory/pull/459>`_
 * (`fe342e4 <https://github.com/litestar-org/polyfactory/commit/fe342e49f35df85db27f42444cdb7e74fae090da>`_)  - Bump actions/upload-artifact from 3 to 4 (#461)  by `@dependabot[bot] <https://github.com/dependabot[bot]>`_ in `#461 <https://github.com/litestar-org/polyfactory/pull/461>`_
 * (`a371d7f <https://github.com/litestar-org/polyfactory/commit/a371d7fb0ac0ec323aabe85dca9bb63e41cbd36a>`_)  - Bump actions/download-artifact from 3 to 4 (#462)  by `@dependabot[bot] <https://github.com/dependabot[bot]>`_ in `#462 <https://github.com/litestar-org/polyfactory/pull/462>`_
-* (`0e2f824 <https://github.com/litestar-org/polyfactory/commit/0e2f824e72a5f682c91f1ed0a2862d36c5661e45>`_)  - Bump dependencies (#465)  by `@guacs <https://github.com/guacs>`_ in `#465 <https://github.com/litestar-org/polyfactory/pull/465>`_
-* (`8dc8e1a <https://github.com/litestar-org/polyfactory/commit/8dc8e1a4594a75ad9a16e1b6f5041b6044fc4f51>`_)  - Bump minor version  by `@guacs <https://github.com/guacs>`_
+* (`0e2f824 <https://github.com/litestar-org/polyfactory/commit/0e2f824e72a5f682c91f1ed0a2862d36c5661e45>`_)  - Bump dependencies (#465)  by `@vkcku <https://github.com/vkcku>`_ in `#465 <https://github.com/litestar-org/polyfactory/pull/465>`_
+* (`8dc8e1a <https://github.com/litestar-org/polyfactory/commit/8dc8e1a4594a75ad9a16e1b6f5041b6044fc4f51>`_)  - Bump minor version  by `@vkcku <https://github.com/vkcku>`_
 
 `Release [v2.12.0] - 2023-11-13 <https://github.com/litestar-org/polyfactory/releases/tag/v2.12.0>`_
 ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -454,8 +484,8 @@ Miscellaneous Tasks
 Bug Fixes
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-* (`70d49fd <https://github.com/litestar-org/polyfactory/commit/70d49fdf6cde700a403a807d26d0d3ea5c86cd44>`_)  - Handle cases where 'init=False' for dataclasses and attrs models (#433)  by `@guacs <https://github.com/guacs>`_ in `#433 <https://github.com/litestar-org/polyfactory/pull/433>`_
-* (`6b7512d <https://github.com/litestar-org/polyfactory/commit/6b7512d7b3d0c1b9b90dbc94e1667b40aba5bf87>`_)  - Correctly handle collections with constrained items   (#436)  by `@guacs <https://github.com/guacs>`_ in `#436 <https://github.com/litestar-org/polyfactory/pull/436>`_
+* (`70d49fd <https://github.com/litestar-org/polyfactory/commit/70d49fdf6cde700a403a807d26d0d3ea5c86cd44>`_)  - Handle cases where 'init=False' for dataclasses and attrs models (#433)  by `@vkcku <https://github.com/vkcku>`_ in `#433 <https://github.com/litestar-org/polyfactory/pull/433>`_
+* (`6b7512d <https://github.com/litestar-org/polyfactory/commit/6b7512d7b3d0c1b9b90dbc94e1667b40aba5bf87>`_)  - Correctly handle collections with constrained items   (#436)  by `@vkcku <https://github.com/vkcku>`_ in `#436 <https://github.com/litestar-org/polyfactory/pull/436>`_
 
 Documentation
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -477,7 +507,7 @@ Features
 Bug Fixes
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-* (`caaee0f <https://github.com/litestar-org/polyfactory/commit/caaee0f4ca372bc29763979be56f8c13ed7fec28>`_)  - Handle Required and NonRequired annotations (#422)  by `@guacs <https://github.com/guacs>`_ in `#422 <https://github.com/litestar-org/polyfactory/pull/422>`_
+* (`caaee0f <https://github.com/litestar-org/polyfactory/commit/caaee0f4ca372bc29763979be56f8c13ed7fec28>`_)  - Handle Required and NonRequired annotations (#422)  by `@vkcku <https://github.com/vkcku>`_ in `#422 <https://github.com/litestar-org/polyfactory/pull/422>`_
 * (`5d64bde <https://github.com/litestar-org/polyfactory/commit/5d64bde08134fb30be60a3596a268c23dcd1837e>`_)  - Respect override of optional nested model fields (#420)  by `@julioolvr <https://github.com/julioolvr>`_ in `#420 <https://github.com/litestar-org/polyfactory/pull/420>`_
 
 Documentation
@@ -492,13 +522,13 @@ Features
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 * (`5fefa41 <https://github.com/litestar-org/polyfactory/commit/5fefa4142940019ebd20703663a6888766cc49ad>`_)  - Check if fields declared on the factory belong to the model (#405)  by `@johnraz <https://github.com/johnraz>`_ in `#405 <https://github.com/litestar-org/polyfactory/pull/405>`_
-* (`e1f7a47 <https://github.com/litestar-org/polyfactory/commit/e1f7a47c6e3c979f8f43ce6ee612f417d2f3c03b>`_)  - Support annotation with Constraints (#411)  by `@guacs <https://github.com/guacs>`_ in `#411 <https://github.com/litestar-org/polyfactory/pull/411>`_
+* (`e1f7a47 <https://github.com/litestar-org/polyfactory/commit/e1f7a47c6e3c979f8f43ce6ee612f417d2f3c03b>`_)  - Support annotation with Constraints (#411)  by `@vkcku <https://github.com/vkcku>`_ in `#411 <https://github.com/litestar-org/polyfactory/pull/411>`_
 * (`0717951 <https://github.com/litestar-org/polyfactory/commit/07179513fc4e27b7466f5627cf252be535b81b61>`_)  - Deprecate FieldMeta collection params (#417)  by `@adhtruong <https://github.com/adhtruong>`_ in `#417 <https://github.com/litestar-org/polyfactory/pull/417>`_
 
 Miscellaneous Tasks
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-* (`b7b88a8 <https://github.com/litestar-org/polyfactory/commit/b7b88a8a86d735c36df60b2e2af3a6322008152f>`_)  - Prepare for releasing v2.11 (#427)  by `@guacs <https://github.com/guacs>`_ in `#427 <https://github.com/litestar-org/polyfactory/pull/427>`_
+* (`b7b88a8 <https://github.com/litestar-org/polyfactory/commit/b7b88a8a86d735c36df60b2e2af3a6322008152f>`_)  - Prepare for releasing v2.11 (#427)  by `@vkcku <https://github.com/vkcku>`_ in `#427 <https://github.com/litestar-org/polyfactory/pull/427>`_
 
 `Release [v2.10.0] - 2023-10-16 <https://github.com/litestar-org/polyfactory/releases/tag/v2.10.0>`_
 ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -509,9 +539,9 @@ Miscellaneous Tasks
 Bug Fixes
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-* (`8c88293 <https://github.com/litestar-org/polyfactory/commit/8c88293e71045fb94c2e5657ab2b8062cb84dbd2>`_)  - Properly resolve dataclass forward references (#383)  by `@guacs <https://github.com/guacs>`_ in `#383 <https://github.com/litestar-org/polyfactory/pull/383>`_
+* (`8c88293 <https://github.com/litestar-org/polyfactory/commit/8c88293e71045fb94c2e5657ab2b8062cb84dbd2>`_)  - Properly resolve dataclass forward references (#383)  by `@vkcku <https://github.com/vkcku>`_ in `#383 <https://github.com/litestar-org/polyfactory/pull/383>`_
 * (`0064240 <https://github.com/litestar-org/polyfactory/commit/00642404e0a1a61052cbf9c1c901d6aee241ff70>`_)  - Update makefile (#399)  by `@JacobCoffee <https://github.com/JacobCoffee>`_ in `#399 <https://github.com/litestar-org/polyfactory/pull/399>`_
-* (`89cd351 <https://github.com/litestar-org/polyfactory/commit/89cd35186a6dd7fd6b86e32e83caa2fad36ee194>`_)  - Decouple the handling of collection length configuration from ``FieldMeta`` (#407)  by `@guacs <https://github.com/guacs>`_ in `#407 <https://github.com/litestar-org/polyfactory/pull/407>`_
+* (`89cd351 <https://github.com/litestar-org/polyfactory/commit/89cd35186a6dd7fd6b86e32e83caa2fad36ee194>`_)  - Decouple the handling of collection length configuration from ``FieldMeta`` (#407)  by `@vkcku <https://github.com/vkcku>`_ in `#407 <https://github.com/litestar-org/polyfactory/pull/407>`_
 
 Documentation
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -526,13 +556,13 @@ Features
 Miscellaneous Tasks
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-* (`63aa272 <https://github.com/litestar-org/polyfactory/commit/63aa2729df553f49ed137e8e33c6a1a80387ca2b>`_)  - Prepare for releasing v2.10 (#410)  by `@guacs <https://github.com/guacs>`_ in `#410 <https://github.com/litestar-org/polyfactory/pull/410>`_
+* (`63aa272 <https://github.com/litestar-org/polyfactory/commit/63aa2729df553f49ed137e8e33c6a1a80387ca2b>`_)  - Prepare for releasing v2.10 (#410)  by `@vkcku <https://github.com/vkcku>`_ in `#410 <https://github.com/litestar-org/polyfactory/pull/410>`_
 
 Refactor
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-* (`79360f1 <https://github.com/litestar-org/polyfactory/commit/79360f18340da6ab67808a4a177349b206432bc9>`_)  - Move creation of pydantic provider map (#396)  by `@guacs <https://github.com/guacs>`_ in `#396 <https://github.com/litestar-org/polyfactory/pull/396>`_
-* (`f555636 <https://github.com/litestar-org/polyfactory/commit/f555636bee6aa0ebf2c4f2c05cdb24a2e143ff75>`_)  - Refactor the msgspec factory to use the fields API (#409)  by `@guacs <https://github.com/guacs>`_ in `#409 <https://github.com/litestar-org/polyfactory/pull/409>`_
+* (`79360f1 <https://github.com/litestar-org/polyfactory/commit/79360f18340da6ab67808a4a177349b206432bc9>`_)  - Move creation of pydantic provider map (#396)  by `@vkcku <https://github.com/vkcku>`_ in `#396 <https://github.com/litestar-org/polyfactory/pull/396>`_
+* (`f555636 <https://github.com/litestar-org/polyfactory/commit/f555636bee6aa0ebf2c4f2c05cdb24a2e143ff75>`_)  - Refactor the msgspec factory to use the fields API (#409)  by `@vkcku <https://github.com/vkcku>`_ in `#409 <https://github.com/litestar-org/polyfactory/pull/409>`_
 
 Ci
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -553,8 +583,8 @@ Infra
 Bug Fixes
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-* (`2a20513 <https://github.com/litestar-org/polyfactory/commit/2a20513621e1c7c7c1f53c66ad43880b4695ea07>`_)  - Properly type hint create_factory (#360)  by `@guacs <https://github.com/guacs>`_ in `#360 <https://github.com/litestar-org/polyfactory/pull/360>`_
-* (`6cc7b03 <https://github.com/litestar-org/polyfactory/commit/6cc7b03067463e1b4d8a8a007b78a44265e6de36>`_)  - ``AttrsFactory`` fixes (#370)  by `@guacs <https://github.com/guacs>`_ in `#370 <https://github.com/litestar-org/polyfactory/pull/370>`_
+* (`2a20513 <https://github.com/litestar-org/polyfactory/commit/2a20513621e1c7c7c1f53c66ad43880b4695ea07>`_)  - Properly type hint create_factory (#360)  by `@vkcku <https://github.com/vkcku>`_ in `#360 <https://github.com/litestar-org/polyfactory/pull/360>`_
+* (`6cc7b03 <https://github.com/litestar-org/polyfactory/commit/6cc7b03067463e1b4d8a8a007b78a44265e6de36>`_)  - ``AttrsFactory`` fixes (#370)  by `@vkcku <https://github.com/vkcku>`_ in `#370 <https://github.com/litestar-org/polyfactory/pull/370>`_
 * (`8e41372 <https://github.com/litestar-org/polyfactory/commit/8e41372f0fc1ae7abfbd41c074e8bb5246f3e188>`_)  - Update fixture size handling (#373)  by `@adhtruong <https://github.com/adhtruong>`_ in `#373 <https://github.com/litestar-org/polyfactory/pull/373>`_
 * (`87a6749 <https://github.com/litestar-org/polyfactory/commit/87a67493d839a5a61ea2df2b31eb909a60426a58>`_)  - Dataclass field type not used correctly (#371)  by `@anthonyjgraff <https://github.com/anthonyjgraff>`_ in `#371 <https://github.com/litestar-org/polyfactory/pull/371>`_
 
@@ -581,7 +611,7 @@ Testing
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 * (`ec177ec <https://github.com/litestar-org/polyfactory/commit/ec177ec2d0e12bddb37af285982b0b453e2cbd06>`_)  - Make ``pytest`` configuration stricter (#363)  by `@sobolevn <https://github.com/sobolevn>`_ in `#363 <https://github.com/litestar-org/polyfactory/pull/363>`_
-* (`95d24cb <https://github.com/litestar-org/polyfactory/commit/95d24cb193e2e6fbfa87c642266f0ae907e3ccdd>`_)  - Skip variable length dict test for odmantic (#372)  by `@guacs <https://github.com/guacs>`_ in `#372 <https://github.com/litestar-org/polyfactory/pull/372>`_
+* (`95d24cb <https://github.com/litestar-org/polyfactory/commit/95d24cb193e2e6fbfa87c642266f0ae907e3ccdd>`_)  - Skip variable length dict test for odmantic (#372)  by `@vkcku <https://github.com/vkcku>`_ in `#372 <https://github.com/litestar-org/polyfactory/pull/372>`_
 
 Infra
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -597,8 +627,8 @@ Infra
 Bug Fixes
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-* (`f639c26 <https://github.com/litestar-org/polyfactory/commit/f639c26b630788c3dbcb9c7186d22f20eb59796b>`_)  - Properly set annotation in union with nested Annotated (#355)  by `@guacs <https://github.com/guacs>`_ in `#355 <https://github.com/litestar-org/polyfactory/pull/355>`_
-* (`ebf30ff <https://github.com/litestar-org/polyfactory/commit/ebf30ff6e05807ee6073f1fb04667f17498424d5>`_)  - Add minimum version constraint to attrs (#359)  by `@guacs <https://github.com/guacs>`_ in `#359 <https://github.com/litestar-org/polyfactory/pull/359>`_
+* (`f639c26 <https://github.com/litestar-org/polyfactory/commit/f639c26b630788c3dbcb9c7186d22f20eb59796b>`_)  - Properly set annotation in union with nested Annotated (#355)  by `@vkcku <https://github.com/vkcku>`_ in `#355 <https://github.com/litestar-org/polyfactory/pull/355>`_
+* (`ebf30ff <https://github.com/litestar-org/polyfactory/commit/ebf30ff6e05807ee6073f1fb04667f17498424d5>`_)  - Add minimum version constraint to attrs (#359)  by `@vkcku <https://github.com/vkcku>`_ in `#359 <https://github.com/litestar-org/polyfactory/pull/359>`_
 
 Documentation
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -614,8 +644,8 @@ Documentation
 Bug Fixes
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-* (`3dba4be <https://github.com/litestar-org/polyfactory/commit/3dba4be756d1d4e2b132f1650949bc9e0cdaa3ec>`_)  - Use full Python version for venv cache (#352)  by `@guacs <https://github.com/guacs>`_ in `#352 <https://github.com/litestar-org/polyfactory/pull/352>`_
-* (`257852a <https://github.com/litestar-org/polyfactory/commit/257852af883c7a34e7a8be4494139f36825be08b>`_)  - Add missing factories to builtin registration (#351)  by `@guacs <https://github.com/guacs>`_ in `#351 <https://github.com/litestar-org/polyfactory/pull/351>`_
+* (`3dba4be <https://github.com/litestar-org/polyfactory/commit/3dba4be756d1d4e2b132f1650949bc9e0cdaa3ec>`_)  - Use full Python version for venv cache (#352)  by `@vkcku <https://github.com/vkcku>`_ in `#352 <https://github.com/litestar-org/polyfactory/pull/352>`_
+* (`257852a <https://github.com/litestar-org/polyfactory/commit/257852af883c7a34e7a8be4494139f36825be08b>`_)  - Add missing factories to builtin registration (#351)  by `@vkcku <https://github.com/vkcku>`_ in `#351 <https://github.com/litestar-org/polyfactory/pull/351>`_
 
 Documentation
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -629,7 +659,7 @@ Miscellaneous Tasks
 
 * (`4f2e5d8 <https://github.com/litestar-org/polyfactory/commit/4f2e5d84d7b2c837a21295f886c9bc04f4ed3534>`_)  - Updated dependencies  by `@Goldziher <https://github.com/Goldziher>`_
 * (`161c0f6 <https://github.com/litestar-org/polyfactory/commit/161c0f69344105a827ee4701e91da159b70b1c08>`_)  - Bump actions/checkout from 3 to 4 (#349)  by `@dependabot[bot] <https://github.com/dependabot[bot]>`_ in `#349 <https://github.com/litestar-org/polyfactory/pull/349>`_
-* (`7af5469 <https://github.com/litestar-org/polyfactory/commit/7af5469440fb2450fdfb68403985f1b67d6e4a92>`_)  - Prepare v2.8.1 (#354)  by `@guacs <https://github.com/guacs>`_ in `#354 <https://github.com/litestar-org/polyfactory/pull/354>`_
+* (`7af5469 <https://github.com/litestar-org/polyfactory/commit/7af5469440fb2450fdfb68403985f1b67d6e4a92>`_)  - Prepare v2.8.1 (#354)  by `@vkcku <https://github.com/vkcku>`_ in `#354 <https://github.com/litestar-org/polyfactory/pull/354>`_
 
 `Release [v2.8.0] - 2023-08-26 <https://github.com/litestar-org/polyfactory/releases/tag/v2.8.0>`_
 ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -640,7 +670,7 @@ Miscellaneous Tasks
 Bug Fixes
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-* (`3ec7de8 <https://github.com/litestar-org/polyfactory/commit/3ec7de8693efa8a0d16abda0d7a17d4cf5d840ee>`_)  - Ensure no override of Faker instance (#331)  by `@guacs <https://github.com/guacs>`_ in `#331 <https://github.com/litestar-org/polyfactory/pull/331>`_
+* (`3ec7de8 <https://github.com/litestar-org/polyfactory/commit/3ec7de8693efa8a0d16abda0d7a17d4cf5d840ee>`_)  - Ensure no override of Faker instance (#331)  by `@vkcku <https://github.com/vkcku>`_ in `#331 <https://github.com/litestar-org/polyfactory/pull/331>`_
 
 Documentation
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -650,7 +680,7 @@ Documentation
 Features
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-* (`510fabd <https://github.com/litestar-org/polyfactory/commit/510fabdffec6b3f0147a136b8cdd50c0337d09a9>`_)  - Support constraints for mapping types (#337)  by `@guacs <https://github.com/guacs>`_ in `#337 <https://github.com/litestar-org/polyfactory/pull/337>`_
+* (`510fabd <https://github.com/litestar-org/polyfactory/commit/510fabdffec6b3f0147a136b8cdd50c0337d09a9>`_)  - Support constraints for mapping types (#337)  by `@vkcku <https://github.com/vkcku>`_ in `#337 <https://github.com/litestar-org/polyfactory/pull/337>`_
 * (`0228d3d <https://github.com/litestar-org/polyfactory/commit/0228d3dd81015bb3dfc1add6f3f4b7d1b5f2b6a1>`_)  - Add pydantic's AwareDatetime to the mock map (#333)  by `@185504a9 <https://github.com/185504a9>`_ in `#333 <https://github.com/litestar-org/polyfactory/pull/333>`_
 
 Miscellaneous Tasks
@@ -667,7 +697,7 @@ Miscellaneous Tasks
 Bug Fixes
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-* (`725835e <https://github.com/litestar-org/polyfactory/commit/725835edf8f3c4a4e6e6741ba4f4deeb24192a11>`_)  - Fix pydantic core import (#329)  by `@guacs <https://github.com/guacs>`_ in `#329 <https://github.com/litestar-org/polyfactory/pull/329>`_
+* (`725835e <https://github.com/litestar-org/polyfactory/commit/725835edf8f3c4a4e6e6741ba4f4deeb24192a11>`_)  - Fix pydantic core import (#329)  by `@vkcku <https://github.com/vkcku>`_ in `#329 <https://github.com/litestar-org/polyfactory/pull/329>`_
 
 `Release [v2.7.1] - 2023-08-08 <https://github.com/litestar-org/polyfactory/releases/tag/v2.7.1>`_
 ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -678,9 +708,9 @@ Bug Fixes
 Bug Fixes
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-* (`2733497 <https://github.com/litestar-org/polyfactory/commit/2733497369a065cf7c50006921967b93a02e0434>`_)  - Add support for Json type in Pydantic factory (#315)  by `@guacs <https://github.com/guacs>`_ in `#315 <https://github.com/litestar-org/polyfactory/pull/315>`_
+* (`2733497 <https://github.com/litestar-org/polyfactory/commit/2733497369a065cf7c50006921967b93a02e0434>`_)  - Add support for Json type in Pydantic factory (#315)  by `@vkcku <https://github.com/vkcku>`_ in `#315 <https://github.com/litestar-org/polyfactory/pull/315>`_
 * (`3aeaa0c <https://github.com/litestar-org/polyfactory/commit/3aeaa0cb290225e912ddda3d242b280839e04582>`_)  - Constrained strings not deterministic with seed because urandom not seedable (#319)  by `@klimantje <https://github.com/klimantje>`_ in `#319 <https://github.com/litestar-org/polyfactory/pull/319>`_
-* (`61f1e2e <https://github.com/litestar-org/polyfactory/commit/61f1e2e0d857ffd111ab8c8d7cfbab6f67230ae1>`_)  - Random seed configuration (#321)  by `@guacs <https://github.com/guacs>`_ in `#321 <https://github.com/litestar-org/polyfactory/pull/321>`_
+* (`61f1e2e <https://github.com/litestar-org/polyfactory/commit/61f1e2e0d857ffd111ab8c8d7cfbab6f67230ae1>`_)  - Random seed configuration (#321)  by `@vkcku <https://github.com/vkcku>`_ in `#321 <https://github.com/litestar-org/polyfactory/pull/321>`_
 * (`2400fbe <https://github.com/litestar-org/polyfactory/commit/2400fbeb756deb5cdc32c666f2e27df31dff9387>`_)  - Include pydantic Field constraints when using Optional type (#323)  by `@tcrasset <https://github.com/tcrasset>`_ in `#323 <https://github.com/litestar-org/polyfactory/pull/323>`_
 
 Documentation
@@ -713,7 +743,7 @@ Documentation
 Features
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-* (`96c61ae <https://github.com/litestar-org/polyfactory/commit/96c61aeabe02cb135bfa5225c0dbe6459df41a8c>`_)  - Implementation of Attrs Factory (#313)  by `@guacs <https://github.com/guacs>`_ in `#313 <https://github.com/litestar-org/polyfactory/pull/313>`_
+* (`96c61ae <https://github.com/litestar-org/polyfactory/commit/96c61aeabe02cb135bfa5225c0dbe6459df41a8c>`_)  - Implementation of Attrs Factory (#313)  by `@vkcku <https://github.com/vkcku>`_ in `#313 <https://github.com/litestar-org/polyfactory/pull/313>`_
 
 Infra
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -892,7 +922,7 @@ Miscellaneous Tasks
 Bug Fixes
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-* (`9670d27 <https://github.com/litestar-org/polyfactory/commit/9670d27391f75f9f562f0663c2a0b2497d44e990>`_)  - Return the correct types in the provider map (#224)  by `@guacs <https://github.com/guacs>`_ in `#224 <https://github.com/litestar-org/polyfactory/pull/224>`_
+* (`9670d27 <https://github.com/litestar-org/polyfactory/commit/9670d27391f75f9f562f0663c2a0b2497d44e990>`_)  - Return the correct types in the provider map (#224)  by `@vkcku <https://github.com/vkcku>`_ in `#224 <https://github.com/litestar-org/polyfactory/pull/224>`_
 
 Documentation
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^

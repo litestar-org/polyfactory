@@ -146,3 +146,21 @@ By default, ``__use_examples__`` is set to ``False.``
 .. literalinclude:: /examples/configuration/test_example_10.py
     :caption: Use Examples Values
     :language: python
+
+
+Forward References
+------------------
+
+The ``__forward_references__`` configuration allows you to resolve forward references in type annotations.
+This is useful when dealing with recursive types that cannot be resolved automatically.
+
+By default, ``__forward_references__`` is set to an empty dictionary. You can provide a mapping of
+forward reference names to their resolved types.
+
+.. literalinclude:: /examples/configuration/test_example_11.py
+    :caption: Forward References Configuration
+    :language: python
+
+.. note::
+    The Pydantic ModelFactory has a default forward reference mapping for ``JsonValue`` to resolve to ``str``
+    to avoid recursive issues with Pydantic's JsonValue type.

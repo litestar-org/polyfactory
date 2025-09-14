@@ -67,6 +67,7 @@ from polyfactory.utils.helpers import (
 from polyfactory.utils.model_coverage import CoverageContainer, CoverageContainerCallable, resolve_kwargs_coverage
 from polyfactory.utils.predicates import (
     get_type_origin,
+    is_forward_ref,
     is_literal,
     is_optional,
     is_safe_subclass,
@@ -175,6 +176,7 @@ class BaseFactory(ABC, Generic[T]):
     """
     Flag indicating whether to use the default value on a specific field, if provided.
     """
+    __forward_references__: ClassVar[dict[str, Any]] = {}
 
     __config_keys__: tuple[str, ...] = (
         "__check_model__",
@@ -186,6 +188,7 @@ class BaseFactory(ABC, Generic[T]):
         "__min_collection_length__",
         "__max_collection_length__",
         "__use_defaults__",
+        "__forward_references__",
     )
     """Keys to be considered as config values to pass on to dynamically created factories."""
 
@@ -239,7 +242,7 @@ class BaseFactory(ABC, Generic[T]):
                     raise ConfigurationException(
                         msg,
                     )
-            if is_attribute_overridden(BaseFactory, cls, "__check_model__"):
+            if not is_attribute_overridden(BaseFactory, cls, "__check_model__"):
                 warn_deprecation(
                     "v2.22.0",
                     deprecated_name="__check_model__",
@@ -768,6 +771,7 @@ class BaseFactory(ABC, Generic[T]):
             return None
 
         unwrapped_annotation = unwrap_annotation(field_meta.annotation)
+        unwrapped_annotation = cls._resolve_forward_references(unwrapped_annotation)
 
         if is_literal(annotation=unwrapped_annotation) and (literal_args := get_args(unwrapped_annotation)):
             return cls.__random__.choice(literal_args)
@@ -896,6 +900,8 @@ class BaseFactory(ABC, Generic[T]):
             return
 
         for unwrapped_annotation in flatten_annotation(field_meta.annotation):
+            unwrapped_annotation = cls._resolve_forward_references(unwrapped_annotation)  # noqa: PLW2901
+
             if unwrapped_annotation in (None, NoneType):
                 yield None
 
@@ -952,6 +958,21 @@ class BaseFactory(ABC, Generic[T]):
                 raise ParameterException(
                     msg,
                 )
+
+    @classmethod
+    def _resolve_forward_references(cls, annotation: Any) -> Any:
+        """Resolve forward references in the factory's model."""
+        if not cls.__forward_references__:
+            return annotation
+
+        if is_forward_ref(annotation):
+            return cls.__forward_references__.get(annotation.__forward_arg__, annotation)
+
+        # This is a workaround when forward references are resolved to strings
+        if isinstance(annotation, str):
+            return cls.__forward_references__.get(annotation, annotation)
+
+        return annotation
 
     @classmethod
     def should_set_none_value(cls, field_meta: FieldMeta) -> bool:
