@@ -723,14 +723,14 @@ data-aria-dark="Switch to auto color mode">
 </span><span data-line="459">                    <span class="k">for</span> <span class="n">field</span> <span class="ow">in</span> <span class="bp">cls</span><span class="o">.</span><span class="n">__model__</span><span class="o">.</span><span class="n">__fields__</span><span class="o">.</span><span class="n">values</span><span class="p">()</span>
 </span><span data-line="460">                <span class="p">]</span>
 </span><span data-line="461">            <span class="k">else</span><span class="p">:</span>
-</span><span data-line="462">                <span class="bp">cls</span><span class="o">.</span><span class="n">_fields_metadata</span> <span class="o">=</span> <span class="p">[</span>
-</span><span data-line="463">                    <span class="n">PydanticFieldMeta</span><span class="o">.</span><span class="n">from_field_info</span><span class="p">(</span>
-</span><span data-line="464">                        <span class="n">field_info</span><span class="o">=</span><span class="n">field_info</span><span class="p">,</span>
-</span><span data-line="465">                        <span class="n">field_name</span><span class="o">=</span><span class="n">field_name</span><span class="p">,</span>
-</span><span data-line="466">                        <span class="n">use_alias</span><span class="o">=</span><span class="ow">not</span> <span class="bp">cls</span><span class="o">.</span><span class="n">__model__</span><span class="o">.</span><span class="n">model_config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span>  <span class="c1"># pyright: ignore[reportGeneralTypeIssues]</span>
-</span><span data-line="467">                            <span class="s2">&quot;populate_by_name&quot;</span><span class="p">,</span>
-</span><span data-line="468">                            <span class="kc">False</span><span class="p">,</span>
-</span><span data-line="469">                        <span class="p">),</span>
+</span><span data-line="462">                <span class="n">use_alias</span> <span class="o">=</span> <span class="bp">cls</span><span class="o">.</span><span class="n">__model__</span><span class="o">.</span><span class="n">model_config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;validate_by_name&quot;</span><span class="p">,</span> <span class="kc">False</span><span class="p">)</span> <span class="ow">or</span> <span class="bp">cls</span><span class="o">.</span><span class="n">__model__</span><span class="o">.</span><span class="n">model_config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span>
+</span><span data-line="463">                    <span class="s2">&quot;populate_by_name&quot;</span><span class="p">,</span> <span class="kc">False</span>
+</span><span data-line="464">                <span class="p">)</span>
+</span><span data-line="465">                <span class="bp">cls</span><span class="o">.</span><span class="n">_fields_metadata</span> <span class="o">=</span> <span class="p">[</span>
+</span><span data-line="466">                    <span class="n">PydanticFieldMeta</span><span class="o">.</span><span class="n">from_field_info</span><span class="p">(</span>
+</span><span data-line="467">                        <span class="n">field_info</span><span class="o">=</span><span class="n">field_info</span><span class="p">,</span>
+</span><span data-line="468">                        <span class="n">field_name</span><span class="o">=</span><span class="n">field_name</span><span class="p">,</span>
+</span><span data-line="469">                        <span class="n">use_alias</span><span class="o">=</span><span class="ow">not</span> <span class="n">use_alias</span><span class="p">,</span>
 </span><span data-line="470">                    <span class="p">)</span>
 </span><span data-line="471">                    <span class="k">for</span> <span class="n">field_name</span><span class="p">,</span> <span class="n">field_info</span> <span class="ow">in</span> <span class="bp">cls</span><span class="o">.</span><span class="n">__model__</span><span class="o">.</span><span class="n">model_fields</span><span class="o">.</span><span class="n">items</span><span class="p">()</span>  <span class="c1"># pyright: ignore[reportGeneralTypeIssues]</span>
 </span><span data-line="472">                <span class="p">]</span>
