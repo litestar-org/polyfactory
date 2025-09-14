@@ -173,7 +173,7 @@ markers = [
   "attrs",
 ]
 asyncio_default_fixture_loop_scope = "function"
-testpaths = ["tests"]
+testpaths = ["tests", "docs/examples"]
 
 [tool.coverage.report]
 exclude_lines = [
