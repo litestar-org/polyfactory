@@ -24,7 +24,7 @@ Default Relationship Behavior
 - ``__set_relationships__`` now defaults to ``True``
 - Relationships are automatically populated by default
 
-To maintain the previous behavior, explicitly set ``__set_relationships__ = False`` in your factory:
+To maintain the previous behavior, explicitly set ``__set_relationships__ = False`` on your factory.
 
 Default Association Proxy Behavior
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -39,7 +39,7 @@ Default Association Proxy Behavior
 - ``__set_association_proxy__`` now defaults to ``True``
 - Association proxies are automatically populated by default
 
-To maintain the previous behavior, explicitly set ``__set_association_proxy__ = False`` in your factory:
+To maintain the previous behavior, explicitly set ``__set_association_proxy__ = False`` on your factory.
 
 Model Validation Behavior
 -------------------------
@@ -55,7 +55,7 @@ Model Validation Behavior
 - Model structure validation is enabled by default
 - This helps catch potential issues with model definitions early
 
-To maintain the previous behavior, explicitly set ``__check_model__ = False`` in your factory:
+To maintain the previous behavior, explicitly set ``__check_model__ = False`` on your factory.
 
 Fixture Field Removal
 ---------------------
