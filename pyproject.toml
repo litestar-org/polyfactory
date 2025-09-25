@@ -37,12 +37,12 @@ version = "2.22.2"
 description = "Mock data generation factories"
 readme = "docs/PYPI_README.md"
 license = { text = "MIT" }
-requires-python = ">=3.8,<4.0"
+requires-python = ">=3.9,<4.0"
 dependencies = ["faker>=5.0.0", "typing-extensions>=4.6.0"]
 
 [project.optional-dependencies]
 sqlalchemy = ["sqlalchemy>=1.4.29"]
-pydantic = ["pydantic[email]>=1.10"]
+pydantic = ["eval-type-backport>=0.2.2", "pydantic[email]>=1.10"]
 msgspec = ["msgspec"]
 odmantic = ["odmantic<1.0.0", "pydantic[email]"]
 beanie = ["beanie", "pydantic[email]", "pymongo<4.9"]
@@ -186,7 +186,7 @@ exclude_lines = [
 [tool.ruff]
 line-length = 120
 src = ["polyfactory", "tests", "docs/examples"]
-target-version = "py38"
+target-version = "py39"
 
 [tool.ruff.format]
 docstring-code-format = true

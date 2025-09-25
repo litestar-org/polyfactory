@@ -1,12 +1,11 @@
 from dataclasses import dataclass
-from typing import Tuple
 
 from polyfactory.factories import DataclassFactory
 
 
 @dataclass
 class Owner:
-    cars: Tuple[str, ...]
+    cars: tuple[str, ...]
 
 
 class OwnerFactory(DataclassFactory[Owner]):

@@ -113,15 +113,15 @@ autosectionlabel_prefix_document = True
 exclude_patterns = ["_build", "Thumbs.db", ".DS_Store"]
 
 # -- Style configuration -----------------------------------------------------
-html_theme = "litestar_sphinx_theme"
+html_theme = "shibuya"
 html_title = "Polyfactory"
-# pygments_style = "lightbulb"
+pygments_style = "dracula"
 todo_include_todos = True
 
+html_favicon = "_static/logo-default.png"
 html_static_path = ["_static"]
 templates_path = ["_templates"]
-html_js_files = ["versioning.js"]
-html_css_files = ["style.css"]
+html_css_files = ["custom.css"]
 
 html_show_sourcelink = True
 html_copy_source = True
@@ -131,18 +131,17 @@ html_context = {
     "source_user": "litestar-org",
     "source_repo": "polyfactory",
     "current_version": "latest",
-    "versions": [
-        ("latest", "/latest"),
-        ("development", "/main"),
-    ],
     "version": release,
 }
 
 html_theme_options = {
     "logo_target": "/",
-    "github_repo_name": "polyfactory",
+    "accent_color": "amber",
     "github_url": "https://github.com/litestar-org/polyfactory",
+    "discord_url": "https://discord.gg/litestar",
     "navigation_with_keys": True,
+    "light_logo": "_static/logo-default.png",
+    "dark_logo": "_static/logo-default.png",
     "nav_links": [
         {"title": "Home", "url": "index"},
         {
@@ -246,5 +245,4 @@ def delayed_setup(app: Sphinx) -> None:
 
 def setup(app: Sphinx) -> dict[str, bool]:
     app.connect("builder-inited", delayed_setup, priority=0)
-    app.setup_extension("litestar_sphinx_theme")
     return {"parallel_read_safe": True, "parallel_write_safe": True}

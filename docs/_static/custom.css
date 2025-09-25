@@ -1,0 +1,154 @@
+/* Theme color definitions */
+:root {
+  --brand-font-size-xl: 6rem;
+  --brand-font-size-lg: 5rem;
+  --brand-font-size-md: 4rem;
+  --brand-font-size-sm: 3rem;
+  --brand-font-size-xs: 2.2rem;
+  --brand-font-size-xxs: 1.6rem;
+
+  --brand-letter-spacing-xl: 0.25em;
+  --brand-letter-spacing-lg: 0.2em;
+  --brand-letter-spacing-md: 0.1em;
+  --brand-letter-spacing-sm: 0.05em;
+  --brand-letter-spacing-xs: 0.03em;
+}
+
+html.light {
+  --sl-color-primary: #202235;
+  --sl-color-secondary: #edb641;
+  --sl-color-accent: #ffd480;
+  --sl-color-text-1: var(--sl-color-primary);
+  --sl-color-text-2: var(--sl-color-secondary);
+  --sy-c-foot-background: #f0f0f0;
+  --yue-c-text: #000;
+  --brand-text-glow:
+    0 0 10px rgba(32, 34, 53, 0.3), 0 0 20px rgba(32, 34, 53, 0.2),
+    0 0 30px rgba(237, 182, 65, 0.1);
+}
+
+html.dark {
+  --sl-color-text-1: var(--sl-color-secondary);
+  --sy-c-foot-background: black;
+  --yue-c-text: #fff;
+  --brand-text-glow:
+    0 0 10px rgba(237, 182, 65, 0.4), 0 0 20px rgba(237, 182, 65, 0.3),
+    0 0 30px rgba(237, 182, 65, 0.2);
+}
+
+.title-with-logo {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 5rem auto 4rem;
+  width: 100%;
+  padding: 0 2rem;
+  user-select: none;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+}
+
+html[class] .title-with-logo .brand-text {
+  font-family: var(--sl-font-sans);
+  font-weight: 300;
+  font-size: var(--brand-font-size-lg);
+  letter-spacing: var(--brand-letter-spacing-xl);
+  text-transform: uppercase;
+  text-align: center;
+  line-height: 1.4;
+  max-width: 100%;
+  white-space: nowrap;
+  word-break: break-word;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+  hyphens: auto;
+  -webkit-hyphens: auto;
+  -ms-hyphens: auto;
+  transition:
+    color var(--sl-transition),
+    text-shadow var(--sl-transition);
+}
+
+html.light .title-with-logo .brand-text {
+  color: var(--sl-color-text-1);
+  text-shadow: var(--brand-text-glow);
+}
+
+html.dark .title-with-logo .brand-text {
+  color: var(--sl-color-text-2);
+  text-shadow: var(--brand-text-glow);
+}
+
+/* Button container wrapping */
+.buttons.wrap {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.buttons.wrap .btn-no-wrap {
+  flex: 0 0 auto;
+}
+
+/* Large screens */
+@media (min-width: 1200px) {
+  html[class] .title-with-logo .brand-text {
+    font-size: var(--brand-font-size-xl);
+  }
+}
+
+/* Medium-small screens */
+@media (max-width: 991px) {
+  html[class] .title-with-logo .brand-text {
+    font-size: var(--brand-font-size-md);
+    letter-spacing: var(--brand-letter-spacing-lg);
+  }
+}
+
+/* Small screens */
+@media (max-width: 767px) {
+  html[class] .title-with-logo .brand-text {
+    font-size: var(--brand-font-size-sm);
+    letter-spacing: var(--brand-letter-spacing-md);
+  }
+
+  html[class] .title-with-logo {
+    margin: 2rem auto 1.5rem;
+  }
+}
+
+/* Extra small screens */
+@media (max-width: 480px) {
+  html[class] .title-with-logo .brand-text {
+    font-size: var(--brand-font-size-xs);
+    letter-spacing: var(--brand-letter-spacing-sm);
+    line-height: 1.2;
+  }
+
+  html[class] .title-with-logo {
+    margin: 1.5rem auto 1rem;
+    padding: 0 1rem;
+  }
+}
+
+/* Smallest screens */
+@media (max-width: 360px) {
+  html[class] .title-with-logo .brand-text {
+    font-size: var(--brand-font-size-xxs);
+    letter-spacing: var(--brand-letter-spacing-xs);
+  }
+}
+
+/* Preserve existing layout styles */
+#badges img {
+  margin-top: 0;
+  margin-bottom: 0;
+}
+
+#badges {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-bottom: 3em;
+}

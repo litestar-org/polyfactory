@@ -1,11 +1,10 @@
 import sys
 import textwrap
 from types import ModuleType
-from typing import Any, Callable, Dict, List, Set, Tuple, get_args, get_origin
+from typing import Annotated, Any, Callable, get_args, get_origin
 
 import annotated_types as at
 import pytest
-from typing_extensions import Annotated
 
 from polyfactory.utils.normalize_type import normalize_type
 
@@ -141,10 +140,10 @@ class TestNormalizeTypePep695:
     [
         (int, int),
         (str, str),
-        (List[int], List[int]),
-        (Dict[str, int], Dict[str, int]),
-        (Tuple[int, ...], Tuple[int, ...]),
-        (Set[str], Set[str]),
+        (list[int], list[int]),
+        (dict[str, int], dict[str, int]),
+        (tuple[int, ...], tuple[int, ...]),
+        (set[str], set[str]),
     ],
     ids=["int", "str", "list", "dict", "tuple", "set"],
 )

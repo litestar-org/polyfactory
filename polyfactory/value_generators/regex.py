@@ -33,8 +33,9 @@ IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 from __future__ import annotations
 
 from itertools import chain
+from re import Pattern
 from string import ascii_letters, ascii_lowercase, ascii_uppercase, digits, printable, punctuation, whitespace
-from typing import TYPE_CHECKING, Any, Pattern
+from typing import TYPE_CHECKING, Any
 
 try:  # >=3.11
     from re._parser import SubPattern, parse
