@@ -26,21 +26,6 @@ Default Relationship Behavior
 
 To maintain the previous behavior, explicitly set ``__set_relationships__ = False`` on your factory.
 
-Default Association Proxy Behavior
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-**Before:**
-
-- ``__set_association_proxy__`` defaulted to ``False``
-- Association proxies were not automatically populated unless explicitly enabled
-
-**After:**
-
-- ``__set_association_proxy__`` now defaults to ``True``
-- Association proxies are automatically populated by default
-
-To maintain the previous behavior, explicitly set ``__set_association_proxy__ = False`` on your factory.
-
 Model Validation Behavior
 -------------------------
 
