@@ -1,4 +1,4 @@
-from typing import Generic, List, Optional, TypeVar, Union
+from typing import Generic, Optional, TypeVar, Union
 
 from pydantic import BaseModel
 
@@ -48,7 +48,7 @@ class ThreeResponse(BaseModel):
 
 
 class APIResponse(GenericModel, Generic[APIResponseData]):  # type: ignore
-    data: List[APIResponseData]
+    data: list[APIResponseData]
 
 
 def test_generic_factory_one_response() -> None:

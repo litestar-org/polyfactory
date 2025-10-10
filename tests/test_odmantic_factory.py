@@ -1,5 +1,5 @@
 from datetime import datetime
-from typing import Any, List
+from typing import Any
 from uuid import UUID
 
 import bson
@@ -46,7 +46,7 @@ class MyModel(Model):  # type: ignore
     bson_binary: bson.Binary
     name: str
     embedded: MyEmbeddedDocument
-    embedded_list: List[MyEmbeddedDocument]
+    embedded_list: list[MyEmbeddedDocument]
 
 
 @pytest.fixture()
