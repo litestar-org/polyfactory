@@ -295,7 +295,7 @@ def test_factory_use_examples_coverage() -> None:
 
     class Foo(BaseModel):
         name: str = Field(examples=example_strings)
-        number: int | float | None = Field(examples=example_numbers)
+        number: Optional[Union[int, float]] = Field(examples=example_numbers)
 
     class FooFactory(ModelFactory[Foo]):
         __use_examples__ = True
