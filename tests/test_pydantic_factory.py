@@ -288,6 +288,25 @@ def test_factory_use_construct_coverage() -> None:
         FooFactory.build()
 
 
+@pytest.mark.skipif(_IS_PYDANTIC_V1, reason="Pydantic 1 doesn't support examples")
+def test_factory_use_examples_coverage() -> None:
+    example_strings = ["a", "b", "c"]
+    example_numbers = [-1, -1.0, 0, 0.0, 1, 1.0, None]
+
+    class Foo(BaseModel):
+        name: str = Field(examples=example_strings)
+        number: int | float | None = Field(examples=example_numbers)
+
+    class FooFactory(ModelFactory[Foo]):
+        __use_examples__ = True
+
+    instances = list(FooFactory.coverage())
+
+    assert len(instances) == max(len(example_strings), len(example_numbers))
+    assert {instance.name for instance in instances} == set(example_strings)
+    assert {instance.number for instance in instances} == set(example_numbers)
+
+
 def test_factory_use_construct_nested() -> None:
     class Child(BaseModel):
         a: int = Field(ge=0)
