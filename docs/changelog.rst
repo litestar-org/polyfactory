@@ -4,17 +4,53 @@ Changelog
 
 All commits to this project will be documented in this file.
 
+`Release [v2.22.3] - 2025-10-18 <https://github.com/litestar-org/polyfactory/releases/tag/v2.22.3>`_
+----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+* `See All commits in v2.22.3 <https://github.com/litestar-org/polyfactory/commits/v2.22.3>`_
+
+`63eaa9f <https://github.com/litestar-org/polyfactory/commit/63eaa9f5e2806791142b559932b103fc524a5a52>`_ ... `ff9148a <https://github.com/litestar-org/polyfactory/commit/ff9148a04ef46e74454acd90b732b97ff5c60715>`_ | `See diff for 2.22.3 <https://github.com/litestar-org/polyfactory/compare/63eaa9f5e2806791142b559932b103fc524a5a52...ff9148a04ef46e74454acd90b732b97ff5c60715>`_
+
+Bug Fixes
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+* (`0358ad0 <https://github.com/litestar-org/polyfactory/commit/0358ad0950bf3816be352ca9ed34370c05e9f94e>`_)  - Pydantic Factory alias generation from version 2.11 (#718)  by `@sandre35 <https://github.com/sandre35>`_ in `#718 <https://github.com/litestar-org/polyfactory/pull/718>`_
+* (`81bfbc2 <https://github.com/litestar-org/polyfactory/commit/81bfbc2519148af1ac46fad37d65be381d444ea3>`_)  - Remove association proxy default change (#747)  by `@adhtruong <https://github.com/adhtruong>`_ in `#747 <https://github.com/litestar-org/polyfactory/pull/747>`_
+* (`ff9148a <https://github.com/litestar-org/polyfactory/commit/ff9148a04ef46e74454acd90b732b97ff5c60715>`_)  - Update prepare-release.sh
+
+Documentation
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+* (`7eec41e <https://github.com/litestar-org/polyfactory/commit/7eec41ef636a1bce2d41f12c295ddef650cbd968>`_)  - Add migration guide (#704)  by `@adhtruong <https://github.com/adhtruong>`_ in `#704 <https://github.com/litestar-org/polyfactory/pull/704>`_
+
+Miscellaneous Tasks
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+* (`ae7cb36 <https://github.com/litestar-org/polyfactory/commit/ae7cb36e26546e9db60dc383da1ba6baea980d0a>`_)  - Bump actions/checkout from 4 to 5 (#740)  by `@dependabot[bot] <https://github.com/dependabot[bot]>`_ in `#740 <https://github.com/litestar-org/polyfactory/pull/740>`_
+* (`0c610f1 <https://github.com/litestar-org/polyfactory/commit/0c610f10e433fdb760028d14dc8c81d29db52f40>`_)  - Bump amannn/action-semantic-pull-request from 5 to 6 (#741)  by `@dependabot[bot] <https://github.com/dependabot[bot]>`_ in `#741 <https://github.com/litestar-org/polyfactory/pull/741>`_
+* (`5e605dc <https://github.com/litestar-org/polyfactory/commit/5e605dce981865c6e3af073a4da74585009cd4c3>`_)  - Bump actions/download-artifact from 4 to 5 (#739)  by `@dependabot[bot] <https://github.com/dependabot[bot]>`_ in `#739 <https://github.com/litestar-org/polyfactory/pull/739>`_
+* (`62d92c9 <https://github.com/litestar-org/polyfactory/commit/62d92c90d79bdf18776d0b3046bd3c0e10555815>`_)  - Bump actions/github-script from 7 to 8 (#743)  by `@dependabot[bot] <https://github.com/dependabot[bot]>`_ in `#743 <https://github.com/litestar-org/polyfactory/pull/743>`_
+* (`16d847b <https://github.com/litestar-org/polyfactory/commit/16d847b961d8c16415dc3e7a63d0d4f4b411a348>`_)  - Bump actions/setup-python from 5 to 6 (#742)  by `@dependabot[bot] <https://github.com/dependabot[bot]>`_ in `#742 <https://github.com/litestar-org/polyfactory/pull/742>`_
+* (`572a47c <https://github.com/litestar-org/polyfactory/commit/572a47c391178638fd2e27aa11d6be3b0695851e>`_)  - Update CODEOWNERS (#749)  by `@adhtruong <https://github.com/adhtruong>`_ in `#749 <https://github.com/litestar-org/polyfactory/pull/749>`_
+* (`1b26034 <https://github.com/litestar-org/polyfactory/commit/1b2603481ced3282647f69a28aa7c3eff0366135>`_)  - Bump github/codeql-action from 3 to 4 (#756)  by `@dependabot[bot] <https://github.com/dependabot[bot]>`_ in `#756 <https://github.com/litestar-org/polyfactory/pull/756>`_
+* (`5ec0b01 <https://github.com/litestar-org/polyfactory/commit/5ec0b0134eef33beb699c5f91ba5e3a5058ce405>`_)  - Bump astral-sh/setup-uv from 6 to 7 (#755)  by `@dependabot[bot] <https://github.com/dependabot[bot]>`_ in `#755 <https://github.com/litestar-org/polyfactory/pull/755>`_
+* (`c87481a <https://github.com/litestar-org/polyfactory/commit/c87481a8074bf5196a29c5c362e39746e2304087>`_)  - Remove unused script (#716)  by `@adhtruong <https://github.com/adhtruong>`_ in `#716 <https://github.com/litestar-org/polyfactory/pull/716>`_
+
 `Release [v2.22.2] - 2025-08-15 <https://github.com/litestar-org/polyfactory/releases/tag/v2.22.2>`_
 ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 * `See All commits in v2.22.2 <https://github.com/litestar-org/polyfactory/commits/v2.22.2>`_
 
-`a14ac7f <https://github.com/litestar-org/polyfactory/commit/a14ac7ff61769df18d509799f8d94c7581e482dd>`_ ... `8e14c35 <https://github.com/litestar-org/polyfactory/commit/8e14c35ee46a8203844ec45728a8d65f7e847869>`_ | `See diff for 2.22.2 <https://github.com/litestar-org/polyfactory/compare/a14ac7ff61769df18d509799f8d94c7581e482dd...8e14c35ee46a8203844ec45728a8d65f7e847869>`_
+`a14ac7f <https://github.com/litestar-org/polyfactory/commit/a14ac7ff61769df18d509799f8d94c7581e482dd>`_ ... `63eaa9f <https://github.com/litestar-org/polyfactory/commit/63eaa9f5e2806791142b559932b103fc524a5a52>`_ | `See diff for 2.22.2 <https://github.com/litestar-org/polyfactory/compare/a14ac7ff61769df18d509799f8d94c7581e482dd...63eaa9f5e2806791142b559932b103fc524a5a52>`_
 
 Bug Fixes
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 * (`6dcd191 <https://github.com/litestar-org/polyfactory/commit/6dcd19134da6b17b97ee4ee04a514db2d1f166c9>`_)  - Pydantic alias handling (#737)  by `@adhtruong <https://github.com/adhtruong>`_ in `#737 <https://github.com/litestar-org/polyfactory/pull/737>`_
 * (`8e14c35 <https://github.com/litestar-org/polyfactory/commit/8e14c35ee46a8203844ec45728a8d65f7e847869>`_)  - Allow specifying forward references when as string (#735)  by `@adhtruong <https://github.com/adhtruong>`_ in `#735 <https://github.com/litestar-org/polyfactory/pull/735>`_
+
+Miscellaneous Tasks
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+* (`63eaa9f <https://github.com/litestar-org/polyfactory/commit/63eaa9f5e2806791142b559932b103fc524a5a52>`_)  - Bump to v2.22.2 (#738)  by `@adhtruong <https://github.com/adhtruong>`_ in `#738 <https://github.com/litestar-org/polyfactory/pull/738>`_
 
 `Release [v2.22.1] - 2025-07-14 <https://github.com/litestar-org/polyfactory/releases/tag/v2.22.1>`_
 ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
