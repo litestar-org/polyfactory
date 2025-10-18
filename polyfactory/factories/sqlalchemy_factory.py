@@ -107,10 +107,7 @@ class SQLAlchemyFactory(Generic[T], BaseFactory[T]):
     def __init_subclass__(cls, *args: Any, **kwargs: Any) -> None:
         super().__init_subclass__(*args, **kwargs)
 
-        for key in (
-            "__set_relationships__",
-            "__set_association_proxy__",
-        ):
+        for key in ("__set_relationships__",):
             if is_attribute_overridden(SQLAlchemyFactory, cls, key):
                 continue
 
