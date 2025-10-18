@@ -15,4 +15,4 @@ uv run git-cliff \
 	--tag "$bumped_version" \
 	--output docs/changelog.rst
 
-uvx bump-my-version@1.1.2 bump --new-version "$bumped_version"
+uvx --with 'click==8.2.2' bump-my-version@1.1.2 bump --new-version "$bumped_version" --allow-dirty
