@@ -59,7 +59,7 @@ jobs:
           python-version: ${{ matrix.python-version }}
 
       - name: Install uv
-        uses: astral-sh/setup-uv@v6
+        uses: astral-sh/setup-uv@v7
         with:
           version: "0.5.4"
           enable-cache: true
@@ -107,7 +107,7 @@ jobs:
           python-version: "3.13"
 
       - name: Install uv
-        uses: astral-sh/setup-uv@v6
+        uses: astral-sh/setup-uv@v7
         with:
           version: "0.5.4"
           enable-cache: true
@@ -145,16 +145,16 @@ jobs:
 
       - name: Initialize CodeQL With Dependencies
         if: github.event_name == 'push' && github.ref_name == 'main'
-        uses: github/codeql-action/init@v3
+        uses: github/codeql-action/init@v4
 
       - name: Initialize CodeQL Without Dependencies
         if: github.event_name == 'pull_request'
-        uses: github/codeql-action/init@v3
+        uses: github/codeql-action/init@v4
         with:
           setup-python-dependencies: false
 
       - name: Perform CodeQL Analysis
-        uses: github/codeql-action/analyze@v3
+        uses: github/codeql-action/analyze@v4
 
   upload-test-coverage:
     runs-on: ubuntu-latest
