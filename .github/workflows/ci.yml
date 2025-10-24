@@ -167,7 +167,7 @@ jobs:
           python-version: "3.13"
 
       - name: Download Artifacts
-        uses: actions/download-artifact@v5
+        uses: actions/download-artifact@v6
         with:
           name: coverage-data
 
