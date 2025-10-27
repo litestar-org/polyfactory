@@ -465,6 +465,24 @@
       "contributions": [
         "test"
       ]
+    },
+    {
+      "login": "RasmusNygren",
+      "name": "RasmusNygren",
+      "avatar_url": "https://avatars.githubusercontent.com/u/26030663?v=4",
+      "profile": "https://github.com/RasmusNygren",
+      "contributions": [
+        "doc"
+      ]
+    },
+    {
+      "login": "arembridge",
+      "name": "rembridge",
+      "avatar_url": "https://avatars.githubusercontent.com/u/35376887?v=4",
+      "profile": "https://github.com/arembridge",
+      "contributions": [
+        "code"
+      ]
     }
   ],
   "contributorsPerLine": 7,

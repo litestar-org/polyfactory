@@ -5,7 +5,7 @@ from datetime import timezone
 from functools import partial
 from os.path import realpath
 from pathlib import Path
-from typing import TYPE_CHECKING, Any, ClassVar, ForwardRef, Generic, Mapping, TypeVar, cast
+from typing import TYPE_CHECKING, Any, ClassVar, ForwardRef, Generic, Iterable, Mapping, TypeVar, cast
 from uuid import NAMESPACE_DNS, uuid1, uuid3, uuid5
 
 from typing_extensions import Literal, get_args
@@ -16,6 +16,7 @@ from polyfactory.factories.base import BuildContext as BaseBuildContext
 from polyfactory.field_meta import Constraints, FieldMeta, Null
 from polyfactory.utils.deprecation import check_for_deprecated_parameters
 from polyfactory.utils.helpers import unwrap_new_type, unwrap_optional
+from polyfactory.utils.model_coverage import CoverageContainer
 from polyfactory.utils.normalize_type import normalize_type
 from polyfactory.utils.predicates import is_annotated, is_optional, is_safe_subclass, is_union
 from polyfactory.utils.types import NoneType
@@ -577,7 +578,7 @@ class ModelFactory(Generic[T], BaseFactory[T]):
 
     @classmethod
     def coverage(cls, factory_use_construct: bool = False, **kwargs: Any) -> abc.Iterator[T]:
-        """Build a batch of the factory's Meta.model will full coverage of the sub-types of the model.
+        """Build a batch of the factory's Meta.model with full coverage of the sub-types of the model.
 
         :param kwargs: Any kwargs. If field_meta names are set in kwargs, their values will be used.
 
@@ -694,6 +695,33 @@ class ModelFactory(Generic[T], BaseFactory[T]):
 
         mapping.update(super().get_provider_map())
         return mapping
+
+    @classmethod
+    def get_field_value_coverage(
+        cls,
+        field_meta: FieldMeta,
+        field_build_parameters: Any | None = None,
+        build_context: BuildContext | None = None,
+    ) -> Iterable[Any]:
+        """Return a field value on the subclass if existing, otherwise returns a mock value.
+
+        :param field_meta: FieldMeta instance.
+        :param field_build_parameters: Any build parameters passed to the factory as kwarg values.
+        :param build_context: BuildContext data for current build.
+
+        :returns: An iterable of values.
+
+        """
+        if cls.is_ignored_type(field_meta.annotation):
+            return
+
+        if cls.__use_examples__:
+            examples = getattr(field_meta, "examples", None) or []
+            if len(examples) > 0:
+                yield CoverageContainer(examples)
+                return
+
+        yield from super().get_field_value_coverage(field_meta, field_build_parameters, build_context)
 
 
 def _is_pydantic_v1_model(model: Any) -> TypeGuard[BaseModelV1]:
