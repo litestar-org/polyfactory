@@ -1,5 +1,5 @@
 from dataclasses import dataclass
-from typing import Any, Dict, Generic, Type, TypeVar
+from typing import Any, Generic, TypeVar
 from uuid import UUID
 
 from polyfactory.factories import DataclassFactory
@@ -25,7 +25,7 @@ class CustomDataclassFactory(Generic[T], DataclassFactory[T]):
     __is_base_factory__ = True
 
     @classmethod
-    def get_provider_map(cls) -> Dict[Type, Any]:
+    def get_provider_map(cls) -> dict[type, Any]:
         providers_map = super().get_provider_map()
 
         return {

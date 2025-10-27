@@ -179,7 +179,7 @@ def test_handle_constrained_decimal_handles_lt(maximum: Decimal) -> None:
     ),
 )
 def test_handle_constrained_decimal_handles_multiple_of(multiple_of: Decimal) -> None:
-    if multiple_of != Decimal("0"):
+    if multiple_of != Decimal(0):
         result = handle_constrained_decimal(
             random=Random(),
             multiple_of=multiple_of,
@@ -209,7 +209,7 @@ def test_handle_constrained_decimal_handles_multiple_of(multiple_of: Decimal) ->
 )
 def test_handle_constrained_decimal_handles_multiple_of_with_lt(val1: Decimal, val2: Decimal) -> None:
     multiple_of, max_value = sorted([val1, val2])
-    if multiple_of != Decimal("0"):
+    if multiple_of != Decimal(0):
         result = handle_constrained_decimal(
             random=Random(),
             multiple_of=multiple_of,
@@ -241,7 +241,7 @@ def test_handle_constrained_decimal_handles_multiple_of_with_lt(val1: Decimal, v
 )
 def test_handle_constrained_decimal_handles_multiple_of_with_le(val1: Decimal, val2: Decimal) -> None:
     multiple_of, max_value = sorted([val1, val2])
-    if multiple_of != Decimal("0"):
+    if multiple_of != Decimal(0):
         result = handle_constrained_decimal(
             random=Random(),
             multiple_of=multiple_of,
@@ -273,7 +273,7 @@ def test_handle_constrained_decimal_handles_multiple_of_with_le(val1: Decimal, v
 )
 def test_handle_constrained_decimal_handles_multiple_of_with_ge(val1: Decimal, val2: Decimal) -> None:
     min_value, multiple_of = sorted([val1, val2])
-    if multiple_of != Decimal("0"):
+    if multiple_of != Decimal(0):
         result = handle_constrained_decimal(
             random=Random(),
             multiple_of=multiple_of,
@@ -305,7 +305,7 @@ def test_handle_constrained_decimal_handles_multiple_of_with_ge(val1: Decimal, v
 )
 def test_handle_constrained_decimal_handles_multiple_of_with_gt(val1: Decimal, val2: Decimal) -> None:
     min_value, multiple_of = sorted([val1, val2])
-    if multiple_of != Decimal("0"):
+    if multiple_of != Decimal(0):
         result = handle_constrained_decimal(
             random=Random(),
             multiple_of=multiple_of,
@@ -347,7 +347,7 @@ def test_handle_constrained_decimal_handles_multiple_of_with_ge_and_le(
     val3: Decimal,
 ) -> None:
     min_value, multiple_of, max_value = sorted([val1, val2, val3])
-    if multiple_of != Decimal("0") and is_multiply_of_multiple_of_in_range(
+    if multiple_of != Decimal(0) and is_multiply_of_multiple_of_in_range(
         minimum=min_value,
         maximum=max_value,
         multiple_of=multiple_of,
@@ -427,5 +427,5 @@ def test_zero_to_one_range() -> None:
 
     result = FractionExampleFactory.build()
 
-    assert result.fraction >= Decimal("0")
-    assert result.fraction <= Decimal("1")
+    assert result.fraction >= Decimal(0)
+    assert result.fraction <= Decimal(1)

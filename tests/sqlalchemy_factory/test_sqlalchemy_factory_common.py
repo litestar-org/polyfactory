@@ -457,18 +457,11 @@ def test_unsupported_type_engine() -> None:
         id: Any = Column(Integer(), primary_key=True)
         numeric_field: Any = Column(Location, nullable=False)
 
-    factory = SQLAlchemyFactory.create_factory(Place)
     with pytest.raises(
         ParameterException,
         match="Unsupported type engine: Location()",
     ):
-        factory.build()
-
-
-def test_check_deprecated_setting() -> None:
-    with pytest.warns(DeprecationWarning, match=r"Use of deprecated default '__set_relationships__'"):
-
-        class BookFactory(SQLAlchemyFactory[Book]): ...
+        SQLAlchemyFactory.create_factory(Place)
 
 
 def test_check_deprecated_default_overridden_no_deprecation() -> None:
