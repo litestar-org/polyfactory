@@ -578,7 +578,7 @@ class ModelFactory(Generic[T], BaseFactory[T]):
 
     @classmethod
     def coverage(cls, factory_use_construct: bool = False, **kwargs: Any) -> abc.Iterator[T]:
-        """Build a batch of the factory's Meta.model will full coverage of the sub-types of the model.
+        """Build a batch of the factory's Meta.model with full coverage of the sub-types of the model.
 
         :param kwargs: Any kwargs. If field_meta names are set in kwargs, their values will be used.
 
