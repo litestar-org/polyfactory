@@ -465,6 +465,15 @@
       "contributions": [
         "test"
       ]
+    },
+    {
+      "login": "RasmusNygren",
+      "name": "RasmusNygren",
+      "avatar_url": "https://avatars.githubusercontent.com/u/26030663?v=4",
+      "profile": "https://github.com/RasmusNygren",
+      "contributions": [
+        "doc"
+      ]
     }
   ],
   "contributorsPerLine": 7,
