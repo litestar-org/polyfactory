@@ -234,6 +234,7 @@ data-aria-dark="Switch to auto color mode">
 <li><a class="reference internal" href="#polyfactory.factories.pydantic_factory.ModelFactory.is_custom_root_field"><code class="docutils literal notranslate">is_custom_root_field()</span></code></a></li>
 <li><a class="reference internal" href="#polyfactory.factories.pydantic_factory.ModelFactory.should_set_field_value"><code class="docutils literal notranslate">should_set_field_value()</span></code></a></li>
 <li><a class="reference internal" href="#polyfactory.factories.pydantic_factory.ModelFactory.get_provider_map"><code class="docutils literal notranslate">get_provider_map()</span></code></a></li>
+<li><a class="reference internal" href="#polyfactory.factories.pydantic_factory.ModelFactory.get_field_value_coverage"><code class="docutils literal notranslate">get_field_value_coverage()</span></code></a></li>
 </ul>
 </li>
 </ul>
@@ -534,6 +535,24 @@ This is an override of BaseFactory.should_set_field_value.</p>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p>a dictionary mapping types to callables.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="polyfactory.factories.pydantic_factory.ModelFactory.get_field_value_coverage">
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">get_field_value_coverage</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">field_meta</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="../field_meta.html#polyfactory.field_meta.FieldMeta" title="polyfactory.field_meta.FieldMeta"><span class="pre">FieldMeta</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">field_build_parameters</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Any" title="(in Python v3.14)"><span class="pre">Any</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">build_context</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="base.html#polyfactory.factories.base.BuildContext" title="polyfactory.factories.base.BuildContext"><span class="pre">BuildContext</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Iterable" title="(in Python v3.14)"><span class="pre">Iterable</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Any" title="(in Python v3.14)"><span class="pre">Any</span></a><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../../_modules/polyfactory/factories/pydantic_factory.html#ModelFactory.get_field_value_coverage"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#polyfactory.factories.pydantic_factory.ModelFactory.get_field_value_coverage" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return a field value on the subclass if existing, otherwise returns a mock value.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><span class="target" id="polyfactory.factories.pydantic_factory.ModelFactory.get_field_value_coverage.params.field_meta"></span><strong>field_meta</strong><a class="paramlink headerlink reference internal" href="#polyfactory.factories.pydantic_factory.ModelFactory.get_field_value_coverage.params.field_meta">¶</a> – FieldMeta instance.</p></li>
+<li><p><span class="target" id="polyfactory.factories.pydantic_factory.ModelFactory.get_field_value_coverage.params.field_build_parameters"></span><strong>field_build_parameters</strong><a class="paramlink headerlink reference internal" href="#polyfactory.factories.pydantic_factory.ModelFactory.get_field_value_coverage.params.field_build_parameters">¶</a> – Any build parameters passed to the factory as kwarg values.</p></li>
+<li><p><span class="target" id="polyfactory.factories.pydantic_factory.ModelFactory.get_field_value_coverage.params.build_context"></span><strong>build_context</strong><a class="paramlink headerlink reference internal" href="#polyfactory.factories.pydantic_factory.ModelFactory.get_field_value_coverage.params.build_context">¶</a> – BuildContext data for current build.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>An iterable of values.</p>
 </dd>
 </dl>
 </dd></dl>
