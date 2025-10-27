@@ -157,6 +157,9 @@ Thanks goes to these wonderful people ([emoji key](https://allcontributors.org/d
       <td align="center" valign="top" width="14.28%"><a href="https://github.com/Rub1kCube"><img src="https://avatars.githubusercontent.com/u/90901892?v=4?s=100" width="100px;" alt="Rub1kCube"/><br /><sub><b>Rub1kCube</b></sub></a><br /><a href="https://github.com/litestar-org/polyfactory/commits?author=Rub1kCube" title="Tests">⚠️</a></td>
       <td align="center" valign="top" width="14.28%"><a href="https://github.com/RasmusNygren"><img src="https://avatars.githubusercontent.com/u/26030663?v=4?s=100" width="100px;" alt="RasmusNygren"/><br /><sub><b>RasmusNygren</b></sub></a><br /><a href="https://github.com/litestar-org/polyfactory/commits?author=RasmusNygren" title="Documentation">📖</a></td>
     </tr>
+    <tr>
+      <td align="center" valign="top" width="14.28%"><a href="https://github.com/arembridge"><img src="https://avatars.githubusercontent.com/u/35376887?v=4?s=100" width="100px;" alt="rembridge"/><br /><sub><b>rembridge</b></sub></a><br /><a href="https://github.com/litestar-org/polyfactory/commits?author=arembridge" title="Code">💻</a></td>
+    </tr>
   </tbody>
 </table>
 
