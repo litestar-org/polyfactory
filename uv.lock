@@ -1170,7 +1170,7 @@ wheels = [
 
 [[package]]
 name = "polyfactory"
-version = "2.22.3"
+version = "2.22.4"
 source = { editable = "." }
 dependencies = [
     { name = "faker" },
