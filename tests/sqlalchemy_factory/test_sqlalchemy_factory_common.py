@@ -2,12 +2,13 @@ import warnings
 from datetime import datetime
 from decimal import Decimal
 from enum import Enum
-from typing import Any, Callable, get_args
-from uuid import UUID
+from typing import Any, Callable, Collection, Type, get_args
+from uuid import UUID, uuid4
 
 import pytest
 from sqlalchemy import (
     Column,
+    ForeignKey,
     Integer,
     Numeric,
     String,
@@ -20,6 +21,7 @@ from sqlalchemy.engine import Engine
 from sqlalchemy.ext.asyncio import AsyncEngine, AsyncSession
 from sqlalchemy.ext.hybrid import hybrid_property
 from sqlalchemy.orm import Session
+from sqlalchemy.orm.collections import attribute_keyed_dict, column_keyed_dict, keyfunc_mapping
 from sqlalchemy.orm.decl_api import DeclarativeMeta, registry
 
 from polyfactory.exceptions import ConfigurationException, ParameterException
@@ -32,6 +34,8 @@ from tests.sqlalchemy_factory.models import (
     Author,
     Base,
     Book,
+    CollectionChildMixin,
+    CollectionParentMixin,
     NonSQLAchemyClass,
     _registry,
 )
@@ -193,6 +197,159 @@ def test_relationship_list_resolution() -> None:
     assert result.books is not None
     assert isinstance(result.books, list)
     assert isinstance(result.books[0], Book)
+
+
+@pytest.mark.parametrize(
+    "collection_class_type",
+    (set, list),
+)
+def test_relationship_collection_class_sequence(collection_class_type: Type[Collection]) -> None:
+    registry_ = registry()
+    Base = registry_.generate_base()
+
+    table_suffix = uuid4().hex
+
+    class Parent(CollectionParentMixin, Base):  # type: ignore[misc, valid-type]
+        __tablename__ = f"parent_{table_suffix}"
+
+        children: Any = orm.relationship("Child", collection_class=collection_class_type)
+
+    class Child(CollectionChildMixin, Base):  # type: ignore[misc, valid-type]
+        __tablename__ = f"child_{table_suffix}"
+
+        parent_id = Column(Integer(), ForeignKey(f"{Parent.__tablename__}.id"), nullable=False)
+
+    class ParentFactory(SQLAlchemyFactory[Parent]):
+        __model__ = Parent
+        __set_relationships__ = True
+
+    result = ParentFactory.build()
+    assert result.children is not None
+
+    assert isinstance(result.children, collection_class_type)
+    first_item = next(iter(result.children))
+    assert isinstance(first_item, Child)
+
+
+def test_relationship_collection_class_attribute_keyed_dict() -> None:
+    registry_ = registry()
+    Base = registry_.generate_base()
+
+    table_suffix = uuid4().hex
+
+    class Parent(CollectionParentMixin, Base):  # type: ignore[misc, valid-type]
+        __tablename__ = f"parent_{table_suffix}"
+
+        children = orm.relationship("Child", collection_class=attribute_keyed_dict("id"))
+
+    class Child(CollectionChildMixin, Base):  # type: ignore[misc, valid-type]
+        __tablename__ = f"child_{table_suffix}"
+
+        parent_id = Column(Integer(), ForeignKey(f"{Parent.__tablename__}.id"), nullable=False)
+
+    class ParentFactory(SQLAlchemyFactory[Parent]):
+        __model__ = Parent
+        __set_relationships__ = True
+
+    result = ParentFactory.build()
+    assert result.children is not None
+
+    assert isinstance(result.children, dict)
+    child = next(iter(result.children.values()))
+    assert isinstance(child, Child)
+    assert child.id in result.children
+
+
+def test_relationship_collection_class_column_keyed_dict() -> None:
+    registry_ = registry()
+    Base = registry_.generate_base()
+
+    table_suffix = uuid4().hex
+
+    class Parent(CollectionParentMixin, Base):  # type: ignore[misc, valid-type]
+        __tablename__ = f"parent_{table_suffix}"
+
+        children: Any
+
+    class Child(CollectionChildMixin, Base):  # type: ignore[misc, valid-type]
+        __tablename__ = f"child_{table_suffix}"
+
+        parent_id = Column(Integer(), ForeignKey(f"{Parent.__tablename__}.id"), nullable=False)
+
+    Parent.children = orm.relationship("Child", collection_class=column_keyed_dict(Child.__table__.c.id))
+
+    class ParentFactory(SQLAlchemyFactory[Parent]):
+        __model__ = Parent
+        __set_relationships__ = True
+
+    result = ParentFactory.build()
+    assert result.children is not None
+
+    assert isinstance(result.children, dict)
+    child = next(iter(result.children.values()))
+    assert isinstance(child, Child)
+    assert child.id in result.children
+
+
+def test_relationship_collection_class_arbitrary_keying() -> None:
+    registry_ = registry()
+    Base = registry_.generate_base()
+
+    table_suffix = uuid4().hex
+
+    class Parent(CollectionParentMixin, Base):  # type: ignore[misc, valid-type]
+        __tablename__ = f"parent_{table_suffix}"
+
+        children = orm.relationship("Child", collection_class=keyfunc_mapping(lambda c: c.id))
+
+    class Child(CollectionChildMixin, Base):  # type: ignore[misc, valid-type]
+        __tablename__ = f"child_{table_suffix}"
+
+        parent_id = Column(Integer(), ForeignKey(f"{Parent.__tablename__}.id"), nullable=False)
+
+    class ParentFactory(SQLAlchemyFactory[Parent]):
+        __model__ = Parent
+        __set_relationships__ = True
+
+    result = ParentFactory.build()
+    assert result.children is not None
+
+    assert isinstance(result.children, dict)
+    child = next(iter(result.children.values()))
+    assert isinstance(child, Child)
+    assert child.id in result.children
+
+
+def test_relationship_collection_class_arbitrary_keyfunc() -> None:
+    def make_mapping() -> Any:
+        return keyfunc_mapping(lambda c: c.id)()  # type: ignore[call-arg]
+
+    registry_ = registry()
+    Base = registry_.generate_base()
+
+    table_suffix = uuid4().hex
+
+    class Parent(CollectionParentMixin, Base):  # type: ignore[misc, valid-type]
+        __tablename__ = f"parent_{table_suffix}"
+
+        children = orm.relationship("Child", collection_class=make_mapping)
+
+    class Child(CollectionChildMixin, Base):  # type: ignore[misc, valid-type]
+        __tablename__ = f"child_{table_suffix}"
+
+        parent_id = Column(Integer(), ForeignKey(f"{Parent.__tablename__}.id"), nullable=False)
+
+    class ParentFactory(SQLAlchemyFactory[Parent]):
+        __model__ = Parent
+        __set_relationships__ = True
+
+    result = ParentFactory.build()
+    assert result.children is not None
+
+    assert isinstance(result.children, dict)
+    child = next(iter(result.children.values()))
+    assert isinstance(child, Child)
+    assert child.id in result.children
 
 
 def test_sqla_factory_create(engine: Engine) -> None:
