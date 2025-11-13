@@ -39,6 +39,7 @@ from tests.sqlalchemy_factory.models import (
     NonSQLAchemyClass,
     _registry,
 )
+from tests.sqlalchemy_factory.types import ListLike, SetLike
 
 
 @pytest.mark.parametrize(
@@ -201,20 +202,25 @@ def test_relationship_list_resolution() -> None:
 
 @pytest.mark.parametrize(
     "collection_class_type",
-    (set, list),
+    (set, list, ListLike, SetLike),
 )
 def test_relationship_collection_class_sequence(collection_class_type: Type[Collection]) -> None:
-    registry_ = registry()
-    Base = registry_.generate_base()
-
     table_suffix = uuid4().hex
+    _registry = registry()
 
-    class Parent(CollectionParentMixin, Base):  # type: ignore[misc, valid-type]
+    class Base(metaclass=DeclarativeMeta):
+        __abstract__ = True
+        __allow_unmapped__ = True
+
+        registry = _registry
+        metadata = _registry.metadata
+
+    class Parent(CollectionParentMixin, Base):
         __tablename__ = f"parent_{table_suffix}"
 
         children: Any = orm.relationship("Child", collection_class=collection_class_type)
 
-    class Child(CollectionChildMixin, Base):  # type: ignore[misc, valid-type]
+    class Child(CollectionChildMixin, Base):
         __tablename__ = f"child_{table_suffix}"
 
         parent_id = Column(Integer(), ForeignKey(f"{Parent.__tablename__}.id"), nullable=False)
@@ -232,17 +238,22 @@ def test_relationship_collection_class_sequence(collection_class_type: Type[Coll
 
 
 def test_relationship_collection_class_attribute_keyed_dict() -> None:
-    registry_ = registry()
-    Base = registry_.generate_base()
-
     table_suffix = uuid4().hex
+    _registry = registry()
 
-    class Parent(CollectionParentMixin, Base):  # type: ignore[misc, valid-type]
+    class Base(metaclass=DeclarativeMeta):
+        __abstract__ = True
+        __allow_unmapped__ = True
+
+        registry = _registry
+        metadata = _registry.metadata
+
+    class Parent(CollectionParentMixin, Base):
         __tablename__ = f"parent_{table_suffix}"
 
         children = orm.relationship("Child", collection_class=attribute_keyed_dict("id"))
 
-    class Child(CollectionChildMixin, Base):  # type: ignore[misc, valid-type]
+    class Child(CollectionChildMixin, Base):
         __tablename__ = f"child_{table_suffix}"
 
         parent_id = Column(Integer(), ForeignKey(f"{Parent.__tablename__}.id"), nullable=False)
@@ -261,22 +272,27 @@ def test_relationship_collection_class_attribute_keyed_dict() -> None:
 
 
 def test_relationship_collection_class_column_keyed_dict() -> None:
-    registry_ = registry()
-    Base = registry_.generate_base()
-
     table_suffix = uuid4().hex
+    _registry = registry()
 
-    class Parent(CollectionParentMixin, Base):  # type: ignore[misc, valid-type]
+    class Base(metaclass=DeclarativeMeta):
+        __abstract__ = True
+        __allow_unmapped__ = True
+
+        registry = _registry
+        metadata = _registry.metadata
+
+    class Parent(CollectionParentMixin, Base):
         __tablename__ = f"parent_{table_suffix}"
 
         children: Any
 
-    class Child(CollectionChildMixin, Base):  # type: ignore[misc, valid-type]
+    class Child(CollectionChildMixin, Base):
         __tablename__ = f"child_{table_suffix}"
 
         parent_id = Column(Integer(), ForeignKey(f"{Parent.__tablename__}.id"), nullable=False)
 
-    Parent.children = orm.relationship("Child", collection_class=column_keyed_dict(Child.__table__.c.id))
+    Parent.children = orm.relationship("Child", collection_class=column_keyed_dict(Child.__table__.c.id))  # type: ignore[attr-defined]
 
     class ParentFactory(SQLAlchemyFactory[Parent]):
         __model__ = Parent
@@ -292,17 +308,22 @@ def test_relationship_collection_class_column_keyed_dict() -> None:
 
 
 def test_relationship_collection_class_arbitrary_keying() -> None:
-    registry_ = registry()
-    Base = registry_.generate_base()
-
     table_suffix = uuid4().hex
+    _registry = registry()
 
-    class Parent(CollectionParentMixin, Base):  # type: ignore[misc, valid-type]
+    class Base(metaclass=DeclarativeMeta):
+        __abstract__ = True
+        __allow_unmapped__ = True
+
+        registry = _registry
+        metadata = _registry.metadata
+
+    class Parent(CollectionParentMixin, Base):
         __tablename__ = f"parent_{table_suffix}"
 
         children = orm.relationship("Child", collection_class=keyfunc_mapping(lambda c: c.id))
 
-    class Child(CollectionChildMixin, Base):  # type: ignore[misc, valid-type]
+    class Child(CollectionChildMixin, Base):
         __tablename__ = f"child_{table_suffix}"
 
         parent_id = Column(Integer(), ForeignKey(f"{Parent.__tablename__}.id"), nullable=False)
@@ -324,17 +345,22 @@ def test_relationship_collection_class_arbitrary_keyfunc() -> None:
     def make_mapping() -> Any:
         return keyfunc_mapping(lambda c: c.id)()  # type: ignore[call-arg]
 
-    registry_ = registry()
-    Base = registry_.generate_base()
-
     table_suffix = uuid4().hex
+    _registry = registry()
 
-    class Parent(CollectionParentMixin, Base):  # type: ignore[misc, valid-type]
+    class Base(metaclass=DeclarativeMeta):
+        __abstract__ = True
+        __allow_unmapped__ = True
+
+        registry = _registry
+        metadata = _registry.metadata
+
+    class Parent(CollectionParentMixin, Base):
         __tablename__ = f"parent_{table_suffix}"
 
         children = orm.relationship("Child", collection_class=make_mapping)
 
-    class Child(CollectionChildMixin, Base):  # type: ignore[misc, valid-type]
+    class Child(CollectionChildMixin, Base):
         __tablename__ = f"child_{table_suffix}"
 
         parent_id = Column(Integer(), ForeignKey(f"{Parent.__tablename__}.id"), nullable=False)

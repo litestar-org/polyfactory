@@ -6,9 +6,10 @@ from typing import (
     Any,
     Callable,
     ClassVar,
+    Collection,
     Generic,
     Iterable,
-    Mapping,
+    MutableMapping,
     Protocol,
     TypeVar,
     Union,
@@ -55,7 +56,7 @@ class SQLAlchemyFieldMeta(FieldMeta):
         default: Any = ...,
         children: list[FieldMeta] | None = None,
         constraints: Constraints | None = None,
-        collection_class: type[Any] | Callable[[], Any] | None = None,
+        collection_class: type[Collection[Any]] | Callable[[], Collection[Any]] | None = None,
     ) -> None:
         super().__init__(
             name=name,
@@ -194,26 +195,32 @@ class SQLAlchemyFactory(Generic[T], BaseFactory[T]):
         field_meta = cast("SQLAlchemyFieldMeta", field_meta)
         result = super().get_field_value(field_meta, field_build_parameters, build_context)
 
-        if field_meta.collection_class:
-            try:
-                return field_meta.collection_class(result)  # type: ignore[call-arg] # pyright: ignore[reporeportCallIssue]
-            except TypeError:
-                collection = field_meta.collection_class()
-                items: Iterable[Any]
-                if isinstance(result, Mapping):
-                    items = result.values()
-                elif isinstance(result, Iterable):
-                    items = result
+        if collection_class := field_meta.collection_class:
+            collection = collection_class() if callable(collection_class) else collection_class
+            items = result if isinstance(result, Iterable) else [result]
+
+            keyfunc = getattr(collection, "keyfunc", None)
+            if callable(keyfunc):
+                mapping_collection = cast("MutableMapping[Any, Any]", collection)
+                for item in items:
+                    mapping_collection[keyfunc(item)] = item
+                collection = mapping_collection
+            else:
+                extend = getattr(collection, "extend", None)
+                if callable(extend):
+                    extend(items)
                 else:
-                    items = [result]
+                    append = getattr(collection, "append", None)
+                    if callable(append):
+                        for item in items:
+                            append(item)
+                    else:
+                        add = getattr(collection, "add", None)
+                        if callable(add):
+                            for item in items:
+                                add(item)
 
-                keyfunc = getattr(collection, "keyfunc", None)
-                if callable(keyfunc):
-                    for item in items:
-                        collection[keyfunc(item)] = item  # pyright: ignore[reportIndexIssue]
-                    return collection
-
-            return collection
+            return collection if collection is not None else result
 
         return result
 
