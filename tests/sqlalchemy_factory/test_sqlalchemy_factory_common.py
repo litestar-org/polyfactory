@@ -21,7 +21,20 @@ from sqlalchemy.engine import Engine
 from sqlalchemy.ext.asyncio import AsyncEngine, AsyncSession
 from sqlalchemy.ext.hybrid import hybrid_property
 from sqlalchemy.orm import Session
-from sqlalchemy.orm.collections import attribute_keyed_dict, column_keyed_dict, keyfunc_mapping
+
+try:
+    from sqlalchemy.orm.collections import (
+        attribute_keyed_dict,
+        column_keyed_dict,
+        keyfunc_mapping,
+    )
+except ImportError:  # SQLAlchemy < 2.0
+    from sqlalchemy.orm import collections as _collections
+
+    attribute_keyed_dict = _collections.attribute_mapped_collection  # type: ignore[attr-defined]
+    column_keyed_dict = _collections.column_mapped_collection  # type: ignore[attr-defined]
+    keyfunc_mapping = _collections.mapped_collection  # type: ignore[attr-defined]
+
 from sqlalchemy.orm.decl_api import DeclarativeMeta, registry
 
 from polyfactory.exceptions import ConfigurationException, ParameterException
