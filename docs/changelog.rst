@@ -4,18 +4,41 @@ Changelog
 
 All commits to this project will be documented in this file.
 
+`Release [v2.22.4] - 2025-11-10 <https://github.com/litestar-org/polyfactory/releases/tag/v2.22.4>`_
+----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+* `See All commits in v2.22.4 <https://github.com/litestar-org/polyfactory/commits/v2.22.4>`_
+
+`ad0a768 <https://github.com/litestar-org/polyfactory/commit/ad0a768f4d29f46f07c6fb64470639a1bf48b5e6>`_ ... `7d67749 <https://github.com/litestar-org/polyfactory/commit/7d67749fa82c44c2930657a7ab2e19cf438bb2f9>`_ | `See diff for 2.22.4 <https://github.com/litestar-org/polyfactory/compare/ad0a768f4d29f46f07c6fb64470639a1bf48b5e6...7d67749fa82c44c2930657a7ab2e19cf438bb2f9>`_
+
+Bug Fixes
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+* (`45958e4 <https://github.com/litestar-org/polyfactory/commit/45958e4e583a873eb31bdd7ff3f01d5894efab93>`_)  - Model coverage generation and __use_examples__ do not compose well (#757)  by `@arembridge <https://github.com/arembridge>`_ in `#757 <https://github.com/litestar-org/polyfactory/pull/757>`_
+
+Documentation
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+* (`09cc9d9 <https://github.com/litestar-org/polyfactory/commit/09cc9d9de5431fa3330dbced37b6234bafe1411f>`_)  - Fix typo in pydantic_factory.coverage doc string (#763)  by `@RasmusNygren <https://github.com/RasmusNygren>`_ in `#763 <https://github.com/litestar-org/polyfactory/pull/763>`_
+* (`b8d0c6f <https://github.com/litestar-org/polyfactory/commit/b8d0c6f9398282b371070307610bf95951ec3968>`_)  - Add RasmusNygren as a contributor for doc (#766)  by `@allcontributors[bot] <https://github.com/allcontributors[bot]>`_ in `#766 <https://github.com/litestar-org/polyfactory/pull/766>`_
+* (`213ea1c <https://github.com/litestar-org/polyfactory/commit/213ea1cdc5b4281ab51202827d72c274e4816070>`_)  - Add arembridge as a contributor for code (#767)  by `@allcontributors[bot] <https://github.com/allcontributors[bot]>`_ in `#767 <https://github.com/litestar-org/polyfactory/pull/767>`_
+
+Miscellaneous Tasks
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+* (`0626847 <https://github.com/litestar-org/polyfactory/commit/0626847d1d80e1c52a678b0e51d5e97112237177>`_)  - Bump actions/upload-artifact from 4 to 5 (#764)  by `@dependabot[bot] <https://github.com/dependabot[bot]>`_ in `#764 <https://github.com/litestar-org/polyfactory/pull/764>`_
+* (`7d67749 <https://github.com/litestar-org/polyfactory/commit/7d67749fa82c44c2930657a7ab2e19cf438bb2f9>`_)  - Bump actions/download-artifact from 5 to 6 (#765)  by `@dependabot[bot] <https://github.com/dependabot[bot]>`_ in `#765 <https://github.com/litestar-org/polyfactory/pull/765>`_
+
 `Release [v2.22.3] - 2025-10-18 <https://github.com/litestar-org/polyfactory/releases/tag/v2.22.3>`_
 ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 * `See All commits in v2.22.3 <https://github.com/litestar-org/polyfactory/commits/v2.22.3>`_
 
-`63eaa9f <https://github.com/litestar-org/polyfactory/commit/63eaa9f5e2806791142b559932b103fc524a5a52>`_ ... `ff9148a <https://github.com/litestar-org/polyfactory/commit/ff9148a04ef46e74454acd90b732b97ff5c60715>`_ | `See diff for 2.22.3 <https://github.com/litestar-org/polyfactory/compare/63eaa9f5e2806791142b559932b103fc524a5a52...ff9148a04ef46e74454acd90b732b97ff5c60715>`_
+`63eaa9f <https://github.com/litestar-org/polyfactory/commit/63eaa9f5e2806791142b559932b103fc524a5a52>`_ ... `ad0a768 <https://github.com/litestar-org/polyfactory/commit/ad0a768f4d29f46f07c6fb64470639a1bf48b5e6>`_ | `See diff for 2.22.3 <https://github.com/litestar-org/polyfactory/compare/63eaa9f5e2806791142b559932b103fc524a5a52...ad0a768f4d29f46f07c6fb64470639a1bf48b5e6>`_
 
 Bug Fixes
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 * (`0358ad0 <https://github.com/litestar-org/polyfactory/commit/0358ad0950bf3816be352ca9ed34370c05e9f94e>`_)  - Pydantic Factory alias generation from version 2.11 (#718)  by `@sandre35 <https://github.com/sandre35>`_ in `#718 <https://github.com/litestar-org/polyfactory/pull/718>`_
 * (`81bfbc2 <https://github.com/litestar-org/polyfactory/commit/81bfbc2519148af1ac46fad37d65be381d444ea3>`_)  - Remove association proxy default change (#747)  by `@adhtruong <https://github.com/adhtruong>`_ in `#747 <https://github.com/litestar-org/polyfactory/pull/747>`_
-* (`ff9148a <https://github.com/litestar-org/polyfactory/commit/ff9148a04ef46e74454acd90b732b97ff5c60715>`_)  - Update prepare-release.sh
 
 Documentation
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -34,6 +57,7 @@ Miscellaneous Tasks
 * (`1b26034 <https://github.com/litestar-org/polyfactory/commit/1b2603481ced3282647f69a28aa7c3eff0366135>`_)  - Bump github/codeql-action from 3 to 4 (#756)  by `@dependabot[bot] <https://github.com/dependabot[bot]>`_ in `#756 <https://github.com/litestar-org/polyfactory/pull/756>`_
 * (`5ec0b01 <https://github.com/litestar-org/polyfactory/commit/5ec0b0134eef33beb699c5f91ba5e3a5058ce405>`_)  - Bump astral-sh/setup-uv from 6 to 7 (#755)  by `@dependabot[bot] <https://github.com/dependabot[bot]>`_ in `#755 <https://github.com/litestar-org/polyfactory/pull/755>`_
 * (`c87481a <https://github.com/litestar-org/polyfactory/commit/c87481a8074bf5196a29c5c362e39746e2304087>`_)  - Remove unused script (#716)  by `@adhtruong <https://github.com/adhtruong>`_ in `#716 <https://github.com/litestar-org/polyfactory/pull/716>`_
+* (`ad0a768 <https://github.com/litestar-org/polyfactory/commit/ad0a768f4d29f46f07c6fb64470639a1bf48b5e6>`_)  - Prepare v2.22.3 release (#761)  by `@adhtruong <https://github.com/adhtruong>`_ in `#761 <https://github.com/litestar-org/polyfactory/pull/761>`_
 
 `Release [v2.22.2] - 2025-08-15 <https://github.com/litestar-org/polyfactory/releases/tag/v2.22.2>`_
 ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -340,7 +364,7 @@ Bug Fixes
 Documentation
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-* (`740fd34 <https://github.com/litestar-org/polyfactory/commit/740fd345685df6b313f8a4e12e041129b4dcd2e1>`_)  - Link to GitHub repo (#547)  by `@Alc-Alc <https://github.com/Alc-Alc>`_ in `#547 <https://github.com/litestar-org/polyfactory/pull/547>`_
+* (`740fd34 <https://github.com/litestar-org/polyfactory/commit/740fd345685df6b313f8a4e12e041129b4dcd2e1>`_)  - Link to GitHub repo (#547)  by `@Alc-Was-Taken <https://github.com/Alc-Was-Taken>`_ in `#547 <https://github.com/litestar-org/polyfactory/pull/547>`_
 * (`c34e72e <https://github.com/litestar-org/polyfactory/commit/c34e72e96d0530293739442a48a679dc85ec33fa>`_)  - Add Reskov as a contributor for code (#556)  by `@allcontributors[bot] <https://github.com/allcontributors[bot]>`_ in `#556 <https://github.com/litestar-org/polyfactory/pull/556>`_
 * (`3320989 <https://github.com/litestar-org/polyfactory/commit/3320989ed73265861ec11d09be5c57ed8f06c03f>`_)  - Add Vegemash as a contributor for code (#562)  by `@allcontributors[bot] <https://github.com/allcontributors[bot]>`_ in `#562 <https://github.com/litestar-org/polyfactory/pull/562>`_
 
