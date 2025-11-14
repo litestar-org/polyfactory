@@ -12,7 +12,7 @@ from typing import Any, Callable, Dict, FrozenSet, List, Literal, Optional, Sequ
 from uuid import UUID
 
 import pytest
-from annotated_types import Ge, Gt, Le, LowerCase, MinLen, UpperCase
+from annotated_types import Ge, Gt, Le, LowerCase, Lt, MaxLen, MinLen, UpperCase
 from typing_extensions import Annotated, TypeAlias
 
 import pydantic
@@ -717,18 +717,52 @@ def test_collection_unions_with_models() -> None:
     assert CFactory.build()
 
 
-def test_constrained_union_types() -> None:
+@pytest.mark.skipif(IS_PYDANTIC_V2, reason="pydantic 1 only test")
+def test_constrained_union_types_pydantic_v1() -> None:
     class A(BaseModel):
         a: Union[Annotated[List[str], MinLen(100)], Annotated[int, Ge(1000)]]
         b: Union[List[Annotated[str, MinLen(100)]], int]
         c: Union[Annotated[List[int], MinLen(100)], None]
-        d: Union[Annotated[List[int], MinLen(100)], Annotated[List[str], MinLen(100)]]
-        e: Optional[Union[Annotated[List[int], MinLen(10)], Annotated[List[str], MinLen(10)]]]
+        d: Union[Annotated[List[int], MinLen(100)], Annotated[List[str], MaxLen(99)]]
+        e: Optional[Union[Annotated[List[int], MinLen(10)], Annotated[List[str], MaxLen(9)]]]
         f: Optional[Union[Annotated[List[int], MinLen(10)], List[str]]]
+        g: Optional[
+            Union[
+                Annotated[List[int], MinLen(10)],
+                Union[Annotated[List[str], MaxLen(9)], Annotated[Decimal, Field(max_digits=4, decimal_places=2)]],
+            ]
+        ]
 
     AFactory = ModelFactory.create_factory(A, __allow_none_optionals__=False)
 
     assert AFactory.build()
+
+
+@pytest.mark.skipif(IS_PYDANTIC_V1, reason="pydantic 2 only test")
+def test_constrained_union_types_pydantic_v2() -> None:
+    class A(BaseModel):
+        a: Union[Annotated[List[str], MinLen(100)], Annotated[int, Ge(1000)]]
+        b: Union[List[Annotated[str, MinLen(100)]], int]
+        c: Union[Annotated[List[int], MinLen(100)], None]
+        d: Union[Annotated[List[int], MinLen(100)], Annotated[List[str], MaxLen(99)]]
+        e: Optional[
+            Union[Annotated[List[Annotated[int, Gt(100), Lt(105)]], MinLen(10)], Annotated[List[str], MaxLen(9)]]
+        ]
+        f: Optional[Union[Annotated[List[int], MinLen(10)], List[str]]]
+        g: Optional[
+            Union[
+                Annotated[List[int], MinLen(10)],
+                Union[Annotated[List[str], MaxLen(9)], Annotated[Decimal, Field(max_digits=4, decimal_places=2)]],
+            ]
+        ]
+        # This annotation is not allowed in pydantic 1
+        h: Annotated[Union[List[int], List[str]], MinLen(10)]
+        i: Annotated[Union[int, float], Field(gt=5, lt=7)]
+
+    AFactory = ModelFactory.create_factory(A, __allow_none_optionals__=False)
+
+    assert AFactory.build()
+    assert list(AFactory.coverage())
 
 
 @pytest.mark.parametrize("allow_none", (True, False))

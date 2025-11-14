@@ -902,6 +902,12 @@ class BaseFactory(ABC, Generic[T]):
         for unwrapped_annotation in flatten_annotation(field_meta.annotation):
             unwrapped_annotation = cls._resolve_forward_references(unwrapped_annotation)  # noqa: PLW2901
 
+            unwrapped_annotation_meta = field_meta
+            if is_union(field_meta.annotation):
+                unwrapped_annotation_meta = next(
+                    (meta for meta in (field_meta.children or []) if meta.annotation == unwrapped_annotation),
+                    field_meta,
+                )
             if unwrapped_annotation in (None, NoneType):
                 yield None
 
@@ -911,11 +917,11 @@ class BaseFactory(ABC, Generic[T]):
             elif isinstance(unwrapped_annotation, EnumMeta):
                 yield CoverageContainer(list(unwrapped_annotation))
 
-            elif field_meta.constraints:
+            elif unwrapped_annotation_meta.constraints:
                 yield CoverageContainerCallable(
                     cls.get_constrained_field_value,
                     annotation=unwrapped_annotation,
-                    field_meta=field_meta,
+                    field_meta=unwrapped_annotation_meta,
                 )
 
             elif BaseFactory.is_factory_type(annotation=unwrapped_annotation):
