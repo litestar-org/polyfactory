@@ -1057,7 +1057,7 @@ class BaseFactory(ABC, Generic[T]):
                 # within get_field_value.
                 excluded_field_value = has_field_value and isinstance(field_value, (NeverNone, AlwaysNone))
 
-                # TODO why do we need the BaseFactory check here, only dunder methods which are ignored would trigger this?  # noqa: FIX002
+                # Avoid considering fields on base field in case of clash
                 if has_field_value and not hasattr(BaseFactory, field_meta.name) and not excluded_field_value:
                     if isinstance(field_value, Ignore):
                         continue
