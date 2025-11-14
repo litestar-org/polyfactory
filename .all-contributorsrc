@@ -483,6 +483,15 @@
       "contributions": [
         "code"
       ]
+    },
+    {
+      "login": "bullfest",
+      "name": "Alexander Viklund",
+      "avatar_url": "https://avatars.githubusercontent.com/u/4342153?v=4",
+      "profile": "https://www.youtube.com/watch?v=1A3W75vH1D4",
+      "contributions": [
+        "code"
+      ]
     }
   ],
   "contributorsPerLine": 7,
