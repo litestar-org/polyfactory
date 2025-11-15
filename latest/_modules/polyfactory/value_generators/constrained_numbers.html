@@ -1,0 +1,774 @@
+<!DOCTYPE html>
+<html lang="en" data-accent-color="amber" data-content_root="../../../">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"><title>polyfactory.value_generators.constrained_numbers - Polyfactory</title><link rel="shortcut icon" href="../../../_static/logo-default.png"/><link rel="index" title="Index" href="../../../genindex.html" /><link rel="search" title="Search" href="../../../search.html" /><script>
+    function setColorMode(t){let e=document.documentElement;e.setAttribute("data-color-mode",t);let a=window.matchMedia&&window.matchMedia("(prefers-color-scheme: dark)").matches,s=t;"auto"===t&&(s=a?"dark":"light"),"light"===s?(e.classList.remove("dark"),e.classList.add("light")):(e.classList.remove("light"),e.classList.add("dark"))}
+    setColorMode(localStorage._theme||"auto");
+  </script><link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=397bb51e" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/shibuya.css?v=d0008d65" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/togglebutton.css?v=13237357" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/sphinx-design.min.css?v=95c83b7e" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/sphinx_paramlinks.css" />
+    <link media="print" rel="stylesheet" type="text/css" href="../../../_static/print.css?v=20ff2c19" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/custom.css?v=686090c2" />
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --sy-f-text: "Inter", var(--sy-f-sys), var(--sy-f-cjk), sans-serif;
+  --sy-f-heading: "Inter", var(--sy-f-sys), var(--sy-f-cjk), sans-serif;
+}
+</style>
+    <meta property="og:type" content="website"/><meta property="og:title" content="polyfactory.value_generators.constrained_numbers"/>
+<meta name="twitter:card" content="summary"/>
+  </head>
+<body><div class="sy-head">
+  <div class="sy-head-blur"></div>
+  <div class="sy-head-inner sy-container mx-auto">
+    <a class="sy-head-brand" href="/">
+      <img class="light-logo" src="../../../_static/logo-default.png" alt="polyfactory" height="28" loading="lazy" />
+      <img class="dark-logo" src="../../../_static/logo-default.png" alt="polyfactory" height="28" loading="lazy" />
+      <strong>polyfactory</strong>
+    </a>
+    <div class="sy-head-nav" id="HeadNav">
+      <nav class="sy-head-links"><ul><li class="link"><a href="../../../index.html">Home</a></li>
+      <li class="link"><button type="button">
+            <span>Community</span>
+            <i class="i-lucide chevron-down"></i>
+          </button>
+        <ul><li><a href="../../../contribution-guide.html">
+                <span>Contributing</span>
+                <small>Learn how to contribute to the Type Lens project</small>
+              </a></li><li><a href="https://github.com/litestar-org/.github?tab=coc-ov-file">
+                <span>Code of Conduct</span>
+                <small>Review the etiquette for interacting with the Litestar community</small>
+              </a></li><li><a href="https://github.com/litestar-org/.github?tab=coc-ov-file#security-ov-file">
+                <span>Security</span>
+                <small>Overview of Litestar's security protocols</small>
+              </a></li></ul>
+      </li>
+      <li class="link"><button type="button">
+            <span>About</span>
+            <i class="i-lucide chevron-down"></i>
+          </button>
+        <ul><li><a href="https://litestar.dev/about/organization">
+                <span>Litestar Organization</span>
+                <small>Details about the Litestar organization</small>
+              </a></li><li><a href="../../../releases.html">
+                <span>Releases</span>
+                <small>Explore the release process, versioning, and deprecation policy for Litestar</small>
+              </a></li></ul>
+      </li>
+      <li class="link"><button type="button">
+            <span>Release notes</span>
+            <i class="i-lucide chevron-down"></i>
+          </button>
+        <ul><li><a href="../../../changelog.html">
+                <span>Changelog</span>
+                <small>All changes in the current major version</small>
+              </a></li></ul>
+      </li>
+      <li class="link"><button type="button">
+            <span>Help</span>
+            <i class="i-lucide chevron-down"></i>
+          </button>
+        <ul><li><a href="https://discord.gg/litestar">
+                <span>Discord Help Forum</span>
+                <small>Dedicated Discord help forum</small>
+              </a></li><li><a href="https://github.com/litestar-org/polyfactory/discussions">
+                <span>GitHub Discussions</span>
+                <small>GitHub Discussions</small>
+              </a></li><li><a href="https://stackoverflow.com/questions/tagged/polyfactory">
+                <span>Stack Overflow</span>
+                <small>We monitor the <code><b>polyfactory</b></code> tag on Stack Overflow</small>
+              </a></li></ul>
+      </li><li class="link">
+          <a href="https://github.com/sponsors/Litestar-Org">
+            <span>Sponsor</span></a>
+        </li></ul></nav>
+      <div class="sy-head-extra flex items-center print:hidden"><form class="searchbox flex items-center" action="../../../search.html" method="get">
+  <input type="text" name="q" placeholder="Search" />
+  <kbd>/</kbd>
+</form><div class="sy-head-socials">
+  <a href="https://github.com/litestar-org/polyfactory" aria-label="GitHub">
+    <iconify-icon icon="simple-icons:github"></iconify-icon>
+  </a>
+  <a href="https://discord.gg/litestar" aria-label="Discord">
+    <iconify-icon icon="simple-icons:discord"></iconify-icon>
+  </a></div></div>
+    </div>
+    <div class="sy-head-actions flex items-center shrink-0 print:hidden"><button class="js-theme theme-switch flex items-center"
+data-aria-auto="Switch to light color mode"
+data-aria-light="Switch to dark color mode"
+data-aria-dark="Switch to auto color mode">
+<i class="i-lucide theme-icon"></i>
+</button><button class="md:hidden flex items-center js-menu" aria-label="Menu" type="button" aria-controls="HeadNav" aria-expanded="false">
+        <div class="hamburger">
+          <span class="hamburger_1"></span>
+          <span class="hamburger_2 -translate-x-2"></span>
+          <span class="hamburger_3 -translate-x-1"></span>
+        </div>
+      </button>
+    </div>
+  </div>
+</div>
+<div class="sy-page sy-container flex mx-auto">
+  <aside id="lside" class="sy-lside md:w-72 md:shrink-0 print:hidden">
+    <div class="sy-lside-inner md:sticky">
+      <div class="sy-scrollbar p-6">
+        <div class="globaltoc" data-expand-depth="0"><p class="caption" role="heading" aria-level="3"><span class="caption-text">Documentation</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../getting-started.html">Getting Started</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../usage/index.html">Usage Guide</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../usage/declaring_factories.html">Declaring Factories</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../usage/library_factories/index.html">Polyfactory Factories</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../usage/library_factories/sqlalchemy_factory.html">SQLAlchemyFactory</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../../usage/configuration.html">Factory Configuration</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../usage/fields.html">Factory Fields</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../usage/decorators.html">The <code class="docutils literal notranslate"><span class="pre">post_generated</span></code> decorator</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../usage/fixtures.html">Pytest fixtures</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../usage/handling_custom_types.html">Handling Custom Types</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../usage/model_coverage.html">Model coverage generation</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../../migration_guide/index.html">Migration Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../reference/index.html">API Reference</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../reference/constants.html">constants</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../reference/exceptions.html">exceptions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../reference/factories/index.html">factories</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../reference/factories/base.html">base_factory</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../reference/factories/dataclass_factory.html">dataclass_factory</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../reference/factories/typed_dict_factory.html">typed_dict_factory</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../reference/factories/pydantic_factory.html">pydantic_factory</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../reference/factories/msgspec_factory.html">msgspec_factory</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../reference/factories/odmantic_odm_factory.html">odmantic_odm_factory</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../reference/factories/beanie_odm_factory.html">beanie_odm_factory</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../reference/factories/attrs_factory.html">attrs_factory</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../reference/factories/sqlalchemy_factory.html">sqlalchemy_factory</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../../reference/field_meta.html">field_meta</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../reference/fields.html">fields</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../reference/decorators.html">decorators</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../reference/persistence.html">persistence</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../reference/pytest_plugin.html">pytest_plugin</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../reference/value_generators/index.html">value_generators</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../reference/value_generators/complex_types.html">complex_types</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../reference/value_generators/constrained_collections.html">constrained_collections</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../reference/value_generators/constrained_dates.html">constrained_dates</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../reference/value_generators/constrained_numbers.html">constrained_numbers</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../reference/value_generators/constrained_strings.html">constrained_strings</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../reference/value_generators/primitives.html">primitives</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<p class="caption" role="heading" aria-level="3"><span class="caption-text">Contributing</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../changelog.html">Changelog</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../contribution-guide.html">Contributing</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/search?q=user%3Alitestar-org+state%3Aopen+label%3A%22good+first+issue%22+++no%3Aassignee+repo%3A%22polyfactory%22&amp;type=issues">Available Issues</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/litestar-org/.github?tab=coc-ov-file#readme">Code of Conduct</a></li>
+</ul>
+
+        </div>
+      </div>
+    </div>
+  </aside>
+  <div class="lside-overlay js-menu" role="button" aria-label="Close left sidebar" aria-controls="lside" aria-expanded="false"></div>
+  <aside id="rside" class="sy-rside pb-3 w-64 shrink-0 order-last">
+    <button class="rside-close js-menu xl:hidden" aria-label="Close Table of Contents" type="button" aria-controls="rside" aria-expanded="false">
+      <i class="i-lucide close"></i>
+    </button>
+    <div class="sy-scrollbar sy-rside-inner px-6 xl:top-16 xl:sticky xl:pl-0 pt-6 pb-4"><a class="js-repo-stats repo-stats flex items-center" href="https://github.com/litestar-org/polyfactory"
+  data-type="github" data-user="litestar-org" data-repo="polyfactory">
+  <span class="w-8 flex items-center justify-around shrink-0 text-3xl">
+    <iconify-icon icon="simple-icons:github"></iconify-icon>
+  </span>
+  <span class="flex-grow px-2 break-all">
+    <span>litestar-org/polyfactory</span>
+    <span class="flex text-sm repo-stats-count">
+      <span class="flex items-center pr-3">
+        <iconify-icon icon="lucide:star"></iconify-icon>
+        <strong class="js-repo-stars ml-1">0</strong>
+      </span>
+      <span class="flex items-center">
+        <iconify-icon icon="lucide:git-fork"></iconify-icon>
+        <strong class="js-repo-forks ml-1">0</strong>
+      </span>
+    </span>
+  </span>
+</a><div id="ethical-ad-placement" data-ea-publisher="readthedocs"></div></div>
+  </aside>
+  <div class="rside-overlay js-menu" role="button" aria-label="Close Table of Contents" aria-controls="rside" aria-expanded="false"></div>
+  <main class="sy-main w-full max-sm:max-w-full print:pt-6">
+<div class="sy-breadcrumbs" role="navigation">
+  <div class="sy-breadcrumbs-inner flex items-center">
+    <div class="md:hidden mr-3">
+      <button class="js-menu" aria-label="Menu" type="button" aria-controls="lside" aria-expanded="false">
+        <i class="i-lucide menu"></i>
+      </button>
+    </div>
+    <ol class="flex-1" itemscope itemtype="https://schema.org/BreadcrumbList"><li itemprop="itemListElement" itemscope itemtype="https://schema.org/ListItem">
+        <a itemprop="item" href="../../../index.html"><span itemprop="name">polyfactory</span></a>
+        <span>/</span>
+        <meta itemprop="position" content="1" />
+      </li><li itemprop="itemListElement" itemscope itemtype="https://schema.org/ListItem">
+        <a itemprop="item" href="../../index.html"><span itemprop="name">Module code</span></a>
+        <span>/</span>
+        <meta itemprop="position" content="2" />
+      </li><li itemprop="itemListElement" itemscope itemtype="https://schema.org/ListItem">
+        <strong itemprop="name">polyfactory.value_generators.constrained_numbers</strong>
+        <meta itemprop="position" content="3" />
+      </li></ol>
+    <div class="xl:hidden ml-1">
+      <button class="js-menu" aria-label="Show table of contents" type="button" aria-controls="rside"
+        aria-expanded="false">
+        <i class="i-lucide outdent"></i>
+      </button>
+    </div>
+  </div>
+</div><div class="flex flex-col break-words justify-between">
+      <div class="min-w-0 max-w-6xl px-6 pb-6 pt-8 xl:px-12">
+        <article class="yue" role="main">
+          <h1>Source code for polyfactory.value_generators.constrained_numbers</h1><div class="highlight"><pre>
+<span></span><span data-line="1"><span class="kn">from</span><span class="w"> </span><span class="nn">__future__</span><span class="w"> </span><span class="kn">import</span> <span class="n">annotations</span>
+</span><span data-line="2">
+</span><span data-line="3"><span class="kn">from</span><span class="w"> </span><span class="nn">decimal</span><span class="w"> </span><span class="kn">import</span> <span class="n">ROUND_DOWN</span><span class="p">,</span> <span class="n">Decimal</span><span class="p">,</span> <span class="n">localcontext</span>
+</span><span data-line="4"><span class="kn">from</span><span class="w"> </span><span class="nn">sys</span><span class="w"> </span><span class="kn">import</span> <span class="n">float_info</span>
+</span><span data-line="5"><span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">TYPE_CHECKING</span><span class="p">,</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Protocol</span><span class="p">,</span> <span class="n">TypeVar</span><span class="p">,</span> <span class="n">cast</span>
+</span><span data-line="6">
+</span><span data-line="7"><span class="kn">from</span><span class="w"> </span><span class="nn">polyfactory.exceptions</span><span class="w"> </span><span class="kn">import</span> <span class="n">ParameterException</span>
+</span><span data-line="8"><span class="kn">from</span><span class="w"> </span><span class="nn">polyfactory.value_generators.primitives</span><span class="w"> </span><span class="kn">import</span> <span class="n">create_random_decimal</span><span class="p">,</span> <span class="n">create_random_float</span><span class="p">,</span> <span class="n">create_random_integer</span>
+</span><span data-line="9">
+</span><span data-line="10"><span class="k">if</span> <span class="n">TYPE_CHECKING</span><span class="p">:</span>
+</span><span data-line="11">    <span class="kn">from</span><span class="w"> </span><span class="nn">random</span><span class="w"> </span><span class="kn">import</span> <span class="n">Random</span>
+</span><span data-line="12">
+</span><span data-line="13"><span class="n">T</span> <span class="o">=</span> <span class="n">TypeVar</span><span class="p">(</span><span class="s2">&quot;T&quot;</span><span class="p">,</span> <span class="n">Decimal</span><span class="p">,</span> <span class="nb">int</span><span class="p">,</span> <span class="nb">float</span><span class="p">)</span>
+</span><span data-line="14">
+</span><span data-line="15">
+<div class="viewcode-block" id="NumberGeneratorProtocol">
+<a class="viewcode-back" href="../../../reference/value_generators/constrained_numbers.html#polyfactory.value_generators.constrained_numbers.NumberGeneratorProtocol">[docs]</a>
+</span><span data-line="16"><span class="k">class</span><span class="w"> </span><span class="nc">NumberGeneratorProtocol</span><span class="p">(</span><span class="n">Protocol</span><span class="p">[</span><span class="n">T</span><span class="p">]):</span>
+</span><span data-line="17"><span class="w">    </span><span class="sd">&quot;&quot;&quot;Protocol for custom callables used to generate numerical values&quot;&quot;&quot;</span>
+</span><span data-line="18">
+<div class="viewcode-block" id="NumberGeneratorProtocol.__call__">
+<a class="viewcode-back" href="../../../reference/value_generators/constrained_numbers.html#polyfactory.value_generators.constrained_numbers.NumberGeneratorProtocol.__call__">[docs]</a>
+</span><span data-line="19">    <span class="k">def</span><span class="w"> </span><span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">random</span><span class="p">:</span> <span class="s2">&quot;Random&quot;</span><span class="p">,</span> <span class="n">minimum</span><span class="p">:</span> <span class="n">T</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">maximum</span><span class="p">:</span> <span class="n">T</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">T</span><span class="p">:</span>
+</span><span data-line="20"><span class="w">        </span><span class="sd">&quot;&quot;&quot;Signature of the callable.</span>
+</span><span data-line="21">
+</span><span data-line="22"><span class="sd">        :param random: An instance of random.</span>
+</span><span data-line="23"><span class="sd">        :param minimum: A minimum value.</span>
+</span><span data-line="24"><span class="sd">        :param maximum: A maximum value.</span>
+</span><span data-line="25"><span class="sd">        :return: The generated numeric value.</span>
+</span><span data-line="26"><span class="sd">        &quot;&quot;&quot;</span>
+</span><span data-line="27">        <span class="o">...</span></div>
+</div>
+
+</span><span data-line="28">
+</span><span data-line="29">
+<div class="viewcode-block" id="almost_equal_floats">
+<a class="viewcode-back" href="../../../reference/value_generators/constrained_numbers.html#polyfactory.value_generators.constrained_numbers.almost_equal_floats">[docs]</a>
+</span><span data-line="30"><span class="k">def</span><span class="w"> </span><span class="nf">almost_equal_floats</span><span class="p">(</span><span class="n">value_1</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">value_2</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">delta</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">1e-8</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+</span><span data-line="31"><span class="w">    </span><span class="sd">&quot;&quot;&quot;Return True if two floats are almost equal</span>
+</span><span data-line="32">
+</span><span data-line="33"><span class="sd">    :param value_1: A float value.</span>
+</span><span data-line="34"><span class="sd">    :param value_2: A float value.</span>
+</span><span data-line="35"><span class="sd">    :param delta: A minimal delta.</span>
+</span><span data-line="36">
+</span><span data-line="37"><span class="sd">    :returns: Boolean dictating whether the floats can be considered equal - given python&#39;s problematic comparison of floats.</span>
+</span><span data-line="38"><span class="sd">    &quot;&quot;&quot;</span>
+</span><span data-line="39">    <span class="k">return</span> <span class="nb">abs</span><span class="p">(</span><span class="n">value_1</span> <span class="o">-</span> <span class="n">value_2</span><span class="p">)</span> <span class="o">&lt;=</span> <span class="n">delta</span></div>
+
+</span><span data-line="40">
+</span><span data-line="41">
+<div class="viewcode-block" id="is_multiply_of_multiple_of_in_range">
+<a class="viewcode-back" href="../../../reference/value_generators/constrained_numbers.html#polyfactory.value_generators.constrained_numbers.is_multiply_of_multiple_of_in_range">[docs]</a>
+</span><span data-line="42"><span class="k">def</span><span class="w"> </span><span class="nf">is_multiply_of_multiple_of_in_range</span><span class="p">(</span>
+</span><span data-line="43">    <span class="n">minimum</span><span class="p">:</span> <span class="n">T</span><span class="p">,</span>
+</span><span data-line="44">    <span class="n">maximum</span><span class="p">:</span> <span class="n">T</span><span class="p">,</span>
+</span><span data-line="45">    <span class="n">multiple_of</span><span class="p">:</span> <span class="n">T</span><span class="p">,</span>
+</span><span data-line="46"><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+</span><span data-line="47"><span class="w">    </span><span class="sd">&quot;&quot;&quot;Determine if at least one multiply of `multiple_of` lies in the given range.</span>
+</span><span data-line="48">
+</span><span data-line="49"><span class="sd">    :param minimum: T: A minimum value.</span>
+</span><span data-line="50"><span class="sd">    :param maximum: T: A maximum value.</span>
+</span><span data-line="51"><span class="sd">    :param multiple_of: T: A value to use as a base for multiplication.</span>
+</span><span data-line="52">
+</span><span data-line="53"><span class="sd">    :returns: Boolean dictating whether at least one multiply of `multiple_of` lies in the given range between minimum and maximum.</span>
+</span><span data-line="54"><span class="sd">    &quot;&quot;&quot;</span>
+</span><span data-line="55">
+</span><span data-line="56">    <span class="c1"># if the range has infinity on one of its ends then infinite number of multipliers</span>
+</span><span data-line="57">    <span class="c1"># can be found within the range</span>
+</span><span data-line="58">
+</span><span data-line="59">    <span class="c1"># if we were given floats and multiple_of is really close to zero then it doesn&#39;t make sense</span>
+</span><span data-line="60">    <span class="c1"># to continue trying to check the range</span>
+</span><span data-line="61">    <span class="k">if</span> <span class="p">(</span>
+</span><span data-line="62">        <span class="nb">isinstance</span><span class="p">(</span><span class="n">minimum</span><span class="p">,</span> <span class="nb">float</span><span class="p">)</span>
+</span><span data-line="63">        <span class="ow">and</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">multiple_of</span><span class="p">,</span> <span class="nb">float</span><span class="p">)</span>
+</span><span data-line="64">        <span class="ow">and</span> <span class="n">minimum</span> <span class="o">/</span> <span class="n">multiple_of</span> <span class="ow">in</span> <span class="p">[</span><span class="nb">float</span><span class="p">(</span><span class="s2">&quot;+inf&quot;</span><span class="p">),</span> <span class="nb">float</span><span class="p">(</span><span class="s2">&quot;-inf&quot;</span><span class="p">)]</span>
+</span><span data-line="65">    <span class="p">):</span>
+</span><span data-line="66">        <span class="k">return</span> <span class="kc">False</span>
+</span><span data-line="67">
+</span><span data-line="68">    <span class="n">multiplier</span> <span class="o">=</span> <span class="nb">round</span><span class="p">(</span><span class="n">minimum</span> <span class="o">/</span> <span class="n">multiple_of</span><span class="p">)</span>
+</span><span data-line="69">    <span class="n">step</span> <span class="o">=</span> <span class="mi">1</span> <span class="k">if</span> <span class="n">multiple_of</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="k">else</span> <span class="o">-</span><span class="mi">1</span>
+</span><span data-line="70">
+</span><span data-line="71">    <span class="c1"># since rounding can go either up or down we may end up in a situation when</span>
+</span><span data-line="72">    <span class="c1"># minimum is less or equal to `multiplier * multiple_of`</span>
+</span><span data-line="73">    <span class="c1"># or when it is greater than `multiplier * multiple_of`</span>
+</span><span data-line="74">    <span class="c1"># (in this case minimum is less than `(multiplier + 1)* multiple_of`). So we need to check</span>
+</span><span data-line="75">    <span class="c1"># that any of two values is inside the given range. ASCII graphic below explain this</span>
+</span><span data-line="76">    <span class="c1">#</span>
+</span><span data-line="77">    <span class="c1">#                minimum</span>
+</span><span data-line="78">    <span class="c1"># -----------------+-------+-----------------------------------+----------------------------</span>
+</span><span data-line="79">    <span class="c1">#</span>
+</span><span data-line="80">    <span class="c1">#</span>
+</span><span data-line="81">    <span class="c1">#                                minimum</span>
+</span><span data-line="82">    <span class="c1"># -------------------------+--------+--------------------------+----------------------------</span>
+</span><span data-line="83">    <span class="c1">#</span>
+</span><span data-line="84">    <span class="c1"># since `multiple_of` can be a negative number adding +1 to `multiplier` drives `(multiplier + 1) * multiple_of``</span>
+</span><span data-line="85">    <span class="c1"># away from `minimum` to the -infinity. It looks like this:</span>
+</span><span data-line="86">    <span class="c1">#                                                                               minimum</span>
+</span><span data-line="87">    <span class="c1"># -----------------------+--------------------------------+------------------------+--------</span>
+</span><span data-line="88">    <span class="c1">#</span>
+</span><span data-line="89">    <span class="c1"># so for negative `multiple_of` we want to subtract 1 from multiplier</span>
+</span><span data-line="90">    <span class="k">for</span> <span class="n">multiply</span> <span class="ow">in</span> <span class="p">[</span><span class="n">multiplier</span> <span class="o">*</span> <span class="n">multiple_of</span><span class="p">,</span> <span class="p">(</span><span class="n">multiplier</span> <span class="o">+</span> <span class="n">step</span><span class="p">)</span> <span class="o">*</span> <span class="n">multiple_of</span><span class="p">]:</span>
+</span><span data-line="91">        <span class="n">multiply_float</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">multiply</span><span class="p">)</span>
+</span><span data-line="92">        <span class="k">if</span> <span class="p">(</span>
+</span><span data-line="93">            <span class="n">almost_equal_floats</span><span class="p">(</span><span class="n">multiply_float</span><span class="p">,</span> <span class="nb">float</span><span class="p">(</span><span class="n">minimum</span><span class="p">))</span>
+</span><span data-line="94">            <span class="ow">or</span> <span class="n">almost_equal_floats</span><span class="p">(</span><span class="n">multiply_float</span><span class="p">,</span> <span class="nb">float</span><span class="p">(</span><span class="n">maximum</span><span class="p">))</span>
+</span><span data-line="95">            <span class="ow">or</span> <span class="n">minimum</span> <span class="o">&lt;</span> <span class="n">multiply</span> <span class="o">&lt;</span> <span class="n">maximum</span>
+</span><span data-line="96">        <span class="p">):</span>
+</span><span data-line="97">            <span class="k">return</span> <span class="kc">True</span>
+</span><span data-line="98">
+</span><span data-line="99">    <span class="k">return</span> <span class="kc">False</span></div>
+
+</span><span data-line="100">
+</span><span data-line="101">
+<div class="viewcode-block" id="passes_pydantic_multiple_validator">
+<a class="viewcode-back" href="../../../reference/value_generators/constrained_numbers.html#polyfactory.value_generators.constrained_numbers.passes_pydantic_multiple_validator">[docs]</a>
+</span><span data-line="102"><span class="k">def</span><span class="w"> </span><span class="nf">passes_pydantic_multiple_validator</span><span class="p">(</span><span class="n">value</span><span class="p">:</span> <span class="n">T</span><span class="p">,</span> <span class="n">multiple_of</span><span class="p">:</span> <span class="n">T</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+</span><span data-line="103"><span class="w">    </span><span class="sd">&quot;&quot;&quot;Determine whether a given value passes the pydantic multiple_of validation.</span>
+</span><span data-line="104">
+</span><span data-line="105"><span class="sd">    :param value: A numeric value.</span>
+</span><span data-line="106"><span class="sd">    :param multiple_of: Another numeric value.</span>
+</span><span data-line="107">
+</span><span data-line="108"><span class="sd">    :returns: Boolean dictating whether value is a multiple of value.</span>
+</span><span data-line="109">
+</span><span data-line="110"><span class="sd">    &quot;&quot;&quot;</span>
+</span><span data-line="111">    <span class="k">if</span> <span class="n">multiple_of</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+</span><span data-line="112">        <span class="k">return</span> <span class="kc">True</span>
+</span><span data-line="113">    <span class="n">mod</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">value</span><span class="p">)</span> <span class="o">/</span> <span class="nb">float</span><span class="p">(</span><span class="n">multiple_of</span><span class="p">)</span> <span class="o">%</span> <span class="mi">1</span>
+</span><span data-line="114">    <span class="k">return</span> <span class="n">almost_equal_floats</span><span class="p">(</span><span class="n">mod</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">)</span> <span class="ow">or</span> <span class="n">almost_equal_floats</span><span class="p">(</span><span class="n">mod</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">)</span></div>
+
+</span><span data-line="115">
+</span><span data-line="116">
+<div class="viewcode-block" id="get_increment">
+<a class="viewcode-back" href="../../../reference/value_generators/constrained_numbers.html#polyfactory.value_generators.constrained_numbers.get_increment">[docs]</a>
+</span><span data-line="117"><span class="k">def</span><span class="w"> </span><span class="nf">get_increment</span><span class="p">(</span><span class="n">t_type</span><span class="p">:</span> <span class="nb">type</span><span class="p">[</span><span class="n">T</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">T</span><span class="p">:</span>
+</span><span data-line="118"><span class="w">    </span><span class="sd">&quot;&quot;&quot;Get a small increment base to add to constrained values, i.e. lt/gt entries.</span>
+</span><span data-line="119">
+</span><span data-line="120"><span class="sd">    :param t_type: A value of type T.</span>
+</span><span data-line="121">
+</span><span data-line="122"><span class="sd">    :returns: An increment T.</span>
+</span><span data-line="123"><span class="sd">    &quot;&quot;&quot;</span>
+</span><span data-line="124">    <span class="n">values</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="n">Any</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span>
+</span><span data-line="125">        <span class="nb">int</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+</span><span data-line="126">        <span class="nb">float</span><span class="p">:</span> <span class="n">float_info</span><span class="o">.</span><span class="n">epsilon</span><span class="p">,</span>
+</span><span data-line="127">        <span class="n">Decimal</span><span class="p">:</span> <span class="n">Decimal</span><span class="p">(</span><span class="s2">&quot;0.001&quot;</span><span class="p">),</span>
+</span><span data-line="128">    <span class="p">}</span>
+</span><span data-line="129">    <span class="k">return</span> <span class="n">cast</span><span class="p">(</span><span class="s2">&quot;T&quot;</span><span class="p">,</span> <span class="n">values</span><span class="p">[</span><span class="n">t_type</span><span class="p">])</span></div>
+
+</span><span data-line="130">
+</span><span data-line="131">
+<div class="viewcode-block" id="get_value_or_none">
+<a class="viewcode-back" href="../../../reference/value_generators/constrained_numbers.html#polyfactory.value_generators.constrained_numbers.get_value_or_none">[docs]</a>
+</span><span data-line="132"><span class="k">def</span><span class="w"> </span><span class="nf">get_value_or_none</span><span class="p">(</span>
+</span><span data-line="133">    <span class="n">t_type</span><span class="p">:</span> <span class="nb">type</span><span class="p">[</span><span class="n">T</span><span class="p">],</span>
+</span><span data-line="134">    <span class="n">lt</span><span class="p">:</span> <span class="n">T</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+</span><span data-line="135">    <span class="n">le</span><span class="p">:</span> <span class="n">T</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+</span><span data-line="136">    <span class="n">gt</span><span class="p">:</span> <span class="n">T</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+</span><span data-line="137">    <span class="n">ge</span><span class="p">:</span> <span class="n">T</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+</span><span data-line="138">    <span class="n">max_digits</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+</span><span data-line="139">    <span class="n">decimal_places</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+</span><span data-line="140"><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="n">T</span> <span class="o">|</span> <span class="kc">None</span><span class="p">,</span> <span class="n">T</span> <span class="o">|</span> <span class="kc">None</span><span class="p">]:</span>
+</span><span data-line="141"><span class="w">    </span><span class="sd">&quot;&quot;&quot;Return an optional value.</span>
+</span><span data-line="142">
+</span><span data-line="143"><span class="sd">    :param equal_value: An GE/LE value.</span>
+</span><span data-line="144"><span class="sd">    :param constrained: An GT/LT value.</span>
+</span><span data-line="145"><span class="sd">    :param increment: increment</span>
+</span><span data-line="146">
+</span><span data-line="147"><span class="sd">    :returns: Optional T.</span>
+</span><span data-line="148"><span class="sd">    &quot;&quot;&quot;</span>
+</span><span data-line="149">    <span class="k">if</span> <span class="n">ge</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+</span><span data-line="150">        <span class="n">minimum_value</span> <span class="o">=</span> <span class="n">ge</span>
+</span><span data-line="151">    <span class="k">elif</span> <span class="n">gt</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+</span><span data-line="152">        <span class="n">minimum_value</span> <span class="o">=</span> <span class="n">gt</span> <span class="o">+</span> <span class="n">get_increment</span><span class="p">(</span><span class="n">t_type</span><span class="p">)</span>
+</span><span data-line="153">    <span class="k">else</span><span class="p">:</span>
+</span><span data-line="154">        <span class="n">minimum_value</span> <span class="o">=</span> <span class="kc">None</span>
+</span><span data-line="155">
+</span><span data-line="156">    <span class="k">if</span> <span class="n">le</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+</span><span data-line="157">        <span class="n">maximum_value</span> <span class="o">=</span> <span class="n">le</span>
+</span><span data-line="158">    <span class="k">elif</span> <span class="n">lt</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+</span><span data-line="159">        <span class="n">maximum_value</span> <span class="o">=</span> <span class="n">lt</span> <span class="o">-</span> <span class="n">get_increment</span><span class="p">(</span><span class="n">t_type</span><span class="p">)</span>
+</span><span data-line="160">    <span class="k">else</span><span class="p">:</span>
+</span><span data-line="161">        <span class="n">maximum_value</span> <span class="o">=</span> <span class="kc">None</span>
+</span><span data-line="162">
+</span><span data-line="163">    <span class="k">if</span> <span class="n">max_digits</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+</span><span data-line="164">        <span class="n">max_whole_digits</span> <span class="o">=</span> <span class="mi">10</span>
+</span><span data-line="165">        <span class="n">whole_digits</span> <span class="o">=</span> <span class="n">max_digits</span> <span class="o">-</span> <span class="n">decimal_places</span> <span class="k">if</span> <span class="n">decimal_places</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">max_digits</span>
+</span><span data-line="166">        <span class="n">maximum</span> <span class="o">=</span> <span class="p">(</span>
+</span><span data-line="167">            <span class="n">Decimal</span><span class="p">(</span><span class="mi">10</span><span class="o">**</span><span class="n">whole_digits</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span> <span class="k">if</span> <span class="n">whole_digits</span> <span class="o">&lt;</span> <span class="n">max_whole_digits</span> <span class="k">else</span> <span class="n">Decimal</span><span class="p">(</span><span class="mi">10</span><span class="o">**</span><span class="n">max_whole_digits</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span>
+</span><span data-line="168">        <span class="p">)</span>
+</span><span data-line="169">        <span class="n">minimum</span> <span class="o">=</span> <span class="n">maximum</span> <span class="o">*</span> <span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span>
+</span><span data-line="170">
+</span><span data-line="171">        <span class="k">if</span> <span class="n">minimum_value</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="n">minimum_value</span> <span class="o">&lt;</span> <span class="n">minimum</span><span class="p">:</span>
+</span><span data-line="172">            <span class="n">minimum_value</span> <span class="o">=</span> <span class="n">t_type</span><span class="p">(</span><span class="n">minimum</span><span class="p">)</span>
+</span><span data-line="173">        <span class="k">elif</span> <span class="n">minimum_value</span> <span class="o">&gt;</span> <span class="n">maximum</span><span class="p">:</span>
+</span><span data-line="174">            <span class="n">msg</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;minimum value must be less than </span><span class="si">{</span><span class="n">maximum</span><span class="si">}</span><span class="s2">&quot;</span>
+</span><span data-line="175">            <span class="k">raise</span> <span class="n">ParameterException</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
+</span><span data-line="176">
+</span><span data-line="177">        <span class="k">if</span> <span class="n">maximum_value</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="n">maximum_value</span> <span class="o">&gt;</span> <span class="n">maximum</span><span class="p">:</span>
+</span><span data-line="178">            <span class="n">maximum_value</span> <span class="o">=</span> <span class="n">t_type</span><span class="p">(</span><span class="n">maximum</span> <span class="k">if</span> <span class="n">maximum</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="k">else</span> <span class="n">Decimal</span><span class="p">(</span><span class="mi">1</span><span class="p">))</span>
+</span><span data-line="179">        <span class="k">elif</span> <span class="n">maximum_value</span> <span class="o">&lt;</span> <span class="n">minimum</span><span class="p">:</span>
+</span><span data-line="180">            <span class="n">msg</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;maximum value must be greater than </span><span class="si">{</span><span class="n">minimum</span><span class="si">}</span><span class="s2">&quot;</span>
+</span><span data-line="181">            <span class="k">raise</span> <span class="n">ParameterException</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
+</span><span data-line="182">    <span class="k">return</span> <span class="n">minimum_value</span><span class="p">,</span> <span class="n">maximum_value</span></div>
+
+</span><span data-line="183">
+</span><span data-line="184">
+<div class="viewcode-block" id="get_constrained_number_range">
+<a class="viewcode-back" href="../../../reference/value_generators/constrained_numbers.html#polyfactory.value_generators.constrained_numbers.get_constrained_number_range">[docs]</a>
+</span><span data-line="185"><span class="k">def</span><span class="w"> </span><span class="nf">get_constrained_number_range</span><span class="p">(</span>
+</span><span data-line="186">    <span class="n">t_type</span><span class="p">:</span> <span class="nb">type</span><span class="p">[</span><span class="n">T</span><span class="p">],</span>
+</span><span data-line="187">    <span class="n">random</span><span class="p">:</span> <span class="n">Random</span><span class="p">,</span>
+</span><span data-line="188">    <span class="n">lt</span><span class="p">:</span> <span class="n">T</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+</span><span data-line="189">    <span class="n">le</span><span class="p">:</span> <span class="n">T</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+</span><span data-line="190">    <span class="n">gt</span><span class="p">:</span> <span class="n">T</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+</span><span data-line="191">    <span class="n">ge</span><span class="p">:</span> <span class="n">T</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+</span><span data-line="192">    <span class="n">multiple_of</span><span class="p">:</span> <span class="n">T</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+</span><span data-line="193">    <span class="n">max_digits</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+</span><span data-line="194">    <span class="n">decimal_places</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+</span><span data-line="195"><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="n">T</span> <span class="o">|</span> <span class="kc">None</span><span class="p">,</span> <span class="n">T</span> <span class="o">|</span> <span class="kc">None</span><span class="p">]:</span>
+</span><span data-line="196"><span class="w">    </span><span class="sd">&quot;&quot;&quot;Return the minimum and maximum values given a field_meta&#39;s constraints.</span>
+</span><span data-line="197">
+</span><span data-line="198"><span class="sd">    :param t_type: A primitive constructor - int, float or Decimal.</span>
+</span><span data-line="199"><span class="sd">    :param random: An instance of Random.</span>
+</span><span data-line="200"><span class="sd">    :param lt: Less than value.</span>
+</span><span data-line="201"><span class="sd">    :param le: Less than or equal value.</span>
+</span><span data-line="202"><span class="sd">    :param gt: Greater than value.</span>
+</span><span data-line="203"><span class="sd">    :param ge: Greater than or equal value.</span>
+</span><span data-line="204"><span class="sd">    :param multiple_of: Multiple of value.</span>
+</span><span data-line="205"><span class="sd">    :param decimal_places: Number of decimal places.</span>
+</span><span data-line="206"><span class="sd">    :param max_digits: Maximal number of digits.</span>
+</span><span data-line="207">
+</span><span data-line="208"><span class="sd">    :returns: a tuple of optional minimum and maximum values.</span>
+</span><span data-line="209"><span class="sd">    &quot;&quot;&quot;</span>
+</span><span data-line="210">    <span class="n">seed</span> <span class="o">=</span> <span class="n">t_type</span><span class="p">(</span><span class="n">random</span><span class="o">.</span><span class="n">random</span><span class="p">()</span> <span class="o">*</span> <span class="mi">10</span><span class="p">)</span>
+</span><span data-line="211">    <span class="n">minimum</span><span class="p">,</span> <span class="n">maximum</span> <span class="o">=</span> <span class="n">get_value_or_none</span><span class="p">(</span>
+</span><span data-line="212">        <span class="n">lt</span><span class="o">=</span><span class="n">lt</span><span class="p">,</span> <span class="n">le</span><span class="o">=</span><span class="n">le</span><span class="p">,</span> <span class="n">gt</span><span class="o">=</span><span class="n">gt</span><span class="p">,</span> <span class="n">ge</span><span class="o">=</span><span class="n">ge</span><span class="p">,</span> <span class="n">t_type</span><span class="o">=</span><span class="n">t_type</span><span class="p">,</span> <span class="n">max_digits</span><span class="o">=</span><span class="n">max_digits</span><span class="p">,</span> <span class="n">decimal_places</span><span class="o">=</span><span class="n">decimal_places</span>
+</span><span data-line="213">    <span class="p">)</span>
+</span><span data-line="214">
+</span><span data-line="215">    <span class="k">if</span> <span class="n">minimum</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">maximum</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">maximum</span> <span class="o">&lt;</span> <span class="n">minimum</span><span class="p">:</span>
+</span><span data-line="216">        <span class="n">msg</span> <span class="o">=</span> <span class="s2">&quot;maximum value must be greater than minimum value&quot;</span>
+</span><span data-line="217">        <span class="k">raise</span> <span class="n">ParameterException</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
+</span><span data-line="218">
+</span><span data-line="219">    <span class="k">if</span> <span class="n">multiple_of</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+</span><span data-line="220">        <span class="k">if</span> <span class="n">minimum</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">maximum</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+</span><span data-line="221">            <span class="k">return</span> <span class="p">(</span><span class="n">minimum</span><span class="p">,</span> <span class="n">seed</span><span class="p">)</span> <span class="k">if</span> <span class="n">minimum</span> <span class="o">==</span> <span class="mi">0</span> <span class="k">else</span> <span class="p">(</span><span class="n">minimum</span><span class="p">,</span> <span class="n">minimum</span> <span class="o">+</span> <span class="n">seed</span><span class="p">)</span>  <span class="c1"># pyright: ignore[reportGeneralTypeIssues]</span>
+</span><span data-line="222">        <span class="k">if</span> <span class="n">maximum</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">minimum</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+</span><span data-line="223">            <span class="k">return</span> <span class="n">maximum</span> <span class="o">-</span> <span class="n">seed</span><span class="p">,</span> <span class="n">maximum</span>
+</span><span data-line="224">    <span class="k">else</span><span class="p">:</span>
+</span><span data-line="225">        <span class="k">if</span> <span class="n">multiple_of</span> <span class="o">==</span> <span class="mf">0.0</span><span class="p">:</span>  <span class="c1"># TODO: investigate @guacs # noqa: FIX002</span>
+</span><span data-line="226">            <span class="n">msg</span> <span class="o">=</span> <span class="s2">&quot;multiple_of can not be zero&quot;</span>
+</span><span data-line="227">            <span class="k">raise</span> <span class="n">ParameterException</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
+</span><span data-line="228">        <span class="k">if</span> <span class="p">(</span>
+</span><span data-line="229">            <span class="n">minimum</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
+</span><span data-line="230">            <span class="ow">and</span> <span class="n">maximum</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
+</span><span data-line="231">            <span class="ow">and</span> <span class="ow">not</span> <span class="n">is_multiply_of_multiple_of_in_range</span><span class="p">(</span><span class="n">minimum</span><span class="o">=</span><span class="n">minimum</span><span class="p">,</span> <span class="n">maximum</span><span class="o">=</span><span class="n">maximum</span><span class="p">,</span> <span class="n">multiple_of</span><span class="o">=</span><span class="n">multiple_of</span><span class="p">)</span>
+</span><span data-line="232">        <span class="p">):</span>
+</span><span data-line="233">            <span class="n">msg</span> <span class="o">=</span> <span class="s2">&quot;given range should include at least one multiply of multiple_of&quot;</span>
+</span><span data-line="234">            <span class="k">raise</span> <span class="n">ParameterException</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
+</span><span data-line="235">
+</span><span data-line="236">    <span class="k">return</span> <span class="n">minimum</span><span class="p">,</span> <span class="n">maximum</span></div>
+
+</span><span data-line="237">
+</span><span data-line="238">
+<div class="viewcode-block" id="generate_constrained_number">
+<a class="viewcode-back" href="../../../reference/value_generators/constrained_numbers.html#polyfactory.value_generators.constrained_numbers.generate_constrained_number">[docs]</a>
+</span><span data-line="239"><span class="k">def</span><span class="w"> </span><span class="nf">generate_constrained_number</span><span class="p">(</span>
+</span><span data-line="240">    <span class="n">random</span><span class="p">:</span> <span class="n">Random</span><span class="p">,</span>
+</span><span data-line="241">    <span class="n">minimum</span><span class="p">:</span> <span class="n">T</span> <span class="o">|</span> <span class="kc">None</span><span class="p">,</span>
+</span><span data-line="242">    <span class="n">maximum</span><span class="p">:</span> <span class="n">T</span> <span class="o">|</span> <span class="kc">None</span><span class="p">,</span>
+</span><span data-line="243">    <span class="n">multiple_of</span><span class="p">:</span> <span class="n">T</span> <span class="o">|</span> <span class="kc">None</span><span class="p">,</span>
+</span><span data-line="244">    <span class="n">method</span><span class="p">:</span> <span class="s2">&quot;NumberGeneratorProtocol[T]&quot;</span><span class="p">,</span>
+</span><span data-line="245"><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">T</span><span class="p">:</span>
+</span><span data-line="246"><span class="w">    </span><span class="sd">&quot;&quot;&quot;Generate a constrained number, output depends on the passed in callbacks.</span>
+</span><span data-line="247">
+</span><span data-line="248"><span class="sd">    :param random: An instance of random.</span>
+</span><span data-line="249"><span class="sd">    :param minimum: A minimum value.</span>
+</span><span data-line="250"><span class="sd">    :param maximum: A maximum value.</span>
+</span><span data-line="251"><span class="sd">    :param multiple_of: A multiple of value.</span>
+</span><span data-line="252"><span class="sd">    :param method: A function that generates numbers of type T.</span>
+</span><span data-line="253">
+</span><span data-line="254"><span class="sd">    :returns: A value of type T.</span>
+</span><span data-line="255"><span class="sd">    &quot;&quot;&quot;</span>
+</span><span data-line="256">    <span class="k">if</span> <span class="n">minimum</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="n">maximum</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+</span><span data-line="257">        <span class="k">return</span> <span class="n">multiple_of</span> <span class="k">if</span> <span class="n">multiple_of</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">method</span><span class="p">(</span><span class="n">random</span><span class="o">=</span><span class="n">random</span><span class="p">)</span>
+</span><span data-line="258">    <span class="k">if</span> <span class="n">multiple_of</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+</span><span data-line="259">        <span class="k">return</span> <span class="n">method</span><span class="p">(</span><span class="n">random</span><span class="o">=</span><span class="n">random</span><span class="p">,</span> <span class="n">minimum</span><span class="o">=</span><span class="n">minimum</span><span class="p">,</span> <span class="n">maximum</span><span class="o">=</span><span class="n">maximum</span><span class="p">)</span>
+</span><span data-line="260">    <span class="k">if</span> <span class="n">multiple_of</span> <span class="o">&gt;=</span> <span class="n">minimum</span><span class="p">:</span>
+</span><span data-line="261">        <span class="k">return</span> <span class="n">multiple_of</span>
+</span><span data-line="262">    <span class="n">result</span> <span class="o">=</span> <span class="n">minimum</span>
+</span><span data-line="263">    <span class="k">while</span> <span class="ow">not</span> <span class="n">passes_pydantic_multiple_validator</span><span class="p">(</span><span class="n">result</span><span class="p">,</span> <span class="n">multiple_of</span><span class="p">):</span>
+</span><span data-line="264">        <span class="n">result</span> <span class="o">=</span> <span class="nb">round</span><span class="p">(</span><span class="n">method</span><span class="p">(</span><span class="n">random</span><span class="o">=</span><span class="n">random</span><span class="p">,</span> <span class="n">minimum</span><span class="o">=</span><span class="n">minimum</span><span class="p">,</span> <span class="n">maximum</span><span class="o">=</span><span class="n">maximum</span><span class="p">)</span> <span class="o">/</span> <span class="n">multiple_of</span><span class="p">)</span> <span class="o">*</span> <span class="n">multiple_of</span>
+</span><span data-line="265">    <span class="k">return</span> <span class="n">result</span></div>
+
+</span><span data-line="266">
+</span><span data-line="267">
+<div class="viewcode-block" id="handle_constrained_int">
+<a class="viewcode-back" href="../../../reference/value_generators/constrained_numbers.html#polyfactory.value_generators.constrained_numbers.handle_constrained_int">[docs]</a>
+</span><span data-line="268"><span class="k">def</span><span class="w"> </span><span class="nf">handle_constrained_int</span><span class="p">(</span>
+</span><span data-line="269">    <span class="n">random</span><span class="p">:</span> <span class="n">Random</span><span class="p">,</span>
+</span><span data-line="270">    <span class="n">multiple_of</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+</span><span data-line="271">    <span class="n">gt</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+</span><span data-line="272">    <span class="n">ge</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+</span><span data-line="273">    <span class="n">lt</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+</span><span data-line="274">    <span class="n">le</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+</span><span data-line="275"><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+</span><span data-line="276"><span class="w">    </span><span class="sd">&quot;&quot;&quot;Handle constrained integers.</span>
+</span><span data-line="277">
+</span><span data-line="278"><span class="sd">    :param random: An instance of Random.</span>
+</span><span data-line="279"><span class="sd">    :param lt: Less than value.</span>
+</span><span data-line="280"><span class="sd">    :param le: Less than or equal value.</span>
+</span><span data-line="281"><span class="sd">    :param gt: Greater than value.</span>
+</span><span data-line="282"><span class="sd">    :param ge: Greater than or equal value.</span>
+</span><span data-line="283"><span class="sd">    :param multiple_of: Multiple of value.</span>
+</span><span data-line="284">
+</span><span data-line="285"><span class="sd">    :returns: An integer.</span>
+</span><span data-line="286">
+</span><span data-line="287"><span class="sd">    &quot;&quot;&quot;</span>
+</span><span data-line="288">
+</span><span data-line="289">    <span class="n">minimum</span><span class="p">,</span> <span class="n">maximum</span> <span class="o">=</span> <span class="n">get_constrained_number_range</span><span class="p">(</span>
+</span><span data-line="290">        <span class="n">gt</span><span class="o">=</span><span class="n">gt</span><span class="p">,</span>
+</span><span data-line="291">        <span class="n">ge</span><span class="o">=</span><span class="n">ge</span><span class="p">,</span>
+</span><span data-line="292">        <span class="n">lt</span><span class="o">=</span><span class="n">lt</span><span class="p">,</span>
+</span><span data-line="293">        <span class="n">le</span><span class="o">=</span><span class="n">le</span><span class="p">,</span>
+</span><span data-line="294">        <span class="n">t_type</span><span class="o">=</span><span class="nb">int</span><span class="p">,</span>
+</span><span data-line="295">        <span class="n">multiple_of</span><span class="o">=</span><span class="n">multiple_of</span><span class="p">,</span>
+</span><span data-line="296">        <span class="n">random</span><span class="o">=</span><span class="n">random</span><span class="p">,</span>
+</span><span data-line="297">    <span class="p">)</span>
+</span><span data-line="298">    <span class="k">return</span> <span class="n">generate_constrained_number</span><span class="p">(</span>
+</span><span data-line="299">        <span class="n">random</span><span class="o">=</span><span class="n">random</span><span class="p">,</span>
+</span><span data-line="300">        <span class="n">minimum</span><span class="o">=</span><span class="n">minimum</span><span class="p">,</span>
+</span><span data-line="301">        <span class="n">maximum</span><span class="o">=</span><span class="n">maximum</span><span class="p">,</span>
+</span><span data-line="302">        <span class="n">multiple_of</span><span class="o">=</span><span class="n">multiple_of</span><span class="p">,</span>
+</span><span data-line="303">        <span class="n">method</span><span class="o">=</span><span class="n">create_random_integer</span><span class="p">,</span>
+</span><span data-line="304">    <span class="p">)</span></div>
+
+</span><span data-line="305">
+</span><span data-line="306">
+<div class="viewcode-block" id="handle_constrained_float">
+<a class="viewcode-back" href="../../../reference/value_generators/constrained_numbers.html#polyfactory.value_generators.constrained_numbers.handle_constrained_float">[docs]</a>
+</span><span data-line="307"><span class="k">def</span><span class="w"> </span><span class="nf">handle_constrained_float</span><span class="p">(</span>
+</span><span data-line="308">    <span class="n">random</span><span class="p">:</span> <span class="n">Random</span><span class="p">,</span>
+</span><span data-line="309">    <span class="n">multiple_of</span><span class="p">:</span> <span class="nb">float</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+</span><span data-line="310">    <span class="n">gt</span><span class="p">:</span> <span class="nb">float</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+</span><span data-line="311">    <span class="n">ge</span><span class="p">:</span> <span class="nb">float</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+</span><span data-line="312">    <span class="n">lt</span><span class="p">:</span> <span class="nb">float</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+</span><span data-line="313">    <span class="n">le</span><span class="p">:</span> <span class="nb">float</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+</span><span data-line="314"><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+</span><span data-line="315"><span class="w">    </span><span class="sd">&quot;&quot;&quot;Handle constrained floats.</span>
+</span><span data-line="316">
+</span><span data-line="317"><span class="sd">    :param random: An instance of Random.</span>
+</span><span data-line="318"><span class="sd">    :param lt: Less than value.</span>
+</span><span data-line="319"><span class="sd">    :param le: Less than or equal value.</span>
+</span><span data-line="320"><span class="sd">    :param gt: Greater than value.</span>
+</span><span data-line="321"><span class="sd">    :param ge: Greater than or equal value.</span>
+</span><span data-line="322"><span class="sd">    :param multiple_of: Multiple of value.</span>
+</span><span data-line="323">
+</span><span data-line="324"><span class="sd">    :returns: A float.</span>
+</span><span data-line="325"><span class="sd">    &quot;&quot;&quot;</span>
+</span><span data-line="326">
+</span><span data-line="327">    <span class="n">minimum</span><span class="p">,</span> <span class="n">maximum</span> <span class="o">=</span> <span class="n">get_constrained_number_range</span><span class="p">(</span>
+</span><span data-line="328">        <span class="n">gt</span><span class="o">=</span><span class="n">gt</span><span class="p">,</span>
+</span><span data-line="329">        <span class="n">ge</span><span class="o">=</span><span class="n">ge</span><span class="p">,</span>
+</span><span data-line="330">        <span class="n">lt</span><span class="o">=</span><span class="n">lt</span><span class="p">,</span>
+</span><span data-line="331">        <span class="n">le</span><span class="o">=</span><span class="n">le</span><span class="p">,</span>
+</span><span data-line="332">        <span class="n">t_type</span><span class="o">=</span><span class="nb">float</span><span class="p">,</span>
+</span><span data-line="333">        <span class="n">multiple_of</span><span class="o">=</span><span class="n">multiple_of</span><span class="p">,</span>
+</span><span data-line="334">        <span class="n">random</span><span class="o">=</span><span class="n">random</span><span class="p">,</span>
+</span><span data-line="335">    <span class="p">)</span>
+</span><span data-line="336">
+</span><span data-line="337">    <span class="k">return</span> <span class="n">generate_constrained_number</span><span class="p">(</span>
+</span><span data-line="338">        <span class="n">random</span><span class="o">=</span><span class="n">random</span><span class="p">,</span>
+</span><span data-line="339">        <span class="n">minimum</span><span class="o">=</span><span class="n">minimum</span><span class="p">,</span>
+</span><span data-line="340">        <span class="n">maximum</span><span class="o">=</span><span class="n">maximum</span><span class="p">,</span>
+</span><span data-line="341">        <span class="n">multiple_of</span><span class="o">=</span><span class="n">multiple_of</span><span class="p">,</span>
+</span><span data-line="342">        <span class="n">method</span><span class="o">=</span><span class="n">create_random_float</span><span class="p">,</span>
+</span><span data-line="343">    <span class="p">)</span></div>
+
+</span><span data-line="344">
+</span><span data-line="345">
+<div class="viewcode-block" id="validate_max_digits">
+<a class="viewcode-back" href="../../../reference/value_generators/constrained_numbers.html#polyfactory.value_generators.constrained_numbers.validate_max_digits">[docs]</a>
+</span><span data-line="346"><span class="k">def</span><span class="w"> </span><span class="nf">validate_max_digits</span><span class="p">(</span>
+</span><span data-line="347">    <span class="n">max_digits</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+</span><span data-line="348">    <span class="n">decimal_places</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span><span class="p">,</span>
+</span><span data-line="349"><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+</span><span data-line="350"><span class="w">    </span><span class="sd">&quot;&quot;&quot;Validate that max digits is greater than minimum and decimal places.</span>
+</span><span data-line="351">
+</span><span data-line="352"><span class="sd">    :param max_digits: The maximal number of digits for the decimal.</span>
+</span><span data-line="353"><span class="sd">    :param minimum: Minimal value.</span>
+</span><span data-line="354"><span class="sd">    :param decimal_places: Number of decimal places</span>
+</span><span data-line="355">
+</span><span data-line="356"><span class="sd">    :returns: &#39;None&#39;</span>
+</span><span data-line="357">
+</span><span data-line="358"><span class="sd">    &quot;&quot;&quot;</span>
+</span><span data-line="359">    <span class="k">if</span> <span class="n">max_digits</span> <span class="o">&lt;=</span> <span class="mi">0</span><span class="p">:</span>
+</span><span data-line="360">        <span class="n">msg</span> <span class="o">=</span> <span class="s2">&quot;max_digits must be greater than 0&quot;</span>
+</span><span data-line="361">        <span class="k">raise</span> <span class="n">ParameterException</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
+</span><span data-line="362">
+</span><span data-line="363">    <span class="k">if</span> <span class="n">decimal_places</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">max_digits</span> <span class="o">&lt;</span> <span class="n">decimal_places</span><span class="p">:</span>
+</span><span data-line="364">        <span class="n">msg</span> <span class="o">=</span> <span class="s2">&quot;max_digits must be greater or equal than decimal places&quot;</span>
+</span><span data-line="365">        <span class="k">raise</span> <span class="n">ParameterException</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span></div>
+
+</span><span data-line="366">
+</span><span data-line="367">
+<div class="viewcode-block" id="handle_decimal_length">
+<a class="viewcode-back" href="../../../reference/value_generators/constrained_numbers.html#polyfactory.value_generators.constrained_numbers.handle_decimal_length">[docs]</a>
+</span><span data-line="368"><span class="k">def</span><span class="w"> </span><span class="nf">handle_decimal_length</span><span class="p">(</span>
+</span><span data-line="369">    <span class="n">generated_decimal</span><span class="p">:</span> <span class="n">Decimal</span><span class="p">,</span>
+</span><span data-line="370">    <span class="n">decimal_places</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span><span class="p">,</span>
+</span><span data-line="371">    <span class="n">max_digits</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span><span class="p">,</span>
+</span><span data-line="372"><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Decimal</span><span class="p">:</span>
+</span><span data-line="373"><span class="w">    </span><span class="sd">&quot;&quot;&quot;Handle the length of the decimal.</span>
+</span><span data-line="374">
+</span><span data-line="375"><span class="sd">    :param generated_decimal: A decimal value.</span>
+</span><span data-line="376"><span class="sd">    :param decimal_places: Number of decimal places.</span>
+</span><span data-line="377"><span class="sd">    :param max_digits: Maximal number of digits.</span>
+</span><span data-line="378">
+</span><span data-line="379"><span class="sd">    &quot;&quot;&quot;</span>
+</span><span data-line="380">    <span class="k">with</span> <span class="n">localcontext</span><span class="p">()</span> <span class="k">as</span> <span class="n">ctx</span><span class="p">:</span>
+</span><span data-line="381">        <span class="n">ctx</span><span class="o">.</span><span class="n">rounding</span> <span class="o">=</span> <span class="n">ROUND_DOWN</span>
+</span><span data-line="382">        <span class="n">list_decimal</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">generated_decimal</span><span class="p">)</span><span class="o">.</span><span class="n">strip</span><span class="p">(</span><span class="s2">&quot;-0&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;.&quot;</span><span class="p">)</span>
+</span><span data-line="383">        <span class="n">decimal_parts</span> <span class="o">=</span> <span class="mi">2</span>
+</span><span data-line="384">        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">list_decimal</span><span class="p">)</span> <span class="o">==</span> <span class="n">decimal_parts</span><span class="p">:</span>
+</span><span data-line="385">            <span class="n">whole</span><span class="p">,</span> <span class="n">decimals</span> <span class="o">=</span> <span class="n">list_decimal</span>
+</span><span data-line="386">            <span class="k">if</span> <span class="n">decimal_places</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">decimals</span><span class="p">)</span> <span class="o">&gt;</span> <span class="n">decimal_places</span><span class="p">:</span>
+</span><span data-line="387">                <span class="k">return</span> <span class="nb">round</span><span class="p">(</span><span class="n">generated_decimal</span><span class="p">,</span> <span class="n">decimal_places</span><span class="p">)</span>
+</span><span data-line="388">            <span class="k">if</span> <span class="n">max_digits</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">whole</span><span class="p">)</span> <span class="o">+</span> <span class="nb">len</span><span class="p">(</span><span class="n">decimals</span><span class="p">)</span> <span class="o">&gt;</span> <span class="n">max_digits</span><span class="p">:</span>
+</span><span data-line="389">                <span class="n">max_decimals</span> <span class="o">=</span> <span class="n">max_digits</span> <span class="o">-</span> <span class="nb">len</span><span class="p">(</span><span class="n">whole</span><span class="p">)</span>
+</span><span data-line="390">                <span class="k">return</span> <span class="nb">round</span><span class="p">(</span><span class="n">generated_decimal</span><span class="p">,</span> <span class="n">max_decimals</span><span class="p">)</span>
+</span><span data-line="391">        <span class="k">return</span> <span class="n">generated_decimal</span></div>
+
+</span><span data-line="392">
+</span><span data-line="393">
+<div class="viewcode-block" id="handle_constrained_decimal">
+<a class="viewcode-back" href="../../../reference/value_generators/constrained_numbers.html#polyfactory.value_generators.constrained_numbers.handle_constrained_decimal">[docs]</a>
+</span><span data-line="394"><span class="k">def</span><span class="w"> </span><span class="nf">handle_constrained_decimal</span><span class="p">(</span>
+</span><span data-line="395">    <span class="n">random</span><span class="p">:</span> <span class="n">Random</span><span class="p">,</span>
+</span><span data-line="396">    <span class="n">multiple_of</span><span class="p">:</span> <span class="n">Decimal</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+</span><span data-line="397">    <span class="n">decimal_places</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+</span><span data-line="398">    <span class="n">max_digits</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+</span><span data-line="399">    <span class="n">gt</span><span class="p">:</span> <span class="n">Decimal</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+</span><span data-line="400">    <span class="n">ge</span><span class="p">:</span> <span class="n">Decimal</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+</span><span data-line="401">    <span class="n">lt</span><span class="p">:</span> <span class="n">Decimal</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+</span><span data-line="402">    <span class="n">le</span><span class="p">:</span> <span class="n">Decimal</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+</span><span data-line="403"><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Decimal</span><span class="p">:</span>
+</span><span data-line="404"><span class="w">    </span><span class="sd">&quot;&quot;&quot;Handle a constrained decimal.</span>
+</span><span data-line="405">
+</span><span data-line="406"><span class="sd">    :param random: An instance of Random.</span>
+</span><span data-line="407"><span class="sd">    :param multiple_of: Multiple of value.</span>
+</span><span data-line="408"><span class="sd">    :param decimal_places: Number of decimal places.</span>
+</span><span data-line="409"><span class="sd">    :param max_digits: Maximal number of digits.</span>
+</span><span data-line="410"><span class="sd">    :param lt: Less than value.</span>
+</span><span data-line="411"><span class="sd">    :param le: Less than or equal value.</span>
+</span><span data-line="412"><span class="sd">    :param gt: Greater than value.</span>
+</span><span data-line="413"><span class="sd">    :param ge: Greater than or equal value.</span>
+</span><span data-line="414">
+</span><span data-line="415"><span class="sd">    :returns: A decimal.</span>
+</span><span data-line="416">
+</span><span data-line="417"><span class="sd">    &quot;&quot;&quot;</span>
+</span><span data-line="418">    <span class="n">minimum</span><span class="p">,</span> <span class="n">maximum</span> <span class="o">=</span> <span class="n">get_constrained_number_range</span><span class="p">(</span>
+</span><span data-line="419">        <span class="n">gt</span><span class="o">=</span><span class="n">gt</span><span class="p">,</span>
+</span><span data-line="420">        <span class="n">ge</span><span class="o">=</span><span class="n">ge</span><span class="p">,</span>
+</span><span data-line="421">        <span class="n">lt</span><span class="o">=</span><span class="n">lt</span><span class="p">,</span>
+</span><span data-line="422">        <span class="n">le</span><span class="o">=</span><span class="n">le</span><span class="p">,</span>
+</span><span data-line="423">        <span class="n">multiple_of</span><span class="o">=</span><span class="n">multiple_of</span><span class="p">,</span>
+</span><span data-line="424">        <span class="n">max_digits</span><span class="o">=</span><span class="n">max_digits</span><span class="p">,</span>
+</span><span data-line="425">        <span class="n">decimal_places</span><span class="o">=</span><span class="n">decimal_places</span><span class="p">,</span>
+</span><span data-line="426">        <span class="n">t_type</span><span class="o">=</span><span class="n">Decimal</span><span class="p">,</span>
+</span><span data-line="427">        <span class="n">random</span><span class="o">=</span><span class="n">random</span><span class="p">,</span>
+</span><span data-line="428">    <span class="p">)</span>
+</span><span data-line="429">
+</span><span data-line="430">    <span class="k">if</span> <span class="n">max_digits</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+</span><span data-line="431">        <span class="n">validate_max_digits</span><span class="p">(</span><span class="n">max_digits</span><span class="o">=</span><span class="n">max_digits</span><span class="p">,</span> <span class="n">decimal_places</span><span class="o">=</span><span class="n">decimal_places</span><span class="p">)</span>
+</span><span data-line="432">
+</span><span data-line="433">    <span class="n">generated_decimal</span> <span class="o">=</span> <span class="n">generate_constrained_number</span><span class="p">(</span>
+</span><span data-line="434">        <span class="n">random</span><span class="o">=</span><span class="n">random</span><span class="p">,</span>
+</span><span data-line="435">        <span class="n">minimum</span><span class="o">=</span><span class="n">minimum</span><span class="p">,</span>
+</span><span data-line="436">        <span class="n">maximum</span><span class="o">=</span><span class="n">maximum</span><span class="p">,</span>
+</span><span data-line="437">        <span class="n">multiple_of</span><span class="o">=</span><span class="n">multiple_of</span><span class="p">,</span>
+</span><span data-line="438">        <span class="n">method</span><span class="o">=</span><span class="n">create_random_decimal</span><span class="p">,</span>
+</span><span data-line="439">    <span class="p">)</span>
+</span><span data-line="440">
+</span><span data-line="441">    <span class="k">return</span> <span class="n">handle_decimal_length</span><span class="p">(</span>
+</span><span data-line="442">        <span class="n">generated_decimal</span><span class="o">=</span><span class="n">generated_decimal</span><span class="p">,</span>
+</span><span data-line="443">        <span class="n">max_digits</span><span class="o">=</span><span class="n">max_digits</span><span class="p">,</span>
+</span><span data-line="444">        <span class="n">decimal_places</span><span class="o">=</span><span class="n">decimal_places</span><span class="p">,</span>
+</span><span data-line="445">    <span class="p">)</span></div>
+
+</span></pre></div>
+        </article><button class="back-to-top" type="button">
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+    <path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8v12z"></path>
+  </svg>
+  <span>Back to top</span>
+</button><div class="navigation flex print:hidden"></div></div>
+    </div>
+  </main>
+</div>
+<footer class="sy-foot">
+  <div class="sy-foot-inner sy-container mx-auto">
+    <div class="sy-foot-reserved md:flex justify-between items-center">
+      <div class="sy-foot-copyright"><p>2025, Litestar Organization</p>
+  
+  <p>
+    Made with
+    
+    <a href="https://www.sphinx-doc.org/">Sphinx</a> and
+    
+    <a href="https://shibuya.lepture.com">Shibuya theme</a>.
+  </p>
+</div>
+      <div class="sy-foot-socials">
+<a href="https://github.com/litestar-org/polyfactory" aria-label="GitHub">
+  <iconify-icon icon="simple-icons:github"></iconify-icon>
+</a>
+<a href="https://discord.gg/litestar" aria-label="Discord">
+  <iconify-icon icon="simple-icons:discord"></iconify-icon>
+</a></div>
+    </div>
+  </div>
+</footer>
+      <script src="../../../_static/documentation_options.js?v=6b33f912"></script>
+      <script src="../../../_static/doctools.js?v=9a2dae69"></script>
+      <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script src="../../../_static/clipboard.min.js?v=a7894cd8"></script>
+      <script src="../../../_static/copybutton.js?v=f281be69"></script>
+      <script>let toggleHintShow = 'Click to show';</script>
+      <script>let toggleHintHide = 'Click to hide';</script>
+      <script>let toggleOpenOnPrint = 'true';</script>
+      <script src="../../../_static/togglebutton.js?v=4a39c7ea"></script>
+      <script src="../../../_static/design-tabs.js?v=f930bc37"></script>
+      <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
+      <script src="../../../_static/shibuya.js?v=1d2088d1"></script>
+      <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script></body>
+</html>
