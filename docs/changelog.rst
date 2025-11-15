@@ -4,11 +4,33 @@ Changelog
 
 All commits to this project will be documented in this file.
 
+`Release [v3.0.0] - 2025-11-15 <https://github.com/litestar-org/polyfactory/releases/tag/v3.0.0>`_
+----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+* `See All commits in v3.0.0 <https://github.com/litestar-org/polyfactory/commits/v3.0.0>`_
+
+`83fc729 <https://github.com/litestar-org/polyfactory/commit/83fc72925c3616db1e40abb59504592c50eb7f60>`_ ... `de231a9 <https://github.com/litestar-org/polyfactory/commit/de231a951b4db54492b1255e5f3473ba8bd201d2>`_ | `See diff for 3.0.0 <https://github.com/litestar-org/polyfactory/compare/83fc72925c3616db1e40abb59504592c50eb7f60...de231a951b4db54492b1255e5f3473ba8bd201d2>`_
+
+Bug Fixes
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+* (`83a82b3 <https://github.com/litestar-org/polyfactory/commit/83a82b3af5616d472285f21287ef7fc6b5903c97>`_)  - Remove unused tests
+
+Miscellaneous Tasks
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+* (`85c7392 <https://github.com/litestar-org/polyfactory/commit/85c739225cdd1995030df77284c4a4338f220c31>`_)  - Drop 3.8 support (#721)
+* (`de231a9 <https://github.com/litestar-org/polyfactory/commit/de231a951b4db54492b1255e5f3473ba8bd201d2>`_)  - Update docs ui (#748)
+
+Refactor
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+* (`afbcdf9 <https://github.com/litestar-org/polyfactory/commit/afbcdf9c7938c2a2fcf95b5e8f5184f205989bb6>`_) [**breaking**]  - Remove deprecated elements (#703)f
+
 `Release [v2.22.5] - 2025-11-15 <https://github.com/litestar-org/polyfactory/releases/tag/v2.22.5>`_
 ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 * `See All commits in v2.22.5 <https://github.com/litestar-org/polyfactory/commits/v2.22.5>`_
 
-`2e5c768 <https://github.com/litestar-org/polyfactory/commit/2e5c768a06d934ca4e1d0222e5a025cce8c4ea38>`_ ... `d6f4df7 <https://github.com/litestar-org/polyfactory/commit/d6f4df7071062ff07f4f578533b2b03308ea456f>`_ | `See diff for 2.22.5 <https://github.com/litestar-org/polyfactory/compare/2e5c768a06d934ca4e1d0222e5a025cce8c4ea38...d6f4df7071062ff07f4f578533b2b03308ea456f>`_
+`2e5c768 <https://github.com/litestar-org/polyfactory/commit/2e5c768a06d934ca4e1d0222e5a025cce8c4ea38>`_ ... `83fc729 <https://github.com/litestar-org/polyfactory/commit/83fc72925c3616db1e40abb59504592c50eb7f60>`_ | `See diff for 2.22.5 <https://github.com/litestar-org/polyfactory/compare/2e5c768a06d934ca4e1d0222e5a025cce8c4ea38...83fc72925c3616db1e40abb59504592c50eb7f60>`_
 
 Bug Fixes
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -19,6 +41,11 @@ Documentation
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 * (`d6f4df7 <https://github.com/litestar-org/polyfactory/commit/d6f4df7071062ff07f4f578533b2b03308ea456f>`_)  - Add bullfest as a contributor for code (#777)  by `@allcontributors[bot] <https://github.com/allcontributors[bot]>`_ in `#777 <https://github.com/litestar-org/polyfactory/pull/777>`_
+
+Miscellaneous Tasks
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+* (`83fc729 <https://github.com/litestar-org/polyfactory/commit/83fc72925c3616db1e40abb59504592c50eb7f60>`_)  - Prepare v2.22.5 release (#778)  by `@adhtruong <https://github.com/adhtruong>`_ in `#778 <https://github.com/litestar-org/polyfactory/pull/778>`_
 
 `Release [v2.22.4] - 2025-11-10 <https://github.com/litestar-org/polyfactory/releases/tag/v2.22.4>`_
 ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
