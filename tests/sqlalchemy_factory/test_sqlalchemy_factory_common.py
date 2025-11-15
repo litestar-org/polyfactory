@@ -1,3 +1,4 @@
+import warnings
 from datetime import datetime
 from decimal import Decimal
 from enum import Enum
@@ -456,9 +457,18 @@ def test_unsupported_type_engine() -> None:
         id: Any = Column(Integer(), primary_key=True)
         numeric_field: Any = Column(Location, nullable=False)
 
-    factory = SQLAlchemyFactory.create_factory(Place)
     with pytest.raises(
         ParameterException,
         match="Unsupported type engine: Location()",
     ):
-        factory.build()
+        SQLAlchemyFactory.create_factory(Place)
+
+
+def test_check_deprecated_default_overridden_no_deprecation() -> None:
+    with warnings.catch_warnings():
+        warnings.simplefilter("error")
+
+        class BookFactory(SQLAlchemyFactory[Book]):
+            __set_relationships__ = False
+            __set_association_proxy__ = False
+            __check_model__ = False

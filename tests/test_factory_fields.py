@@ -1,7 +1,8 @@
 import random
+import warnings
 from dataclasses import dataclass
 from datetime import datetime, timedelta
-from typing import Any, ClassVar, List, Optional, Union
+from typing import Any, ClassVar, Optional, Union
 
 import pytest
 
@@ -175,13 +176,13 @@ def test_post_generation_classmethod() -> None:
         Ignore(),
     ],
 )
-def test_non_existing_model_fields_does_not_raise_by_default(
+def test_non_existing_model_fields_do_raise_on_check_model_false(
     factory_field: Union[Use, PostGenerated, Require, Ignore],
 ) -> None:
     class NoFieldModel(BaseModel):
         pass
 
-    ModelFactory.create_factory(NoFieldModel, bases=None, unknown_field=factory_field)
+    ModelFactory.create_factory(NoFieldModel, bases=None, __check_model__=False, unknown_field=factory_field)
 
 
 @pytest.mark.parametrize(
@@ -193,7 +194,7 @@ def test_non_existing_model_fields_does_not_raise_by_default(
         Ignore(),
     ],
 )
-def test_non_existing_model_fields_raises_with__check__model__(
+def test_non_existent_fields_raise(
     factory_field: Union[Use, PostGenerated, Require, Ignore],
 ) -> None:
     class NoFieldModel(BaseModel):
@@ -203,16 +204,32 @@ def test_non_existing_model_fields_raises_with__check__model__(
         ConfigurationException,
         match="unknown_field is declared on the factory NoFieldModelFactory but it is not part of the model NoFieldModel",
     ):
-        ModelFactory.create_factory(NoFieldModel, bases=None, __check_model__=True, unknown_field=factory_field)
+        ModelFactory.create_factory(NoFieldModel, bases=None, unknown_field=factory_field)
+
+
+def test_check_model_overridden_no_deprecation() -> None:
+    with warnings.catch_warnings():
+        warnings.simplefilter("error")
+        warnings.filterwarnings(
+            "ignore",
+            category=DeprecationWarning,
+            message=r"Failing to pass a value to the 'type_params' parameter of 'typing._eval_type' is deprecated",
+        )
+
+        class MyModel(BaseModel):
+            name: str
+
+        class MyFactory(ModelFactory[MyModel]):
+            __check_model__ = False
 
 
 def test_mutable_defaults() -> None:
     @dataclass
     class A:
-        a: List[str]
+        a: list[str]
 
     class AFactory(DataclassFactory[A]):
-        a: ClassVar[List[str]] = []
+        a: ClassVar[list[str]] = []
 
     AFactory.build().a.append("a")
     assert AFactory.build().a == []

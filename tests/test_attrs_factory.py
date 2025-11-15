@@ -1,7 +1,7 @@
 import datetime as dt
 from decimal import Decimal
 from enum import Enum
-from typing import Any, Dict, Generic, List, Optional, Tuple, TypeVar, Union
+from typing import Any, Generic, Optional, TypeVar, Union
 from uuid import UUID
 
 import attrs
@@ -39,10 +39,10 @@ def test_with_basic_types_annotated() -> None:
         str_field: str
         bytse_field: bytes
         bytearray_field: bytearray
-        tuple_field: Tuple[int, str]
-        tuple_with_variadic_args: Tuple[int, ...]
-        list_field: List[int]
-        dict_field: Dict[str, int]
+        tuple_field: tuple[int, str]
+        tuple_with_variadic_args: tuple[int, ...]
+        list_field: list[int]
+        dict_field: dict[str, int]
         datetime_field: dt.datetime
         date_field: dt.date
         time_field: dt.time
@@ -69,10 +69,10 @@ def test_with_basic_types_attrs_field() -> None:
         str_field = attrs.field(type=str)  # pyright: ignore
         bytes_field = attrs.field(type=bytes)  # pyright: ignore
         bytearray_field = attrs.field(type=bytearray)  # pyright: ignore
-        tuple_field = attrs.field(type=Tuple[int, str])  # type: ignore
-        tuple_with_variadic_args = attrs.field(type=Tuple[int, ...])  # type: ignore
-        list_field = attrs.field(type=List[int])  # pyright: ignore
-        dict_field = attrs.field(type=Dict[int, str])  # pyright: ignore
+        tuple_field = attrs.field(type=tuple[int, str])  # pyright: ignore
+        tuple_with_variadic_args = attrs.field(type=tuple[int, ...])  # pyright: ignore
+        list_field = attrs.field(type=list[int])  # pyright: ignore
+        dict_field = attrs.field(type=dict[int, str])  # pyright: ignore
         datetime_field = attrs.field(type=dt.datetime)  # pyright: ignore
         date_field = attrs.field(type=dt.date)  # pyright: ignore
         time_field = attrs.field(type=dt.time)  # pyright: ignore
@@ -222,9 +222,9 @@ def test_use_default_with_non_callable_default() -> None:
 def test_union_types() -> None:
     @define
     class A:
-        a: Union[List[str], List[int]]
-        b: Union[str, List[int]]
-        c: List[Union[Tuple[int, int], Tuple[str, int]]]
+        a: Union[list[str], list[int]]
+        b: Union[str, list[int]]
+        c: list[Union[tuple[int, int], tuple[str, int]]]
 
     AFactory = AttrsFactory.create_factory(A)
 
@@ -242,8 +242,8 @@ def test_collection_unions_with_models() -> None:
 
     @define
     class C:
-        a: Union[List[A], List[B]]
-        b: List[Union[A, B]]
+        a: Union[list[A], list[B]]
+        b: list[Union[A, B]]
 
     CFactory = AttrsFactory.create_factory(C)
 
@@ -256,7 +256,7 @@ def test_optional_type(allow_none: bool) -> None:
     class A:
         a: Union[str, None]
         b: Optional[str]
-        c: Optional[Union[str, int, List[int]]]
+        c: Optional[Union[str, int, list[int]]]
 
     class AFactory(AttrsFactory[A]):
         __model__ = A

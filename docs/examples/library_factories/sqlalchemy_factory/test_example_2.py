@@ -1,5 +1,3 @@
-from typing import List
-
 from sqlalchemy import ForeignKey
 from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column, relationship
 
@@ -15,7 +13,7 @@ class Author(Base):
     id: Mapped[int] = mapped_column(primary_key=True)
     name: Mapped[str]
 
-    books: Mapped[List["Book"]] = relationship("Book", uselist=True)
+    books: Mapped[list["Book"]] = relationship("Book", uselist=True)
 
 
 class Book(Base):
@@ -28,16 +26,16 @@ class Book(Base):
 class AuthorFactory(SQLAlchemyFactory[Author]): ...
 
 
-class AuthorFactoryWithRelationship(SQLAlchemyFactory[Author]):
-    __set_relationships__ = True
+class AuthorFactoryWithoutRelationship(SQLAlchemyFactory[Author]):
+    __set_relationships__ = False
 
 
 def test_sqla_factory() -> None:
     author = AuthorFactory.build()
-    assert author.books == []
-
-
-def test_sqla_factory_with_relationship() -> None:
-    author = AuthorFactoryWithRelationship.build()
     assert isinstance(author, Author)
     assert isinstance(author.books[0], Book)
+
+
+def test_sqla_factory_without_relationship() -> None:
+    author = AuthorFactoryWithoutRelationship.build()
+    assert author.books == []

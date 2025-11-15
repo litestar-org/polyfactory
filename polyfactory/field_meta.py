@@ -1,23 +1,29 @@
 from __future__ import annotations
 
 import functools
+from collections.abc import Hashable, Mapping
 from dataclasses import asdict
-from typing import TYPE_CHECKING, Any, Hashable, Literal, Mapping, Pattern, TypedDict, cast
+from typing import TYPE_CHECKING, Any, Literal, TypedDict, cast
 
 from typing_extensions import get_args, get_origin
 
-from polyfactory.constants import DEFAULT_RANDOM, TYPE_MAPPING
-from polyfactory.utils.deprecation import check_for_deprecated_parameters
-from polyfactory.utils.helpers import get_annotation_metadata, is_dataclass_instance, unwrap_annotated, unwrap_new_type
+from polyfactory.constants import TYPE_MAPPING
+from polyfactory.utils.helpers import (
+    get_annotation_metadata,
+    is_dataclass_instance,
+    unwrap_annotated,
+    unwrap_new_type,
+)
 from polyfactory.utils.normalize_type import normalize_type
 from polyfactory.utils.predicates import is_annotated
 from polyfactory.utils.types import NoneType
 
 if TYPE_CHECKING:
     import datetime
+    from collections.abc import Sequence
     from decimal import Decimal
     from random import Random
-    from typing import Sequence
+    from re import Pattern
 
     from typing_extensions import NotRequired, Self
 
@@ -76,19 +82,20 @@ class FieldMeta:
         *,
         name: str,
         annotation: type,
-        random: Random | None = None,
         default: Any = Null,
         children: list[FieldMeta] | None = None,
         constraints: Constraints | None = None,
     ) -> None:
         """Create a factory field metadata instance."""
-        check_for_deprecated_parameters("2.20.0", parameters=(("random", random),))
         self.annotation = annotation
-        self.random = random or DEFAULT_RANDOM
         self.children = children
         self.default = default
         self.name = name
         self.constraints = constraints
+
+    def __repr__(self) -> str:
+        """Return a string representation of the field meta."""
+        return f"FieldMeta(name={self.name!r}, annotation={self.annotation!r}, default={self.default!r}, children={self.children!r}, constraints={self.constraints!r})"
 
     @functools.cached_property
     def type_args(self) -> tuple[Any, ...]:
@@ -100,7 +107,7 @@ class FieldMeta:
         if is_annotated(annotation):
             annotation = get_args(self.annotation)[0]
         return tuple(
-            TYPE_MAPPING.get(arg, arg) if isinstance(arg, Hashable) else arg  # pyright: ignore[reportCallIssue,reportArgumentType]
+            TYPE_MAPPING.get(arg, arg) if isinstance(arg, Hashable) else arg  # type: ignore[call-overload]
             for arg in get_args(annotation)
         )
 
@@ -108,38 +115,20 @@ class FieldMeta:
     def from_type(
         cls,
         annotation: Any,
-        random: Random | None = None,
         name: str = "",
         default: Any = Null,
         constraints: Constraints | None = None,
-        randomize_collection_length: bool | None = None,
-        min_collection_length: int | None = None,
-        max_collection_length: int | None = None,
         children: list[FieldMeta] | None = None,
     ) -> Self:
         """Builder method to create a FieldMeta from a type annotation.
 
         :param annotation: A type annotation.
-        :param random: An instance of random.Random.
         :param name: Field name
         :param default: Default value, if any.
         :param constraints: A dictionary of constraints, if any.
-        :param randomize_collection_length: A boolean flag whether to randomize collections lengths
-        :param min_collection_length: Minimum number of elements in randomized collection
-        :param max_collection_length: Maximum number of elements in randomized collection
 
         :returns: A field meta instance.
         """
-        check_for_deprecated_parameters(
-            "2.11.0",
-            parameters=(
-                ("randomize_collection_length", randomize_collection_length),
-                ("min_collection_length", min_collection_length),
-                ("max_collection_length", max_collection_length),
-                ("random", random),
-            ),
-        )
-
         annotation = normalize_type(annotation)
         annotated = is_annotated(annotation)
         if not constraints and annotated:

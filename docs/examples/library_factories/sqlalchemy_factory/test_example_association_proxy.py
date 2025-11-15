@@ -41,7 +41,9 @@ class Keyword(Base):
     keyword: Mapped[str]
 
 
-class UserFactory(SQLAlchemyFactory[User]): ...
+class UserFactory(SQLAlchemyFactory[User]):
+    __set_relationships__ = False
+    __set_association_proxy__ = False
 
 
 class UserFactoryWithAssociation(SQLAlchemyFactory[User]):

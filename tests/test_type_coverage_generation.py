@@ -1,9 +1,10 @@
-# ruff: noqa: UP007, UP006
+# ruff: noqa: UP007
 from __future__ import annotations
 
+from collections.abc import Iterable
 from dataclasses import dataclass, make_dataclass
 from datetime import date
-from typing import Any, Dict, FrozenSet, Iterable, List, Literal, Optional, Set, Tuple, Type, Union
+from typing import Any, Literal, Optional, Union
 from uuid import UUID
 
 import pytest
@@ -42,7 +43,7 @@ def test_coverage_count() -> None:
 def test_coverage_tuple() -> None:
     @dataclass
     class Pair:
-        tuple_: Tuple[Union[int, str], Tuple[Union[int, float], int]]
+        tuple_: tuple[Union[int, str], tuple[Union[int, float], int]]
 
     class TupleFactory(DataclassFactory[Pair]):
         __model__ = Pair
@@ -60,7 +61,7 @@ def test_coverage_tuple() -> None:
 
 @pytest.mark.parametrize(
     "collection_annotation",
-    (Set[Union[int, str]], List[Union[int, str]], FrozenSet[Union[int, str]]),
+    (set[Union[int, str]], list[Union[int, str]], frozenset[Union[int, str]]),
 )
 def test_coverage_collection(collection_annotation: type) -> None:
     Collective = make_dataclass("Collective", [("collection", collection_annotation)])
@@ -103,9 +104,9 @@ def test_coverage_literal() -> None:
 def test_coverage_dict() -> None:
     @dataclass
     class Thesaurus:
-        dict_simple: Dict[str, int]
-        dict_more_key_types: Dict[Union[str, int, float], Union[int, str]]
-        dict_more_value_types: Dict[str, Union[int, str]]
+        dict_simple: dict[str, int]
+        dict_more_key_types: dict[Union[str, int, float], Union[int, str]]
+        dict_more_value_types: dict[str, Union[int, str]]
 
     class ThesaurusFactory(DataclassFactory[Thesaurus]):
         __model__ = Thesaurus
@@ -133,7 +134,7 @@ def test_coverage_typed_dict() -> None:
         number: int
         string: str
         union: Union[int, str]
-        collection: List[Union[int, str]]
+        collection: list[Union[int, str]]
 
     class TypedThesaurusFactory(TypedDictFactory[TypedThesaurus]):
         __model__ = TypedThesaurus
@@ -152,7 +153,7 @@ def test_coverage_typed_dict_field() -> None:
         number: int
         string: str
         union: Union[int, str]
-        collection: List[Union[int, str]]
+        collection: list[Union[int, str]]
 
     class TypedThesaurusFactory(TypedDictFactory[TypedThesaurus]):
         __model__ = TypedThesaurus
@@ -222,23 +223,23 @@ def test_coverage_parameter_exception() -> None:
 def test_coverage_optional_field() -> None:
     @dataclass
     class OptionalInt:
-        i: Optional[int]
+        i: Union[int, None]
 
     class OptionalIntFactory(DataclassFactory[OptionalInt]):
         __model__ = OptionalInt
 
     results = list(OptionalIntFactory.coverage())
-    assert len(results) == 2
+    assert len(results) == 2, results
 
     assert isinstance(results[0].i, int)
     assert results[1].i is None
 
 
-def type_exists_at_path_any(objs: Iterable, path: List[Union[int, str]], target_type: Type) -> bool:
+def type_exists_at_path_any(objs: Iterable, path: list[Union[int, str]], target_type: type) -> bool:
     return any(type_exists_at_path(obj, path, target_type) for obj in objs)
 
 
-def type_exists_at_path(obj: Any, path: List[Union[int, str]], target_type: Type) -> bool:
+def type_exists_at_path(obj: Any, path: list[Union[int, str]], target_type: type) -> bool:
     """Determine if a type exists at a path through a given object
 
         type_exists_at_path(obj, ["i", "*"], int)
@@ -274,7 +275,7 @@ def type_exists_at_path(obj: Any, path: List[Union[int, str]], target_type: Type
     return type_exists_at_path(item, path[1:], target_type)
 
 
-def get_or_index(obj: Any, idx: Union[int, str]) -> Tuple[Any, bool]:
+def get_or_index(obj: Any, idx: Union[int, str]) -> tuple[Any, bool]:
     if isinstance(idx, str):
         if idx not in dir(obj):
             return None, False
@@ -289,7 +290,7 @@ def get_or_index(obj: Any, idx: Union[int, str]) -> Tuple[Any, bool]:
 def test_coverage_optional_list() -> None:
     @dataclass
     class OptionalIntList:
-        i: Optional[List[int]]
+        i: Union[list[int], None]
 
     class OptionalIntFactory(DataclassFactory[OptionalIntList]):
         __model__ = OptionalIntList
@@ -303,9 +304,9 @@ def test_coverage_optional_list() -> None:
 
 def test_optional_lists() -> None:
     class Model(BaseModel):
-        just_a_list: List[int]
-        optional_list: Optional[List[int]]
-        optional_nested_list: Optional[List[List[List[int]]]]
+        just_a_list: list[int]
+        optional_list: Optional[list[int]]
+        optional_nested_list: Optional[list[list[list[int]]]]
 
     results = list(ModelFactory.create_factory(Model).coverage())
     assert type_exists_at_path_any(results, ["just_a_list"], list)
@@ -319,7 +320,7 @@ def test_optional_lists() -> None:
 
 def test_tuple_types() -> None:
     class Model(BaseModel):
-        tii: Tuple[int, int]
+        tii: tuple[int, int]
 
     results = list(ModelFactory.create_factory(Model).coverage())
     assert type_exists_at_path_any(results, ["tii"], tuple)
@@ -329,7 +330,7 @@ def test_tuple_types() -> None:
 
 def test_hetero_tuple_types() -> None:
     class Model(BaseModel):
-        tis: Tuple[int, str]
+        tis: tuple[int, str]
 
     results = list(ModelFactory.create_factory(Model).coverage())
     assert type_exists_at_path_any(results, ["tis"], tuple)
@@ -339,7 +340,7 @@ def test_hetero_tuple_types() -> None:
 
 def test_optional_list_uuid() -> None:
     class Model(BaseModel):
-        maybe_uuids: Optional[List[UUID]]
+        maybe_uuids: Optional[list[UUID]]
 
     results = list(ModelFactory.create_factory(Model).coverage())
     assert type_exists_at_path_any(results, ["maybe_uuids"], list)
@@ -349,7 +350,7 @@ def test_optional_list_uuid() -> None:
 
 def test_optional_set_uuid() -> None:
     class Model(BaseModel):
-        maybe_uuids: Optional[Set[UUID]]
+        maybe_uuids: Optional[set[UUID]]
 
     results = list(ModelFactory.create_factory(Model).coverage())
     assert type_exists_at_path_any(results, ["maybe_uuids"], set)
@@ -363,7 +364,7 @@ def test_optional_set_uuid() -> None:
 )
 def test_optional_mixed_collections() -> None:
     class Model(BaseModel):
-        maybe_uuids: Optional[Union[Set[UUID], List[UUID]]]
+        maybe_uuids: Union[set[UUID], list[UUID]] | None
 
     results = list(ModelFactory.create_factory(Model).coverage())
     assert type_exists_at_path_any(results, ["maybe_uuids"], set)

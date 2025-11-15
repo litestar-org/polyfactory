@@ -5,6 +5,10 @@ import shutil
 import subprocess
 from contextlib import contextmanager
 from pathlib import Path
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from collections.abc import Generator
 
 REDIRECT_TEMPLATE = """
 <!DOCTYPE HTML>
@@ -26,16 +30,16 @@ parser.add_argument("output")
 
 
 @contextmanager
-def checkout(branch: str) -> None:
+def checkout(branch: str) -> Generator[None, None, None]:
     subprocess.run(["git", "checkout", branch], check=True)  # noqa: S603 S607
     yield
     subprocess.run(["git", "checkout", "-"], check=True)  # noqa: S603 S607
 
 
-def build(output_dir: str) -> None:
+def build(output: str) -> None:
     subprocess.run(["make", "docs"], check=True)  # noqa: S603 S607
 
-    output_dir = Path(output_dir)
+    output_dir = Path(output)
     output_dir.mkdir()
     output_dir.joinpath(".nojekyll").touch(exist_ok=True)
     output_dir.joinpath("index.html").write_text(REDIRECT_TEMPLATE.format(target="latest"))
@@ -46,7 +50,7 @@ def build(output_dir: str) -> None:
 
 def main() -> None:
     args = parser.parse_args()
-    build(output_dir=args.output)
+    build(output=args.output)
 
 
 if __name__ == "__main__":

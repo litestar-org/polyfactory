@@ -4,16 +4,13 @@
 .. container::
     :name: home-head
 
-    .. image:: https://raw.githubusercontent.com/litestar-org/branding/main/assets/Branding%20-%20SVG%20-%20Transparent/Badge%20-%20Blue%20and%20Yellow.svg
-        :alt: Litestar Framework
-        :width: 400
-        :height: 400
-
     .. container::
 
         .. raw:: html
 
-            <h1>Polyfactory</h1>
+            <div class="title-with-logo">
+               <div class="brand-text">Polyfactory</div>
+            </div>
 
         .. container:: badges
            :name: badges
@@ -48,12 +45,14 @@
    hints and supporting :doc:`dataclasses <python:library/dataclasses>`, :class:`TypedDicts <typing.TypedDict>`,
    Pydantic models, :class:`msgspec Struct's <msgspec.Struct>` and more.
 
-.. container:: buttons
+.. container:: buttons wrap
 
-    :doc:`Get Started <getting-started>`
-    `Usage Docs <usage>`_
-    `API Docs <reference>`_
-    `Blog <https://blog.litestar.dev>`_
+   .. raw:: html
+
+      <a href="getting-started.html" class="btn-no-wrap">Get Started</a>
+      <a href="usage/index.html" class="btn-no-wrap">Usage Docs</a>
+      <a href="reference/index.html" class="btn-no-wrap">API Docs</a>
+      <a href="https://blog.litestar.dev" class="btn-no-wrap">Blog</a>
 
 .. grid:: 1 1 2 2
     :padding: 0
@@ -81,65 +80,6 @@
 
       Contribute to Litestar's growth with code, docs, and more.
 
-Sponsors
---------
-
-.. rst-class:: lead
-
-   Litestar is a community-driven, open-source initiative that thrives on the generous contributions of our sponsors,
-   enabling us to pursue innovative developments and continue our mission to provide exceptional tools and resources
-   to our users.
-
-
-A huge thank you to our current sponsors:
-
-.. container::
-   :name: sponsors-section
-
-   .. grid:: 3
-      :class-row: surface
-      :padding: 0
-      :gutter: 2
-
-      .. grid-item-card::
-         :link: https://github.com/scalar/scalar
-
-         .. image:: https://raw.githubusercontent.com/litestar-org/branding/main/assets/sponsors/scalar.svg
-            :alt: Scalar.com
-            :class: sponsor
-
-         `Scalar.com <https://github.com/scalar/scalar>`_
-
-      .. grid-item-card::
-         :link: https://telemetrysports.com/
-
-         .. image:: https://raw.githubusercontent.com/litestar-org/branding/main/assets/sponsors/telemetry-sports/unofficial-telemetry-whitebg.svg
-            :alt: Telemetry Sports
-            :class: sponsor
-
-         `Telemetry Sports <https://telemetrysports.com/>`_
-
-      .. grid-item-card::
-         :link: https://www.stok.kr/
-
-         .. image:: https://avatars.githubusercontent.com/u/144093421
-            :alt: Stok
-            :class: sponsor
-
-         `Stok <https://www.stok.kr/>`_
-
-We invite organizations and individuals to join our sponsorship program.
-By becoming a sponsor on platforms like `Polar <sponsor-polar_>`_, `GitHub <sponsor-github_>`_
-and `Open Collective <sponsor-oc_>`_, you can play a pivotal role in our project's growth.
-
-On top of regular sponsorship, we engage in pledge-based sponsorship opportunities through `Polar <sponsor-polar_>`_,
-where you can pledge an amount towards an issue or feature you would like to see implemented.
-
-
-.. _sponsor-github: https://github.com/sponsors/litestar-org
-.. _sponsor-oc: https://opencollective.com/litestar
-.. _sponsor-polar: https://polar.sh/litestar-org
-
 .. toctree::
     :titlesonly:
     :caption: Documentation
@@ -147,6 +87,7 @@ where you can pledge an amount towards an issue or feature you would like to see
 
     getting-started
     usage/index
+    migration_guide/index
     reference/index
 
 .. toctree::
