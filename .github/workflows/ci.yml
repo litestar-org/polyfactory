@@ -184,6 +184,7 @@ jobs:
     needs: test
     if: always()
     runs-on: ubuntu-latest
+    permissions: {}
     steps:
       - name: Report success or fail
         run: |
