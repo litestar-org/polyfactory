@@ -179,3 +179,13 @@ jobs:
         with:
           files: coverage.xml
           token: ${{ secrets.CODECOV_TOKEN }}
+
+  test_success:
+    needs: test
+    if: always()
+    runs-on: ubuntu-latest
+    steps:
+      - name: Report success or fail
+        run: |
+          echo "test workflow exited with ${{ needs.test.result }}"
+          exit ${{ needs.test.result == 'success' && '0' || '1' }}
