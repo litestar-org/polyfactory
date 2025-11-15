@@ -4,11 +4,27 @@ Changelog
 
 All commits to this project will be documented in this file.
 
+`Release [v2.22.5] - 2025-11-15 <https://github.com/litestar-org/polyfactory/releases/tag/v2.22.5>`_
+----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+* `See All commits in v2.22.5 <https://github.com/litestar-org/polyfactory/commits/v2.22.5>`_
+
+`2e5c768 <https://github.com/litestar-org/polyfactory/commit/2e5c768a06d934ca4e1d0222e5a025cce8c4ea38>`_ ... `d6f4df7 <https://github.com/litestar-org/polyfactory/commit/d6f4df7071062ff07f4f578533b2b03308ea456f>`_ | `See diff for 2.22.5 <https://github.com/litestar-org/polyfactory/compare/2e5c768a06d934ca4e1d0222e5a025cce8c4ea38...d6f4df7071062ff07f4f578533b2b03308ea456f>`_
+
+Bug Fixes
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+* (`af24258 <https://github.com/litestar-org/polyfactory/commit/af24258a49faecc8da44b43c3acd64b020882cb9>`_)  - Use correct field_meta for constrained union types when building field values for coverage (#770)  by `@bullfest <https://github.com/bullfest>`_ in `#770 <https://github.com/litestar-org/polyfactory/pull/770>`_
+
+Documentation
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+* (`d6f4df7 <https://github.com/litestar-org/polyfactory/commit/d6f4df7071062ff07f4f578533b2b03308ea456f>`_)  - Add bullfest as a contributor for code (#777)  by `@allcontributors[bot] <https://github.com/allcontributors[bot]>`_ in `#777 <https://github.com/litestar-org/polyfactory/pull/777>`_
+
 `Release [v2.22.4] - 2025-11-10 <https://github.com/litestar-org/polyfactory/releases/tag/v2.22.4>`_
 ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 * `See All commits in v2.22.4 <https://github.com/litestar-org/polyfactory/commits/v2.22.4>`_
 
-`ad0a768 <https://github.com/litestar-org/polyfactory/commit/ad0a768f4d29f46f07c6fb64470639a1bf48b5e6>`_ ... `7d67749 <https://github.com/litestar-org/polyfactory/commit/7d67749fa82c44c2930657a7ab2e19cf438bb2f9>`_ | `See diff for 2.22.4 <https://github.com/litestar-org/polyfactory/compare/ad0a768f4d29f46f07c6fb64470639a1bf48b5e6...7d67749fa82c44c2930657a7ab2e19cf438bb2f9>`_
+`ad0a768 <https://github.com/litestar-org/polyfactory/commit/ad0a768f4d29f46f07c6fb64470639a1bf48b5e6>`_ ... `2e5c768 <https://github.com/litestar-org/polyfactory/commit/2e5c768a06d934ca4e1d0222e5a025cce8c4ea38>`_ | `See diff for 2.22.4 <https://github.com/litestar-org/polyfactory/compare/ad0a768f4d29f46f07c6fb64470639a1bf48b5e6...2e5c768a06d934ca4e1d0222e5a025cce8c4ea38>`_
 
 Bug Fixes
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -27,6 +43,7 @@ Miscellaneous Tasks
 
 * (`0626847 <https://github.com/litestar-org/polyfactory/commit/0626847d1d80e1c52a678b0e51d5e97112237177>`_)  - Bump actions/upload-artifact from 4 to 5 (#764)  by `@dependabot[bot] <https://github.com/dependabot[bot]>`_ in `#764 <https://github.com/litestar-org/polyfactory/pull/764>`_
 * (`7d67749 <https://github.com/litestar-org/polyfactory/commit/7d67749fa82c44c2930657a7ab2e19cf438bb2f9>`_)  - Bump actions/download-artifact from 5 to 6 (#765)  by `@dependabot[bot] <https://github.com/dependabot[bot]>`_ in `#765 <https://github.com/litestar-org/polyfactory/pull/765>`_
+* (`2e5c768 <https://github.com/litestar-org/polyfactory/commit/2e5c768a06d934ca4e1d0222e5a025cce8c4ea38>`_)  - Prepare v2.22.4 release (#775)  by `@adhtruong <https://github.com/adhtruong>`_ in `#775 <https://github.com/litestar-org/polyfactory/pull/775>`_
 
 `Release [v2.22.3] - 2025-10-18 <https://github.com/litestar-org/polyfactory/releases/tag/v2.22.3>`_
 ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
