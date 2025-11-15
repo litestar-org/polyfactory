@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import warnings
 from collections.abc import Mapping
 from contextlib import suppress
 from datetime import timezone
@@ -83,10 +84,12 @@ except ImportError:
     from pydantic_core import PydanticUndefined as UndefinedV2
     from pydantic_core import to_json
 
-    import pydantic.v1 as pydantic_v1  # type: ignore[no-redef]
-    from pydantic.v1 import BaseModel as BaseModelV1  # type: ignore[assignment]
-    from pydantic.v1.color import Color  # type: ignore[assignment]
-    from pydantic.v1.fields import DeferredType, ModelField, Undefined
+    with warnings.catch_warnings():
+        warnings.filterwarnings("ignore", message=".*Pydantic V1.*", category=UserWarning)
+        import pydantic.v1 as pydantic_v1  # type: ignore[no-redef]
+        from pydantic.v1 import BaseModel as BaseModelV1  # type: ignore[assignment]
+        from pydantic.v1.color import Color  # type: ignore[assignment]
+        from pydantic.v1.fields import DeferredType, ModelField, Undefined
 
 
 if TYPE_CHECKING:
