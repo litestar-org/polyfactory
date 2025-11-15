@@ -108,6 +108,7 @@ _IS_PYDANTIC_V1 = VERSION.startswith("1")
 
 class PydanticBuildContext(BaseBuildContext):
     factory_use_construct: bool
+    by_name: NotRequired[bool]
 
 
 class PydanticConstraints(Constraints):
@@ -377,6 +378,24 @@ class ModelFactory(Generic[T], BaseFactory[T]):
     >>> payment
     Payment(amount=120, currency="EUR")
     """
+    __by_name__: ClassVar[bool] = False
+    """
+    Flag indicating whether to use model_validate with by_name parameter (Pydantic V2 only)
+
+    This helps handle validation aliases automatically without requiring users to modify their model configurations.
+
+    Example code::
+
+        class MyModel(BaseModel):
+            field_a: str = Field(..., validation_alias="special_field_a")
+
+        class MyFactory(ModelFactory[MyModel]):
+            __by_name__ = True
+
+    >>> instance = MyFactory.build(field_a="test")
+    >>> instance.field_a
+    "test"
+    """
     if not _IS_PYDANTIC_V1:
         __forward_references__: ClassVar[dict[str, Any]] = {
             # Resolve to str to avoid recursive issues
@@ -386,6 +405,7 @@ class ModelFactory(Generic[T], BaseFactory[T]):
     __config_keys__ = (
         *BaseFactory.__config_keys__,
         "__use_examples__",
+        "__by_name__",
     )
 
     @classmethod
@@ -512,6 +532,7 @@ class ModelFactory(Generic[T], BaseFactory[T]):
             kwargs["_build_context"] = PydanticBuildContext(
                 seen_models=set(),
                 factory_use_construct=factory_use_construct,
+                by_name=cls.__by_name__,
             )
 
         processed_kwargs = cls.process_kwargs(**kwargs)
@@ -545,12 +566,19 @@ class ModelFactory(Generic[T], BaseFactory[T]):
             if _is_pydantic_v1_model(cls.__model__):
                 return cls.__model__.construct(**kwargs)  # type: ignore[return-value]
             return cls.__model__.model_construct(**kwargs)
+
+        # Use model_validate with by_name for Pydantic v2 models when requested
+        if _build_context.get("by_name") and _is_pydantic_v2_model(cls.__model__):
+            return cls.__model__.model_validate(kwargs, by_name=True)  # type: ignore[return-value]
+
         return cls.__model__(**kwargs)
 
     @classmethod
     def coverage(cls, factory_use_construct: bool = False, **kwargs: Any) -> abc.Iterator[T]:
         """Build a batch of the factory's Meta.model with full coverage of the sub-types of the model.
 
+        :param factory_use_construct: A boolean that determines whether validations will be made when instantiating the
+                model. This is supported only for pydantic models.
         :param kwargs: Any kwargs. If field_meta names are set in kwargs, their values will be used.
 
         :returns: A iterator of instances of type T.
@@ -559,7 +587,9 @@ class ModelFactory(Generic[T], BaseFactory[T]):
 
         if "_build_context" not in kwargs:
             kwargs["_build_context"] = PydanticBuildContext(
-                seen_models=set(), factory_use_construct=factory_use_construct
+                seen_models=set(),
+                factory_use_construct=factory_use_construct,
+                by_name=cls.__by_name__,
             )
 
         for data in cls.process_kwargs_coverage(**kwargs):
