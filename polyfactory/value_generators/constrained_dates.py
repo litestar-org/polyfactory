@@ -66,7 +66,7 @@ def handle_constrained_datetime(
     elif gt:
         start_datetime = gt + timedelta(seconds=1)
 
-    end_datetime = datetime.now(tz=tz) + timedelta(days=100)
+    end_datetime = start_datetime + timedelta(days=30)
     if le is not None:
         end_datetime = le
     elif lt is not None:
