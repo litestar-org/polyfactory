@@ -1,4 +1,5 @@
 from datetime import date, timedelta
+from typing import Optional
 
 import pytest
 from hypothesis import given
@@ -23,8 +24,8 @@ from polyfactory.factories.pydantic_factory import ModelFactory
     ),
 )
 def test_handle_constrained_date(
-    start: str | None,
-    end: str | None,
+    start: Optional[str],
+    end: Optional[str],
     start_date: date,
     end_date: date,
 ) -> None:

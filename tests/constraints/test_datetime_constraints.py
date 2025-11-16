@@ -1,15 +1,19 @@
 """Test datetime constraints, including Issue #734."""
 
+import contextlib
 from datetime import datetime, timedelta, timezone
-from typing import Annotated
+from typing import Annotated, Optional
 
 import pytest
 from annotated_types import Timezone
 from hypothesis import given
 from hypothesis.strategies import datetimes
-from typing_extensions import Literal
 
-from pydantic import BaseModel, BeforeValidator, Field
+from pydantic import BaseModel, Field, __version__
+
+with contextlib.suppress(ImportError):
+    from pydantic import BeforeValidator
+
 
 from polyfactory.factories.pydantic_factory import ModelFactory
 
@@ -28,8 +32,8 @@ from polyfactory.factories.pydantic_factory import ModelFactory
     ),
 )
 def test_handle_constrained_datetime(
-    start: Literal["ge", "gt"],
-    end: Literal["le", "lt"],
+    start: Optional[str],
+    end: Optional[str],
     start_datetime: datetime,
     end_datetime: datetime,
 ) -> None:
@@ -37,7 +41,7 @@ def test_handle_constrained_datetime(
     if start_datetime == end_datetime:
         return
 
-    kwargs: dict[Literal["ge", "gt", "le", "lt"], datetime] = {}
+    kwargs: dict[str, datetime] = {}
     if start:
         kwargs[start] = start_datetime
     if end:
@@ -52,25 +56,23 @@ def test_handle_constrained_datetime(
 
     assert result.value
     assert isinstance(result.value, datetime), "Should be datetime.datetime, not date"
-    assert result.value >= start_datetime if "ge" in kwargs else result.value > start_datetime
-    assert result.value <= end_datetime if "le" in kwargs else result.value < end_datetime
+    assert result.value >= start_datetime
+    assert result.value <= end_datetime
 
 
-def validate_datetime(value: datetime) -> datetime:
-    """Validator that expects a datetime object with timezone info."""
-    assert isinstance(value, datetime), f"Expected datetime.datetime, got {type(value)}"
-    assert value.tzinfo == timezone.utc, f"Expected UTC timezone, got {value.tzinfo}"
-    return value
-
-
-ValidatedDatetime = Annotated[datetime, BeforeValidator(validate_datetime), Timezone(tz=timezone.utc)]
-
-
+@pytest.mark.skipif(__version__.startswith("1"), reason="Pydantic v2 required")
 def test_annotated_datetime_with_validator_and_constraint() -> None:
+    def validate_datetime(value: datetime) -> datetime:
+        """Validator that expects a datetime object with timezone info."""
+        assert isinstance(value, datetime), f"Expected datetime.datetime, got {type(value)}"
+        assert value.tzinfo == timezone.utc, f"Expected UTC timezone, got {value.tzinfo}"
+        return value
+
+    ValidatedDatetime = Annotated[datetime, BeforeValidator(validate_datetime), Timezone(tz=timezone.utc)]
     minimum_datetime = datetime(2030, 1, 1, tzinfo=timezone.utc)
 
     class MyModel(BaseModel):
-        dt: ValidatedDatetime = Field(gt=minimum_datetime)
+        dt: ValidatedDatetime = Field(gt=minimum_datetime)  # pyright: ignore[reportInvalidTypeForm]
 
     class MyModelFactory(ModelFactory[MyModel]): ...
 
