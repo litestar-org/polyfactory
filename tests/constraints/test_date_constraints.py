@@ -1,5 +1,4 @@
 from datetime import date, timedelta
-from typing import Optional
 
 import pytest
 from hypothesis import given
@@ -14,10 +13,18 @@ from polyfactory.factories.pydantic_factory import ModelFactory
     dates(max_value=date.today() - timedelta(days=3)),
     dates(min_value=date.today()),
 )
-@pytest.mark.parametrize(("start", "end"), (("ge", "le"), ("gt", "lt"), ("ge", "lt"), ("gt", "le")))
+@pytest.mark.parametrize(
+    ("start", "end"),
+    (
+        ("ge", "le"),
+        ("gt", "lt"),
+        ("ge", "lt"),
+        ("gt", "le"),
+    ),
+)
 def test_handle_constrained_date(
-    start: Optional[str],
-    end: Optional[str],
+    start: str | None,
+    end: str | None,
     start_date: date,
     end_date: date,
 ) -> None:
