@@ -221,10 +221,12 @@ class SQLAlchemyFactory(Generic[T], BaseFactory[T]):
         cls,
         collection_class: type[Collection[Any]] | Callable[[], Collection[Any]],
         entity_class: Any,
-    ) -> type:
+    ) -> type[Any]:
+        annotation: type[Any]
+
         if isinstance(collection_class, type):
             if issubclass(collection_class, Mapping):
-                annotation = dict[Any, entity_class]  # type: ignore[valid-type]
+                annotation = dict[Any, entity_class]
             else:
                 if not (duck_typed_as := duck_type_collection(collection_class)):
                     msg = f"Cannot infer type from collection_class {collection_class}"
@@ -232,11 +234,9 @@ class SQLAlchemyFactory(Generic[T], BaseFactory[T]):
                         msg,
                     )
 
-                annotation = duck_typed_as[entity_class]  # type: ignore[valid-type]
-        elif callable(collection_class):
-            annotation = dict[Any, entity_class]  # type: ignore[valid-type]
+                annotation = duck_typed_as[entity_class]  # pyright: ignore[reportIndexIssue]
         else:
-            annotation = entity_class
+            annotation = dict[Any, entity_class]
 
         return annotation
 
@@ -256,6 +256,7 @@ class SQLAlchemyFactory(Generic[T], BaseFactory[T]):
         if cls.__set_relationships__:
             for name, relationship in table.relationships.items():
                 class_ = relationship.entity.class_
+                annotation: Any
 
                 if relationship.uselist:
                     collection_class = relationship.collection_class
