@@ -8,18 +8,19 @@ from typing import (
     ClassVar,
     Collection,
     Generic,
+    List,
     Iterable,
-    MutableMapping,
+    Mapping,
     Protocol,
     TypeVar,
     Union,
-    cast,
 )
 
+from sqlalchemy.util.langhelpers import duck_type_collection
 from typing_extensions import Annotated
 
-from polyfactory.exceptions import MissingDependencyException, ParameterException
-from polyfactory.factories.base import BaseFactory, BuildContext
+from polyfactory.exceptions import ConfigurationException, MissingDependencyException, ParameterException
+from polyfactory.factories.base import BaseFactory
 from polyfactory.field_meta import Constraints, FieldMeta
 from polyfactory.persistence import AsyncPersistenceProtocol, SyncPersistenceProtocol
 from polyfactory.utils.types import Frozendict
@@ -35,8 +36,6 @@ except ImportError as e:
     raise MissingDependencyException(msg) from e
 
 if TYPE_CHECKING:
-    from random import Random
-
     from sqlalchemy.ext.asyncio import AsyncSession
     from sqlalchemy.orm import Session
     from sqlalchemy.sql.type_api import TypeEngine
@@ -44,29 +43,6 @@ if TYPE_CHECKING:
 
 
 T = TypeVar("T")
-
-
-class SQLAlchemyFieldMeta(FieldMeta):
-    def __init__(
-        self,
-        *,
-        name: str,
-        annotation: type,
-        random: Random | None = None,
-        default: Any = ...,
-        children: list[FieldMeta] | None = None,
-        constraints: Constraints | None = None,
-        collection_class: type[Collection[Any]] | Callable[[], Collection[Any]] | None = None,
-    ) -> None:
-        super().__init__(
-            name=name,
-            annotation=annotation,
-            random=random,
-            default=default,
-            children=children,
-            constraints=constraints,
-        )
-        self.collection_class = collection_class
 
 
 class SQLASyncPersistence(SyncPersistenceProtocol[T]):
@@ -186,45 +162,6 @@ class SQLAlchemyFactory(Generic[T], BaseFactory[T]):
         return providers_map
 
     @classmethod
-    def get_field_value(
-        cls,
-        field_meta: FieldMeta,
-        field_build_parameters: Any | None = None,
-        build_context: BuildContext | None = None,
-    ) -> Any:
-        field_meta = cast("SQLAlchemyFieldMeta", field_meta)
-        result = super().get_field_value(field_meta, field_build_parameters, build_context)
-
-        if collection_class := field_meta.collection_class:
-            collection = collection_class() if callable(collection_class) else collection_class
-            items = result if isinstance(result, Iterable) else [result]
-
-            keyfunc = getattr(collection, "keyfunc", None)
-            if callable(keyfunc):
-                mapping_collection = cast("MutableMapping[Any, Any]", collection)
-                for item in items:
-                    mapping_collection[keyfunc(item)] = item
-                collection = mapping_collection
-            else:
-                extend = getattr(collection, "extend", None)
-                if callable(extend):
-                    extend(items)
-                else:
-                    append = getattr(collection, "append", None)
-                    if callable(append):
-                        for item in items:
-                            append(item)
-                    else:
-                        add = getattr(collection, "add", None)
-                        if callable(add):
-                            for item in items:
-                                add(item)
-
-            return collection if collection is not None else result
-
-        return result
-
-    @classmethod
     def is_supported_type(cls, value: Any) -> TypeGuard[type[T]]:
         try:
             inspected = inspect(value)
@@ -283,12 +220,36 @@ class SQLAlchemyFactory(Generic[T], BaseFactory[T]):
         return annotation
 
     @classmethod
+    def get_type_from_collection_class(
+        cls,
+        collection_class: type[Collection[Any]] | Callable[[], Collection[Any]],
+        entity_class: Any,
+    ) -> type:
+        if isinstance(collection_class, type):
+            if issubclass(collection_class, Mapping):
+                annotation = dict[Any, entity_class]  # type: ignore[valid-type]
+            else:
+                if not (duck_typed_as := duck_type_collection(collection_class)):
+                    msg = f"Cannot infer type from collection_class {collection_class}"
+                    raise ConfigurationException(
+                        msg,
+                    )
+
+                annotation = duck_typed_as[entity_class]  # type: ignore[valid-type]
+        elif callable(collection_class):
+            annotation = dict[Any, entity_class]  # type: ignore[valid-type]
+        else:
+            annotation = entity_class
+
+        return annotation
+
+    @classmethod
     def get_model_fields(cls) -> list[FieldMeta]:
         fields_meta: list[FieldMeta] = []
 
         table: Mapper = inspect(cls.__model__)  # type: ignore[assignment]
         fields_meta.extend(
-            SQLAlchemyFieldMeta.from_type(
+            FieldMeta.from_type(
                 annotation=cls.get_type_from_column(column),
                 name=name,
             )
@@ -298,13 +259,22 @@ class SQLAlchemyFactory(Generic[T], BaseFactory[T]):
         if cls.__set_relationships__:
             for name, relationship in table.relationships.items():
                 class_ = relationship.entity.class_
-                annotation = class_ if not relationship.uselist else list[class_]  # type: ignore[valid-type]
-                field_meta = SQLAlchemyFieldMeta.from_type(
-                    name=name,
-                    annotation=annotation,
+
+                if relationship.uselist:
+                    collection_class = relationship.collection_class
+                    if collection_class is None:
+                        annotation = list[class_]  # type: ignore[valid-type]
+                    else:
+                        annotation = cls.get_type_from_collection_class(collection_class, class_)
+                else:
+                    annotation = class_
+
+                fields_meta.append(
+                    FieldMeta.from_type(
+                        name=name,
+                        annotation=annotation,
+                    )
                 )
-                field_meta.collection_class = relationship.collection_class
-                fields_meta.append(field_meta)
         if cls.__set_association_proxy__:
             for name, attr in table.all_orm_descriptors.items():
                 if isinstance(attr, AssociationProxy):
@@ -316,7 +286,7 @@ class SQLAlchemyFactory(Generic[T], BaseFactory[T]):
                             class_ = target_attr.entity.class_
                             annotation = class_ if not target_collection.uselist else list[class_]  # type: ignore[valid-type]
                             fields_meta.append(
-                                SQLAlchemyFieldMeta.from_type(
+                                FieldMeta.from_type(
                                     name=name,
                                     annotation=annotation,
                                 )
