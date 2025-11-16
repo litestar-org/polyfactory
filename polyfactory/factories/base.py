@@ -74,7 +74,7 @@ from polyfactory.value_generators.constrained_collections import (
     handle_constrained_collection,
     handle_constrained_mapping,
 )
-from polyfactory.value_generators.constrained_dates import handle_constrained_date
+from polyfactory.value_generators.constrained_dates import handle_constrained_date, handle_constrained_datetime
 from polyfactory.value_generators.constrained_numbers import (
     handle_constrained_decimal,
     handle_constrained_float,
@@ -625,15 +625,15 @@ class BaseFactory(ABC, Generic[T]):
         )
 
     @classmethod
-    def get_constrained_field_value(  # noqa: C901, PLR0911
+    def get_constrained_field_value(  # noqa: C901, PLR0911, PLR0912
         cls,
         annotation: Any,
         field_meta: FieldMeta,
         field_build_parameters: Any | None = None,
         build_context: BuildContext | None = None,
     ) -> Any:
+        constraints = cast("Constraints", field_meta.constraints)
         try:
-            constraints = cast("Constraints", field_meta.constraints)
             if is_safe_subclass(annotation, float):
                 return handle_constrained_float(
                     random=cls.__random__,
@@ -704,6 +704,16 @@ class BaseFactory(ABC, Generic[T]):
                     unique_items=constraints.get("unique_items", False),
                     field_build_parameters=field_build_parameters,
                     build_context=build_context,
+                )
+
+            if is_safe_subclass(annotation, datetime):
+                return handle_constrained_datetime(
+                    faker=cls.__faker__,
+                    ge=cast("Any", constraints.get("ge")),
+                    gt=cast("Any", constraints.get("gt")),
+                    le=cast("Any", constraints.get("le")),
+                    lt=cast("Any", constraints.get("lt")),
+                    tz=cast("Any", constraints.get("tz")),
                 )
 
             if is_safe_subclass(annotation, date):

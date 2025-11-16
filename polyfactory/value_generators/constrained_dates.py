@@ -27,15 +27,49 @@ def handle_constrained_date(
     :returns: A date instance.
     """
     start_date = datetime.now(tz=tz).date() - timedelta(days=100)
-    if ge:
+    if ge is not None:
         start_date = ge
-    elif gt:
+    elif gt is not None:
         start_date = gt + timedelta(days=1)
 
     end_date = datetime.now(tz=timezone.utc).date() + timedelta(days=100)
-    if le:
+    if le is not None:
         end_date = le
-    elif lt:
+    elif lt is not None:
         end_date = lt - timedelta(days=1)
 
     return faker.date_between(start_date=start_date, end_date=end_date)
+
+
+def handle_constrained_datetime(
+    faker: Faker,
+    ge: datetime | None = None,
+    gt: datetime | None = None,
+    le: datetime | None = None,
+    lt: datetime | None = None,
+    tz: tzinfo | None = None,
+) -> datetime:
+    """Generates a datetime value fulfilling the expected constraints.
+
+    :param faker: An instance of faker.
+    :param lt: Less than value.
+    :param le: Less than or equal value.
+    :param gt: Greater than value.
+    :param ge: Greater than or equal value.
+    :param tz: A timezone. If not provided, infers from constraint values.
+
+    :returns: A datetime instance.
+    """
+    start_datetime = datetime.now(tz=tz) - timedelta(days=100)
+    if ge:
+        start_datetime = ge
+    elif gt:
+        start_datetime = gt + timedelta(seconds=1)
+
+    end_datetime = datetime.now(tz=tz) + timedelta(days=100)
+    if le is not None:
+        end_datetime = le
+    elif lt is not None:
+        end_datetime = lt - timedelta(seconds=1)
+
+    return faker.date_time_between(start_date=start_datetime, end_date=end_datetime, tzinfo=tz)
