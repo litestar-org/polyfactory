@@ -4,7 +4,7 @@ from inspect import isclass
 from typing import TYPE_CHECKING, Generic, TypeVar
 
 from polyfactory.exceptions import MissingDependencyException
-from polyfactory.factories.base import BaseFactory
+from polyfactory.factories.base import BaseFactory, cache_model_fields
 from polyfactory.field_meta import FieldMeta, Null
 
 if TYPE_CHECKING:
@@ -35,13 +35,19 @@ class AttrsFactory(Generic[T], BaseFactory[T]):
         return isclass(value) and hasattr(value, "__attrs_attrs__")
 
     @classmethod
+    def _init_model(cls) -> None:
+        """Initialize the model and resolve type annotations."""
+        super()._init_model()
+        if hasattr(cls, "__model__"):
+            cls.resolve_types(cls.__model__)
+
+    @classmethod
+    @cache_model_fields
     def get_model_fields(cls) -> list[FieldMeta]:
         field_metas: list[FieldMeta] = []
         none_type = type(None)
 
-        cls.resolve_types(cls.__model__)
         fields = attrs.fields(cls.__model__)
-
         for field in fields:
             if not field.init:
                 continue

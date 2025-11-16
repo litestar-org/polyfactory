@@ -18,6 +18,8 @@ from sqlalchemy.util.langhelpers import duck_type_collection
 
 from polyfactory.exceptions import ConfigurationException, MissingDependencyException, ParameterException
 from polyfactory.factories.base import BaseFactory
+from polyfactory.exceptions import MissingDependencyException, ParameterException
+from polyfactory.factories.base import BaseFactory, cache_model_fields
 from polyfactory.field_meta import Constraints, FieldMeta
 from polyfactory.persistence import AsyncPersistenceProtocol, SyncPersistenceProtocol
 from polyfactory.utils.types import Frozendict
@@ -241,6 +243,7 @@ class SQLAlchemyFactory(Generic[T], BaseFactory[T]):
         return annotation
 
     @classmethod
+    @cache_model_fields
     def get_model_fields(cls) -> list[FieldMeta]:
         fields_meta: list[FieldMeta] = []
 

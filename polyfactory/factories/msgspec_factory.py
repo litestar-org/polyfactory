@@ -4,7 +4,7 @@ from inspect import isclass
 from typing import TYPE_CHECKING, Any, Callable, Generic, TypeVar, get_type_hints
 
 from polyfactory.exceptions import MissingDependencyException
-from polyfactory.factories.base import BaseFactory
+from polyfactory.factories.base import BaseFactory, cache_model_fields
 from polyfactory.field_meta import FieldMeta, Null
 from polyfactory.value_generators.constrained_numbers import handle_constrained_int
 from polyfactory.value_generators.primitives import create_random_bytes
@@ -46,6 +46,7 @@ class MsgspecFactory(Generic[T], BaseFactory[T]):
         return isclass(value) and hasattr(value, "__struct_fields__")
 
     @classmethod
+    @cache_model_fields
     def get_model_fields(cls) -> list[FieldMeta]:
         fields_meta: list[FieldMeta] = []
 

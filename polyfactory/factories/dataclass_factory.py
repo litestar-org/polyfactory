@@ -5,7 +5,7 @@ from typing import Any, Generic, get_type_hints
 
 from typing_extensions import TypeGuard
 
-from polyfactory.factories.base import BaseFactory, T
+from polyfactory.factories.base import BaseFactory, T, cache_model_fields
 from polyfactory.field_meta import FieldMeta, Null
 
 
@@ -24,6 +24,7 @@ class DataclassFactory(Generic[T], BaseFactory[T]):
         return bool(is_dataclass(value))
 
     @classmethod
+    @cache_model_fields
     def get_model_fields(cls) -> list["FieldMeta"]:
         """Retrieve a list of fields from the factory's model.
 

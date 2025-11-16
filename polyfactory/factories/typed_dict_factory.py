@@ -11,7 +11,7 @@ from typing_extensions import (  # type: ignore[attr-defined]
     is_typeddict,
 )
 
-from polyfactory.factories.base import BaseFactory
+from polyfactory.factories.base import BaseFactory, cache_model_fields
 from polyfactory.field_meta import FieldMeta, Null
 
 TypedDictT = TypeVar("TypedDictT", bound=_TypedDictMeta)
@@ -32,6 +32,7 @@ class TypedDictFactory(Generic[TypedDictT], BaseFactory[TypedDictT]):
         return is_typeddict(value)
 
     @classmethod
+    @cache_model_fields
     def get_model_fields(cls) -> list["FieldMeta"]:
         """Retrieve a list of fields from the factory's model.
 
