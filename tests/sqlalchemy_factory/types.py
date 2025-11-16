@@ -1,4 +1,5 @@
-from typing import Generic, Iterable, Iterator, TypeVar
+from collections.abc import Iterable, Iterator
+from typing import Generic, TypeVar
 
 from sqlalchemy.orm.collections import collection
 

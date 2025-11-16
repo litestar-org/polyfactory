@@ -1,23 +1,20 @@
 from __future__ import annotations
 
+from collections.abc import Collection, Mapping
 from datetime import date, datetime
 from typing import (
     TYPE_CHECKING,
+    Annotated,
     Any,
     Callable,
     ClassVar,
-    Collection,
     Generic,
-    List,
-    Iterable,
-    Mapping,
     Protocol,
     TypeVar,
     Union,
 )
 
 from sqlalchemy.util.langhelpers import duck_type_collection
-from typing_extensions import Annotated
 
 from polyfactory.exceptions import ConfigurationException, MissingDependencyException, ParameterException
 from polyfactory.factories.base import BaseFactory

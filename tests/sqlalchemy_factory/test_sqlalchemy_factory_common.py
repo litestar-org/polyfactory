@@ -1,8 +1,9 @@
 import warnings
+from collections.abc import Collection
 from datetime import datetime
 from decimal import Decimal
 from enum import Enum
-from typing import Any, Callable, Collection, Type, get_args
+from typing import Any, Callable, get_args
 from uuid import UUID, uuid4
 
 import pytest
@@ -217,7 +218,7 @@ def test_relationship_list_resolution() -> None:
     "collection_class_type",
     (set, list, ListLike, SetLike),
 )
-def test_relationship_collection_class_sequence(collection_class_type: Type[Collection]) -> None:
+def test_relationship_collection_class_sequence(collection_class_type: type[Collection]) -> None:
     table_suffix = uuid4().hex
     _registry = registry()
 
