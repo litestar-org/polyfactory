@@ -1,5 +1,6 @@
 """Tests to check that usage of pydantic v1 and v2 at the same time works."""
 
+import sys
 from typing import Annotated, Optional, Union
 
 import pytest
@@ -18,8 +19,19 @@ try:
 except ImportError:
     from pydantic import BaseModel as BaseModelV1  # type: ignore[assignment]
 
+skip_pydantic_v1_on_py314 = pytest.mark.skipif(
+    sys.version_info >= (3, 14),
+    reason="pydantic v1 not supported on Python 3.14",
+)
 
-@pytest.mark.parametrize("base_model", [BaseModelV1, BaseModelV2])
+
+@pytest.mark.parametrize(
+    "base_model",
+    [
+        pytest.param(BaseModelV1, marks=skip_pydantic_v1_on_py314),
+        BaseModelV2,
+    ],
+)
 def test_is_supported_type(base_model: type[Union[BaseModelV1, BaseModelV2]]) -> None:
     class Foo(base_model):  # type: ignore[valid-type, misc]
         ...
@@ -27,7 +39,13 @@ def test_is_supported_type(base_model: type[Union[BaseModelV1, BaseModelV2]]) ->
     assert ModelFactory.is_supported_type(Foo) is True
 
 
-@pytest.mark.parametrize("base_model", [BaseModelV1, BaseModelV2])
+@pytest.mark.parametrize(
+    "base_model",
+    [
+        pytest.param(BaseModelV1, marks=skip_pydantic_v1_on_py314),
+        BaseModelV2,
+    ],
+)
 def test_build(base_model: type[Union[BaseModelV1, BaseModelV2]]) -> None:
     class Foo(base_model):  # type: ignore[valid-type, misc]
         a: int
@@ -42,6 +60,7 @@ def test_build(base_model: type[Union[BaseModelV1, BaseModelV2]]) -> None:
     assert isinstance(foo.c, bool)
 
 
+@skip_pydantic_v1_on_py314
 def test_build_v1_with_constrained_fields() -> None:
     from pydantic.v1.fields import Field
 
@@ -91,6 +110,7 @@ def test_variadic_tuple_length() -> None:
     assert 7 <= len(result.bar) <= 8
 
 
+@skip_pydantic_v1_on_py314
 def test_build_v1_with_url_and_email_types() -> None:
     from pydantic.v1 import AnyHttpUrl, AnyUrl, EmailStr, HttpUrl, NameEmail
 
