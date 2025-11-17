@@ -22,7 +22,6 @@ if TYPE_CHECKING:
     import datetime
     from collections.abc import Sequence
     from decimal import Decimal
-    from random import Random
     from re import Pattern
 
     from typing_extensions import NotRequired, Self
@@ -68,10 +67,9 @@ class Constraints(TypedDict):
 class FieldMeta:
     """Factory field metadata container. This class is used to store the data about a field of a factory's model."""
 
-    __slots__ = ("__dict__", "annotation", "children", "constraints", "default", "name", "random")
+    __slots__ = ("__dict__", "annotation", "children", "constraints", "default", "name")
 
     annotation: Any
-    random: Random
     children: list[FieldMeta] | None
     default: Any
     name: str

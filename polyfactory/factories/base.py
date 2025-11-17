@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import copy
+import functools
 import inspect
 from abc import ABC, abstractmethod
 from collections import Counter, abc, deque
@@ -97,6 +98,22 @@ U = TypeVar("U")
 F = TypeVar("F", bound="BaseFactory[Any]")
 
 
+def cache_model_fields(func: Callable[[type[F]], list["FieldMeta"]]) -> Callable[[type[F]], list["FieldMeta"]]:
+    """Decorator to cache the results of get_model_fields() to avoid repeated introspection.
+
+    :param func: The get_model_fields classmethod to wrap
+    :returns: Wrapped function with caching
+    """
+
+    @functools.wraps(func)
+    def wrapper(cls: type[F]) -> list["FieldMeta"]:
+        if "_fields_metadata" not in cls.__dict__:
+            cls._fields_metadata = func(cls)
+        return cls._fields_metadata
+
+    return wrapper
+
+
 class BuildContext(TypedDict):
     seen_models: set[type]
 
@@ -124,12 +141,13 @@ class BaseFactory(ABC, Generic[T]):
     """A sync persistence handler. Can be a class or a class instance."""
     __async_persistence__: type[AsyncPersistenceProtocol[T]] | AsyncPersistenceProtocol[T] | None = None
     """An async persistence handler. Can be a class or a class instance."""
-    __set_as_default_factory_for_type__ = False
+
+    __set_as_default_factory_for_type__: ClassVar[bool] = False
     """
     Flag dictating whether to set as the default factory for the given type.
     If 'True' the factory will be used instead of dynamically generating a factory for the type.
     """
-    __is_base_factory__: bool = False
+    __is_base_factory__: ClassVar[bool] = False
     """
     Flag dictating whether the factory is a 'base' factory. Base factories are registered globally as handlers for types.
     For example, the 'DataclassFactory', 'TypedDictFactory' and 'ModelFactory' are all base factories.
