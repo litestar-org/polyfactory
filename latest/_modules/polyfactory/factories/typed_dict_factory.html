@@ -299,10 +299,11 @@ data-aria-dark="Switch to auto color mode">
 </span><span data-line="52">                    <span class="n">annotation</span><span class="o">=</span><span class="n">annotation</span><span class="p">,</span>
 </span><span data-line="53">                    <span class="n">name</span><span class="o">=</span><span class="n">field_name</span><span class="p">,</span>
 </span><span data-line="54">                    <span class="n">default</span><span class="o">=</span><span class="nb">getattr</span><span class="p">(</span><span class="bp">cls</span><span class="o">.</span><span class="n">__model__</span><span class="p">,</span> <span class="n">field_name</span><span class="p">,</span> <span class="n">Null</span><span class="p">),</span>
-</span><span data-line="55">                <span class="p">),</span>
-</span><span data-line="56">            <span class="p">)</span>
-</span><span data-line="57">
-</span><span data-line="58">        <span class="k">return</span> <span class="n">field_metas</span></div>
+</span><span data-line="55">                    <span class="n">required</span><span class="o">=</span><span class="n">field_name</span> <span class="ow">in</span> <span class="bp">cls</span><span class="o">.</span><span class="n">__model__</span><span class="o">.</span><span class="n">__required_keys__</span><span class="p">,</span>
+</span><span data-line="56">                <span class="p">),</span>
+</span><span data-line="57">            <span class="p">)</span>
+</span><span data-line="58">
+</span><span data-line="59">        <span class="k">return</span> <span class="n">field_metas</span></div>
 </div>
 
 </span></pre></div>
