@@ -492,6 +492,15 @@
       "contributions": [
         "code"
       ]
+    },
+    {
+      "login": "AlexPetul",
+      "name": "Alex Petul",
+      "avatar_url": "https://avatars.githubusercontent.com/u/47738904?v=4",
+      "profile": "https://skydi.io",
+      "contributions": [
+        "code"
+      ]
     }
   ],
   "contributorsPerLine": 7,
