@@ -1,9 +1,22 @@
 from __future__ import annotations
 
+from collections.abc import Collection, Mapping
 from datetime import date, datetime
-from typing import TYPE_CHECKING, Annotated, Any, Callable, ClassVar, Generic, Protocol, TypeVar, Union
+from typing import (
+    TYPE_CHECKING,
+    Annotated,
+    Any,
+    Callable,
+    ClassVar,
+    Generic,
+    Protocol,
+    TypeVar,
+    Union,
+)
 
-from polyfactory.exceptions import MissingDependencyException, ParameterException
+from sqlalchemy.util.langhelpers import duck_type_collection
+
+from polyfactory.exceptions import ConfigurationException, MissingDependencyException, ParameterException
 from polyfactory.factories.base import BaseFactory
 from polyfactory.field_meta import Constraints, FieldMeta
 from polyfactory.persistence import AsyncPersistenceProtocol, SyncPersistenceProtocol
@@ -204,6 +217,30 @@ class SQLAlchemyFactory(Generic[T], BaseFactory[T]):
         return annotation
 
     @classmethod
+    def get_type_from_collection_class(
+        cls,
+        collection_class: type[Collection[Any]] | Callable[[], Collection[Any]],
+        entity_class: Any,
+    ) -> type[Any]:
+        annotation: type[Any]
+
+        if isinstance(collection_class, type):
+            if issubclass(collection_class, Mapping):
+                annotation = dict[Any, entity_class]
+            else:
+                if not (duck_typed_as := duck_type_collection(collection_class)):
+                    msg = f"Cannot infer type from collection_class {collection_class}"
+                    raise ConfigurationException(
+                        msg,
+                    )
+
+                annotation = duck_typed_as[entity_class]  # pyright: ignore[reportIndexIssue]
+        else:
+            annotation = dict[Any, entity_class]
+
+        return annotation
+
+    @classmethod
     def get_model_fields(cls) -> list[FieldMeta]:
         fields_meta: list[FieldMeta] = []
 
@@ -219,12 +256,22 @@ class SQLAlchemyFactory(Generic[T], BaseFactory[T]):
         if cls.__set_relationships__:
             for name, relationship in table.relationships.items():
                 class_ = relationship.entity.class_
-                annotation = class_ if not relationship.uselist else list[class_]  # type: ignore[valid-type]
+                annotation: Any
+
+                if relationship.uselist:
+                    collection_class = relationship.collection_class
+                    if collection_class is None:
+                        annotation = list[class_]  # type: ignore[valid-type]
+                    else:
+                        annotation = cls.get_type_from_collection_class(collection_class, class_)
+                else:
+                    annotation = class_
+
                 fields_meta.append(
                     FieldMeta.from_type(
                         name=name,
                         annotation=annotation,
-                    ),
+                    )
                 )
         if cls.__set_association_proxy__:
             for name, attr in table.all_orm_descriptors.items():

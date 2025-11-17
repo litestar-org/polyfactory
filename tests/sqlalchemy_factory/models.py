@@ -1,17 +1,7 @@
 from dataclasses import dataclass
 from typing import Any, Optional
 
-from sqlalchemy import (
-    Boolean,
-    Column,
-    DateTime,
-    ForeignKey,
-    Integer,
-    String,
-    func,
-    orm,
-    text,
-)
+from sqlalchemy import Boolean, Column, DateTime, ForeignKey, Integer, String, func, orm, text
 from sqlalchemy.ext.associationproxy import association_proxy
 from sqlalchemy.orm import relationship
 from sqlalchemy.orm.decl_api import DeclarativeMeta, registry
@@ -30,6 +20,20 @@ class Base(metaclass=DeclarativeMeta):
 
     registry = _registry
     metadata = _registry.metadata
+
+
+class CollectionParentMixin:
+    __abstract__ = True
+    __allow_unmapped__ = True
+
+    id = Column(Integer(), primary_key=True)
+
+
+class CollectionChildMixin:
+    __abstract__ = True
+    __allow_unmapped__ = True
+
+    id = Column(Integer(), primary_key=True)
 
 
 class Author(Base):
