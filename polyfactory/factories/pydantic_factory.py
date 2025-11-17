@@ -125,6 +125,7 @@ class PydanticFieldMeta(FieldMeta):
         children: list[FieldMeta] | None = None,
         constraints: PydanticConstraints | None = None,
         examples: list[Any] | None = None,
+        required: bool = True,
     ) -> None:
         super().__init__(
             name=name,
@@ -132,6 +133,7 @@ class PydanticFieldMeta(FieldMeta):
             default=default,
             children=children,
             constraints=constraints,
+            required=required,
         )
         self.examples = examples
 
@@ -220,10 +222,11 @@ class PydanticFieldMeta(FieldMeta):
         return result
 
     @classmethod
-    def from_model_field(  # pragma: no cover
+    def from_model_field(
         cls,
         model_field: ModelField,  # pyright: ignore[reportGeneralTypeIssues]
         use_alias: bool,
+        required: bool = True,
     ) -> PydanticFieldMeta:
         """Create an instance from a pydantic model field.
         :param model_field: A pydantic ModelField.
@@ -332,6 +335,7 @@ class PydanticFieldMeta(FieldMeta):
             default=default_value,
             constraints=cast("PydanticConstraints", {k: v for k, v in constraints.items() if v is not None}) or None,
             examples=examples,
+            required=required,
         )
 
     if not _IS_PYDANTIC_V1:

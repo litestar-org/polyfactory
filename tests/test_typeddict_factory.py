@@ -66,5 +66,29 @@ def test_typeddict_with_required_and_non_required_fields() -> None:
     assert result["annotated"] >= 100
     assert isinstance(result["list_field"], list)
     assert isinstance(result["optional_int"], (type(None), int))
-    assert "name" in result
-    assert isinstance(result["name"], str)
+    assert "name" not in result or isinstance(result["name"], str)
+
+
+def test_total_false_and_not_required() -> None:
+    class TypedDictModel(TypedDict, total=False):
+        id: Required[int]
+        name: str
+        list_field: list[dict[str, int]]
+        optional_int: Optional[int]
+
+    class TypedDictModelFactory(TypedDictFactory[TypedDictModel]):
+        __model__ = TypedDictModel
+
+    build_result = TypedDictModelFactory.batch(size=20)
+    coverage_result = list(TypedDictModelFactory.coverage())
+    for results in (build_result, coverage_result):
+        for result in results:
+            assert isinstance(result, dict)
+            assert "id" in result
+            assert isinstance(result["id"], int)
+            assert "name" not in result or isinstance(result["name"], str)
+            assert "list_field" not in result or isinstance(result["list_field"], list)
+            assert "optional_int" not in result or isinstance(result["optional_int"], (type(None), int))
+
+        assert any("name" not in result for result in results)
+        assert any("name" in result for result in results)
