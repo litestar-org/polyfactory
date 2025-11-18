@@ -27,7 +27,7 @@ try:
     from sqlalchemy.dialects import mssql, mysql, postgresql, sqlite
     from sqlalchemy.exc import NoInspectionAvailable
     from sqlalchemy.ext.associationproxy import AssociationProxy
-    from sqlalchemy.orm import InstanceState, Mapper
+    from sqlalchemy.orm import InstanceState, Mapper, RelationshipProperty
 except ImportError as e:
     msg = "sqlalchemy is not installed"
     raise MissingDependencyException(msg) from e
@@ -241,6 +241,36 @@ class SQLAlchemyFactory(Generic[T], BaseFactory[T]):
         return annotation
 
     @classmethod
+    def _get_relationship_type(cls, relationship: RelationshipProperty[Any]) -> type:
+        class_ = relationship.entity.class_
+        annotation: type
+
+        if relationship.uselist:
+            collection_class = relationship.collection_class
+            if collection_class is None:
+                annotation = list[class_]  # type: ignore[valid-type]
+            else:
+                annotation = cls.get_type_from_collection_class(collection_class, class_)
+        else:
+            annotation = class_
+
+        return annotation
+
+    @classmethod
+    def _get_association_proxy_type(cls, table: Mapper, proxy: AssociationProxy) -> type | None:
+        target_collection = table.relationships.get(proxy.target_collection)
+        if not target_collection:
+            return None
+
+        target_class = target_collection.entity.class_
+        target_attr = getattr(target_class, proxy.value_attr)
+        if not target_attr:
+            return None
+
+        class_ = target_attr.entity.class_
+        return class_ if not target_collection.uselist else list[class_]  # type: ignore[valid-type]
+
+    @classmethod
     def get_model_fields(cls) -> list[FieldMeta]:
         fields_meta: list[FieldMeta] = []
 
@@ -255,18 +285,7 @@ class SQLAlchemyFactory(Generic[T], BaseFactory[T]):
         )
         if cls.__set_relationships__:
             for name, relationship in table.relationships.items():
-                class_ = relationship.entity.class_
-                annotation: Any
-
-                if relationship.uselist:
-                    collection_class = relationship.collection_class
-                    if collection_class is None:
-                        annotation = list[class_]  # type: ignore[valid-type]
-                    else:
-                        annotation = cls.get_type_from_collection_class(collection_class, class_)
-                else:
-                    annotation = class_
-
+                annotation = cls._get_relationship_type(relationship)
                 fields_meta.append(
                     FieldMeta.from_type(
                         name=name,
@@ -280,19 +299,13 @@ class SQLAlchemyFactory(Generic[T], BaseFactory[T]):
                     if not getattr(attr, "creator", None):
                         continue
 
-                    target_collection = table.relationships.get(attr.target_collection)
-                    if target_collection:
-                        target_class = target_collection.entity.class_
-                        target_attr = getattr(target_class, attr.value_attr)
-                        if target_attr:
-                            class_ = target_attr.entity.class_
-                            annotation = class_ if not target_collection.uselist else list[class_]  # type: ignore[valid-type]
-                            fields_meta.append(
-                                FieldMeta.from_type(
-                                    name=name,
-                                    annotation=annotation,
-                                )
+                    if annotation := cls._get_association_proxy_type(table, attr):  # type: ignore[assignment]
+                        fields_meta.append(
+                            FieldMeta.from_type(
+                                name=name,
+                                annotation=annotation,
                             )
+                        )
 
         return fields_meta
 
