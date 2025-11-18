@@ -276,6 +276,10 @@ class SQLAlchemyFactory(Generic[T], BaseFactory[T]):
         if cls.__set_association_proxy__:
             for name, attr in table.all_orm_descriptors.items():
                 if isinstance(attr, AssociationProxy):
+                    # Read-only proxies derive from the underlying relationship and shouldn't be set directly.
+                    if not getattr(attr, "creator", None):
+                        continue
+
                     target_collection = table.relationships.get(attr.target_collection)
                     if target_collection:
                         target_class = target_collection.entity.class_
