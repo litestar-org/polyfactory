@@ -75,6 +75,10 @@ jobs:
         if: matrix.pydantic-version == '1.10'
         run: uv add --group pydantic "pydantic[email]==1.10.17"
 
+      - name: Pin hypothesis for pydantic 1.10
+        if: matrix.pydantic-version == '1.10'
+        run: uv add --group test "hypothesis==6.135.20"
+
       - name: Install SQLAlchemy
         if: matrix.sqla-version == '1.4'
         run: uv add --group sqlalchemy "sqlalchemy[asyncio]==1.4.49"
