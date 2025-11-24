@@ -35,8 +35,13 @@ jobs:
       fail-fast: true
       matrix:
         python-version: ["3.9", "3.10", "3.11", "3.12", "3.13", "3.14"]
-        pydantic-version: ["2.0"]
+        pydantic-version: ["1.10", "2.0"]
         sqla-version: ["1.4", "2"]
+        exclude:
+          - pydantic-version: "1.10"
+            sqla-version: "1.4"
+          - python-version: "3.14"
+            pydantic-version: "1.10"
     steps:
       - name: Check out repository
         uses: actions/checkout@v5
