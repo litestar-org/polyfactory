@@ -12,11 +12,6 @@ from msgspec import Meta, Struct, structs
 from polyfactory.exceptions import ParameterException
 from polyfactory.factories.msgspec_factory import MsgspecFactory
 
-pytestmark = pytest.mark.skipif(
-    sys.version_info >= (3, 14),
-    reason="msgspec not supported on Python 3.14",
-)
-
 
 def test_is_supported_type() -> None:
     class Foo(Struct): ...
