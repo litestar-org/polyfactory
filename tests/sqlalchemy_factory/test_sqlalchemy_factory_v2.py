@@ -4,7 +4,7 @@ from typing import Any
 from uuid import UUID
 
 import pytest
-from sqlalchemy import ForeignKey, Text, __version__, orm, types
+from sqlalchemy import Text, __version__, orm, types
 from sqlalchemy.dialects.mssql import JSON as MSSQL_JSON
 from sqlalchemy.dialects.mysql import JSON as MYSQL_JSON
 from sqlalchemy.dialects.postgresql import ARRAY, CIDR, HSTORE, INET, JSON, JSONB
@@ -15,32 +15,6 @@ from polyfactory.factories.sqlalchemy_factory import SQLAlchemyFactory
 
 if __version__.startswith("1"):
     pytest.importorskip("SQLAlchemy", "2")
-
-
-class Base(orm.DeclarativeBase): ...
-
-
-class Author(Base):
-    __tablename__ = "authors"
-
-    id: orm.Mapped[int] = orm.mapped_column(primary_key=True)
-    books: orm.Mapped[list["Book"]] = orm.relationship(
-        "Book",
-        uselist=True,
-        back_populates="author",
-    )
-
-
-class Book(Base):
-    __tablename__ = "books"
-
-    id: orm.Mapped[int] = orm.mapped_column(primary_key=True)
-    author_id: orm.Mapped[int] = orm.mapped_column(ForeignKey(Author.id))
-    author: orm.Mapped[Author] = orm.relationship(
-        Author,
-        uselist=False,
-        back_populates="books",
-    )
 
 
 def test_python_type_handling_v2() -> None:
