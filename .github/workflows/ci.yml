@@ -34,12 +34,14 @@ jobs:
     strategy:
       fail-fast: true
       matrix:
-        python-version: ["3.9", "3.10", "3.11", "3.12", "3.13"]
+        python-version: ["3.9", "3.10", "3.11", "3.12", "3.13", "3.14"]
         pydantic-version: ["1.10", "2.0"]
         sqla-version: ["1.4", "2"]
         exclude:
           - pydantic-version: "1.10"
             sqla-version: "1.4"
+          - python-version: "3.14"
+            pydantic-version: "1.10"
     steps:
       - name: Check out repository
         uses: actions/checkout@v5
@@ -70,6 +72,10 @@ jobs:
       - name: Install pydantic
         if: matrix.pydantic-version == '1.10'
         run: uv add --group pydantic "pydantic[email]==1.10.17"
+
+      - name: Pin hypothesis for pydantic 1.10
+        if: matrix.pydantic-version == '1.10'
+        run: uv add --group test "hypothesis==6.135.20"
 
       - name: Install SQLAlchemy
         if: matrix.sqla-version == '1.4'

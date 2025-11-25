@@ -4,27 +4,62 @@ Changelog
 
 All commits to this project will be documented in this file.
 
-`Release [v3.0.0] - 2025-11-15 <https://github.com/litestar-org/polyfactory/releases/tag/v3.0.0>`_
+`Release [v3.1.0] - 2025-11-25 <https://github.com/litestar-org/polyfactory/releases/tag/v3.1.0>`_
 ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-* `See All commits in v3.0.0 <https://github.com/litestar-org/polyfactory/commits/v3.0.0>`_
+* `See All commits in v3.1.0 <https://github.com/litestar-org/polyfactory/commits/v3.1.0>`_
 
-`83fc729 <https://github.com/litestar-org/polyfactory/commit/83fc72925c3616db1e40abb59504592c50eb7f60>`_ ... `de231a9 <https://github.com/litestar-org/polyfactory/commit/de231a951b4db54492b1255e5f3473ba8bd201d2>`_ | `See diff for 3.0.0 <https://github.com/litestar-org/polyfactory/compare/83fc72925c3616db1e40abb59504592c50eb7f60...de231a951b4db54492b1255e5f3473ba8bd201d2>`_
+`36c68f5 <https://github.com/litestar-org/polyfactory/commit/36c68f51338fb435df2e8e06bf5d7c6be9ab902c>`_ ... `2ca8574 <https://github.com/litestar-org/polyfactory/commit/2ca85741f1875c7f88012910a282706b19cc670a>`_ | `See diff for 3.1.0 <https://github.com/litestar-org/polyfactory/compare/36c68f51338fb435df2e8e06bf5d7c6be9ab902c...2ca85741f1875c7f88012910a282706b19cc670a>`_
 
 Bug Fixes
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-* (`83a82b3 <https://github.com/litestar-org/polyfactory/commit/83a82b3af5616d472285f21287ef7fc6b5903c97>`_)  - Remove unused tests
+* (`637e731 <https://github.com/litestar-org/polyfactory/commit/637e731bd17228ea18da2b82d44be9fcb2d9e6ff>`_)  - Skip association proxy creation if creator is not specified (#788)  by `@AlexPetul <https://github.com/AlexPetul>`_ in `#788 <https://github.com/litestar-org/polyfactory/pull/788>`_
+
+Documentation
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+* (`76e2c5c <https://github.com/litestar-org/polyfactory/commit/76e2c5c38d580a576c1d07e0ea35cdb273cae93d>`_)  - Add AlexPetul as a contributor for code (#786)  by `@allcontributors[bot] <https://github.com/allcontributors[bot]>`_ in `#786 <https://github.com/litestar-org/polyfactory/pull/786>`_
+* (`2ca8574 <https://github.com/litestar-org/polyfactory/commit/2ca85741f1875c7f88012910a282706b19cc670a>`_)  - Fix typo in changelog.rst (#791)  by `@sobolevn <https://github.com/sobolevn>`_ in `#791 <https://github.com/litestar-org/polyfactory/pull/791>`_
+
+Features
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+* (`c54880f <https://github.com/litestar-org/polyfactory/commit/c54880f3403120294bb691cecc6861162272ca70>`_)  - Support NotRequired fields in TypedDictFactory (#785)  by `@adhtruong <https://github.com/adhtruong>`_ in `#785 <https://github.com/litestar-org/polyfactory/pull/785>`_
+* (`77031a5 <https://github.com/litestar-org/polyfactory/commit/77031a54060777f3aa9483989a71c7d0764ebde7>`_)  - Support for custom ``collection_class`` in SQLAlchemy relationships (#776)  by `@AlexPetul <https://github.com/AlexPetul>`_ in `#776 <https://github.com/litestar-org/polyfactory/pull/776>`_
+* (`af885a3 <https://github.com/litestar-org/polyfactory/commit/af885a3252788e2830b589bfb34b617b7553755e>`_)  - Support python 3.14 (#779)  by `@adhtruong <https://github.com/adhtruong>`_ in `#779 <https://github.com/litestar-org/polyfactory/pull/779>`_
+
+Performance
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+* (`e5fb6bf <https://github.com/litestar-org/polyfactory/commit/e5fb6bf6c1f6de8ec2fb3943305a2d7f593b8620>`_)  - Micro-optimize ``BaseFactory._infer_model_type`` (#731)  by `@sobolevn <https://github.com/sobolevn>`_ in `#731 <https://github.com/litestar-org/polyfactory/pull/731>`_
+
+Ci
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+* (`6ab574a <https://github.com/litestar-org/polyfactory/commit/6ab574a9d3c21f0aff3d7f772a8ca7214796d235>`_)  - Add test_success to simplify PR check (#780)  by `@adhtruong <https://github.com/adhtruong>`_ in `#780 <https://github.com/litestar-org/polyfactory/pull/780>`_
+
+`Release [v3.0.0] - 2025-11-15 <https://github.com/litestar-org/polyfactory/releases/tag/v3.0.0>`_
+----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+* `See All commits in v3.0.0 <https://github.com/litestar-org/polyfactory/commits/v3.0.0>`_
+
+`83fc729 <https://github.com/litestar-org/polyfactory/commit/83fc72925c3616db1e40abb59504592c50eb7f60>`_ ... `36c68f5 <https://github.com/litestar-org/polyfactory/commit/36c68f51338fb435df2e8e06bf5d7c6be9ab902c>`_ | `See diff for 3.0.0 <https://github.com/litestar-org/polyfactory/compare/83fc72925c3616db1e40abb59504592c50eb7f60...36c68f51338fb435df2e8e06bf5d7c6be9ab902c>`_
+
+Bug Fixes
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+* (`ddd33c8 <https://github.com/litestar-org/polyfactory/commit/ddd33c81c7fbc875d437aa4216a01b910a23dc5c>`_)  - Remove unused tests  by `@adhtruong <https://github.com/adhtruong>`_
 
 Miscellaneous Tasks
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-* (`85c7392 <https://github.com/litestar-org/polyfactory/commit/85c739225cdd1995030df77284c4a4338f220c31>`_)  - Drop 3.8 support (#721)
-* (`de231a9 <https://github.com/litestar-org/polyfactory/commit/de231a951b4db54492b1255e5f3473ba8bd201d2>`_)  - Update docs ui (#748)
+* (`561b740 <https://github.com/litestar-org/polyfactory/commit/561b74081c6836a190ae524cc203872f33973e74>`_)  - Drop 3.8 support (#721)  by `@adhtruong <https://github.com/adhtruong>`_
+* (`37b69f9 <https://github.com/litestar-org/polyfactory/commit/37b69f997266b216e7d5f841c77b712caca379d5>`_)  - Update docs ui (#748)  by `@Harshal6927 <https://github.com/Harshal6927>`_
+* (`36c68f5 <https://github.com/litestar-org/polyfactory/commit/36c68f51338fb435df2e8e06bf5d7c6be9ab902c>`_)  - Prepare v3 release  by `@adhtruong <https://github.com/adhtruong>`_ in `#720 <https://github.com/litestar-org/polyfactory/pull/720>`_
 
 Refactor
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-* (`afbcdf9 <https://github.com/litestar-org/polyfactory/commit/afbcdf9c7938c2a2fcf95b5e8f5184f205989bb6>`_) [**breaking**]  - Remove deprecated elements (#703)f
+* (`96160ab <https://github.com/litestar-org/polyfactory/commit/96160ab65ce2edeaf19c9719fb7bfdfc4dadaa34>`_) [**breaking**]  - Remove deprecated elements (#703)f  by `@adhtruong <https://github.com/adhtruong>`_
 
 `Release [v2.22.5] - 2025-11-15 <https://github.com/litestar-org/polyfactory/releases/tag/v2.22.5>`_
 ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
