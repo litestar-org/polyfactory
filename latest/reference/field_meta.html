@@ -5,8 +5,8 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0"><title>field_meta - Polyfactory</title><link rel="shortcut icon" href="../_static/logo-default.png"/><link rel="index" title="Index" href="../genindex.html" /><link rel="search" title="Search" href="../search.html" /><link rel="next" title="fields" href="fields.html" /><link rel="prev" title="sqlalchemy_factory" href="factories/sqlalchemy_factory.html" /><script>
     function setColorMode(t){let e=document.documentElement;e.setAttribute("data-color-mode",t);let a=window.matchMedia&&window.matchMedia("(prefers-color-scheme: dark)").matches,s=t;"auto"===t&&(s=a?"dark":"light"),"light"===s?(e.classList.remove("dark"),e.classList.add("light")):(e.classList.remove("light"),e.classList.add("dark"))}
     setColorMode(localStorage._theme||"auto");
-  </script><link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=397bb51e" />
-    <link rel="stylesheet" type="text/css" href="../_static/shibuya.css?v=d0008d65" />
+  </script><link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=d03f443e" />
+    <link rel="stylesheet" type="text/css" href="../_static/shibuya.css?v=14737038" />
     <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
     <link rel="stylesheet" type="text/css" href="../_static/togglebutton.css?v=13237357" />
     <link rel="stylesheet" type="text/css" href="../_static/sphinx-design.min.css?v=95c83b7e" />
@@ -23,7 +23,7 @@
 }
 </style>
     <meta property="og:type" content="website"/><meta property="og:title" content="field_meta"/>
-<meta name="twitter:card" content="summary"/>
+    <meta name="twitter:card" content="summary"/>
   </head>
 <body><div class="sy-head">
   <div class="sy-head-blur"></div>
@@ -33,13 +33,13 @@
       <img class="dark-logo" src="../_static/logo-default.png" alt="polyfactory" height="28" loading="lazy" />
       <strong>polyfactory</strong>
     </a>
-    <div class="sy-head-nav" id="HeadNav">
+    <div class="sy-head-nav" id="head-nav">
       <nav class="sy-head-links"><ul><li class="link"><a href="../index.html">Home</a></li>
-      <li class="link"><button type="button">
+      <li class="link"><button class="js-menu" type="button" id="nav-trigger-2" aria-controls="nav-children-2">
             <span>Community</span>
             <i class="i-lucide chevron-down"></i>
           </button>
-        <ul><li><a href="../contribution-guide.html">
+        <ul id="nav-children-2" aria-labelledby="nav-trigger-2"><li><a href="../contribution-guide.html">
                 <span>Contributing</span>
                 <small>Learn how to contribute to the Type Lens project</small>
               </a></li><li><a href="https://github.com/litestar-org/.github?tab=coc-ov-file">
@@ -50,11 +50,11 @@
                 <small>Overview of Litestar's security protocols</small>
               </a></li></ul>
       </li>
-      <li class="link"><button type="button">
+      <li class="link"><button class="js-menu" type="button" id="nav-trigger-3" aria-controls="nav-children-3">
             <span>About</span>
             <i class="i-lucide chevron-down"></i>
           </button>
-        <ul><li><a href="https://litestar.dev/about/organization">
+        <ul id="nav-children-3" aria-labelledby="nav-trigger-3"><li><a href="https://litestar.dev/about/organization">
                 <span>Litestar Organization</span>
                 <small>Details about the Litestar organization</small>
               </a></li><li><a href="../releases.html">
@@ -62,20 +62,20 @@
                 <small>Explore the release process, versioning, and deprecation policy for Litestar</small>
               </a></li></ul>
       </li>
-      <li class="link"><button type="button">
+      <li class="link"><button class="js-menu" type="button" id="nav-trigger-4" aria-controls="nav-children-4">
             <span>Release notes</span>
             <i class="i-lucide chevron-down"></i>
           </button>
-        <ul><li><a href="../changelog.html">
+        <ul id="nav-children-4" aria-labelledby="nav-trigger-4"><li><a href="../changelog.html">
                 <span>Changelog</span>
                 <small>All changes in the current major version</small>
               </a></li></ul>
       </li>
-      <li class="link"><button type="button">
+      <li class="link"><button class="js-menu" type="button" id="nav-trigger-5" aria-controls="nav-children-5">
             <span>Help</span>
             <i class="i-lucide chevron-down"></i>
           </button>
-        <ul><li><a href="https://discord.gg/litestar">
+        <ul id="nav-children-5" aria-labelledby="nav-trigger-5"><li><a href="https://discord.gg/litestar">
                 <span>Discord Help Forum</span>
                 <small>Dedicated Discord help forum</small>
               </a></li><li><a href="https://github.com/litestar-org/polyfactory/discussions">
@@ -105,11 +105,11 @@ data-aria-auto="Switch to light color mode"
 data-aria-light="Switch to dark color mode"
 data-aria-dark="Switch to auto color mode">
 <i class="i-lucide theme-icon"></i>
-</button><button class="md:hidden flex items-center js-menu" aria-label="Menu" type="button" aria-controls="HeadNav" aria-expanded="false">
+</button><button class="md:hidden flex items-center js-menu" aria-label="Menu" type="button" aria-controls="head-nav" aria-expanded="false">
         <div class="hamburger">
           <span class="hamburger_1"></span>
-          <span class="hamburger_2 -translate-x-2"></span>
-          <span class="hamburger_3 -translate-x-1"></span>
+          <span class="hamburger_2"></span>
+          <span class="hamburger_3"></span>
         </div>
       </button>
     </div>
@@ -205,7 +205,10 @@ data-aria-dark="Switch to auto color mode">
     <iconify-icon icon="simple-icons:github"></iconify-icon>
   </span>
   <span class="flex-grow px-2 break-all">
-    <span>litestar-org/polyfactory</span>
+    
+    
+      <span>polyfactory</span>
+    
     <span class="flex text-sm repo-stats-count">
       <span class="flex items-center pr-3">
         <iconify-icon icon="lucide:star"></iconify-icon>
@@ -256,27 +259,27 @@ data-aria-dark="Switch to auto color mode">
 <span id="field-meta"></span><h1>field_meta<a class="headerlink" href="#module-polyfactory.field_meta" title="Link to this heading">¶</a></h1>
 <dl class="py class">
 <dt class="sig sig-object py" id="polyfactory.field_meta.Null">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">polyfactory.field_meta.</span></span><span class="sig-name descname"><span class="pre">Null</span></span><a class="reference internal" href="../_modules/polyfactory/field_meta.html#Null"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#polyfactory.field_meta.Null" title="Link to this definition">¶</a></dt>
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">polyfactory.field_meta.</span></span><span class="sig-name descname"><span class="pre">Null</span></span><a class="reference internal" href="../_modules/polyfactory/field_meta.html#Null"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#polyfactory.field_meta.Null" title="Link to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
 <p>Sentinel class for empty values</p>
 </dd></dl>
 
 <dl class="py class">
 <dt class="sig sig-object py" id="polyfactory.field_meta.UrlConstraints">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">polyfactory.field_meta.</span></span><span class="sig-name descname"><span class="pre">UrlConstraints</span></span><a class="reference internal" href="../_modules/polyfactory/field_meta.html#UrlConstraints"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#polyfactory.field_meta.UrlConstraints" title="Link to this definition">¶</a></dt>
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">polyfactory.field_meta.</span></span><span class="sig-name descname"><span class="pre">UrlConstraints</span></span><a class="reference internal" href="../_modules/polyfactory/field_meta.html#UrlConstraints"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#polyfactory.field_meta.UrlConstraints" title="Link to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.TypedDict" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">TypedDict</span></code></a></p>
 </dd></dl>
 
 <dl class="py class">
 <dt class="sig sig-object py" id="polyfactory.field_meta.Constraints">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">polyfactory.field_meta.</span></span><span class="sig-name descname"><span class="pre">Constraints</span></span><a class="reference internal" href="../_modules/polyfactory/field_meta.html#Constraints"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#polyfactory.field_meta.Constraints" title="Link to this definition">¶</a></dt>
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">polyfactory.field_meta.</span></span><span class="sig-name descname"><span class="pre">Constraints</span></span><a class="reference internal" href="../_modules/polyfactory/field_meta.html#Constraints"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#polyfactory.field_meta.Constraints" title="Link to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.TypedDict" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">TypedDict</span></code></a></p>
 <p>Metadata regarding a type constraints, if any</p>
 </dd></dl>
 
 <dl class="py class">
 <dt class="sig sig-object py" id="polyfactory.field_meta.FieldMeta">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">polyfactory.field_meta.</span></span><span class="sig-name descname"><span class="pre">FieldMeta</span></span><a class="reference internal" href="../_modules/polyfactory/field_meta.html#FieldMeta"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#polyfactory.field_meta.FieldMeta" title="Link to this definition">¶</a></dt>
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">polyfactory.field_meta.</span></span><span class="sig-name descname"><span class="pre">FieldMeta</span></span><a class="reference internal" href="../_modules/polyfactory/field_meta.html#FieldMeta"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#polyfactory.field_meta.FieldMeta" title="Link to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
 <p>Factory field metadata container. This class is used to store the data about a field of a factory’s model.</p>
 <dl class="py method">
@@ -293,7 +296,7 @@ data-aria-dark="Switch to auto color mode">
 
 <dl class="py property">
 <dt class="sig sig-object py" id="polyfactory.field_meta.FieldMeta.type_args">
-<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">type_args</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.14)"><span class="pre">tuple</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Any" title="(in Python v3.14)"><span class="pre">Any</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="p"><span class="pre">...</span></span><span class="p"><span class="pre">]</span></span></em><a class="reference internal" href="../_modules/polyfactory/field_meta.html#FieldMeta.type_args"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#polyfactory.field_meta.FieldMeta.type_args" title="Link to this definition">¶</a></dt>
+<em class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">type_args</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.14)"><span class="pre">tuple</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Any" title="(in Python v3.14)"><span class="pre">Any</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="p"><span class="pre">...</span></span><span class="p"><span class="pre">]</span></span></em><a class="reference internal" href="../_modules/polyfactory/field_meta.html#FieldMeta.type_args"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#polyfactory.field_meta.FieldMeta.type_args" title="Link to this definition">¶</a></dt>
 <dd><p>Return the normalized type args of the annotation, if any.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Returns<span class="colon">:</span></dt>
@@ -304,7 +307,7 @@ data-aria-dark="Switch to auto color mode">
 
 <dl class="py method">
 <dt class="sig sig-object py" id="polyfactory.field_meta.FieldMeta.from_type">
-<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">from_type</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">annotation:</span> <span class="pre">Any</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">name:</span> <span class="pre">str</span> <span class="pre">=</span> <span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">default:</span> <span class="pre">Any</span> <span class="pre">=</span> <span class="pre">&lt;class</span> <span class="pre">'polyfactory.field_meta.Null'&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">constraints:</span> <span class="pre">Constraints</span> <span class="pre">|</span> <span class="pre">None</span> <span class="pre">=</span> <span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">children:</span> <span class="pre">list[FieldMeta]</span> <span class="pre">|</span> <span class="pre">None</span> <span class="pre">=</span> <span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">required:</span> <span class="pre">bool</span> <span class="pre">=</span> <span class="pre">True</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Self</span></span></span><a class="reference internal" href="../_modules/polyfactory/field_meta.html#FieldMeta.from_type"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#polyfactory.field_meta.FieldMeta.from_type" title="Link to this definition">¶</a></dt>
+<em class="property"><span class="k"><span class="pre">classmethod</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">from_type</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">annotation:</span> <span class="pre">Any</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">name:</span> <span class="pre">str</span> <span class="pre">=</span> <span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">default:</span> <span class="pre">Any</span> <span class="pre">=</span> <span class="pre">&lt;class</span> <span class="pre">'polyfactory.field_meta.Null'&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">constraints:</span> <span class="pre">Constraints</span> <span class="pre">|</span> <span class="pre">None</span> <span class="pre">=</span> <span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">children:</span> <span class="pre">list[FieldMeta]</span> <span class="pre">|</span> <span class="pre">None</span> <span class="pre">=</span> <span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">required:</span> <span class="pre">bool</span> <span class="pre">=</span> <span class="pre">True</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Self</span></span></span><a class="reference internal" href="../_modules/polyfactory/field_meta.html#FieldMeta.from_type"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#polyfactory.field_meta.FieldMeta.from_type" title="Link to this definition">¶</a></dt>
 <dd><p>Builder method to create a FieldMeta from a type annotation.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
@@ -323,7 +326,7 @@ data-aria-dark="Switch to auto color mode">
 
 <dl class="py method">
 <dt class="sig sig-object py" id="polyfactory.field_meta.FieldMeta.get_constraints_metadata">
-<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">get_constraints_metadata</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">annotation</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Any</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Sequence</span><span class="p"><span class="pre">[</span></span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../_modules/polyfactory/field_meta.html#FieldMeta.get_constraints_metadata"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#polyfactory.field_meta.FieldMeta.get_constraints_metadata" title="Link to this definition">¶</a></dt>
+<em class="property"><span class="k"><span class="pre">classmethod</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">get_constraints_metadata</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">annotation</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Any</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Sequence</span><span class="p"><span class="pre">[</span></span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../_modules/polyfactory/field_meta.html#FieldMeta.get_constraints_metadata"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#polyfactory.field_meta.FieldMeta.get_constraints_metadata" title="Link to this definition">¶</a></dt>
 <dd><p>Get the metadatas of the constraints from the given annotation.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
@@ -389,7 +392,7 @@ data-aria-dark="Switch to auto color mode">
   </div>
 </footer>
       <script src="../_static/documentation_options.js?v=6b33f912"></script>
-      <script src="../_static/doctools.js?v=9a2dae69"></script>
+      <script src="../_static/doctools.js?v=9bcbadda"></script>
       <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
       <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
       <script src="../_static/copybutton.js?v=f281be69"></script>
@@ -399,6 +402,5 @@ data-aria-dark="Switch to auto color mode">
       <script src="../_static/togglebutton.js?v=4a39c7ea"></script>
       <script src="../_static/design-tabs.js?v=f930bc37"></script>
       <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
-      <script src="../_static/shibuya.js?v=1d2088d1"></script>
-      <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script></body>
+      <script src="../_static/shibuya.js?v=c1cf1a6b"></script></body>
 </html>

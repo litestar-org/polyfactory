@@ -5,8 +5,8 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0"><title>faker.proxy - Polyfactory</title><link rel="shortcut icon" href="../../_static/logo-default.png"/><link rel="index" title="Index" href="../../genindex.html" /><link rel="search" title="Search" href="../../search.html" /><script>
     function setColorMode(t){let e=document.documentElement;e.setAttribute("data-color-mode",t);let a=window.matchMedia&&window.matchMedia("(prefers-color-scheme: dark)").matches,s=t;"auto"===t&&(s=a?"dark":"light"),"light"===s?(e.classList.remove("dark"),e.classList.add("light")):(e.classList.remove("light"),e.classList.add("dark"))}
     setColorMode(localStorage._theme||"auto");
-  </script><link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=397bb51e" />
-    <link rel="stylesheet" type="text/css" href="../../_static/shibuya.css?v=d0008d65" />
+  </script><link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=d03f443e" />
+    <link rel="stylesheet" type="text/css" href="../../_static/shibuya.css?v=14737038" />
     <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css?v=76b2166b" />
     <link rel="stylesheet" type="text/css" href="../../_static/togglebutton.css?v=13237357" />
     <link rel="stylesheet" type="text/css" href="../../_static/sphinx-design.min.css?v=95c83b7e" />
@@ -23,7 +23,7 @@
 }
 </style>
     <meta property="og:type" content="website"/><meta property="og:title" content="faker.proxy"/>
-<meta name="twitter:card" content="summary"/>
+    <meta name="twitter:card" content="summary"/>
   </head>
 <body><div class="sy-head">
   <div class="sy-head-blur"></div>
@@ -33,13 +33,13 @@
       <img class="dark-logo" src="../../_static/logo-default.png" alt="polyfactory" height="28" loading="lazy" />
       <strong>polyfactory</strong>
     </a>
-    <div class="sy-head-nav" id="HeadNav">
+    <div class="sy-head-nav" id="head-nav">
       <nav class="sy-head-links"><ul><li class="link"><a href="../../index.html">Home</a></li>
-      <li class="link"><button type="button">
+      <li class="link"><button class="js-menu" type="button" id="nav-trigger-2" aria-controls="nav-children-2">
             <span>Community</span>
             <i class="i-lucide chevron-down"></i>
           </button>
-        <ul><li><a href="../../contribution-guide.html">
+        <ul id="nav-children-2" aria-labelledby="nav-trigger-2"><li><a href="../../contribution-guide.html">
                 <span>Contributing</span>
                 <small>Learn how to contribute to the Type Lens project</small>
               </a></li><li><a href="https://github.com/litestar-org/.github?tab=coc-ov-file">
@@ -50,11 +50,11 @@
                 <small>Overview of Litestar's security protocols</small>
               </a></li></ul>
       </li>
-      <li class="link"><button type="button">
+      <li class="link"><button class="js-menu" type="button" id="nav-trigger-3" aria-controls="nav-children-3">
             <span>About</span>
             <i class="i-lucide chevron-down"></i>
           </button>
-        <ul><li><a href="https://litestar.dev/about/organization">
+        <ul id="nav-children-3" aria-labelledby="nav-trigger-3"><li><a href="https://litestar.dev/about/organization">
                 <span>Litestar Organization</span>
                 <small>Details about the Litestar organization</small>
               </a></li><li><a href="../../releases.html">
@@ -62,20 +62,20 @@
                 <small>Explore the release process, versioning, and deprecation policy for Litestar</small>
               </a></li></ul>
       </li>
-      <li class="link"><button type="button">
+      <li class="link"><button class="js-menu" type="button" id="nav-trigger-4" aria-controls="nav-children-4">
             <span>Release notes</span>
             <i class="i-lucide chevron-down"></i>
           </button>
-        <ul><li><a href="../../changelog.html">
+        <ul id="nav-children-4" aria-labelledby="nav-trigger-4"><li><a href="../../changelog.html">
                 <span>Changelog</span>
                 <small>All changes in the current major version</small>
               </a></li></ul>
       </li>
-      <li class="link"><button type="button">
+      <li class="link"><button class="js-menu" type="button" id="nav-trigger-5" aria-controls="nav-children-5">
             <span>Help</span>
             <i class="i-lucide chevron-down"></i>
           </button>
-        <ul><li><a href="https://discord.gg/litestar">
+        <ul id="nav-children-5" aria-labelledby="nav-trigger-5"><li><a href="https://discord.gg/litestar">
                 <span>Discord Help Forum</span>
                 <small>Dedicated Discord help forum</small>
               </a></li><li><a href="https://github.com/litestar-org/polyfactory/discussions">
@@ -105,11 +105,11 @@ data-aria-auto="Switch to light color mode"
 data-aria-light="Switch to dark color mode"
 data-aria-dark="Switch to auto color mode">
 <i class="i-lucide theme-icon"></i>
-</button><button class="md:hidden flex items-center js-menu" aria-label="Menu" type="button" aria-controls="HeadNav" aria-expanded="false">
+</button><button class="md:hidden flex items-center js-menu" aria-label="Menu" type="button" aria-controls="head-nav" aria-expanded="false">
         <div class="hamburger">
           <span class="hamburger_1"></span>
-          <span class="hamburger_2 -translate-x-2"></span>
-          <span class="hamburger_3 -translate-x-1"></span>
+          <span class="hamburger_2"></span>
+          <span class="hamburger_3"></span>
         </div>
       </button>
     </div>
@@ -192,7 +192,10 @@ data-aria-dark="Switch to auto color mode">
     <iconify-icon icon="simple-icons:github"></iconify-icon>
   </span>
   <span class="flex-grow px-2 break-all">
-    <span>litestar-org/polyfactory</span>
+    
+    
+      <span>polyfactory</span>
+    
     <span class="flex text-sm repo-stats-count">
       <span class="flex items-center pr-3">
         <iconify-icon icon="lucide:star"></iconify-icon>
@@ -545,93 +548,100 @@ data-aria-dark="Switch to auto color mode">
 </span><span data-line="305">    <span class="k">def</span><span class="w"> </span><span class="nf">clear</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 </span><span data-line="306">        <span class="bp">self</span><span class="o">.</span><span class="n">_seen</span> <span class="o">=</span> <span class="p">{}</span>
 </span><span data-line="307">
-</span><span data-line="308">    <span class="k">def</span><span class="w"> </span><span class="fm">__getattr__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Any</span><span class="p">:</span>
-</span><span data-line="309">        <span class="n">obj</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_proxy</span><span class="p">,</span> <span class="n">name</span><span class="p">)</span>
-</span><span data-line="310">        <span class="k">if</span> <span class="nb">callable</span><span class="p">(</span><span class="n">obj</span><span class="p">):</span>
-</span><span data-line="311">            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_wrap</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">obj</span><span class="p">)</span>
-</span><span data-line="312">        <span class="k">else</span><span class="p">:</span>
-</span><span data-line="313">            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s2">&quot;Accessing non-functions through .unique is not supported.&quot;</span><span class="p">)</span>
+</span><span data-line="308">    <span class="k">def</span><span class="w"> </span><span class="fm">__getitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">locale</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">UniqueProxy</span><span class="p">:</span>
+</span><span data-line="309">        <span class="n">locale_proxy</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_proxy</span><span class="p">[</span><span class="n">locale</span><span class="p">]</span>
+</span><span data-line="310">        <span class="n">unique_proxy</span> <span class="o">=</span> <span class="n">UniqueProxy</span><span class="p">(</span><span class="n">locale_proxy</span><span class="p">)</span>
+</span><span data-line="311">        <span class="n">unique_proxy</span><span class="o">.</span><span class="n">_seen</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_seen</span>
+</span><span data-line="312">        <span class="n">unique_proxy</span><span class="o">.</span><span class="n">_sentinel</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_sentinel</span>
+</span><span data-line="313">        <span class="k">return</span> <span class="n">unique_proxy</span>
 </span><span data-line="314">
-</span><span data-line="315">    <span class="k">def</span><span class="w"> </span><span class="nf">__getstate__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-</span><span data-line="316">        <span class="c1"># Copy the object&#39;s state from self.__dict__ which contains</span>
-</span><span data-line="317">        <span class="c1"># all our instance attributes. Always use the dict.copy()</span>
-</span><span data-line="318">        <span class="c1"># method to avoid modifying the original state.</span>
-</span><span data-line="319">        <span class="n">state</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="vm">__dict__</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
-</span><span data-line="320">        <span class="k">return</span> <span class="n">state</span>
+</span><span data-line="315">    <span class="k">def</span><span class="w"> </span><span class="fm">__getattr__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Any</span><span class="p">:</span>
+</span><span data-line="316">        <span class="n">obj</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_proxy</span><span class="p">,</span> <span class="n">name</span><span class="p">)</span>
+</span><span data-line="317">        <span class="k">if</span> <span class="nb">callable</span><span class="p">(</span><span class="n">obj</span><span class="p">):</span>
+</span><span data-line="318">            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_wrap</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">obj</span><span class="p">)</span>
+</span><span data-line="319">        <span class="k">else</span><span class="p">:</span>
+</span><span data-line="320">            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s2">&quot;Accessing non-functions through .unique is not supported.&quot;</span><span class="p">)</span>
 </span><span data-line="321">
-</span><span data-line="322">    <span class="k">def</span><span class="w"> </span><span class="nf">__setstate__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">state</span><span class="p">):</span>
-</span><span data-line="323">        <span class="bp">self</span><span class="o">.</span><span class="vm">__dict__</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">state</span><span class="p">)</span>
-</span><span data-line="324">
-</span><span data-line="325">    <span class="k">def</span><span class="w"> </span><span class="nf">_make_hashable</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Any</span><span class="p">:</span>
-</span><span data-line="326"><span class="w">        </span><span class="sd">&quot;&quot;&quot;Convert unhashable types (e.g., dict) to a hashable representation.&quot;&quot;&quot;</span>
-</span><span data-line="327">        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>
-</span><span data-line="328">            <span class="k">return</span> <span class="nb">tuple</span><span class="p">(</span><span class="nb">sorted</span><span class="p">((</span><span class="n">k</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_make_hashable</span><span class="p">(</span><span class="n">v</span><span class="p">))</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">value</span><span class="o">.</span><span class="n">items</span><span class="p">()))</span>
-</span><span data-line="329">        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span>
-</span><span data-line="330">            <span class="k">return</span> <span class="nb">tuple</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_make_hashable</span><span class="p">(</span><span class="n">v</span><span class="p">)</span> <span class="k">for</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">value</span><span class="p">)</span>
-</span><span data-line="331">        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="nb">set</span><span class="p">):</span>
-</span><span data-line="332">            <span class="k">return</span> <span class="nb">frozenset</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_make_hashable</span><span class="p">(</span><span class="n">v</span><span class="p">)</span> <span class="k">for</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">value</span><span class="p">)</span>
-</span><span data-line="333">        <span class="k">return</span> <span class="n">value</span>
-</span><span data-line="334">
-</span><span data-line="335">    <span class="k">def</span><span class="w"> </span><span class="nf">_wrap</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">function</span><span class="p">:</span> <span class="n">Callable</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Callable</span><span class="p">:</span>
-</span><span data-line="336">        <span class="nd">@functools</span><span class="o">.</span><span class="n">wraps</span><span class="p">(</span><span class="n">function</span><span class="p">)</span>
-</span><span data-line="337">        <span class="k">def</span><span class="w"> </span><span class="nf">wrapper</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
-</span><span data-line="338">            <span class="n">key</span> <span class="o">=</span> <span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">args</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">(</span><span class="nb">sorted</span><span class="p">(</span><span class="n">kwargs</span><span class="o">.</span><span class="n">items</span><span class="p">())))</span>
-</span><span data-line="339">
-</span><span data-line="340">            <span class="n">generated</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_seen</span><span class="o">.</span><span class="n">setdefault</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="p">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_sentinel</span><span class="p">})</span>
+</span><span data-line="322">    <span class="k">def</span><span class="w"> </span><span class="nf">__getstate__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+</span><span data-line="323">        <span class="c1"># Copy the object&#39;s state from self.__dict__ which contains</span>
+</span><span data-line="324">        <span class="c1"># all our instance attributes. Always use the dict.copy()</span>
+</span><span data-line="325">        <span class="c1"># method to avoid modifying the original state.</span>
+</span><span data-line="326">        <span class="n">state</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="vm">__dict__</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+</span><span data-line="327">        <span class="k">return</span> <span class="n">state</span>
+</span><span data-line="328">
+</span><span data-line="329">    <span class="k">def</span><span class="w"> </span><span class="nf">__setstate__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">state</span><span class="p">):</span>
+</span><span data-line="330">        <span class="bp">self</span><span class="o">.</span><span class="vm">__dict__</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">state</span><span class="p">)</span>
+</span><span data-line="331">
+</span><span data-line="332">    <span class="k">def</span><span class="w"> </span><span class="nf">_make_hashable</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Any</span><span class="p">:</span>
+</span><span data-line="333"><span class="w">        </span><span class="sd">&quot;&quot;&quot;Convert unhashable types (e.g., dict) to a hashable representation.&quot;&quot;&quot;</span>
+</span><span data-line="334">        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>
+</span><span data-line="335">            <span class="k">return</span> <span class="nb">tuple</span><span class="p">(</span><span class="nb">sorted</span><span class="p">((</span><span class="n">k</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_make_hashable</span><span class="p">(</span><span class="n">v</span><span class="p">))</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">value</span><span class="o">.</span><span class="n">items</span><span class="p">()))</span>
+</span><span data-line="336">        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span>
+</span><span data-line="337">            <span class="k">return</span> <span class="nb">tuple</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_make_hashable</span><span class="p">(</span><span class="n">v</span><span class="p">)</span> <span class="k">for</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">value</span><span class="p">)</span>
+</span><span data-line="338">        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="nb">set</span><span class="p">):</span>
+</span><span data-line="339">            <span class="k">return</span> <span class="nb">frozenset</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_make_hashable</span><span class="p">(</span><span class="n">v</span><span class="p">)</span> <span class="k">for</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">value</span><span class="p">)</span>
+</span><span data-line="340">        <span class="k">return</span> <span class="n">value</span>
 </span><span data-line="341">
-</span><span data-line="342">            <span class="c1"># With use of a sentinel value rather than None, we leave</span>
-</span><span data-line="343">            <span class="c1"># None open as a valid return value.</span>
-</span><span data-line="344">            <span class="n">retval</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_sentinel</span>
-</span><span data-line="345">            <span class="n">hashable_retval</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_make_hashable</span><span class="p">(</span><span class="n">retval</span><span class="p">)</span>
+</span><span data-line="342">    <span class="k">def</span><span class="w"> </span><span class="nf">_wrap</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">function</span><span class="p">:</span> <span class="n">Callable</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Callable</span><span class="p">:</span>
+</span><span data-line="343">        <span class="nd">@functools</span><span class="o">.</span><span class="n">wraps</span><span class="p">(</span><span class="n">function</span><span class="p">)</span>
+</span><span data-line="344">        <span class="k">def</span><span class="w"> </span><span class="nf">wrapper</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+</span><span data-line="345">            <span class="n">key</span> <span class="o">=</span> <span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">args</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">(</span><span class="nb">sorted</span><span class="p">(</span><span class="n">kwargs</span><span class="o">.</span><span class="n">items</span><span class="p">())))</span>
 </span><span data-line="346">
-</span><span data-line="347">            <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">_UNIQUE_ATTEMPTS</span><span class="p">):</span>
-</span><span data-line="348">                <span class="k">if</span> <span class="n">hashable_retval</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">generated</span><span class="p">:</span>
-</span><span data-line="349">                    <span class="k">break</span>
-</span><span data-line="350">                <span class="n">retval</span> <span class="o">=</span> <span class="n">function</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
-</span><span data-line="351">                <span class="n">hashable_retval</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_make_hashable</span><span class="p">(</span><span class="n">retval</span><span class="p">)</span>
-</span><span data-line="352">            <span class="k">else</span><span class="p">:</span>
-</span><span data-line="353">                <span class="k">raise</span> <span class="n">UniquenessException</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Got duplicated values after </span><span class="si">{</span><span class="n">_UNIQUE_ATTEMPTS</span><span class="si">:</span><span class="s2">,</span><span class="si">}</span><span class="s2"> iterations.&quot;</span><span class="p">)</span>
-</span><span data-line="354">
-</span><span data-line="355">            <span class="n">generated</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">hashable_retval</span><span class="p">)</span>
-</span><span data-line="356">
-</span><span data-line="357">            <span class="k">return</span> <span class="n">retval</span>
-</span><span data-line="358">
-</span><span data-line="359">        <span class="k">return</span> <span class="n">wrapper</span>
-</span><span data-line="360">
+</span><span data-line="347">            <span class="n">generated</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_seen</span><span class="o">.</span><span class="n">setdefault</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="p">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_sentinel</span><span class="p">})</span>
+</span><span data-line="348">
+</span><span data-line="349">            <span class="c1"># With use of a sentinel value rather than None, we leave</span>
+</span><span data-line="350">            <span class="c1"># None open as a valid return value.</span>
+</span><span data-line="351">            <span class="n">retval</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_sentinel</span>
+</span><span data-line="352">            <span class="n">hashable_retval</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_make_hashable</span><span class="p">(</span><span class="n">retval</span><span class="p">)</span>
+</span><span data-line="353">
+</span><span data-line="354">            <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">_UNIQUE_ATTEMPTS</span><span class="p">):</span>
+</span><span data-line="355">                <span class="k">if</span> <span class="n">hashable_retval</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">generated</span><span class="p">:</span>
+</span><span data-line="356">                    <span class="k">break</span>
+</span><span data-line="357">                <span class="n">retval</span> <span class="o">=</span> <span class="n">function</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+</span><span data-line="358">                <span class="n">hashable_retval</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_make_hashable</span><span class="p">(</span><span class="n">retval</span><span class="p">)</span>
+</span><span data-line="359">            <span class="k">else</span><span class="p">:</span>
+</span><span data-line="360">                <span class="k">raise</span> <span class="n">UniquenessException</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Got duplicated values after </span><span class="si">{</span><span class="n">_UNIQUE_ATTEMPTS</span><span class="si">:</span><span class="s2">,</span><span class="si">}</span><span class="s2"> iterations.&quot;</span><span class="p">)</span>
 </span><span data-line="361">
-</span><span data-line="362"><span class="k">class</span><span class="w"> </span><span class="nc">OptionalProxy</span><span class="p">:</span>
-</span><span data-line="363"><span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
-</span><span data-line="364"><span class="sd">    Return either a fake value or None, with a customizable probability.</span>
-</span><span data-line="365"><span class="sd">    &quot;&quot;&quot;</span>
-</span><span data-line="366">
-</span><span data-line="367">    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">proxy</span><span class="p">:</span> <span class="n">Faker</span><span class="p">):</span>
-</span><span data-line="368">        <span class="bp">self</span><span class="o">.</span><span class="n">_proxy</span> <span class="o">=</span> <span class="n">proxy</span>
-</span><span data-line="369">
-</span><span data-line="370">    <span class="k">def</span><span class="w"> </span><span class="fm">__getattr__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Any</span><span class="p">:</span>
-</span><span data-line="371">        <span class="n">obj</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_proxy</span><span class="p">,</span> <span class="n">name</span><span class="p">)</span>
-</span><span data-line="372">        <span class="k">if</span> <span class="nb">callable</span><span class="p">(</span><span class="n">obj</span><span class="p">):</span>
-</span><span data-line="373">            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_wrap</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">obj</span><span class="p">)</span>
-</span><span data-line="374">        <span class="k">else</span><span class="p">:</span>
-</span><span data-line="375">            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s2">&quot;Accessing non-functions through .optional is not supported.&quot;</span><span class="p">)</span>
+</span><span data-line="362">            <span class="n">generated</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">hashable_retval</span><span class="p">)</span>
+</span><span data-line="363">
+</span><span data-line="364">            <span class="k">return</span> <span class="n">retval</span>
+</span><span data-line="365">
+</span><span data-line="366">        <span class="k">return</span> <span class="n">wrapper</span>
+</span><span data-line="367">
+</span><span data-line="368">
+</span><span data-line="369"><span class="k">class</span><span class="w"> </span><span class="nc">OptionalProxy</span><span class="p">:</span>
+</span><span data-line="370"><span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+</span><span data-line="371"><span class="sd">    Return either a fake value or None, with a customizable probability.</span>
+</span><span data-line="372"><span class="sd">    &quot;&quot;&quot;</span>
+</span><span data-line="373">
+</span><span data-line="374">    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">proxy</span><span class="p">:</span> <span class="n">Faker</span><span class="p">):</span>
+</span><span data-line="375">        <span class="bp">self</span><span class="o">.</span><span class="n">_proxy</span> <span class="o">=</span> <span class="n">proxy</span>
 </span><span data-line="376">
-</span><span data-line="377">    <span class="k">def</span><span class="w"> </span><span class="nf">__getstate__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-</span><span data-line="378">        <span class="c1"># Copy the object&#39;s state from self.__dict__ which contains</span>
-</span><span data-line="379">        <span class="c1"># all our instance attributes. Always use the dict.copy()</span>
-</span><span data-line="380">        <span class="c1"># method to avoid modifying the original state.</span>
-</span><span data-line="381">        <span class="n">state</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="vm">__dict__</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
-</span><span data-line="382">        <span class="k">return</span> <span class="n">state</span>
+</span><span data-line="377">    <span class="k">def</span><span class="w"> </span><span class="fm">__getattr__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Any</span><span class="p">:</span>
+</span><span data-line="378">        <span class="n">obj</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_proxy</span><span class="p">,</span> <span class="n">name</span><span class="p">)</span>
+</span><span data-line="379">        <span class="k">if</span> <span class="nb">callable</span><span class="p">(</span><span class="n">obj</span><span class="p">):</span>
+</span><span data-line="380">            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_wrap</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">obj</span><span class="p">)</span>
+</span><span data-line="381">        <span class="k">else</span><span class="p">:</span>
+</span><span data-line="382">            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s2">&quot;Accessing non-functions through .optional is not supported.&quot;</span><span class="p">)</span>
 </span><span data-line="383">
-</span><span data-line="384">    <span class="k">def</span><span class="w"> </span><span class="nf">__setstate__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">state</span><span class="p">):</span>
-</span><span data-line="385">        <span class="bp">self</span><span class="o">.</span><span class="vm">__dict__</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">state</span><span class="p">)</span>
-</span><span data-line="386">
-</span><span data-line="387">    <span class="k">def</span><span class="w"> </span><span class="nf">_wrap</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">function</span><span class="p">:</span> <span class="n">Callable</span><span class="p">[</span><span class="o">...</span><span class="p">,</span> <span class="n">RetType</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">Callable</span><span class="p">[</span><span class="o">...</span><span class="p">,</span> <span class="n">RetType</span> <span class="o">|</span> <span class="kc">None</span><span class="p">]:</span>
-</span><span data-line="388">        <span class="nd">@functools</span><span class="o">.</span><span class="n">wraps</span><span class="p">(</span><span class="n">function</span><span class="p">)</span>
-</span><span data-line="389">        <span class="k">def</span><span class="w"> </span><span class="nf">wrapper</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span> <span class="n">prob</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.5</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">RetType</span> <span class="o">|</span> <span class="kc">None</span><span class="p">:</span>
-</span><span data-line="390">            <span class="k">if</span> <span class="ow">not</span> <span class="mi">0</span> <span class="o">&lt;</span> <span class="n">prob</span> <span class="o">&lt;=</span> <span class="mf">1.0</span><span class="p">:</span>
-</span><span data-line="391">                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;prob must be between 0 and 1&quot;</span><span class="p">)</span>
-</span><span data-line="392">            <span class="k">return</span> <span class="n">function</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span> <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_proxy</span><span class="o">.</span><span class="n">boolean</span><span class="p">(</span><span class="n">chance_of_getting_true</span><span class="o">=</span><span class="nb">int</span><span class="p">(</span><span class="n">prob</span> <span class="o">*</span> <span class="mi">100</span><span class="p">))</span> <span class="k">else</span> <span class="kc">None</span>
+</span><span data-line="384">    <span class="k">def</span><span class="w"> </span><span class="nf">__getstate__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+</span><span data-line="385">        <span class="c1"># Copy the object&#39;s state from self.__dict__ which contains</span>
+</span><span data-line="386">        <span class="c1"># all our instance attributes. Always use the dict.copy()</span>
+</span><span data-line="387">        <span class="c1"># method to avoid modifying the original state.</span>
+</span><span data-line="388">        <span class="n">state</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="vm">__dict__</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+</span><span data-line="389">        <span class="k">return</span> <span class="n">state</span>
+</span><span data-line="390">
+</span><span data-line="391">    <span class="k">def</span><span class="w"> </span><span class="nf">__setstate__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">state</span><span class="p">):</span>
+</span><span data-line="392">        <span class="bp">self</span><span class="o">.</span><span class="vm">__dict__</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">state</span><span class="p">)</span>
 </span><span data-line="393">
-</span><span data-line="394">        <span class="k">return</span> <span class="n">wrapper</span>
+</span><span data-line="394">    <span class="k">def</span><span class="w"> </span><span class="nf">_wrap</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">function</span><span class="p">:</span> <span class="n">Callable</span><span class="p">[</span><span class="o">...</span><span class="p">,</span> <span class="n">RetType</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">Callable</span><span class="p">[</span><span class="o">...</span><span class="p">,</span> <span class="n">RetType</span> <span class="o">|</span> <span class="kc">None</span><span class="p">]:</span>
+</span><span data-line="395">        <span class="nd">@functools</span><span class="o">.</span><span class="n">wraps</span><span class="p">(</span><span class="n">function</span><span class="p">)</span>
+</span><span data-line="396">        <span class="k">def</span><span class="w"> </span><span class="nf">wrapper</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span> <span class="n">prob</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.5</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">RetType</span> <span class="o">|</span> <span class="kc">None</span><span class="p">:</span>
+</span><span data-line="397">            <span class="k">if</span> <span class="ow">not</span> <span class="mi">0</span> <span class="o">&lt;</span> <span class="n">prob</span> <span class="o">&lt;=</span> <span class="mf">1.0</span><span class="p">:</span>
+</span><span data-line="398">                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;prob must be between 0 and 1&quot;</span><span class="p">)</span>
+</span><span data-line="399">            <span class="k">return</span> <span class="n">function</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span> <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_proxy</span><span class="o">.</span><span class="n">boolean</span><span class="p">(</span><span class="n">chance_of_getting_true</span><span class="o">=</span><span class="nb">int</span><span class="p">(</span><span class="n">prob</span> <span class="o">*</span> <span class="mi">100</span><span class="p">))</span> <span class="k">else</span> <span class="kc">None</span>
+</span><span data-line="400">
+</span><span data-line="401">        <span class="k">return</span> <span class="n">wrapper</span>
 </span></pre></div>
         </article><button class="back-to-top" type="button">
   <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
@@ -666,7 +676,7 @@ data-aria-dark="Switch to auto color mode">
   </div>
 </footer>
       <script src="../../_static/documentation_options.js?v=6b33f912"></script>
-      <script src="../../_static/doctools.js?v=9a2dae69"></script>
+      <script src="../../_static/doctools.js?v=9bcbadda"></script>
       <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
       <script src="../../_static/clipboard.min.js?v=a7894cd8"></script>
       <script src="../../_static/copybutton.js?v=f281be69"></script>
@@ -676,6 +686,5 @@ data-aria-dark="Switch to auto color mode">
       <script src="../../_static/togglebutton.js?v=4a39c7ea"></script>
       <script src="../../_static/design-tabs.js?v=f930bc37"></script>
       <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
-      <script src="../../_static/shibuya.js?v=1d2088d1"></script>
-      <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script></body>
+      <script src="../../_static/shibuya.js?v=c1cf1a6b"></script></body>
 </html>

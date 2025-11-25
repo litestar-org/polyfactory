@@ -5,8 +5,8 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0"><title>Usage Guide - Polyfactory</title><link rel="shortcut icon" href="../_static/logo-default.png"/><link rel="index" title="Index" href="../genindex.html" /><link rel="search" title="Search" href="../search.html" /><link rel="next" title="Declaring Factories" href="declaring_factories.html" /><link rel="prev" title="Getting Started" href="../getting-started.html" /><script>
     function setColorMode(t){let e=document.documentElement;e.setAttribute("data-color-mode",t);let a=window.matchMedia&&window.matchMedia("(prefers-color-scheme: dark)").matches,s=t;"auto"===t&&(s=a?"dark":"light"),"light"===s?(e.classList.remove("dark"),e.classList.add("light")):(e.classList.remove("light"),e.classList.add("dark"))}
     setColorMode(localStorage._theme||"auto");
-  </script><link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=397bb51e" />
-    <link rel="stylesheet" type="text/css" href="../_static/shibuya.css?v=d0008d65" />
+  </script><link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=d03f443e" />
+    <link rel="stylesheet" type="text/css" href="../_static/shibuya.css?v=14737038" />
     <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
     <link rel="stylesheet" type="text/css" href="../_static/togglebutton.css?v=13237357" />
     <link rel="stylesheet" type="text/css" href="../_static/sphinx-design.min.css?v=95c83b7e" />
@@ -23,7 +23,7 @@
 }
 </style>
     <meta property="og:type" content="website"/><meta property="og:title" content="Usage Guide"/>
-<meta name="twitter:card" content="summary"/>
+    <meta name="twitter:card" content="summary"/>
   </head>
 <body><div class="sy-head">
   <div class="sy-head-blur"></div>
@@ -33,13 +33,13 @@
       <img class="dark-logo" src="../_static/logo-default.png" alt="polyfactory" height="28" loading="lazy" />
       <strong>polyfactory</strong>
     </a>
-    <div class="sy-head-nav" id="HeadNav">
+    <div class="sy-head-nav" id="head-nav">
       <nav class="sy-head-links"><ul><li class="link"><a href="../index.html">Home</a></li>
-      <li class="link"><button type="button">
+      <li class="link"><button class="js-menu" type="button" id="nav-trigger-2" aria-controls="nav-children-2">
             <span>Community</span>
             <i class="i-lucide chevron-down"></i>
           </button>
-        <ul><li><a href="../contribution-guide.html">
+        <ul id="nav-children-2" aria-labelledby="nav-trigger-2"><li><a href="../contribution-guide.html">
                 <span>Contributing</span>
                 <small>Learn how to contribute to the Type Lens project</small>
               </a></li><li><a href="https://github.com/litestar-org/.github?tab=coc-ov-file">
@@ -50,11 +50,11 @@
                 <small>Overview of Litestar's security protocols</small>
               </a></li></ul>
       </li>
-      <li class="link"><button type="button">
+      <li class="link"><button class="js-menu" type="button" id="nav-trigger-3" aria-controls="nav-children-3">
             <span>About</span>
             <i class="i-lucide chevron-down"></i>
           </button>
-        <ul><li><a href="https://litestar.dev/about/organization">
+        <ul id="nav-children-3" aria-labelledby="nav-trigger-3"><li><a href="https://litestar.dev/about/organization">
                 <span>Litestar Organization</span>
                 <small>Details about the Litestar organization</small>
               </a></li><li><a href="../releases.html">
@@ -62,20 +62,20 @@
                 <small>Explore the release process, versioning, and deprecation policy for Litestar</small>
               </a></li></ul>
       </li>
-      <li class="link"><button type="button">
+      <li class="link"><button class="js-menu" type="button" id="nav-trigger-4" aria-controls="nav-children-4">
             <span>Release notes</span>
             <i class="i-lucide chevron-down"></i>
           </button>
-        <ul><li><a href="../changelog.html">
+        <ul id="nav-children-4" aria-labelledby="nav-trigger-4"><li><a href="../changelog.html">
                 <span>Changelog</span>
                 <small>All changes in the current major version</small>
               </a></li></ul>
       </li>
-      <li class="link"><button type="button">
+      <li class="link"><button class="js-menu" type="button" id="nav-trigger-5" aria-controls="nav-children-5">
             <span>Help</span>
             <i class="i-lucide chevron-down"></i>
           </button>
-        <ul><li><a href="https://discord.gg/litestar">
+        <ul id="nav-children-5" aria-labelledby="nav-trigger-5"><li><a href="https://discord.gg/litestar">
                 <span>Discord Help Forum</span>
                 <small>Dedicated Discord help forum</small>
               </a></li><li><a href="https://github.com/litestar-org/polyfactory/discussions">
@@ -105,11 +105,11 @@ data-aria-auto="Switch to light color mode"
 data-aria-light="Switch to dark color mode"
 data-aria-dark="Switch to auto color mode">
 <i class="i-lucide theme-icon"></i>
-</button><button class="md:hidden flex items-center js-menu" aria-label="Menu" type="button" aria-controls="HeadNav" aria-expanded="false">
+</button><button class="md:hidden flex items-center js-menu" aria-label="Menu" type="button" aria-controls="head-nav" aria-expanded="false">
         <div class="hamburger">
           <span class="hamburger_1"></span>
-          <span class="hamburger_2 -translate-x-2"></span>
-          <span class="hamburger_3 -translate-x-1"></span>
+          <span class="hamburger_2"></span>
+          <span class="hamburger_3"></span>
         </div>
       </button>
     </div>
@@ -192,7 +192,10 @@ data-aria-dark="Switch to auto color mode">
     <iconify-icon icon="simple-icons:github"></iconify-icon>
   </span>
   <span class="flex-grow px-2 break-all">
-    <span>litestar-org/polyfactory</span>
+    
+    
+      <span>polyfactory</span>
+    
     <span class="flex text-sm repo-stats-count">
       <span class="flex items-center pr-3">
         <iconify-icon icon="lucide:star"></iconify-icon>
@@ -300,7 +303,7 @@ data-aria-dark="Switch to auto color mode">
   </div>
 </footer>
       <script src="../_static/documentation_options.js?v=6b33f912"></script>
-      <script src="../_static/doctools.js?v=9a2dae69"></script>
+      <script src="../_static/doctools.js?v=9bcbadda"></script>
       <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
       <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
       <script src="../_static/copybutton.js?v=f281be69"></script>
@@ -310,6 +313,5 @@ data-aria-dark="Switch to auto color mode">
       <script src="../_static/togglebutton.js?v=4a39c7ea"></script>
       <script src="../_static/design-tabs.js?v=f930bc37"></script>
       <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
-      <script src="../_static/shibuya.js?v=1d2088d1"></script>
-      <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script></body>
+      <script src="../_static/shibuya.js?v=c1cf1a6b"></script></body>
 </html>
