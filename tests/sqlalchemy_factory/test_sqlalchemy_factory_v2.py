@@ -4,7 +4,7 @@ from typing import Any
 from uuid import UUID
 
 import pytest
-from sqlalchemy import Text, __version__, orm, types
+from sqlalchemy import ForeignKey, Text, __version__, orm, types
 from sqlalchemy.dialects.mssql import JSON as MSSQL_JSON
 from sqlalchemy.dialects.mysql import JSON as MYSQL_JSON
 from sqlalchemy.dialects.postgresql import ARRAY, CIDR, HSTORE, INET, JSON, JSONB
