@@ -141,7 +141,7 @@ def test_with_generics() -> None:
         x: T
 
     class FooFactory(AttrsFactory[Foo[str]]):
-        __model__ = Foo
+        __model__ = Foo  # type: ignore[assignment]
 
     foo = FooFactory.build()
     foo_dict = asdict(foo)

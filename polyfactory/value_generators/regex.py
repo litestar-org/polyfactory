@@ -38,7 +38,7 @@ from string import ascii_letters, ascii_lowercase, ascii_uppercase, digits, prin
 from typing import TYPE_CHECKING, Any
 
 try:  # >=3.11
-    from re._parser import SubPattern, parse
+    from re._parser import SubPattern, parse  # type: ignore[import-not-found]
 except ImportError:  # < 3.11
     from sre_parse import (
         SubPattern,  # pylint: disable=deprecated-module
