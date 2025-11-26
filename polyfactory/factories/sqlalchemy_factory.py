@@ -211,6 +211,9 @@ class SQLAlchemyFactory(Generic[T], BaseFactory[T]):
         if not cls.should_dataclass_init_field(column.name):
             return False
 
+        if column.computed and (cls.__session__ is not None or cls.__async_session__ is not None):
+            return False
+
         return bool(cls.__set_foreign_keys__ or not column.foreign_keys)
 
     @classmethod
