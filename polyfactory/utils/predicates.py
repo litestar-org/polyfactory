@@ -4,9 +4,6 @@ from inspect import isclass
 from typing import Annotated, Any, ForwardRef, Literal, NewType, Optional, TypeVar, get_args
 
 from typing_extensions import (
-    Literal as TypingExtensionLiteral,
-)
-from typing_extensions import (
     NotRequired,
     ParamSpec,
     Required,
@@ -98,8 +95,11 @@ def is_literal(annotation: Any) -> bool:
 
     :returns: A boolean.
     """
-    origin = get_type_origin(annotation)
-    return origin is Literal or origin is TypingExtensionLiteral
+    return (
+        get_type_origin(annotation) is Literal
+        or repr(annotation).startswith("typing.Literal")
+        or repr(annotation).startswith("typing_extensions.Literal")
+    )
 
 
 def is_new_type(annotation: Any) -> "TypeGuard[type[NewType]]":

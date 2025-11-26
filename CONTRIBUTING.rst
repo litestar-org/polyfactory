@@ -7,8 +7,8 @@ Setting up the environment
 1. Install `uv <https://github.com/astral-sh/uv>`_
 2. Run ``uv sync --all-extras`` to create a `virtual environment <https://docs.python.org/3/tutorial/venv.html>`_ and install
    the dependencies
-3. Install `pre-commit <https://pre-commit.com/>`_
-4. Run ``pre-commit install`` to install pre-commit hooks
+3. Install `prek <https://prek.j178.dev/>`_
+4. Run ``prek install`` to install pre-commit hooks
 
 Code contributions
 ------------------
