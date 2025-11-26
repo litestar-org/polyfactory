@@ -9,38 +9,13 @@ from sqlalchemy.dialects.mssql import JSON as MSSQL_JSON
 from sqlalchemy.dialects.mysql import JSON as MYSQL_JSON
 from sqlalchemy.dialects.postgresql import ARRAY, CIDR, HSTORE, INET, JSON, JSONB
 from sqlalchemy.dialects.sqlite import JSON as SQLITE_JSON
+from sqlalchemy.ext.associationproxy import AssociationProxy, association_proxy
 from sqlalchemy.ext.mutable import MutableDict, MutableList
 
 from polyfactory.factories.sqlalchemy_factory import SQLAlchemyFactory
 
 if __version__.startswith("1"):
     pytest.importorskip("SQLAlchemy", "2")
-
-
-class Base(orm.DeclarativeBase): ...
-
-
-class Author(Base):
-    __tablename__ = "authors"
-
-    id: orm.Mapped[int] = orm.mapped_column(primary_key=True)
-    books: orm.Mapped[list["Book"]] = orm.relationship(
-        "Book",
-        uselist=True,
-        back_populates="author",
-    )
-
-
-class Book(Base):
-    __tablename__ = "books"
-
-    id: orm.Mapped[int] = orm.mapped_column(primary_key=True)
-    author_id: orm.Mapped[int] = orm.mapped_column(ForeignKey(Author.id))
-    author: orm.Mapped[Author] = orm.relationship(
-        Author,
-        uselist=False,
-        back_populates="books",
-    )
 
 
 def test_python_type_handling_v2() -> None:
@@ -158,3 +133,44 @@ def test_sqlalchemy_type_handlers_v2(type_: types.TypeEngine) -> None:
 
     instance = ModelFactory.build()
     assert instance.overridden is not None
+
+
+def test_dataclass_mapped_do_not_init_field() -> None:
+    class Base(orm.DeclarativeBase): ...
+
+    class Parent(orm.MappedAsDataclass, Base):
+        __tablename__ = "tesT_model"
+
+        id: orm.Mapped[int] = orm.mapped_column(primary_key=True)
+        name: orm.Mapped[str] = orm.mapped_column(init=False)
+        children_no_init: orm.Mapped[list["Child"]] = orm.relationship(
+            "Child",
+            uselist=True,
+            init=False,
+        )
+        children_init: orm.Mapped[list["Child"]] = orm.relationship(
+            "Child",
+            uselist=True,
+            overlaps="children_no_init",
+        )
+
+        child_ids: AssociationProxy[list[int]] = association_proxy(
+            "children_init",
+            "id",
+            init=False,
+        )
+
+    class Child(orm.MappedAsDataclass, Base):
+        __tablename__ = "child_with_overridden_type"
+
+        id: orm.Mapped[int] = orm.mapped_column(primary_key=True)
+        model_id: orm.Mapped[int] = orm.mapped_column(ForeignKey(Parent.id))
+
+    class ModelFactory(SQLAlchemyFactory[Parent]):
+        __model__ = Parent
+
+    instance = ModelFactory.build()
+    assert instance.name is None
+    assert instance.children_no_init == []  # type: ignore[unreachable]
+    assert len(instance.children_init) > 0
+    assert instance.child_ids[0] == instance.children_init[0].id
