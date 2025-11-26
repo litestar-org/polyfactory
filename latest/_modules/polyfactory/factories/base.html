@@ -882,7 +882,7 @@ data-aria-dark="Switch to auto color mode">
 </span><span data-line="608"><span class="sd">        &quot;&quot;&quot;</span>
 </span><span data-line="609">        <span class="k">if</span> <span class="n">model</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
 </span><span data-line="610">            <span class="k">try</span><span class="p">:</span>
-</span><span data-line="611">                <span class="n">model</span> <span class="o">=</span> <span class="bp">cls</span><span class="o">.</span><span class="n">__model__</span>  <span class="c1"># pyright: ignore[reportAssignmentType]</span>
+</span><span data-line="611">                <span class="n">model</span> <span class="o">=</span> <span class="bp">cls</span><span class="o">.</span><span class="n">__model__</span>  <span class="c1"># type: ignore[assignment]  # pyright: ignore[reportAssignmentType]</span>
 </span><span data-line="612">            <span class="k">except</span> <span class="ne">AttributeError</span> <span class="k">as</span> <span class="n">ex</span><span class="p">:</span>
 </span><span data-line="613">                <span class="n">msg</span> <span class="o">=</span> <span class="s2">&quot;A &#39;model&#39; argument is required when creating a new factory from a base one&quot;</span>
 </span><span data-line="614">                <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span> <span class="kn">from</span><span class="w"> </span><span class="nn">ex</span>
@@ -890,7 +890,7 @@ data-aria-dark="Switch to auto color mode">
 </span><span data-line="616">        <span class="k">return</span> <span class="n">cast</span><span class="p">(</span>
 </span><span data-line="617">            <span class="s2">&quot;type[Self]&quot;</span><span class="p">,</span>
 </span><span data-line="618">            <span class="nb">type</span><span class="p">(</span>
-</span><span data-line="619">                <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">model</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2">Factory&quot;</span><span class="p">,</span>  <span class="c1"># pyright: ignore[reportOptionalMemberAccess]</span>
+</span><span data-line="619">                <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">model</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2">Factory&quot;</span><span class="p">,</span>  <span class="c1"># type: ignore[union-attr]  # pyright: ignore[reportOptionalMemberAccess]</span>
 </span><span data-line="620">                <span class="p">(</span><span class="o">*</span><span class="p">(</span><span class="n">bases</span> <span class="ow">or</span> <span class="p">()),</span> <span class="bp">cls</span><span class="p">),</span>
 </span><span data-line="621">                <span class="p">{</span><span class="s2">&quot;__model__&quot;</span><span class="p">:</span> <span class="n">model</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">},</span>
 </span><span data-line="622">            <span class="p">),</span>
@@ -1467,7 +1467,7 @@ data-aria-dark="Switch to auto color mode">
 </span><span data-line="1163"><span class="sd">        :returns: An instance of type T.</span>
 </span><span data-line="1164">
 </span><span data-line="1165"><span class="sd">        &quot;&quot;&quot;</span>
-</span><span data-line="1166">        <span class="k">return</span> <span class="n">cast</span><span class="p">(</span><span class="s2">&quot;T&quot;</span><span class="p">,</span> <span class="bp">cls</span><span class="o">.</span><span class="n">__model__</span><span class="p">(</span><span class="o">**</span><span class="bp">cls</span><span class="o">.</span><span class="n">process_kwargs</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)))</span></div>
+</span><span data-line="1166">        <span class="k">return</span> <span class="bp">cls</span><span class="o">.</span><span class="n">__model__</span><span class="p">(</span><span class="o">**</span><span class="bp">cls</span><span class="o">.</span><span class="n">process_kwargs</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">))</span></div>
 
 </span><span data-line="1167">
 <div class="viewcode-block" id="BaseFactory.batch">
@@ -1498,7 +1498,7 @@ data-aria-dark="Switch to auto color mode">
 </span><span data-line="1188"><span class="sd">        &quot;&quot;&quot;</span>
 </span><span data-line="1189">        <span class="k">for</span> <span class="n">data</span> <span class="ow">in</span> <span class="bp">cls</span><span class="o">.</span><span class="n">process_kwargs_coverage</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
 </span><span data-line="1190">            <span class="n">instance</span> <span class="o">=</span> <span class="bp">cls</span><span class="o">.</span><span class="n">__model__</span><span class="p">(</span><span class="o">**</span><span class="n">data</span><span class="p">)</span>
-</span><span data-line="1191">            <span class="k">yield</span> <span class="n">cast</span><span class="p">(</span><span class="s2">&quot;T&quot;</span><span class="p">,</span> <span class="n">instance</span><span class="p">)</span></div>
+</span><span data-line="1191">            <span class="k">yield</span> <span class="n">instance</span></div>
 
 </span><span data-line="1192">
 <div class="viewcode-block" id="BaseFactory.create_sync">
