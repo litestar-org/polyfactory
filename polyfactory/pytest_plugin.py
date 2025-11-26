@@ -8,7 +8,6 @@ from typing import (
     Literal,
     TypeVar,
     Union,
-    cast,
     overload,
 )
 
@@ -77,12 +76,12 @@ class FactoryFixture:
 
         def _factory_fixture() -> type[T]:
             """The wrapped factory"""
-            return cast("type[T]", factory)
+            return factory
 
         caller_globals = inspect.stack()[depth][0].f_globals
         caller_globals[fixture_name] = fixture_register(_factory_fixture)
 
-        return factory  # type: ignore[return-value]
+        return factory
 
 
 @overload

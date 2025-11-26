@@ -16,7 +16,7 @@ upgrade:       										## Upgrade all dependencies to the latest stable versio
 	@echo "=> Updating all dependencies"
 	@uv sync --upgrade
 	@echo "=> Dependencies Updated"
-	@uv run pre-commit autoupdate
+	@uv run prek autoupdate
 	@echo "=> Updated Pre-commit"
 
 # =============================================================================
@@ -29,7 +29,7 @@ install:											## Install the project, dependencies, and pre-commit for loca
 	if [ "$(VENV_EXISTS)" ]; then $(MAKE) clean; fi
 	@uv sync --all-extras
 	@echo "=> Installing pre-commit hooks"
-	pre-commit install --install-hooks
+	@uv run prek install --install-hooks
 	@echo "=> Install complete! Note: If you want to re-install re-run 'make install'"
 
 .PHONY: clean
@@ -63,7 +63,7 @@ release:
 .PHONY: lint
 lint: 												## Runs pre-commit hooks; includes ruff linting, ruff formatting, codespell
 	@echo "=> Running pre-commit process"
-	@uv run pre-commit run --all-files
+	@uv run prek run --all-files
 	@echo "=> Pre-commit complete"
 
 .PHONY: coverage
