@@ -52,7 +52,6 @@ from tests.sqlalchemy_factory.models import (
     CollectionParentMixin,
     NonSQLAchemyClass,
     Shape,
-    _registry,
 )
 from tests.sqlalchemy_factory.types import ListLike, SetLike
 

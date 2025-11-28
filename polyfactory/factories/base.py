@@ -1071,7 +1071,9 @@ class BaseFactory(ABC, Generic[T]):
 
         for field_meta in cls.get_model_fields():
             field_build_parameters = cls.extract_field_build_parameters(field_meta=field_meta, build_args=kwargs)
-            if cls.should_set_field_value(field_meta, **kwargs) and not cls.should_use_default_value(field_meta):
+            if cls.should_set_field_value(
+                field_meta, _build_context=_build_context, **kwargs
+            ) and not cls.should_use_default_value(field_meta):
                 if hasattr(cls, field_meta.name) and not hasattr(BaseFactory, field_meta.name):
                     field_value = getattr(cls, field_meta.name)
                     if isinstance(field_value, Ignore):
@@ -1122,7 +1124,7 @@ class BaseFactory(ABC, Generic[T]):
         for field_meta in cls.get_model_fields():
             field_build_parameters = cls.extract_field_build_parameters(field_meta=field_meta, build_args=kwargs)
 
-            if cls.should_set_field_value(field_meta, **kwargs):
+            if cls.should_set_field_value(field_meta, _build_context=_build_context, **kwargs):
                 if hasattr(cls, field_meta.name) and not hasattr(BaseFactory, field_meta.name):
                     field_value = getattr(cls, field_meta.name)
                     if isinstance(field_value, Ignore):
