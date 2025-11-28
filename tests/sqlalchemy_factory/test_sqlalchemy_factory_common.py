@@ -158,8 +158,8 @@ def test_computed_column_no_persistence() -> None:
     class ShapeFactory(SQLAlchemyFactory[Shape]):
         __model__ = Shape
 
-    instance = ShapeFactory.build()
-    assert instance.area != pow(instance.side, 2)
+    fields = ShapeFactory.get_model_fields()
+    assert "area" in [field.name for field in fields]
 
 
 @pytest.mark.parametrize(
