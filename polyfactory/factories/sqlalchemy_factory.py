@@ -34,8 +34,8 @@ except ImportError as e:
     raise MissingDependencyException(msg) from e
 
 if TYPE_CHECKING:
-    from sqlalchemy.ext.asyncio import AsyncSession
-    from sqlalchemy.orm import Session
+    from sqlalchemy.ext.asyncio import AsyncSession, async_scoped_session
+    from sqlalchemy.orm import Session, scoped_session
     from sqlalchemy.sql.type_api import TypeEngine
     from typing_extensions import TypeGuard
 
@@ -102,8 +102,10 @@ class SQLAlchemyFactory(Generic[T], BaseFactory[T]):
     __set_association_proxy__: ClassVar[bool] = True
     """Configuration to consider AssociationProxy property as a model field or not."""
 
-    __session__: ClassVar[Session | _SessionMaker[Session] | None] = None
-    __async_session__: ClassVar[AsyncSession | _SessionMaker[AsyncSession] | None] = None
+    __session__: ClassVar[Session | _SessionMaker[Session] | scoped_session[Session] | None] = None
+    __async_session__: ClassVar[
+        AsyncSession | _SessionMaker[AsyncSession] | async_scoped_session[AsyncSession] | None
+    ] = None
 
     __config_keys__ = (
         *BaseFactory.__config_keys__,
