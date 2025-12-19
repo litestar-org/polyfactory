@@ -37,6 +37,7 @@ from typing import (
     overload,
 )
 from uuid import UUID
+from zoneinfo import ZoneInfo
 
 from faker import Faker
 from typing_extensions import Self, get_args, get_origin, get_original_bases
@@ -556,6 +557,7 @@ class BaseFactory(ABC, Generic[T]):
             date: cls.__faker__.date_this_decade,
             time: cls.__faker__.time_object,
             timedelta: cls.__faker__.time_delta,
+            ZoneInfo: cls.__faker__.pytimezone,
             # ip addresses
             IPv4Address: lambda: ip_address(cls.__faker__.ipv4()),
             IPv4Interface: lambda: ip_interface(cls.__faker__.ipv4()),
