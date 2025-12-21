@@ -95,11 +95,12 @@ def is_literal(annotation: Any) -> bool:
 
     :returns: A boolean.
     """
-    return (
-        get_type_origin(annotation) is Literal
-        or repr(annotation).startswith("typing.Literal")
-        or repr(annotation).startswith("typing_extensions.Literal")
-    )
+    origin = get_type_origin(annotation)
+    if origin is Literal:
+        return True
+    if origin in UNION_TYPES:
+        return False
+    return repr(annotation).startswith("typing.Literal") or repr(annotation).startswith("typing_extensions.Literal")
 
 
 def is_new_type(annotation: Any) -> "TypeGuard[type[NewType]]":
