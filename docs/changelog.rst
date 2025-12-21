@@ -4,11 +4,51 @@ Changelog
 
 All commits to this project will be documented in this file.
 
+`Release [v3.2.0] - 2025-12-21 <https://github.com/litestar-org/polyfactory/releases/tag/v3.2.0>`_
+----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+* `See All commits in v3.2.0 <https://github.com/litestar-org/polyfactory/commits/v3.2.0>`_
+
+`2eff4e1 <https://github.com/litestar-org/polyfactory/commit/2eff4e1fbfdc02fd5930311011220a6473c3c06a>`_ ... `363ff7d <https://github.com/litestar-org/polyfactory/commit/363ff7dec9c890d74176f49e11437514e416e3eb>`_ | `See diff for 3.2.0 <https://github.com/litestar-org/polyfactory/compare/2eff4e1fbfdc02fd5930311011220a6473c3c06a...363ff7dec9c890d74176f49e11437514e416e3eb>`_
+
+Bug Fixes
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+* (`a05f7e6 <https://github.com/litestar-org/polyfactory/commit/a05f7e6ecadbbeba78eacfa4154b12db756e139a>`_)  - Respect ``init`` parameter for SQLAlchemy dataclasses (#793)  by `@AlexPetul <https://github.com/AlexPetul>`_ in `#793 <https://github.com/litestar-org/polyfactory/pull/793>`_
+* (`6ca6daa <https://github.com/litestar-org/polyfactory/commit/6ca6daa10de3781f7d9f529c168cb35eb5575ec3>`_)  - Add ``scoped_session`` and ``async_scoped_session`` to type annotations (#800)  by `@AlexPetul <https://github.com/AlexPetul>`_ in `#800 <https://github.com/litestar-org/polyfactory/pull/800>`_
+* (`a2e6f99 <https://github.com/litestar-org/polyfactory/commit/a2e6f996b3bebc9297963b949d05ded5526d9683>`_)  - Update literal detection for 3.14 compatibility (#811)  by `@adhtruong <https://github.com/adhtruong>`_ in `#811 <https://github.com/litestar-org/polyfactory/pull/811>`_
+* (`363ff7d <https://github.com/litestar-org/polyfactory/commit/363ff7dec9c890d74176f49e11437514e416e3eb>`_)  - Change default docs light theme (#808)  by `@AlexPetul <https://github.com/AlexPetul>`_ in `#808 <https://github.com/litestar-org/polyfactory/pull/808>`_
+
+Documentation
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+* (`be76369 <https://github.com/litestar-org/polyfactory/commit/be7636980f69e9d17f4be4c5cc9a4c63f1be5803>`_)  - Fix pre-commit mention in favor of prek (#807)  by `@Hugo-C <https://github.com/Hugo-C>`_ in `#807 <https://github.com/litestar-org/polyfactory/pull/807>`_
+* (`179afe9 <https://github.com/litestar-org/polyfactory/commit/179afe92a4a1cb3123cd538dbe38793ba66e1c7e>`_)  - Add Hugo-C as a contributor for code (#809)  by `@allcontributors[bot] <https://github.com/allcontributors[bot]>`_ in `#809 <https://github.com/litestar-org/polyfactory/pull/809>`_
+
+Features
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+* (`7778f16 <https://github.com/litestar-org/polyfactory/commit/7778f16d004ccca2dec2f37be490d58d34eb1d73>`_)  - Support ZoneInfo (#806)  by `@Hugo-C <https://github.com/Hugo-C>`_ in `#806 <https://github.com/litestar-org/polyfactory/pull/806>`_
+* (`a0be0cc <https://github.com/litestar-org/polyfactory/commit/a0be0cc3cfa5fc9a024d5aa3a125e7345364137c>`_)  - Support pydantic by_name (#781)  by `@adhtruong <https://github.com/adhtruong>`_ in `#781 <https://github.com/litestar-org/polyfactory/pull/781>`_
+
+Miscellaneous Tasks
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+* (`ad86dc1 <https://github.com/litestar-org/polyfactory/commit/ad86dc14507131c38886979aa0dad75cf4d7fde4>`_)  - Remove unused models (#794)  by `@AlexPetul <https://github.com/AlexPetul>`_ in `#794 <https://github.com/litestar-org/polyfactory/pull/794>`_
+* (`eeab10b <https://github.com/litestar-org/polyfactory/commit/eeab10bb913074af97ed672cd8343002d646e3fa>`_)  - Bump actions/checkout from 5 to 6 (#789)  by `@dependabot[bot] <https://github.com/dependabot[bot]>`_ in `#789 <https://github.com/litestar-org/polyfactory/pull/789>`_
+* (`4c84fad <https://github.com/litestar-org/polyfactory/commit/4c84fad07f07a092e1f8e85c2e31735d576326a9>`_)  - Bump actions/download-artifact from 6 to 7 (#805)  by `@dependabot[bot] <https://github.com/dependabot[bot]>`_ in `#805 <https://github.com/litestar-org/polyfactory/pull/805>`_
+* (`76d8547 <https://github.com/litestar-org/polyfactory/commit/76d8547aa71f0d1bc0c430c38135e2ece479a251>`_)  - Bump actions/upload-artifact from 5 to 6 (#804)  by `@dependabot[bot] <https://github.com/dependabot[bot]>`_ in `#804 <https://github.com/litestar-org/polyfactory/pull/804>`_
+* (`8615efe <https://github.com/litestar-org/polyfactory/commit/8615efe0cccbbd947590a09848eae6d237a593d8>`_)  - Update classifiers (#810)  by `@adhtruong <https://github.com/adhtruong>`_ in `#810 <https://github.com/litestar-org/polyfactory/pull/810>`_
+
+Refactor
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+* (`f0440ed <https://github.com/litestar-org/polyfactory/commit/f0440edc722824dd50831bb4458895b1b622e71b>`_)  - Update pre-commit (#797)  by `@adhtruong <https://github.com/adhtruong>`_ in `#797 <https://github.com/litestar-org/polyfactory/pull/797>`_
+
 `Release [v3.1.0] - 2025-11-25 <https://github.com/litestar-org/polyfactory/releases/tag/v3.1.0>`_
 ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 * `See All commits in v3.1.0 <https://github.com/litestar-org/polyfactory/commits/v3.1.0>`_
 
-`36c68f5 <https://github.com/litestar-org/polyfactory/commit/36c68f51338fb435df2e8e06bf5d7c6be9ab902c>`_ ... `2ca8574 <https://github.com/litestar-org/polyfactory/commit/2ca85741f1875c7f88012910a282706b19cc670a>`_ | `See diff for 3.1.0 <https://github.com/litestar-org/polyfactory/compare/36c68f51338fb435df2e8e06bf5d7c6be9ab902c...2ca85741f1875c7f88012910a282706b19cc670a>`_
+`36c68f5 <https://github.com/litestar-org/polyfactory/commit/36c68f51338fb435df2e8e06bf5d7c6be9ab902c>`_ ... `2eff4e1 <https://github.com/litestar-org/polyfactory/commit/2eff4e1fbfdc02fd5930311011220a6473c3c06a>`_ | `See diff for 3.1.0 <https://github.com/litestar-org/polyfactory/compare/36c68f51338fb435df2e8e06bf5d7c6be9ab902c...2eff4e1fbfdc02fd5930311011220a6473c3c06a>`_
 
 Bug Fixes
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -27,6 +67,11 @@ Features
 * (`c54880f <https://github.com/litestar-org/polyfactory/commit/c54880f3403120294bb691cecc6861162272ca70>`_)  - Support NotRequired fields in TypedDictFactory (#785)  by `@adhtruong <https://github.com/adhtruong>`_ in `#785 <https://github.com/litestar-org/polyfactory/pull/785>`_
 * (`77031a5 <https://github.com/litestar-org/polyfactory/commit/77031a54060777f3aa9483989a71c7d0764ebde7>`_)  - Support for custom ``collection_class`` in SQLAlchemy relationships (#776)  by `@AlexPetul <https://github.com/AlexPetul>`_ in `#776 <https://github.com/litestar-org/polyfactory/pull/776>`_
 * (`af885a3 <https://github.com/litestar-org/polyfactory/commit/af885a3252788e2830b589bfb34b617b7553755e>`_)  - Support python 3.14 (#779)  by `@adhtruong <https://github.com/adhtruong>`_ in `#779 <https://github.com/litestar-org/polyfactory/pull/779>`_
+
+Miscellaneous Tasks
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+* (`2eff4e1 <https://github.com/litestar-org/polyfactory/commit/2eff4e1fbfdc02fd5930311011220a6473c3c06a>`_)  - Prepare v3.1.0 release (#792)  by `@adhtruong <https://github.com/adhtruong>`_ in `#792 <https://github.com/litestar-org/polyfactory/pull/792>`_
 
 Performance
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
