@@ -1,7 +1,6 @@
 [project]
 authors = [{ name = "Na'aman Hirschfeld", email = "nhirschfeld@gmail.com" }]
 maintainers = [
-  { name = "Visakh Unnikrishnan", email = "guacs@litestar.dev" },
   { name = "Cody Fincher", email = "cody@litestar.dev" },
   { name = "Janek Nouvertné", email = "janek@litestar.dev" },
   { name = "Jacob Coffee", email = "jacob@litestar.dev" },
@@ -23,6 +22,7 @@ classifiers = [
   "Programming Language :: Python :: 3.11",
   "Programming Language :: Python :: 3.12",
   "Programming Language :: Python :: 3.13",
+  "Programming Language :: Python :: 3.14",
   "Programming Language :: Python",
   "Topic :: Software Development :: Libraries",
   "Topic :: Software Development :: Testing :: Unit",
