@@ -199,6 +199,7 @@ data-aria-dark="Switch to auto color mode">
 <li><a class="reference internal" href="#polyfactory.factories.pydantic_factory.ModelFactory"><code class="docutils literal notranslate"><span class="pre">ModelFactory</span></code></a><ul>
 <li><a class="reference internal" href="#polyfactory.factories.pydantic_factory.ModelFactory.__is_base_factory__"><code class="docutils literal notranslate">__is_base_factory__</span></code></a></li>
 <li><a class="reference internal" href="#polyfactory.factories.pydantic_factory.ModelFactory.__use_examples__"><code class="docutils literal notranslate">__use_examples__</span></code></a></li>
+<li><a class="reference internal" href="#polyfactory.factories.pydantic_factory.ModelFactory.__by_name__"><code class="docutils literal notranslate">__by_name__</span></code></a></li>
 <li><a class="reference internal" href="#polyfactory.factories.pydantic_factory.ModelFactory.__config_keys__"><code class="docutils literal notranslate">__config_keys__</span></code></a></li>
 <li><a class="reference internal" href="#polyfactory.factories.pydantic_factory.ModelFactory.is_supported_type"><code class="docutils literal notranslate">is_supported_type()</span></code></a></li>
 <li><a class="reference internal" href="#polyfactory.factories.pydantic_factory.ModelFactory.get_model_fields"><code class="docutils literal notranslate">get_model_fields()</span></code></a></li>
@@ -381,8 +382,28 @@ For example, the ‘DataclassFactory’, ‘TypedDictFactory’ and ‘ModelFact
 </dd></dl>
 
 <dl class="py attribute">
+<dt class="sig sig-object py" id="polyfactory.factories.pydantic_factory.ModelFactory.__by_name__">
+<span class="sig-name descname"><span class="pre">__by_name__</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">ClassVar</span><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.14)"><span class="pre">bool</span></a><span class="p"><span class="pre">]</span></span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">False</span></em><a class="headerlink" href="#polyfactory.factories.pydantic_factory.ModelFactory.__by_name__" title="Link to this definition">¶</a></dt>
+<dd><p>Flag indicating whether to use model_validate with by_name parameter (Pydantic V2 only)</p>
+<p>This helps handle validation aliases automatically without requiring users to modify their model configurations.</p>
+<p>Example code:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span data-line="1"><span class="k">class</span><span class="w"> </span><span class="nc">MyModel</span><span class="p">(</span><span class="n">BaseModel</span><span class="p">):</span>
+</span><span data-line="2">    <span class="n">field_a</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="o">...</span><span class="p">,</span> <span class="n">validation_alias</span><span class="o">=</span><span class="s2">&quot;special_field_a&quot;</span><span class="p">)</span>
+</span><span data-line="3">
+</span><span data-line="4"><span class="k">class</span><span class="w"> </span><span class="nc">MyFactory</span><span class="p">(</span><span class="n">ModelFactory</span><span class="p">[</span><span class="n">MyModel</span><span class="p">]):</span>
+</span><span data-line="5">    <span class="n">__by_name__</span> <span class="o">=</span> <span class="kc">True</span>
+</span></pre></div>
+</div>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span data-line="1"><span class="gp">&gt;&gt;&gt; </span><span class="n">instance</span> <span class="o">=</span> <span class="n">MyFactory</span><span class="o">.</span><span class="n">build</span><span class="p">(</span><span class="n">field_a</span><span class="o">=</span><span class="s2">&quot;test&quot;</span><span class="p">)</span>
+</span><span data-line="2"><span class="gp">&gt;&gt;&gt; </span><span class="n">instance</span><span class="o">.</span><span class="n">field_a</span>
+</span><span data-line="3"><span class="go">&quot;test&quot;</span>
+</span></pre></div>
+</div>
+</dd></dl>
+
+<dl class="py attribute">
 <dt class="sig sig-object py" id="polyfactory.factories.pydantic_factory.ModelFactory.__config_keys__">
-<span class="sig-name descname"><span class="pre">__config_keys__</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.14)"><span class="pre">tuple</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="p"><span class="pre">...</span></span><span class="p"><span class="pre">]</span></span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">('__check_model__',</span> <span class="pre">'__allow_none_optionals__',</span> <span class="pre">'__set_as_default_factory_for_type__',</span> <span class="pre">'__faker__',</span> <span class="pre">'__random__',</span> <span class="pre">'__randomize_collection_length__',</span> <span class="pre">'__min_collection_length__',</span> <span class="pre">'__max_collection_length__',</span> <span class="pre">'__use_defaults__',</span> <span class="pre">'__forward_references__',</span> <span class="pre">'__use_examples__')</span></em><a class="headerlink" href="#polyfactory.factories.pydantic_factory.ModelFactory.__config_keys__" title="Link to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">__config_keys__</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.14)"><span class="pre">tuple</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="p"><span class="pre">...</span></span><span class="p"><span class="pre">]</span></span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">('__check_model__',</span> <span class="pre">'__allow_none_optionals__',</span> <span class="pre">'__set_as_default_factory_for_type__',</span> <span class="pre">'__faker__',</span> <span class="pre">'__random__',</span> <span class="pre">'__randomize_collection_length__',</span> <span class="pre">'__min_collection_length__',</span> <span class="pre">'__max_collection_length__',</span> <span class="pre">'__use_defaults__',</span> <span class="pre">'__forward_references__',</span> <span class="pre">'__use_examples__',</span> <span class="pre">'__by_name__')</span></em><a class="headerlink" href="#polyfactory.factories.pydantic_factory.ModelFactory.__config_keys__" title="Link to this definition">¶</a></dt>
 <dd><p>Keys to be considered as config values to pass on to dynamically created factories.</p>
 </dd></dl>
 
@@ -453,7 +474,11 @@ model. This is supported only for pydantic models.</p></li>
 <dd><p>Build a batch of the factory’s Meta.model with full coverage of the sub-types of the model.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><span class="target" id="polyfactory.factories.pydantic_factory.ModelFactory.coverage.params.kwargs"></span><strong>kwargs</strong><a class="paramlink headerlink reference internal" href="#polyfactory.factories.pydantic_factory.ModelFactory.coverage.params.kwargs">¶</a> – Any kwargs. If field_meta names are set in kwargs, their values will be used.</p>
+<dd class="field-odd"><ul class="simple">
+<li><p><span class="target" id="polyfactory.factories.pydantic_factory.ModelFactory.coverage.params.factory_use_construct"></span><strong>factory_use_construct</strong><a class="paramlink headerlink reference internal" href="#polyfactory.factories.pydantic_factory.ModelFactory.coverage.params.factory_use_construct">¶</a> – A boolean that determines whether validations will be made when instantiating the
+model. This is supported only for pydantic models.</p></li>
+<li><p><span class="target" id="polyfactory.factories.pydantic_factory.ModelFactory.coverage.params.kwargs"></span><strong>kwargs</strong><a class="paramlink headerlink reference internal" href="#polyfactory.factories.pydantic_factory.ModelFactory.coverage.params.kwargs">¶</a> – Any kwargs. If field_meta names are set in kwargs, their values will be used.</p></li>
+</ul>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p>A iterator of instances of type T.</p>

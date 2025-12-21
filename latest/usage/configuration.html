@@ -197,6 +197,7 @@ data-aria-dark="Switch to auto color mode">
 <li><a class="reference internal" href="#check-factory-fields">Check Factory Fields</a></li>
 <li><a class="reference internal" href="#use-default-values">Use Default Values</a></li>
 <li><a class="reference internal" href="#use-example-values-pydantic-v2">Use Example Values (Pydantic &gt;= V2)</a></li>
+<li><a class="reference internal" href="#validation-aliases-pydantic-v2">Validation Aliases (Pydantic &gt;= V2)</a></li>
 <li><a class="reference internal" href="#forward-references">Forward References</a></li>
 </ul>
 </div><a class="js-repo-stats repo-stats flex items-center" href="https://github.com/litestar-org/polyfactory"
@@ -745,14 +746,58 @@ provided there’s a non-empty list of examples defined for that field.</p>
 </div>
 </div>
 </section>
+<section id="validation-aliases-pydantic-v2">
+<h2>Validation Aliases (Pydantic &gt;= V2)<a class="headerlink" href="#validation-aliases-pydantic-v2" title="Link to this heading">¶</a></h2>
+<p>If <code class="docutils literal notranslate"><span class="pre">__by_name__</span></code> is set to <code class="docutils literal notranslate"><span class="pre">True</span></code>, then the factory will use <code class="docutils literal notranslate"><span class="pre">model_validate()</span></code> with the <code class="docutils literal notranslate"><span class="pre">by_name</span></code> parameter
+when creating model instances. This is useful when working with models that use validation aliases, such as
+<code class="docutils literal notranslate"><span class="pre">validation_alias</span></code> or <code class="docutils literal notranslate"><span class="pre">AliasPath</span></code>, as it allows the factory to handle these aliases automatically without
+requiring additional model configuration.</p>
+<p>By default, <code class="docutils literal notranslate"><span class="pre">__by_name__</span></code> is set to <code class="docutils literal notranslate"><span class="pre">False.</span></code></p>
+<div class="literal-block-wrapper docutils container" id="id12">
+<div class="code-block-caption"><span class="caption-text">Validation Aliases with by_name</span><a class="headerlink" href="#id12" title="Link to this code">¶</a></div>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span data-line="1"><span class="kn">from</span><span class="w"> </span><span class="nn">pydantic</span><span class="w"> </span><span class="kn">import</span> <span class="n">AliasPath</span><span class="p">,</span> <span class="n">BaseModel</span><span class="p">,</span> <span class="n">Field</span>
+</span><span data-line="2">
+</span><span data-line="3"><span class="kn">from</span><span class="w"> </span><span class="nn">polyfactory.factories.pydantic_factory</span><span class="w"> </span><span class="kn">import</span> <span class="n">ModelFactory</span>
+</span><span data-line="4">
+</span><span data-line="5">
+</span><span data-line="6"><span class="k">class</span><span class="w"> </span><span class="nc">User</span><span class="p">(</span><span class="n">BaseModel</span><span class="p">):</span>
+</span><span data-line="7">    <span class="n">username</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="o">...</span><span class="p">,</span> <span class="n">validation_alias</span><span class="o">=</span><span class="s2">&quot;user_name&quot;</span><span class="p">)</span>
+</span><span data-line="8">    <span class="n">email</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="o">...</span><span class="p">,</span> <span class="n">validation_alias</span><span class="o">=</span><span class="n">AliasPath</span><span class="p">(</span><span class="s2">&quot;contact&quot;</span><span class="p">,</span> <span class="s2">&quot;email&quot;</span><span class="p">))</span>  <span class="c1"># type: ignore[pydantic-alias]</span>
+</span><span data-line="9">
+</span><span data-line="10">
+</span><span data-line="11"><span class="k">class</span><span class="w"> </span><span class="nc">UserFactory</span><span class="p">(</span><span class="n">ModelFactory</span><span class="p">[</span><span class="n">User</span><span class="p">]):</span>
+</span><span data-line="12">    <span class="n">__by_name__</span> <span class="o">=</span> <span class="kc">True</span>
+</span><span data-line="13">
+</span><span data-line="14">    <span class="c1"># Set factory defaults using field names</span>
+</span><span data-line="15">    <span class="n">username</span> <span class="o">=</span> <span class="s2">&quot;john_doe&quot;</span>
+</span><span data-line="16">
+</span><span data-line="17">
+</span><span data-line="18"><span class="k">def</span><span class="w"> </span><span class="nf">test_by_name</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+</span><span data-line="19">    <span class="c1"># Factory uses model_validate with by_name=True</span>
+</span><span data-line="20">    <span class="n">instance</span> <span class="o">=</span> <span class="n">UserFactory</span><span class="o">.</span><span class="n">build</span><span class="p">()</span>
+</span><span data-line="21">    <span class="k">assert</span> <span class="n">instance</span><span class="o">.</span><span class="n">username</span> <span class="o">==</span> <span class="s2">&quot;john_doe&quot;</span>
+</span><span data-line="22">    <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">instance</span><span class="o">.</span><span class="n">email</span><span class="p">,</span> <span class="nb">str</span><span class="p">)</span>
+</span><span data-line="23">
+</span><span data-line="24">    <span class="c1"># Can override factory defaults</span>
+</span><span data-line="25">    <span class="n">instance2</span> <span class="o">=</span> <span class="n">UserFactory</span><span class="o">.</span><span class="n">build</span><span class="p">(</span><span class="n">username</span><span class="o">=</span><span class="s2">&quot;jane_doe&quot;</span><span class="p">,</span> <span class="n">email</span><span class="o">=</span><span class="s2">&quot;jane@example.com&quot;</span><span class="p">)</span>
+</span><span data-line="26">    <span class="k">assert</span> <span class="n">instance2</span><span class="o">.</span><span class="n">username</span> <span class="o">==</span> <span class="s2">&quot;jane_doe&quot;</span>
+</span><span data-line="27">    <span class="k">assert</span> <span class="n">instance2</span><span class="o">.</span><span class="n">email</span> <span class="o">==</span> <span class="s2">&quot;jane@example.com&quot;</span>
+</span></pre></div>
+</div>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>This feature is only available for Pydantic V2 models. For Pydantic V1 models, this setting has no effect.</p>
+</div>
+</section>
 <section id="forward-references">
 <h2>Forward References<a class="headerlink" href="#forward-references" title="Link to this heading">¶</a></h2>
 <p>The <code class="docutils literal notranslate"><span class="pre">__forward_references__</span></code> configuration allows you to resolve forward references in type annotations.
 This is useful when dealing with recursive types that cannot be resolved automatically.</p>
 <p>By default, <code class="docutils literal notranslate"><span class="pre">__forward_references__</span></code> is set to an empty dictionary. You can provide a mapping of
 forward reference names to their resolved types.</p>
-<div class="literal-block-wrapper docutils container" id="id12">
-<div class="code-block-caption"><span class="caption-text">Forward References Configuration</span><a class="headerlink" href="#id12" title="Link to this code">¶</a></div>
+<div class="literal-block-wrapper docutils container" id="id13">
+<div class="code-block-caption"><span class="caption-text">Forward References Configuration</span><a class="headerlink" href="#id13" title="Link to this code">¶</a></div>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span data-line="1"><span class="kn">from</span><span class="w"> </span><span class="nn">__future__</span><span class="w"> </span><span class="kn">import</span> <span class="n">annotations</span>
 </span><span data-line="2">
 </span><span data-line="3"><span class="kn">from</span><span class="w"> </span><span class="nn">dataclasses</span><span class="w"> </span><span class="kn">import</span> <span class="n">dataclass</span>
