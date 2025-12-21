@@ -148,6 +148,24 @@ By default, ``__use_examples__`` is set to ``False.``
     :language: python
 
 
+Validation Aliases (Pydantic >= V2)
+------------------------------------
+
+If ``__by_name__`` is set to ``True``, then the factory will use ``model_validate()`` with the ``by_name`` parameter
+when creating model instances. This is useful when working with models that use validation aliases, such as
+``validation_alias`` or ``AliasPath``, as it allows the factory to handle these aliases automatically without
+requiring additional model configuration.
+
+By default, ``__by_name__`` is set to ``False.``
+
+.. literalinclude:: /examples/configuration/test_example_12.py
+    :caption: Validation Aliases with by_name
+    :language: python
+
+.. note::
+    This feature is only available for Pydantic V2 models. For Pydantic V1 models, this setting has no effect.
+
+
 Forward References
 ------------------
 

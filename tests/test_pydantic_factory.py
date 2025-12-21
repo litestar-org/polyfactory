@@ -494,6 +494,78 @@ def test_build_instance_by_field_alias_with_populate_by_name_flag_pydantic_v2() 
     assert instance.aliased_field == "some"
 
 
+@pytest.mark.skipif(IS_PYDANTIC_V1, reason="pydantic 2 only test")
+def test_build_instance_with_by_name_class_variable() -> None:
+    """Test that __by_name__ class variable enables by_name for model validation."""
+    from pydantic import AliasPath
+
+    class MyModel(BaseModel):
+        field_a: str = Field(..., validation_alias="special_field_a")
+        field_b: int = Field(..., validation_alias=AliasPath("nested", "field_b"))  # type: ignore[pydantic-alias]
+
+    class MyFactory(ModelFactory):
+        __model__ = MyModel
+        __by_name__ = True
+
+    # With __by_name__ = True, the factory uses model_validate with by_name
+    instance = MyFactory.build()
+    assert isinstance(instance.field_a, str)
+    assert isinstance(instance.field_b, int)
+
+    # Can pass field names directly when __by_name__ is True
+    instance2 = MyFactory.build(field_a="test", field_b=42)
+    assert instance2.field_a == "test"
+    assert instance2.field_b == 42
+
+
+@pytest.mark.skipif(IS_PYDANTIC_V1, reason="pydantic 2 only test")
+def test_build_instance_with_by_name_and_alias_path() -> None:
+    """Test that __by_name__ class variable works with AliasPath validation aliases."""
+    from pydantic import AliasPath
+
+    class NestedModel(BaseModel):
+        value: str = Field(..., validation_alias=AliasPath("b", "a"))  # type: ignore[pydantic-alias]
+
+    class MyFactory(ModelFactory):
+        __model__ = NestedModel
+        __by_name__ = True
+
+    # Build with __by_name__ = True to handle the validation alias correctly
+    instance = MyFactory.build()
+    assert isinstance(instance.value, str)
+
+
+@pytest.mark.skipif(IS_PYDANTIC_V1, reason="pydantic 2 only test")
+def test_build_instance_with_by_name_and_factory_field_values() -> None:
+    """Test that __by_name__ class variable works with factory field value overrides."""
+    from pydantic import AliasPath
+
+    class MyModel(BaseModel):
+        field_a: str = Field(..., validation_alias="special_field_a")
+        field_b: int = Field(..., validation_alias=AliasPath("nested", "field_b"))  # type: ignore[pydantic-alias]
+        field_c: str = Field(default="default_c")
+
+    class MyFactory(ModelFactory):
+        __model__ = MyModel
+        __by_name__ = True
+
+        # Set default values on the factory
+        field_a = "factory_default_a"
+        field_c = "factory_default_c"
+
+    # Build using factory defaults
+    instance = MyFactory.build()
+    assert instance.field_a == "factory_default_a"
+    assert isinstance(instance.field_b, int)
+    assert instance.field_c == "factory_default_c"
+
+    # Override factory defaults
+    instance2 = MyFactory.build(field_a="override_a", field_b=99)
+    assert instance2.field_a == "override_a"
+    assert instance2.field_b == 99
+    assert instance2.field_c == "factory_default_c"
+
+
 def test_build_instance_by_field_name_with_allow_population_by_field_name_flag() -> None:
     class MyModel(BaseModel):
         aliased_field: str = Field(..., alias="special_field")
