@@ -1,136 +1,113 @@
 :root {
---syntax-light-background: #282a36;
---syntax-light-highlight: #44475a;
---syntax-light-text: #F8F8F2;
---syntax-light-text-whitespace: #F8F8F2;
---syntax-light-comment: #6272A4;
---syntax-light-comment-preproc: #FF79C6;
---syntax-light-generic: #F8F8F2;
---syntax-light-generic-deleted: #8B080B;
---syntax-light-generic-emph: #F8F8F2;
---syntax-light-generic-heading: #F8F8F2;
---syntax-light-generic-inserted: #F8F8F2;
---syntax-light-generic-output: #44475A;
---syntax-light-generic-emphstrong: #F8F8F2;
---syntax-light-generic-subheading: #F8F8F2;
---syntax-light-error: #F8F8F2;
---syntax-light-keyword: #FF79C6;
---syntax-light-keyword-constant: #FF79C6;
---syntax-light-keyword-declaration: #8BE9FD;
---syntax-light-keyword-type: #8BE9FD;
---syntax-light-literal: #F8F8F2;
---syntax-light-name: #F8F8F2;
---syntax-light-name-attribute: #50FA7B;
---syntax-light-name-builtin: #8BE9FD;
---syntax-light-name-builtin-pseudo: #F8F8F2;
---syntax-light-name-class: #50FA7B;
---syntax-light-name-function: #50FA7B;
---syntax-light-name-label: #8BE9FD;
---syntax-light-name-tag: #FF79C6;
---syntax-light-name-variable: #8BE9FD;
---syntax-light-literal-number: #FFB86C;
---syntax-light-operator: #FF79C6;
---syntax-light-other: #F8F8F2;
---syntax-light-punctuation: #F8F8F2;
---syntax-light-literal-string: #BD93F9;
---syntax-light-keyword-namespace: #FF79C6;
---syntax-light-keyword-pseudo: #FF79C6;
---syntax-light-keyword-reserved: #FF79C6;
---syntax-light-name-constant: #F8F8F2;
---syntax-light-name-decorator: #F8F8F2;
---syntax-light-name-entity: #F8F8F2;
---syntax-light-name-exception: #F8F8F2;
---syntax-light-name-function-magic: #50FA7B;
---syntax-light-name-property: #F8F8F2;
---syntax-light-name-namespace: #F8F8F2;
---syntax-light-name-other: #F8F8F2;
---syntax-light-name-variable-class: #8BE9FD;
---syntax-light-name-variable-global: #8BE9FD;
---syntax-light-name-variable-instance: #8BE9FD;
---syntax-light-name-variable-magic: #8BE9FD;
---syntax-light-literal-date: #F8F8F2;
---syntax-light-literal-string-affix: #BD93F9;
---syntax-light-literal-string-backtick: #BD93F9;
---syntax-light-literal-string-char: #BD93F9;
---syntax-light-literal-string-delimiter: #BD93F9;
---syntax-light-literal-string-doc: #BD93F9;
---syntax-light-literal-string-double: #BD93F9;
---syntax-light-literal-string-escape: #BD93F9;
---syntax-light-literal-string-heredoc: #BD93F9;
---syntax-light-literal-string-interpol: #BD93F9;
---syntax-light-literal-string-other: #BD93F9;
---syntax-light-literal-string-regex: #BD93F9;
---syntax-light-literal-string-single: #BD93F9;
---syntax-light-literal-string-symbol: #BD93F9;
---syntax-light-literal-number-bin: #FFB86C;
---syntax-light-literal-number-float: #FFB86C;
---syntax-light-literal-number-hex: #FFB86C;
---syntax-light-literal-number-integer: #FFB86C;
---syntax-light-literal-number-integer-long: #FFB86C;
---syntax-light-literal-number-oct: #FFB86C;
---syntax-light-operator-word: #FF79C6;
---syntax-light-punctuation-marker: #F8F8F2;
---syntax-light-comment-hashbang: #6272A4;
---syntax-light-comment-multiline: #6272A4;
---syntax-light-comment-preprocfile: #6272A4;
---syntax-light-comment-single: #6272A4;
---syntax-light-comment-special: #6272A4;
---syntax-light-generic-error: #F8F8F2;
---syntax-light-generic-prompt: #F8F8F2;
---syntax-light-generic-strong: #F8F8F2;
---syntax-light-generic-traceback: #F8F8F2;
+--syntax-light-background: #f0f0f0;
+--syntax-light-highlight: #ffffcc;
+--syntax-light-text-whitespace: #BBB;
+--syntax-light-comment: #60A0B0;
+--syntax-light-comment-preproc: #007020;
+--syntax-light-comment-special: #60A0B0;
+--syntax-light-keyword: #007020;
+--syntax-light-keyword-pseudo: #007020;
+--syntax-light-keyword-type: #902000;
+--syntax-light-operator: #666;
+--syntax-light-operator-word: #007020;
+--syntax-light-name-builtin: #007020;
+--syntax-light-name-function: #06287E;
+--syntax-light-name-class: #0E84B5;
+--syntax-light-name-namespace: #0E84B5;
+--syntax-light-name-exception: #007020;
+--syntax-light-name-variable: #BB60D5;
+--syntax-light-name-constant: #60ADD5;
+--syntax-light-name-label: #002070;
+--syntax-light-name-entity: #D55537;
+--syntax-light-name-attribute: #4070A0;
+--syntax-light-name-tag: #062873;
+--syntax-light-name-decorator: #555;
+--syntax-light-literal-string: #4070A0;
+--syntax-light-literal-string-doc: #4070A0;
+--syntax-light-literal-string-interpol: #70A0D0;
+--syntax-light-literal-string-escape: #4070A0;
+--syntax-light-literal-string-regex: #235388;
+--syntax-light-literal-string-symbol: #517918;
+--syntax-light-literal-string-other: #C65D09;
+--syntax-light-literal-number: #40A070;
+--syntax-light-generic-heading: #000080;
+--syntax-light-generic-subheading: #800080;
+--syntax-light-generic-deleted: #A00000;
+--syntax-light-generic-inserted: #00A000;
+--syntax-light-generic-error: #F00;
+--syntax-light-generic-prompt: #C65D09;
+--syntax-light-generic-output: #888;
+--syntax-light-generic-traceback: #04D;
+--syntax-light-keyword-constant: #007020;
+--syntax-light-keyword-declaration: #007020;
+--syntax-light-keyword-namespace: #007020;
+--syntax-light-keyword-reserved: #007020;
+--syntax-light-name-builtin-pseudo: #007020;
+--syntax-light-name-function-magic: #06287E;
+--syntax-light-name-variable-class: #BB60D5;
+--syntax-light-name-variable-global: #BB60D5;
+--syntax-light-name-variable-instance: #BB60D5;
+--syntax-light-name-variable-magic: #BB60D5;
+--syntax-light-literal-string-affix: #4070A0;
+--syntax-light-literal-string-backtick: #4070A0;
+--syntax-light-literal-string-char: #4070A0;
+--syntax-light-literal-string-delimiter: #4070A0;
+--syntax-light-literal-string-double: #4070A0;
+--syntax-light-literal-string-heredoc: #4070A0;
+--syntax-light-literal-string-single: #4070A0;
+--syntax-light-literal-number-bin: #40A070;
+--syntax-light-literal-number-float: #40A070;
+--syntax-light-literal-number-hex: #40A070;
+--syntax-light-literal-number-integer: #40A070;
+--syntax-light-literal-number-integer-long: #40A070;
+--syntax-light-literal-number-oct: #40A070;
+--syntax-light-comment-hashbang: #60A0B0;
+--syntax-light-comment-multiline: #60A0B0;
+--syntax-light-comment-preprocfile: #60A0B0;
+--syntax-light-comment-single: #60A0B0;
 }
-html.light .highlight .c { color: var(--syntax-light-comment) }
-html.light .highlight .err { color: var(--syntax-light-error) }
-html.light .highlight .g { color: var(--syntax-light-generic) }
-html.light .highlight .k { color: var(--syntax-light-keyword) }
-html.light .highlight .l { color: var(--syntax-light-literal) }
-html.light .highlight .n { color: var(--syntax-light-name) }
+html.light .highlight .c { color: var(--syntax-light-comment); font-style: italic }
+html.light .highlight .err { border: 1px solid #F00 }
+html.light .highlight .k { color: var(--syntax-light-keyword); font-weight: bold }
 html.light .highlight .o { color: var(--syntax-light-operator) }
-html.light .highlight .x { color: var(--syntax-light-other) }
-html.light .highlight .p { color: var(--syntax-light-punctuation) }
-html.light .highlight .ch { color: var(--syntax-light-comment-hashbang) }
-html.light .highlight .cm { color: var(--syntax-light-comment-multiline) }
+html.light .highlight .ch { color: var(--syntax-light-comment-hashbang); font-style: italic }
+html.light .highlight .cm { color: var(--syntax-light-comment-multiline); font-style: italic }
 html.light .highlight .cp { color: var(--syntax-light-comment-preproc) }
-html.light .highlight .cpf { color: var(--syntax-light-comment-preprocfile) }
-html.light .highlight .c1 { color: var(--syntax-light-comment-single) }
-html.light .highlight .cs { color: var(--syntax-light-comment-special) }
+html.light .highlight .cpf { color: var(--syntax-light-comment-preprocfile); font-style: italic }
+html.light .highlight .c1 { color: var(--syntax-light-comment-single); font-style: italic }
+html.light .highlight .cs { color: var(--syntax-light-comment-special); background-color: #FFF0F0 }
 html.light .highlight .gd { color: var(--syntax-light-generic-deleted) }
-html.light .highlight .ge { color: var(--syntax-light-generic-emph); text-decoration: underline }
-html.light .highlight .ges { color: var(--syntax-light-generic-emphstrong); text-decoration: underline }
+html.light .highlight .ge { font-style: italic }
+html.light .highlight .ges { font-weight: bold; font-style: italic }
 html.light .highlight .gr { color: var(--syntax-light-generic-error) }
 html.light .highlight .gh { color: var(--syntax-light-generic-heading); font-weight: bold }
-html.light .highlight .gi { color: var(--syntax-light-generic-inserted); font-weight: bold }
+html.light .highlight .gi { color: var(--syntax-light-generic-inserted) }
 html.light .highlight .go { color: var(--syntax-light-generic-output) }
-html.light .highlight .gp { color: var(--syntax-light-generic-prompt) }
-html.light .highlight .gs { color: var(--syntax-light-generic-strong) }
+html.light .highlight .gp { color: var(--syntax-light-generic-prompt); font-weight: bold }
+html.light .highlight .gs { font-weight: bold }
 html.light .highlight .gu { color: var(--syntax-light-generic-subheading); font-weight: bold }
 html.light .highlight .gt { color: var(--syntax-light-generic-traceback) }
-html.light .highlight .kc { color: var(--syntax-light-keyword-constant) }
-html.light .highlight .kd { color: var(--syntax-light-keyword-declaration); font-style: italic }
-html.light .highlight .kn { color: var(--syntax-light-keyword-namespace) }
+html.light .highlight .kc { color: var(--syntax-light-keyword-constant); font-weight: bold }
+html.light .highlight .kd { color: var(--syntax-light-keyword-declaration); font-weight: bold }
+html.light .highlight .kn { color: var(--syntax-light-keyword-namespace); font-weight: bold }
 html.light .highlight .kp { color: var(--syntax-light-keyword-pseudo) }
-html.light .highlight .kr { color: var(--syntax-light-keyword-reserved) }
+html.light .highlight .kr { color: var(--syntax-light-keyword-reserved); font-weight: bold }
 html.light .highlight .kt { color: var(--syntax-light-keyword-type) }
-html.light .highlight .ld { color: var(--syntax-light-literal-date) }
 html.light .highlight .m { color: var(--syntax-light-literal-number) }
 html.light .highlight .s { color: var(--syntax-light-literal-string) }
 html.light .highlight .na { color: var(--syntax-light-name-attribute) }
-html.light .highlight .nb { color: var(--syntax-light-name-builtin); font-style: italic }
-html.light .highlight .nc { color: var(--syntax-light-name-class) }
+html.light .highlight .nb { color: var(--syntax-light-name-builtin) }
+html.light .highlight .nc { color: var(--syntax-light-name-class); font-weight: bold }
 html.light .highlight .no { color: var(--syntax-light-name-constant) }
-html.light .highlight .nd { color: var(--syntax-light-name-decorator) }
-html.light .highlight .ni { color: var(--syntax-light-name-entity) }
+html.light .highlight .nd { color: var(--syntax-light-name-decorator); font-weight: bold }
+html.light .highlight .ni { color: var(--syntax-light-name-entity); font-weight: bold }
 html.light .highlight .ne { color: var(--syntax-light-name-exception) }
 html.light .highlight .nf { color: var(--syntax-light-name-function) }
-html.light .highlight .nl { color: var(--syntax-light-name-label); font-style: italic }
-html.light .highlight .nn { color: var(--syntax-light-name-namespace) }
-html.light .highlight .nx { color: var(--syntax-light-name-other) }
-html.light .highlight .py { color: var(--syntax-light-name-property) }
-html.light .highlight .nt { color: var(--syntax-light-name-tag) }
-html.light .highlight .nv { color: var(--syntax-light-name-variable); font-style: italic }
-html.light .highlight .ow { color: var(--syntax-light-operator-word) }
-html.light .highlight .pm { color: var(--syntax-light-punctuation-marker) }
+html.light .highlight .nl { color: var(--syntax-light-name-label); font-weight: bold }
+html.light .highlight .nn { color: var(--syntax-light-name-namespace); font-weight: bold }
+html.light .highlight .nt { color: var(--syntax-light-name-tag); font-weight: bold }
+html.light .highlight .nv { color: var(--syntax-light-name-variable) }
+html.light .highlight .ow { color: var(--syntax-light-operator-word); font-weight: bold }
 html.light .highlight .w { color: var(--syntax-light-text-whitespace) }
 html.light .highlight .mb { color: var(--syntax-light-literal-number-bin) }
 html.light .highlight .mf { color: var(--syntax-light-literal-number-float) }
@@ -141,21 +118,21 @@ html.light .highlight .sa { color: var(--syntax-light-literal-string-affix) }
 html.light .highlight .sb { color: var(--syntax-light-literal-string-backtick) }
 html.light .highlight .sc { color: var(--syntax-light-literal-string-char) }
 html.light .highlight .dl { color: var(--syntax-light-literal-string-delimiter) }
-html.light .highlight .sd { color: var(--syntax-light-literal-string-doc) }
+html.light .highlight .sd { color: var(--syntax-light-literal-string-doc); font-style: italic }
 html.light .highlight .s2 { color: var(--syntax-light-literal-string-double) }
-html.light .highlight .se { color: var(--syntax-light-literal-string-escape) }
+html.light .highlight .se { color: var(--syntax-light-literal-string-escape); font-weight: bold }
 html.light .highlight .sh { color: var(--syntax-light-literal-string-heredoc) }
-html.light .highlight .si { color: var(--syntax-light-literal-string-interpol) }
+html.light .highlight .si { color: var(--syntax-light-literal-string-interpol); font-style: italic }
 html.light .highlight .sx { color: var(--syntax-light-literal-string-other) }
 html.light .highlight .sr { color: var(--syntax-light-literal-string-regex) }
 html.light .highlight .s1 { color: var(--syntax-light-literal-string-single) }
 html.light .highlight .ss { color: var(--syntax-light-literal-string-symbol) }
-html.light .highlight .bp { color: var(--syntax-light-name-builtin-pseudo); font-style: italic }
+html.light .highlight .bp { color: var(--syntax-light-name-builtin-pseudo) }
 html.light .highlight .fm { color: var(--syntax-light-name-function-magic) }
-html.light .highlight .vc { color: var(--syntax-light-name-variable-class); font-style: italic }
-html.light .highlight .vg { color: var(--syntax-light-name-variable-global); font-style: italic }
-html.light .highlight .vi { color: var(--syntax-light-name-variable-instance); font-style: italic }
-html.light .highlight .vm { color: var(--syntax-light-name-variable-magic); font-style: italic }
+html.light .highlight .vc { color: var(--syntax-light-name-variable-class) }
+html.light .highlight .vg { color: var(--syntax-light-name-variable-global) }
+html.light .highlight .vi { color: var(--syntax-light-name-variable-instance) }
+html.light .highlight .vm { color: var(--syntax-light-name-variable-magic) }
 html.light .highlight .il { color: var(--syntax-light-literal-number-integer-long) }
 :root {
 --syntax-dark-background: #0d1117;
