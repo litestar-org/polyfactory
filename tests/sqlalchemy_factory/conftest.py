@@ -1,4 +1,4 @@
-from collections.abc import AsyncIterator
+from collections.abc import AsyncIterator, Iterator
 
 import pytest
 from sqlalchemy import create_engine
@@ -9,18 +9,26 @@ from tests.sqlalchemy_factory.models import Base
 
 
 @pytest.fixture()
-def engine() -> Engine:
-    return create_engine("sqlite:///:memory:")
+def engine() -> Iterator[Engine]:
+    """Create a sync engine and clean up tables before and after each test."""
+    _engine = create_engine("sqlite:///:memory:")
+    Base.metadata.create_all(_engine)
+    try:
+        yield _engine
+    finally:
+        Base.metadata.drop_all(_engine)
+        _engine.dispose()
 
 
 @pytest.fixture()
-def async_engine() -> AsyncEngine:
-    return create_async_engine("sqlite+aiosqlite:///:memory:")
-
-
-@pytest.fixture(autouse=True)
-async def fx_drop_create_meta(async_engine: AsyncEngine) -> AsyncIterator[None]:
-    async with async_engine.begin() as conn:
-        await conn.run_sync(Base.metadata.drop_all)
+async def async_engine() -> AsyncIterator[AsyncEngine]:
+    """Create an async engine and clean up tables before and after each test."""
+    _engine = create_async_engine("sqlite+aiosqlite:///:memory:")
+    async with _engine.begin() as conn:
         await conn.run_sync(Base.metadata.create_all)
-    yield
+    try:
+        yield _engine
+    finally:
+        async with _engine.begin() as conn:
+            await conn.run_sync(Base.metadata.drop_all)
+        await _engine.dispose()

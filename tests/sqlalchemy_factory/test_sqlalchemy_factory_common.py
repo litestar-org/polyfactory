@@ -51,7 +51,6 @@ from tests.sqlalchemy_factory.models import (
     CollectionChildMixin,
     CollectionParentMixin,
     NonSQLAchemyClass,
-    _registry,
 )
 from tests.sqlalchemy_factory.types import ListLike, SetLike
 
@@ -543,12 +542,14 @@ def test_sqlalchemy_custom_type_from_type_decorator(python_type_: type) -> None:
             def python_type(self) -> type:
                 return python_type_
 
+    test_registry = registry()
+
     class Base(metaclass=DeclarativeMeta):
         __abstract__ = True
         __allow_unmapped__ = True
 
-        registry = _registry
-        metadata = _registry.metadata
+        registry = test_registry
+        metadata = test_registry.metadata
 
     class Model(Base):
         __tablename__ = f"model_with_custom_types_{python_type_}"
