@@ -90,7 +90,7 @@ jobs:
         if: matrix.python-version == '3.13' && matrix.pydantic-version == '2.0' && matrix.sqla-version == '2'
         run: uv run pytest tests docs/examples --cov=. --cov-report=xml
 
-      - uses: actions/upload-artifact@v5
+      - uses: actions/upload-artifact@v6
         if: matrix.python-version == '3.13' && matrix.pydantic-version == '2.0' && matrix.sqla-version == '2'
         with:
           name: coverage-data
@@ -128,7 +128,7 @@ jobs:
         run: echo $PR_NUMBER > .pr_number
 
       - name: Upload artifact
-        uses: actions/upload-artifact@v5
+        uses: actions/upload-artifact@v6
         with:
           name: docs-preview
           include-hidden-files: true
@@ -171,7 +171,7 @@ jobs:
           python-version: "3.13"
 
       - name: Download Artifacts
-        uses: actions/download-artifact@v6
+        uses: actions/download-artifact@v7
         with:
           name: coverage-data
 
