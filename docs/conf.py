@@ -115,7 +115,8 @@ exclude_patterns = ["_build", "Thumbs.db", ".DS_Store"]
 # -- Style configuration -----------------------------------------------------
 html_theme = "shibuya"
 html_title = "Polyfactory"
-pygments_style = "dracula"
+pygments_style = "friendly"
+pygments_dark_style = "dracula"
 todo_include_todos = True
 
 html_favicon = "_static/logo-default.png"
