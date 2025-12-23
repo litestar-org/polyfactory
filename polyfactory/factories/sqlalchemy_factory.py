@@ -13,12 +13,14 @@ from typing import (
     Protocol,
     TypeVar,
     Union,
+    cast,
 )
 
 from sqlalchemy.util.langhelpers import duck_type_collection
 
 from polyfactory.exceptions import ConfigurationException, MissingDependencyException, ParameterException
 from polyfactory.factories.base import BaseFactory
+from polyfactory.factories.base import BuildContext as BaseBuildContext
 from polyfactory.field_meta import Constraints, FieldMeta
 from polyfactory.persistence import AsyncPersistenceProtocol, SyncPersistenceProtocol
 from polyfactory.utils.types import Frozendict
@@ -41,6 +43,10 @@ if TYPE_CHECKING:
 
 
 T = TypeVar("T")
+
+
+class SQLAlchemyBuildContext(BaseBuildContext):
+    skip_computed_fields: bool
 
 
 class SQLASyncPersistence(SyncPersistenceProtocol[T]):
@@ -116,6 +122,30 @@ class SQLAlchemyFactory(Generic[T], BaseFactory[T]):
     )
 
     @classmethod
+    def _get_build_context(
+        cls, build_context: BaseBuildContext | SQLAlchemyBuildContext | None
+    ) -> SQLAlchemyBuildContext:
+        build_context = cast("SQLAlchemyBuildContext", super()._get_build_context(build_context))
+        if build_context.get("skip_computed_fields") is None:
+            build_context["skip_computed_fields"] = False
+
+        return build_context
+
+    @classmethod
+    def create_sync(cls, **kwargs: Any) -> T:
+        build_context = cls._get_build_context(kwargs.get("_build_context"))
+        build_context["skip_computed_fields"] = True
+        kwargs["_build_context"] = build_context
+        return super().create_sync(**kwargs)
+
+    @classmethod
+    async def create_async(cls, **kwargs: Any) -> T:
+        build_context = cls._get_build_context(kwargs.get("_build_context"))
+        build_context["skip_computed_fields"] = True
+        kwargs["_build_context"] = build_context
+        return await super().create_async(**kwargs)
+
+    @classmethod
     def get_sqlalchemy_types(cls) -> dict[Any, Callable[[], Any]]:
         """Get mapping of types where column type should be used directly.
 
@@ -170,6 +200,19 @@ class SQLAlchemyFactory(Generic[T], BaseFactory[T]):
         return isinstance(inspected, (Mapper, InstanceState))
 
     @classmethod
+    def should_set_field_value(cls, field_meta: FieldMeta, **kwargs: Any) -> bool:
+        build_context = kwargs.get("_build_context", {})
+
+        if (
+            field_meta.constraints
+            and field_meta.constraints.get("computed")
+            and build_context.get("skip_computed_fields")
+        ):
+            return False
+
+        return super().should_set_field_value(field_meta, **kwargs)
+
+    @classmethod
     def should_column_be_set(cls, column: Any) -> bool:
         if not isinstance(column, Column):
             return False
@@ -178,9 +221,6 @@ class SQLAlchemyFactory(Generic[T], BaseFactory[T]):
             return False
 
         if not cls.should_dataclass_init_field(column.name):
-            return False
-
-        if column.computed and (cls.__session__ is not None or cls.__async_session__ is not None):
             return False
 
         return bool(cls.__set_foreign_keys__ or not column.foreign_keys)
@@ -233,6 +273,10 @@ class SQLAlchemyFactory(Generic[T], BaseFactory[T]):
 
         if column.nullable:
             annotation = Union[annotation, None]  # type: ignore[assignment]
+
+        if column.computed:
+            constraints: Constraints = {"computed": True}
+            annotation = Annotated[annotation, Frozendict(constraints)]  # type: ignore[assignment]
 
         return annotation
 
