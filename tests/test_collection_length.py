@@ -1,5 +1,5 @@
 from enum import Enum
-from typing import Annotated, Any, Literal, Optional, get_args
+from typing import Annotated, Any, Literal, get_args
 
 import pytest
 from annotated_types import Len

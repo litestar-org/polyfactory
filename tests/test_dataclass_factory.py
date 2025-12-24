@@ -1,12 +1,11 @@
 import dataclasses
 import sys
 import textwrap
-from collections.abc import Iterable
+from collections.abc import Callable, Iterable
 from dataclasses import dataclass as vanilla_dataclass
 from dataclasses import field
 from types import ModuleType
-from typing import Any, Optional, TypeVar, Union
-from collections.abc import Callable
+from typing import Any, TypeVar
 from unittest.mock import ANY
 
 import pytest

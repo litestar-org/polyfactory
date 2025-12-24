@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from collections.abc import Collection, Mapping
+from collections.abc import Callable, Collection, Mapping
 from dataclasses import is_dataclass
 from datetime import date, datetime
 from typing import (
@@ -11,9 +11,7 @@ from typing import (
     Generic,
     Protocol,
     TypeVar,
-    Union,
 )
-from collections.abc import Callable
 
 from sqlalchemy.util.langhelpers import duck_type_collection
 
@@ -34,10 +32,11 @@ except ImportError as e:
     raise MissingDependencyException(msg) from e
 
 if TYPE_CHECKING:
+    from typing import TypeGuard
+
     from sqlalchemy.ext.asyncio import AsyncSession, async_scoped_session
     from sqlalchemy.orm import Session, scoped_session
     from sqlalchemy.sql.type_api import TypeEngine
-    from typing import TypeGuard
 
 
 T = TypeVar("T")
@@ -229,7 +228,7 @@ class SQLAlchemyFactory(Generic[T], BaseFactory[T]):
             annotation = cls._get_type_from_type_engine(column.type)
 
         if column.nullable:
-            annotation = Union[annotation, None]  # type: ignore[assignment]
+            annotation = annotation | None  # type: ignore[assignment]
 
         return annotation
 

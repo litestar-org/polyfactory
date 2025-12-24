@@ -7,10 +7,8 @@ from datetime import timezone
 from functools import partial
 from os.path import realpath
 from pathlib import Path
-from typing import TYPE_CHECKING, Any, ClassVar, ForwardRef, Generic, TypeVar, cast
+from typing import TYPE_CHECKING, Any, ClassVar, ForwardRef, Generic, Literal, TypeVar, cast, get_args
 from uuid import NAMESPACE_DNS, uuid1, uuid3, uuid5
-
-from typing import Literal, get_args
 
 from polyfactory.exceptions import MissingDependencyException
 from polyfactory.factories.base import BaseFactory, BuildContext
@@ -94,11 +92,10 @@ except ImportError:
 
 if TYPE_CHECKING:
     from collections import abc
-    from collections.abc import Iterable, Mapping, Sequence
-    from collections.abc import Callable
+    from collections.abc import Callable, Iterable, Mapping, Sequence
+    from typing import TypeGuard
 
     from typing_extensions import NotRequired
-    from typing import TypeGuard
 
     from pydantic import BaseModel
 

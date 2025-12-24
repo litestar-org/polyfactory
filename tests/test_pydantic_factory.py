@@ -2,20 +2,18 @@ import re
 import sys
 import textwrap
 from collections import Counter, deque
-from collections.abc import Sequence
+from collections.abc import Callable, Sequence
 from dataclasses import dataclass
 from datetime import date, datetime, time, timedelta
 from decimal import Decimal
 from ipaddress import IPv4Address, IPv4Interface, IPv4Network, IPv6Address, IPv6Interface, IPv6Network
 from pathlib import Path
 from types import ModuleType
-from typing import Annotated, Any, Literal, Optional, Union
-from collections.abc import Callable
+from typing import Annotated, Any, Literal, TypeAlias
 from uuid import UUID
 
 import pytest
 from annotated_types import Ge, Gt, Le, LowerCase, Lt, MaxLen, MinLen, UpperCase
-from typing import TypeAlias
 
 import pydantic
 from pydantic import (

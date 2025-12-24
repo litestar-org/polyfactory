@@ -1,5 +1,4 @@
 from datetime import date, timedelta
-from typing import Optional
 
 import pytest
 from hypothesis import given

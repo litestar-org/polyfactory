@@ -2,12 +2,11 @@ from __future__ import annotations
 
 from enum import EnumMeta
 from typing import TYPE_CHECKING, Any, Literal, TypeVar
-from collections.abc import Callable
 
 from polyfactory.exceptions import ParameterException
 
 if TYPE_CHECKING:
-    from collections.abc import Mapping
+    from collections.abc import Callable, Mapping
 
     from polyfactory.factories.base import BaseFactory, BuildContext
     from polyfactory.field_meta import FieldMeta

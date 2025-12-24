@@ -1,18 +1,16 @@
 from __future__ import annotations
 
-from typing import Any, Generic, TypeVar, get_args, get_type_hints
+from typing import Any, Generic, TypeGuard, TypeVar, get_args, get_origin, get_type_hints, is_typeddict
 
-from typing_extensions import (  # type: ignore[attr-defined]
+from typing_extensions import (
     NotRequired,
     Required,
-    _TypedDictMeta,
 )
-from typing import TypeGuard, get_origin, is_typeddict
 
 from polyfactory.factories.base import BaseFactory
 from polyfactory.field_meta import FieldMeta, Null
 
-TypedDictT = TypeVar("TypedDictT", bound=_TypedDictMeta)
+TypedDictT = TypeVar("TypedDictT", bound=dict)
 
 
 class TypedDictFactory(Generic[TypedDictT], BaseFactory[TypedDictT]):
@@ -40,6 +38,7 @@ class TypedDictFactory(Generic[TypedDictT], BaseFactory[TypedDictT]):
         model_type_hints = get_type_hints(cls.__model__, include_extras=True)
 
         field_metas: list[FieldMeta] = []
+        required_keys: set = getattr(cls.__model__, "__required_keys__", set())
         for field_name, annotation in model_type_hints.items():
             origin = get_origin(annotation)
             if origin in (Required, NotRequired):
@@ -50,7 +49,7 @@ class TypedDictFactory(Generic[TypedDictT], BaseFactory[TypedDictT]):
                     annotation=annotation,
                     name=field_name,
                     default=getattr(cls.__model__, field_name, Null),
-                    required=field_name in cls.__model__.__required_keys__,
+                    required=field_name in required_keys,
                 ),
             )
 

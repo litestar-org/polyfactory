@@ -1,8 +1,6 @@
 from __future__ import annotations
 
-from typing import TYPE_CHECKING, Any, Generic, TypeVar
-
-from typing import get_args
+from typing import TYPE_CHECKING, Any, Generic, TypeVar, get_args
 
 from polyfactory.exceptions import MissingDependencyException
 from polyfactory.factories.pydantic_factory import ModelFactory

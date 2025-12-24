@@ -4,7 +4,7 @@ from __future__ import annotations
 from collections.abc import Iterable
 from dataclasses import dataclass, make_dataclass
 from datetime import date
-from typing import Any, Literal, Optional, Union
+from typing import Any, Literal, Union
 from uuid import UUID
 
 import pytest
@@ -136,7 +136,7 @@ def test_coverage_typed_dict() -> None:
         union: int | str
         collection: list[int | str]
 
-    class TypedThesaurusFactory(TypedDictFactory[TypedThesaurus]):
+    class TypedThesaurusFactory(TypedDictFactory[TypedThesaurus]):  # type: ignore [type-var]
         __model__ = TypedThesaurus
 
     results = list(TypedThesaurusFactory.coverage())
@@ -155,7 +155,7 @@ def test_coverage_typed_dict_field() -> None:
         union: int | str
         collection: list[int | str]
 
-    class TypedThesaurusFactory(TypedDictFactory[TypedThesaurus]):
+    class TypedThesaurusFactory(TypedDictFactory[TypedThesaurus]):  # type: ignore [type-var]
         __model__ = TypedThesaurus
 
     results = list(TypedThesaurusFactory.coverage())

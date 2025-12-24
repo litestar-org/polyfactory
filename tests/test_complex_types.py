@@ -1,16 +1,13 @@
 from collections import defaultdict, deque
-from collections.abc import Iterable, Sequence
+from collections.abc import Callable, Iterable, Sequence
 from dataclasses import dataclass
 from enum import Enum
 from typing import (
     Any,
     Generic,
     Literal,
-    Optional,
     TypeVar,
-    Union,
 )
-from collections.abc import Callable
 
 import pytest
 

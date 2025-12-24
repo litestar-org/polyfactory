@@ -1,5 +1,4 @@
 from random import randint
-from typing import Optional
 
 from pydantic import VERSION, BaseModel, Field
 

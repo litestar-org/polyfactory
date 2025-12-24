@@ -1,8 +1,7 @@
 import datetime as dt
-import sys
 from decimal import Decimal
 from enum import Enum
-from typing import Annotated, Any, Generic, NewType, Optional, TypeVar, Union
+from typing import Annotated, Any, Generic, NewType, TypeVar
 from uuid import UUID
 
 import msgspec

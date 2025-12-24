@@ -1,8 +1,6 @@
 from __future__ import annotations
 
-from typing import TYPE_CHECKING, Annotated, Any, Union
-
-from typing import get_args, get_origin
+from typing import TYPE_CHECKING, Annotated, Any, Union, get_args, get_origin
 
 from polyfactory.utils.predicates import (
     is_generic_alias,
@@ -70,7 +68,7 @@ def __handle_generic_type_alias(origin: Any, args: tuple) -> Any:
         return template
 
     normalized_args = tuple(normalize_type(arg) for arg in args)
-    substitutions = dict(zip(type_params, normalized_args))
+    substitutions = dict(zip(type_params, normalized_args, strict=False))
 
     if get_origin(template) is Annotated:
         base_type, *metadata = get_args(template)

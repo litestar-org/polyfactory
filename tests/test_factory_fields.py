@@ -2,7 +2,7 @@ import random
 import warnings
 from dataclasses import dataclass
 from datetime import datetime, timedelta
-from typing import Any, ClassVar, Optional, Union
+from typing import Any, ClassVar
 
 import pytest
 

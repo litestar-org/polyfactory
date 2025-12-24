@@ -1,7 +1,7 @@
 """Tests to check that usage of pydantic v1 and v2 at the same time works."""
 
 import sys
-from typing import Annotated, Optional, Union
+from typing import Annotated
 
 import pytest
 

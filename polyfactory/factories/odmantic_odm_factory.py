@@ -1,8 +1,7 @@
 from __future__ import annotations
 
 import decimal
-from typing import TYPE_CHECKING, Any, Generic, TypeVar, Union
-from collections.abc import Callable
+from typing import TYPE_CHECKING, Any, Generic, TypeVar
 
 from polyfactory.exceptions import MissingDependencyException
 from polyfactory.factories.pydantic_factory import ModelFactory
@@ -21,6 +20,7 @@ except ImportError as e:
 T = TypeVar("T", bound=Model | EmbeddedModel)
 
 if TYPE_CHECKING:
+    from collections.abc import Callable
     from typing import TypeGuard
 
 

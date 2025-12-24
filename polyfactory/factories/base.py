@@ -4,7 +4,7 @@ import copy
 import inspect
 from abc import ABC, abstractmethod
 from collections import Counter, abc, deque
-from collections.abc import Collection, Hashable, Iterable, Mapping, Sequence
+from collections.abc import Callable, Collection, Hashable, Iterable, Mapping, Sequence
 from contextlib import suppress
 from datetime import date, datetime, time, timedelta
 from decimal import Decimal
@@ -33,15 +33,15 @@ from typing import (
     TypedDict,
     TypeVar,
     cast,
+    get_args,
+    get_origin,
     overload,
 )
-from collections.abc import Callable
 from uuid import UUID
 from zoneinfo import ZoneInfo
 
 from faker import Faker
 from typing_extensions import Self, get_original_bases
-from typing import get_args, get_origin
 
 from polyfactory.constants import (
     DEFAULT_RANDOM,

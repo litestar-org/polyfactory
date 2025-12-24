@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from collections.abc import Iterable
 from dataclasses import dataclass, field
-from typing import Any, TypeVar, Union
+from typing import Any, TypeVar
 
 import pytest
 
@@ -19,9 +19,9 @@ class _Sentinel: ...
 @dataclass
 class Node:
     value: int
-    union_child: Node | int  # noqa: UP007
+    union_child: Node | int
     list_child: list[Node]
-    optional_child: Node | None  # noqa: UP007
+    optional_child: Node | None
     child: Node = field(default=_Sentinel)  # type: ignore[assignment]
 
     def __post_init__(self) -> None:
@@ -44,10 +44,10 @@ def test_recursive_model() -> None:
 
 class PydanticNode(BaseModel):
     value: int
-    union_child: PydanticNode | int  # noqa: UP007
+    union_child: PydanticNode | int
     list_child: list[PydanticNode]
-    optional_union_child: PydanticNode | None  # noqa: UP007
-    optional_child: PydanticNode | None  # noqa: UP007
+    optional_union_child: PydanticNode | None
+    optional_child: PydanticNode | None
     child: PydanticNode = Field(default=_Sentinel)  # type: ignore[assignment]
     recursive_key: dict[PydanticNode, Any]
     recursive_value: dict[str, PydanticNode]
