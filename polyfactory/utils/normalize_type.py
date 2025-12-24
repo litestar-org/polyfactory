@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING, Annotated, Any, Union
 
-from typing_extensions import get_args, get_origin
+from typing import get_args, get_origin
 
 from polyfactory.utils.predicates import (
     is_generic_alias,

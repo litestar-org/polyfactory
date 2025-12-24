@@ -3,7 +3,7 @@ from __future__ import annotations
 from dataclasses import MISSING, fields, is_dataclass
 from typing import Any, Generic, get_type_hints
 
-from typing_extensions import TypeGuard
+from typing import TypeGuard
 
 from polyfactory.factories.base import BaseFactory, T
 from polyfactory.field_meta import FieldMeta, Null
@@ -24,14 +24,14 @@ class DataclassFactory(Generic[T], BaseFactory[T]):
         return bool(is_dataclass(value))
 
     @classmethod
-    def get_model_fields(cls) -> list["FieldMeta"]:
+    def get_model_fields(cls) -> list[FieldMeta]:
         """Retrieve a list of fields from the factory's model.
 
 
         :returns: A list of field MetaData instances.
 
         """
-        fields_meta: list["FieldMeta"] = []
+        fields_meta: list[FieldMeta] = []
 
         model_type_hints = get_type_hints(cls.__model__, include_extras=True)
 

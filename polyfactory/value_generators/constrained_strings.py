@@ -1,6 +1,7 @@
 from __future__ import annotations
 
-from typing import TYPE_CHECKING, Callable, TypeVar, Union, cast
+from typing import TYPE_CHECKING, TypeVar, Union, cast
+from collections.abc import Callable
 
 from polyfactory.exceptions import ParameterException
 from polyfactory.value_generators.primitives import create_random_bytes, create_random_string

@@ -4,13 +4,13 @@ from dataclasses import dataclass
 from enum import Enum
 from typing import (
     Any,
-    Callable,
     Generic,
     Literal,
     Optional,
     TypeVar,
     Union,
 )
+from collections.abc import Callable
 
 import pytest
 
@@ -24,7 +24,7 @@ from tests.models import Person
 
 def test_handles_complex_typing() -> None:
     class MyModel(BaseModel):
-        nested_dict: dict[str, dict[Union[int, str], dict[Any, list[dict[str, str]]]]]
+        nested_dict: dict[str, dict[int | str, dict[Any, list[dict[str, str]]]]]
         dict_str_any: dict[str, Any]
         nested_list: list[list[list[dict[str, list[Any]]]]]
         sequence_literal: Sequence[Literal[1, 2, 3]]
@@ -34,7 +34,7 @@ def test_handles_complex_typing() -> None:
         tuple_str_str: tuple[str, str]
         default_dict: defaultdict[str, list[dict[str, int]]]
         deque: deque[list[dict[str, int]]]
-        set_union: set[Union[str, int]]
+        set_union: set[str | int]
         frozen_set: frozenset[str]
         plain_list: list[Any]
         plain_set: set[Any]
@@ -96,10 +96,10 @@ def test_randomizes_optional_returns() -> None:
     """this is a flaky test - because it depends on randomness, hence it's been re-ran multiple times."""
 
     class MyModel(BaseModel):
-        optional_1: Optional[list[str]]
-        optional_2: Optional[dict[str, str]]
-        optional_3: Optional[set[str]]
-        optional_4: Optional[dict[int, str]]
+        optional_1: list[str] | None
+        optional_2: dict[str, str] | None
+        optional_3: set[str] | None
+        optional_4: dict[int, str] | None
 
     class MyFactory(ModelFactory):
         __model__ = MyModel
@@ -150,7 +150,7 @@ def test_complex_typing_with_enum() -> None:
 
 def test_union_literal() -> None:
     class MyModel(BaseModel):
-        x: Union[int, Literal["a", "b", "c"]]
+        x: int | Literal["a", "b", "c"]
 
     class MyFactory(ModelFactory):
         __model__ = MyModel

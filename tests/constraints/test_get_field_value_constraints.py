@@ -9,7 +9,7 @@ from polyfactory.field_meta import Constraints, FieldMeta
 
 
 @pytest.mark.parametrize("t", (int, float, Decimal))
-def test_numbers(t: type[Union[int, float, Decimal]]) -> None:
+def test_numbers(t: type[int | float | Decimal]) -> None:
     constraints: Constraints = {"ge": 1, "le": 20}
     field_meta = FieldMeta.from_type(annotation=t, name="foo", constraints=constraints)
     value = BaseFactory.get_field_value(field_meta)
@@ -19,7 +19,7 @@ def test_numbers(t: type[Union[int, float, Decimal]]) -> None:
 
 
 @pytest.mark.parametrize("t", (str, bytes))
-def test_str_and_bytes(t: type[Union[str, bytes]]) -> None:
+def test_str_and_bytes(t: type[str | bytes]) -> None:
     constraints: Constraints = {"min_length": 20, "max_length": 45}
     field_meta = FieldMeta.from_type(annotation=t, name="foo", constraints=constraints)
     value = BaseFactory.get_field_value(field_meta)
@@ -29,7 +29,7 @@ def test_str_and_bytes(t: type[Union[str, bytes]]) -> None:
 
 
 @pytest.mark.parametrize("t", (list[int], set[int], tuple[int], frozenset[int]))
-def test_collections(t: type[Union[tuple, list, set, frozenset]]) -> None:
+def test_collections(t: type[tuple | list | set | frozenset]) -> None:
     constraints: Constraints = {
         "min_length": 2,
         "max_length": 10,

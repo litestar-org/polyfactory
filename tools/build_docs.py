@@ -30,7 +30,7 @@ parser.add_argument("output")
 
 
 @contextmanager
-def checkout(branch: str) -> Generator[None, None, None]:
+def checkout(branch: str) -> Generator[None]:
     subprocess.run(["git", "checkout", branch], check=True)  # noqa: S603 S607
     yield
     subprocess.run(["git", "checkout", "-"], check=True)  # noqa: S603 S607

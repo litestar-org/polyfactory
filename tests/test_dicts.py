@@ -32,7 +32,7 @@ def test_passing_nested_dict() -> None:
 )
 def test_dict_with_union_random_types() -> None:
     class MyClass(BaseModel):
-        val: dict[str, Union[int, str]]
+        val: dict[str, int | str]
 
     class MyClassFactory(ModelFactory[MyClass]):
         __model__ = MyClass

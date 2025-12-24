@@ -25,8 +25,8 @@ class Person:
     id: UUID
     name: str
     hobbies: list[str]
-    age: Union[float, int]
-    birthday: Union[datetime, date]
+    age: float | int
+    birthday: datetime | date
     pets: list[Pet]
     assets: list[dict[str, dict[str, Any]]]
 

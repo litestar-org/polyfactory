@@ -1,7 +1,8 @@
 import sys
 import textwrap
 from types import ModuleType
-from typing import Annotated, Any, Callable, get_args, get_origin
+from typing import Annotated, Any, get_args, get_origin
+from collections.abc import Callable
 
 import annotated_types as at
 import pytest

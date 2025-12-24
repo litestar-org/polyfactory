@@ -1,7 +1,8 @@
 from __future__ import annotations
 
 from enum import EnumMeta
-from typing import TYPE_CHECKING, Any, Callable, Literal, TypeVar
+from typing import TYPE_CHECKING, Any, Literal, TypeVar
+from collections.abc import Callable
 
 from polyfactory.exceptions import ParameterException
 

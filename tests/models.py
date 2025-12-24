@@ -18,11 +18,11 @@ class Pet(BaseModel):
 class Person(BaseModel):
     id: UUID4
     name: str
-    hobbies: Optional[list[str]]
+    hobbies: list[str] | None
     nicks: list[str]
-    age: Union[float, int]
+    age: float | int
     pets: list[Pet]
-    birthday: Union[datetime, date]
+    birthday: datetime | date
 
 
 class PersonFactoryWithoutDefaults(ModelFactory[Person]):

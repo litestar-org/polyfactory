@@ -7,13 +7,13 @@ from typing import (
     TYPE_CHECKING,
     Annotated,
     Any,
-    Callable,
     ClassVar,
     Generic,
     Protocol,
     TypeVar,
     Union,
 )
+from collections.abc import Callable
 
 from sqlalchemy.util.langhelpers import duck_type_collection
 
@@ -37,7 +37,7 @@ if TYPE_CHECKING:
     from sqlalchemy.ext.asyncio import AsyncSession, async_scoped_session
     from sqlalchemy.orm import Session, scoped_session
     from sqlalchemy.sql.type_api import TypeEngine
-    from typing_extensions import TypeGuard
+    from typing import TypeGuard
 
 
 T = TypeVar("T")

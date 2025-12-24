@@ -1,6 +1,7 @@
 from datetime import date
 from enum import Enum
-from typing import Callable, Literal, Optional
+from typing import Literal, Optional
+from collections.abc import Callable
 
 import pytest
 
@@ -142,7 +143,7 @@ def test_class_parsing() -> None:
 )
 def test_optional_url_field_parsed_correctly(type_: type) -> None:
     class MyModel(BaseModel):
-        url: Optional[type_]  # type: ignore
+        url: type_ | None  # type: ignore
 
     class MyFactory(ModelFactory[MyModel]):
         __model__ = MyModel

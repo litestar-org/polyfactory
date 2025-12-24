@@ -5,11 +5,9 @@ from typing import Any, Generic, TypeVar, get_args, get_type_hints
 from typing_extensions import (  # type: ignore[attr-defined]
     NotRequired,
     Required,
-    TypeGuard,
-    _TypedDictMeta,  # pyright: ignore[reportAttributeAccessIssue]
-    get_origin,
-    is_typeddict,
+    _TypedDictMeta,
 )
+from typing import TypeGuard, get_origin, is_typeddict
 
 from polyfactory.factories.base import BaseFactory
 from polyfactory.field_meta import FieldMeta, Null
@@ -32,7 +30,7 @@ class TypedDictFactory(Generic[TypedDictT], BaseFactory[TypedDictT]):
         return is_typeddict(value)
 
     @classmethod
-    def get_model_fields(cls) -> list["FieldMeta"]:
+    def get_model_fields(cls) -> list[FieldMeta]:
         """Retrieve a list of fields from the factory's model.
 
 

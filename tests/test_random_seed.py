@@ -28,7 +28,7 @@ def test_random_seed() -> None:
 
 def test_deterministic_optionals_seeding() -> None:
     class ModelWithOptionalValues(BaseModel):
-        name: Optional[str]
+        name: str | None
 
     class FactoryWithNoneOptionals(ModelFactory):
         __model__ = ModelWithOptionalValues

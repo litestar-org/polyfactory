@@ -11,10 +11,10 @@ from polyfactory.pytest_plugin import register_fixture
 class Person:
     id: UUID
     name: str
-    hobbies: Optional[list[str]]
+    hobbies: list[str] | None
     nicks: list[str]
-    age: Union[float, int]
-    birthday: Union[datetime, date]
+    age: float | int
+    birthday: datetime | date
 
 
 class PersonFactory(DataclassFactory[Person]): ...

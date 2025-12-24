@@ -2,7 +2,8 @@ from __future__ import annotations
 
 import inspect
 from functools import wraps
-from typing import Any, Callable, Literal, TypeVar
+from typing import Any, Literal, TypeVar
+from collections.abc import Callable
 from warnings import warn
 
 from typing_extensions import ParamSpec

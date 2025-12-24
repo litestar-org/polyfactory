@@ -12,9 +12,9 @@ class Person:
     id: UUID
     name: str
     hobbies: list[str]
-    age: Union[float, int]
+    age: float | int
     # an aliased variable
-    birthday: Union[datetime, date] = attrs.field(alias="date_of_birth")
+    birthday: datetime | date = attrs.field(alias="date_of_birth")
     # a "private" variable
     _assets: list[dict[str, dict[str, Any]]]
 

@@ -2,7 +2,8 @@ import sys
 from datetime import date
 from decimal import Decimal
 from types import ModuleType
-from typing import Any, Callable, NewType, Optional, Union
+from typing import Any, NewType, Optional, Union
+from collections.abc import Callable
 
 import pytest
 
@@ -52,11 +53,11 @@ def test_complex_new_types() -> None:
 
     class MyModel(BaseModel):
         list_int_field: list[MyInt]
-        union_field: Union[MyInt, MyStr]
-        optional_str_field: Optional[MyStr]
+        union_field: MyInt | MyStr
+        optional_str_field: MyStr | None
         tuple_str_str: tuple[MyStr, MyStr]
         dict_field: dict[MyStr, Any]
-        complex_dict_field: dict[MyStr, dict[Union[MyInt, MyStr], MyInt]]
+        complex_dict_field: dict[MyStr, dict[MyInt | MyStr, MyInt]]
         nested_model_field: MyNestedModel
 
     class MyModelFactory(ModelFactory):
