@@ -3,15 +3,6 @@ from __future__ import annotations
 from collections import abc, defaultdict, deque
 from collections.abc import Iterable, Mapping, Sequence
 from random import Random
-from typing import (
-    Union,
-)
-
-try:
-    from types import UnionType
-except ImportError:
-    UnionType = Union  # type: ignore[misc,assignment]
-
 
 # Mapping of type annotations into concrete types.
 TYPE_MAPPING = {
@@ -29,7 +20,6 @@ TYPE_MAPPING = {
     abc.Mapping: dict,
     abc.Sequence: list,
     abc.Set: set,
-    UnionType: Union,
 }
 
 

@@ -18,7 +18,7 @@ except ImportError as e:
     msg = "odmantic is not installed"
     raise MissingDependencyException(msg) from e
 
-T = TypeVar("T", bound=Union[Model, EmbeddedModel])
+T = TypeVar("T", bound=Model | EmbeddedModel)
 
 if TYPE_CHECKING:
     from typing import TypeGuard

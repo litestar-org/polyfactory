@@ -6,7 +6,7 @@ from typing import Union
 from polyfactory.factories import DataclassFactory
 
 # Define a recursive type using forward reference
-RecursiveType = Union[list["RecursiveType"], int]
+RecursiveType = list["RecursiveType"] | int
 
 
 @dataclass

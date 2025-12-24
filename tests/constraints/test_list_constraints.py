@@ -1,11 +1,8 @@
-import sys
 from typing import Any
 
 import pytest
 from hypothesis import given
 from hypothesis.strategies import integers
-
-from pydantic import VERSION
 
 from polyfactory.exceptions import ParameterException
 from polyfactory.factories.pydantic_factory import ModelFactory, PydanticFieldMeta
@@ -74,10 +71,6 @@ def test_handle_constrained_list_with_min_items(
     assert len(result) >= min_items
 
 
-@pytest.mark.skipif(
-    sys.version_info < (3, 9) and VERSION.startswith("2"),
-    reason="fails on python 3.8 with pydantic v2",
-)
 @pytest.mark.parametrize("t_type", tuple(ModelFactory.get_provider_map()))
 def test_handle_constrained_list_with_different_types(t_type: Any) -> None:
     field_meta = PydanticFieldMeta.from_type(list[t_type], name="test")

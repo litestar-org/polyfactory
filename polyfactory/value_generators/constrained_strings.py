@@ -7,7 +7,7 @@ from polyfactory.exceptions import ParameterException
 from polyfactory.value_generators.primitives import create_random_bytes, create_random_string
 from polyfactory.value_generators.regex import RegexFactory
 
-T = TypeVar("T", bound=Union[bytes, str])
+T = TypeVar("T", bound=bytes | str)
 
 if TYPE_CHECKING:
     from random import Random
