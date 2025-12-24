@@ -1,6 +1,8 @@
 from __future__ import annotations
 
-from typing import TYPE_CHECKING, Annotated, Any, Union, get_args, get_origin
+from functools import reduce
+from operator import or_
+from typing import TYPE_CHECKING, Annotated, Any, get_args, get_origin
 
 from polyfactory.utils.predicates import (
     is_generic_alias,
@@ -85,7 +87,7 @@ def __apply_substitutions(target: Any, subs: Mapping[Any, Any]) -> Any:
 
     if is_union(target):
         args = tuple(__apply_substitutions(arg, subs) for arg in get_args(target))
-        return Union[*args]
+        return reduce(or_, args)
 
     origin = get_origin(target)
     args = get_args(target)
