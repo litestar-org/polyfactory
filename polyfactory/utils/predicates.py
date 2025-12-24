@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import sys
 from inspect import isclass
 from typing import Annotated, Any, ForwardRef, Literal, NewType, Optional, TypeGuard, TypeVar, get_args, get_origin
 
@@ -10,11 +11,12 @@ from typing_extensions import (
     TypeAliasType,
 )
 
-try:
-    from typing_extensions import TypeAliasType as typing_TypeAliasType
+# Python 3.12+ has TypeAliasType in typing module, and it's different from typing_extensions version
+if sys.version_info >= (3, 12):
+    from typing import TypeAliasType as typing_TypeAliasType
 
     AllTypeAliasTypes: tuple[type, ...] = (TypeAliasType, typing_TypeAliasType)
-except ImportError:
+else:
     AllTypeAliasTypes = (TypeAliasType,)
 
 

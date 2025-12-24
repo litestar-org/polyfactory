@@ -40,7 +40,7 @@ def normalize_type(type_annotation: Any) -> Any:
     """
 
     if is_type_alias(type_annotation):
-        return type_annotation.__value__
+        return normalize_type(type_annotation.__value__)
 
     if not is_generic_alias(type_annotation):
         return type_annotation
@@ -85,7 +85,7 @@ def __apply_substitutions(target: Any, subs: Mapping[Any, Any]) -> Any:
 
     if is_union(target):
         args = tuple(__apply_substitutions(arg, subs) for arg in get_args(target))
-        return Union[args]
+        return Union[*args]
 
     origin = get_origin(target)
     args = get_args(target)
