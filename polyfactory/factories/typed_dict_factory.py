@@ -1,10 +1,11 @@
 from __future__ import annotations
 
-from typing import Any, Generic, TypeGuard, TypeVar, get_args, get_origin, get_type_hints, is_typeddict
+from typing import Any, Generic, TypeGuard, TypeVar, get_args, get_origin, get_type_hints
 
 from typing_extensions import (
     NotRequired,
     Required,
+    is_typeddict,
 )
 
 from polyfactory.factories.base import BaseFactory
