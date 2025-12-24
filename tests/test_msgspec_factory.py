@@ -130,7 +130,6 @@ def test_msgspec_types() -> None:
     assert isinstance(foo.ext, msgspec.msgpack.Ext)
 
 
-@pytest.mark.skipif(sys.version_info < (3, 9), reason="flaky in 3.8")
 def test_with_constraints() -> None:
     class Foo(Struct):
         int_field: Annotated[int, msgspec.Meta(ge=10, le=500, multiple_of=2)]
@@ -150,7 +149,6 @@ def test_with_constraints() -> None:
     assert foo == validated_foo
 
 
-@pytest.mark.skipif(sys.version_info < (3, 9), reason="flaky in 3.8")
 def test_dict_constraints() -> None:
     class Foo(Struct):
         dict_field: Annotated[dict[str, int], msgspec.Meta(min_length=1)]
@@ -165,7 +163,6 @@ def test_dict_constraints() -> None:
     assert foo == validated_foo
 
 
-@pytest.mark.skipif(sys.version_info < (3, 9), reason="flaky in 3.8")
 @pytest.mark.parametrize("t", (dt.datetime, dt.time))
 def test_datetime_constraints(t: type[dt.datetime] | type[dt.time]) -> None:
     class Foo(Struct):

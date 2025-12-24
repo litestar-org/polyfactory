@@ -105,7 +105,7 @@ autodoc_default_options = {
 autodoc_member_order = "bysource"
 autodoc_typehints_format = "short"
 
-auto_pytabs_min_version = (3, 8)
+auto_pytabs_min_version = (3, 10)
 auto_pytabs_max_version = (3, 11)
 auto_pytabs_compat_mode = True
 

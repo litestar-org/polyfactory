@@ -83,7 +83,7 @@ def test_generic_factory_three_response() -> None:
 
 def test_generic_factory_union_response() -> None:
     class APIResponseFactory(ModelFactory):
-        __model__ = APIResponse[Union[OneResponse, TwoResponse, ThreeResponse]]
+        __model__ = APIResponse[OneResponse | TwoResponse | ThreeResponse]
 
     result = APIResponseFactory.build()
 

@@ -107,7 +107,6 @@ def test_optional_with_constraints() -> None:
     assert isinstance(AFactory.build().a, float)
 
 
-@pytest.mark.skipif(sys.version_info < (3, 10), reason="requires python3.9 or higher")
 def test_list_unions() -> None:
     # issue: https://github.com/litestar-org/polyfactory/issues/300, no error reproduced
     class A(BaseModel):
@@ -732,7 +731,6 @@ def test_union_types() -> None:
     assert AFactory.build()
 
 
-@pytest.mark.skipif(sys.version_info < (3, 10), reason="requires modern union types")
 @pytest.mark.skipif(IS_PYDANTIC_V1, reason="pydantic 2 only test")
 def test_optional_custom_type() -> None:
     from pydantic_core import core_schema
@@ -801,8 +799,9 @@ def test_constrained_union_types_pydantic_v1() -> None:
         e: Annotated[list[int], MinLen(10)] | Annotated[list[str], MaxLen(9)] | None
         f: Annotated[list[int], MinLen(10)] | list[str] | None
         g: None | (
-                Annotated[list[int], MinLen(10)] |
-                Annotated[list[str], MaxLen(9)] | Annotated[Decimal, Field(max_digits=4, decimal_places=2)]
+            Annotated[list[int], MinLen(10)]
+            | Annotated[list[str], MaxLen(9)]
+            | Annotated[Decimal, Field(max_digits=4, decimal_places=2)]
         )
 
     AFactory = ModelFactory.create_factory(A, __allow_none_optionals__=False)
@@ -817,13 +816,12 @@ def test_constrained_union_types_pydantic_v2() -> None:
         b: list[Annotated[str, MinLen(100)]] | int
         c: Annotated[list[int], MinLen(100)] | None
         d: Annotated[list[int], MinLen(100)] | Annotated[list[str], MaxLen(99)]
-        e: None | (
-            Annotated[list[Annotated[int, Gt(100), Lt(105)]], MinLen(10)] | Annotated[list[str], MaxLen(9)]
-        )
+        e: None | (Annotated[list[Annotated[int, Gt(100), Lt(105)]], MinLen(10)] | Annotated[list[str], MaxLen(9)])
         f: Annotated[list[int], MinLen(10)] | list[str] | None
         g: None | (
-                Annotated[list[int], MinLen(10)] |
-                Annotated[list[str], MaxLen(9)] | Annotated[Decimal, Field(max_digits=4, decimal_places=2)]
+            Annotated[list[int], MinLen(10)]
+            | Annotated[list[str], MaxLen(9)]
+            | Annotated[Decimal, Field(max_digits=4, decimal_places=2)]
         )
         # This annotation is not allowed in pydantic 1
         h: Annotated[list[int] | list[str], MinLen(10)]
@@ -1082,10 +1080,6 @@ def test_nested_constrained_attribute_handling_pydantic_1() -> None:
     assert result.my_str_dict_field
 
 
-@pytest.mark.skipif(
-    IS_PYDANTIC_V1 or sys.version_info < (3, 9),
-    reason="pydantic 2 only test, does not work correctly in py 3.8",
-)
 def test_nested_constrained_attribute_handling_pydantic_2() -> None:
     # subclassing the constrained fields is not documented by pydantic,
     # but is supported apparently
