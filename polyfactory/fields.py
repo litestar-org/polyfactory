@@ -1,6 +1,7 @@
 from __future__ import annotations
 
-from typing import Any, Callable, Generic, TypedDict, TypeVar, cast
+from typing import Any, Generic, TypedDict, TypeVar, cast
+from collections.abc import Callable
 
 from typing_extensions import ParamSpec
 

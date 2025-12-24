@@ -5,7 +5,8 @@ from collections.abc import Iterable
 from dataclasses import dataclass as vanilla_dataclass
 from dataclasses import field
 from types import ModuleType
-from typing import Any, Callable, Optional, TypeVar, Union
+from typing import Any, Optional, TypeVar, Union
+from collections.abc import Callable
 from unittest.mock import ANY
 
 import pytest
@@ -22,7 +23,7 @@ def test_factory_vanilla_dc() -> None:
         id: int
         name: str
         list_field: list[dict[str, int]]
-        field_of_some_value: Optional[int] = field(default_factory=lambda: 0)
+        field_of_some_value: int | None = field(default_factory=lambda: 0)
 
     class MyFactory(DataclassFactory[VanillaDC]):
         __model__ = VanillaDC
@@ -43,7 +44,7 @@ def test_factory_pydantic_dc() -> None:
         id: int
         name: str
         list_field: list[dict[str, int]]
-        field_of_some_value: Optional[int] = field(default_factory=lambda: 0)
+        field_of_some_value: int | None = field(default_factory=lambda: 0)
 
     class MyFactory(DataclassFactory[PydanticDC]):
         __model__ = PydanticDC
@@ -270,10 +271,10 @@ def test_use_default_with_non_callable_default() -> None:
 def test_union_types() -> None:
     @vanilla_dataclass
     class A:
-        a: Union[list[str], list[int]]
-        b: Union[str, list[int]]
-        c: list[Union[tuple[int, int], tuple[str, int]]]
-        d: Union[str, int]
+        a: list[str] | list[int]
+        b: str | list[int]
+        c: list[tuple[int, int] | tuple[str, int]]
+        d: str | int
 
     AFactory = DataclassFactory.create_factory(A)
 
@@ -306,8 +307,8 @@ def test_collection_unions_with_models() -> None:
 
     @vanilla_dataclass
     class C:
-        a: Union[list[A], list[B]]
-        b: list[Union[A, B]]
+        a: list[A] | list[B]
+        b: list[A | B]
 
     CFactory = DataclassFactory.create_factory(
         C,
@@ -336,9 +337,9 @@ def _get_types(items: Iterable[_T]) -> set[type[_T]]:
 def test_optional_type(allow_none: bool) -> None:
     @vanilla_dataclass
     class A:
-        a: Union[str, None]
-        b: Optional[str]
-        c: Optional[Union[str, int, list[int]]]
+        a: str | None
+        b: str | None
+        c: str | int | list[int] | None
 
     class AFactory(DataclassFactory[A]):
         __model__ = A

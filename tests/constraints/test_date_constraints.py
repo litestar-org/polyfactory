@@ -16,8 +16,8 @@ from polyfactory.factories.pydantic_factory import ModelFactory
 )
 @pytest.mark.parametrize(("start", "end"), (("ge", "le"), ("gt", "lt"), ("ge", "lt"), ("gt", "le")))
 def test_handle_constrained_date(
-    start: Optional[str],
-    end: Optional[str],
+    start: str | None,
+    end: str | None,
     start_date: date,
     end_date: date,
 ) -> None:

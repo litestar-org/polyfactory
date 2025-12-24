@@ -4,12 +4,12 @@ import inspect
 import re
 from typing import (
     Any,
-    Callable,
     Literal,
     TypeVar,
     Union,
     overload,
 )
+from collections.abc import Callable
 
 import pytest
 

@@ -4,7 +4,7 @@ from collections.abc import Iterable, MutableMapping, MutableSequence
 from collections.abc import Set as AbstractSet
 from typing import TYPE_CHECKING, Any, cast
 
-from typing_extensions import is_typeddict
+from typing import is_typeddict
 
 from polyfactory.utils.model_coverage import CoverageContainer
 

@@ -112,7 +112,7 @@ def test_collection_length_with_dict(min_val: int, max_val: int) -> None:
 def test_collection_length_with_optional_not_allowed(min_val: int, max_val: int) -> None:
     @dataclass
     class Foo:
-        foo: Optional[list[int]]
+        foo: list[int] | None
 
     class FooFactory(DataclassFactory[Foo]):
         __model__ = Foo
@@ -133,7 +133,7 @@ def test_collection_length_with_optional_not_allowed(min_val: int, max_val: int)
 def test_collection_length_with_optional_allowed(min_val: int, max_val: int) -> None:
     @dataclass
     class Foo:
-        foo: Optional[list[int]]
+        foo: list[int] | None
 
     class FooFactory(DataclassFactory[Foo]):
         __model__ = Foo

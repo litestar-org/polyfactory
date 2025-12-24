@@ -5,7 +5,7 @@ from collections.abc import Hashable, Mapping
 from dataclasses import asdict
 from typing import TYPE_CHECKING, Any, Literal, TypedDict, cast
 
-from typing_extensions import get_args, get_origin
+from typing import get_args, get_origin
 
 from polyfactory.constants import TYPE_MAPPING
 from polyfactory.utils.helpers import (
@@ -160,7 +160,7 @@ class FieldMeta:
         return field
 
     @classmethod
-    def parse_constraints(cls, metadata: Sequence[Any]) -> "Constraints":
+    def parse_constraints(cls, metadata: Sequence[Any]) -> Constraints:
         constraints = {}
 
         for value in metadata:

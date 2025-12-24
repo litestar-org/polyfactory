@@ -167,7 +167,7 @@ def test_dict_constraints() -> None:
 
 @pytest.mark.skipif(sys.version_info < (3, 9), reason="flaky in 3.8")
 @pytest.mark.parametrize("t", (dt.datetime, dt.time))
-def test_datetime_constraints(t: Union[type[dt.datetime], type[dt.time]]) -> None:
+def test_datetime_constraints(t: type[dt.datetime] | type[dt.time]) -> None:
     class Foo(Struct):
         date_field: Annotated[t, msgspec.Meta(tz=True)]  # type: ignore[valid-type]
 
@@ -277,9 +277,9 @@ def test_use_default_with_non_callable_default() -> None:
 
 def test_union_types() -> None:
     class A(Struct):
-        a: Union[list[str], int]
-        b: Union[str, list[int]]
-        c: list[Union[tuple[int, int], float]]
+        a: list[str] | int
+        b: str | list[int]
+        c: list[tuple[int, int] | float]
 
     AFactory = MsgspecFactory.create_factory(A)
 
@@ -295,8 +295,8 @@ def test_collection_unions_with_models() -> None:
         a: str
 
     class C(Struct):
-        a: Union[list[A], str]
-        b: list[Union[A, int]]
+        a: list[A] | str
+        b: list[A | int]
 
     CFactory = MsgspecFactory.create_factory(C)
 
@@ -306,12 +306,12 @@ def test_collection_unions_with_models() -> None:
 
 def test_constrained_union_types() -> None:
     class A(Struct):
-        a: Union[Annotated[list[str], Meta(min_length=10)], Annotated[int, Meta(ge=1000)]]
-        b: Union[list[Annotated[str, Meta(min_length=20)]], int]
-        c: Optional[Annotated[int, Meta(ge=1000)]]
-        d: Union[Annotated[list[int], Meta(min_length=100)], Annotated[str, Meta(min_length=100)]]
-        e: Optional[Union[Annotated[list[int], Meta(min_length=100)], Annotated[str, Meta(min_length=100)]]]
-        f: Optional[Union[Annotated[list[int], Meta(min_length=100)], str]]
+        a: Annotated[list[str], Meta(min_length=10)] | Annotated[int, Meta(ge=1000)]
+        b: list[Annotated[str, Meta(min_length=20)]] | int
+        c: Annotated[int, Meta(ge=1000)] | None
+        d: Annotated[list[int], Meta(min_length=100)] | Annotated[str, Meta(min_length=100)]
+        e: Annotated[list[int], Meta(min_length=100)] | Annotated[str, Meta(min_length=100)] | None
+        f: Annotated[list[int], Meta(min_length=100)] | str | None
 
     AFactory = MsgspecFactory.create_factory(A, __allow_none_optionals__=False)
 
@@ -322,9 +322,9 @@ def test_constrained_union_types() -> None:
 @pytest.mark.parametrize("allow_none", (True, False))
 def test_optional_type(allow_none: bool) -> None:
     class A(Struct):
-        a: Union[str, None]
-        b: Optional[str]
-        c: Optional[Union[str, int, list[int]]]
+        a: str | None
+        b: str | None
+        c: str | int | list[int] | None
 
     class AFactory(MsgspecFactory[A]):
         __model__ = A

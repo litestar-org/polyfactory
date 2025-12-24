@@ -13,7 +13,7 @@ class TypedDictModel(TypedDict):
     id: int
     name: str
     list_field: list[dict[str, int]]
-    int_field: Optional[int]
+    int_field: int | None
 
 
 def test_factory_with_typeddict() -> None:
@@ -34,7 +34,7 @@ def test_factory_model_with_typeddict_attribute_value() -> None:
         td: TypedDictModel
         name: str
         list_field: list[dict[str, int]]
-        int_field: Optional[int]
+        int_field: int | None
 
     class MyFactory(ModelFactory[MyModel]):
         __model__ = MyModel
@@ -54,7 +54,7 @@ def test_typeddict_with_required_and_non_required_fields() -> None:
         name: NotRequired[str]
         annotated: Required[Annotated[int, Ge(100)]]
         list_field: list[dict[str, int]]
-        optional_int: Required[Optional[int]]
+        optional_int: Required[int | None]
 
     class TypedDictModelFactory(TypedDictFactory[TypedDictModel]):
         __model__ = TypedDictModel
@@ -74,7 +74,7 @@ def test_total_false_and_not_required() -> None:
         id: Required[int]
         name: str
         list_field: list[dict[str, int]]
-        optional_int: Optional[int]
+        optional_int: int | None
 
     class TypedDictModelFactory(TypedDictFactory[TypedDictModel]):
         __model__ = TypedDictModel

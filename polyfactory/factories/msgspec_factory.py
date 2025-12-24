@@ -1,7 +1,8 @@
 from __future__ import annotations
 
 from inspect import isclass
-from typing import TYPE_CHECKING, Any, Callable, Generic, TypeVar, get_type_hints
+from typing import TYPE_CHECKING, Any, Generic, TypeVar, get_type_hints
+from collections.abc import Callable
 
 from polyfactory.exceptions import MissingDependencyException
 from polyfactory.factories.base import BaseFactory
@@ -10,7 +11,7 @@ from polyfactory.value_generators.constrained_numbers import handle_constrained_
 from polyfactory.value_generators.primitives import create_random_bytes
 
 if TYPE_CHECKING:
-    from typing_extensions import TypeGuard
+    from typing import TypeGuard
 
 try:
     import msgspec

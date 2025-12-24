@@ -10,7 +10,7 @@ from pathlib import Path
 from typing import TYPE_CHECKING, Any, ClassVar, ForwardRef, Generic, TypeVar, cast
 from uuid import NAMESPACE_DNS, uuid1, uuid3, uuid5
 
-from typing_extensions import Literal, get_args
+from typing import Literal, get_args
 
 from polyfactory.exceptions import MissingDependencyException
 from polyfactory.factories.base import BaseFactory, BuildContext
@@ -95,9 +95,10 @@ except ImportError:
 if TYPE_CHECKING:
     from collections import abc
     from collections.abc import Iterable, Mapping, Sequence
-    from typing import Callable
+    from collections.abc import Callable
 
-    from typing_extensions import NotRequired, TypeGuard
+    from typing_extensions import NotRequired
+    from typing import TypeGuard
 
     from pydantic import BaseModel
 
@@ -433,7 +434,7 @@ class ModelFactory(Generic[T], BaseFactory[T]):
         return _is_pydantic_v1_model(value) or _is_pydantic_v2_model(value)
 
     @classmethod
-    def get_model_fields(cls) -> list["FieldMeta"]:
+    def get_model_fields(cls) -> list[FieldMeta]:
         """Retrieve a list of fields from the factory's model.
 
 

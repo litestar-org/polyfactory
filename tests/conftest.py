@@ -11,7 +11,7 @@ import pytest
 if TYPE_CHECKING:
     from pathlib import Path
     from types import ModuleType
-    from typing import Callable
+    from collections.abc import Callable
 
     from pytest import MonkeyPatch
 

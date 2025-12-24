@@ -9,12 +9,13 @@ from decimal import Decimal
 from ipaddress import IPv4Address, IPv4Interface, IPv4Network, IPv6Address, IPv6Interface, IPv6Network
 from pathlib import Path
 from types import ModuleType
-from typing import Annotated, Any, Callable, Literal, Optional, Union
+from typing import Annotated, Any, Literal, Optional, Union
+from collections.abc import Callable
 from uuid import UUID
 
 import pytest
 from annotated_types import Ge, Gt, Le, LowerCase, Lt, MaxLen, MinLen, UpperCase
-from typing_extensions import TypeAlias
+from typing import TypeAlias
 
 import pydantic
 from pydantic import (
@@ -93,7 +94,7 @@ def test_const() -> None:
 
 def test_optional_with_constraints() -> None:
     class A(BaseModel):
-        a: Optional[float] = Field(None, ge=0, le=1)
+        a: float | None = Field(None, ge=0, le=1)
 
     class AFactory(ModelFactory[A]):
         __model__ = A
@@ -296,7 +297,7 @@ def test_factory_use_examples_coverage() -> None:
 
     class Foo(BaseModel):
         name: str = Field(examples=example_strings)
-        number: Optional[Union[int, float]] = Field(examples=example_numbers)
+        number: int | float | None = Field(examples=example_numbers)
 
     class FooFactory(ModelFactory[Foo]):
         __use_examples__ = True
@@ -363,7 +364,7 @@ def test_factory_use_construct_nested_sequence(sequence_type: type[Sequence]) ->
 
 
 @pytest.mark.parametrize("set_type", (frozenset, set))
-def test_factory_use_construct_nested_set(set_type: Union[type[frozenset], type[set]]) -> None:
+def test_factory_use_construct_nested_set(set_type: type[frozenset] | type[set]) -> None:
     class Child(BaseModel):
         invalid: int = Field()
 
@@ -695,7 +696,7 @@ def test_type_property_parsing() -> None:
 )
 def test_optional_url_field_parsed_correctly(type_: TypeAlias) -> None:
     class MyModel(BaseModel):
-        url: Optional[type_]
+        url: type_ | None
 
     class MyFactory(ModelFactory[MyModel]):
         __model__ = MyModel
@@ -722,9 +723,9 @@ def test_handles_complex_typing_with_custom_root_type() -> None:
 
 def test_union_types() -> None:
     class A(BaseModel):
-        a: Union[list[str], list[int]]
-        b: Union[str, list[int]]
-        c: list[Union[tuple[int, int], tuple[str, int]]]
+        a: list[str] | list[int]
+        b: str | list[int]
+        c: list[tuple[int, int] | tuple[str, int]]
 
     AFactory = ModelFactory.create_factory(A)
 
@@ -745,7 +746,7 @@ def test_optional_custom_type() -> None:
             return core_schema.str_schema()
 
     class OptionalFormOne(BaseModel):
-        optional_custom_type: Optional[CustomType]
+        optional_custom_type: CustomType | None
 
         @classmethod
         def should_set_none_value(cls, field_meta: FieldMeta) -> bool:
@@ -782,8 +783,8 @@ def test_collection_unions_with_models() -> None:
         a: str
 
     class C(BaseModel):
-        a: Union[list[A], list[B]]
-        b: list[Union[A, B]]
+        a: list[A] | list[B]
+        b: list[A | B]
 
     CFactory = ModelFactory.create_factory(C)
 
@@ -793,18 +794,16 @@ def test_collection_unions_with_models() -> None:
 @pytest.mark.skipif(IS_PYDANTIC_V2, reason="pydantic 1 only test")
 def test_constrained_union_types_pydantic_v1() -> None:
     class A(BaseModel):
-        a: Union[Annotated[list[str], MinLen(100)], Annotated[int, Ge(1000)]]
-        b: Union[list[Annotated[str, MinLen(100)]], int]
-        c: Union[Annotated[list[int], MinLen(100)], None]
-        d: Union[Annotated[list[int], MinLen(100)], Annotated[list[str], MaxLen(99)]]
-        e: Optional[Union[Annotated[list[int], MinLen(10)], Annotated[list[str], MaxLen(9)]]]
-        f: Optional[Union[Annotated[list[int], MinLen(10)], list[str]]]
-        g: Optional[
-            Union[
-                Annotated[list[int], MinLen(10)],
-                Union[Annotated[list[str], MaxLen(9)], Annotated[Decimal, Field(max_digits=4, decimal_places=2)]],
-            ]
-        ]
+        a: Annotated[list[str], MinLen(100)] | Annotated[int, Ge(1000)]
+        b: list[Annotated[str, MinLen(100)]] | int
+        c: Annotated[list[int], MinLen(100)] | None
+        d: Annotated[list[int], MinLen(100)] | Annotated[list[str], MaxLen(99)]
+        e: Annotated[list[int], MinLen(10)] | Annotated[list[str], MaxLen(9)] | None
+        f: Annotated[list[int], MinLen(10)] | list[str] | None
+        g: None | (
+                Annotated[list[int], MinLen(10)] |
+                Annotated[list[str], MaxLen(9)] | Annotated[Decimal, Field(max_digits=4, decimal_places=2)]
+        )
 
     AFactory = ModelFactory.create_factory(A, __allow_none_optionals__=False)
 
@@ -814,23 +813,21 @@ def test_constrained_union_types_pydantic_v1() -> None:
 @pytest.mark.skipif(IS_PYDANTIC_V1, reason="pydantic 2 only test")
 def test_constrained_union_types_pydantic_v2() -> None:
     class A(BaseModel):
-        a: Union[Annotated[list[str], MinLen(100)], Annotated[int, Ge(1000)]]
-        b: Union[list[Annotated[str, MinLen(100)]], int]
-        c: Union[Annotated[list[int], MinLen(100)], None]
-        d: Union[Annotated[list[int], MinLen(100)], Annotated[list[str], MaxLen(99)]]
-        e: Optional[
-            Union[Annotated[list[Annotated[int, Gt(100), Lt(105)]], MinLen(10)], Annotated[list[str], MaxLen(9)]]
-        ]
-        f: Optional[Union[Annotated[list[int], MinLen(10)], list[str]]]
-        g: Optional[
-            Union[
-                Annotated[list[int], MinLen(10)],
-                Union[Annotated[list[str], MaxLen(9)], Annotated[Decimal, Field(max_digits=4, decimal_places=2)]],
-            ]
-        ]
+        a: Annotated[list[str], MinLen(100)] | Annotated[int, Ge(1000)]
+        b: list[Annotated[str, MinLen(100)]] | int
+        c: Annotated[list[int], MinLen(100)] | None
+        d: Annotated[list[int], MinLen(100)] | Annotated[list[str], MaxLen(99)]
+        e: None | (
+            Annotated[list[Annotated[int, Gt(100), Lt(105)]], MinLen(10)] | Annotated[list[str], MaxLen(9)]
+        )
+        f: Annotated[list[int], MinLen(10)] | list[str] | None
+        g: None | (
+                Annotated[list[int], MinLen(10)] |
+                Annotated[list[str], MaxLen(9)] | Annotated[Decimal, Field(max_digits=4, decimal_places=2)]
+        )
         # This annotation is not allowed in pydantic 1
-        h: Annotated[Union[list[int], list[str]], MinLen(10)]
-        i: Annotated[Union[int, float], Field(gt=5, lt=7)]
+        h: Annotated[list[int] | list[str], MinLen(10)]
+        i: Annotated[int | float, Field(gt=5, lt=7)]
 
     AFactory = ModelFactory.create_factory(A, __allow_none_optionals__=False)
 
@@ -841,9 +838,9 @@ def test_constrained_union_types_pydantic_v2() -> None:
 @pytest.mark.parametrize("allow_none", (True, False))
 def test_optional_type(allow_none: bool) -> None:
     class A(BaseModel):
-        a: Union[str, None]
-        b: Optional[str]
-        c: Optional[Union[str, int, list[int]]]
+        a: str | None
+        b: str | None
+        c: str | int | list[int] | None
 
     class AFactory(ModelFactory[A]):
         __model__ = A
@@ -870,7 +867,7 @@ def test_discriminated_unions() -> None:
 
     class Owner(BaseModel):
         pet: Annotated[
-            Union[Annotated[Union[BlackCat, WhiteCat], Field(discriminator="color")], Dog],
+            Annotated[BlackCat | WhiteCat, Field(discriminator="color")] | Dog,
             Field(discriminator="pet_type"),
         ]
         name: str
@@ -905,7 +902,7 @@ def test_tuple_with_annotated_constraints() -> None:
 
 def test_optional_tuple_with_annotated_constraints() -> None:
     class Location(BaseModel):
-        long_lat: Union[tuple[Annotated[float, Ge(-180), Le(180)], Annotated[float, Ge(-90), Le(90)]], None]
+        long_lat: tuple[Annotated[float, Ge(-180), Le(180)], Annotated[float, Ge(-90), Le(90)]] | None
 
     class LocationFactory(ModelFactory[Location]):
         __model__ = Location
@@ -925,7 +922,7 @@ def test_legacy_tuple_with_annotated_constraints() -> None:
 
 def test_legacy_optional_tuple_with_annotated_constraints() -> None:
     class Location(BaseModel):
-        long_lat: Union[tuple[Annotated[float, Ge(-180), Le(180)], Annotated[float, Ge(-90), Le(90)]], None]
+        long_lat: tuple[Annotated[float, Ge(-180), Le(180)], Annotated[float, Ge(-90), Le(90)]] | None
 
     class LocationFactory(ModelFactory[Location]):
         __model__ = Location
@@ -952,7 +949,7 @@ def test_constrained_attribute_parsing_pydantic_v1() -> None:
         decimal_field: Decimal = Field(ge=100, le=1000)
         list_field: list[str] = Field(min_items=1, max_items=10)  # type: ignore[call-overload]
         constant_field: int = Field(const=True, default=100)  # type: ignore[call-overload]
-        optional_field: Optional[constr(min_length=1)]  # type: ignore[valid-type]
+        optional_field: constr(min_length=1) | None  # type: ignore[valid-type]
 
     class MyFactory(ModelFactory):
         __model__ = ConstrainedModel
@@ -1137,7 +1134,7 @@ def test_constrained_attribute_parsing_pydantic_v2() -> None:
         float_field: float = Field(gt=100, lt=1000)
         decimal_field: Decimal = Field(ge=100, le=1000)
         list_field: list[str] = Field(min_length=1, max_length=10)
-        optional_field: Optional[constr(min_length=1)]  # type: ignore[valid-type]
+        optional_field: constr(min_length=1) | None  # type: ignore[valid-type]
 
     class MyFactory(ModelFactory):
         __model__ = ConstrainedModel

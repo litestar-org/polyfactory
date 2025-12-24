@@ -222,9 +222,9 @@ def test_use_default_with_non_callable_default() -> None:
 def test_union_types() -> None:
     @define
     class A:
-        a: Union[list[str], list[int]]
-        b: Union[str, list[int]]
-        c: list[Union[tuple[int, int], tuple[str, int]]]
+        a: list[str] | list[int]
+        b: str | list[int]
+        c: list[tuple[int, int] | tuple[str, int]]
 
     AFactory = AttrsFactory.create_factory(A)
 
@@ -242,8 +242,8 @@ def test_collection_unions_with_models() -> None:
 
     @define
     class C:
-        a: Union[list[A], list[B]]
-        b: list[Union[A, B]]
+        a: list[A] | list[B]
+        b: list[A | B]
 
     CFactory = AttrsFactory.create_factory(C)
 
@@ -254,9 +254,9 @@ def test_collection_unions_with_models() -> None:
 def test_optional_type(allow_none: bool) -> None:
     @define
     class A:
-        a: Union[str, None]
-        b: Optional[str]
-        c: Optional[Union[str, int, list[int]]]
+        a: str | None
+        b: str | None
+        c: str | int | list[int] | None
 
     class AFactory(AttrsFactory[A]):
         __model__ = A

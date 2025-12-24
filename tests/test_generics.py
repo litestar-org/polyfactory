@@ -20,8 +20,8 @@ class Attributes(GenericModel, Generic[Inner]):  # type: ignore
 
 class OneInner(BaseModel):
     one: str
-    id: Optional[int]
-    description: Optional[str]
+    id: int | None
+    description: str | None
 
 
 class OneResponse(BaseModel):
@@ -30,8 +30,8 @@ class OneResponse(BaseModel):
 
 class TwoInner(BaseModel):
     two: str
-    id: Optional[int]
-    description: Optional[str]
+    id: int | None
+    description: str | None
 
 
 class TwoResponse(BaseModel):

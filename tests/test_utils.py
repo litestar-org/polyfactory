@@ -3,7 +3,8 @@ import sys
 import textwrap
 from decimal import Decimal
 from types import ModuleType
-from typing import Any, Callable, NewType, Union
+from typing import Any, NewType, Union
+from collections.abc import Callable
 
 import pytest
 from hypothesis import given
@@ -21,7 +22,7 @@ from polyfactory.value_generators.constrained_numbers import (
 
 def test_is_union() -> None:
     class UnionTest(BaseModel):
-        union: Union[int, str]
+        union: int | str
         no_union: Any
 
     class UnionTestFactory(ModelFactory):
@@ -34,21 +35,20 @@ def test_is_union() -> None:
             assert not is_union(field_meta.annotation)
 
     # for python 3.10 we need to run the test as well with the union_pipe operator
-    if sys.version_info >= (3, 10):
 
-        class UnionTestWithPipe(BaseModel):
-            union_pipe: int | str | None  # Pipe syntax supported from Python 3.10 onwards
-            union_normal: Union[int, str]
-            no_union: Any
+    class UnionTestWithPipe(BaseModel):
+        union_pipe: int | str | None  # Pipe syntax supported from Python 3.10 onwards
+        union_normal: int | str
+        no_union: Any
 
-        class UnionTestWithPipeFactory(ModelFactory):
-            __model__ = UnionTestWithPipe
+    class UnionTestWithPipeFactory(ModelFactory):
+        __model__ = UnionTestWithPipe
 
-        for field_meta in UnionTestWithPipeFactory.get_model_fields():
-            if field_meta.name in ("union_pipe", "union_normal"):
-                assert is_union(field_meta.annotation)
-            else:
-                assert not is_union(field_meta.annotation)
+    for field_meta in UnionTestWithPipeFactory.get_model_fields():
+        if field_meta.name in ("union_pipe", "union_normal"):
+            assert is_union(field_meta.annotation)
+        else:
+            assert not is_union(field_meta.annotation)
 
 
 def test_is_new_type() -> None:

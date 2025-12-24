@@ -8,9 +8,8 @@ from typing_extensions import (
     ParamSpec,
     Required,
     TypeAliasType,
-    TypeGuard,
-    get_origin,
 )
+from typing import TypeGuard, get_origin
 
 try:
     from typing import TypeAliasType as typing_TypeAliasType
@@ -27,7 +26,7 @@ P = ParamSpec("P")
 T = TypeVar("T")
 
 
-def is_safe_subclass(annotation: Any, class_or_tuple: type[T] | tuple[type[T], ...]) -> "TypeGuard[type[T]]":
+def is_safe_subclass(annotation: Any, class_or_tuple: type[T] | tuple[type[T], ...]) -> TypeGuard[type[T]]:
     """Determine whether a given annotation is a subclass of a give type
 
     :param annotation: A type annotation.
@@ -44,7 +43,7 @@ def is_safe_subclass(annotation: Any, class_or_tuple: type[T] | tuple[type[T], .
         return False
 
 
-def is_any(annotation: Any) -> "TypeGuard[Any]":
+def is_any(annotation: Any) -> TypeGuard[Any]:
     """Determine whether a given annotation is 'typing.Any'.
 
     :param annotation: A type annotation.
@@ -58,7 +57,7 @@ def is_any(annotation: Any) -> "TypeGuard[Any]":
     )
 
 
-def is_dict_key_or_value_type(annotation: Any) -> "TypeGuard[Any]":
+def is_dict_key_or_value_type(annotation: Any) -> TypeGuard[Any]:
     """Determine whether a given annotation is a valid dict key or value type:
     ``typing.KT`` or ``typing.VT``.
 
@@ -67,7 +66,7 @@ def is_dict_key_or_value_type(annotation: Any) -> "TypeGuard[Any]":
     return str(annotation) in {"~KT", "~VT"}
 
 
-def is_union(annotation: Any) -> "TypeGuard[Any]":
+def is_union(annotation: Any) -> TypeGuard[Any]:
     """Determine whether a given annotation is 'typing.Union'.
 
     :param annotation: A type annotation.
@@ -77,7 +76,7 @@ def is_union(annotation: Any) -> "TypeGuard[Any]":
     return get_type_origin(annotation) in UNION_TYPES
 
 
-def is_optional(annotation: Any) -> "TypeGuard[Any | None]":
+def is_optional(annotation: Any) -> TypeGuard[Any | None]:
     """Determine whether a given annotation is 'typing.Optional'.
 
     :param annotation: A type annotation.
@@ -103,7 +102,7 @@ def is_literal(annotation: Any) -> bool:
     return repr(annotation).startswith("typing.Literal") or repr(annotation).startswith("typing_extensions.Literal")
 
 
-def is_new_type(annotation: Any) -> "TypeGuard[type[NewType]]":
+def is_new_type(annotation: Any) -> TypeGuard[type[NewType]]:
     """Determine whether a given annotation is 'typing.NewType'.
 
     :param annotation: A type annotation.

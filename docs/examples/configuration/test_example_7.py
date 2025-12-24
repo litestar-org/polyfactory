@@ -8,7 +8,7 @@ from polyfactory.factories.dataclass_factory import DataclassFactory
 @dataclass
 class Person:
     id: UUID
-    name: Optional[str]
+    name: str | None
 
 
 class PersonFactory(DataclassFactory[Person]):
