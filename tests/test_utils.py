@@ -1,10 +1,10 @@
 import random
 import sys
 import textwrap
+from collections.abc import Callable
 from decimal import Decimal
 from types import ModuleType
-from typing import Any, NewType, Union
-from collections.abc import Callable
+from typing import Any, NewType
 
 import pytest
 from hypothesis import given

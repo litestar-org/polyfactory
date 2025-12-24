@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from inspect import isclass
-from typing import Annotated, Any, ForwardRef, Literal, NewType, Optional, TypeVar, get_args
+from typing import Annotated, Any, ForwardRef, Literal, NewType, Optional, TypeGuard, TypeVar, get_args, get_origin
 
 from typing_extensions import (
     NotRequired,
@@ -9,10 +9,9 @@ from typing_extensions import (
     Required,
     TypeAliasType,
 )
-from typing import TypeGuard, get_origin
 
 try:
-    from typing import TypeAliasType as typing_TypeAliasType
+    from typing_extensions import TypeAliasType as typing_TypeAliasType
 
     AllTypeAliasTypes: tuple[type, ...] = (TypeAliasType, typing_TypeAliasType)
 except ImportError:

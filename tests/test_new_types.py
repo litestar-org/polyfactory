@@ -1,9 +1,9 @@
 import sys
+from collections.abc import Callable
 from datetime import date
 from decimal import Decimal
 from types import ModuleType
-from typing import Any, NewType, Optional, Union
-from collections.abc import Callable
+from typing import Any, NewType
 
 import pytest
 

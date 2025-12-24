@@ -3,9 +3,7 @@ from __future__ import annotations
 from collections import deque
 from collections.abc import Mapping, Sequence
 from dataclasses import is_dataclass
-from typing import Any
-
-from typing import get_args, get_origin
+from typing import Any, get_args, get_origin
 
 from polyfactory.constants import TYPE_MAPPING
 from polyfactory.utils.predicates import (

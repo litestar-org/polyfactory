@@ -1,7 +1,7 @@
 from dataclasses import dataclass
 from datetime import date, datetime
 from enum import Enum
-from typing import Any, Union
+from typing import Any
 from uuid import UUID
 
 from polyfactory.factories import DataclassFactory

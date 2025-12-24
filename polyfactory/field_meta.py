@@ -3,9 +3,7 @@ from __future__ import annotations
 import functools
 from collections.abc import Hashable, Mapping
 from dataclasses import asdict
-from typing import TYPE_CHECKING, Any, Literal, TypedDict, cast
-
-from typing import get_args, get_origin
+from typing import TYPE_CHECKING, Any, Literal, TypedDict, cast, get_args, get_origin
 
 from polyfactory.constants import TYPE_MAPPING
 from polyfactory.utils.helpers import (

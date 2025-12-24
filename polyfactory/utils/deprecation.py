@@ -2,11 +2,13 @@ from __future__ import annotations
 
 import inspect
 from functools import wraps
-from typing import Any, Literal, TypeVar
-from collections.abc import Callable
+from typing import TYPE_CHECKING, Any, Literal, TypeVar
 from warnings import warn
 
 from typing_extensions import ParamSpec
+
+if TYPE_CHECKING:
+    from collections.abc import Callable
 
 __all__ = ("check_for_deprecated_parameters", "deprecated", "warn_deprecation")
 

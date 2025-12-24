@@ -2,14 +2,14 @@ from __future__ import annotations
 
 import inspect
 import re
+from collections.abc import Callable
 from typing import (
     Any,
     Literal,
+    TypeAlias,
     TypeVar,
-    Union,
     overload,
 )
-from collections.abc import Callable
 
 import pytest
 
@@ -17,10 +17,11 @@ from polyfactory.exceptions import ParameterException
 from polyfactory.factories.base import BaseFactory
 from polyfactory.utils.predicates import is_safe_subclass
 
-Scope = Union[
-    Literal["session", "package", "module", "class", "function"],
-    Callable[[str, pytest.Config], Literal["session", "package", "module", "class", "function"]],
-]
+Scope: TypeAlias = (
+    Literal["session", "package", "module", "class", "function"]
+    | Callable[[str, pytest.Config], Literal["session", "package", "module", "class", "function"]]
+)
+
 T = TypeVar("T", bound=BaseFactory[Any])
 
 split_pattern_1 = re.compile(r"([A-Z]+)([A-Z][a-z])")

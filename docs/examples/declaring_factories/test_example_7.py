@@ -1,5 +1,5 @@
 from datetime import date, datetime
-from typing import Any, Union
+from typing import Any
 from uuid import UUID
 
 import attrs

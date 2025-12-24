@@ -1,6 +1,6 @@
 from datetime import date, datetime, timedelta
 from decimal import Decimal
-from typing import Annotated, Union, cast
+from typing import Annotated, cast
 
 import pytest
 

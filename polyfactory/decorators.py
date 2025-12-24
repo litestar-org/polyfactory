@@ -2,10 +2,12 @@ from __future__ import annotations
 
 import contextlib
 import inspect
-from typing import Any
-from collections.abc import Callable
+from typing import TYPE_CHECKING, Any
 
 from polyfactory import PostGenerated
+
+if TYPE_CHECKING:
+    from collections.abc import Callable
 
 
 class post_generated:  # noqa: N801

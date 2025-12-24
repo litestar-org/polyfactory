@@ -1,5 +1,4 @@
 from dataclasses import dataclass
-from typing import Optional
 from uuid import UUID
 
 from polyfactory.factories.dataclass_factory import DataclassFactory

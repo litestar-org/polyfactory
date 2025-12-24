@@ -1,9 +1,11 @@
 from __future__ import annotations
 
-from typing import Any, Generic, TypedDict, TypeVar, cast
-from collections.abc import Callable
+from typing import TYPE_CHECKING, Any, Generic, TypedDict, TypeVar, cast
 
 from typing_extensions import ParamSpec
+
+if TYPE_CHECKING:
+    from collections.abc import Callable
 
 T = TypeVar("T")
 P = ParamSpec("P")

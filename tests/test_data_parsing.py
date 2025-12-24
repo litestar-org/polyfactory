@@ -1,7 +1,7 @@
+from collections.abc import Callable
 from datetime import date
 from enum import Enum
-from typing import Literal, Optional
-from collections.abc import Callable
+from typing import Literal
 
 import pytest
 

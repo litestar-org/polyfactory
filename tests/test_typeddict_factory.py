@@ -1,4 +1,4 @@
-from typing import Annotated, Optional
+from typing import Annotated
 
 from annotated_types import Ge
 from typing_extensions import NotRequired, Required, TypedDict
@@ -17,7 +17,7 @@ class TypedDictModel(TypedDict):
 
 
 def test_factory_with_typeddict() -> None:
-    class MyFactory(TypedDictFactory[TypedDictModel]):
+    class MyFactory(TypedDictFactory[TypedDictModel]):  # type: ignore [type-var]
         __model__ = TypedDictModel
 
     result = MyFactory.build()
@@ -56,7 +56,7 @@ def test_typeddict_with_required_and_non_required_fields() -> None:
         list_field: list[dict[str, int]]
         optional_int: Required[int | None]
 
-    class TypedDictModelFactory(TypedDictFactory[TypedDictModel]):
+    class TypedDictModelFactory(TypedDictFactory[TypedDictModel]):  # type: ignore [type-var]
         __model__ = TypedDictModel
 
     result = TypedDictModelFactory.build()
@@ -76,7 +76,7 @@ def test_total_false_and_not_required() -> None:
         list_field: list[dict[str, int]]
         optional_int: int | None
 
-    class TypedDictModelFactory(TypedDictFactory[TypedDictModel]):
+    class TypedDictModelFactory(TypedDictFactory[TypedDictModel]):  # type: ignore [type-var]
         __model__ = TypedDictModel
 
     build_result = TypedDictModelFactory.batch(size=20)

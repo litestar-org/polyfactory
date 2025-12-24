@@ -1,7 +1,6 @@
 from __future__ import annotations
 
-from typing import TYPE_CHECKING, TypeVar, Union, cast
-from collections.abc import Callable
+from typing import TYPE_CHECKING, TypeVar, cast
 
 from polyfactory.exceptions import ParameterException
 from polyfactory.value_generators.primitives import create_random_bytes, create_random_string
@@ -10,6 +9,7 @@ from polyfactory.value_generators.regex import RegexFactory
 T = TypeVar("T", bound=bytes | str)
 
 if TYPE_CHECKING:
+    from collections.abc import Callable
     from random import Random
     from re import Pattern
 
