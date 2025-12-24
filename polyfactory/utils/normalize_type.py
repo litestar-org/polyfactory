@@ -87,6 +87,7 @@ def __apply_substitutions(target: Any, subs: Mapping[Any, Any]) -> Any:
 
     if is_union(target):
         args = tuple(__apply_substitutions(arg, subs) for arg in get_args(target))
+        # the return statement is required for python 3.10 and 3.11+ compatibility
         return reduce(or_, args)
 
     origin = get_origin(target)
