@@ -136,7 +136,7 @@ def test_coverage_typed_dict() -> None:
         union: int | str
         collection: list[int | str]
 
-    class TypedThesaurusFactory(TypedDictFactory[TypedThesaurus]):  # type: ignore [type-var]
+    class TypedThesaurusFactory(TypedDictFactory[TypedThesaurus]):
         __model__ = TypedThesaurus
 
     results = list(TypedThesaurusFactory.coverage())
@@ -155,7 +155,7 @@ def test_coverage_typed_dict_field() -> None:
         union: int | str
         collection: list[int | str]
 
-    class TypedThesaurusFactory(TypedDictFactory[TypedThesaurus]):  # type: ignore [type-var]
+    class TypedThesaurusFactory(TypedDictFactory[TypedThesaurus]):
         __model__ = TypedThesaurus
 
     results = list(TypedThesaurusFactory.coverage())

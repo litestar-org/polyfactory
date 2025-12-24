@@ -11,7 +11,7 @@ from typing_extensions import (
 from polyfactory.factories.base import BaseFactory
 from polyfactory.field_meta import FieldMeta, Null
 
-TypedDictT = TypeVar("TypedDictT", bound=dict)
+TypedDictT = TypeVar("TypedDictT")
 
 
 class TypedDictFactory(Generic[TypedDictT], BaseFactory[TypedDictT]):
