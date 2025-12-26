@@ -1,8 +1,6 @@
 from __future__ import annotations
 
-from typing import TYPE_CHECKING, Any, Generic, TypeVar
-
-from typing_extensions import get_args
+from typing import TYPE_CHECKING, Any, Generic, TypeVar, get_args
 
 from polyfactory.exceptions import MissingDependencyException
 from polyfactory.factories.pydantic_factory import ModelFactory
@@ -10,7 +8,7 @@ from polyfactory.persistence import AsyncPersistenceProtocol
 from polyfactory.utils.predicates import is_safe_subclass
 
 if TYPE_CHECKING:
-    from typing_extensions import TypeGuard
+    from typing import TypeGuard
 
     from polyfactory.factories.base import BuildContext
     from polyfactory.field_meta import FieldMeta
@@ -47,7 +45,7 @@ class BeanieDocumentFactory(Generic[T], ModelFactory[T]):
     __is_base_factory__ = True
 
     @classmethod
-    def is_supported_type(cls, value: Any) -> "TypeGuard[type[T]]":
+    def is_supported_type(cls, value: Any) -> TypeGuard[type[T]]:
         """Determine whether the given value is supported by the factory.
 
         :param value: An arbitrary value.
@@ -58,7 +56,7 @@ class BeanieDocumentFactory(Generic[T], ModelFactory[T]):
     @classmethod
     def get_field_value(
         cls,
-        field_meta: "FieldMeta",
+        field_meta: FieldMeta,
         field_build_parameters: Any | None = None,
         build_context: BuildContext | None = None,
     ) -> Any:

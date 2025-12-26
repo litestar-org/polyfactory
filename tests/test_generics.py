@@ -1,4 +1,4 @@
-from typing import Generic, Optional, TypeVar, Union
+from typing import Generic, TypeVar
 
 from pydantic import BaseModel
 
@@ -20,8 +20,8 @@ class Attributes(GenericModel, Generic[Inner]):  # type: ignore
 
 class OneInner(BaseModel):
     one: str
-    id: Optional[int]
-    description: Optional[str]
+    id: int | None
+    description: str | None
 
 
 class OneResponse(BaseModel):
@@ -30,8 +30,8 @@ class OneResponse(BaseModel):
 
 class TwoInner(BaseModel):
     two: str
-    id: Optional[int]
-    description: Optional[str]
+    id: int | None
+    description: str | None
 
 
 class TwoResponse(BaseModel):
@@ -83,7 +83,7 @@ def test_generic_factory_three_response() -> None:
 
 def test_generic_factory_union_response() -> None:
     class APIResponseFactory(ModelFactory):
-        __model__ = APIResponse[Union[OneResponse, TwoResponse, ThreeResponse]]
+        __model__ = APIResponse[OneResponse | TwoResponse | ThreeResponse]
 
     result = APIResponseFactory.build()
 

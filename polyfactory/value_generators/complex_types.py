@@ -2,9 +2,7 @@ from __future__ import annotations
 
 from collections.abc import Iterable, MutableMapping, MutableSequence
 from collections.abc import Set as AbstractSet
-from typing import TYPE_CHECKING, Any, cast
-
-from typing_extensions import is_typeddict
+from typing import TYPE_CHECKING, Any, cast, is_typeddict
 
 from polyfactory.utils.model_coverage import CoverageContainer
 
@@ -40,7 +38,7 @@ def handle_collection_type(
     if issubclass(container_type, MutableMapping) or is_typeddict(container_type):
         for key_field_meta, value_field_meta in cast(
             "Iterable[tuple[FieldMeta, FieldMeta]]",
-            zip(field_meta.children[::2], field_meta.children[1::2]),
+            zip(field_meta.children[::2], field_meta.children[1::2], strict=False),
         ):
             key = factory.get_field_value(
                 key_field_meta, field_build_parameters=field_build_parameters, build_context=build_context
@@ -110,7 +108,7 @@ def handle_collection_type_coverage(  # noqa: C901, PLR0911
     if issubclass(container_type, MutableMapping) or is_typeddict(container_type):
         for key_field_meta, value_field_meta in cast(
             "Iterable[tuple[FieldMeta, FieldMeta]]",
-            zip(field_meta.children[::2], field_meta.children[1::2]),
+            zip(field_meta.children[::2], field_meta.children[1::2], strict=False),
         ):
             key = CoverageContainer(factory.get_field_value_coverage(key_field_meta, build_context=build_context))
             value = CoverageContainer(factory.get_field_value_coverage(value_field_meta, build_context=build_context))

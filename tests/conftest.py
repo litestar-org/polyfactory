@@ -9,9 +9,9 @@ from typing import TYPE_CHECKING, TypeVar
 import pytest
 
 if TYPE_CHECKING:
+    from collections.abc import Callable
     from pathlib import Path
     from types import ModuleType
-    from typing import Callable
 
     from pytest import MonkeyPatch
 

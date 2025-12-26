@@ -4,7 +4,7 @@ import copy
 import inspect
 from abc import ABC, abstractmethod
 from collections import Counter, abc, deque
-from collections.abc import Collection, Hashable, Iterable, Mapping, Sequence
+from collections.abc import Callable, Collection, Hashable, Iterable, Mapping, Sequence
 from contextlib import suppress
 from datetime import date, datetime, time, timedelta
 from decimal import Decimal
@@ -28,19 +28,20 @@ from random import Random
 from typing import (
     TYPE_CHECKING,
     Any,
-    Callable,
     ClassVar,
     Generic,
     TypedDict,
     TypeVar,
     cast,
+    get_args,
+    get_origin,
     overload,
 )
 from uuid import UUID
 from zoneinfo import ZoneInfo
 
 from faker import Faker
-from typing_extensions import Self, get_args, get_origin, get_original_bases
+from typing_extensions import Self, get_original_bases
 
 from polyfactory.constants import (
     DEFAULT_RANDOM,
@@ -87,7 +88,7 @@ from polyfactory.value_generators.constrained_uuid import handle_constrained_uui
 from polyfactory.value_generators.primitives import create_random_boolean, create_random_bytes, create_random_string
 
 if TYPE_CHECKING:
-    from typing_extensions import TypeGuard
+    from typing import TypeGuard
 
     from polyfactory.field_meta import Constraints, FieldMeta
     from polyfactory.persistence import AsyncPersistenceProtocol, SyncPersistenceProtocol
@@ -141,11 +142,11 @@ class BaseFactory(ABC, Generic[T]):
 
     Note: this value can only be set when '__is_base_factory__' is 'True'.
     """
-    __faker__: ClassVar["Faker"] = Faker()
+    __faker__: ClassVar[Faker] = Faker()
     """
     A faker instance to use. Can be a user provided value.
     """
-    __random__: ClassVar["Random"] = DEFAULT_RANDOM
+    __random__: ClassVar[Random] = DEFAULT_RANDOM
     """
     An instance of 'random.Random' to use.
     """
@@ -483,7 +484,7 @@ class BaseFactory(ABC, Generic[T]):
 
     @classmethod
     @abstractmethod
-    def is_supported_type(cls, value: Any) -> "TypeGuard[type[T]]":  # pragma: no cover
+    def is_supported_type(cls, value: Any) -> TypeGuard[type[T]]:  # pragma: no cover
         """Determine whether the given value is supported by the factory.
 
         :param value: An arbitrary value.

@@ -1,7 +1,7 @@
 """Tests to check that usage of pydantic v1 and v2 at the same time works."""
 
 import sys
-from typing import Annotated, Optional, Union
+from typing import Annotated
 
 import pytest
 
@@ -32,7 +32,7 @@ skip_pydantic_v1_on_py314 = pytest.mark.skipif(
         BaseModelV2,
     ],
 )
-def test_is_supported_type(base_model: type[Union[BaseModelV1, BaseModelV2]]) -> None:
+def test_is_supported_type(base_model: type[BaseModelV1 | BaseModelV2]) -> None:
     class Foo(base_model):  # type: ignore[valid-type, misc]
         ...
 
@@ -46,7 +46,7 @@ def test_is_supported_type(base_model: type[Union[BaseModelV1, BaseModelV2]]) ->
         BaseModelV2,
     ],
 )
-def test_build(base_model: type[Union[BaseModelV1, BaseModelV2]]) -> None:
+def test_build(base_model: type[BaseModelV1 | BaseModelV2]) -> None:
     class Foo(base_model):  # type: ignore[valid-type, misc]
         a: int
         b: str
@@ -70,9 +70,9 @@ def test_build_v1_with_constrained_fields() -> None:
     class Foo(BaseModelV1):
         a: ConstrainedInt
         b: ConstrainedStr
-        c: Union[ConstrainedInt, ConstrainedStr]
-        d: Optional[ConstrainedInt]
-        e: Optional[Union[ConstrainedInt, ConstrainedStr]]
+        c: ConstrainedInt | ConstrainedStr
+        d: ConstrainedInt | None
+        e: ConstrainedInt | ConstrainedStr | None
         f: list[ConstrainedInt]
         g: dict[ConstrainedInt, ConstrainedStr]
 
@@ -88,9 +88,9 @@ def test_build_v2_with_constrained_fields() -> None:
     class Foo(pydantic.BaseModel):  # pyright: ignore[reportGeneralTypeIssues]
         a: ConstrainedInt
         b: ConstrainedStr
-        c: Union[ConstrainedInt, ConstrainedStr]
-        d: Optional[ConstrainedInt]
-        e: Optional[Union[ConstrainedInt, ConstrainedStr]]
+        c: ConstrainedInt | ConstrainedStr
+        d: ConstrainedInt | None
+        e: ConstrainedInt | ConstrainedStr | None
         f: list[ConstrainedInt]
         g: dict[ConstrainedInt, ConstrainedStr]
 

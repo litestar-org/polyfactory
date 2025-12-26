@@ -1,6 +1,7 @@
 from abc import ABC, abstractmethod
+from collections.abc import Callable
 from dataclasses import dataclass
-from typing import Annotated, Any, Callable, NewType
+from typing import Annotated, Any, NewType
 
 import pytest
 

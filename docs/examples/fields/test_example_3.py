@@ -1,7 +1,7 @@
 from dataclasses import dataclass
 from datetime import date, datetime
 from enum import Enum
-from typing import Any, Union
+from typing import Any
 from uuid import UUID
 
 from polyfactory import Use
@@ -25,8 +25,8 @@ class Person:
     id: UUID
     name: str
     hobbies: list[str]
-    age: Union[float, int]
-    birthday: Union[datetime, date]
+    age: float | int
+    birthday: datetime | date
     pets: list[Pet]
     assets: list[dict[str, dict[str, Any]]]
 

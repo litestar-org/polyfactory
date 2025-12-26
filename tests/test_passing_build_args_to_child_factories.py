@@ -1,5 +1,4 @@
 from collections.abc import Mapping
-from typing import Optional
 
 from pydantic import BaseModel
 
@@ -101,7 +100,7 @@ def test_factory_child_none() -> None:
 
     class PersonOptional(BaseModel):
         name: str
-        address: Optional[Address]
+        address: Address | None
 
     class PersonOptionalFactory(ModelFactory):
         __model__ = PersonOptional
@@ -185,7 +184,7 @@ def test_factory_with_nested_optional_field_overrides_in_dict() -> None:
         name: str
 
     class MyParentModel(BaseModel):
-        child: Optional[MyChildModel]
+        child: MyChildModel | None
 
     class MyParentModelFactory(ModelFactory):
         __model__ = MyParentModel

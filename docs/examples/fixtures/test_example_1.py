@@ -1,6 +1,5 @@
 from dataclasses import dataclass
 from datetime import date, datetime
-from typing import Optional, Union
 from uuid import UUID
 
 from polyfactory.factories import DataclassFactory
@@ -11,10 +10,10 @@ from polyfactory.pytest_plugin import register_fixture
 class Person:
     id: UUID
     name: str
-    hobbies: Optional[list[str]]
+    hobbies: list[str] | None
     nicks: list[str]
-    age: Union[float, int]
-    birthday: Union[datetime, date]
+    age: float | int
+    birthday: datetime | date
 
 
 @register_fixture
