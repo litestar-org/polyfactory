@@ -63,6 +63,7 @@ class Constraints(TypedDict):
     upper_case: NotRequired[bool]
     url: NotRequired[UrlConstraints]
     uuid_version: NotRequired[Literal[1, 3, 4, 5]]
+    computed: NotRequired[bool]
 
 
 class FieldMeta:

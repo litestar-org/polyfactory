@@ -51,6 +51,7 @@ from tests.sqlalchemy_factory.models import (
     CollectionChildMixin,
     CollectionParentMixin,
     NonSQLAchemyClass,
+    Shape,
 )
 from tests.sqlalchemy_factory.types import ListLike, SetLike
 
@@ -130,6 +131,34 @@ def test_properties() -> None:
     # Expect empty as requires session to be set
     assert instance.double_age is None
     assert instance.age * 3 == instance.triple_age
+
+
+def test_computed_column_sync_persistence(engine: Engine) -> None:
+    Base.metadata.create_all(engine)
+
+    class ShapeFactory(SQLAlchemyFactory[Shape]):
+        __model__ = Shape
+        __session__ = Session(engine)
+
+    instance = ShapeFactory.create_sync()
+    assert instance.area == pow(instance.side, 2)
+
+
+async def test_computed_column_async_persistence(engine: Engine, async_engine: AsyncEngine) -> None:
+    class ShapeFactory(SQLAlchemyFactory[Shape]):
+        __model__ = Shape
+        __async_session__ = AsyncSession(async_engine)
+
+    instance = await ShapeFactory.create_async()
+    assert instance.area == pow(instance.side, 2)
+
+
+def test_computed_column_no_persistence() -> None:
+    class ShapeFactory(SQLAlchemyFactory[Shape]):
+        __model__ = Shape
+
+    fields = ShapeFactory.get_model_fields()
+    assert "area" in [field.name for field in fields]
 
 
 @pytest.mark.parametrize(
