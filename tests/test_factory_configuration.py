@@ -1,7 +1,6 @@
+from collections.abc import Callable
 from dataclasses import dataclass
-from typing import Any, Callable
-
-from typing_extensions import TypeGuard
+from typing import Any, TypeGuard
 
 from polyfactory.factories.base import BaseFactory, T
 from polyfactory.factories.dataclass_factory import DataclassFactory

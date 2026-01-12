@@ -1,5 +1,4 @@
 from dataclasses import dataclass
-from typing import Optional
 from uuid import UUID
 
 from polyfactory.factories.dataclass_factory import DataclassFactory
@@ -8,7 +7,7 @@ from polyfactory.factories.dataclass_factory import DataclassFactory
 @dataclass
 class Person:
     id: UUID
-    name: Optional[str]
+    name: str | None
 
 
 class PersonFactory(DataclassFactory[Person]):

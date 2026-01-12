@@ -1,9 +1,9 @@
 import warnings
-from collections.abc import Collection
+from collections.abc import Callable, Collection
 from datetime import datetime
 from decimal import Decimal
 from enum import Enum
-from typing import Any, Callable, get_args
+from typing import Any, get_args
 from uuid import UUID, uuid4
 
 import pytest

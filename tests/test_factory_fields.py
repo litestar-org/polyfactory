@@ -2,7 +2,7 @@ import random
 import warnings
 from dataclasses import dataclass
 from datetime import datetime, timedelta
-from typing import Any, ClassVar, Optional, Union
+from typing import Any, ClassVar
 
 import pytest
 
@@ -74,7 +74,7 @@ def test_build_kwarg() -> None:
 
 def test_ignored() -> None:
     class MyModel(BaseModel):
-        name: Optional[str] = None
+        name: str | None = None
 
     class MyFactory(ModelFactory):
         __model__ = MyModel
@@ -177,7 +177,7 @@ def test_post_generation_classmethod() -> None:
     ],
 )
 def test_non_existing_model_fields_do_raise_on_check_model_false(
-    factory_field: Union[Use, PostGenerated, Require, Ignore],
+    factory_field: Use | PostGenerated | Require | Ignore,
 ) -> None:
     class NoFieldModel(BaseModel):
         pass
@@ -195,7 +195,7 @@ def test_non_existing_model_fields_do_raise_on_check_model_false(
     ],
 )
 def test_non_existent_fields_raise(
-    factory_field: Union[Use, PostGenerated, Require, Ignore],
+    factory_field: Use | PostGenerated | Require | Ignore,
 ) -> None:
     class NoFieldModel(BaseModel):
         pass

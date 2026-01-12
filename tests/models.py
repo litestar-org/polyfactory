@@ -1,5 +1,4 @@
 from datetime import date, datetime
-from typing import Optional, Union
 from uuid import uuid4
 
 from pydantic import UUID4, BaseModel
@@ -18,11 +17,11 @@ class Pet(BaseModel):
 class Person(BaseModel):
     id: UUID4
     name: str
-    hobbies: Optional[list[str]]
+    hobbies: list[str] | None
     nicks: list[str]
-    age: Union[float, int]
+    age: float | int
     pets: list[Pet]
-    birthday: Union[datetime, date]
+    birthday: datetime | date
 
 
 class PersonFactoryWithoutDefaults(ModelFactory[Person]):

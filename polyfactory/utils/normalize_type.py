@@ -1,8 +1,8 @@
 from __future__ import annotations
 
-from typing import TYPE_CHECKING, Annotated, Any, Union
-
-from typing_extensions import get_args, get_origin
+from functools import reduce
+from operator import or_
+from typing import TYPE_CHECKING, Annotated, Any, get_args, get_origin
 
 from polyfactory.utils.predicates import (
     is_generic_alias,
@@ -42,7 +42,7 @@ def normalize_type(type_annotation: Any) -> Any:
     """
 
     if is_type_alias(type_annotation):
-        return type_annotation.__value__
+        return normalize_type(type_annotation.__value__)
 
     if not is_generic_alias(type_annotation):
         return type_annotation
@@ -70,7 +70,7 @@ def __handle_generic_type_alias(origin: Any, args: tuple) -> Any:
         return template
 
     normalized_args = tuple(normalize_type(arg) for arg in args)
-    substitutions = dict(zip(type_params, normalized_args))
+    substitutions = dict(zip(type_params, normalized_args, strict=False))
 
     if get_origin(template) is Annotated:
         base_type, *metadata = get_args(template)
@@ -87,7 +87,7 @@ def __apply_substitutions(target: Any, subs: Mapping[Any, Any]) -> Any:
 
     if is_union(target):
         args = tuple(__apply_substitutions(arg, subs) for arg in get_args(target))
-        return Union[args]
+        return reduce(or_, args)
 
     origin = get_origin(target)
     args = get_args(target)

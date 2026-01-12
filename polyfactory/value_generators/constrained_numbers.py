@@ -16,7 +16,7 @@ T = TypeVar("T", Decimal, int, float)
 class NumberGeneratorProtocol(Protocol[T]):
     """Protocol for custom callables used to generate numerical values"""
 
-    def __call__(self, random: "Random", minimum: T | None = None, maximum: T | None = None) -> T:
+    def __call__(self, random: Random, minimum: T | None = None, maximum: T | None = None) -> T:
         """Signature of the callable.
 
         :param random: An instance of random.
@@ -241,7 +241,7 @@ def generate_constrained_number(
     minimum: T | None,
     maximum: T | None,
     multiple_of: T | None,
-    method: "NumberGeneratorProtocol[T]",
+    method: NumberGeneratorProtocol[T],
 ) -> T:
     """Generate a constrained number, output depends on the passed in callbacks.
 

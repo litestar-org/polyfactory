@@ -16,10 +16,10 @@ class User(Base):
     id: Mapped[int] = mapped_column(primary_key=True)
     name: Mapped[str]
 
-    user_keyword_associations: Mapped[list["UserKeywordAssociation"]] = relationship(
+    user_keyword_associations: Mapped[list[UserKeywordAssociation]] = relationship(
         back_populates="user",
     )
-    keywords: AssociationProxy[list["Keyword"]] = association_proxy(
+    keywords: AssociationProxy[list[Keyword]] = association_proxy(
         "user_keyword_associations",
         "keyword",
         creator=lambda keyword_obj: UserKeywordAssociation(keyword=keyword_obj),
@@ -32,7 +32,7 @@ class UserKeywordAssociation(Base):
     keyword_id: Mapped[int] = mapped_column(ForeignKey("keywords.id"), primary_key=True)
 
     user: Mapped[User] = relationship(back_populates="user_keyword_associations")
-    keyword: Mapped["Keyword"] = relationship()
+    keyword: Mapped[Keyword] = relationship()
 
 
 class Keyword(Base):

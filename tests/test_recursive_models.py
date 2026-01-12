@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from collections.abc import Iterable
 from dataclasses import dataclass, field
-from typing import Any, TypeVar, Union
+from typing import Any, TypeVar
 
 import pytest
 
@@ -19,9 +19,9 @@ class _Sentinel: ...
 @dataclass
 class Node:
     value: int
-    union_child: Union[Node, int]  # noqa: UP007
+    union_child: Node | int
     list_child: list[Node]
-    optional_child: Union[Node, None]  # noqa: UP007
+    optional_child: Node | None
     child: Node = field(default=_Sentinel)  # type: ignore[assignment]
 
     def __post_init__(self) -> None:
@@ -44,10 +44,10 @@ def test_recursive_model() -> None:
 
 class PydanticNode(BaseModel):
     value: int
-    union_child: Union[PydanticNode, int]  # noqa: UP007
+    union_child: PydanticNode | int
     list_child: list[PydanticNode]
-    optional_union_child: Union[PydanticNode, None]  # noqa: UP007
-    optional_child: Union[PydanticNode, None]  # noqa: UP007
+    optional_union_child: PydanticNode | None
+    optional_child: PydanticNode | None
     child: PydanticNode = Field(default=_Sentinel)  # type: ignore[assignment]
     recursive_key: dict[PydanticNode, Any]
     recursive_value: dict[str, PydanticNode]
@@ -108,7 +108,7 @@ def test_recursive_type_annotation() -> None:
     assert _get_types(result.json_value for result in factory.coverage()) == valid_types
 
 
-RecursiveType = Union[list["RecursiveType"], int]
+RecursiveType = list["RecursiveType"] | int
 
 
 def test_recursive_model_with_forward_ref() -> None:
