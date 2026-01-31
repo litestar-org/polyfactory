@@ -60,6 +60,15 @@ By default, this will add generated models to the session and then commit. This 
 
 Similarly for ``__async_session__`` and ``create_async``.
 
+Persistence Method
+++++++++++++++++++
+
+By default, the factory uses ``commit()`` to persist data, which permanently saves changes to the database. You can configure the factory to use ``flush()`` instead by setting ``__persistence_method__`` to ``SQLAlchemyPersistenceMethod.FLUSH``.
+
+.. literalinclude:: /examples/library_factories/sqlalchemy_factory/test_example_persistence_method.py
+    :caption: Using flush() vs commit() for persistence
+    :language: python
+
 
 Adding global overrides
 -----------------------
