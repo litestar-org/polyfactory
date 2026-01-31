@@ -40,7 +40,7 @@ from sqlalchemy.orm.decl_api import DeclarativeMeta, registry
 
 from polyfactory.exceptions import ConfigurationException, ParameterException
 from polyfactory.factories.base import BaseFactory
-from polyfactory.factories.sqlalchemy_factory import SQLAlchemyFactory
+from polyfactory.factories.sqlalchemy_factory import SQLAlchemyFactory, SQLAlchemyPersistenceMethod
 from polyfactory.fields import Ignore
 from tests.sqlalchemy_factory.models import (
     AsyncModel,
@@ -453,6 +453,25 @@ def test_sync_persistence(engine: Engine, session_config: Callable[[Session], An
             assert inspect(batch_item).persistent  # type: ignore[union-attr]
 
 
+def test_sync_persistence_method_flush(engine: Engine) -> None:
+    Base.metadata.create_all(bind=engine)
+
+    with Session(bind=engine) as session:
+
+        class AuthorFactory(SQLAlchemyFactory[Author]):
+            __session__ = session
+            __model__ = Author
+            __persistence_method__ = SQLAlchemyPersistenceMethod.FLUSH
+
+        author = AuthorFactory.create_sync()
+        assert author.id is not None
+        assert inspect(author).persistent  # type: ignore[union-attr]
+
+        session.rollback()
+        result = session.query(Author).filter_by(id=author.id).first()
+        assert result is None
+
+
 @pytest.mark.parametrize(
     "session_config",
     (
@@ -481,6 +500,22 @@ async def test_async_persistence(
         for batch_item in batch_result:
             result = await session.scalar(select(AsyncModel).where(AsyncModel.id == batch_item.id))
             assert result
+
+
+async def test_async_persistence_method_flush(async_engine: AsyncEngine) -> None:
+    async with AsyncSession(async_engine) as session:
+
+        class Factory(SQLAlchemyFactory[AsyncModel]):
+            __async_session__ = session
+            __model__ = AsyncModel
+            __persistence_method__ = SQLAlchemyPersistenceMethod.FLUSH
+
+        instance = await Factory.create_async()
+        assert instance.id is not None
+
+        await session.rollback()
+        result = await session.scalar(select(AsyncModel).where(AsyncModel.id == instance.id))
+        assert result is None
 
 
 @pytest.mark.parametrize(

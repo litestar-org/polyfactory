@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import enum
 from collections.abc import Collection, Mapping
 from dataclasses import is_dataclass
 from datetime import date, datetime
@@ -43,38 +44,65 @@ if TYPE_CHECKING:
 T = TypeVar("T")
 
 
+class SQLAlchemyPersistenceMethod(enum.Enum):
+    FLUSH = "flush"
+    COMMIT = "commit"
+
+
 class SQLASyncPersistence(SyncPersistenceProtocol[T]):
-    def __init__(self, session: Session) -> None:
+    def __init__(
+        self,
+        session: Session,
+        persistence_method: SQLAlchemyPersistenceMethod = SQLAlchemyPersistenceMethod.COMMIT,
+    ) -> None:
         """Sync persistence handler for SQLAFactory."""
         self.session = session
+        self.persistence_method = persistence_method
+
+    def _flush_or_commit(self) -> None:
+        if self.persistence_method == SQLAlchemyPersistenceMethod.FLUSH:
+            self.session.flush()
+        elif self.persistence_method == SQLAlchemyPersistenceMethod.COMMIT:
+            self.session.commit()
 
     def save(self, data: T) -> T:
         self.session.add(data)
-        self.session.commit()
+        self._flush_or_commit()
         return data
 
     def save_many(self, data: list[T]) -> list[T]:
         self.session.add_all(data)
-        self.session.commit()
+        self._flush_or_commit()
         return data
 
 
 class SQLAASyncPersistence(AsyncPersistenceProtocol[T]):
-    def __init__(self, session: AsyncSession) -> None:
+    def __init__(
+        self,
+        session: AsyncSession,
+        persistence_method: SQLAlchemyPersistenceMethod = SQLAlchemyPersistenceMethod.COMMIT,
+    ) -> None:
         """Async persistence handler for SQLAFactory."""
         self.session = session
+        self.persistence_method = persistence_method
+
+    async def _flush_or_commit(self, session: AsyncSession) -> None:
+        if self.persistence_method == SQLAlchemyPersistenceMethod.FLUSH:
+            await session.flush()
+        elif self.persistence_method == SQLAlchemyPersistenceMethod.COMMIT:
+            await session.commit()
 
     async def save(self, data: T) -> T:
         async with self.session as session:
             session.add(data)
-            await session.commit()
+            await self._flush_or_commit(session)
             await session.refresh(data)
         return data
 
     async def save_many(self, data: list[T]) -> list[T]:
         async with self.session as session:
             session.add_all(data)
-            await session.commit()
+            await self._flush_or_commit(session)
             for batch_item in data:
                 await session.refresh(batch_item)
         return data
@@ -106,6 +134,8 @@ class SQLAlchemyFactory(Generic[T], BaseFactory[T]):
     __async_session__: ClassVar[
         AsyncSession | _SessionMaker[AsyncSession] | async_scoped_session[AsyncSession] | None
     ] = None
+    __persistence_method__: ClassVar[SQLAlchemyPersistenceMethod] = SQLAlchemyPersistenceMethod.COMMIT
+    """Configuration to use flush() or commit() for persistence."""
 
     __config_keys__ = (
         *BaseFactory.__config_keys__,
@@ -113,6 +143,7 @@ class SQLAlchemyFactory(Generic[T], BaseFactory[T]):
         "__set_foreign_keys__",
         "__set_relationships__",
         "__set_association_proxy__",
+        "__persistence_method__",
     )
 
     @classmethod
@@ -335,19 +366,13 @@ class SQLAlchemyFactory(Generic[T], BaseFactory[T]):
     @classmethod
     def _get_sync_persistence(cls) -> SyncPersistenceProtocol[T]:
         if cls.__session__ is not None:
-            return (
-                SQLASyncPersistence(cls.__session__())
-                if callable(cls.__session__)
-                else SQLASyncPersistence(cls.__session__)
-            )
+            session = cls.__session__() if callable(cls.__session__) else cls.__session__
+            return SQLASyncPersistence(session, persistence_method=cls.__persistence_method__)
         return super()._get_sync_persistence()
 
     @classmethod
     def _get_async_persistence(cls) -> AsyncPersistenceProtocol[T]:
         if cls.__async_session__ is not None:
-            return (
-                SQLAASyncPersistence(cls.__async_session__())
-                if callable(cls.__async_session__)
-                else SQLAASyncPersistence(cls.__async_session__)
-            )
+            session = cls.__async_session__() if callable(cls.__async_session__) else cls.__async_session__
+            return SQLAASyncPersistence(session, persistence_method=cls.__persistence_method__)
         return super()._get_async_persistence()
