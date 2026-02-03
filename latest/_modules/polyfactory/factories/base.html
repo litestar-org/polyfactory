@@ -1369,223 +1369,225 @@ data-aria-dark="Switch to auto color mode">
 </span><span data-line="1071">
 </span><span data-line="1072">        <span class="k">for</span> <span class="n">field_meta</span> <span class="ow">in</span> <span class="bp">cls</span><span class="o">.</span><span class="n">get_model_fields</span><span class="p">():</span>
 </span><span data-line="1073">            <span class="n">field_build_parameters</span> <span class="o">=</span> <span class="bp">cls</span><span class="o">.</span><span class="n">extract_field_build_parameters</span><span class="p">(</span><span class="n">field_meta</span><span class="o">=</span><span class="n">field_meta</span><span class="p">,</span> <span class="n">build_args</span><span class="o">=</span><span class="n">kwargs</span><span class="p">)</span>
-</span><span data-line="1074">            <span class="k">if</span> <span class="bp">cls</span><span class="o">.</span><span class="n">should_set_field_value</span><span class="p">(</span><span class="n">field_meta</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span> <span class="ow">and</span> <span class="ow">not</span> <span class="bp">cls</span><span class="o">.</span><span class="n">should_use_default_value</span><span class="p">(</span><span class="n">field_meta</span><span class="p">):</span>
-</span><span data-line="1075">                <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">field_meta</span><span class="o">.</span><span class="n">name</span><span class="p">)</span> <span class="ow">and</span> <span class="ow">not</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">BaseFactory</span><span class="p">,</span> <span class="n">field_meta</span><span class="o">.</span><span class="n">name</span><span class="p">):</span>
-</span><span data-line="1076">                    <span class="n">field_value</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">field_meta</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
-</span><span data-line="1077">                    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">field_value</span><span class="p">,</span> <span class="n">Ignore</span><span class="p">):</span>
-</span><span data-line="1078">                        <span class="k">continue</span>
-</span><span data-line="1079">
-</span><span data-line="1080">                    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">field_value</span><span class="p">,</span> <span class="n">Require</span><span class="p">)</span> <span class="ow">and</span> <span class="n">field_meta</span><span class="o">.</span><span class="n">name</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">kwargs</span><span class="p">:</span>
-</span><span data-line="1081">                        <span class="n">msg</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;Require kwarg </span><span class="si">{</span><span class="n">field_meta</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2"> is missing&quot;</span>
-</span><span data-line="1082">                        <span class="k">raise</span> <span class="n">MissingBuildKwargException</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
-</span><span data-line="1083">
-</span><span data-line="1084">                    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">field_value</span><span class="p">,</span> <span class="n">PostGenerated</span><span class="p">):</span>
-</span><span data-line="1085">                        <span class="n">generate_post</span><span class="p">[</span><span class="n">field_meta</span><span class="o">.</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="n">field_value</span>
-</span><span data-line="1086">                        <span class="k">continue</span>
-</span><span data-line="1087">
-</span><span data-line="1088">                    <span class="n">result</span><span class="p">[</span><span class="n">field_meta</span><span class="o">.</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_handle_factory_field</span><span class="p">(</span>
-</span><span data-line="1089">                        <span class="n">field_value</span><span class="o">=</span><span class="n">field_value</span><span class="p">,</span>
-</span><span data-line="1090">                        <span class="n">field_build_parameters</span><span class="o">=</span><span class="n">field_build_parameters</span><span class="p">,</span>
-</span><span data-line="1091">                        <span class="n">build_context</span><span class="o">=</span><span class="n">_build_context</span><span class="p">,</span>
-</span><span data-line="1092">                    <span class="p">)</span>
-</span><span data-line="1093">                    <span class="k">continue</span>
-</span><span data-line="1094">
-</span><span data-line="1095">                <span class="n">field_result</span> <span class="o">=</span> <span class="bp">cls</span><span class="o">.</span><span class="n">get_field_value</span><span class="p">(</span>
-</span><span data-line="1096">                    <span class="n">field_meta</span><span class="p">,</span>
-</span><span data-line="1097">                    <span class="n">field_build_parameters</span><span class="o">=</span><span class="n">field_build_parameters</span><span class="p">,</span>
-</span><span data-line="1098">                    <span class="n">build_context</span><span class="o">=</span><span class="n">_build_context</span><span class="p">,</span>
-</span><span data-line="1099">                <span class="p">)</span>
-</span><span data-line="1100">                <span class="k">if</span> <span class="n">field_result</span> <span class="ow">is</span> <span class="n">Null</span><span class="p">:</span>
-</span><span data-line="1101">                    <span class="k">continue</span>
-</span><span data-line="1102">
-</span><span data-line="1103">                <span class="n">result</span><span class="p">[</span><span class="n">field_meta</span><span class="o">.</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="n">field_result</span>
+</span><span data-line="1074">            <span class="k">if</span> <span class="bp">cls</span><span class="o">.</span><span class="n">should_set_field_value</span><span class="p">(</span>
+</span><span data-line="1075">                <span class="n">field_meta</span><span class="p">,</span> <span class="n">_build_context</span><span class="o">=</span><span class="n">_build_context</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span>
+</span><span data-line="1076">            <span class="p">)</span> <span class="ow">and</span> <span class="ow">not</span> <span class="bp">cls</span><span class="o">.</span><span class="n">should_use_default_value</span><span class="p">(</span><span class="n">field_meta</span><span class="p">):</span>
+</span><span data-line="1077">                <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">field_meta</span><span class="o">.</span><span class="n">name</span><span class="p">)</span> <span class="ow">and</span> <span class="ow">not</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">BaseFactory</span><span class="p">,</span> <span class="n">field_meta</span><span class="o">.</span><span class="n">name</span><span class="p">):</span>
+</span><span data-line="1078">                    <span class="n">field_value</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">field_meta</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
+</span><span data-line="1079">                    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">field_value</span><span class="p">,</span> <span class="n">Ignore</span><span class="p">):</span>
+</span><span data-line="1080">                        <span class="k">continue</span>
+</span><span data-line="1081">
+</span><span data-line="1082">                    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">field_value</span><span class="p">,</span> <span class="n">Require</span><span class="p">)</span> <span class="ow">and</span> <span class="n">field_meta</span><span class="o">.</span><span class="n">name</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">kwargs</span><span class="p">:</span>
+</span><span data-line="1083">                        <span class="n">msg</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;Require kwarg </span><span class="si">{</span><span class="n">field_meta</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2"> is missing&quot;</span>
+</span><span data-line="1084">                        <span class="k">raise</span> <span class="n">MissingBuildKwargException</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
+</span><span data-line="1085">
+</span><span data-line="1086">                    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">field_value</span><span class="p">,</span> <span class="n">PostGenerated</span><span class="p">):</span>
+</span><span data-line="1087">                        <span class="n">generate_post</span><span class="p">[</span><span class="n">field_meta</span><span class="o">.</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="n">field_value</span>
+</span><span data-line="1088">                        <span class="k">continue</span>
+</span><span data-line="1089">
+</span><span data-line="1090">                    <span class="n">result</span><span class="p">[</span><span class="n">field_meta</span><span class="o">.</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_handle_factory_field</span><span class="p">(</span>
+</span><span data-line="1091">                        <span class="n">field_value</span><span class="o">=</span><span class="n">field_value</span><span class="p">,</span>
+</span><span data-line="1092">                        <span class="n">field_build_parameters</span><span class="o">=</span><span class="n">field_build_parameters</span><span class="p">,</span>
+</span><span data-line="1093">                        <span class="n">build_context</span><span class="o">=</span><span class="n">_build_context</span><span class="p">,</span>
+</span><span data-line="1094">                    <span class="p">)</span>
+</span><span data-line="1095">                    <span class="k">continue</span>
+</span><span data-line="1096">
+</span><span data-line="1097">                <span class="n">field_result</span> <span class="o">=</span> <span class="bp">cls</span><span class="o">.</span><span class="n">get_field_value</span><span class="p">(</span>
+</span><span data-line="1098">                    <span class="n">field_meta</span><span class="p">,</span>
+</span><span data-line="1099">                    <span class="n">field_build_parameters</span><span class="o">=</span><span class="n">field_build_parameters</span><span class="p">,</span>
+</span><span data-line="1100">                    <span class="n">build_context</span><span class="o">=</span><span class="n">_build_context</span><span class="p">,</span>
+</span><span data-line="1101">                <span class="p">)</span>
+</span><span data-line="1102">                <span class="k">if</span> <span class="n">field_result</span> <span class="ow">is</span> <span class="n">Null</span><span class="p">:</span>
+</span><span data-line="1103">                    <span class="k">continue</span>
 </span><span data-line="1104">
-</span><span data-line="1105">        <span class="k">for</span> <span class="n">field_name</span><span class="p">,</span> <span class="n">post_generator</span> <span class="ow">in</span> <span class="n">generate_post</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
-</span><span data-line="1106">            <span class="n">result</span><span class="p">[</span><span class="n">field_name</span><span class="p">]</span> <span class="o">=</span> <span class="n">post_generator</span><span class="o">.</span><span class="n">to_value</span><span class="p">(</span><span class="n">field_name</span><span class="p">,</span> <span class="n">result</span><span class="p">)</span>
-</span><span data-line="1107">
-</span><span data-line="1108">        <span class="k">return</span> <span class="n">result</span></div>
-
+</span><span data-line="1105">                <span class="n">result</span><span class="p">[</span><span class="n">field_meta</span><span class="o">.</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="n">field_result</span>
+</span><span data-line="1106">
+</span><span data-line="1107">        <span class="k">for</span> <span class="n">field_name</span><span class="p">,</span> <span class="n">post_generator</span> <span class="ow">in</span> <span class="n">generate_post</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+</span><span data-line="1108">            <span class="n">result</span><span class="p">[</span><span class="n">field_name</span><span class="p">]</span> <span class="o">=</span> <span class="n">post_generator</span><span class="o">.</span><span class="n">to_value</span><span class="p">(</span><span class="n">field_name</span><span class="p">,</span> <span class="n">result</span><span class="p">)</span>
 </span><span data-line="1109">
+</span><span data-line="1110">        <span class="k">return</span> <span class="n">result</span></div>
+
+</span><span data-line="1111">
 <div class="viewcode-block" id="BaseFactory.process_kwargs_coverage">
 <a class="viewcode-back" href="../../../reference/factories/base.html#polyfactory.factories.base.BaseFactory.process_kwargs_coverage">[docs]</a>
-</span><span data-line="1110">    <span class="nd">@classmethod</span>
-</span><span data-line="1111">    <span class="k">def</span><span class="w"> </span><span class="nf">process_kwargs_coverage</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">abc</span><span class="o">.</span><span class="n">Iterable</span><span class="p">[</span><span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]]:</span>
-</span><span data-line="1112"><span class="w">        </span><span class="sd">&quot;&quot;&quot;Process the given kwargs and generate values for the factory&#39;s model.</span>
-</span><span data-line="1113">
-</span><span data-line="1114"><span class="sd">        :param kwargs: Any build kwargs.</span>
-</span><span data-line="1115"><span class="sd">        :param build_context: BuildContext data for current build.</span>
-</span><span data-line="1116">
-</span><span data-line="1117"><span class="sd">        :returns: A dictionary of build results.</span>
+</span><span data-line="1112">    <span class="nd">@classmethod</span>
+</span><span data-line="1113">    <span class="k">def</span><span class="w"> </span><span class="nf">process_kwargs_coverage</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">abc</span><span class="o">.</span><span class="n">Iterable</span><span class="p">[</span><span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]]:</span>
+</span><span data-line="1114"><span class="w">        </span><span class="sd">&quot;&quot;&quot;Process the given kwargs and generate values for the factory&#39;s model.</span>
+</span><span data-line="1115">
+</span><span data-line="1116"><span class="sd">        :param kwargs: Any build kwargs.</span>
+</span><span data-line="1117"><span class="sd">        :param build_context: BuildContext data for current build.</span>
 </span><span data-line="1118">
-</span><span data-line="1119"><span class="sd">        &quot;&quot;&quot;</span>
-</span><span data-line="1120">        <span class="n">result</span><span class="p">,</span> <span class="n">generate_post</span><span class="p">,</span> <span class="n">_build_context</span> <span class="o">=</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_get_initial_variables</span><span class="p">(</span><span class="n">kwargs</span><span class="p">)</span>
-</span><span data-line="1121">
-</span><span data-line="1122">        <span class="k">for</span> <span class="n">field_meta</span> <span class="ow">in</span> <span class="bp">cls</span><span class="o">.</span><span class="n">get_model_fields</span><span class="p">():</span>
-</span><span data-line="1123">            <span class="n">field_build_parameters</span> <span class="o">=</span> <span class="bp">cls</span><span class="o">.</span><span class="n">extract_field_build_parameters</span><span class="p">(</span><span class="n">field_meta</span><span class="o">=</span><span class="n">field_meta</span><span class="p">,</span> <span class="n">build_args</span><span class="o">=</span><span class="n">kwargs</span><span class="p">)</span>
-</span><span data-line="1124">
-</span><span data-line="1125">            <span class="k">if</span> <span class="bp">cls</span><span class="o">.</span><span class="n">should_set_field_value</span><span class="p">(</span><span class="n">field_meta</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
-</span><span data-line="1126">                <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">field_meta</span><span class="o">.</span><span class="n">name</span><span class="p">)</span> <span class="ow">and</span> <span class="ow">not</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">BaseFactory</span><span class="p">,</span> <span class="n">field_meta</span><span class="o">.</span><span class="n">name</span><span class="p">):</span>
-</span><span data-line="1127">                    <span class="n">field_value</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">field_meta</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
-</span><span data-line="1128">                    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">field_value</span><span class="p">,</span> <span class="n">Ignore</span><span class="p">):</span>
-</span><span data-line="1129">                        <span class="k">continue</span>
-</span><span data-line="1130">
-</span><span data-line="1131">                    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">field_value</span><span class="p">,</span> <span class="n">Require</span><span class="p">)</span> <span class="ow">and</span> <span class="n">field_meta</span><span class="o">.</span><span class="n">name</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">kwargs</span><span class="p">:</span>
-</span><span data-line="1132">                        <span class="n">msg</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;Require kwarg </span><span class="si">{</span><span class="n">field_meta</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2"> is missing&quot;</span>
-</span><span data-line="1133">                        <span class="k">raise</span> <span class="n">MissingBuildKwargException</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
-</span><span data-line="1134">
-</span><span data-line="1135">                    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">field_value</span><span class="p">,</span> <span class="n">PostGenerated</span><span class="p">):</span>
-</span><span data-line="1136">                        <span class="n">generate_post</span><span class="p">[</span><span class="n">field_meta</span><span class="o">.</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="n">field_value</span>
-</span><span data-line="1137">                        <span class="k">continue</span>
-</span><span data-line="1138">
-</span><span data-line="1139">                    <span class="n">result</span><span class="p">[</span><span class="n">field_meta</span><span class="o">.</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_handle_factory_field_coverage</span><span class="p">(</span>
-</span><span data-line="1140">                        <span class="n">field_value</span><span class="o">=</span><span class="n">field_value</span><span class="p">,</span>
-</span><span data-line="1141">                        <span class="n">field_build_parameters</span><span class="o">=</span><span class="n">field_build_parameters</span><span class="p">,</span>
-</span><span data-line="1142">                        <span class="n">build_context</span><span class="o">=</span><span class="n">_build_context</span><span class="p">,</span>
-</span><span data-line="1143">                    <span class="p">)</span>
-</span><span data-line="1144">                    <span class="k">continue</span>
-</span><span data-line="1145">
-</span><span data-line="1146">                <span class="n">result</span><span class="p">[</span><span class="n">field_meta</span><span class="o">.</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="n">CoverageContainer</span><span class="p">(</span>
-</span><span data-line="1147">                    <span class="bp">cls</span><span class="o">.</span><span class="n">get_field_value_coverage</span><span class="p">(</span>
-</span><span data-line="1148">                        <span class="n">field_meta</span><span class="p">,</span>
-</span><span data-line="1149">                        <span class="n">field_build_parameters</span><span class="o">=</span><span class="n">field_build_parameters</span><span class="p">,</span>
-</span><span data-line="1150">                        <span class="n">build_context</span><span class="o">=</span><span class="n">_build_context</span><span class="p">,</span>
-</span><span data-line="1151">                    <span class="p">),</span>
-</span><span data-line="1152">                <span class="p">)</span>
-</span><span data-line="1153">
-</span><span data-line="1154">        <span class="k">for</span> <span class="n">resolved</span> <span class="ow">in</span> <span class="n">resolve_kwargs_coverage</span><span class="p">(</span><span class="n">result</span><span class="p">):</span>
-</span><span data-line="1155">            <span class="k">for</span> <span class="n">field_name</span><span class="p">,</span> <span class="n">post_generator</span> <span class="ow">in</span> <span class="n">generate_post</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
-</span><span data-line="1156">                <span class="n">resolved</span><span class="p">[</span><span class="n">field_name</span><span class="p">]</span> <span class="o">=</span> <span class="n">post_generator</span><span class="o">.</span><span class="n">to_value</span><span class="p">(</span><span class="n">field_name</span><span class="p">,</span> <span class="n">resolved</span><span class="p">)</span>
-</span><span data-line="1157">            <span class="k">yield</span> <span class="n">resolved</span></div>
+</span><span data-line="1119"><span class="sd">        :returns: A dictionary of build results.</span>
+</span><span data-line="1120">
+</span><span data-line="1121"><span class="sd">        &quot;&quot;&quot;</span>
+</span><span data-line="1122">        <span class="n">result</span><span class="p">,</span> <span class="n">generate_post</span><span class="p">,</span> <span class="n">_build_context</span> <span class="o">=</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_get_initial_variables</span><span class="p">(</span><span class="n">kwargs</span><span class="p">)</span>
+</span><span data-line="1123">
+</span><span data-line="1124">        <span class="k">for</span> <span class="n">field_meta</span> <span class="ow">in</span> <span class="bp">cls</span><span class="o">.</span><span class="n">get_model_fields</span><span class="p">():</span>
+</span><span data-line="1125">            <span class="n">field_build_parameters</span> <span class="o">=</span> <span class="bp">cls</span><span class="o">.</span><span class="n">extract_field_build_parameters</span><span class="p">(</span><span class="n">field_meta</span><span class="o">=</span><span class="n">field_meta</span><span class="p">,</span> <span class="n">build_args</span><span class="o">=</span><span class="n">kwargs</span><span class="p">)</span>
+</span><span data-line="1126">
+</span><span data-line="1127">            <span class="k">if</span> <span class="bp">cls</span><span class="o">.</span><span class="n">should_set_field_value</span><span class="p">(</span><span class="n">field_meta</span><span class="p">,</span> <span class="n">_build_context</span><span class="o">=</span><span class="n">_build_context</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+</span><span data-line="1128">                <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">field_meta</span><span class="o">.</span><span class="n">name</span><span class="p">)</span> <span class="ow">and</span> <span class="ow">not</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">BaseFactory</span><span class="p">,</span> <span class="n">field_meta</span><span class="o">.</span><span class="n">name</span><span class="p">):</span>
+</span><span data-line="1129">                    <span class="n">field_value</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">field_meta</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
+</span><span data-line="1130">                    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">field_value</span><span class="p">,</span> <span class="n">Ignore</span><span class="p">):</span>
+</span><span data-line="1131">                        <span class="k">continue</span>
+</span><span data-line="1132">
+</span><span data-line="1133">                    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">field_value</span><span class="p">,</span> <span class="n">Require</span><span class="p">)</span> <span class="ow">and</span> <span class="n">field_meta</span><span class="o">.</span><span class="n">name</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">kwargs</span><span class="p">:</span>
+</span><span data-line="1134">                        <span class="n">msg</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;Require kwarg </span><span class="si">{</span><span class="n">field_meta</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2"> is missing&quot;</span>
+</span><span data-line="1135">                        <span class="k">raise</span> <span class="n">MissingBuildKwargException</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
+</span><span data-line="1136">
+</span><span data-line="1137">                    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">field_value</span><span class="p">,</span> <span class="n">PostGenerated</span><span class="p">):</span>
+</span><span data-line="1138">                        <span class="n">generate_post</span><span class="p">[</span><span class="n">field_meta</span><span class="o">.</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="n">field_value</span>
+</span><span data-line="1139">                        <span class="k">continue</span>
+</span><span data-line="1140">
+</span><span data-line="1141">                    <span class="n">result</span><span class="p">[</span><span class="n">field_meta</span><span class="o">.</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_handle_factory_field_coverage</span><span class="p">(</span>
+</span><span data-line="1142">                        <span class="n">field_value</span><span class="o">=</span><span class="n">field_value</span><span class="p">,</span>
+</span><span data-line="1143">                        <span class="n">field_build_parameters</span><span class="o">=</span><span class="n">field_build_parameters</span><span class="p">,</span>
+</span><span data-line="1144">                        <span class="n">build_context</span><span class="o">=</span><span class="n">_build_context</span><span class="p">,</span>
+</span><span data-line="1145">                    <span class="p">)</span>
+</span><span data-line="1146">                    <span class="k">continue</span>
+</span><span data-line="1147">
+</span><span data-line="1148">                <span class="n">result</span><span class="p">[</span><span class="n">field_meta</span><span class="o">.</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="n">CoverageContainer</span><span class="p">(</span>
+</span><span data-line="1149">                    <span class="bp">cls</span><span class="o">.</span><span class="n">get_field_value_coverage</span><span class="p">(</span>
+</span><span data-line="1150">                        <span class="n">field_meta</span><span class="p">,</span>
+</span><span data-line="1151">                        <span class="n">field_build_parameters</span><span class="o">=</span><span class="n">field_build_parameters</span><span class="p">,</span>
+</span><span data-line="1152">                        <span class="n">build_context</span><span class="o">=</span><span class="n">_build_context</span><span class="p">,</span>
+</span><span data-line="1153">                    <span class="p">),</span>
+</span><span data-line="1154">                <span class="p">)</span>
+</span><span data-line="1155">
+</span><span data-line="1156">        <span class="k">for</span> <span class="n">resolved</span> <span class="ow">in</span> <span class="n">resolve_kwargs_coverage</span><span class="p">(</span><span class="n">result</span><span class="p">):</span>
+</span><span data-line="1157">            <span class="k">for</span> <span class="n">field_name</span><span class="p">,</span> <span class="n">post_generator</span> <span class="ow">in</span> <span class="n">generate_post</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+</span><span data-line="1158">                <span class="n">resolved</span><span class="p">[</span><span class="n">field_name</span><span class="p">]</span> <span class="o">=</span> <span class="n">post_generator</span><span class="o">.</span><span class="n">to_value</span><span class="p">(</span><span class="n">field_name</span><span class="p">,</span> <span class="n">resolved</span><span class="p">)</span>
+</span><span data-line="1159">            <span class="k">yield</span> <span class="n">resolved</span></div>
 
-</span><span data-line="1158">
+</span><span data-line="1160">
 <div class="viewcode-block" id="BaseFactory.build">
 <a class="viewcode-back" href="../../../reference/factories/base.html#polyfactory.factories.base.BaseFactory.build">[docs]</a>
-</span><span data-line="1159">    <span class="nd">@classmethod</span>
-</span><span data-line="1160">    <span class="k">def</span><span class="w"> </span><span class="nf">build</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="o">*</span><span class="n">_</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">T</span><span class="p">:</span>
-</span><span data-line="1161"><span class="w">        </span><span class="sd">&quot;&quot;&quot;Build an instance of the factory&#39;s __model__</span>
-</span><span data-line="1162">
-</span><span data-line="1163"><span class="sd">        :param kwargs: Any kwargs. If field names are set in kwargs, their values will be used.</span>
+</span><span data-line="1161">    <span class="nd">@classmethod</span>
+</span><span data-line="1162">    <span class="k">def</span><span class="w"> </span><span class="nf">build</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="o">*</span><span class="n">_</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">T</span><span class="p">:</span>
+</span><span data-line="1163"><span class="w">        </span><span class="sd">&quot;&quot;&quot;Build an instance of the factory&#39;s __model__</span>
 </span><span data-line="1164">
-</span><span data-line="1165"><span class="sd">        :returns: An instance of type T.</span>
+</span><span data-line="1165"><span class="sd">        :param kwargs: Any kwargs. If field names are set in kwargs, their values will be used.</span>
 </span><span data-line="1166">
-</span><span data-line="1167"><span class="sd">        &quot;&quot;&quot;</span>
-</span><span data-line="1168">        <span class="k">return</span> <span class="bp">cls</span><span class="o">.</span><span class="n">__model__</span><span class="p">(</span><span class="o">**</span><span class="bp">cls</span><span class="o">.</span><span class="n">process_kwargs</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">))</span></div>
+</span><span data-line="1167"><span class="sd">        :returns: An instance of type T.</span>
+</span><span data-line="1168">
+</span><span data-line="1169"><span class="sd">        &quot;&quot;&quot;</span>
+</span><span data-line="1170">        <span class="k">return</span> <span class="bp">cls</span><span class="o">.</span><span class="n">__model__</span><span class="p">(</span><span class="o">**</span><span class="bp">cls</span><span class="o">.</span><span class="n">process_kwargs</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">))</span></div>
 
-</span><span data-line="1169">
+</span><span data-line="1171">
 <div class="viewcode-block" id="BaseFactory.batch">
 <a class="viewcode-back" href="../../../reference/factories/base.html#polyfactory.factories.base.BaseFactory.batch">[docs]</a>
-</span><span data-line="1170">    <span class="nd">@classmethod</span>
-</span><span data-line="1171">    <span class="k">def</span><span class="w"> </span><span class="nf">batch</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">size</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="n">T</span><span class="p">]:</span>
-</span><span data-line="1172"><span class="w">        </span><span class="sd">&quot;&quot;&quot;Build a batch of size n of the factory&#39;s Meta.model.</span>
-</span><span data-line="1173">
-</span><span data-line="1174"><span class="sd">        :param size: Size of the batch.</span>
-</span><span data-line="1175"><span class="sd">        :param kwargs: Any kwargs. If field_meta names are set in kwargs, their values will be used.</span>
-</span><span data-line="1176">
-</span><span data-line="1177"><span class="sd">        :returns: A list of instances of type T.</span>
+</span><span data-line="1172">    <span class="nd">@classmethod</span>
+</span><span data-line="1173">    <span class="k">def</span><span class="w"> </span><span class="nf">batch</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">size</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="n">T</span><span class="p">]:</span>
+</span><span data-line="1174"><span class="w">        </span><span class="sd">&quot;&quot;&quot;Build a batch of size n of the factory&#39;s Meta.model.</span>
+</span><span data-line="1175">
+</span><span data-line="1176"><span class="sd">        :param size: Size of the batch.</span>
+</span><span data-line="1177"><span class="sd">        :param kwargs: Any kwargs. If field_meta names are set in kwargs, their values will be used.</span>
 </span><span data-line="1178">
-</span><span data-line="1179"><span class="sd">        &quot;&quot;&quot;</span>
-</span><span data-line="1180">        <span class="k">return</span> <span class="p">[</span><span class="bp">cls</span><span class="o">.</span><span class="n">build</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span> <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">size</span><span class="p">)]</span></div>
+</span><span data-line="1179"><span class="sd">        :returns: A list of instances of type T.</span>
+</span><span data-line="1180">
+</span><span data-line="1181"><span class="sd">        &quot;&quot;&quot;</span>
+</span><span data-line="1182">        <span class="k">return</span> <span class="p">[</span><span class="bp">cls</span><span class="o">.</span><span class="n">build</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span> <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">size</span><span class="p">)]</span></div>
 
-</span><span data-line="1181">
+</span><span data-line="1183">
 <div class="viewcode-block" id="BaseFactory.coverage">
 <a class="viewcode-back" href="../../../reference/factories/base.html#polyfactory.factories.base.BaseFactory.coverage">[docs]</a>
-</span><span data-line="1182">    <span class="nd">@classmethod</span>
-</span><span data-line="1183">    <span class="k">def</span><span class="w"> </span><span class="nf">coverage</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">abc</span><span class="o">.</span><span class="n">Iterator</span><span class="p">[</span><span class="n">T</span><span class="p">]:</span>
-</span><span data-line="1184"><span class="w">        </span><span class="sd">&quot;&quot;&quot;Build a batch of the factory&#39;s Meta.model with full coverage of the sub-types of the model.</span>
-</span><span data-line="1185">
-</span><span data-line="1186"><span class="sd">        :param kwargs: Any kwargs. If field_meta names are set in kwargs, their values will be used.</span>
+</span><span data-line="1184">    <span class="nd">@classmethod</span>
+</span><span data-line="1185">    <span class="k">def</span><span class="w"> </span><span class="nf">coverage</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">abc</span><span class="o">.</span><span class="n">Iterator</span><span class="p">[</span><span class="n">T</span><span class="p">]:</span>
+</span><span data-line="1186"><span class="w">        </span><span class="sd">&quot;&quot;&quot;Build a batch of the factory&#39;s Meta.model with full coverage of the sub-types of the model.</span>
 </span><span data-line="1187">
-</span><span data-line="1188"><span class="sd">        :returns: A iterator of instances of type T.</span>
+</span><span data-line="1188"><span class="sd">        :param kwargs: Any kwargs. If field_meta names are set in kwargs, their values will be used.</span>
 </span><span data-line="1189">
-</span><span data-line="1190"><span class="sd">        &quot;&quot;&quot;</span>
-</span><span data-line="1191">        <span class="k">for</span> <span class="n">data</span> <span class="ow">in</span> <span class="bp">cls</span><span class="o">.</span><span class="n">process_kwargs_coverage</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
-</span><span data-line="1192">            <span class="n">instance</span> <span class="o">=</span> <span class="bp">cls</span><span class="o">.</span><span class="n">__model__</span><span class="p">(</span><span class="o">**</span><span class="n">data</span><span class="p">)</span>
-</span><span data-line="1193">            <span class="k">yield</span> <span class="n">instance</span></div>
+</span><span data-line="1190"><span class="sd">        :returns: A iterator of instances of type T.</span>
+</span><span data-line="1191">
+</span><span data-line="1192"><span class="sd">        &quot;&quot;&quot;</span>
+</span><span data-line="1193">        <span class="k">for</span> <span class="n">data</span> <span class="ow">in</span> <span class="bp">cls</span><span class="o">.</span><span class="n">process_kwargs_coverage</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+</span><span data-line="1194">            <span class="n">instance</span> <span class="o">=</span> <span class="bp">cls</span><span class="o">.</span><span class="n">__model__</span><span class="p">(</span><span class="o">**</span><span class="n">data</span><span class="p">)</span>
+</span><span data-line="1195">            <span class="k">yield</span> <span class="n">instance</span></div>
 
-</span><span data-line="1194">
+</span><span data-line="1196">
 <div class="viewcode-block" id="BaseFactory.create_sync">
 <a class="viewcode-back" href="../../../reference/factories/base.html#polyfactory.factories.base.BaseFactory.create_sync">[docs]</a>
-</span><span data-line="1195">    <span class="nd">@classmethod</span>
-</span><span data-line="1196">    <span class="k">def</span><span class="w"> </span><span class="nf">create_sync</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">T</span><span class="p">:</span>
-</span><span data-line="1197"><span class="w">        </span><span class="sd">&quot;&quot;&quot;Build and persists synchronously a single model instance.</span>
-</span><span data-line="1198">
-</span><span data-line="1199"><span class="sd">        :param kwargs: Any kwargs. If field_meta names are set in kwargs, their values will be used.</span>
+</span><span data-line="1197">    <span class="nd">@classmethod</span>
+</span><span data-line="1198">    <span class="k">def</span><span class="w"> </span><span class="nf">create_sync</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">T</span><span class="p">:</span>
+</span><span data-line="1199"><span class="w">        </span><span class="sd">&quot;&quot;&quot;Build and persists synchronously a single model instance.</span>
 </span><span data-line="1200">
-</span><span data-line="1201"><span class="sd">        :returns: An instance of type T.</span>
+</span><span data-line="1201"><span class="sd">        :param kwargs: Any kwargs. If field_meta names are set in kwargs, their values will be used.</span>
 </span><span data-line="1202">
-</span><span data-line="1203"><span class="sd">        &quot;&quot;&quot;</span>
-</span><span data-line="1204">        <span class="k">return</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_get_sync_persistence</span><span class="p">()</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="bp">cls</span><span class="o">.</span><span class="n">build</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">))</span></div>
+</span><span data-line="1203"><span class="sd">        :returns: An instance of type T.</span>
+</span><span data-line="1204">
+</span><span data-line="1205"><span class="sd">        &quot;&quot;&quot;</span>
+</span><span data-line="1206">        <span class="k">return</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_get_sync_persistence</span><span class="p">()</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="bp">cls</span><span class="o">.</span><span class="n">build</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">))</span></div>
 
-</span><span data-line="1205">
+</span><span data-line="1207">
 <div class="viewcode-block" id="BaseFactory.create_batch_sync">
 <a class="viewcode-back" href="../../../reference/factories/base.html#polyfactory.factories.base.BaseFactory.create_batch_sync">[docs]</a>
-</span><span data-line="1206">    <span class="nd">@classmethod</span>
-</span><span data-line="1207">    <span class="k">def</span><span class="w"> </span><span class="nf">create_batch_sync</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">size</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="n">T</span><span class="p">]:</span>
-</span><span data-line="1208"><span class="w">        </span><span class="sd">&quot;&quot;&quot;Build and persists synchronously a batch of n size model instances.</span>
-</span><span data-line="1209">
-</span><span data-line="1210"><span class="sd">        :param size: Size of the batch.</span>
-</span><span data-line="1211"><span class="sd">        :param kwargs: Any kwargs. If field_meta names are set in kwargs, their values will be used.</span>
-</span><span data-line="1212">
-</span><span data-line="1213"><span class="sd">        :returns: A list of instances of type T.</span>
+</span><span data-line="1208">    <span class="nd">@classmethod</span>
+</span><span data-line="1209">    <span class="k">def</span><span class="w"> </span><span class="nf">create_batch_sync</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">size</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="n">T</span><span class="p">]:</span>
+</span><span data-line="1210"><span class="w">        </span><span class="sd">&quot;&quot;&quot;Build and persists synchronously a batch of n size model instances.</span>
+</span><span data-line="1211">
+</span><span data-line="1212"><span class="sd">        :param size: Size of the batch.</span>
+</span><span data-line="1213"><span class="sd">        :param kwargs: Any kwargs. If field_meta names are set in kwargs, their values will be used.</span>
 </span><span data-line="1214">
-</span><span data-line="1215"><span class="sd">        &quot;&quot;&quot;</span>
-</span><span data-line="1216">        <span class="k">return</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_get_sync_persistence</span><span class="p">()</span><span class="o">.</span><span class="n">save_many</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="bp">cls</span><span class="o">.</span><span class="n">batch</span><span class="p">(</span><span class="n">size</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">))</span></div>
+</span><span data-line="1215"><span class="sd">        :returns: A list of instances of type T.</span>
+</span><span data-line="1216">
+</span><span data-line="1217"><span class="sd">        &quot;&quot;&quot;</span>
+</span><span data-line="1218">        <span class="k">return</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_get_sync_persistence</span><span class="p">()</span><span class="o">.</span><span class="n">save_many</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="bp">cls</span><span class="o">.</span><span class="n">batch</span><span class="p">(</span><span class="n">size</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">))</span></div>
 
-</span><span data-line="1217">
+</span><span data-line="1219">
 <div class="viewcode-block" id="BaseFactory.create_async">
 <a class="viewcode-back" href="../../../reference/factories/base.html#polyfactory.factories.base.BaseFactory.create_async">[docs]</a>
-</span><span data-line="1218">    <span class="nd">@classmethod</span>
-</span><span data-line="1219">    <span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">create_async</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">T</span><span class="p">:</span>
-</span><span data-line="1220"><span class="w">        </span><span class="sd">&quot;&quot;&quot;Build and persists asynchronously a single model instance.</span>
-</span><span data-line="1221">
-</span><span data-line="1222"><span class="sd">        :param kwargs: Any kwargs. If field_meta names are set in kwargs, their values will be used.</span>
+</span><span data-line="1220">    <span class="nd">@classmethod</span>
+</span><span data-line="1221">    <span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">create_async</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">T</span><span class="p">:</span>
+</span><span data-line="1222"><span class="w">        </span><span class="sd">&quot;&quot;&quot;Build and persists asynchronously a single model instance.</span>
 </span><span data-line="1223">
-</span><span data-line="1224"><span class="sd">        :returns: An instance of type T.</span>
-</span><span data-line="1225"><span class="sd">        &quot;&quot;&quot;</span>
-</span><span data-line="1226">        <span class="k">return</span> <span class="k">await</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_get_async_persistence</span><span class="p">()</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="bp">cls</span><span class="o">.</span><span class="n">build</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">))</span></div>
+</span><span data-line="1224"><span class="sd">        :param kwargs: Any kwargs. If field_meta names are set in kwargs, their values will be used.</span>
+</span><span data-line="1225">
+</span><span data-line="1226"><span class="sd">        :returns: An instance of type T.</span>
+</span><span data-line="1227"><span class="sd">        &quot;&quot;&quot;</span>
+</span><span data-line="1228">        <span class="k">return</span> <span class="k">await</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_get_async_persistence</span><span class="p">()</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="bp">cls</span><span class="o">.</span><span class="n">build</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">))</span></div>
 
-</span><span data-line="1227">
+</span><span data-line="1229">
 <div class="viewcode-block" id="BaseFactory.create_batch_async">
 <a class="viewcode-back" href="../../../reference/factories/base.html#polyfactory.factories.base.BaseFactory.create_batch_async">[docs]</a>
-</span><span data-line="1228">    <span class="nd">@classmethod</span>
-</span><span data-line="1229">    <span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">create_batch_async</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">size</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="n">T</span><span class="p">]:</span>
-</span><span data-line="1230"><span class="w">        </span><span class="sd">&quot;&quot;&quot;Build and persists asynchronously a batch of n size model instances.</span>
-</span><span data-line="1231">
-</span><span data-line="1232">
-</span><span data-line="1233"><span class="sd">        :param size: Size of the batch.</span>
-</span><span data-line="1234"><span class="sd">        :param kwargs: Any kwargs. If field_meta names are set in kwargs, their values will be used.</span>
-</span><span data-line="1235">
-</span><span data-line="1236"><span class="sd">        :returns: A list of instances of type T.</span>
-</span><span data-line="1237"><span class="sd">        &quot;&quot;&quot;</span>
-</span><span data-line="1238">        <span class="k">return</span> <span class="k">await</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_get_async_persistence</span><span class="p">()</span><span class="o">.</span><span class="n">save_many</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="bp">cls</span><span class="o">.</span><span class="n">batch</span><span class="p">(</span><span class="n">size</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">))</span></div>
+</span><span data-line="1230">    <span class="nd">@classmethod</span>
+</span><span data-line="1231">    <span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">create_batch_async</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">size</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="n">T</span><span class="p">]:</span>
+</span><span data-line="1232"><span class="w">        </span><span class="sd">&quot;&quot;&quot;Build and persists asynchronously a batch of n size model instances.</span>
+</span><span data-line="1233">
+</span><span data-line="1234">
+</span><span data-line="1235"><span class="sd">        :param size: Size of the batch.</span>
+</span><span data-line="1236"><span class="sd">        :param kwargs: Any kwargs. If field_meta names are set in kwargs, their values will be used.</span>
+</span><span data-line="1237">
+</span><span data-line="1238"><span class="sd">        :returns: A list of instances of type T.</span>
+</span><span data-line="1239"><span class="sd">        &quot;&quot;&quot;</span>
+</span><span data-line="1240">        <span class="k">return</span> <span class="k">await</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_get_async_persistence</span><span class="p">()</span><span class="o">.</span><span class="n">save_many</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="bp">cls</span><span class="o">.</span><span class="n">batch</span><span class="p">(</span><span class="n">size</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">))</span></div>
 </div>
 
-</span><span data-line="1239">
-</span><span data-line="1240">
-</span><span data-line="1241"><span class="k">def</span><span class="w"> </span><span class="nf">_register_builtin_factories</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-</span><span data-line="1242"><span class="w">    </span><span class="sd">&quot;&quot;&quot;This function is used to register the base factories, if present.</span>
-</span><span data-line="1243">
-</span><span data-line="1244"><span class="sd">    :returns: None</span>
-</span><span data-line="1245"><span class="sd">    &quot;&quot;&quot;</span>
-</span><span data-line="1246">    <span class="kn">import</span><span class="w"> </span><span class="nn">polyfactory.factories.dataclass_factory</span>
-</span><span data-line="1247">    <span class="kn">import</span><span class="w"> </span><span class="nn">polyfactory.factories.typed_dict_factory</span>  <span class="c1"># noqa: F401</span>
-</span><span data-line="1248">
-</span><span data-line="1249">    <span class="k">for</span> <span class="n">module</span> <span class="ow">in</span> <span class="p">[</span>
-</span><span data-line="1250">        <span class="s2">&quot;polyfactory.factories.pydantic_factory&quot;</span><span class="p">,</span>
-</span><span data-line="1251">        <span class="s2">&quot;polyfactory.factories.beanie_odm_factory&quot;</span><span class="p">,</span>
-</span><span data-line="1252">        <span class="s2">&quot;polyfactory.factories.odmantic_odm_factory&quot;</span><span class="p">,</span>
-</span><span data-line="1253">        <span class="s2">&quot;polyfactory.factories.msgspec_factory&quot;</span><span class="p">,</span>
-</span><span data-line="1254">        <span class="c1"># `AttrsFactory` is not being registered by default since not all versions of `attrs` are supported.</span>
-</span><span data-line="1255">        <span class="c1"># Issue: https://github.com/litestar-org/polyfactory/issues/356</span>
-</span><span data-line="1256">        <span class="c1"># &quot;polyfactory.factories.attrs_factory&quot;,</span>
-</span><span data-line="1257">    <span class="p">]:</span>
-</span><span data-line="1258">        <span class="k">try</span><span class="p">:</span>
-</span><span data-line="1259">            <span class="n">import_module</span><span class="p">(</span><span class="n">module</span><span class="p">)</span>
-</span><span data-line="1260">        <span class="k">except</span> <span class="ne">ImportError</span><span class="p">:</span>  <span class="c1"># noqa: PERF203</span>
-</span><span data-line="1261">            <span class="k">continue</span>
-</span><span data-line="1262">
-</span><span data-line="1263">
-</span><span data-line="1264"><span class="n">_register_builtin_factories</span><span class="p">()</span>
+</span><span data-line="1241">
+</span><span data-line="1242">
+</span><span data-line="1243"><span class="k">def</span><span class="w"> </span><span class="nf">_register_builtin_factories</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+</span><span data-line="1244"><span class="w">    </span><span class="sd">&quot;&quot;&quot;This function is used to register the base factories, if present.</span>
+</span><span data-line="1245">
+</span><span data-line="1246"><span class="sd">    :returns: None</span>
+</span><span data-line="1247"><span class="sd">    &quot;&quot;&quot;</span>
+</span><span data-line="1248">    <span class="kn">import</span><span class="w"> </span><span class="nn">polyfactory.factories.dataclass_factory</span>
+</span><span data-line="1249">    <span class="kn">import</span><span class="w"> </span><span class="nn">polyfactory.factories.typed_dict_factory</span>  <span class="c1"># noqa: F401</span>
+</span><span data-line="1250">
+</span><span data-line="1251">    <span class="k">for</span> <span class="n">module</span> <span class="ow">in</span> <span class="p">[</span>
+</span><span data-line="1252">        <span class="s2">&quot;polyfactory.factories.pydantic_factory&quot;</span><span class="p">,</span>
+</span><span data-line="1253">        <span class="s2">&quot;polyfactory.factories.beanie_odm_factory&quot;</span><span class="p">,</span>
+</span><span data-line="1254">        <span class="s2">&quot;polyfactory.factories.odmantic_odm_factory&quot;</span><span class="p">,</span>
+</span><span data-line="1255">        <span class="s2">&quot;polyfactory.factories.msgspec_factory&quot;</span><span class="p">,</span>
+</span><span data-line="1256">        <span class="c1"># `AttrsFactory` is not being registered by default since not all versions of `attrs` are supported.</span>
+</span><span data-line="1257">        <span class="c1"># Issue: https://github.com/litestar-org/polyfactory/issues/356</span>
+</span><span data-line="1258">        <span class="c1"># &quot;polyfactory.factories.attrs_factory&quot;,</span>
+</span><span data-line="1259">    <span class="p">]:</span>
+</span><span data-line="1260">        <span class="k">try</span><span class="p">:</span>
+</span><span data-line="1261">            <span class="n">import_module</span><span class="p">(</span><span class="n">module</span><span class="p">)</span>
+</span><span data-line="1262">        <span class="k">except</span> <span class="ne">ImportError</span><span class="p">:</span>  <span class="c1"># noqa: PERF203</span>
+</span><span data-line="1263">            <span class="k">continue</span>
+</span><span data-line="1264">
+</span><span data-line="1265">
+</span><span data-line="1266"><span class="n">_register_builtin_factories</span><span class="p">()</span>
 </span></pre></div>
         </article><button class="back-to-top" type="button">
   <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">

@@ -187,6 +187,8 @@ data-aria-dark="Switch to auto color mode">
       <i class="i-lucide close"></i>
     </button>
     <div class="sy-scrollbar sy-rside-inner px-6 xl:top-16 xl:sticky xl:pl-0 pt-6 pb-4"><div class="localtoc"><h3>On this page</h3><ul>
+<li><a class="reference internal" href="#polyfactory.factories.sqlalchemy_factory.SQLAlchemyBuildContext"><code class="docutils literal notranslate"><span class="pre">SQLAlchemyBuildContext</span></code></a></li>
+<li><a class="reference internal" href="#polyfactory.factories.sqlalchemy_factory.SQLAlchemyConstraints"><code class="docutils literal notranslate"><span class="pre">SQLAlchemyConstraints</span></code></a></li>
 <li><a class="reference internal" href="#polyfactory.factories.sqlalchemy_factory.SQLAlchemyPersistenceMethod"><code class="docutils literal notranslate"><span class="pre">SQLAlchemyPersistenceMethod</span></code></a></li>
 <li><a class="reference internal" href="#polyfactory.factories.sqlalchemy_factory.SQLASyncPersistence"><code class="docutils literal notranslate"><span class="pre">SQLASyncPersistence</span></code></a><ul>
 <li><a class="reference internal" href="#polyfactory.factories.sqlalchemy_factory.SQLASyncPersistence.__init__"><code class="docutils literal notranslate">__init__()</span></code></a></li>
@@ -208,10 +210,13 @@ data-aria-dark="Switch to auto color mode">
 <li><a class="reference internal" href="#polyfactory.factories.sqlalchemy_factory.SQLAlchemyFactory.__set_association_proxy__"><code class="docutils literal notranslate">__set_association_proxy__</span></code></a></li>
 <li><a class="reference internal" href="#polyfactory.factories.sqlalchemy_factory.SQLAlchemyFactory.__persistence_method__"><code class="docutils literal notranslate">__persistence_method__</span></code></a></li>
 <li><a class="reference internal" href="#polyfactory.factories.sqlalchemy_factory.SQLAlchemyFactory.__config_keys__"><code class="docutils literal notranslate">__config_keys__</span></code></a></li>
+<li><a class="reference internal" href="#polyfactory.factories.sqlalchemy_factory.SQLAlchemyFactory.create_sync"><code class="docutils literal notranslate">create_sync()</span></code></a></li>
+<li><a class="reference internal" href="#polyfactory.factories.sqlalchemy_factory.SQLAlchemyFactory.create_async"><code class="docutils literal notranslate">create_async()</span></code></a></li>
 <li><a class="reference internal" href="#polyfactory.factories.sqlalchemy_factory.SQLAlchemyFactory.get_sqlalchemy_types"><code class="docutils literal notranslate">get_sqlalchemy_types()</span></code></a></li>
 <li><a class="reference internal" href="#polyfactory.factories.sqlalchemy_factory.SQLAlchemyFactory.get_sqlalchemy_constraints"><code class="docutils literal notranslate">get_sqlalchemy_constraints()</span></code></a></li>
 <li><a class="reference internal" href="#polyfactory.factories.sqlalchemy_factory.SQLAlchemyFactory.get_provider_map"><code class="docutils literal notranslate">get_provider_map()</span></code></a></li>
 <li><a class="reference internal" href="#polyfactory.factories.sqlalchemy_factory.SQLAlchemyFactory.is_supported_type"><code class="docutils literal notranslate">is_supported_type()</span></code></a></li>
+<li><a class="reference internal" href="#polyfactory.factories.sqlalchemy_factory.SQLAlchemyFactory.should_set_field_value"><code class="docutils literal notranslate">should_set_field_value()</span></code></a></li>
 <li><a class="reference internal" href="#polyfactory.factories.sqlalchemy_factory.SQLAlchemyFactory.get_model_fields"><code class="docutils literal notranslate">get_model_fields()</span></code></a></li>
 </ul>
 </li>
@@ -278,6 +283,18 @@ data-aria-dark="Switch to auto color mode">
         <article class="yue" role="main">
           <section id="module-polyfactory.factories.sqlalchemy_factory">
 <span id="sqlalchemy-factory"></span><h1>sqlalchemy_factory<a class="headerlink" href="#module-polyfactory.factories.sqlalchemy_factory" title="Link to this heading">¶</a></h1>
+<dl class="py class">
+<dt class="sig sig-object py" id="polyfactory.factories.sqlalchemy_factory.SQLAlchemyBuildContext">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">polyfactory.factories.sqlalchemy_factory.</span></span><span class="sig-name descname"><span class="pre">SQLAlchemyBuildContext</span></span><a class="reference internal" href="../../_modules/polyfactory/factories/sqlalchemy_factory.html#SQLAlchemyBuildContext"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#polyfactory.factories.sqlalchemy_factory.SQLAlchemyBuildContext" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="base.html#polyfactory.factories.base.BuildContext" title="polyfactory.factories.base.BuildContext"><code class="xref py py-class docutils literal notranslate"><span class="pre">BuildContext</span></code></a></p>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="polyfactory.factories.sqlalchemy_factory.SQLAlchemyConstraints">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">polyfactory.factories.sqlalchemy_factory.</span></span><span class="sig-name descname"><span class="pre">SQLAlchemyConstraints</span></span><a class="reference internal" href="../../_modules/polyfactory/factories/sqlalchemy_factory.html#SQLAlchemyConstraints"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#polyfactory.factories.sqlalchemy_factory.SQLAlchemyConstraints" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="../field_meta.html#polyfactory.field_meta.Constraints" title="polyfactory.field_meta.Constraints"><code class="xref py py-class docutils literal notranslate"><span class="pre">Constraints</span></code></a></p>
+</dd></dl>
+
 <dl class="py class">
 <dt class="sig sig-object py" id="polyfactory.factories.sqlalchemy_factory.SQLAlchemyPersistenceMethod">
 <em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">polyfactory.factories.sqlalchemy_factory.</span></span><span class="sig-name descname"><span class="pre">SQLAlchemyPersistenceMethod</span></span><a class="reference internal" href="../../_modules/polyfactory/factories/sqlalchemy_factory.html#SQLAlchemyPersistenceMethod"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#polyfactory.factories.sqlalchemy_factory.SQLAlchemyPersistenceMethod" title="Link to this definition">¶</a></dt>
@@ -413,6 +430,34 @@ For example, the ‘DataclassFactory’, ‘TypedDictFactory’ and ‘ModelFact
 </dd></dl>
 
 <dl class="py method">
+<dt class="sig sig-object py" id="polyfactory.factories.sqlalchemy_factory.SQLAlchemyFactory.create_sync">
+<em class="property"><span class="k"><span class="pre">classmethod</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">create_sync</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Any" title="(in Python v3.14)"><span class="pre">Any</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">T</span></span></span><a class="reference internal" href="../../_modules/polyfactory/factories/sqlalchemy_factory.html#SQLAlchemyFactory.create_sync"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#polyfactory.factories.sqlalchemy_factory.SQLAlchemyFactory.create_sync" title="Link to this definition">¶</a></dt>
+<dd><p>Build and persists synchronously a single model instance.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><span class="target" id="polyfactory.factories.sqlalchemy_factory.SQLAlchemyFactory.create_sync.params.kwargs"></span><strong>kwargs</strong><a class="paramlink headerlink reference internal" href="#polyfactory.factories.sqlalchemy_factory.SQLAlchemyFactory.create_sync.params.kwargs">¶</a> – Any kwargs. If field_meta names are set in kwargs, their values will be used.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>An instance of type T.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="polyfactory.factories.sqlalchemy_factory.SQLAlchemyFactory.create_async">
+<em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span><span class="k"><span class="pre">classmethod</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">create_async</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Any" title="(in Python v3.14)"><span class="pre">Any</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">T</span></span></span><a class="reference internal" href="../../_modules/polyfactory/factories/sqlalchemy_factory.html#SQLAlchemyFactory.create_async"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#polyfactory.factories.sqlalchemy_factory.SQLAlchemyFactory.create_async" title="Link to this definition">¶</a></dt>
+<dd><p>Build and persists asynchronously a single model instance.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><span class="target" id="polyfactory.factories.sqlalchemy_factory.SQLAlchemyFactory.create_async.params.kwargs"></span><strong>kwargs</strong><a class="paramlink headerlink reference internal" href="#polyfactory.factories.sqlalchemy_factory.SQLAlchemyFactory.create_async.params.kwargs">¶</a> – Any kwargs. If field_meta names are set in kwargs, their values will be used.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>An instance of type T.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
 <dt class="sig sig-object py" id="polyfactory.factories.sqlalchemy_factory.SQLAlchemyFactory.get_sqlalchemy_types">
 <em class="property"><span class="k"><span class="pre">classmethod</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">get_sqlalchemy_types</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.14)"><span class="pre">dict</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Any" title="(in Python v3.14)"><span class="pre">Any</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Callable" title="(in Python v3.14)"><span class="pre">Callable</span></a><span class="p"><span class="pre">[</span></span><span class="p"><span class="pre">[</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Any" title="(in Python v3.14)"><span class="pre">Any</span></a><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../../_modules/polyfactory/factories/sqlalchemy_factory.html#SQLAlchemyFactory.get_sqlalchemy_types"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#polyfactory.factories.sqlalchemy_factory.SQLAlchemyFactory.get_sqlalchemy_types" title="Link to this definition">¶</a></dt>
 <dd><p>Get mapping of types where column type should be used directly.</p>
@@ -451,6 +496,28 @@ For example, the ‘DataclassFactory’, ‘TypedDictFactory’ and ‘ModelFact
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p>A typeguard</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="polyfactory.factories.sqlalchemy_factory.SQLAlchemyFactory.should_set_field_value">
+<em class="property"><span class="k"><span class="pre">classmethod</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">should_set_field_value</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">field_meta</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="../field_meta.html#polyfactory.field_meta.FieldMeta" title="polyfactory.field_meta.FieldMeta"><span class="pre">FieldMeta</span></a></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Any" title="(in Python v3.14)"><span class="pre">Any</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.14)"><span class="pre">bool</span></a></span></span><a class="reference internal" href="../../_modules/polyfactory/factories/sqlalchemy_factory.html#SQLAlchemyFactory.should_set_field_value"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#polyfactory.factories.sqlalchemy_factory.SQLAlchemyFactory.should_set_field_value" title="Link to this definition">¶</a></dt>
+<dd><p>Determine whether to set a value for a given field_name.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><span class="target" id="polyfactory.factories.sqlalchemy_factory.SQLAlchemyFactory.should_set_field_value.params.field_meta"></span><strong>field_meta</strong><a class="paramlink headerlink reference internal" href="#polyfactory.factories.sqlalchemy_factory.SQLAlchemyFactory.should_set_field_value.params.field_meta">¶</a> – FieldMeta instance.</p></li>
+<li><p><span class="target" id="polyfactory.factories.sqlalchemy_factory.SQLAlchemyFactory.should_set_field_value.params.kwargs"></span><strong>kwargs</strong><a class="paramlink headerlink reference internal" href="#polyfactory.factories.sqlalchemy_factory.SQLAlchemyFactory.should_set_field_value.params.kwargs">¶</a> – Any kwargs passed to the factory.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Notes<span class="colon">:</span></dt>
+<dd class="field-even"><ul class="simple">
+<li><p>This method is distinct to allow overriding.</p></li>
+</ul>
+</dd>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>A boolean determining whether a value should be set for the given field_meta.</p>
 </dd>
 </dl>
 </dd></dl>
