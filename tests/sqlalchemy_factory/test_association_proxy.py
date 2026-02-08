@@ -47,19 +47,21 @@ async def test_async_persistence(async_engine: AsyncEngine) -> None:
             __async_session__ = session
 
         instance = await AsyncUserFactory.create_async()
+        instance_id = instance.id
         instances = await AsyncUserFactory.create_batch_async(3)
+        instance_ids = (instance.id for instance in instances)
 
     async with AsyncSession(async_engine) as session:
         result = await session.scalars(select(User))
         assert len(result.all()) == 4
 
-        user = await session.get(User, instance.id)
+        user = await session.get(User, instance_id)
         assert user
         assert isinstance(user.keywords[0], Keyword)
         assert isinstance(user.user_keyword_associations[0], UserKeywordAssociation)
 
-        for instance in instances:
-            user = await session.get(User, instance.id)
+        for instance_id in instance_ids:
+            user = await session.get(User, instance_id)
             assert user
             assert isinstance(user.keywords[0], Keyword)
             assert isinstance(user.user_keyword_associations[0], UserKeywordAssociation)
