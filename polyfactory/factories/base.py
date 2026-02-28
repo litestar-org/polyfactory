@@ -784,6 +784,10 @@ class BaseFactory(ABC, Generic[T]):
 
             return cls.get_field_value(cls.__random__.choice(children), field_build_parameters, build_context)
 
+        provider_map = cls.get_provider_map()
+        if provider := (provider_map.get(field_meta.annotation) or provider_map.get(unwrapped_annotation)):
+            return provider()
+
         if BaseFactory.is_factory_type(annotation=unwrapped_annotation):
             if not field_build_parameters and unwrapped_annotation in build_context["seen_models"]:
                 return None if is_optional(field_meta.annotation) else Null
@@ -843,10 +847,6 @@ class BaseFactory(ABC, Generic[T]):
                 field_build_parameters=field_build_parameters,
                 build_context=build_context,
             )
-
-        provider_map = cls.get_provider_map()
-        if provider := (provider_map.get(field_meta.annotation) or provider_map.get(unwrapped_annotation)):
-            return provider()
 
         if is_type_var(unwrapped_annotation):
             return create_random_string(cls.__random__, min_length=1, max_length=10)
@@ -913,6 +913,12 @@ class BaseFactory(ABC, Generic[T]):
                     field_meta=unwrapped_annotation_meta,
                 )
 
+            elif provider := (
+                (provider_map := cls.get_provider_map()).get(field_meta.annotation)
+                or provider_map.get(unwrapped_annotation)
+            ):
+                yield CoverageContainerCallable(provider)
+
             elif BaseFactory.is_factory_type(annotation=unwrapped_annotation):
                 yield CoverageContainer(
                     cls._get_or_create_factory(model=unwrapped_annotation).coverage(
@@ -934,12 +940,6 @@ class BaseFactory(ABC, Generic[T]):
                 )
 
                 yield handle_collection_type_coverage(child_meta, origin, cls, build_context=build_context)
-
-            elif provider := (
-                (provider_map := cls.get_provider_map()).get(field_meta.annotation)
-                or provider_map.get(unwrapped_annotation)
-            ):
-                yield CoverageContainerCallable(provider)
 
             elif is_type_var(unwrapped_annotation):
                 yield create_random_string(cls.__random__, min_length=1, max_length=10)
