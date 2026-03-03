@@ -23,6 +23,6 @@ class PersonFactory(DataclassFactory[Person]): ...
 register_fixture(PersonFactory)
 
 
-def test_person_factory(person_factory: PersonFactory) -> None:
+def test_person_factory(person_factory: type[PersonFactory]) -> None:
     person_instance = person_factory.build()
     assert isinstance(person_instance, Person)
