@@ -21,6 +21,6 @@ class Person:
 class PersonFactory(DataclassFactory[Person]): ...
 
 
-def test_person_factory(aliased_person_factory: PersonFactory) -> None:
+def test_person_factory(aliased_person_factory: type[PersonFactory]) -> None:
     person_instance = aliased_person_factory.build()
     assert isinstance(person_instance, Person)
