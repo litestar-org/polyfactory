@@ -74,7 +74,7 @@ from polyfactory.value_generators.constrained_collections import (
     handle_constrained_collection,
     handle_constrained_mapping,
 )
-from polyfactory.value_generators.constrained_dates import handle_constrained_date
+from polyfactory.value_generators.constrained_dates import handle_constrained_date, handle_constrained_datetime
 from polyfactory.value_generators.constrained_numbers import (
     handle_constrained_decimal,
     handle_constrained_float,
@@ -704,6 +704,16 @@ class BaseFactory(ABC, Generic[T]):
                     unique_items=constraints.get("unique_items", False),
                     field_build_parameters=field_build_parameters,
                     build_context=build_context,
+                )
+
+            if is_safe_subclass(annotation, datetime):
+                return handle_constrained_datetime(
+                    faker=cls.__faker__,
+                    ge=cast("Any", constraints.get("ge")),
+                    gt=cast("Any", constraints.get("gt")),
+                    le=cast("Any", constraints.get("le")),
+                    lt=cast("Any", constraints.get("lt")),
+                    tz=cast("Any", constraints.get("tz")),
                 )
 
             if is_safe_subclass(annotation, date):
