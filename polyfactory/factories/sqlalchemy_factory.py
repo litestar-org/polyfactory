@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import enum
+import inspect
 from collections.abc import Collection, Mapping
 from dataclasses import is_dataclass
 from datetime import date, datetime
@@ -17,21 +18,24 @@ from typing import (
     cast,
 )
 
+from sqlalchemy.sql.schema import ColumnDefault
 from sqlalchemy.util.langhelpers import duck_type_collection
 
 from polyfactory.exceptions import ConfigurationException, MissingDependencyException, ParameterException
 from polyfactory.factories.base import BaseFactory
 from polyfactory.factories.base import BuildContext as BaseBuildContext
-from polyfactory.field_meta import Constraints, FieldMeta
+from polyfactory.field_meta import Constraints, FieldMeta, Null
 from polyfactory.persistence import AsyncPersistenceProtocol, SyncPersistenceProtocol
 from polyfactory.utils.types import Frozendict
 
 try:
-    from sqlalchemy import ARRAY, Column, Numeric, String, inspect, types
+    from sqlalchemy import ARRAY, Column, Numeric, String, types
+    from sqlalchemy import inspect as sqla_inspect
     from sqlalchemy.dialects import mssql, mysql, postgresql, sqlite
     from sqlalchemy.exc import NoInspectionAvailable
     from sqlalchemy.ext.associationproxy import AssociationProxy
     from sqlalchemy.orm import InstanceState, Mapper, RelationshipProperty
+    from sqlalchemy.sql.elements import TextClause
 except ImportError as e:
     msg = "sqlalchemy is not installed"
     raise MissingDependencyException(msg) from e
@@ -179,6 +183,21 @@ class SQLAlchemyFactory(Generic[T], BaseFactory[T]):
         return await super().create_async(**kwargs)
 
     @classmethod
+    def build(cls, *_: Any, **kwargs: Any) -> T:
+        """Build an instance of the factory's __model__ and apply field defaults."""
+        data = super().process_kwargs(**kwargs)
+
+        if cls.__use_defaults__:
+            for field_meta in cls.get_model_fields():
+                if field_meta.name in data:
+                    continue
+
+                if cls.should_use_default_value(field_meta):
+                    data[field_meta.name] = field_meta.default
+
+        return cls.__model__(**data)
+
+    @classmethod
     def get_sqlalchemy_types(cls) -> dict[Any, Callable[[], Any]]:
         """Get mapping of types where column type should be used directly.
 
@@ -227,7 +246,7 @@ class SQLAlchemyFactory(Generic[T], BaseFactory[T]):
     @classmethod
     def is_supported_type(cls, value: Any) -> TypeGuard[type[T]]:
         try:
-            inspected = inspect(value)
+            inspected = sqla_inspect(value)
         except NoInspectionAvailable:
             return False
         return isinstance(inspected, (Mapper, InstanceState))
@@ -366,14 +385,38 @@ class SQLAlchemyFactory(Generic[T], BaseFactory[T]):
         return class_ if not target_collection.uselist else list[class_]  # type: ignore[valid-type]
 
     @classmethod
+    def get_column_default(cls, col: Column) -> Any:
+        if (default := col.default) is None:
+            return Null
+
+        if not isinstance(default, ColumnDefault):
+            return Null
+
+        if default.is_scalar:
+            return default.arg
+
+        if default.is_clause_element and isinstance(default.arg, TextClause):
+            return default.arg.text
+
+        if default.is_callable:
+            sig = inspect.signature(default.arg)
+            # Skip context-sensitive default functions as there is no
+            # obvious and correct way to construct the SQLAlchemy context manually.
+            if not sig.parameters:
+                return default.arg(None)  # type: ignore[arg-type]
+
+        return Null
+
+    @classmethod
     def get_model_fields(cls) -> list[FieldMeta]:
         fields_meta: list[FieldMeta] = []
 
-        table: Mapper = inspect(cls.__model__)  # type: ignore[assignment]
+        table: Mapper = sqla_inspect(cls.__model__)  # type: ignore[assignment]
         fields_meta.extend(
             FieldMeta.from_type(
                 annotation=cls.get_type_from_column(column),
                 name=name,
+                default=cls.get_column_default(column),
             )
             for name, column in table.columns.items()
             if cls.should_column_be_set(column)
