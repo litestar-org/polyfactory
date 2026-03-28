@@ -124,7 +124,7 @@ class _SessionMaker(Protocol[_T_co]):
     def __call__() -> _T_co: ...
 
 
-class SQLAlchemyFactory(Generic[T], BaseFactory[T]):
+class SQLAlchemyFactory(BaseFactory[T], Generic[T]):
     """Base factory for SQLAlchemy models."""
 
     __is_base_factory__ = True

@@ -305,8 +305,8 @@ def test_coverage_optional_list() -> None:
 def test_optional_lists() -> None:
     class Model(BaseModel):
         just_a_list: list[int]
-        optional_list: Optional[list[int]]
-        optional_nested_list: Optional[list[list[list[int]]]]
+        optional_list: Optional[list[int]]  # noqa: UP045
+        optional_nested_list: Optional[list[list[list[int]]]]  # noqa: UP045
 
     results = list(ModelFactory.create_factory(Model).coverage())
     assert type_exists_at_path_any(results, ["just_a_list"], list)
@@ -340,7 +340,7 @@ def test_hetero_tuple_types() -> None:
 
 def test_optional_list_uuid() -> None:
     class Model(BaseModel):
-        maybe_uuids: Optional[list[UUID]]
+        maybe_uuids: Optional[list[UUID]]  # noqa: UP045
 
     results = list(ModelFactory.create_factory(Model).coverage())
     assert type_exists_at_path_any(results, ["maybe_uuids"], list)
@@ -350,7 +350,7 @@ def test_optional_list_uuid() -> None:
 
 def test_optional_set_uuid() -> None:
     class Model(BaseModel):
-        maybe_uuids: Optional[set[UUID]]
+        maybe_uuids: Optional[set[UUID]]  # noqa: UP045
 
     results = list(ModelFactory.create_factory(Model).coverage())
     assert type_exists_at_path_any(results, ["maybe_uuids"], set)
