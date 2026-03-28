@@ -1246,7 +1246,7 @@ def _register_builtin_factories() -> None:
     :returns: None
     """
     import polyfactory.factories.dataclass_factory  # noqa: PLC0415
-    import polyfactory.factories.typed_dict_factory  # noqa: F401,PLC0415
+    import polyfactory.factories.typed_dict_factory  # noqa: F401, PLC0415
 
     for module in [
         "polyfactory.factories.pydantic_factory",
