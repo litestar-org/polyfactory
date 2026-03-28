@@ -48,10 +48,12 @@ T = TypeVar("T")
 
 class SQLAlchemyBuildContext(BaseBuildContext):
     skip_computed_fields: bool
+    skip_system_fields: bool
 
 
 class SQLAlchemyConstraints(Constraints):
     computed: NotRequired[bool]
+    system: NotRequired[bool]
 
 
 class SQLAlchemyPersistenceMethod(enum.Enum):
@@ -161,6 +163,8 @@ class SQLAlchemyFactory(Generic[T], BaseFactory[T]):
         build_context = cast("SQLAlchemyBuildContext", super()._get_build_context(build_context))
         if build_context.get("skip_computed_fields") is None:
             build_context["skip_computed_fields"] = False
+        if build_context.get("skip_system_fields") is None:
+            build_context["skip_system_fields"] = False
 
         return build_context
 
@@ -168,6 +172,7 @@ class SQLAlchemyFactory(Generic[T], BaseFactory[T]):
     def create_sync(cls, **kwargs: Any) -> T:
         build_context = cls._get_build_context(kwargs.get("_build_context"))
         build_context["skip_computed_fields"] = True
+        build_context["skip_system_fields"] = True
         kwargs["_build_context"] = build_context
         return super().create_sync(**kwargs)
 
@@ -175,6 +180,7 @@ class SQLAlchemyFactory(Generic[T], BaseFactory[T]):
     async def create_async(cls, **kwargs: Any) -> T:
         build_context = cls._get_build_context(kwargs.get("_build_context"))
         build_context["skip_computed_fields"] = True
+        build_context["skip_system_fields"] = True
         kwargs["_build_context"] = build_context
         return await super().create_async(**kwargs)
 
@@ -239,6 +245,8 @@ class SQLAlchemyFactory(Generic[T], BaseFactory[T]):
         if field_meta.constraints:
             constraints = cast("SQLAlchemyConstraints", field_meta.constraints)
             if constraints.get("computed") and build_context.get("skip_computed_fields"):
+                return False
+            if constraints.get("system") and build_context.get("skip_system_fields"):
                 return False
 
         return super().should_set_field_value(field_meta, **kwargs)
@@ -308,6 +316,10 @@ class SQLAlchemyFactory(Generic[T], BaseFactory[T]):
         if column.computed:
             constraints: SQLAlchemyConstraints = {"computed": True}
             annotation = Annotated[annotation, Frozendict(constraints)]  # type: ignore[assignment]
+
+        if getattr(column, "system", False):
+            system_constraints: SQLAlchemyConstraints = {"system": True}
+            annotation = Annotated[annotation, Frozendict(system_constraints)]  # type: ignore[assignment]
 
         return annotation
 
