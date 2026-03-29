@@ -497,7 +497,7 @@ def test_build_instance_by_field_alias_with_populate_by_name_flag_pydantic_v2() 
 @pytest.mark.skipif(IS_PYDANTIC_V1, reason="pydantic 2 only test")
 def test_build_instance_with_by_name_class_variable() -> None:
     """Test that __by_name__ class variable enables by_name for model validation."""
-    from pydantic import AliasPath
+    from pydantic import AliasPath  # noqa: PLC0415
 
     class MyModel(BaseModel):
         field_a: str = Field(..., validation_alias="special_field_a")
@@ -521,7 +521,7 @@ def test_build_instance_with_by_name_class_variable() -> None:
 @pytest.mark.skipif(IS_PYDANTIC_V1, reason="pydantic 2 only test")
 def test_build_instance_with_by_name_and_alias_path() -> None:
     """Test that __by_name__ class variable works with AliasPath validation aliases."""
-    from pydantic import AliasPath
+    from pydantic import AliasPath  # noqa: PLC0415
 
     class NestedModel(BaseModel):
         value: str = Field(..., validation_alias=AliasPath("b", "a"))  # type: ignore[pydantic-alias]
@@ -538,7 +538,7 @@ def test_build_instance_with_by_name_and_alias_path() -> None:
 @pytest.mark.skipif(IS_PYDANTIC_V1, reason="pydantic 2 only test")
 def test_build_instance_with_by_name_and_factory_field_values() -> None:
     """Test that __by_name__ class variable works with factory field value overrides."""
-    from pydantic import AliasPath
+    from pydantic import AliasPath  # noqa: PLC0415
 
     class MyModel(BaseModel):
         field_a: str = Field(..., validation_alias="special_field_a")
@@ -734,7 +734,7 @@ def test_union_types() -> None:
 @pytest.mark.skipif(sys.version_info < (3, 10), reason="requires modern union types")
 @pytest.mark.skipif(IS_PYDANTIC_V1, reason="pydantic 2 only test")
 def test_optional_custom_type() -> None:
-    from pydantic_core import core_schema
+    from pydantic_core import core_schema  # noqa: PLC0415
 
     class CustomType:
         def __init__(self, _: Any) -> None:
@@ -1023,7 +1023,13 @@ def test_nested_constrained_attribute_handling_pydantic_1() -> None:
     # subclassing the constrained fields is not documented by pydantic,
     # but is supported apparently
 
-    from pydantic import ConstrainedBytes, ConstrainedDecimal, ConstrainedFloat, ConstrainedInt, ConstrainedStr
+    from pydantic import (  # noqa: PLC0415
+        ConstrainedBytes,
+        ConstrainedDecimal,
+        ConstrainedFloat,
+        ConstrainedInt,
+        ConstrainedStr,
+    )
 
     class MyConstrainedString(ConstrainedStr):  # type: ignore[misc,valid-type]
         regex = re.compile("^vpc-.*$")

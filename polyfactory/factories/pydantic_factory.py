@@ -355,7 +355,7 @@ class PydanticFieldMeta(FieldMeta):
             return metadata
 
 
-class ModelFactory(Generic[T], BaseFactory[T]):
+class ModelFactory(BaseFactory[T], Generic[T]):
     """Base factory for pydantic models"""
 
     __forward_ref_resolution_type_mapping__: ClassVar[Mapping[str, type]] = {}
