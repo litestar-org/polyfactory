@@ -384,7 +384,7 @@ for handling dataclasses:</p>
 </span><span data-line="21">
 </span><span data-line="22">
 </span><span data-line="23"><span class="c1"># we create a custom base factory to handle dataclasses, with an extended provider map</span>
-</span><span data-line="24"><span class="k">class</span><span class="w"> </span><span class="nc">CustomDataclassFactory</span><span class="p">(</span><span class="n">Generic</span><span class="p">[</span><span class="n">T</span><span class="p">],</span> <span class="n">DataclassFactory</span><span class="p">[</span><span class="n">T</span><span class="p">]):</span>
+</span><span data-line="24"><span class="k">class</span><span class="w"> </span><span class="nc">CustomDataclassFactory</span><span class="p">(</span><span class="n">DataclassFactory</span><span class="p">[</span><span class="n">T</span><span class="p">],</span> <span class="n">Generic</span><span class="p">[</span><span class="n">T</span><span class="p">]):</span>
 </span><span data-line="25">    <span class="n">__is_base_factory__</span> <span class="o">=</span> <span class="kc">True</span>
 </span><span data-line="26">
 </span><span data-line="27">    <span class="nd">@classmethod</span>

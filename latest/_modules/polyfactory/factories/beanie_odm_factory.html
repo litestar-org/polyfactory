@@ -269,7 +269,7 @@ data-aria-dark="Switch to auto color mode">
 </span><span data-line="26">
 <div class="viewcode-block" id="BeaniePersistenceHandler">
 <a class="viewcode-back" href="../../../reference/factories/beanie_odm_factory.html#polyfactory.factories.beanie_odm_factory.BeaniePersistenceHandler">[docs]</a>
-</span><span data-line="27"><span class="k">class</span><span class="w"> </span><span class="nc">BeaniePersistenceHandler</span><span class="p">(</span><span class="n">Generic</span><span class="p">[</span><span class="n">T</span><span class="p">],</span> <span class="n">AsyncPersistenceProtocol</span><span class="p">[</span><span class="n">T</span><span class="p">]):</span>
+</span><span data-line="27"><span class="k">class</span><span class="w"> </span><span class="nc">BeaniePersistenceHandler</span><span class="p">(</span><span class="n">AsyncPersistenceProtocol</span><span class="p">[</span><span class="n">T</span><span class="p">],</span> <span class="n">Generic</span><span class="p">[</span><span class="n">T</span><span class="p">]):</span>
 </span><span data-line="28"><span class="w">    </span><span class="sd">&quot;&quot;&quot;Persistence Handler using beanie logic&quot;&quot;&quot;</span>
 </span><span data-line="29">
 <div class="viewcode-block" id="BeaniePersistenceHandler.save">
@@ -294,7 +294,7 @@ data-aria-dark="Switch to auto color mode">
 </span><span data-line="42">
 <div class="viewcode-block" id="BeanieDocumentFactory">
 <a class="viewcode-back" href="../../../reference/factories/beanie_odm_factory.html#polyfactory.factories.beanie_odm_factory.BeanieDocumentFactory">[docs]</a>
-</span><span data-line="43"><span class="k">class</span><span class="w"> </span><span class="nc">BeanieDocumentFactory</span><span class="p">(</span><span class="n">Generic</span><span class="p">[</span><span class="n">T</span><span class="p">],</span> <span class="n">ModelFactory</span><span class="p">[</span><span class="n">T</span><span class="p">]):</span>
+</span><span data-line="43"><span class="k">class</span><span class="w"> </span><span class="nc">BeanieDocumentFactory</span><span class="p">(</span><span class="n">ModelFactory</span><span class="p">[</span><span class="n">T</span><span class="p">],</span> <span class="n">Generic</span><span class="p">[</span><span class="n">T</span><span class="p">]):</span>
 </span><span data-line="44"><span class="w">    </span><span class="sd">&quot;&quot;&quot;Base factory for Beanie Documents&quot;&quot;&quot;</span>
 </span><span data-line="45">
 </span><span data-line="46">    <span class="n">__async_persistence__</span> <span class="o">=</span> <span class="n">BeaniePersistenceHandler</span>

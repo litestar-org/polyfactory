@@ -1569,8 +1569,8 @@ data-aria-dark="Switch to auto color mode">
 </span><span data-line="1245">
 </span><span data-line="1246"><span class="sd">    :returns: None</span>
 </span><span data-line="1247"><span class="sd">    &quot;&quot;&quot;</span>
-</span><span data-line="1248">    <span class="kn">import</span><span class="w"> </span><span class="nn">polyfactory.factories.dataclass_factory</span>
-</span><span data-line="1249">    <span class="kn">import</span><span class="w"> </span><span class="nn">polyfactory.factories.typed_dict_factory</span>  <span class="c1"># noqa: F401</span>
+</span><span data-line="1248">    <span class="kn">import</span><span class="w"> </span><span class="nn">polyfactory.factories.dataclass_factory</span>  <span class="c1"># noqa: PLC0415</span>
+</span><span data-line="1249">    <span class="kn">import</span><span class="w"> </span><span class="nn">polyfactory.factories.typed_dict_factory</span>  <span class="c1"># noqa: F401, PLC0415</span>
 </span><span data-line="1250">
 </span><span data-line="1251">    <span class="k">for</span> <span class="n">module</span> <span class="ow">in</span> <span class="p">[</span>
 </span><span data-line="1252">        <span class="s2">&quot;polyfactory.factories.pydantic_factory&quot;</span><span class="p">,</span>
