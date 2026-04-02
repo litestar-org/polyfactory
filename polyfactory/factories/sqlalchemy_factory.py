@@ -385,7 +385,7 @@ class SQLAlchemyFactory(Generic[T], BaseFactory[T]):
         return class_ if not target_collection.uselist else list[class_]  # type: ignore[valid-type]
 
     @classmethod
-    def get_column_default(cls, col: Column) -> Any:
+    def _get_column_default(cls, col: Column) -> Any:
         if (default := col.default) is None:
             return Null
 
@@ -416,7 +416,7 @@ class SQLAlchemyFactory(Generic[T], BaseFactory[T]):
             FieldMeta.from_type(
                 annotation=cls.get_type_from_column(column),
                 name=name,
-                default=cls.get_column_default(column),
+                default=cls._get_column_default(column),
             )
             for name, column in table.columns.items()
             if cls.should_column_be_set(column)
