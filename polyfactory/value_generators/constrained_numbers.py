@@ -1,8 +1,9 @@
 from __future__ import annotations
 
+import math
+import operator
 from decimal import ROUND_DOWN, Decimal, localcontext
-from sys import float_info
-from typing import TYPE_CHECKING, Any, Protocol, TypeVar, cast
+from typing import TYPE_CHECKING, Literal, Protocol, TypeVar, cast
 
 from polyfactory.exceptions import ParameterException
 from polyfactory.value_generators.primitives import create_random_decimal, create_random_float, create_random_integer
@@ -114,19 +115,26 @@ def passes_pydantic_multiple_validator(value: T, multiple_of: T) -> bool:
     return almost_equal_floats(mod, 0.0) or almost_equal_floats(mod, 1.0)
 
 
-def get_increment(t_type: type[T]) -> T:
+def get_increment(value: T, op: Literal["+", "-"], t_type: type[T]) -> T:
     """Get a small increment base to add to constrained values, i.e. lt/gt entries.
 
+    :param value: Base value to adjust.
+    :param op: Operation direction ("+" or "-").
     :param t_type: A value of type T.
 
     :returns: An increment T.
     """
-    values: dict[Any, Any] = {
-        int: 1,
-        float: float_info.epsilon,
-        Decimal: Decimal("0.001"),
+    ops = {
+        "+": operator.add,
+        "-": operator.sub,
     }
-    return cast("T", values[t_type])
+
+    if issubclass(t_type, int):
+        return cast("T", ops[op](value, 1))
+    if issubclass(t_type, float):
+        target = float("inf") if op == "+" else float("-inf")
+        return math.nextafter(value, target)  # pyright: ignore[reportReturnType]
+    return cast("T", ops[op](value, Decimal("0.001")))
 
 
 def get_value_or_none(
@@ -149,14 +157,14 @@ def get_value_or_none(
     if ge is not None:
         minimum_value = ge
     elif gt is not None:
-        minimum_value = gt + get_increment(t_type)
+        minimum_value = get_increment(gt, "+", t_type)
     else:
         minimum_value = None
 
     if le is not None:
         maximum_value = le
     elif lt is not None:
-        maximum_value = lt - get_increment(t_type)
+        maximum_value = get_increment(lt, "-", t_type)
     else:
         maximum_value = None
 
