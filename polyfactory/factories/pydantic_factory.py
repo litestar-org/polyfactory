@@ -1,11 +1,13 @@
 from __future__ import annotations
 
+import warnings
+from collections.abc import Mapping
 from contextlib import suppress
 from datetime import timezone
 from functools import partial
 from os.path import realpath
 from pathlib import Path
-from typing import TYPE_CHECKING, Any, ClassVar, ForwardRef, Generic, Mapping, TypeVar, cast
+from typing import TYPE_CHECKING, Any, ClassVar, ForwardRef, Generic, TypeVar, cast
 from uuid import NAMESPACE_DNS, uuid1, uuid3, uuid5
 
 from typing_extensions import Literal, get_args
@@ -14,9 +16,10 @@ from polyfactory.exceptions import MissingDependencyException
 from polyfactory.factories.base import BaseFactory, BuildContext
 from polyfactory.factories.base import BuildContext as BaseBuildContext
 from polyfactory.field_meta import Constraints, FieldMeta, Null
-from polyfactory.utils.deprecation import check_for_deprecated_parameters
 from polyfactory.utils.helpers import unwrap_new_type, unwrap_optional
-from polyfactory.utils.predicates import is_optional, is_safe_subclass, is_union
+from polyfactory.utils.model_coverage import CoverageContainer
+from polyfactory.utils.normalize_type import normalize_type
+from polyfactory.utils.predicates import is_annotated, is_optional, is_safe_subclass, is_union
 from polyfactory.utils.types import NoneType
 from polyfactory.value_generators.primitives import create_random_bytes
 
@@ -81,16 +84,18 @@ except ImportError:
     from pydantic_core import PydanticUndefined as UndefinedV2
     from pydantic_core import to_json
 
-    import pydantic.v1 as pydantic_v1  # type: ignore[no-redef]
-    from pydantic.v1 import BaseModel as BaseModelV1  # type: ignore[assignment]
-    from pydantic.v1.color import Color  # type: ignore[assignment]
-    from pydantic.v1.fields import DeferredType, ModelField, Undefined
+    with warnings.catch_warnings():
+        warnings.filterwarnings("ignore", message=".*Pydantic V1.*", category=UserWarning)
+        import pydantic.v1 as pydantic_v1  # type: ignore[no-redef]
+        from pydantic.v1 import BaseModel as BaseModelV1  # type: ignore[assignment]
+        from pydantic.v1.color import Color  # type: ignore[assignment]
+        from pydantic.v1.fields import DeferredType, ModelField, Undefined
 
 
 if TYPE_CHECKING:
     from collections import abc
-    from random import Random
-    from typing import Callable, Sequence
+    from collections.abc import Iterable, Mapping, Sequence
+    from typing import Callable
 
     from typing_extensions import NotRequired, TypeGuard
 
@@ -119,19 +124,19 @@ class PydanticFieldMeta(FieldMeta):
         *,
         name: str,
         annotation: type,
-        random: Random | None = None,
         default: Any = ...,
         children: list[FieldMeta] | None = None,
         constraints: PydanticConstraints | None = None,
         examples: list[Any] | None = None,
+        required: bool = True,
     ) -> None:
         super().__init__(
             name=name,
             annotation=annotation,
-            random=random,
             default=default,
             children=children,
             constraints=constraints,
+            required=required,
         )
         self.examples = examples
 
@@ -141,32 +146,21 @@ class PydanticFieldMeta(FieldMeta):
         field_name: str,
         field_info: FieldInfo,
         use_alias: bool,
-        random: Random | None = None,
-        randomize_collection_length: bool | None = None,
-        min_collection_length: int | None = None,
-        max_collection_length: int | None = None,
     ) -> PydanticFieldMeta:
         """Create an instance from a pydantic field info.
 
         :param field_name: The name of the field.
         :param field_info: A pydantic FieldInfo instance.
         :param use_alias: Whether to use the field alias.
-        :param random: A random.Random instance.
-        :param randomize_collection_length: Whether to randomize collection length.
-        :param min_collection_length: Minimum collection length.
-        :param max_collection_length: Maximum collection length.
 
         :returns: A PydanticFieldMeta instance.
         """
-        check_for_deprecated_parameters(
-            "2.11.0",
-            parameters=(
-                ("randomize_collection_length", randomize_collection_length),
-                ("min_collection_length", min_collection_length),
-                ("max_collection_length", max_collection_length),
-                ("random", random),
-            ),
+        field_info = FieldInfo.merge_field_infos(
+            field_info,
+            FieldInfo.from_annotation(normalize_type(field_info.annotation)),
+            alias=field_info.alias,
         )
+
         if callable(field_info.default_factory):
             default_value = field_info.default_factory
         else:
@@ -181,14 +175,21 @@ class PydanticFieldMeta(FieldMeta):
         if is_union(annotation):
             constraints = {}
             children = []
+
+            # create a child for each of the possible union values
             for arg in get_args(annotation):
+                # don't add the NoneType in an optional to the list of children
                 if arg is NoneType:
                     continue
                 child_field_info = FieldInfo.from_annotation(arg)
                 merged_field_info = FieldInfo.merge_field_infos(field_info, child_field_info)
+
                 children.append(
+                    # recurse for each element of the union
                     cls.from_field_info(
-                        field_name="",
+                        # this is a fake field name, but it makes it possible to debug which type variant
+                        # is the source of an exception downstream
+                        field_name=field_name,
                         field_info=merged_field_info,
                         use_alias=use_alias,
                     ),
@@ -213,7 +214,7 @@ class PydanticFieldMeta(FieldMeta):
             if is_json:
                 constraints["json"] = True
 
-        result = PydanticFieldMeta.from_type(
+        result = super().from_type(
             annotation=annotation,
             children=children,
             constraints=cast("Constraints", {k: v for k, v in constraints.items() if v is not None}) or None,
@@ -224,36 +225,19 @@ class PydanticFieldMeta(FieldMeta):
         return result
 
     @classmethod
-    def from_model_field(  # pragma: no cover
+    def from_model_field(
         cls,
         model_field: ModelField,  # pyright: ignore[reportGeneralTypeIssues]
         use_alias: bool,
-        randomize_collection_length: bool | None = None,
-        min_collection_length: int | None = None,
-        max_collection_length: int | None = None,
-        random: Random | None = None,
+        required: bool = True,
     ) -> PydanticFieldMeta:
         """Create an instance from a pydantic model field.
         :param model_field: A pydantic ModelField.
         :param use_alias: Whether to use the field alias.
-        :param randomize_collection_length: A boolean flag whether to randomize collections lengths
-        :param min_collection_length: Minimum number of elements in randomized collection
-        :param max_collection_length: Maximum number of elements in randomized collection
-        :param random: An instance of random.Random.
 
         :returns: A PydanticFieldMeta instance.
 
         """
-        check_for_deprecated_parameters(
-            "2.11.0",
-            parameters=(
-                ("randomize_collection_length", randomize_collection_length),
-                ("min_collection_length", min_collection_length),
-                ("max_collection_length", max_collection_length),
-                ("random", random),
-            ),
-        )
-
         if model_field.default is not Undefined:
             default_value = model_field.default
         elif callable(model_field.default_factory):
@@ -270,31 +254,37 @@ class PydanticFieldMeta(FieldMeta):
             else unwrap_new_type(model_field.annotation)
         )
 
-        constraints = cast(
-            "Constraints",
-            {
-                "ge": getattr(outer_type, "ge", model_field.field_info.ge),
-                "gt": getattr(outer_type, "gt", model_field.field_info.gt),
-                "le": getattr(outer_type, "le", model_field.field_info.le),
-                "lt": getattr(outer_type, "lt", model_field.field_info.lt),
-                "min_length": (
-                    getattr(outer_type, "min_length", model_field.field_info.min_length)
-                    or getattr(outer_type, "min_items", model_field.field_info.min_items)
-                ),
-                "max_length": (
-                    getattr(outer_type, "max_length", model_field.field_info.max_length)
-                    or getattr(outer_type, "max_items", model_field.field_info.max_items)
-                ),
-                "pattern": getattr(outer_type, "regex", model_field.field_info.regex),
-                "unique_items": getattr(outer_type, "unique_items", model_field.field_info.unique_items),
-                "decimal_places": getattr(outer_type, "decimal_places", None),
-                "max_digits": getattr(outer_type, "max_digits", None),
-                "multiple_of": getattr(outer_type, "multiple_of", None),
-                "upper_case": getattr(outer_type, "to_upper", None),
-                "lower_case": getattr(outer_type, "to_lower", None),
-                "item_type": getattr(outer_type, "item_type", None),
-            },
-        )
+        # In pydantic v1, we need to check if the annotation is directly annotated to properly extract constraints
+        # from the metadata, as v1 doesn't automatically propagate constraints like v2 does
+        annotation_constraints: Constraints = {}
+        if is_annotated(model_field.annotation):
+            annotation_metadata = cls.get_constraints_metadata(model_field.annotation)
+            annotation_constraints = cls.parse_constraints(annotation_metadata) if annotation_metadata else {}
+
+        field_info_constraints = {
+            "ge": getattr(outer_type, "ge", model_field.field_info.ge),
+            "gt": getattr(outer_type, "gt", model_field.field_info.gt),
+            "le": getattr(outer_type, "le", model_field.field_info.le),
+            "lt": getattr(outer_type, "lt", model_field.field_info.lt),
+            "min_length": (
+                getattr(outer_type, "min_length", model_field.field_info.min_length)
+                or getattr(outer_type, "min_items", model_field.field_info.min_items)
+            ),
+            "max_length": (
+                getattr(outer_type, "max_length", model_field.field_info.max_length)
+                or getattr(outer_type, "max_items", model_field.field_info.max_items)
+            ),
+            "pattern": getattr(outer_type, "regex", model_field.field_info.regex),
+            "unique_items": getattr(outer_type, "unique_items", model_field.field_info.unique_items),
+            "decimal_places": getattr(outer_type, "decimal_places", None),
+            "max_digits": getattr(outer_type, "max_digits", None),
+            "multiple_of": getattr(outer_type, "multiple_of", None),
+            "upper_case": getattr(outer_type, "to_upper", None),
+            "lower_case": getattr(outer_type, "to_lower", None),
+            "item_type": getattr(outer_type, "item_type", None),
+        }
+
+        constraints = cast("Constraints", {**field_info_constraints, **annotation_constraints})
 
         # pydantic v1 has constraints set for these values, but we generate them using faker
         if unwrap_optional(annotation) in (
@@ -348,6 +338,7 @@ class PydanticFieldMeta(FieldMeta):
             default=default_value,
             constraints=cast("PydanticConstraints", {k: v for k, v in constraints.items() if v is not None}) or None,
             examples=examples,
+            required=required,
         )
 
     if not _IS_PYDANTIC_V1:
@@ -364,7 +355,7 @@ class PydanticFieldMeta(FieldMeta):
             return metadata
 
 
-class ModelFactory(Generic[T], BaseFactory[T]):
+class ModelFactory(BaseFactory[T], Generic[T]):
     """Base factory for pydantic models"""
 
     __forward_ref_resolution_type_mapping__: ClassVar[Mapping[str, type]] = {}
@@ -386,14 +377,39 @@ class ModelFactory(Generic[T], BaseFactory[T]):
     >>> payment
     Payment(amount=120, currency="EUR")
     """
+    __by_name__: ClassVar[bool] = False
+    """
+    Flag indicating whether to use model_validate with by_name parameter (Pydantic V2 only)
+
+    This helps handle validation aliases automatically without requiring users to modify their model configurations.
+
+    Example code::
+
+        class MyModel(BaseModel):
+            field_a: str = Field(..., validation_alias="special_field_a")
+
+        class MyFactory(ModelFactory[MyModel]):
+            __by_name__ = True
+
+    >>> instance = MyFactory.build(field_a="test")
+    >>> instance.field_a
+    "test"
+    """
+    if not _IS_PYDANTIC_V1:
+        __forward_references__: ClassVar[dict[str, Any]] = {
+            # Resolve to str to avoid recursive issues
+            "JsonValue": str,
+        }
 
     __config_keys__ = (
         *BaseFactory.__config_keys__,
         "__use_examples__",
+        "__by_name__",
     )
 
-    def __init_subclass__(cls, *args: Any, **kwargs: Any) -> None:
-        super().__init_subclass__(*args, **kwargs)
+    @classmethod
+    def _init_model(cls) -> None:
+        super()._init_model()
 
         model = getattr(cls, "__model__", None)
         if model is None:
@@ -434,14 +450,14 @@ class ModelFactory(Generic[T], BaseFactory[T]):
                     for field in cls.__model__.__fields__.values()
                 ]
             else:
+                use_alias = cls.__model__.model_config.get("validate_by_name", False) or cls.__model__.model_config.get(
+                    "populate_by_name", False
+                )
                 cls._fields_metadata = [
                     PydanticFieldMeta.from_field_info(
                         field_info=field_info,
                         field_name=field_name,
-                        use_alias=not cls.__model__.model_config.get(  # pyright: ignore[reportGeneralTypeIssues]
-                            "populate_by_name",
-                            False,
-                        ),
+                        use_alias=not use_alias,
                     )
                     for field_name, field_info in cls.__model__.model_fields.items()  # pyright: ignore[reportGeneralTypeIssues]
                 ]
@@ -548,12 +564,19 @@ class ModelFactory(Generic[T], BaseFactory[T]):
             if _is_pydantic_v1_model(cls.__model__):
                 return cls.__model__.construct(**kwargs)  # type: ignore[return-value]
             return cls.__model__.model_construct(**kwargs)
+
+        # Use model_validate with by_name for Pydantic v2 models when requested
+        if cls.__by_name__ and _is_pydantic_v2_model(cls.__model__):
+            return cls.__model__.model_validate(kwargs, by_name=True)  # type: ignore[return-value]
+
         return cls.__model__(**kwargs)
 
     @classmethod
     def coverage(cls, factory_use_construct: bool = False, **kwargs: Any) -> abc.Iterator[T]:
-        """Build a batch of the factory's Meta.model will full coverage of the sub-types of the model.
+        """Build a batch of the factory's Meta.model with full coverage of the sub-types of the model.
 
+        :param factory_use_construct: A boolean that determines whether validations will be made when instantiating the
+                model. This is supported only for pydantic models.
         :param kwargs: Any kwargs. If field_meta names are set in kwargs, their values will be used.
 
         :returns: A iterator of instances of type T.
@@ -562,7 +585,8 @@ class ModelFactory(Generic[T], BaseFactory[T]):
 
         if "_build_context" not in kwargs:
             kwargs["_build_context"] = PydanticBuildContext(
-                seen_models=set(), factory_use_construct=factory_use_construct
+                seen_models=set(),
+                factory_use_construct=factory_use_construct,
             )
 
         for data in cls.process_kwargs_coverage(**kwargs):
@@ -669,6 +693,33 @@ class ModelFactory(Generic[T], BaseFactory[T]):
 
         mapping.update(super().get_provider_map())
         return mapping
+
+    @classmethod
+    def get_field_value_coverage(
+        cls,
+        field_meta: FieldMeta,
+        field_build_parameters: Any | None = None,
+        build_context: BuildContext | None = None,
+    ) -> Iterable[Any]:
+        """Return a field value on the subclass if existing, otherwise returns a mock value.
+
+        :param field_meta: FieldMeta instance.
+        :param field_build_parameters: Any build parameters passed to the factory as kwarg values.
+        :param build_context: BuildContext data for current build.
+
+        :returns: An iterable of values.
+
+        """
+        if cls.is_ignored_type(field_meta.annotation):
+            return
+
+        if cls.__use_examples__:
+            examples = getattr(field_meta, "examples", None) or []
+            if len(examples) > 0:
+                yield CoverageContainer(examples)
+                return
+
+        yield from super().get_field_value_coverage(field_meta, field_build_parameters, build_context)
 
 
 def _is_pydantic_v1_model(model: Any) -> TypeGuard[BaseModelV1]:

@@ -1,7 +1,6 @@
 [project]
 authors = [{ name = "Na'aman Hirschfeld", email = "nhirschfeld@gmail.com" }]
 maintainers = [
-  { name = "Visakh Unnikrishnan", email = "guacs@litestar.dev" },
   { name = "Cody Fincher", email = "cody@litestar.dev" },
   { name = "Janek Nouvertné", email = "janek@litestar.dev" },
   { name = "Jacob Coffee", email = "jacob@litestar.dev" },
@@ -18,12 +17,12 @@ classifiers = [
   "License :: OSI Approved :: MIT License",
   "Natural Language :: English",
   "Operating System :: OS Independent",
-  "Programming Language :: Python :: 3.8",
   "Programming Language :: Python :: 3.9",
   "Programming Language :: Python :: 3.10",
   "Programming Language :: Python :: 3.11",
   "Programming Language :: Python :: 3.12",
   "Programming Language :: Python :: 3.13",
+  "Programming Language :: Python :: 3.14",
   "Programming Language :: Python",
   "Topic :: Software Development :: Libraries",
   "Topic :: Software Development :: Testing :: Unit",
@@ -33,17 +32,17 @@ classifiers = [
   "Typing :: Typed",
 ]
 name = "polyfactory"
-version = "2.21.0"
+version = "3.3.0"
 description = "Mock data generation factories"
 readme = "docs/PYPI_README.md"
 license = { text = "MIT" }
-requires-python = ">=3.8,<4.0"
+requires-python = ">=3.9,<4.0"
 dependencies = ["faker>=5.0.0", "typing-extensions>=4.6.0"]
 
 [project.optional-dependencies]
 sqlalchemy = ["sqlalchemy>=1.4.29"]
-pydantic = ["pydantic[email]>=1.10"]
-msgspec = ["msgspec"]
+pydantic = ["eval-type-backport>=0.2.2", "pydantic[email]>=1.10"]
+msgspec = ["msgspec>=0.20.0"]
 odmantic = ["odmantic<1.0.0", "pydantic[email]"]
 beanie = ["beanie", "pydantic[email]", "pymongo<4.9"]
 attrs = ["attrs>=22.2.0"]
@@ -89,10 +88,9 @@ lint = [
   "ruff>=0.0.290",
   "codespell>=2.2.5",
   "mypy>=1.5.1",
-  "pre-commit>=3.4.0",
   "shellcheck-py>=0.9.0.5",
   "pyright>=1.1.327",
-  "sourcery>=1.9.0",
+  "prek>=0.2.19",
 ]
 test = [
   "pytest>=7.4.2",
@@ -113,7 +111,7 @@ pydantic = ["pydantic[email]>=2.10.4"]
 allow_dirty = true
 commit = true
 commit_args = "--no-verify"
-current_version = "2.21.0"
+current_version = "3.3.0"
 ignore_missing_files = false
 ignore_missing_version = false
 message = "chore(release): bump to v{new_version}"
@@ -186,7 +184,7 @@ exclude_lines = [
 [tool.ruff]
 line-length = 120
 src = ["polyfactory", "tests", "docs/examples"]
-target-version = "py38"
+target-version = "py39"
 
 [tool.ruff.format]
 docstring-code-format = true

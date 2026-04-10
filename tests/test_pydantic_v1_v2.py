@@ -1,9 +1,9 @@
 """Tests to check that usage of pydantic v1 and v2 at the same time works."""
 
-from typing import Dict, List, Optional, Tuple, Type, Union
+import sys
+from typing import Annotated, Optional, Union
 
 import pytest
-from typing_extensions import Annotated
 
 import pydantic
 
@@ -19,17 +19,34 @@ try:
 except ImportError:
     from pydantic import BaseModel as BaseModelV1  # type: ignore[assignment]
 
+skip_pydantic_v1_on_py314 = pytest.mark.skipif(
+    sys.version_info >= (3, 14),
+    reason="pydantic v1 not supported on Python 3.14",
+)
 
-@pytest.mark.parametrize("base_model", [BaseModelV1, BaseModelV2])
-def test_is_supported_type(base_model: Type[Union[BaseModelV1, BaseModelV2]]) -> None:
+
+@pytest.mark.parametrize(
+    "base_model",
+    [
+        pytest.param(BaseModelV1, marks=skip_pydantic_v1_on_py314),
+        BaseModelV2,
+    ],
+)
+def test_is_supported_type(base_model: type[Union[BaseModelV1, BaseModelV2]]) -> None:
     class Foo(base_model):  # type: ignore[valid-type, misc]
         ...
 
     assert ModelFactory.is_supported_type(Foo) is True
 
 
-@pytest.mark.parametrize("base_model", [BaseModelV1, BaseModelV2])
-def test_build(base_model: Type[Union[BaseModelV1, BaseModelV2]]) -> None:
+@pytest.mark.parametrize(
+    "base_model",
+    [
+        pytest.param(BaseModelV1, marks=skip_pydantic_v1_on_py314),
+        BaseModelV2,
+    ],
+)
+def test_build(base_model: type[Union[BaseModelV1, BaseModelV2]]) -> None:
     class Foo(base_model):  # type: ignore[valid-type, misc]
         a: int
         b: str
@@ -43,8 +60,9 @@ def test_build(base_model: Type[Union[BaseModelV1, BaseModelV2]]) -> None:
     assert isinstance(foo.c, bool)
 
 
+@skip_pydantic_v1_on_py314
 def test_build_v1_with_constrained_fields() -> None:
-    from pydantic.v1.fields import Field
+    from pydantic.v1.fields import Field  # noqa: PLC0415
 
     ConstrainedInt = Annotated[int, Field(ge=100, le=200)]
     ConstrainedStr = Annotated[str, Field(min_length=1, max_length=3)]
@@ -55,14 +73,14 @@ def test_build_v1_with_constrained_fields() -> None:
         c: Union[ConstrainedInt, ConstrainedStr]
         d: Optional[ConstrainedInt]
         e: Optional[Union[ConstrainedInt, ConstrainedStr]]
-        f: List[ConstrainedInt]
-        g: Dict[ConstrainedInt, ConstrainedStr]
+        f: list[ConstrainedInt]
+        g: dict[ConstrainedInt, ConstrainedStr]
 
     ModelFactory.create_factory(Foo).build()
 
 
 def test_build_v2_with_constrained_fields() -> None:
-    from pydantic.fields import Field
+    from pydantic.fields import Field  # noqa: PLC0415
 
     ConstrainedInt = Annotated[int, Field(ge=100, le=200)]
     ConstrainedStr = Annotated[str, Field(min_length=1, max_length=3)]
@@ -73,15 +91,15 @@ def test_build_v2_with_constrained_fields() -> None:
         c: Union[ConstrainedInt, ConstrainedStr]
         d: Optional[ConstrainedInt]
         e: Optional[Union[ConstrainedInt, ConstrainedStr]]
-        f: List[ConstrainedInt]
-        g: Dict[ConstrainedInt, ConstrainedStr]
+        f: list[ConstrainedInt]
+        g: dict[ConstrainedInt, ConstrainedStr]
 
     ModelFactory.create_factory(Foo).build()
 
 
 def test_variadic_tuple_length() -> None:
     class Foo(pydantic.BaseModel):
-        bar: Tuple[int, ...]
+        bar: tuple[int, ...]
 
     class Factory(ModelFactory[Foo]):
         __randomize_collection_length__ = True
@@ -92,8 +110,9 @@ def test_variadic_tuple_length() -> None:
     assert 7 <= len(result.bar) <= 8
 
 
+@skip_pydantic_v1_on_py314
 def test_build_v1_with_url_and_email_types() -> None:
-    from pydantic.v1 import AnyHttpUrl, AnyUrl, EmailStr, HttpUrl, NameEmail
+    from pydantic.v1 import AnyHttpUrl, AnyUrl, EmailStr, HttpUrl, NameEmail  # noqa: PLC0415
 
     class Foo(BaseModelV1):
         http_url: HttpUrl
@@ -101,6 +120,6 @@ def test_build_v1_with_url_and_email_types() -> None:
         any_url: AnyUrl
         email_str: EmailStr
         name_email: NameEmail
-        composed: Tuple[HttpUrl, AnyHttpUrl, AnyUrl, EmailStr, NameEmail]
+        composed: tuple[HttpUrl, AnyHttpUrl, AnyUrl, EmailStr, NameEmail]
 
     ModelFactory.create_factory(Foo).build()

@@ -146,3 +146,39 @@ By default, ``__use_examples__`` is set to ``False.``
 .. literalinclude:: /examples/configuration/test_example_10.py
     :caption: Use Examples Values
     :language: python
+
+
+Validation Aliases (Pydantic >= V2)
+------------------------------------
+
+If ``__by_name__`` is set to ``True``, then the factory will use ``model_validate()`` with the ``by_name`` parameter
+when creating model instances. This is useful when working with models that use validation aliases, such as
+``validation_alias`` or ``AliasPath``, as it allows the factory to handle these aliases automatically without
+requiring additional model configuration.
+
+By default, ``__by_name__`` is set to ``False.``
+
+.. literalinclude:: /examples/configuration/test_example_12.py
+    :caption: Validation Aliases with by_name
+    :language: python
+
+.. note::
+    This feature is only available for Pydantic V2 models. For Pydantic V1 models, this setting has no effect.
+
+
+Forward References
+------------------
+
+The ``__forward_references__`` configuration allows you to resolve forward references in type annotations.
+This is useful when dealing with recursive types that cannot be resolved automatically.
+
+By default, ``__forward_references__`` is set to an empty dictionary. You can provide a mapping of
+forward reference names to their resolved types.
+
+.. literalinclude:: /examples/configuration/test_example_11.py
+    :caption: Forward References Configuration
+    :language: python
+
+.. note::
+    The Pydantic ModelFactory has a default forward reference mapping for ``JsonValue`` to resolve to ``str``
+    to avoid recursive issues with Pydantic's JsonValue type.

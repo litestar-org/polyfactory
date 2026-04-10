@@ -23,7 +23,7 @@ except ImportError as ex:
 T = TypeVar("T", bound=AttrsInstance)
 
 
-class AttrsFactory(Generic[T], BaseFactory[T]):
+class AttrsFactory(BaseFactory[T], Generic[T]):
     """Base factory for attrs classes."""
 
     __model__: type[T]

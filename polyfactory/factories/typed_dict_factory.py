@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from typing import Any, Generic, TypeVar, get_args
+from typing import Any, Generic, TypeVar, get_args, get_type_hints
 
 from typing_extensions import (  # type: ignore[attr-defined]
     NotRequired,
@@ -8,7 +8,6 @@ from typing_extensions import (  # type: ignore[attr-defined]
     TypeGuard,
     _TypedDictMeta,  # pyright: ignore[reportAttributeAccessIssue]
     get_origin,
-    get_type_hints,
     is_typeddict,
 )
 
@@ -18,7 +17,7 @@ from polyfactory.field_meta import FieldMeta, Null
 TypedDictT = TypeVar("TypedDictT", bound=_TypedDictMeta)
 
 
-class TypedDictFactory(Generic[TypedDictT], BaseFactory[TypedDictT]):
+class TypedDictFactory(BaseFactory[TypedDictT], Generic[TypedDictT]):
     """TypedDict base factory"""
 
     __is_base_factory__ = True
@@ -53,6 +52,7 @@ class TypedDictFactory(Generic[TypedDictT], BaseFactory[TypedDictT]):
                     annotation=annotation,
                     name=field_name,
                     default=getattr(cls.__model__, field_name, Null),
+                    required=field_name in cls.__model__.__required_keys__,
                 ),
             )
 

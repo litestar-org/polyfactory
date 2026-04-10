@@ -1,17 +1,7 @@
 from dataclasses import dataclass
 from typing import Any, Optional
 
-from sqlalchemy import (
-    Boolean,
-    Column,
-    DateTime,
-    ForeignKey,
-    Integer,
-    String,
-    func,
-    orm,
-    text,
-)
+from sqlalchemy import Boolean, Column, Computed, DateTime, ForeignKey, Integer, String, func, orm, text
 from sqlalchemy.ext.associationproxy import association_proxy
 from sqlalchemy.orm import relationship
 from sqlalchemy.orm.decl_api import DeclarativeMeta, registry
@@ -30,6 +20,20 @@ class Base(metaclass=DeclarativeMeta):
 
     registry = _registry
     metadata = _registry.metadata
+
+
+class CollectionParentMixin:
+    __abstract__ = True
+    __allow_unmapped__ = True
+
+    id = Column(Integer(), primary_key=True)
+
+
+class CollectionChildMixin:
+    __abstract__ = True
+    __allow_unmapped__ = True
+
+    id = Column(Integer(), primary_key=True)
 
 
 class Author(Base):
@@ -118,3 +122,35 @@ class Department(Base):
 
     id = Column(Integer, primary_key=True)
     director_id = Column(Integer, ForeignKey("users.id"))
+
+
+class Company(Base):
+    __tablename__ = "companies"
+
+    id = Column(Integer, primary_key=True)
+    name: Any = Column(String)
+    employees = relationship(
+        "Employee",
+        back_populates="company",
+    )
+    employee_ids = association_proxy(
+        "employees",
+        "id",
+    )
+
+
+class Employee(Base):
+    __tablename__ = "employees"
+
+    id = Column(Integer, primary_key=True)
+    name = Column(String)
+    company_id = Column(Integer, ForeignKey("companies.id"))
+    company = relationship(Company, back_populates="employees")
+
+
+class Shape(Base):
+    __tablename__ = "shape"
+
+    id = Column(Integer, primary_key=True)
+    side: Any = Column(Integer(), nullable=False, default=10)
+    area: Any = Column(Integer, Computed("side * side"), nullable=False)

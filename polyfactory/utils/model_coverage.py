@@ -2,11 +2,13 @@ from __future__ import annotations
 
 from abc import ABC, abstractmethod
 from collections.abc import Callable, Iterable, Iterator, Mapping, MutableSequence
-from typing import AbstractSet, Any, Generic, Set, TypeVar, cast
+from collections.abc import Set as AbstractSet
+from typing import Any, Generic, TypeVar, cast
 
 from typing_extensions import ParamSpec
 
 from polyfactory.exceptions import ParameterException
+from polyfactory.field_meta import Null
 
 
 class CoverageContainerBase(ABC):
@@ -102,7 +104,8 @@ def _resolve_next(unresolved: Any) -> tuple[Any, bool]:  # noqa: C901
         for key, value in unresolved.items():
             val_resolved, val_done = _resolve_next(value)
             key_resolved, key_done = _resolve_next(key)
-            result[key_resolved] = val_resolved
+            if val_resolved is not Null:
+                result[key_resolved] = val_resolved
             done_status = done_status and val_done and key_done
         return result, done_status
 
@@ -117,7 +120,7 @@ def _resolve_next(unresolved: Any) -> tuple[Any, bool]:  # noqa: C901
             result = tuple(result)
         return result, done_status
 
-    if isinstance(unresolved, Set):
+    if isinstance(unresolved, set):
         result = type(unresolved)()
         done_status = True
         for value in unresolved:

@@ -19,7 +19,7 @@ SQLAlchemyFactory allows to override some configuration attributes so that a des
 Relationship
 ++++++++++++
 
-By default, ``__set_relationships__`` is set to ``False``. If it is ``True``, all fields with the SQLAlchemy `relationship() <relationship()_>`_ will be included in the result created by ``build`` method.
+By default, ``__set_relationships__`` is set to ``True``. If it is ``True``, all fields with the SQLAlchemy `relationship() <relationship()_>`_ will be included in the result created by ``build`` method.
 
 .. literalinclude:: /examples/library_factories/sqlalchemy_factory/test_example_2.py
     :caption: Setting relationships
@@ -34,7 +34,7 @@ By default, ``__set_relationships__`` is set to ``False``. If it is ``True``, al
 Association Proxy
 +++++++++++++++++
 
-By default, ``__set_association_proxy__`` is set to ``False``. If it is ``True``, all SQLAlchemy fields mapped to ORM `Association Proxy <Association Proxy_>`_ class will be included in the result created by ``build`` method.
+By default, ``__set_association_proxy__`` is set to ``True``. If it is ``True``, all SQLAlchemy fields mapped to ORM `Association Proxy <Association Proxy_>`_ class will be included in the result created by ``build`` method.
 
 .. literalinclude:: /examples/library_factories/sqlalchemy_factory/test_example_association_proxy.py
     :caption: Setting association_proxy
@@ -59,6 +59,15 @@ A handler is provided to allow persistence. This can be used by setting ``__sess
 By default, this will add generated models to the session and then commit. This can be customised further by setting ``__sync_persistence__``.
 
 Similarly for ``__async_session__`` and ``create_async``.
+
+Persistence Method
+++++++++++++++++++
+
+By default, the factory uses ``commit()`` to persist data, which permanently saves changes to the database. You can configure the factory to use ``flush()`` instead by setting ``__persistence_method__`` to ``SQLAlchemyPersistenceMethod.FLUSH``.
+
+.. literalinclude:: /examples/library_factories/sqlalchemy_factory/test_example_persistence_method.py
+    :caption: Using flush() vs commit() for persistence
+    :language: python
 
 
 Adding global overrides

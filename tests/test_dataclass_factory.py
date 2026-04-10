@@ -1,8 +1,11 @@
 import dataclasses
+import sys
+import textwrap
+from collections.abc import Iterable
 from dataclasses import dataclass as vanilla_dataclass
 from dataclasses import field
 from types import ModuleType
-from typing import Any, Callable, Dict, Iterable, List, Optional, Set, Tuple, Type, TypeVar, Union
+from typing import Any, Callable, Optional, TypeVar, Union
 from unittest.mock import ANY
 
 import pytest
@@ -18,7 +21,7 @@ def test_factory_vanilla_dc() -> None:
     class VanillaDC:
         id: int
         name: str
-        list_field: List[Dict[str, int]]
+        list_field: list[dict[str, int]]
         field_of_some_value: Optional[int] = field(default_factory=lambda: 0)
 
     class MyFactory(DataclassFactory[VanillaDC]):
@@ -39,7 +42,7 @@ def test_factory_pydantic_dc() -> None:
     class PydanticDC:
         id: int
         name: str
-        list_field: List[Dict[str, int]]
+        list_field: list[dict[str, int]]
         field_of_some_value: Optional[int] = field(default_factory=lambda: 0)
 
     class MyFactory(DataclassFactory[PydanticDC]):
@@ -58,7 +61,7 @@ def test_factory_pydantic_dc() -> None:
 def test_vanilla_dc_with_embedded_model() -> None:
     @vanilla_dataclass
     class VanillaDC:
-        people: List[Person]
+        people: list[Person]
 
     class MyFactory(DataclassFactory[VanillaDC]):
         __model__ = VanillaDC
@@ -72,7 +75,7 @@ def test_vanilla_dc_with_embedded_model() -> None:
 def test_pydantic_dc_with_embedded_model() -> None:
     @vanilla_dataclass
     class PydanticDC:
-        people: List[Person]
+        people: list[Person]
 
     class MyFactory(DataclassFactory):
         __model__ = PydanticDC
@@ -86,11 +89,11 @@ def test_pydantic_dc_with_embedded_model() -> None:
 def test_model_with_embedded_dataclasses() -> None:
     @vanilla_dataclass
     class VanillaDC:
-        people: List[Person]
+        people: list[Person]
 
     @vanilla_dataclass
     class PydanticDC:
-        people: List[Person]
+        people: list[Person]
 
     @vanilla_dataclass
     class Crowd:
@@ -111,11 +114,11 @@ def test_model_with_embedded_dataclasses() -> None:
 def test_complex_embedded_dataclass() -> None:
     @vanilla_dataclass
     class VanillaDC:
-        people: List[Person]
+        people: list[Person]
 
     @vanilla_dataclass
     class MyModel:
-        weirdly_nest_field: List[Dict[str, Dict[str, VanillaDC]]]
+        weirdly_nest_field: list[dict[str, dict[str, VanillaDC]]]
 
     class MyFactory(DataclassFactory):
         __model__ = MyModel
@@ -151,11 +154,11 @@ def test_complex_embedded_dataclass() -> None:
         ),
     ),
 )
-def test_tuple_in_vanilla_dc(factory_config: Dict[str, Any], expected_length: int) -> None:
+def test_tuple_in_vanilla_dc(factory_config: dict[str, Any], expected_length: int) -> None:
     @vanilla_dataclass
     class VanillaDC:
-        ids: Tuple[int, ...]
-        field: Tuple[int, str]
+        ids: tuple[int, ...]
+        field: tuple[int, str]
 
     MyFactory = DataclassFactory[VanillaDC].create_factory(VanillaDC, **factory_config)
     result = MyFactory.build()
@@ -267,9 +270,9 @@ def test_use_default_with_non_callable_default() -> None:
 def test_union_types() -> None:
     @vanilla_dataclass
     class A:
-        a: Union[List[str], List[int]]
-        b: Union[str, List[int]]
-        c: List[Union[Tuple[int, int], Tuple[str, int]]]
+        a: Union[list[str], list[int]]
+        b: Union[str, list[int]]
+        c: list[Union[tuple[int, int], tuple[str, int]]]
         d: Union[str, int]
 
     AFactory = DataclassFactory.create_factory(A)
@@ -303,8 +306,8 @@ def test_collection_unions_with_models() -> None:
 
     @vanilla_dataclass
     class C:
-        a: Union[List[A], List[B]]
-        b: List[Union[A, B]]
+        a: Union[list[A], list[B]]
+        b: list[Union[A, B]]
 
     CFactory = DataclassFactory.create_factory(
         C,
@@ -325,7 +328,7 @@ def test_collection_unions_with_models() -> None:
 _T = TypeVar("_T")
 
 
-def _get_types(items: Iterable[_T]) -> Set[Type[_T]]:
+def _get_types(items: Iterable[_T]) -> set[type[_T]]:
     return {type(item) for item in items}
 
 
@@ -335,7 +338,7 @@ def test_optional_type(allow_none: bool) -> None:
     class A:
         a: Union[str, None]
         b: Optional[str]
-        c: Optional[Union[str, int, List[int]]]
+        c: Optional[Union[str, int, list[int]]]
 
     class AFactory(DataclassFactory[A]):
         __model__ = A
@@ -351,3 +354,23 @@ def test_optional_type(allow_none: bool) -> None:
 
         if isinstance(a.c, list):
             assert all(isinstance(value, int) for value in a.c)
+
+
+@pytest.mark.skipif(sys.version_info < (3, 12), reason="PEP 695 requires Python 3.12+")
+def test_pep695_dict_union_types(create_module: Callable[[str], ModuleType]) -> None:
+    """Test type aliases with dict unions."""
+    module = create_module(
+        textwrap.dedent("""
+            from dataclasses import dataclass
+
+            type IntDict = dict[str, int]
+            type StrDict = dict[str, str]
+            type MixedDict = IntDict | StrDict
+
+            @dataclass
+            class Foo:
+                data: MixedDict
+                nested: dict[str, MixedDict]
+        """)
+    )
+    DataclassFactory.create_factory(module.Foo).build()

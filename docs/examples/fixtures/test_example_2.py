@@ -1,6 +1,6 @@
 from dataclasses import dataclass
 from datetime import date, datetime
-from typing import List, Optional, Union
+from typing import Optional, Union
 from uuid import UUID
 
 from polyfactory.factories import DataclassFactory
@@ -11,8 +11,8 @@ from polyfactory.pytest_plugin import register_fixture
 class Person:
     id: UUID
     name: str
-    hobbies: Optional[List[str]]
-    nicks: List[str]
+    hobbies: Optional[list[str]]
+    nicks: list[str]
     age: Union[float, int]
     birthday: Union[datetime, date]
 
@@ -23,6 +23,6 @@ class PersonFactory(DataclassFactory[Person]): ...
 register_fixture(PersonFactory)
 
 
-def test_person_factory(person_factory: PersonFactory) -> None:
+def test_person_factory(person_factory: type[PersonFactory]) -> None:
     person_instance = person_factory.build()
     assert isinstance(person_instance, Person)

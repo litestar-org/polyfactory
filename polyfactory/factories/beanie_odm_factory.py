@@ -24,12 +24,12 @@ except ImportError as e:
 T = TypeVar("T", bound=Document)
 
 
-class BeaniePersistenceHandler(Generic[T], AsyncPersistenceProtocol[T]):
+class BeaniePersistenceHandler(AsyncPersistenceProtocol[T], Generic[T]):
     """Persistence Handler using beanie logic"""
 
     async def save(self, data: T) -> T:
         """Persist a single instance in mongoDB."""
-        return await data.insert()  # pyright: ignore[reportGeneralTypeIssues]
+        return await data.insert()
 
     async def save_many(self, data: list[T]) -> list[T]:
         """Persist multiple instances in mongoDB.
@@ -40,7 +40,7 @@ class BeaniePersistenceHandler(Generic[T], AsyncPersistenceProtocol[T]):
         return [await doc.insert() for doc in data]  # pyright: ignore[reportGeneralTypeIssues]
 
 
-class BeanieDocumentFactory(Generic[T], ModelFactory[T]):
+class BeanieDocumentFactory(ModelFactory[T], Generic[T]):
     """Base factory for Beanie Documents"""
 
     __async_persistence__ = BeaniePersistenceHandler

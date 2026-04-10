@@ -1,12 +1,15 @@
+import warnings
+from collections.abc import Collection
 from datetime import datetime
 from decimal import Decimal
 from enum import Enum
 from typing import Any, Callable, get_args
-from uuid import UUID
+from uuid import UUID, uuid4
 
 import pytest
 from sqlalchemy import (
     Column,
+    ForeignKey,
     Integer,
     Numeric,
     String,
@@ -19,11 +22,25 @@ from sqlalchemy.engine import Engine
 from sqlalchemy.ext.asyncio import AsyncEngine, AsyncSession
 from sqlalchemy.ext.hybrid import hybrid_property
 from sqlalchemy.orm import Session
+
+try:
+    from sqlalchemy.orm.collections import (
+        attribute_keyed_dict,
+        column_keyed_dict,
+        keyfunc_mapping,
+    )
+except ImportError:  # SQLAlchemy < 2.0
+    from sqlalchemy.orm import collections as _collections
+
+    attribute_keyed_dict = _collections.attribute_mapped_collection  # type: ignore[attr-defined]
+    column_keyed_dict = _collections.column_mapped_collection  # type: ignore[attr-defined]
+    keyfunc_mapping = _collections.mapped_collection  # type: ignore[attr-defined]
+
 from sqlalchemy.orm.decl_api import DeclarativeMeta, registry
 
 from polyfactory.exceptions import ConfigurationException, ParameterException
 from polyfactory.factories.base import BaseFactory
-from polyfactory.factories.sqlalchemy_factory import SQLAlchemyFactory
+from polyfactory.factories.sqlalchemy_factory import SQLAlchemyFactory, SQLAlchemyPersistenceMethod
 from polyfactory.fields import Ignore
 from tests.sqlalchemy_factory.models import (
     AsyncModel,
@@ -31,9 +48,12 @@ from tests.sqlalchemy_factory.models import (
     Author,
     Base,
     Book,
+    CollectionChildMixin,
+    CollectionParentMixin,
     NonSQLAchemyClass,
-    _registry,
+    Shape,
 )
+from tests.sqlalchemy_factory.types import ListLike, SetLike
 
 
 @pytest.mark.parametrize(
@@ -111,6 +131,34 @@ def test_properties() -> None:
     # Expect empty as requires session to be set
     assert instance.double_age is None
     assert instance.age * 3 == instance.triple_age
+
+
+def test_computed_column_sync_persistence(engine: Engine) -> None:
+    Base.metadata.create_all(engine)
+
+    class ShapeFactory(SQLAlchemyFactory[Shape]):
+        __model__ = Shape
+        __session__ = Session(engine)
+
+    instance = ShapeFactory.create_sync()
+    assert instance.area == pow(instance.side, 2)
+
+
+async def test_computed_column_async_persistence(engine: Engine, async_engine: AsyncEngine) -> None:
+    class ShapeFactory(SQLAlchemyFactory[Shape]):
+        __model__ = Shape
+        __async_session__ = AsyncSession(async_engine)
+
+    instance = await ShapeFactory.create_async()
+    assert instance.area == pow(instance.side, 2)
+
+
+def test_computed_column_no_persistence() -> None:
+    class ShapeFactory(SQLAlchemyFactory[Shape]):
+        __model__ = Shape
+
+    fields = ShapeFactory.get_model_fields()
+    assert "area" in [field.name for field in fields]
 
 
 @pytest.mark.parametrize(
@@ -194,6 +242,184 @@ def test_relationship_list_resolution() -> None:
     assert isinstance(result.books[0], Book)
 
 
+@pytest.mark.parametrize(
+    "collection_class_type",
+    (set, list, ListLike, SetLike),
+)
+def test_relationship_collection_class_sequence(collection_class_type: type[Collection]) -> None:
+    table_suffix = uuid4().hex
+    _registry = registry()
+
+    class Base(metaclass=DeclarativeMeta):
+        __abstract__ = True
+        __allow_unmapped__ = True
+
+        registry = _registry
+        metadata = _registry.metadata
+
+    class Parent(CollectionParentMixin, Base):
+        __tablename__ = f"parent_{table_suffix}"
+
+        children: Any = orm.relationship("Child", collection_class=collection_class_type)
+
+    class Child(CollectionChildMixin, Base):
+        __tablename__ = f"child_{table_suffix}"
+
+        parent_id = Column(Integer(), ForeignKey(f"{Parent.__tablename__}.id"), nullable=False)
+
+    class ParentFactory(SQLAlchemyFactory[Parent]):
+        __model__ = Parent
+        __set_relationships__ = True
+
+    result = ParentFactory.build()
+    assert result.children is not None
+
+    assert isinstance(result.children, collection_class_type)
+    first_item = next(iter(result.children))
+    assert isinstance(first_item, Child)
+
+
+def test_relationship_collection_class_attribute_keyed_dict() -> None:
+    table_suffix = uuid4().hex
+    _registry = registry()
+
+    class Base(metaclass=DeclarativeMeta):
+        __abstract__ = True
+        __allow_unmapped__ = True
+
+        registry = _registry
+        metadata = _registry.metadata
+
+    class Parent(CollectionParentMixin, Base):
+        __tablename__ = f"parent_{table_suffix}"
+
+        children = orm.relationship("Child", collection_class=attribute_keyed_dict("id"))
+
+    class Child(CollectionChildMixin, Base):
+        __tablename__ = f"child_{table_suffix}"
+
+        parent_id = Column(Integer(), ForeignKey(f"{Parent.__tablename__}.id"), nullable=False)
+
+    class ParentFactory(SQLAlchemyFactory[Parent]):
+        __model__ = Parent
+        __set_relationships__ = True
+
+    result = ParentFactory.build()
+    assert result.children is not None
+
+    assert isinstance(result.children, dict)
+    child = next(iter(result.children.values()))
+    assert isinstance(child, Child)
+    assert child.id in result.children
+
+
+def test_relationship_collection_class_column_keyed_dict() -> None:
+    table_suffix = uuid4().hex
+    _registry = registry()
+
+    class Base(metaclass=DeclarativeMeta):
+        __abstract__ = True
+        __allow_unmapped__ = True
+
+        registry = _registry
+        metadata = _registry.metadata
+
+    class Parent(CollectionParentMixin, Base):
+        __tablename__ = f"parent_{table_suffix}"
+
+        children: Any
+
+    class Child(CollectionChildMixin, Base):
+        __tablename__ = f"child_{table_suffix}"
+
+        parent_id = Column(Integer(), ForeignKey(f"{Parent.__tablename__}.id"), nullable=False)
+
+    Parent.children = orm.relationship("Child", collection_class=column_keyed_dict(Child.__table__.c.id))  # type: ignore[attr-defined]
+
+    class ParentFactory(SQLAlchemyFactory[Parent]):
+        __model__ = Parent
+        __set_relationships__ = True
+
+    result = ParentFactory.build()
+    assert result.children is not None
+
+    assert isinstance(result.children, dict)
+    child = next(iter(result.children.values()))
+    assert isinstance(child, Child)
+    assert child.id in result.children
+
+
+def test_relationship_collection_class_arbitrary_keying() -> None:
+    table_suffix = uuid4().hex
+    _registry = registry()
+
+    class Base(metaclass=DeclarativeMeta):
+        __abstract__ = True
+        __allow_unmapped__ = True
+
+        registry = _registry
+        metadata = _registry.metadata
+
+    class Parent(CollectionParentMixin, Base):
+        __tablename__ = f"parent_{table_suffix}"
+
+        children = orm.relationship("Child", collection_class=keyfunc_mapping(lambda c: c.id))
+
+    class Child(CollectionChildMixin, Base):
+        __tablename__ = f"child_{table_suffix}"
+
+        parent_id = Column(Integer(), ForeignKey(f"{Parent.__tablename__}.id"), nullable=False)
+
+    class ParentFactory(SQLAlchemyFactory[Parent]):
+        __model__ = Parent
+        __set_relationships__ = True
+
+    result = ParentFactory.build()
+    assert result.children is not None
+
+    assert isinstance(result.children, dict)
+    child = next(iter(result.children.values()))
+    assert isinstance(child, Child)
+    assert child.id in result.children
+
+
+def test_relationship_collection_class_arbitrary_keyfunc() -> None:
+    def make_mapping() -> Any:
+        return keyfunc_mapping(lambda c: c.id)()  # type: ignore[call-arg]
+
+    table_suffix = uuid4().hex
+    _registry = registry()
+
+    class Base(metaclass=DeclarativeMeta):
+        __abstract__ = True
+        __allow_unmapped__ = True
+
+        registry = _registry
+        metadata = _registry.metadata
+
+    class Parent(CollectionParentMixin, Base):
+        __tablename__ = f"parent_{table_suffix}"
+
+        children = orm.relationship("Child", collection_class=make_mapping)
+
+    class Child(CollectionChildMixin, Base):
+        __tablename__ = f"child_{table_suffix}"
+
+        parent_id = Column(Integer(), ForeignKey(f"{Parent.__tablename__}.id"), nullable=False)
+
+    class ParentFactory(SQLAlchemyFactory[Parent]):
+        __model__ = Parent
+        __set_relationships__ = True
+
+    result = ParentFactory.build()
+    assert result.children is not None
+
+    assert isinstance(result.children, dict)
+    child = next(iter(result.children.values()))
+    assert isinstance(child, Child)
+    assert child.id in result.children
+
+
 def test_sqla_factory_create(engine: Engine) -> None:
     Base.metadata.create_all(engine)
 
@@ -234,7 +460,7 @@ async def test_invalid_persistence_config_raises() -> None:
     "session_config",
     (
         lambda session: session,
-        lambda session: (lambda: session),
+        lambda session: lambda: session,
     ),
 )
 def test_sync_persistence(engine: Engine, session_config: Callable[[Session], Any]) -> None:
@@ -256,11 +482,30 @@ def test_sync_persistence(engine: Engine, session_config: Callable[[Session], An
             assert inspect(batch_item).persistent  # type: ignore[union-attr]
 
 
+def test_sync_persistence_method_flush(engine: Engine) -> None:
+    Base.metadata.create_all(bind=engine)
+
+    with Session(bind=engine) as session:
+
+        class AuthorFactory(SQLAlchemyFactory[Author]):
+            __session__ = session
+            __model__ = Author
+            __persistence_method__ = SQLAlchemyPersistenceMethod.FLUSH
+
+        author = AuthorFactory.create_sync()
+        assert author.id is not None
+        assert inspect(author).persistent  # type: ignore[union-attr]
+
+        session.rollback()
+        result = session.query(Author).filter_by(id=author.id).first()
+        assert result is None
+
+
 @pytest.mark.parametrize(
     "session_config",
     (
         lambda session: session,
-        lambda session: (lambda: session),
+        lambda session: lambda: session,
     ),
 )
 async def test_async_persistence(
@@ -274,23 +519,41 @@ async def test_async_persistence(
             __model__ = AsyncModel
 
         instance = await Factory.create_async()
-        batch_result = await Factory.create_batch_async(size=2)
-        assert len(batch_result) == 2
+        instance_id = instance.id
+        instances = await Factory.create_batch_async(size=2)
+        instance_ids = (instance.id for instance in instances)
+        assert len(instances) == 2
 
     async with AsyncSession(async_engine) as session:
-        result = await session.scalar(select(AsyncModel).where(AsyncModel.id == instance.id))
+        result = await session.scalar(select(AsyncModel).where(AsyncModel.id == instance_id))
         assert result
 
-        for batch_item in batch_result:
-            result = await session.scalar(select(AsyncModel).where(AsyncModel.id == batch_item.id))
+        for instance_id in instance_ids:
+            result = await session.scalar(select(AsyncModel).where(AsyncModel.id == instance_id))
             assert result
+
+
+async def test_async_persistence_method_flush(async_engine: AsyncEngine) -> None:
+    async with AsyncSession(async_engine) as session:
+
+        class Factory(SQLAlchemyFactory[AsyncModel]):
+            __async_session__ = session
+            __model__ = AsyncModel
+            __persistence_method__ = SQLAlchemyPersistenceMethod.FLUSH
+
+        instance = await Factory.create_async()
+        assert instance.id is not None
+
+        await session.rollback()
+        result = await session.scalar(select(AsyncModel).where(AsyncModel.id == instance.id))
+        assert result is None
 
 
 @pytest.mark.parametrize(
     "session_config",
     (
         lambda session: session,
-        lambda session: (lambda: session),
+        lambda session: lambda: session,
     ),
 )
 async def test_async_server_default_refresh(
@@ -345,12 +608,14 @@ def test_sqlalchemy_custom_type_from_type_decorator(python_type_: type) -> None:
             def python_type(self) -> type:
                 return python_type_
 
+    test_registry = registry()
+
     class Base(metaclass=DeclarativeMeta):
         __abstract__ = True
         __allow_unmapped__ = True
 
-        registry = _registry
-        metadata = _registry.metadata
+        registry = test_registry
+        metadata = test_registry.metadata
 
     class Model(Base):
         __tablename__ = f"model_with_custom_types_{python_type_}"
@@ -456,9 +721,18 @@ def test_unsupported_type_engine() -> None:
         id: Any = Column(Integer(), primary_key=True)
         numeric_field: Any = Column(Location, nullable=False)
 
-    factory = SQLAlchemyFactory.create_factory(Place)
     with pytest.raises(
         ParameterException,
-        match="Unsupported type engine: Location()",
+        match=r"Unsupported type engine: Location\(\)",
     ):
-        factory.build()
+        SQLAlchemyFactory.create_factory(Place)
+
+
+def test_check_deprecated_default_overridden_no_deprecation() -> None:
+    with warnings.catch_warnings():
+        warnings.simplefilter("error")
+
+        class BookFactory(SQLAlchemyFactory[Book]):
+            __set_relationships__ = False
+            __set_association_proxy__ = False
+            __check_model__ = False

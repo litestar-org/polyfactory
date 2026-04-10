@@ -1,5 +1,5 @@
 from dataclasses import dataclass
-from typing import Any, Dict, Type
+from typing import Any
 from uuid import UUID
 
 from polyfactory.factories import DataclassFactory
@@ -27,7 +27,7 @@ class Person:
 # so we need to override the provider map to add it:
 class PersonFactory(DataclassFactory[Person]):
     @classmethod
-    def get_provider_map(cls) -> Dict[Type, Any]:
+    def get_provider_map(cls) -> dict[type, Any]:
         providers_map = super().get_provider_map()
 
         return {

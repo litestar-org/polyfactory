@@ -4,6 +4,7 @@ import copy
 import inspect
 from abc import ABC, abstractmethod
 from collections import Counter, abc, deque
+from collections.abc import Collection, Hashable, Iterable, Mapping, Sequence
 from contextlib import suppress
 from datetime import date, datetime, time, timedelta
 from decimal import Decimal
@@ -29,19 +30,14 @@ from typing import (
     Any,
     Callable,
     ClassVar,
-    Collection,
     Generic,
-    Hashable,
-    Iterable,
-    Mapping,
-    Sequence,
-    Type,
     TypedDict,
     TypeVar,
     cast,
     overload,
 )
 from uuid import UUID
+from zoneinfo import ZoneInfo
 
 from faker import Faker
 from typing_extensions import Self, get_args, get_origin, get_original_bases
@@ -54,9 +50,7 @@ from polyfactory.constants import (
 )
 from polyfactory.exceptions import ConfigurationException, MissingBuildKwargException, ParameterException
 from polyfactory.field_meta import Null
-from polyfactory.fields import Fixture, Ignore, PostGenerated, Require, Use
-from polyfactory.utils._internal import is_attribute_overridden
-from polyfactory.utils.deprecation import warn_deprecation
+from polyfactory.fields import Ignore, PostGenerated, Require, Use
 from polyfactory.utils.helpers import (
     flatten_annotation,
     get_collection_type,
@@ -65,7 +59,15 @@ from polyfactory.utils.helpers import (
     unwrap_optional,
 )
 from polyfactory.utils.model_coverage import CoverageContainer, CoverageContainerCallable, resolve_kwargs_coverage
-from polyfactory.utils.predicates import get_type_origin, is_literal, is_optional, is_safe_subclass, is_union
+from polyfactory.utils.predicates import (
+    get_type_origin,
+    is_forward_ref,
+    is_literal,
+    is_optional,
+    is_safe_subclass,
+    is_type_var,
+    is_union,
+)
 from polyfactory.utils.types import NoneType
 from polyfactory.value_generators.complex_types import handle_collection_type, handle_collection_type_coverage
 from polyfactory.value_generators.constrained_collections import (
@@ -109,7 +111,7 @@ class BaseFactory(ABC, Generic[T]):
     The model for the factory.
     This attribute is required for non-base factories and an exception will be raised if it's not set. Can be automatically inferred from the factory generic argument.
     """
-    __check_model__: bool = False
+    __check_model__: bool = True
     """
     Flag dictating whether to check if fields defined on the factory exists on the model or not.
     If 'True', checks will be done against Use, PostGenerated, Ignore, Require constructs fields only.
@@ -168,6 +170,7 @@ class BaseFactory(ABC, Generic[T]):
     """
     Flag indicating whether to use the default value on a specific field, if provided.
     """
+    __forward_references__: ClassVar[dict[str, Any]] = {}
 
     __config_keys__: tuple[str, ...] = (
         "__check_model__",
@@ -179,6 +182,7 @@ class BaseFactory(ABC, Generic[T]):
         "__min_collection_length__",
         "__max_collection_length__",
         "__use_defaults__",
+        "__forward_references__",
     )
     """Keys to be considered as config values to pass on to dynamically created factories."""
 
@@ -195,7 +199,7 @@ class BaseFactory(ABC, Generic[T]):
     _extra_providers: dict[Any, Callable[[], Any]] | None = None
     """Used to copy providers from once base factory to another dynamically generated factory for a class"""
 
-    def __init_subclass__(cls, *args: Any, **kwargs: Any) -> None:  # noqa: C901, PLR0912
+    def __init_subclass__(cls, *args: Any, **kwargs: Any) -> None:
         super().__init_subclass__(*args, **kwargs)
 
         if not hasattr(BaseFactory, "_base_factories"):
@@ -209,36 +213,10 @@ class BaseFactory(ABC, Generic[T]):
 
         if cls.__min_collection_length__ > cls.__max_collection_length__:
             msg = "Minimum collection length shouldn't be greater than maximum collection length"
-            raise ConfigurationException(
-                msg,
-            )
+            raise ConfigurationException(msg)
 
         if "__is_base_factory__" not in cls.__dict__ or not cls.__is_base_factory__:
-            model: type[T] | None = getattr(cls, "__model__", None) or cls._infer_model_type()
-            if not model:
-                msg = f"required configuration attribute '__model__' is not set on {cls.__name__}"
-                raise ConfigurationException(
-                    msg,
-                )
-            cls.__model__ = model
-            if not cls.is_supported_type(model):
-                for factory in BaseFactory._base_factories:
-                    if factory.is_supported_type(model):
-                        msg = f"{cls.__name__} does not support {model.__name__}, but this type is supported by the {factory.__name__} base factory class. To resolve this error, subclass the factory from {factory.__name__} instead of {cls.__name__}"
-                        raise ConfigurationException(
-                            msg,
-                        )
-                    msg = f"Model type {model.__name__} is not supported. To support it, register an appropriate base factory and subclass it for your factory."
-                    raise ConfigurationException(
-                        msg,
-                    )
-            if is_attribute_overridden(BaseFactory, cls, "__check_model__"):
-                warn_deprecation(
-                    "v2.22.0",
-                    deprecated_name="__check_model__",
-                    kind="default",
-                    alternative="set to `False` explicitly to keep existing behaviour",
-                )
+            cls._init_model()
             if cls.__check_model__:
                 cls._check_declared_fields_exist_in_model()
         else:
@@ -250,6 +228,27 @@ class BaseFactory(ABC, Generic[T]):
 
         if cls.__set_as_default_factory_for_type__ and hasattr(cls, "__model__"):
             BaseFactory._factory_type_mapping[cls.__model__] = cls
+
+    @classmethod
+    def _init_model(cls) -> None:
+        model: type[T] | None = getattr(cls, "__model__", None) or cls._infer_model_type()
+        if not model:
+            msg = f"required configuration attribute '__model__' is not set on {cls.__name__}"
+            raise ConfigurationException(
+                msg,
+            )
+        cls.__model__ = model
+        if not cls.is_supported_type(model):
+            for factory in BaseFactory._base_factories:
+                if factory.is_supported_type(model):
+                    msg = f"{cls.__name__} does not support {model.__name__}, but this type is supported by the {factory.__name__} base factory class. To resolve this error, subclass the factory from {factory.__name__} instead of {cls.__name__}"
+                    raise ConfigurationException(
+                        msg,
+                    )
+                msg = f"Model type {model.__name__} is not supported. To support it, register an appropriate base factory and subclass it for your factory."
+                raise ConfigurationException(
+                    msg,
+                )
 
     @classmethod
     def _get_build_context(cls, build_context: BuildContext | None) -> BuildContext:
@@ -275,12 +274,11 @@ class BaseFactory(ABC, Generic[T]):
 
         :returns: Inferred model type or None
         """
-
         factory_bases: Iterable[type[BaseFactory[T]]] = (
-            b for b in get_original_bases(cls) if get_origin(b) and issubclass(get_origin(b), BaseFactory)
+            b for b in get_original_bases(cls) if (orig := get_origin(b)) and issubclass(orig, BaseFactory)
         )
         generic_args: Sequence[type[T]] = [
-            arg for factory_base in factory_bases for arg in get_args(factory_base) if not isinstance(arg, TypeVar)
+            arg for factory_base in factory_bases for arg in get_args(factory_base) if not is_type_var(arg)
         ]
         if len(generic_args) != 1:
             return None
@@ -316,7 +314,7 @@ class BaseFactory(ABC, Generic[T]):
         )
 
     @classmethod
-    def _handle_factory_field(  # noqa: PLR0911
+    def _handle_factory_field(
         cls,
         field_value: Any,
         build_context: BuildContext,
@@ -341,9 +339,6 @@ class BaseFactory(ABC, Generic[T]):
             return field_value.build(_build_context=build_context)
 
         if isinstance(field_value, Use):
-            return field_value.to_value()
-
-        if isinstance(field_value, Fixture):
             return field_value.to_value()
 
         if callable(field_value):
@@ -379,9 +374,6 @@ class BaseFactory(ABC, Generic[T]):
 
         if isinstance(field_value, Use):
             return field_value.to_value()
-
-        if isinstance(field_value, Fixture):
-            return CoverageContainerCallable(field_value.to_value)
 
         return CoverageContainerCallable(field_value) if callable(field_value) else field_value
 
@@ -565,6 +557,7 @@ class BaseFactory(ABC, Generic[T]):
             date: cls.__faker__.date_this_decade,
             time: cls.__faker__.time_object,
             timedelta: cls.__faker__.time_delta,
+            ZoneInfo: cls.__faker__.pytimezone,
             # ip addresses
             IPv4Address: lambda: ip_address(cls.__faker__.ipv4()),
             IPv4Interface: lambda: ip_interface(cls.__faker__.ipv4()),
@@ -617,15 +610,15 @@ class BaseFactory(ABC, Generic[T]):
         """
         if model is None:
             try:
-                model = cls.__model__  # pyright: ignore[reportAssignmentType]
+                model = cls.__model__  # type: ignore[assignment]  # pyright: ignore[reportAssignmentType]
             except AttributeError as ex:
                 msg = "A 'model' argument is required when creating a new factory from a base one"
                 raise TypeError(msg) from ex
 
         return cast(
-            "Type[Self]",
+            "type[Self]",
             type(
-                f"{model.__name__}Factory",  # pyright: ignore[reportOptionalMemberAccess]
+                f"{model.__name__}Factory",  # type: ignore[union-attr]  # pyright: ignore[reportOptionalMemberAccess]
                 (*(bases or ()), cls),
                 {"__model__": model, **kwargs},
             ),
@@ -760,7 +753,11 @@ class BaseFactory(ABC, Generic[T]):
         if field_build_parameters is None and cls.should_set_none_value(field_meta=field_meta):
             return None
 
+        if not field_meta.required and create_random_boolean(cls.__random__):
+            return Null
+
         unwrapped_annotation = unwrap_annotation(field_meta.annotation)
+        unwrapped_annotation = cls._resolve_forward_references(unwrapped_annotation)
 
         if is_literal(annotation=unwrapped_annotation) and (literal_args := get_args(unwrapped_annotation)):
             return cls.__random__.choice(literal_args)
@@ -786,6 +783,10 @@ class BaseFactory(ABC, Generic[T]):
                 return None
 
             return cls.get_field_value(cls.__random__.choice(children), field_build_parameters, build_context)
+
+        provider_map = cls.get_provider_map()
+        if provider := (provider_map.get(field_meta.annotation) or provider_map.get(unwrapped_annotation)):
+            return provider()
 
         if BaseFactory.is_factory_type(annotation=unwrapped_annotation):
             if not field_build_parameters and unwrapped_annotation in build_context["seen_models"]:
@@ -847,11 +848,7 @@ class BaseFactory(ABC, Generic[T]):
                 build_context=build_context,
             )
 
-        provider_map = cls.get_provider_map()
-        if provider := (provider_map.get(field_meta.annotation) or provider_map.get(unwrapped_annotation)):
-            return provider()
-
-        if isinstance(unwrapped_annotation, TypeVar):
+        if is_type_var(unwrapped_annotation):
             return create_random_string(cls.__random__, min_length=1, max_length=10)
 
         if callable(unwrapped_annotation):
@@ -888,7 +885,18 @@ class BaseFactory(ABC, Generic[T]):
         if cls.is_ignored_type(field_meta.annotation):
             return
 
+        if not field_meta.required:
+            yield Null
+
         for unwrapped_annotation in flatten_annotation(field_meta.annotation):
+            unwrapped_annotation = cls._resolve_forward_references(unwrapped_annotation)  # noqa: PLW2901
+
+            unwrapped_annotation_meta = field_meta
+            if is_union(field_meta.annotation):
+                unwrapped_annotation_meta = next(
+                    (meta for meta in (field_meta.children or []) if meta.annotation == unwrapped_annotation),
+                    field_meta,
+                )
             if unwrapped_annotation in (None, NoneType):
                 yield None
 
@@ -898,12 +906,18 @@ class BaseFactory(ABC, Generic[T]):
             elif isinstance(unwrapped_annotation, EnumMeta):
                 yield CoverageContainer(list(unwrapped_annotation))
 
-            elif field_meta.constraints:
+            elif unwrapped_annotation_meta.constraints:
                 yield CoverageContainerCallable(
                     cls.get_constrained_field_value,
                     annotation=unwrapped_annotation,
-                    field_meta=field_meta,
+                    field_meta=unwrapped_annotation_meta,
                 )
+
+            elif provider := (
+                (provider_map := cls.get_provider_map()).get(field_meta.annotation)
+                or provider_map.get(unwrapped_annotation)
+            ):
+                yield CoverageContainerCallable(provider)
 
             elif BaseFactory.is_factory_type(annotation=unwrapped_annotation):
                 yield CoverageContainer(
@@ -927,13 +941,7 @@ class BaseFactory(ABC, Generic[T]):
 
                 yield handle_collection_type_coverage(child_meta, origin, cls, build_context=build_context)
 
-            elif provider := (
-                (provider_map := cls.get_provider_map()).get(field_meta.annotation)
-                or provider_map.get(unwrapped_annotation)
-            ):
-                yield CoverageContainerCallable(provider)
-
-            elif isinstance(unwrapped_annotation, TypeVar):
+            elif is_type_var(unwrapped_annotation):
                 yield create_random_string(cls.__random__, min_length=1, max_length=10)
 
             elif callable(unwrapped_annotation):
@@ -945,6 +953,21 @@ class BaseFactory(ABC, Generic[T]):
                 raise ParameterException(
                     msg,
                 )
+
+    @classmethod
+    def _resolve_forward_references(cls, annotation: Any) -> Any:
+        """Resolve forward references in the factory's model."""
+        if not cls.__forward_references__:
+            return annotation
+
+        if is_forward_ref(annotation):
+            return cls.__forward_references__.get(annotation.__forward_arg__, annotation)
+
+        # This is a workaround when forward references are resolved to strings
+        if isinstance(annotation, str):
+            return cls.__forward_references__.get(annotation, annotation)
+
+        return annotation
 
     @classmethod
     def should_set_none_value(cls, field_meta: FieldMeta) -> bool:
@@ -998,7 +1021,6 @@ class BaseFactory(ABC, Generic[T]):
     def get_model_fields(cls) -> list[FieldMeta]:  # pragma: no cover
         """Retrieve a list of fields from the factory's model.
 
-
         :returns: A list of field MetaData instances.
 
         """
@@ -1049,7 +1071,9 @@ class BaseFactory(ABC, Generic[T]):
 
         for field_meta in cls.get_model_fields():
             field_build_parameters = cls.extract_field_build_parameters(field_meta=field_meta, build_args=kwargs)
-            if cls.should_set_field_value(field_meta, **kwargs) and not cls.should_use_default_value(field_meta):
+            if cls.should_set_field_value(
+                field_meta, _build_context=_build_context, **kwargs
+            ) and not cls.should_use_default_value(field_meta):
                 if hasattr(cls, field_meta.name) and not hasattr(BaseFactory, field_meta.name):
                     field_value = getattr(cls, field_meta.name)
                     if isinstance(field_value, Ignore):
@@ -1100,7 +1124,7 @@ class BaseFactory(ABC, Generic[T]):
         for field_meta in cls.get_model_fields():
             field_build_parameters = cls.extract_field_build_parameters(field_meta=field_meta, build_args=kwargs)
 
-            if cls.should_set_field_value(field_meta, **kwargs):
+            if cls.should_set_field_value(field_meta, _build_context=_build_context, **kwargs):
                 if hasattr(cls, field_meta.name) and not hasattr(BaseFactory, field_meta.name):
                     field_value = getattr(cls, field_meta.name)
                     if isinstance(field_value, Ignore):
@@ -1143,7 +1167,7 @@ class BaseFactory(ABC, Generic[T]):
         :returns: An instance of type T.
 
         """
-        return cast("T", cls.__model__(**cls.process_kwargs(**kwargs)))
+        return cls.__model__(**cls.process_kwargs(**kwargs))
 
     @classmethod
     def batch(cls, size: int, **kwargs: Any) -> list[T]:
@@ -1168,7 +1192,7 @@ class BaseFactory(ABC, Generic[T]):
         """
         for data in cls.process_kwargs_coverage(**kwargs):
             instance = cls.__model__(**data)
-            yield cast("T", instance)
+            yield instance
 
     @classmethod
     def create_sync(cls, **kwargs: Any) -> T:
@@ -1221,8 +1245,8 @@ def _register_builtin_factories() -> None:
 
     :returns: None
     """
-    import polyfactory.factories.dataclass_factory
-    import polyfactory.factories.typed_dict_factory  # noqa: F401
+    import polyfactory.factories.dataclass_factory  # noqa: PLC0415
+    import polyfactory.factories.typed_dict_factory  # noqa: F401, PLC0415
 
     for module in [
         "polyfactory.factories.pydantic_factory",

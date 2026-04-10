@@ -1,10 +1,9 @@
 from __future__ import annotations
 
 from inspect import isclass
-from typing import Any, Literal, NewType, Optional, TypeVar, get_args
+from typing import Annotated, Any, ForwardRef, Literal, NewType, Optional, TypeVar, get_args
 
 from typing_extensions import (
-    Annotated,
     NotRequired,
     ParamSpec,
     Required,
@@ -96,11 +95,12 @@ def is_literal(annotation: Any) -> bool:
 
     :returns: A boolean.
     """
-    return (
-        get_type_origin(annotation) is Literal
-        or repr(annotation).startswith("typing.Literal")
-        or repr(annotation).startswith("typing_extensions.Literal")
-    )
+    origin = get_type_origin(annotation)
+    if origin is Literal:
+        return True
+    if origin in UNION_TYPES:
+        return False
+    return repr(annotation).startswith("typing.Literal") or repr(annotation).startswith("typing_extensions.Literal")
 
 
 def is_new_type(annotation: Any) -> "TypeGuard[type[NewType]]":
@@ -147,6 +147,28 @@ def is_type_alias(annotation: Any) -> TypeGuard[TypeAliasType]:
     return isinstance(annotation, AllTypeAliasTypes)
 
 
+def is_generic_alias(annotation: Any) -> bool:
+    """Determine if the given type annotation is a generic alias.
+
+    :param annotation: A type annotation.
+
+    :returns: A boolean
+    """
+    return hasattr(annotation, "__origin__") and hasattr(annotation, "__args__")
+
+
+def is_type_var(annotation: Any) -> TypeGuard[TypeVar]:
+    """Determine if the given type annotation is a TypeVar.
+
+    Args:
+        annotation: A type annotation.
+
+    Returns:
+        A boolean.
+    """
+    return isinstance(annotation, TypeVar)
+
+
 def get_type_origin(annotation: Any) -> Any:
     """Get the type origin of an annotation - safely.
 
@@ -158,3 +180,13 @@ def get_type_origin(annotation: Any) -> Any:
     if origin in (Annotated, Required, NotRequired):
         origin = get_args(annotation)[0]
     return mapped_type if (mapped_type := TYPE_MAPPING.get(origin)) else origin
+
+
+def is_forward_ref(annotation: Any) -> TypeGuard[ForwardRef]:
+    """Determine if the given type annotation is a ForwardRef.
+
+    :param annotation: A type annotation.
+
+    :returns: A boolean.
+    """
+    return isinstance(annotation, ForwardRef)

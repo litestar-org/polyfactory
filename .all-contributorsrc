@@ -465,6 +465,60 @@
       "contributions": [
         "test"
       ]
+    },
+    {
+      "login": "RasmusNygren",
+      "name": "RasmusNygren",
+      "avatar_url": "https://avatars.githubusercontent.com/u/26030663?v=4",
+      "profile": "https://github.com/RasmusNygren",
+      "contributions": [
+        "doc"
+      ]
+    },
+    {
+      "login": "arembridge",
+      "name": "rembridge",
+      "avatar_url": "https://avatars.githubusercontent.com/u/35376887?v=4",
+      "profile": "https://github.com/arembridge",
+      "contributions": [
+        "code"
+      ]
+    },
+    {
+      "login": "bullfest",
+      "name": "Alexander Viklund",
+      "avatar_url": "https://avatars.githubusercontent.com/u/4342153?v=4",
+      "profile": "https://www.youtube.com/watch?v=1A3W75vH1D4",
+      "contributions": [
+        "code"
+      ]
+    },
+    {
+      "login": "AlexPetul",
+      "name": "Alex Petul",
+      "avatar_url": "https://avatars.githubusercontent.com/u/47738904?v=4",
+      "profile": "https://skydi.io",
+      "contributions": [
+        "code"
+      ]
+    },
+    {
+      "login": "Hugo-C",
+      "name": "Hugo-C",
+      "avatar_url": "https://avatars.githubusercontent.com/u/24675917?v=4",
+      "profile": "https://github.com/Hugo-C",
+      "contributions": [
+        "code"
+      ]
+    },
+    {
+      "login": "toroleapinc",
+      "name": "edvatar",
+      "avatar_url": "https://avatars.githubusercontent.com/u/88481784?v=4",
+      "profile": "https://github.com/toroleapinc",
+      "contributions": [
+        "doc"
+      ]
     }
   ],
   "contributorsPerLine": 7,

@@ -7,8 +7,8 @@ Setting up the environment
 1. Install `uv <https://github.com/astral-sh/uv>`_
 2. Run ``uv sync --all-extras`` to create a `virtual environment <https://docs.python.org/3/tutorial/venv.html>`_ and install
    the dependencies
-3. Install `pre-commit <https://pre-commit.com/>`_
-4. Run ``pre-commit install`` to install pre-commit hooks
+3. Install `prek <https://prek.j178.dev/>`_
+4. Run ``prek install`` to install pre-commit hooks
 
 Code contributions
 ------------------
@@ -20,7 +20,7 @@ Workflow
 2. Clone your fork locally with git
 3. `Set up the environment <#setting-up-the-environment>`_
 4. Make your changes
-5. (Optional) Run ``pre-commit run --all-files`` to run linters and formatters. This step is optional and will be executed
+5. (Optional) Run ``prek run --all-files`` to run linters and formatters. This step is optional and will be executed
    automatically by git before you make a commit, but you may want to run it manually in order to apply fixes
 6. Commit your changes to git
 7. Push the changes to your fork
