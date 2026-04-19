@@ -1,14 +1,16 @@
-from datetime import date, timedelta, timezone
+from datetime import date, datetime, timedelta, timezone, tzinfo
 from typing import Optional
-from unittest.mock import patch, MagicMock
+from unittest.mock import patch
 
 import pytest
+from faker import Faker
 from hypothesis import given
-from hypothesis.strategies import dates
+from hypothesis.strategies import dates, timezones
 
 from pydantic import BaseModel, condate
 
 from polyfactory.factories.pydantic_factory import ModelFactory
+from polyfactory.value_generators.constrained_dates import handle_constrained_date
 
 
 @given(
@@ -39,20 +41,29 @@ def test_handle_constrained_date(
 
         assert result.value
 
-def test_handle_constrained_date_tz() -> None:
-    from polyfactory.value_generators.constrained_dates import handle_constrained_date
-    from faker import Faker
-    
+
+@given(tz=timezones())
+def test_handle_constrained_date_tz(tz: tzinfo) -> None:
     faker = Faker()
-    tz = timezone(timedelta(hours=5))
-    
+
+    # Create a fixed UTC time close to midnight (23:00) so that positive timezone offsets shift the date to tomorrow.
+    fixed_utc_now = datetime(2020, 1, 1, 23, 0, 0, tzinfo=timezone.utc)
+
+    def mock_now(tz: Optional[tzinfo] = None) -> datetime:
+        if tz is not None:
+            return fixed_utc_now.astimezone(tz)
+        return fixed_utc_now
+
     with patch("polyfactory.value_generators.constrained_dates.datetime") as mock_datetime:
-        mock_now = MagicMock()
-        mock_now.date.return_value = date(2020, 1, 1)
-        mock_datetime.now.return_value = mock_now
-        
-        handle_constrained_date(faker=faker, tz=tz)
-        
-        assert mock_datetime.now.call_count == 2
-        for call in mock_datetime.now.call_args_list:
-            assert call.kwargs.get("tz") == tz
+        mock_datetime.now.side_effect = mock_now
+
+        expected_start = fixed_utc_now.astimezone(tz).date() - timedelta(days=100)
+        expected_end = fixed_utc_now.astimezone(tz).date() + timedelta(days=100)
+
+        # Test 1: By setting 'ge' to the expected end_date, we force start_date == end_date.
+        # This proves the tz parameter was used to calculate end_date properly.
+        # If the tz bug existed, Faker would raise a ValueError because expected_end (ge) would be > end_date.
+        assert handle_constrained_date(faker=faker, tz=tz, ge=expected_end) == expected_end
+
+        # Test 2: Do the same for the start_date logic using 'le'.
+        assert handle_constrained_date(faker=faker, tz=tz, le=expected_start) == expected_start
