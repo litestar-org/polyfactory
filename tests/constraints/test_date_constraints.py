@@ -1,5 +1,6 @@
-from datetime import date, timedelta
+from datetime import date, timedelta, timezone
 from typing import Optional
+from unittest.mock import patch, MagicMock
 
 import pytest
 from hypothesis import given
@@ -37,3 +38,21 @@ def test_handle_constrained_date(
         result = MyFactory.build()
 
         assert result.value
+
+def test_handle_constrained_date_tz() -> None:
+    from polyfactory.value_generators.constrained_dates import handle_constrained_date
+    from faker import Faker
+    
+    faker = Faker()
+    tz = timezone(timedelta(hours=5))
+    
+    with patch("polyfactory.value_generators.constrained_dates.datetime") as mock_datetime:
+        mock_now = MagicMock()
+        mock_now.date.return_value = date(2020, 1, 1)
+        mock_datetime.now.return_value = mock_now
+        
+        handle_constrained_date(faker=faker, tz=tz)
+        
+        assert mock_datetime.now.call_count == 2
+        for call in mock_datetime.now.call_args_list:
+            assert call.kwargs.get("tz") == tz
