@@ -1,15 +1,15 @@
 # ruff: noqa: UP007
 from __future__ import annotations
-from sys import version_info
-from annotated_types import Gt, Lt
 
 from collections.abc import Iterable
 from dataclasses import dataclass, make_dataclass
 from datetime import date
-from typing import Any, Literal, Optional, Union, Annotated
+from sys import version_info
+from typing import Annotated, Any, Literal, Optional, Union
 from uuid import UUID
 
 import pytest
+from annotated_types import Gt, Lt
 from typing_extensions import TypedDict
 
 from pydantic import BaseModel
