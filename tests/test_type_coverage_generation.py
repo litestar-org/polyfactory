@@ -383,7 +383,7 @@ def test_annotated_optional() -> None:
     # which actually results in a false positive.
     @dataclass
     class Model:
-        maybe_constraint_int: Optional[Annotated[int, Gt(0), Lt(3)]]
+        maybe_constraint_int: Annotated[int, Gt(0), Lt(3)] | None
 
     results = list(DataclassFactory.create_factory(Model).coverage())
 
