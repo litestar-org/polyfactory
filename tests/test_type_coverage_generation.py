@@ -1,5 +1,6 @@
 # ruff: noqa: UP007
 from __future__ import annotations
+from sys import version_info
 from annotated_types import Gt, Lt
 
 from collections.abc import Iterable
@@ -374,12 +375,13 @@ def test_optional_mixed_collections() -> None:
     assert type_exists_at_path_any(results, ["maybe_uuids"], NoneType)
 
 
+@pytest.mark.skipif(version_info < (3, 10), reason="Union with annotated and None not support on <3.10")
 def test_annotated_optional() -> None:
     # Struggling a bit on how to properly test this.
     # We are constraining random generation of an int value
-    # within a constraint. The actual constraint is actually under test
+    # The actual constraint is actually under test
     # here. But in case the constraint is not doing its job,
-    # there is a case where the generation falls within the constraint
+    # there is a possibility where the generation falls within the constraint
     # which actually results in a false positive.
     @dataclass
     class Model:
