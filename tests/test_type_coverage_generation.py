@@ -1,10 +1,11 @@
 # ruff: noqa: UP007
 from __future__ import annotations
+from annotated_types import Gt, Lt
 
 from collections.abc import Iterable
 from dataclasses import dataclass, make_dataclass
 from datetime import date
-from typing import Any, Literal, Optional, Union
+from typing import Any, Literal, Optional, Union, Annotated
 from uuid import UUID
 
 import pytest
@@ -371,3 +372,21 @@ def test_optional_mixed_collections() -> None:
     assert type_exists_at_path_any(results, ["maybe_uuids"], list)
     assert type_exists_at_path_any(results, ["maybe_uuids", "*"], UUID)
     assert type_exists_at_path_any(results, ["maybe_uuids"], NoneType)
+
+
+def test_annotated_optional() -> None:
+    # Struggling a bit on how to properly test this.
+    # We are constraining random generation of an int value
+    # within a constraint. The actual constraint is actually under test
+    # here. But in case the constraint is not doing its job,
+    # there is a case where the generation falls within the constraint
+    # which actually results in a false positive.
+    @dataclass
+    class Model:
+        maybe_constraint_int: Optional[Annotated[int, Gt(0), Lt(3)]]
+
+    results = list(DataclassFactory.create_factory(Model).coverage())
+
+    assert len(results) == 2
+    for result in results:
+        assert result.maybe_constraint_int in {1, 2, None}
