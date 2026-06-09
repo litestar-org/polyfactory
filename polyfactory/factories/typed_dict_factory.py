@@ -17,7 +17,7 @@ from polyfactory.field_meta import FieldMeta, Null
 TypedDictT = TypeVar("TypedDictT", bound=_TypedDictMeta)
 
 
-class TypedDictFactory(Generic[TypedDictT], BaseFactory[TypedDictT]):
+class TypedDictFactory(BaseFactory[TypedDictT], Generic[TypedDictT]):
     """TypedDict base factory"""
 
     __is_base_factory__ = True

@@ -9,7 +9,7 @@ from polyfactory.factories.base import BaseFactory, T
 from polyfactory.field_meta import FieldMeta, Null
 
 
-class DataclassFactory(Generic[T], BaseFactory[T]):
+class DataclassFactory(BaseFactory[T], Generic[T]):
     """Dataclass base factory"""
 
     __is_base_factory__ = True

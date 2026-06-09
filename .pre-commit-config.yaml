@@ -2,12 +2,12 @@ default_language_version:
   python: "3.13"
 repos:
   - repo: https://github.com/compilerla/conventional-pre-commit
-    rev: v4.0.0
+    rev: v4.4.0
     hooks:
       - id: conventional-pre-commit
         stages: [commit-msg]
   - repo: https://github.com/pre-commit/pre-commit-hooks
-    rev: v5.0.0
+    rev: v6.0.0
     hooks:
       - id: check-ast
       - id: check-case-conflict
@@ -17,18 +17,24 @@ repos:
       - id: end-of-file-fixer
       - id: mixed-line-ending
       - id: trailing-whitespace
-  - repo: https://github.com/charliermarsh/ruff-pre-commit
-    rev: "v0.11.0"
+  - repo: local
     hooks:
       - id: ruff
-        args: ["--fix"]
+        name: ruff
+        entry: uv run ruff check --fix
+        language: system
+        types: [python]
       - id: ruff-format
+        name: ruff-format
+        entry: uv run ruff format
+        language: system
+        types: [python]
   - repo: https://github.com/crate-ci/typos
-    rev: v1.30.3
+    rev: v1.44.0
     hooks:
       - id: typos
   - repo: https://github.com/pycontribs/mirrors-prettier
-    rev: "v3.5.3"
+    rev: v3.6.2
     hooks:
       - id: prettier
         exclude: ".all-contributorsrc"
@@ -53,6 +59,6 @@ repos:
         entry: uv run --all-groups pyright
         types: [python]
   - repo: https://github.com/sphinx-contrib/sphinx-lint
-    rev: "v1.0.0"
+    rev: v1.0.2
     hooks:
       - id: sphinx-lint

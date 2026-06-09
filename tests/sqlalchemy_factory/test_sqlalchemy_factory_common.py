@@ -460,7 +460,7 @@ async def test_invalid_persistence_config_raises() -> None:
     "session_config",
     (
         lambda session: session,
-        lambda session: (lambda: session),
+        lambda session: lambda: session,
     ),
 )
 def test_sync_persistence(engine: Engine, session_config: Callable[[Session], Any]) -> None:
@@ -505,7 +505,7 @@ def test_sync_persistence_method_flush(engine: Engine) -> None:
     "session_config",
     (
         lambda session: session,
-        lambda session: (lambda: session),
+        lambda session: lambda: session,
     ),
 )
 async def test_async_persistence(
@@ -553,7 +553,7 @@ async def test_async_persistence_method_flush(async_engine: AsyncEngine) -> None
     "session_config",
     (
         lambda session: session,
-        lambda session: (lambda: session),
+        lambda session: lambda: session,
     ),
 )
 async def test_async_server_default_refresh(
@@ -723,7 +723,7 @@ def test_unsupported_type_engine() -> None:
 
     with pytest.raises(
         ParameterException,
-        match="Unsupported type engine: Location()",
+        match=r"Unsupported type engine: Location\(\)",
     ):
         SQLAlchemyFactory.create_factory(Place)
 

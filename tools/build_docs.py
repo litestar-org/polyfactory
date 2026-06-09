@@ -33,11 +33,11 @@ parser.add_argument("output")
 def checkout(branch: str) -> Generator[None, None, None]:
     subprocess.run(["git", "checkout", branch], check=True)  # noqa: S603 S607
     yield
-    subprocess.run(["git", "checkout", "-"], check=True)  # noqa: S603 S607
+    subprocess.run(["git", "checkout", "-"], check=True)  # noqa: S607
 
 
 def build(output: str) -> None:
-    subprocess.run(["make", "docs"], check=True)  # noqa: S603 S607
+    subprocess.run(["make", "docs"], check=True)  # noqa: S607
 
     output_dir = Path(output)
     output_dir.mkdir()

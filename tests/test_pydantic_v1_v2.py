@@ -62,7 +62,7 @@ def test_build(base_model: type[Union[BaseModelV1, BaseModelV2]]) -> None:
 
 @skip_pydantic_v1_on_py314
 def test_build_v1_with_constrained_fields() -> None:
-    from pydantic.v1.fields import Field
+    from pydantic.v1.fields import Field  # noqa: PLC0415
 
     ConstrainedInt = Annotated[int, Field(ge=100, le=200)]
     ConstrainedStr = Annotated[str, Field(min_length=1, max_length=3)]
@@ -80,7 +80,7 @@ def test_build_v1_with_constrained_fields() -> None:
 
 
 def test_build_v2_with_constrained_fields() -> None:
-    from pydantic.fields import Field
+    from pydantic.fields import Field  # noqa: PLC0415
 
     ConstrainedInt = Annotated[int, Field(ge=100, le=200)]
     ConstrainedStr = Annotated[str, Field(min_length=1, max_length=3)]
@@ -112,7 +112,7 @@ def test_variadic_tuple_length() -> None:
 
 @skip_pydantic_v1_on_py314
 def test_build_v1_with_url_and_email_types() -> None:
-    from pydantic.v1 import AnyHttpUrl, AnyUrl, EmailStr, HttpUrl, NameEmail
+    from pydantic.v1 import AnyHttpUrl, AnyUrl, EmailStr, HttpUrl, NameEmail  # noqa: PLC0415
 
     class Foo(BaseModelV1):
         http_url: HttpUrl

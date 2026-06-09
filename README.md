@@ -162,6 +162,7 @@ Thanks goes to these wonderful people ([emoji key](https://allcontributors.org/d
       <td align="center" valign="top" width="14.28%"><a href="https://www.youtube.com/watch?v=1A3W75vH1D4"><img src="https://avatars.githubusercontent.com/u/4342153?v=4?s=100" width="100px;" alt="Alexander Viklund"/><br /><sub><b>Alexander Viklund</b></sub></a><br /><a href="https://github.com/litestar-org/polyfactory/commits?author=bullfest" title="Code">💻</a></td>
       <td align="center" valign="top" width="14.28%"><a href="https://skydi.io"><img src="https://avatars.githubusercontent.com/u/47738904?v=4?s=100" width="100px;" alt="Alex Petul"/><br /><sub><b>Alex Petul</b></sub></a><br /><a href="https://github.com/litestar-org/polyfactory/commits?author=AlexPetul" title="Code">💻</a></td>
       <td align="center" valign="top" width="14.28%"><a href="https://github.com/Hugo-C"><img src="https://avatars.githubusercontent.com/u/24675917?v=4?s=100" width="100px;" alt="Hugo-C"/><br /><sub><b>Hugo-C</b></sub></a><br /><a href="https://github.com/litestar-org/polyfactory/commits?author=Hugo-C" title="Code">💻</a></td>
+      <td align="center" valign="top" width="14.28%"><a href="https://github.com/toroleapinc"><img src="https://avatars.githubusercontent.com/u/88481784?v=4?s=100" width="100px;" alt="edvatar"/><br /><sub><b>edvatar</b></sub></a><br /><a href="https://github.com/litestar-org/polyfactory/commits?author=toroleapinc" title="Documentation">📖</a></td>
     </tr>
   </tbody>
 </table>

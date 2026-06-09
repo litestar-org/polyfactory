@@ -94,7 +94,7 @@ def test_recursive_list_model() -> None:
 
 @pytest.mark.skipif(pydantic_version.startswith("1"), reason="Pydantic v2+ is required for JsonValue")
 def test_recursive_type_annotation() -> None:
-    from pydantic import JsonValue
+    from pydantic import JsonValue  # noqa: PLC0415
 
     class RecursiveTypeModel(BaseModel):
         json_value: JsonValue

@@ -3,9 +3,12 @@ from typing import Any, Callable, Generic, TypeVar
 
 import pytest
 
+from pydantic import BaseModel
+
 from polyfactory.exceptions import ParameterException
 from polyfactory.factories.base import BaseFactory
 from polyfactory.factories.dataclass_factory import DataclassFactory
+from polyfactory.factories.pydantic_factory import ModelFactory
 
 
 def test_provider_map() -> None:
@@ -58,6 +61,46 @@ def test_provider_map_with_typevar() -> None:
 
     coverage_result = list(FooFactory.coverage())
     assert all(result.foo == "any" for result in coverage_result)
+
+
+def test_provider_map_takes_priority_over_factory_type() -> None:
+    """Custom providers should take precedence over built-in factory type resolution."""
+
+    @dataclass
+    class Inner:
+        value: str
+
+    @dataclass
+    class Outer:
+        inner: Inner
+
+    sentinel = Inner(value="from_provider")
+
+    class OuterFactory(DataclassFactory[Outer]):
+        @classmethod
+        def get_provider_map(cls) -> dict[Any, Callable[[], Any]]:
+            return {Inner: lambda: sentinel, **super().get_provider_map()}
+
+    assert OuterFactory.build().inner is sentinel
+    assert all(result.inner is sentinel for result in OuterFactory.coverage())
+
+
+def test_provider_map_takes_priority_over_pydantic_factory_type() -> None:
+    """Custom providers should take precedence for Pydantic model fields."""
+
+    class InnerModel(BaseModel):
+        value: str
+
+    class OuterModel(BaseModel):
+        inner: InnerModel
+
+    class OuterFactory(ModelFactory[OuterModel]):
+        @classmethod
+        def get_provider_map(cls) -> dict[Any, Callable[[], Any]]:
+            return {InnerModel: lambda: InnerModel(value="from_provider"), **super().get_provider_map()}
+
+    assert OuterFactory.build().inner.value == "from_provider"
+    assert all(result.inner.value == "from_provider" for result in OuterFactory.coverage())
 
 
 def test_add_custom_provider() -> None:

@@ -21,7 +21,7 @@ T = TypeVar("T")
 
 
 # we create a custom base factory to handle dataclasses, with an extended provider map
-class CustomDataclassFactory(Generic[T], DataclassFactory[T]):
+class CustomDataclassFactory(DataclassFactory[T], Generic[T]):
     __is_base_factory__ = True
 
     @classmethod

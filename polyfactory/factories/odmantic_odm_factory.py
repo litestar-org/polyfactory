@@ -23,7 +23,7 @@ if TYPE_CHECKING:
     from typing_extensions import TypeGuard
 
 
-class OdmanticModelFactory(Generic[T], ModelFactory[T]):
+class OdmanticModelFactory(ModelFactory[T], Generic[T]):
     """Base factory for odmantic models"""
 
     __is_base_factory__ = True
