@@ -32,7 +32,7 @@ def handle_constrained_date(
     elif gt:
         start_date = gt + timedelta(days=1)
 
-    end_date = datetime.now(tz=timezone.utc).date() + timedelta(days=100)
+    end_date = datetime.now(tz=tz).date() + timedelta(days=100)
     if le:
         end_date = le
     elif lt:
