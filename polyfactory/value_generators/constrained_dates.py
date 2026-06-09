@@ -13,7 +13,7 @@ def handle_constrained_date(
     gt: date | None = None,
     le: date | None = None,
     lt: date | None = None,
-    tz: tzinfo = timezone.utc,
+    tz: tzinfo | bool | None = timezone.utc,
 ) -> date:
     """Generates a date value fulfilling the expected constraints.
 
@@ -22,10 +22,20 @@ def handle_constrained_date(
     :param le: Less than or equal value.
     :param gt: Greater than value.
     :param ge: Greater than or equal value.
-    :param tz: A timezone.
+    :param tz: A timezone. When a boolean is passed (as used by ``msgspec.Meta``),
+        a :class:`TypeError` is raised because ``tz=True/False`` cannot be used to
+        produce a timezone-aware or naive value in this context.
 
     :returns: A date instance.
     """
+    if isinstance(tz, bool):
+        msg = (
+            "Received a boolean value for the 'tz' constraint. "
+            "This is not supported for date/datetime field generation. "
+            "Use a tzinfo instance to specify a timezone."
+        )
+        raise TypeError(msg)
+
     start_date = datetime.now(tz=tz).date() - timedelta(days=100)
     if ge:
         start_date = ge

@@ -347,3 +347,31 @@ def test_annotated_children() -> None:
 
     a = AFactory.build()
     assert msgspec.convert(structs.asdict(a), A) == a
+
+
+def test_msgspec_datetime_tz_bool_raises_parameter_exception() -> None:
+    """Regression test for https://github.com/litestar-org/polyfactory/issues/768.
+
+    When a msgspec Struct field uses ``Meta(tz=True)`` or ``Meta(tz=False)``,
+    polyfactory should raise a clean :class:`ParameterException` rather than
+    crashing with a cryptic ``TypeError: tzinfo argument must be None or of a
+    tzinfo subclass, not type 'bool'``.
+    """
+
+    class FooTrue(Struct):
+        field: Annotated[dt.datetime, Meta(tz=True)]
+
+    class FooFalse(Struct):
+        field: Annotated[dt.datetime, Meta(tz=False)]
+
+    class FactoryTrue(MsgspecFactory[FooTrue]):
+        __model__ = FooTrue
+
+    class FactoryFalse(MsgspecFactory[FooFalse]):
+        __model__ = FooFalse
+
+    with pytest.raises(ParameterException):
+        FactoryTrue.build()
+
+    with pytest.raises(ParameterException):
+        FactoryFalse.build()
