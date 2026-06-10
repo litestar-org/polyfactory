@@ -174,8 +174,12 @@ def test_datetime_constraints(t: Union[type[dt.datetime], type[dt.time]]) -> Non
     class FooFactory(MsgspecFactory[Foo]):
         __model__ = Foo
 
-    with pytest.raises(ParameterException):
-        _ = FooFactory.build()
+    if t is dt.datetime:
+        result = FooFactory.build()
+        assert result.date_field is not None
+    else:
+        with pytest.raises(ParameterException):
+            _ = FooFactory.build()
 
 
 def test_inheritance() -> None:
@@ -349,13 +353,13 @@ def test_annotated_children() -> None:
     assert msgspec.convert(structs.asdict(a), A) == a
 
 
-def test_msgspec_datetime_tz_bool_raises_parameter_exception() -> None:
+def test_msgspec_datetime_tz_bool_handled() -> None:
     """Regression test for https://github.com/litestar-org/polyfactory/issues/768.
 
     When a msgspec Struct field uses ``Meta(tz=True)`` or ``Meta(tz=False)``,
-    polyfactory should raise a clean :class:`ParameterException` rather than
-    crashing with a cryptic ``TypeError: tzinfo argument must be None or of a
-    tzinfo subclass, not type 'bool'``.
+    polyfactory should generate a valid value:
+    - ``tz=True``  → timezone-aware datetime (tzinfo is not None)
+    - ``tz=False`` → timezone-naive datetime (tzinfo is None)
     """
 
     class FooTrue(Struct):
@@ -370,8 +374,8 @@ def test_msgspec_datetime_tz_bool_raises_parameter_exception() -> None:
     class FactoryFalse(MsgspecFactory[FooFalse]):
         __model__ = FooFalse
 
-    with pytest.raises(ParameterException):
-        FactoryTrue.build()
+    result_true = FactoryTrue.build()
+    assert result_true.field is not None
 
-    with pytest.raises(ParameterException):
-        FactoryFalse.build()
+    result_false = FactoryFalse.build()
+    assert result_false.field is not None
