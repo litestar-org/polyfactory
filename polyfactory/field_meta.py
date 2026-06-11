@@ -58,7 +58,7 @@ class Constraints(TypedDict):
     multiple_of: NotRequired[int | float | Decimal]
     path_type: NotRequired[Literal["file", "dir", "new"]]
     pattern: NotRequired[str | Pattern]
-    tz: NotRequired[datetime.tzinfo]
+    tz: NotRequired[datetime.tzinfo | bool]
     unique_items: NotRequired[bool]
     upper_case: NotRequired[bool]
     url: NotRequired[UrlConstraints]

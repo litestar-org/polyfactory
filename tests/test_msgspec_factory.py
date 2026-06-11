@@ -9,7 +9,6 @@ import msgspec
 import pytest
 from msgspec import Meta, Struct, structs
 
-from polyfactory.exceptions import ParameterException
 from polyfactory.factories.msgspec_factory import MsgspecFactory
 
 
@@ -166,16 +165,20 @@ def test_dict_constraints() -> None:
 
 
 @pytest.mark.skipif(sys.version_info < (3, 9), reason="flaky in 3.8")
-@pytest.mark.parametrize("t", (dt.datetime, dt.time))
-def test_datetime_constraints(t: Union[type[dt.datetime], type[dt.time]]) -> None:
+@pytest.mark.parametrize(("tz", "expects_tzinfo"), ((True, True), (False, False)))
+def test_datetime_constraints(tz: bool, expects_tzinfo: bool) -> None:
     class Foo(Struct):
-        date_field: Annotated[t, msgspec.Meta(tz=True)]  # type: ignore[valid-type]
+        datetime_field: Annotated[dt.datetime, msgspec.Meta(tz=tz)]
 
     class FooFactory(MsgspecFactory[Foo]):
         __model__ = Foo
 
-    with pytest.raises(ParameterException):
-        _ = FooFactory.build()
+    foo = FooFactory.build()
+    foo_dict = structs.asdict(foo)
+
+    assert (foo.datetime_field.tzinfo is not None) is expects_tzinfo
+    validated_foo = msgspec.convert(foo_dict, type=Foo)
+    assert foo == validated_foo
 
 
 def test_inheritance() -> None:
