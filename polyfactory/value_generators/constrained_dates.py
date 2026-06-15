@@ -13,7 +13,7 @@ def handle_constrained_date(
     gt: date | None = None,
     le: date | None = None,
     lt: date | None = None,
-    tz: tzinfo = timezone.utc,
+    tz: tzinfo | bool = timezone.utc,
 ) -> date:
     """Generates a date value fulfilling the expected constraints.
 
@@ -22,10 +22,14 @@ def handle_constrained_date(
     :param le: Less than or equal value.
     :param gt: Greater than value.
     :param ge: Greater than or equal value.
-    :param tz: A timezone.
+    :param tz: A timezone (tzinfo) or a bool from msgspec.Meta tz constraint.
 
     :returns: A date instance.
     """
+    # Handle msgspec.Meta tz constraint which is a bool, not a tzinfo
+    if isinstance(tz, bool):
+        tz = timezone.utc if tz else None  # type: ignore[assignment]
+
     start_date = datetime.now(tz=tz).date() - timedelta(days=100)
     if ge:
         start_date = ge
