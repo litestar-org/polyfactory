@@ -894,7 +894,11 @@ class BaseFactory(ABC, Generic[T]):
             unwrapped_annotation_meta = field_meta
             if is_union(field_meta.annotation):
                 unwrapped_annotation_meta = next(
-                    (meta for meta in (field_meta.children or []) if meta.annotation == unwrapped_annotation),
+                    (
+                        meta
+                        for meta in (field_meta.children or [])
+                        if unwrap_annotation(meta.annotation) == unwrapped_annotation
+                    ),
                     field_meta,
                 )
             if unwrapped_annotation in (None, NoneType):
