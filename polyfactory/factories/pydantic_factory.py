@@ -713,11 +713,29 @@ class ModelFactory(BaseFactory[T], Generic[T]):
         if cls.is_ignored_type(field_meta.annotation):
             return
 
+        field_meta = cast("PydanticFieldMeta", field_meta)
         if cls.__use_examples__:
-            examples = getattr(field_meta, "examples", None) or []
-            if len(examples) > 0:
-                yield CoverageContainer(examples)
-                return
+
+            def examples_coverage(field_meta: PydanticFieldMeta) -> Iterable[Any]:
+                examples = field_meta.examples or []
+                if len(examples) > 0:
+                    yield CoverageContainer(examples)
+                    return
+                if field_meta.children:
+                    # NoneType children aren't included in field_meta.children,
+                    # so to ensure that they are covered we need to check for them explicitly
+                    if NoneType in field_meta.type_args:
+                        yield None
+                    for child in field_meta.children:
+                        child = cast("PydanticFieldMeta", child)
+                        yield from examples_coverage(child)
+                    return
+                yield from super(ModelFactory, cls).get_field_value_coverage(
+                    field_meta, field_build_parameters, build_context
+                )
+
+            yield from examples_coverage(field_meta)
+            return
 
         yield from super().get_field_value_coverage(field_meta, field_build_parameters, build_context)
 
