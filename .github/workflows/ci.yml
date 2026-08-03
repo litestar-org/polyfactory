@@ -25,7 +25,7 @@ jobs:
       - name: Instal dependencies
         run: uv sync --all-groups
 
-      - uses: j178/prek-action@v2.0.6
+      - uses: j178/prek-action@v3.0.0
 
   test:
     runs-on: ubuntu-latest
