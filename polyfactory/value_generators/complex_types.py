@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from collections.abc import Iterable, MutableMapping, MutableSequence
+from collections.abc import Iterable, Mapping, MutableMapping, MutableSequence
 from collections.abc import Set as AbstractSet
 from typing import TYPE_CHECKING, Any, cast
 
@@ -30,7 +30,10 @@ def handle_collection_type(
 
     :returns: A built result.
     """
-    container = container_type()
+    try:
+        container = container_type()
+    except TypeError:
+        container = {}  # Fallback for abstract types like Mapping
     if field_meta.children is None or any(
         child_meta.annotation in factory._get_build_context(build_context)["seen_models"]
         for child_meta in field_meta.children
@@ -50,6 +53,26 @@ def handle_collection_type(
             )
             container[key] = value
         return container
+
+    if issubclass(container_type, Mapping):
+        # For non-mutable Mapping types (e.g. frozendict), build a dict first
+        # then construct the container. For abstract Mapping, fall back to dict.
+        result: dict[Any, Any] = {}
+        for key_field_meta, value_field_meta in cast(
+            "Iterable[tuple[FieldMeta, FieldMeta]]",
+            zip(field_meta.children[::2], field_meta.children[1::2]),
+        ):
+            key = factory.get_field_value(
+                key_field_meta, field_build_parameters=field_build_parameters, build_context=build_context
+            )
+            value = factory.get_field_value(
+                value_field_meta, field_build_parameters=field_build_parameters, build_context=build_context
+            )
+            result[key] = value
+        try:
+            return container_type(result)  # type: ignore[call-arg]
+        except TypeError:
+            return result
 
     if issubclass(container_type, MutableSequence):
         container.extend(
@@ -103,7 +126,10 @@ def handle_collection_type_coverage(  # noqa: C901, PLR0911
 
     :returns: An unresolved built result.
     """
-    container = container_type()
+    try:
+        container = container_type()
+    except TypeError:
+        container = {}  # Fallback for abstract types like Mapping
     if not field_meta.children:
         return container
 
@@ -116,6 +142,21 @@ def handle_collection_type_coverage(  # noqa: C901, PLR0911
             value = CoverageContainer(factory.get_field_value_coverage(value_field_meta, build_context=build_context))
             container[key] = value
         return container
+
+    if issubclass(container_type, Mapping):
+        # For non-mutable Mapping types, build a dict first then construct the container
+        result_dict: dict[Any, Any] = {}
+        for key_field_meta, value_field_meta in cast(
+            "Iterable[tuple[FieldMeta, FieldMeta]]",
+            zip(field_meta.children[::2], field_meta.children[1::2]),
+        ):
+            key = CoverageContainer(factory.get_field_value_coverage(key_field_meta, build_context=build_context))
+            value = CoverageContainer(factory.get_field_value_coverage(value_field_meta, build_context=build_context))
+            result_dict[key] = value
+        try:
+            return container_type(result_dict)  # type: ignore[call-arg]
+        except TypeError:
+            return result_dict
 
     if issubclass(container_type, MutableSequence):
         container_instance = container_type()
