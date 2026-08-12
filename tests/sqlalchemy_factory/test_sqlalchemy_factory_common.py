@@ -22,6 +22,7 @@ from sqlalchemy.engine import Engine
 from sqlalchemy.ext.asyncio import AsyncEngine, AsyncSession
 from sqlalchemy.ext.hybrid import hybrid_property
 from sqlalchemy.orm import Session
+from sqlalchemy.sql.expression import text
 
 try:
     from sqlalchemy.orm.collections import (
@@ -200,6 +201,25 @@ def test_optional_field() -> None:
 
     result = ModelFactory.build()
     assert result.optional_field is None
+
+
+def test_default_fields() -> None:
+    class Model(Base):
+        __tablename__ = "model_with_default_fields"
+
+        id = Column(Integer(), primary_key=True)
+        default_scalar = Column(Integer(), default=10)
+        default_callable = Column(String(), default=lambda: "callable")
+        default_sql = Column(String(), default=text("0"))
+
+    class ModelFactory(SQLAlchemyFactory[Model]):
+        __model__ = Model
+        __use_defaults__ = True
+
+    result = ModelFactory.build()
+    assert result.default_scalar == 10
+    assert result.default_callable == "callable"
+    assert result.default_sql == "0"
 
 
 @pytest.mark.parametrize("set_primary_key", (True, False))
