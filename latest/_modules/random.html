@@ -1071,246 +1071,254 @@ data-aria-dark="Switch to auto color mode">
 </span><span data-line="828">            <span class="k">if</span> <span class="ow">not</span> <span class="n">c</span><span class="p">:</span>
 </span><span data-line="829">                <span class="k">return</span> <span class="n">x</span>
 </span><span data-line="830">            <span class="k">while</span> <span class="kc">True</span><span class="p">:</span>
-</span><span data-line="831">                <span class="n">y</span> <span class="o">+=</span> <span class="n">_floor</span><span class="p">(</span><span class="n">_log2</span><span class="p">(</span><span class="n">random</span><span class="p">())</span> <span class="o">/</span> <span class="n">c</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1</span>
-</span><span data-line="832">                <span class="k">if</span> <span class="n">y</span> <span class="o">&gt;</span> <span class="n">n</span><span class="p">:</span>
-</span><span data-line="833">                    <span class="k">return</span> <span class="n">x</span>
-</span><span data-line="834">                <span class="n">x</span> <span class="o">+=</span> <span class="mi">1</span>
-</span><span data-line="835">
-</span><span data-line="836">        <span class="c1"># BTRS: Transformed rejection with squeeze method by Wolfgang Hörmann</span>
-</span><span data-line="837">        <span class="c1"># https://citeseerx.ist.psu.edu/viewdoc/download?doi=10.1.1.47.8407&amp;rep=rep1&amp;type=pdf</span>
-</span><span data-line="838">        <span class="k">assert</span> <span class="n">n</span><span class="o">*</span><span class="n">p</span> <span class="o">&gt;=</span> <span class="mf">10.0</span> <span class="ow">and</span> <span class="n">p</span> <span class="o">&lt;=</span> <span class="mf">0.5</span>
-</span><span data-line="839">        <span class="n">setup_complete</span> <span class="o">=</span> <span class="kc">False</span>
-</span><span data-line="840">
-</span><span data-line="841">        <span class="n">spq</span> <span class="o">=</span> <span class="n">_sqrt</span><span class="p">(</span><span class="n">n</span> <span class="o">*</span> <span class="n">p</span> <span class="o">*</span> <span class="p">(</span><span class="mf">1.0</span> <span class="o">-</span> <span class="n">p</span><span class="p">))</span>  <span class="c1"># Standard deviation of the distribution</span>
-</span><span data-line="842">        <span class="n">b</span> <span class="o">=</span> <span class="mf">1.15</span> <span class="o">+</span> <span class="mf">2.53</span> <span class="o">*</span> <span class="n">spq</span>
-</span><span data-line="843">        <span class="n">a</span> <span class="o">=</span> <span class="o">-</span><span class="mf">0.0873</span> <span class="o">+</span> <span class="mf">0.0248</span> <span class="o">*</span> <span class="n">b</span> <span class="o">+</span> <span class="mf">0.01</span> <span class="o">*</span> <span class="n">p</span>
-</span><span data-line="844">        <span class="n">c</span> <span class="o">=</span> <span class="n">n</span> <span class="o">*</span> <span class="n">p</span> <span class="o">+</span> <span class="mf">0.5</span>
-</span><span data-line="845">        <span class="n">vr</span> <span class="o">=</span> <span class="mf">0.92</span> <span class="o">-</span> <span class="mf">4.2</span> <span class="o">/</span> <span class="n">b</span>
-</span><span data-line="846">
-</span><span data-line="847">        <span class="k">while</span> <span class="kc">True</span><span class="p">:</span>
-</span><span data-line="848">
-</span><span data-line="849">            <span class="n">u</span> <span class="o">=</span> <span class="n">random</span><span class="p">()</span>
-</span><span data-line="850">            <span class="n">u</span> <span class="o">-=</span> <span class="mf">0.5</span>
-</span><span data-line="851">            <span class="n">us</span> <span class="o">=</span> <span class="mf">0.5</span> <span class="o">-</span> <span class="n">_fabs</span><span class="p">(</span><span class="n">u</span><span class="p">)</span>
-</span><span data-line="852">            <span class="n">k</span> <span class="o">=</span> <span class="n">_floor</span><span class="p">((</span><span class="mf">2.0</span> <span class="o">*</span> <span class="n">a</span> <span class="o">/</span> <span class="n">us</span> <span class="o">+</span> <span class="n">b</span><span class="p">)</span> <span class="o">*</span> <span class="n">u</span> <span class="o">+</span> <span class="n">c</span><span class="p">)</span>
-</span><span data-line="853">            <span class="k">if</span> <span class="n">k</span> <span class="o">&lt;</span> <span class="mi">0</span> <span class="ow">or</span> <span class="n">k</span> <span class="o">&gt;</span> <span class="n">n</span><span class="p">:</span>
-</span><span data-line="854">                <span class="k">continue</span>
-</span><span data-line="855">
-</span><span data-line="856">            <span class="c1"># The early-out &quot;squeeze&quot; test substantially reduces</span>
-</span><span data-line="857">            <span class="c1"># the number of acceptance condition evaluations.</span>
-</span><span data-line="858">            <span class="n">v</span> <span class="o">=</span> <span class="n">random</span><span class="p">()</span>
-</span><span data-line="859">            <span class="k">if</span> <span class="n">us</span> <span class="o">&gt;=</span> <span class="mf">0.07</span> <span class="ow">and</span> <span class="n">v</span> <span class="o">&lt;=</span> <span class="n">vr</span><span class="p">:</span>
-</span><span data-line="860">                <span class="k">return</span> <span class="n">k</span>
-</span><span data-line="861">
-</span><span data-line="862">            <span class="c1"># Acceptance-rejection test.</span>
-</span><span data-line="863">            <span class="c1"># Note, the original paper erroneously omits the call to log(v)</span>
-</span><span data-line="864">            <span class="c1"># when comparing to the log of the rescaled binomial distribution.</span>
-</span><span data-line="865">            <span class="k">if</span> <span class="ow">not</span> <span class="n">setup_complete</span><span class="p">:</span>
-</span><span data-line="866">                <span class="n">alpha</span> <span class="o">=</span> <span class="p">(</span><span class="mf">2.83</span> <span class="o">+</span> <span class="mf">5.1</span> <span class="o">/</span> <span class="n">b</span><span class="p">)</span> <span class="o">*</span> <span class="n">spq</span>
-</span><span data-line="867">                <span class="n">lpq</span> <span class="o">=</span> <span class="n">_log</span><span class="p">(</span><span class="n">p</span> <span class="o">/</span> <span class="p">(</span><span class="mf">1.0</span> <span class="o">-</span> <span class="n">p</span><span class="p">))</span>
-</span><span data-line="868">                <span class="n">m</span> <span class="o">=</span> <span class="n">_floor</span><span class="p">((</span><span class="n">n</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span> <span class="o">*</span> <span class="n">p</span><span class="p">)</span>         <span class="c1"># Mode of the distribution</span>
-</span><span data-line="869">                <span class="n">h</span> <span class="o">=</span> <span class="n">_lgamma</span><span class="p">(</span><span class="n">m</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span> <span class="o">+</span> <span class="n">_lgamma</span><span class="p">(</span><span class="n">n</span> <span class="o">-</span> <span class="n">m</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span>
-</span><span data-line="870">                <span class="n">setup_complete</span> <span class="o">=</span> <span class="kc">True</span>           <span class="c1"># Only needs to be done once</span>
-</span><span data-line="871">            <span class="n">v</span> <span class="o">*=</span> <span class="n">alpha</span> <span class="o">/</span> <span class="p">(</span><span class="n">a</span> <span class="o">/</span> <span class="p">(</span><span class="n">us</span> <span class="o">*</span> <span class="n">us</span><span class="p">)</span> <span class="o">+</span> <span class="n">b</span><span class="p">)</span>
-</span><span data-line="872">            <span class="k">if</span> <span class="n">_log</span><span class="p">(</span><span class="n">v</span><span class="p">)</span> <span class="o">&lt;=</span> <span class="n">h</span> <span class="o">-</span> <span class="n">_lgamma</span><span class="p">(</span><span class="n">k</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span> <span class="o">-</span> <span class="n">_lgamma</span><span class="p">(</span><span class="n">n</span> <span class="o">-</span> <span class="n">k</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span> <span class="o">+</span> <span class="p">(</span><span class="n">k</span> <span class="o">-</span> <span class="n">m</span><span class="p">)</span> <span class="o">*</span> <span class="n">lpq</span><span class="p">:</span>
-</span><span data-line="873">                <span class="k">return</span> <span class="n">k</span>
-</span><span data-line="874">
-</span><span data-line="875">
-</span><span data-line="876"><span class="c1">## ------------------------------------------------------------------</span>
-</span><span data-line="877"><span class="c1">## --------------- Operating System Random Source  ------------------</span>
-</span><span data-line="878">
-</span><span data-line="879">
-</span><span data-line="880"><span class="k">class</span><span class="w"> </span><span class="nc">SystemRandom</span><span class="p">(</span><span class="n">Random</span><span class="p">):</span>
-</span><span data-line="881"><span class="w">    </span><span class="sd">&quot;&quot;&quot;Alternate random number generator using sources provided</span>
-</span><span data-line="882"><span class="sd">    by the operating system (such as /dev/urandom on Unix or</span>
-</span><span data-line="883"><span class="sd">    CryptGenRandom on Windows).</span>
-</span><span data-line="884">
-</span><span data-line="885"><span class="sd">     Not available on all systems (see os.urandom() for details).</span>
+</span><span data-line="831">                <span class="k">try</span><span class="p">:</span>
+</span><span data-line="832">                    <span class="n">y</span> <span class="o">+=</span> <span class="n">_floor</span><span class="p">(</span><span class="n">_log2</span><span class="p">(</span><span class="n">random</span><span class="p">())</span> <span class="o">/</span> <span class="n">c</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1</span>
+</span><span data-line="833">                <span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
+</span><span data-line="834">                    <span class="c1"># Reject case where random() returned 0.0</span>
+</span><span data-line="835">                    <span class="k">continue</span>
+</span><span data-line="836">                <span class="k">if</span> <span class="n">y</span> <span class="o">&gt;</span> <span class="n">n</span><span class="p">:</span>
+</span><span data-line="837">                    <span class="k">return</span> <span class="n">x</span>
+</span><span data-line="838">                <span class="n">x</span> <span class="o">+=</span> <span class="mi">1</span>
+</span><span data-line="839">
+</span><span data-line="840">        <span class="c1"># BTRS: Transformed rejection with squeeze method by Wolfgang Hörmann</span>
+</span><span data-line="841">        <span class="c1"># https://citeseerx.ist.psu.edu/viewdoc/download?doi=10.1.1.47.8407&amp;rep=rep1&amp;type=pdf</span>
+</span><span data-line="842">        <span class="k">assert</span> <span class="n">n</span><span class="o">*</span><span class="n">p</span> <span class="o">&gt;=</span> <span class="mf">10.0</span> <span class="ow">and</span> <span class="n">p</span> <span class="o">&lt;=</span> <span class="mf">0.5</span>
+</span><span data-line="843">        <span class="n">setup_complete</span> <span class="o">=</span> <span class="kc">False</span>
+</span><span data-line="844">
+</span><span data-line="845">        <span class="n">spq</span> <span class="o">=</span> <span class="n">_sqrt</span><span class="p">(</span><span class="n">n</span> <span class="o">*</span> <span class="n">p</span> <span class="o">*</span> <span class="p">(</span><span class="mf">1.0</span> <span class="o">-</span> <span class="n">p</span><span class="p">))</span>  <span class="c1"># Standard deviation of the distribution</span>
+</span><span data-line="846">        <span class="n">b</span> <span class="o">=</span> <span class="mf">1.15</span> <span class="o">+</span> <span class="mf">2.53</span> <span class="o">*</span> <span class="n">spq</span>
+</span><span data-line="847">        <span class="n">a</span> <span class="o">=</span> <span class="o">-</span><span class="mf">0.0873</span> <span class="o">+</span> <span class="mf">0.0248</span> <span class="o">*</span> <span class="n">b</span> <span class="o">+</span> <span class="mf">0.01</span> <span class="o">*</span> <span class="n">p</span>
+</span><span data-line="848">        <span class="n">c</span> <span class="o">=</span> <span class="n">n</span> <span class="o">*</span> <span class="n">p</span> <span class="o">+</span> <span class="mf">0.5</span>
+</span><span data-line="849">        <span class="n">vr</span> <span class="o">=</span> <span class="mf">0.92</span> <span class="o">-</span> <span class="mf">4.2</span> <span class="o">/</span> <span class="n">b</span>
+</span><span data-line="850">
+</span><span data-line="851">        <span class="k">while</span> <span class="kc">True</span><span class="p">:</span>
+</span><span data-line="852">
+</span><span data-line="853">            <span class="n">u</span> <span class="o">=</span> <span class="n">random</span><span class="p">()</span>
+</span><span data-line="854">            <span class="n">u</span> <span class="o">-=</span> <span class="mf">0.5</span>
+</span><span data-line="855">            <span class="n">us</span> <span class="o">=</span> <span class="mf">0.5</span> <span class="o">-</span> <span class="n">_fabs</span><span class="p">(</span><span class="n">u</span><span class="p">)</span>
+</span><span data-line="856">            <span class="k">try</span><span class="p">:</span>
+</span><span data-line="857">                <span class="n">k</span> <span class="o">=</span> <span class="n">_floor</span><span class="p">((</span><span class="mf">2.0</span> <span class="o">*</span> <span class="n">a</span> <span class="o">/</span> <span class="n">us</span> <span class="o">+</span> <span class="n">b</span><span class="p">)</span> <span class="o">*</span> <span class="n">u</span> <span class="o">+</span> <span class="n">c</span><span class="p">)</span>
+</span><span data-line="858">            <span class="k">except</span> <span class="ne">ZeroDivisionError</span><span class="p">:</span>
+</span><span data-line="859">                <span class="c1"># Reject case where random() returned 0.0</span>
+</span><span data-line="860">                <span class="k">continue</span>
+</span><span data-line="861">            <span class="k">if</span> <span class="n">k</span> <span class="o">&lt;</span> <span class="mi">0</span> <span class="ow">or</span> <span class="n">k</span> <span class="o">&gt;</span> <span class="n">n</span><span class="p">:</span>
+</span><span data-line="862">                <span class="k">continue</span>
+</span><span data-line="863">
+</span><span data-line="864">            <span class="c1"># The early-out &quot;squeeze&quot; test substantially reduces</span>
+</span><span data-line="865">            <span class="c1"># the number of acceptance condition evaluations.</span>
+</span><span data-line="866">            <span class="n">v</span> <span class="o">=</span> <span class="n">random</span><span class="p">()</span>
+</span><span data-line="867">            <span class="k">if</span> <span class="n">us</span> <span class="o">&gt;=</span> <span class="mf">0.07</span> <span class="ow">and</span> <span class="n">v</span> <span class="o">&lt;=</span> <span class="n">vr</span><span class="p">:</span>
+</span><span data-line="868">                <span class="k">return</span> <span class="n">k</span>
+</span><span data-line="869">
+</span><span data-line="870">            <span class="c1"># Acceptance-rejection test.</span>
+</span><span data-line="871">            <span class="c1"># Note, the original paper erroneously omits the call to log(v)</span>
+</span><span data-line="872">            <span class="c1"># when comparing to the log of the rescaled binomial distribution.</span>
+</span><span data-line="873">            <span class="k">if</span> <span class="ow">not</span> <span class="n">setup_complete</span><span class="p">:</span>
+</span><span data-line="874">                <span class="n">alpha</span> <span class="o">=</span> <span class="p">(</span><span class="mf">2.83</span> <span class="o">+</span> <span class="mf">5.1</span> <span class="o">/</span> <span class="n">b</span><span class="p">)</span> <span class="o">*</span> <span class="n">spq</span>
+</span><span data-line="875">                <span class="n">lpq</span> <span class="o">=</span> <span class="n">_log</span><span class="p">(</span><span class="n">p</span> <span class="o">/</span> <span class="p">(</span><span class="mf">1.0</span> <span class="o">-</span> <span class="n">p</span><span class="p">))</span>
+</span><span data-line="876">                <span class="n">m</span> <span class="o">=</span> <span class="n">_floor</span><span class="p">((</span><span class="n">n</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span> <span class="o">*</span> <span class="n">p</span><span class="p">)</span>         <span class="c1"># Mode of the distribution</span>
+</span><span data-line="877">                <span class="n">h</span> <span class="o">=</span> <span class="n">_lgamma</span><span class="p">(</span><span class="n">m</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span> <span class="o">+</span> <span class="n">_lgamma</span><span class="p">(</span><span class="n">n</span> <span class="o">-</span> <span class="n">m</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span>
+</span><span data-line="878">                <span class="n">setup_complete</span> <span class="o">=</span> <span class="kc">True</span>           <span class="c1"># Only needs to be done once</span>
+</span><span data-line="879">            <span class="n">v</span> <span class="o">*=</span> <span class="n">alpha</span> <span class="o">/</span> <span class="p">(</span><span class="n">a</span> <span class="o">/</span> <span class="p">(</span><span class="n">us</span> <span class="o">*</span> <span class="n">us</span><span class="p">)</span> <span class="o">+</span> <span class="n">b</span><span class="p">)</span>
+</span><span data-line="880">            <span class="k">if</span> <span class="n">_log</span><span class="p">(</span><span class="n">v</span><span class="p">)</span> <span class="o">&lt;=</span> <span class="n">h</span> <span class="o">-</span> <span class="n">_lgamma</span><span class="p">(</span><span class="n">k</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span> <span class="o">-</span> <span class="n">_lgamma</span><span class="p">(</span><span class="n">n</span> <span class="o">-</span> <span class="n">k</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span> <span class="o">+</span> <span class="p">(</span><span class="n">k</span> <span class="o">-</span> <span class="n">m</span><span class="p">)</span> <span class="o">*</span> <span class="n">lpq</span><span class="p">:</span>
+</span><span data-line="881">                <span class="k">return</span> <span class="n">k</span>
+</span><span data-line="882">
+</span><span data-line="883">
+</span><span data-line="884"><span class="c1">## ------------------------------------------------------------------</span>
+</span><span data-line="885"><span class="c1">## --------------- Operating System Random Source  ------------------</span>
 </span><span data-line="886">
-</span><span data-line="887"><span class="sd">    &quot;&quot;&quot;</span>
-</span><span data-line="888">
-</span><span data-line="889">    <span class="k">def</span><span class="w"> </span><span class="nf">random</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-</span><span data-line="890"><span class="w">        </span><span class="sd">&quot;&quot;&quot;Get the next random number in the range 0.0 &lt;= X &lt; 1.0.&quot;&quot;&quot;</span>
-</span><span data-line="891">        <span class="k">return</span> <span class="p">(</span><span class="nb">int</span><span class="o">.</span><span class="n">from_bytes</span><span class="p">(</span><span class="n">_urandom</span><span class="p">(</span><span class="mi">7</span><span class="p">))</span> <span class="o">&gt;&gt;</span> <span class="mi">3</span><span class="p">)</span> <span class="o">*</span> <span class="n">RECIP_BPF</span>
+</span><span data-line="887">
+</span><span data-line="888"><span class="k">class</span><span class="w"> </span><span class="nc">SystemRandom</span><span class="p">(</span><span class="n">Random</span><span class="p">):</span>
+</span><span data-line="889"><span class="w">    </span><span class="sd">&quot;&quot;&quot;Alternate random number generator using sources provided</span>
+</span><span data-line="890"><span class="sd">    by the operating system (such as /dev/urandom on Unix or</span>
+</span><span data-line="891"><span class="sd">    CryptGenRandom on Windows).</span>
 </span><span data-line="892">
-</span><span data-line="893">    <span class="k">def</span><span class="w"> </span><span class="nf">getrandbits</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">k</span><span class="p">):</span>
-</span><span data-line="894"><span class="w">        </span><span class="sd">&quot;&quot;&quot;getrandbits(k) -&gt; x.  Generates an int with k random bits.&quot;&quot;&quot;</span>
-</span><span data-line="895">        <span class="k">if</span> <span class="n">k</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">:</span>
-</span><span data-line="896">            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;number of bits must be non-negative&#39;</span><span class="p">)</span>
-</span><span data-line="897">        <span class="n">numbytes</span> <span class="o">=</span> <span class="p">(</span><span class="n">k</span> <span class="o">+</span> <span class="mi">7</span><span class="p">)</span> <span class="o">//</span> <span class="mi">8</span>                       <span class="c1"># bits / 8 and rounded up</span>
-</span><span data-line="898">        <span class="n">x</span> <span class="o">=</span> <span class="nb">int</span><span class="o">.</span><span class="n">from_bytes</span><span class="p">(</span><span class="n">_urandom</span><span class="p">(</span><span class="n">numbytes</span><span class="p">))</span>
-</span><span data-line="899">        <span class="k">return</span> <span class="n">x</span> <span class="o">&gt;&gt;</span> <span class="p">(</span><span class="n">numbytes</span> <span class="o">*</span> <span class="mi">8</span> <span class="o">-</span> <span class="n">k</span><span class="p">)</span>                <span class="c1"># trim excess bits</span>
+</span><span data-line="893"><span class="sd">     Not available on all systems (see os.urandom() for details).</span>
+</span><span data-line="894">
+</span><span data-line="895"><span class="sd">    &quot;&quot;&quot;</span>
+</span><span data-line="896">
+</span><span data-line="897">    <span class="k">def</span><span class="w"> </span><span class="nf">random</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+</span><span data-line="898"><span class="w">        </span><span class="sd">&quot;&quot;&quot;Get the next random number in the range 0.0 &lt;= X &lt; 1.0.&quot;&quot;&quot;</span>
+</span><span data-line="899">        <span class="k">return</span> <span class="p">(</span><span class="nb">int</span><span class="o">.</span><span class="n">from_bytes</span><span class="p">(</span><span class="n">_urandom</span><span class="p">(</span><span class="mi">7</span><span class="p">))</span> <span class="o">&gt;&gt;</span> <span class="mi">3</span><span class="p">)</span> <span class="o">*</span> <span class="n">RECIP_BPF</span>
 </span><span data-line="900">
-</span><span data-line="901">    <span class="k">def</span><span class="w"> </span><span class="nf">randbytes</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">n</span><span class="p">):</span>
-</span><span data-line="902"><span class="w">        </span><span class="sd">&quot;&quot;&quot;Generate n random bytes.&quot;&quot;&quot;</span>
-</span><span data-line="903">        <span class="c1"># os.urandom(n) fails with ValueError for n &lt; 0</span>
-</span><span data-line="904">        <span class="c1"># and returns an empty bytes string for n == 0.</span>
-</span><span data-line="905">        <span class="k">return</span> <span class="n">_urandom</span><span class="p">(</span><span class="n">n</span><span class="p">)</span>
-</span><span data-line="906">
-</span><span data-line="907">    <span class="k">def</span><span class="w"> </span><span class="nf">seed</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwds</span><span class="p">):</span>
-</span><span data-line="908">        <span class="s2">&quot;Stub method.  Not used for a system random number generator.&quot;</span>
-</span><span data-line="909">        <span class="k">return</span> <span class="kc">None</span>
-</span><span data-line="910">
-</span><span data-line="911">    <span class="k">def</span><span class="w"> </span><span class="nf">_notimplemented</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwds</span><span class="p">):</span>
-</span><span data-line="912">        <span class="s2">&quot;Method should not be called for a system random number generator.&quot;</span>
-</span><span data-line="913">        <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span><span class="s1">&#39;System entropy source does not have state.&#39;</span><span class="p">)</span>
-</span><span data-line="914">    <span class="n">getstate</span> <span class="o">=</span> <span class="n">setstate</span> <span class="o">=</span> <span class="n">_notimplemented</span>
-</span><span data-line="915">
-</span><span data-line="916">
-</span><span data-line="917"><span class="c1"># ----------------------------------------------------------------------</span>
-</span><span data-line="918"><span class="c1"># Create one instance, seeded from current time, and export its methods</span>
-</span><span data-line="919"><span class="c1"># as module-level functions.  The functions share state across all uses</span>
-</span><span data-line="920"><span class="c1"># (both in the user&#39;s code and in the Python libraries), but that&#39;s fine</span>
-</span><span data-line="921"><span class="c1"># for most programs and is easier for the casual user than making them</span>
-</span><span data-line="922"><span class="c1"># instantiate their own Random() instance.</span>
+</span><span data-line="901">    <span class="k">def</span><span class="w"> </span><span class="nf">getrandbits</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">k</span><span class="p">):</span>
+</span><span data-line="902"><span class="w">        </span><span class="sd">&quot;&quot;&quot;getrandbits(k) -&gt; x.  Generates an int with k random bits.&quot;&quot;&quot;</span>
+</span><span data-line="903">        <span class="k">if</span> <span class="n">k</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">:</span>
+</span><span data-line="904">            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;number of bits must be non-negative&#39;</span><span class="p">)</span>
+</span><span data-line="905">        <span class="n">numbytes</span> <span class="o">=</span> <span class="p">(</span><span class="n">k</span> <span class="o">+</span> <span class="mi">7</span><span class="p">)</span> <span class="o">//</span> <span class="mi">8</span>                       <span class="c1"># bits / 8 and rounded up</span>
+</span><span data-line="906">        <span class="n">x</span> <span class="o">=</span> <span class="nb">int</span><span class="o">.</span><span class="n">from_bytes</span><span class="p">(</span><span class="n">_urandom</span><span class="p">(</span><span class="n">numbytes</span><span class="p">))</span>
+</span><span data-line="907">        <span class="k">return</span> <span class="n">x</span> <span class="o">&gt;&gt;</span> <span class="p">(</span><span class="n">numbytes</span> <span class="o">*</span> <span class="mi">8</span> <span class="o">-</span> <span class="n">k</span><span class="p">)</span>                <span class="c1"># trim excess bits</span>
+</span><span data-line="908">
+</span><span data-line="909">    <span class="k">def</span><span class="w"> </span><span class="nf">randbytes</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">n</span><span class="p">):</span>
+</span><span data-line="910"><span class="w">        </span><span class="sd">&quot;&quot;&quot;Generate n random bytes.&quot;&quot;&quot;</span>
+</span><span data-line="911">        <span class="c1"># os.urandom(n) fails with ValueError for n &lt; 0</span>
+</span><span data-line="912">        <span class="c1"># and returns an empty bytes string for n == 0.</span>
+</span><span data-line="913">        <span class="k">return</span> <span class="n">_urandom</span><span class="p">(</span><span class="n">n</span><span class="p">)</span>
+</span><span data-line="914">
+</span><span data-line="915">    <span class="k">def</span><span class="w"> </span><span class="nf">seed</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwds</span><span class="p">):</span>
+</span><span data-line="916">        <span class="s2">&quot;Stub method.  Not used for a system random number generator.&quot;</span>
+</span><span data-line="917">        <span class="k">return</span> <span class="kc">None</span>
+</span><span data-line="918">
+</span><span data-line="919">    <span class="k">def</span><span class="w"> </span><span class="nf">_notimplemented</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwds</span><span class="p">):</span>
+</span><span data-line="920">        <span class="s2">&quot;Method should not be called for a system random number generator.&quot;</span>
+</span><span data-line="921">        <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span><span class="s1">&#39;System entropy source does not have state.&#39;</span><span class="p">)</span>
+</span><span data-line="922">    <span class="n">getstate</span> <span class="o">=</span> <span class="n">setstate</span> <span class="o">=</span> <span class="n">_notimplemented</span>
 </span><span data-line="923">
-</span><span data-line="924"><span class="n">_inst</span> <span class="o">=</span> <span class="n">Random</span><span class="p">()</span>
-</span><span data-line="925"><span class="n">seed</span> <span class="o">=</span> <span class="n">_inst</span><span class="o">.</span><span class="n">seed</span>
-</span><span data-line="926"><span class="n">random</span> <span class="o">=</span> <span class="n">_inst</span><span class="o">.</span><span class="n">random</span>
-</span><span data-line="927"><span class="n">uniform</span> <span class="o">=</span> <span class="n">_inst</span><span class="o">.</span><span class="n">uniform</span>
-</span><span data-line="928"><span class="n">triangular</span> <span class="o">=</span> <span class="n">_inst</span><span class="o">.</span><span class="n">triangular</span>
-</span><span data-line="929"><span class="n">randint</span> <span class="o">=</span> <span class="n">_inst</span><span class="o">.</span><span class="n">randint</span>
-</span><span data-line="930"><span class="n">choice</span> <span class="o">=</span> <span class="n">_inst</span><span class="o">.</span><span class="n">choice</span>
-</span><span data-line="931"><span class="n">randrange</span> <span class="o">=</span> <span class="n">_inst</span><span class="o">.</span><span class="n">randrange</span>
-</span><span data-line="932"><span class="n">sample</span> <span class="o">=</span> <span class="n">_inst</span><span class="o">.</span><span class="n">sample</span>
-</span><span data-line="933"><span class="n">shuffle</span> <span class="o">=</span> <span class="n">_inst</span><span class="o">.</span><span class="n">shuffle</span>
-</span><span data-line="934"><span class="n">choices</span> <span class="o">=</span> <span class="n">_inst</span><span class="o">.</span><span class="n">choices</span>
-</span><span data-line="935"><span class="n">normalvariate</span> <span class="o">=</span> <span class="n">_inst</span><span class="o">.</span><span class="n">normalvariate</span>
-</span><span data-line="936"><span class="n">lognormvariate</span> <span class="o">=</span> <span class="n">_inst</span><span class="o">.</span><span class="n">lognormvariate</span>
-</span><span data-line="937"><span class="n">expovariate</span> <span class="o">=</span> <span class="n">_inst</span><span class="o">.</span><span class="n">expovariate</span>
-</span><span data-line="938"><span class="n">vonmisesvariate</span> <span class="o">=</span> <span class="n">_inst</span><span class="o">.</span><span class="n">vonmisesvariate</span>
-</span><span data-line="939"><span class="n">gammavariate</span> <span class="o">=</span> <span class="n">_inst</span><span class="o">.</span><span class="n">gammavariate</span>
-</span><span data-line="940"><span class="n">gauss</span> <span class="o">=</span> <span class="n">_inst</span><span class="o">.</span><span class="n">gauss</span>
-</span><span data-line="941"><span class="n">betavariate</span> <span class="o">=</span> <span class="n">_inst</span><span class="o">.</span><span class="n">betavariate</span>
-</span><span data-line="942"><span class="n">binomialvariate</span> <span class="o">=</span> <span class="n">_inst</span><span class="o">.</span><span class="n">binomialvariate</span>
-</span><span data-line="943"><span class="n">paretovariate</span> <span class="o">=</span> <span class="n">_inst</span><span class="o">.</span><span class="n">paretovariate</span>
-</span><span data-line="944"><span class="n">weibullvariate</span> <span class="o">=</span> <span class="n">_inst</span><span class="o">.</span><span class="n">weibullvariate</span>
-</span><span data-line="945"><span class="n">getstate</span> <span class="o">=</span> <span class="n">_inst</span><span class="o">.</span><span class="n">getstate</span>
-</span><span data-line="946"><span class="n">setstate</span> <span class="o">=</span> <span class="n">_inst</span><span class="o">.</span><span class="n">setstate</span>
-</span><span data-line="947"><span class="n">getrandbits</span> <span class="o">=</span> <span class="n">_inst</span><span class="o">.</span><span class="n">getrandbits</span>
-</span><span data-line="948"><span class="n">randbytes</span> <span class="o">=</span> <span class="n">_inst</span><span class="o">.</span><span class="n">randbytes</span>
-</span><span data-line="949">
-</span><span data-line="950">
-</span><span data-line="951"><span class="c1">## ------------------------------------------------------</span>
-</span><span data-line="952"><span class="c1">## ----------------- test program -----------------------</span>
-</span><span data-line="953">
-</span><span data-line="954"><span class="k">def</span><span class="w"> </span><span class="nf">_test_generator</span><span class="p">(</span><span class="n">n</span><span class="p">,</span> <span class="n">func</span><span class="p">,</span> <span class="n">args</span><span class="p">):</span>
-</span><span data-line="955">    <span class="kn">from</span><span class="w"> </span><span class="nn">statistics</span><span class="w"> </span><span class="kn">import</span> <span class="n">stdev</span><span class="p">,</span> <span class="n">fmean</span> <span class="k">as</span> <span class="n">mean</span>
-</span><span data-line="956">    <span class="kn">from</span><span class="w"> </span><span class="nn">time</span><span class="w"> </span><span class="kn">import</span> <span class="n">perf_counter</span>
+</span><span data-line="924">
+</span><span data-line="925"><span class="c1"># ----------------------------------------------------------------------</span>
+</span><span data-line="926"><span class="c1"># Create one instance, seeded from current time, and export its methods</span>
+</span><span data-line="927"><span class="c1"># as module-level functions.  The functions share state across all uses</span>
+</span><span data-line="928"><span class="c1"># (both in the user&#39;s code and in the Python libraries), but that&#39;s fine</span>
+</span><span data-line="929"><span class="c1"># for most programs and is easier for the casual user than making them</span>
+</span><span data-line="930"><span class="c1"># instantiate their own Random() instance.</span>
+</span><span data-line="931">
+</span><span data-line="932"><span class="n">_inst</span> <span class="o">=</span> <span class="n">Random</span><span class="p">()</span>
+</span><span data-line="933"><span class="n">seed</span> <span class="o">=</span> <span class="n">_inst</span><span class="o">.</span><span class="n">seed</span>
+</span><span data-line="934"><span class="n">random</span> <span class="o">=</span> <span class="n">_inst</span><span class="o">.</span><span class="n">random</span>
+</span><span data-line="935"><span class="n">uniform</span> <span class="o">=</span> <span class="n">_inst</span><span class="o">.</span><span class="n">uniform</span>
+</span><span data-line="936"><span class="n">triangular</span> <span class="o">=</span> <span class="n">_inst</span><span class="o">.</span><span class="n">triangular</span>
+</span><span data-line="937"><span class="n">randint</span> <span class="o">=</span> <span class="n">_inst</span><span class="o">.</span><span class="n">randint</span>
+</span><span data-line="938"><span class="n">choice</span> <span class="o">=</span> <span class="n">_inst</span><span class="o">.</span><span class="n">choice</span>
+</span><span data-line="939"><span class="n">randrange</span> <span class="o">=</span> <span class="n">_inst</span><span class="o">.</span><span class="n">randrange</span>
+</span><span data-line="940"><span class="n">sample</span> <span class="o">=</span> <span class="n">_inst</span><span class="o">.</span><span class="n">sample</span>
+</span><span data-line="941"><span class="n">shuffle</span> <span class="o">=</span> <span class="n">_inst</span><span class="o">.</span><span class="n">shuffle</span>
+</span><span data-line="942"><span class="n">choices</span> <span class="o">=</span> <span class="n">_inst</span><span class="o">.</span><span class="n">choices</span>
+</span><span data-line="943"><span class="n">normalvariate</span> <span class="o">=</span> <span class="n">_inst</span><span class="o">.</span><span class="n">normalvariate</span>
+</span><span data-line="944"><span class="n">lognormvariate</span> <span class="o">=</span> <span class="n">_inst</span><span class="o">.</span><span class="n">lognormvariate</span>
+</span><span data-line="945"><span class="n">expovariate</span> <span class="o">=</span> <span class="n">_inst</span><span class="o">.</span><span class="n">expovariate</span>
+</span><span data-line="946"><span class="n">vonmisesvariate</span> <span class="o">=</span> <span class="n">_inst</span><span class="o">.</span><span class="n">vonmisesvariate</span>
+</span><span data-line="947"><span class="n">gammavariate</span> <span class="o">=</span> <span class="n">_inst</span><span class="o">.</span><span class="n">gammavariate</span>
+</span><span data-line="948"><span class="n">gauss</span> <span class="o">=</span> <span class="n">_inst</span><span class="o">.</span><span class="n">gauss</span>
+</span><span data-line="949"><span class="n">betavariate</span> <span class="o">=</span> <span class="n">_inst</span><span class="o">.</span><span class="n">betavariate</span>
+</span><span data-line="950"><span class="n">binomialvariate</span> <span class="o">=</span> <span class="n">_inst</span><span class="o">.</span><span class="n">binomialvariate</span>
+</span><span data-line="951"><span class="n">paretovariate</span> <span class="o">=</span> <span class="n">_inst</span><span class="o">.</span><span class="n">paretovariate</span>
+</span><span data-line="952"><span class="n">weibullvariate</span> <span class="o">=</span> <span class="n">_inst</span><span class="o">.</span><span class="n">weibullvariate</span>
+</span><span data-line="953"><span class="n">getstate</span> <span class="o">=</span> <span class="n">_inst</span><span class="o">.</span><span class="n">getstate</span>
+</span><span data-line="954"><span class="n">setstate</span> <span class="o">=</span> <span class="n">_inst</span><span class="o">.</span><span class="n">setstate</span>
+</span><span data-line="955"><span class="n">getrandbits</span> <span class="o">=</span> <span class="n">_inst</span><span class="o">.</span><span class="n">getrandbits</span>
+</span><span data-line="956"><span class="n">randbytes</span> <span class="o">=</span> <span class="n">_inst</span><span class="o">.</span><span class="n">randbytes</span>
 </span><span data-line="957">
-</span><span data-line="958">    <span class="n">t0</span> <span class="o">=</span> <span class="n">perf_counter</span><span class="p">()</span>
-</span><span data-line="959">    <span class="n">data</span> <span class="o">=</span> <span class="p">[</span><span class="n">func</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">_repeat</span><span class="p">(</span><span class="kc">None</span><span class="p">,</span> <span class="n">n</span><span class="p">)]</span>
-</span><span data-line="960">    <span class="n">t1</span> <span class="o">=</span> <span class="n">perf_counter</span><span class="p">()</span>
+</span><span data-line="958">
+</span><span data-line="959"><span class="c1">## ------------------------------------------------------</span>
+</span><span data-line="960"><span class="c1">## ----------------- test program -----------------------</span>
 </span><span data-line="961">
-</span><span data-line="962">    <span class="n">xbar</span> <span class="o">=</span> <span class="n">mean</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
-</span><span data-line="963">    <span class="n">sigma</span> <span class="o">=</span> <span class="n">stdev</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">xbar</span><span class="p">)</span>
-</span><span data-line="964">    <span class="n">low</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
-</span><span data-line="965">    <span class="n">high</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
-</span><span data-line="966">
-</span><span data-line="967">    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">t1</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="n">t0</span><span class="si">:</span><span class="s1">.3f</span><span class="si">}</span><span class="s1"> sec, </span><span class="si">{</span><span class="n">n</span><span class="si">}</span><span class="s1"> times </span><span class="si">{</span><span class="n">func</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}{</span><span class="n">args</span><span class="si">!r}</span><span class="s1">&#39;</span><span class="p">)</span>
-</span><span data-line="968">    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;avg </span><span class="si">%g</span><span class="s1">, stddev </span><span class="si">%g</span><span class="s1">, min </span><span class="si">%g</span><span class="s1">, max </span><span class="si">%g</span><span class="se">\n</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">xbar</span><span class="p">,</span> <span class="n">sigma</span><span class="p">,</span> <span class="n">low</span><span class="p">,</span> <span class="n">high</span><span class="p">))</span>
+</span><span data-line="962"><span class="k">def</span><span class="w"> </span><span class="nf">_test_generator</span><span class="p">(</span><span class="n">n</span><span class="p">,</span> <span class="n">func</span><span class="p">,</span> <span class="n">args</span><span class="p">):</span>
+</span><span data-line="963">    <span class="kn">from</span><span class="w"> </span><span class="nn">statistics</span><span class="w"> </span><span class="kn">import</span> <span class="n">stdev</span><span class="p">,</span> <span class="n">fmean</span> <span class="k">as</span> <span class="n">mean</span>
+</span><span data-line="964">    <span class="kn">from</span><span class="w"> </span><span class="nn">time</span><span class="w"> </span><span class="kn">import</span> <span class="n">perf_counter</span>
+</span><span data-line="965">
+</span><span data-line="966">    <span class="n">t0</span> <span class="o">=</span> <span class="n">perf_counter</span><span class="p">()</span>
+</span><span data-line="967">    <span class="n">data</span> <span class="o">=</span> <span class="p">[</span><span class="n">func</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">_repeat</span><span class="p">(</span><span class="kc">None</span><span class="p">,</span> <span class="n">n</span><span class="p">)]</span>
+</span><span data-line="968">    <span class="n">t1</span> <span class="o">=</span> <span class="n">perf_counter</span><span class="p">()</span>
 </span><span data-line="969">
-</span><span data-line="970">
-</span><span data-line="971"><span class="k">def</span><span class="w"> </span><span class="nf">_test</span><span class="p">(</span><span class="n">N</span><span class="o">=</span><span class="mi">10_000</span><span class="p">):</span>
-</span><span data-line="972">    <span class="n">_test_generator</span><span class="p">(</span><span class="n">N</span><span class="p">,</span> <span class="n">random</span><span class="p">,</span> <span class="p">())</span>
-</span><span data-line="973">    <span class="n">_test_generator</span><span class="p">(</span><span class="n">N</span><span class="p">,</span> <span class="n">normalvariate</span><span class="p">,</span> <span class="p">(</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">))</span>
-</span><span data-line="974">    <span class="n">_test_generator</span><span class="p">(</span><span class="n">N</span><span class="p">,</span> <span class="n">lognormvariate</span><span class="p">,</span> <span class="p">(</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">))</span>
-</span><span data-line="975">    <span class="n">_test_generator</span><span class="p">(</span><span class="n">N</span><span class="p">,</span> <span class="n">vonmisesvariate</span><span class="p">,</span> <span class="p">(</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">))</span>
-</span><span data-line="976">    <span class="n">_test_generator</span><span class="p">(</span><span class="n">N</span><span class="p">,</span> <span class="n">binomialvariate</span><span class="p">,</span> <span class="p">(</span><span class="mi">15</span><span class="p">,</span> <span class="mf">0.60</span><span class="p">))</span>
-</span><span data-line="977">    <span class="n">_test_generator</span><span class="p">(</span><span class="n">N</span><span class="p">,</span> <span class="n">binomialvariate</span><span class="p">,</span> <span class="p">(</span><span class="mi">100</span><span class="p">,</span> <span class="mf">0.75</span><span class="p">))</span>
-</span><span data-line="978">    <span class="n">_test_generator</span><span class="p">(</span><span class="n">N</span><span class="p">,</span> <span class="n">gammavariate</span><span class="p">,</span> <span class="p">(</span><span class="mf">0.01</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">))</span>
-</span><span data-line="979">    <span class="n">_test_generator</span><span class="p">(</span><span class="n">N</span><span class="p">,</span> <span class="n">gammavariate</span><span class="p">,</span> <span class="p">(</span><span class="mf">0.1</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">))</span>
-</span><span data-line="980">    <span class="n">_test_generator</span><span class="p">(</span><span class="n">N</span><span class="p">,</span> <span class="n">gammavariate</span><span class="p">,</span> <span class="p">(</span><span class="mf">0.1</span><span class="p">,</span> <span class="mf">2.0</span><span class="p">))</span>
-</span><span data-line="981">    <span class="n">_test_generator</span><span class="p">(</span><span class="n">N</span><span class="p">,</span> <span class="n">gammavariate</span><span class="p">,</span> <span class="p">(</span><span class="mf">0.5</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">))</span>
-</span><span data-line="982">    <span class="n">_test_generator</span><span class="p">(</span><span class="n">N</span><span class="p">,</span> <span class="n">gammavariate</span><span class="p">,</span> <span class="p">(</span><span class="mf">0.9</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">))</span>
-</span><span data-line="983">    <span class="n">_test_generator</span><span class="p">(</span><span class="n">N</span><span class="p">,</span> <span class="n">gammavariate</span><span class="p">,</span> <span class="p">(</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">))</span>
-</span><span data-line="984">    <span class="n">_test_generator</span><span class="p">(</span><span class="n">N</span><span class="p">,</span> <span class="n">gammavariate</span><span class="p">,</span> <span class="p">(</span><span class="mf">2.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">))</span>
-</span><span data-line="985">    <span class="n">_test_generator</span><span class="p">(</span><span class="n">N</span><span class="p">,</span> <span class="n">gammavariate</span><span class="p">,</span> <span class="p">(</span><span class="mf">20.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">))</span>
-</span><span data-line="986">    <span class="n">_test_generator</span><span class="p">(</span><span class="n">N</span><span class="p">,</span> <span class="n">gammavariate</span><span class="p">,</span> <span class="p">(</span><span class="mf">200.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">))</span>
-</span><span data-line="987">    <span class="n">_test_generator</span><span class="p">(</span><span class="n">N</span><span class="p">,</span> <span class="n">gauss</span><span class="p">,</span> <span class="p">(</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">))</span>
-</span><span data-line="988">    <span class="n">_test_generator</span><span class="p">(</span><span class="n">N</span><span class="p">,</span> <span class="n">betavariate</span><span class="p">,</span> <span class="p">(</span><span class="mf">3.0</span><span class="p">,</span> <span class="mf">3.0</span><span class="p">))</span>
-</span><span data-line="989">    <span class="n">_test_generator</span><span class="p">(</span><span class="n">N</span><span class="p">,</span> <span class="n">triangular</span><span class="p">,</span> <span class="p">(</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="mf">1.0</span> <span class="o">/</span> <span class="mf">3.0</span><span class="p">))</span>
-</span><span data-line="990">
-</span><span data-line="991">
-</span><span data-line="992"><span class="c1">## ------------------------------------------------------</span>
-</span><span data-line="993"><span class="c1">## ------------------ fork support  ---------------------</span>
-</span><span data-line="994">
-</span><span data-line="995"><span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">_os</span><span class="p">,</span> <span class="s2">&quot;fork&quot;</span><span class="p">):</span>
-</span><span data-line="996">    <span class="n">_os</span><span class="o">.</span><span class="n">register_at_fork</span><span class="p">(</span><span class="n">after_in_child</span><span class="o">=</span><span class="n">_inst</span><span class="o">.</span><span class="n">seed</span><span class="p">)</span>
-</span><span data-line="997">
+</span><span data-line="970">    <span class="n">xbar</span> <span class="o">=</span> <span class="n">mean</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+</span><span data-line="971">    <span class="n">sigma</span> <span class="o">=</span> <span class="n">stdev</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">xbar</span><span class="p">)</span>
+</span><span data-line="972">    <span class="n">low</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+</span><span data-line="973">    <span class="n">high</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+</span><span data-line="974">
+</span><span data-line="975">    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">t1</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="n">t0</span><span class="si">:</span><span class="s1">.3f</span><span class="si">}</span><span class="s1"> sec, </span><span class="si">{</span><span class="n">n</span><span class="si">}</span><span class="s1"> times </span><span class="si">{</span><span class="n">func</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}{</span><span class="n">args</span><span class="si">!r}</span><span class="s1">&#39;</span><span class="p">)</span>
+</span><span data-line="976">    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;avg </span><span class="si">%g</span><span class="s1">, stddev </span><span class="si">%g</span><span class="s1">, min </span><span class="si">%g</span><span class="s1">, max </span><span class="si">%g</span><span class="se">\n</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">xbar</span><span class="p">,</span> <span class="n">sigma</span><span class="p">,</span> <span class="n">low</span><span class="p">,</span> <span class="n">high</span><span class="p">))</span>
+</span><span data-line="977">
+</span><span data-line="978">
+</span><span data-line="979"><span class="k">def</span><span class="w"> </span><span class="nf">_test</span><span class="p">(</span><span class="n">N</span><span class="o">=</span><span class="mi">10_000</span><span class="p">):</span>
+</span><span data-line="980">    <span class="n">_test_generator</span><span class="p">(</span><span class="n">N</span><span class="p">,</span> <span class="n">random</span><span class="p">,</span> <span class="p">())</span>
+</span><span data-line="981">    <span class="n">_test_generator</span><span class="p">(</span><span class="n">N</span><span class="p">,</span> <span class="n">normalvariate</span><span class="p">,</span> <span class="p">(</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">))</span>
+</span><span data-line="982">    <span class="n">_test_generator</span><span class="p">(</span><span class="n">N</span><span class="p">,</span> <span class="n">lognormvariate</span><span class="p">,</span> <span class="p">(</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">))</span>
+</span><span data-line="983">    <span class="n">_test_generator</span><span class="p">(</span><span class="n">N</span><span class="p">,</span> <span class="n">vonmisesvariate</span><span class="p">,</span> <span class="p">(</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">))</span>
+</span><span data-line="984">    <span class="n">_test_generator</span><span class="p">(</span><span class="n">N</span><span class="p">,</span> <span class="n">binomialvariate</span><span class="p">,</span> <span class="p">(</span><span class="mi">15</span><span class="p">,</span> <span class="mf">0.60</span><span class="p">))</span>
+</span><span data-line="985">    <span class="n">_test_generator</span><span class="p">(</span><span class="n">N</span><span class="p">,</span> <span class="n">binomialvariate</span><span class="p">,</span> <span class="p">(</span><span class="mi">100</span><span class="p">,</span> <span class="mf">0.75</span><span class="p">))</span>
+</span><span data-line="986">    <span class="n">_test_generator</span><span class="p">(</span><span class="n">N</span><span class="p">,</span> <span class="n">gammavariate</span><span class="p">,</span> <span class="p">(</span><span class="mf">0.01</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">))</span>
+</span><span data-line="987">    <span class="n">_test_generator</span><span class="p">(</span><span class="n">N</span><span class="p">,</span> <span class="n">gammavariate</span><span class="p">,</span> <span class="p">(</span><span class="mf">0.1</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">))</span>
+</span><span data-line="988">    <span class="n">_test_generator</span><span class="p">(</span><span class="n">N</span><span class="p">,</span> <span class="n">gammavariate</span><span class="p">,</span> <span class="p">(</span><span class="mf">0.1</span><span class="p">,</span> <span class="mf">2.0</span><span class="p">))</span>
+</span><span data-line="989">    <span class="n">_test_generator</span><span class="p">(</span><span class="n">N</span><span class="p">,</span> <span class="n">gammavariate</span><span class="p">,</span> <span class="p">(</span><span class="mf">0.5</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">))</span>
+</span><span data-line="990">    <span class="n">_test_generator</span><span class="p">(</span><span class="n">N</span><span class="p">,</span> <span class="n">gammavariate</span><span class="p">,</span> <span class="p">(</span><span class="mf">0.9</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">))</span>
+</span><span data-line="991">    <span class="n">_test_generator</span><span class="p">(</span><span class="n">N</span><span class="p">,</span> <span class="n">gammavariate</span><span class="p">,</span> <span class="p">(</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">))</span>
+</span><span data-line="992">    <span class="n">_test_generator</span><span class="p">(</span><span class="n">N</span><span class="p">,</span> <span class="n">gammavariate</span><span class="p">,</span> <span class="p">(</span><span class="mf">2.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">))</span>
+</span><span data-line="993">    <span class="n">_test_generator</span><span class="p">(</span><span class="n">N</span><span class="p">,</span> <span class="n">gammavariate</span><span class="p">,</span> <span class="p">(</span><span class="mf">20.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">))</span>
+</span><span data-line="994">    <span class="n">_test_generator</span><span class="p">(</span><span class="n">N</span><span class="p">,</span> <span class="n">gammavariate</span><span class="p">,</span> <span class="p">(</span><span class="mf">200.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">))</span>
+</span><span data-line="995">    <span class="n">_test_generator</span><span class="p">(</span><span class="n">N</span><span class="p">,</span> <span class="n">gauss</span><span class="p">,</span> <span class="p">(</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">))</span>
+</span><span data-line="996">    <span class="n">_test_generator</span><span class="p">(</span><span class="n">N</span><span class="p">,</span> <span class="n">betavariate</span><span class="p">,</span> <span class="p">(</span><span class="mf">3.0</span><span class="p">,</span> <span class="mf">3.0</span><span class="p">))</span>
+</span><span data-line="997">    <span class="n">_test_generator</span><span class="p">(</span><span class="n">N</span><span class="p">,</span> <span class="n">triangular</span><span class="p">,</span> <span class="p">(</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="mf">1.0</span> <span class="o">/</span> <span class="mf">3.0</span><span class="p">))</span>
 </span><span data-line="998">
-</span><span data-line="999"><span class="c1"># ------------------------------------------------------</span>
-</span><span data-line="1000"><span class="c1"># -------------- command-line interface ----------------</span>
-</span><span data-line="1001">
+</span><span data-line="999">
+</span><span data-line="1000"><span class="c1">## ------------------------------------------------------</span>
+</span><span data-line="1001"><span class="c1">## ------------------ fork support  ---------------------</span>
 </span><span data-line="1002">
-</span><span data-line="1003"><span class="k">def</span><span class="w"> </span><span class="nf">_parse_args</span><span class="p">(</span><span class="n">arg_list</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span><span class="p">):</span>
-</span><span data-line="1004">    <span class="kn">import</span><span class="w"> </span><span class="nn">argparse</span>
-</span><span data-line="1005">    <span class="n">parser</span> <span class="o">=</span> <span class="n">argparse</span><span class="o">.</span><span class="n">ArgumentParser</span><span class="p">(</span>
-</span><span data-line="1006">        <span class="n">formatter_class</span><span class="o">=</span><span class="n">argparse</span><span class="o">.</span><span class="n">RawTextHelpFormatter</span><span class="p">)</span>
-</span><span data-line="1007">    <span class="n">group</span> <span class="o">=</span> <span class="n">parser</span><span class="o">.</span><span class="n">add_mutually_exclusive_group</span><span class="p">()</span>
-</span><span data-line="1008">    <span class="n">group</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
-</span><span data-line="1009">        <span class="s2">&quot;-c&quot;</span><span class="p">,</span> <span class="s2">&quot;--choice&quot;</span><span class="p">,</span> <span class="n">nargs</span><span class="o">=</span><span class="s2">&quot;+&quot;</span><span class="p">,</span>
-</span><span data-line="1010">        <span class="n">help</span><span class="o">=</span><span class="s2">&quot;print a random choice&quot;</span><span class="p">)</span>
-</span><span data-line="1011">    <span class="n">group</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
-</span><span data-line="1012">        <span class="s2">&quot;-i&quot;</span><span class="p">,</span> <span class="s2">&quot;--integer&quot;</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="nb">int</span><span class="p">,</span> <span class="n">metavar</span><span class="o">=</span><span class="s2">&quot;N&quot;</span><span class="p">,</span>
-</span><span data-line="1013">        <span class="n">help</span><span class="o">=</span><span class="s2">&quot;print a random integer between 1 and N inclusive&quot;</span><span class="p">)</span>
-</span><span data-line="1014">    <span class="n">group</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
-</span><span data-line="1015">        <span class="s2">&quot;-f&quot;</span><span class="p">,</span> <span class="s2">&quot;--float&quot;</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="nb">float</span><span class="p">,</span> <span class="n">metavar</span><span class="o">=</span><span class="s2">&quot;N&quot;</span><span class="p">,</span>
-</span><span data-line="1016">        <span class="n">help</span><span class="o">=</span><span class="s2">&quot;print a random floating-point number between 0 and N inclusive&quot;</span><span class="p">)</span>
-</span><span data-line="1017">    <span class="n">group</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
-</span><span data-line="1018">        <span class="s2">&quot;--test&quot;</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="nb">int</span><span class="p">,</span> <span class="n">const</span><span class="o">=</span><span class="mi">10_000</span><span class="p">,</span> <span class="n">nargs</span><span class="o">=</span><span class="s2">&quot;?&quot;</span><span class="p">,</span>
-</span><span data-line="1019">        <span class="n">help</span><span class="o">=</span><span class="n">argparse</span><span class="o">.</span><span class="n">SUPPRESS</span><span class="p">)</span>
-</span><span data-line="1020">    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s2">&quot;input&quot;</span><span class="p">,</span> <span class="n">nargs</span><span class="o">=</span><span class="s2">&quot;*&quot;</span><span class="p">,</span>
-</span><span data-line="1021">                        <span class="n">help</span><span class="o">=</span><span class="s2">&quot;&quot;&quot;</span><span class="se">\</span>
-</span><span data-line="1022"><span class="s2">if no options given, output depends on the input</span>
-</span><span data-line="1023"><span class="s2">    string or multiple: same as --choice</span>
-</span><span data-line="1024"><span class="s2">    integer: same as --integer</span>
-</span><span data-line="1025"><span class="s2">    float: same as --float&quot;&quot;&quot;</span><span class="p">)</span>
-</span><span data-line="1026">    <span class="n">args</span> <span class="o">=</span> <span class="n">parser</span><span class="o">.</span><span class="n">parse_args</span><span class="p">(</span><span class="n">arg_list</span><span class="p">)</span>
-</span><span data-line="1027">    <span class="k">return</span> <span class="n">args</span><span class="p">,</span> <span class="n">parser</span><span class="o">.</span><span class="n">format_help</span><span class="p">()</span>
-</span><span data-line="1028">
-</span><span data-line="1029">
-</span><span data-line="1030"><span class="k">def</span><span class="w"> </span><span class="nf">main</span><span class="p">(</span><span class="n">arg_list</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span> <span class="o">|</span> <span class="nb">str</span><span class="p">:</span>
-</span><span data-line="1031">    <span class="n">args</span><span class="p">,</span> <span class="n">help_text</span> <span class="o">=</span> <span class="n">_parse_args</span><span class="p">(</span><span class="n">arg_list</span><span class="p">)</span>
-</span><span data-line="1032">
-</span><span data-line="1033">    <span class="c1"># Explicit arguments</span>
-</span><span data-line="1034">    <span class="k">if</span> <span class="n">args</span><span class="o">.</span><span class="n">choice</span><span class="p">:</span>
-</span><span data-line="1035">        <span class="k">return</span> <span class="n">choice</span><span class="p">(</span><span class="n">args</span><span class="o">.</span><span class="n">choice</span><span class="p">)</span>
+</span><span data-line="1003"><span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">_os</span><span class="p">,</span> <span class="s2">&quot;fork&quot;</span><span class="p">):</span>
+</span><span data-line="1004">    <span class="n">_os</span><span class="o">.</span><span class="n">register_at_fork</span><span class="p">(</span><span class="n">after_in_child</span><span class="o">=</span><span class="n">_inst</span><span class="o">.</span><span class="n">seed</span><span class="p">)</span>
+</span><span data-line="1005">
+</span><span data-line="1006">
+</span><span data-line="1007"><span class="c1"># ------------------------------------------------------</span>
+</span><span data-line="1008"><span class="c1"># -------------- command-line interface ----------------</span>
+</span><span data-line="1009">
+</span><span data-line="1010">
+</span><span data-line="1011"><span class="k">def</span><span class="w"> </span><span class="nf">_parse_args</span><span class="p">(</span><span class="n">arg_list</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span><span class="p">):</span>
+</span><span data-line="1012">    <span class="kn">import</span><span class="w"> </span><span class="nn">argparse</span>
+</span><span data-line="1013">    <span class="n">parser</span> <span class="o">=</span> <span class="n">argparse</span><span class="o">.</span><span class="n">ArgumentParser</span><span class="p">(</span>
+</span><span data-line="1014">        <span class="n">formatter_class</span><span class="o">=</span><span class="n">argparse</span><span class="o">.</span><span class="n">RawTextHelpFormatter</span><span class="p">)</span>
+</span><span data-line="1015">    <span class="n">group</span> <span class="o">=</span> <span class="n">parser</span><span class="o">.</span><span class="n">add_mutually_exclusive_group</span><span class="p">()</span>
+</span><span data-line="1016">    <span class="n">group</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
+</span><span data-line="1017">        <span class="s2">&quot;-c&quot;</span><span class="p">,</span> <span class="s2">&quot;--choice&quot;</span><span class="p">,</span> <span class="n">nargs</span><span class="o">=</span><span class="s2">&quot;+&quot;</span><span class="p">,</span>
+</span><span data-line="1018">        <span class="n">help</span><span class="o">=</span><span class="s2">&quot;print a random choice&quot;</span><span class="p">)</span>
+</span><span data-line="1019">    <span class="n">group</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
+</span><span data-line="1020">        <span class="s2">&quot;-i&quot;</span><span class="p">,</span> <span class="s2">&quot;--integer&quot;</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="nb">int</span><span class="p">,</span> <span class="n">metavar</span><span class="o">=</span><span class="s2">&quot;N&quot;</span><span class="p">,</span>
+</span><span data-line="1021">        <span class="n">help</span><span class="o">=</span><span class="s2">&quot;print a random integer between 1 and N inclusive&quot;</span><span class="p">)</span>
+</span><span data-line="1022">    <span class="n">group</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
+</span><span data-line="1023">        <span class="s2">&quot;-f&quot;</span><span class="p">,</span> <span class="s2">&quot;--float&quot;</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="nb">float</span><span class="p">,</span> <span class="n">metavar</span><span class="o">=</span><span class="s2">&quot;N&quot;</span><span class="p">,</span>
+</span><span data-line="1024">        <span class="n">help</span><span class="o">=</span><span class="s2">&quot;print a random floating-point number between 0 and N inclusive&quot;</span><span class="p">)</span>
+</span><span data-line="1025">    <span class="n">group</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
+</span><span data-line="1026">        <span class="s2">&quot;--test&quot;</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="nb">int</span><span class="p">,</span> <span class="n">const</span><span class="o">=</span><span class="mi">10_000</span><span class="p">,</span> <span class="n">nargs</span><span class="o">=</span><span class="s2">&quot;?&quot;</span><span class="p">,</span>
+</span><span data-line="1027">        <span class="n">help</span><span class="o">=</span><span class="n">argparse</span><span class="o">.</span><span class="n">SUPPRESS</span><span class="p">)</span>
+</span><span data-line="1028">    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s2">&quot;input&quot;</span><span class="p">,</span> <span class="n">nargs</span><span class="o">=</span><span class="s2">&quot;*&quot;</span><span class="p">,</span>
+</span><span data-line="1029">                        <span class="n">help</span><span class="o">=</span><span class="s2">&quot;&quot;&quot;</span><span class="se">\</span>
+</span><span data-line="1030"><span class="s2">if no options given, output depends on the input</span>
+</span><span data-line="1031"><span class="s2">    string or multiple: same as --choice</span>
+</span><span data-line="1032"><span class="s2">    integer: same as --integer</span>
+</span><span data-line="1033"><span class="s2">    float: same as --float&quot;&quot;&quot;</span><span class="p">)</span>
+</span><span data-line="1034">    <span class="n">args</span> <span class="o">=</span> <span class="n">parser</span><span class="o">.</span><span class="n">parse_args</span><span class="p">(</span><span class="n">arg_list</span><span class="p">)</span>
+</span><span data-line="1035">    <span class="k">return</span> <span class="n">args</span><span class="p">,</span> <span class="n">parser</span><span class="o">.</span><span class="n">format_help</span><span class="p">()</span>
 </span><span data-line="1036">
-</span><span data-line="1037">    <span class="k">if</span> <span class="n">args</span><span class="o">.</span><span class="n">integer</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-</span><span data-line="1038">        <span class="k">return</span> <span class="n">randint</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">args</span><span class="o">.</span><span class="n">integer</span><span class="p">)</span>
-</span><span data-line="1039">
-</span><span data-line="1040">    <span class="k">if</span> <span class="n">args</span><span class="o">.</span><span class="n">float</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-</span><span data-line="1041">        <span class="k">return</span> <span class="n">uniform</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">args</span><span class="o">.</span><span class="n">float</span><span class="p">)</span>
-</span><span data-line="1042">
-</span><span data-line="1043">    <span class="k">if</span> <span class="n">args</span><span class="o">.</span><span class="n">test</span><span class="p">:</span>
-</span><span data-line="1044">        <span class="n">_test</span><span class="p">(</span><span class="n">args</span><span class="o">.</span><span class="n">test</span><span class="p">)</span>
-</span><span data-line="1045">        <span class="k">return</span> <span class="s2">&quot;&quot;</span>
-</span><span data-line="1046">
-</span><span data-line="1047">    <span class="c1"># No explicit argument, select based on input</span>
-</span><span data-line="1048">    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">args</span><span class="o">.</span><span class="n">input</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
-</span><span data-line="1049">        <span class="n">val</span> <span class="o">=</span> <span class="n">args</span><span class="o">.</span><span class="n">input</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
-</span><span data-line="1050">        <span class="k">try</span><span class="p">:</span>
-</span><span data-line="1051">            <span class="c1"># Is it an integer?</span>
-</span><span data-line="1052">            <span class="n">val</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">val</span><span class="p">)</span>
-</span><span data-line="1053">            <span class="k">return</span> <span class="n">randint</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">val</span><span class="p">)</span>
-</span><span data-line="1054">        <span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
-</span><span data-line="1055">            <span class="k">try</span><span class="p">:</span>
-</span><span data-line="1056">                <span class="c1"># Is it a float?</span>
-</span><span data-line="1057">                <span class="n">val</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">val</span><span class="p">)</span>
-</span><span data-line="1058">                <span class="k">return</span> <span class="n">uniform</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">val</span><span class="p">)</span>
-</span><span data-line="1059">            <span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
-</span><span data-line="1060">                <span class="c1"># Split in case of space-separated string: &quot;a b c&quot;</span>
-</span><span data-line="1061">                <span class="k">return</span> <span class="n">choice</span><span class="p">(</span><span class="n">val</span><span class="o">.</span><span class="n">split</span><span class="p">())</span>
-</span><span data-line="1062">
-</span><span data-line="1063">    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">args</span><span class="o">.</span><span class="n">input</span><span class="p">)</span> <span class="o">&gt;=</span> <span class="mi">2</span><span class="p">:</span>
-</span><span data-line="1064">        <span class="k">return</span> <span class="n">choice</span><span class="p">(</span><span class="n">args</span><span class="o">.</span><span class="n">input</span><span class="p">)</span>
-</span><span data-line="1065">
-</span><span data-line="1066">    <span class="k">return</span> <span class="n">help_text</span>
-</span><span data-line="1067">
-</span><span data-line="1068">
-</span><span data-line="1069"><span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s1">&#39;__main__&#39;</span><span class="p">:</span>
-</span><span data-line="1070">    <span class="nb">print</span><span class="p">(</span><span class="n">main</span><span class="p">())</span>
+</span><span data-line="1037">
+</span><span data-line="1038"><span class="k">def</span><span class="w"> </span><span class="nf">main</span><span class="p">(</span><span class="n">arg_list</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span> <span class="o">|</span> <span class="nb">str</span><span class="p">:</span>
+</span><span data-line="1039">    <span class="n">args</span><span class="p">,</span> <span class="n">help_text</span> <span class="o">=</span> <span class="n">_parse_args</span><span class="p">(</span><span class="n">arg_list</span><span class="p">)</span>
+</span><span data-line="1040">
+</span><span data-line="1041">    <span class="c1"># Explicit arguments</span>
+</span><span data-line="1042">    <span class="k">if</span> <span class="n">args</span><span class="o">.</span><span class="n">choice</span><span class="p">:</span>
+</span><span data-line="1043">        <span class="k">return</span> <span class="n">choice</span><span class="p">(</span><span class="n">args</span><span class="o">.</span><span class="n">choice</span><span class="p">)</span>
+</span><span data-line="1044">
+</span><span data-line="1045">    <span class="k">if</span> <span class="n">args</span><span class="o">.</span><span class="n">integer</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+</span><span data-line="1046">        <span class="k">return</span> <span class="n">randint</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">args</span><span class="o">.</span><span class="n">integer</span><span class="p">)</span>
+</span><span data-line="1047">
+</span><span data-line="1048">    <span class="k">if</span> <span class="n">args</span><span class="o">.</span><span class="n">float</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+</span><span data-line="1049">        <span class="k">return</span> <span class="n">uniform</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">args</span><span class="o">.</span><span class="n">float</span><span class="p">)</span>
+</span><span data-line="1050">
+</span><span data-line="1051">    <span class="k">if</span> <span class="n">args</span><span class="o">.</span><span class="n">test</span><span class="p">:</span>
+</span><span data-line="1052">        <span class="n">_test</span><span class="p">(</span><span class="n">args</span><span class="o">.</span><span class="n">test</span><span class="p">)</span>
+</span><span data-line="1053">        <span class="k">return</span> <span class="s2">&quot;&quot;</span>
+</span><span data-line="1054">
+</span><span data-line="1055">    <span class="c1"># No explicit argument, select based on input</span>
+</span><span data-line="1056">    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">args</span><span class="o">.</span><span class="n">input</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+</span><span data-line="1057">        <span class="n">val</span> <span class="o">=</span> <span class="n">args</span><span class="o">.</span><span class="n">input</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+</span><span data-line="1058">        <span class="k">try</span><span class="p">:</span>
+</span><span data-line="1059">            <span class="c1"># Is it an integer?</span>
+</span><span data-line="1060">            <span class="n">val</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">val</span><span class="p">)</span>
+</span><span data-line="1061">            <span class="k">return</span> <span class="n">randint</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">val</span><span class="p">)</span>
+</span><span data-line="1062">        <span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
+</span><span data-line="1063">            <span class="k">try</span><span class="p">:</span>
+</span><span data-line="1064">                <span class="c1"># Is it a float?</span>
+</span><span data-line="1065">                <span class="n">val</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">val</span><span class="p">)</span>
+</span><span data-line="1066">                <span class="k">return</span> <span class="n">uniform</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">val</span><span class="p">)</span>
+</span><span data-line="1067">            <span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
+</span><span data-line="1068">                <span class="c1"># Split in case of space-separated string: &quot;a b c&quot;</span>
+</span><span data-line="1069">                <span class="k">return</span> <span class="n">choice</span><span class="p">(</span><span class="n">val</span><span class="o">.</span><span class="n">split</span><span class="p">())</span>
+</span><span data-line="1070">
+</span><span data-line="1071">    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">args</span><span class="o">.</span><span class="n">input</span><span class="p">)</span> <span class="o">&gt;=</span> <span class="mi">2</span><span class="p">:</span>
+</span><span data-line="1072">        <span class="k">return</span> <span class="n">choice</span><span class="p">(</span><span class="n">args</span><span class="o">.</span><span class="n">input</span><span class="p">)</span>
+</span><span data-line="1073">
+</span><span data-line="1074">    <span class="k">return</span> <span class="n">help_text</span>
+</span><span data-line="1075">
+</span><span data-line="1076">
+</span><span data-line="1077"><span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s1">&#39;__main__&#39;</span><span class="p">:</span>
+</span><span data-line="1078">    <span class="nb">print</span><span class="p">(</span><span class="n">main</span><span class="p">())</span>
 </span></pre></div>
         </article><button class="back-to-top" type="button">
   <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
