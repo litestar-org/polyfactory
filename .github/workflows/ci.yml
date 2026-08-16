@@ -10,9 +10,9 @@ jobs:
   validate:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v7
 
-      - uses: actions/setup-python@v6
+      - uses: actions/setup-python@v7
         with:
           python-version: "3.13"
 
@@ -25,7 +25,7 @@ jobs:
       - name: Instal dependencies
         run: uv sync --all-groups
 
-      - uses: j178/prek-action@v1
+      - uses: j178/prek-action@v3.0.0
 
   test:
     runs-on: ubuntu-latest
@@ -42,11 +42,11 @@ jobs:
             pydantic-version: "1.10"
     steps:
       - name: Check out repository
-        uses: actions/checkout@v6
+        uses: actions/checkout@v7
 
       - name: Set up python ${{ matrix.python-version }}
         id: checkout-python
-        uses: actions/setup-python@v6
+        uses: actions/setup-python@v7
         with:
           python-version: ${{ matrix.python-version }}
 
@@ -54,7 +54,7 @@ jobs:
         run: echo '${{ matrix.pydantic-version }}-${{ matrix.sqla-version }}' > ./matrix-file.txt
 
       - name: Set up python ${{ matrix.python-version }}
-        uses: actions/setup-python@v6
+        uses: actions/setup-python@v7
         with:
           python-version: ${{ matrix.python-version }}
 
@@ -90,7 +90,7 @@ jobs:
         if: matrix.python-version == '3.13' && matrix.pydantic-version == '2.0' && matrix.sqla-version == '2'
         run: uv run pytest tests docs/examples --cov=. --cov-report=xml
 
-      - uses: actions/upload-artifact@v6
+      - uses: actions/upload-artifact@v7
         if: matrix.python-version == '3.13' && matrix.pydantic-version == '2.0' && matrix.sqla-version == '2'
         with:
           name: coverage-data
@@ -103,10 +103,10 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Check out repository
-        uses: actions/checkout@v6
+        uses: actions/checkout@v7
 
       - name: Set up Python
-        uses: actions/setup-python@v6
+        uses: actions/setup-python@v7
         with:
           python-version: "3.13"
 
@@ -128,7 +128,7 @@ jobs:
         run: echo $PR_NUMBER > .pr_number
 
       - name: Upload artifact
-        uses: actions/upload-artifact@v6
+        uses: actions/upload-artifact@v7
         with:
           name: docs-preview
           include-hidden-files: true
@@ -145,7 +145,7 @@ jobs:
       security-events: write
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v6
+        uses: actions/checkout@v7
 
       - name: Initialize CodeQL With Dependencies
         if: github.event_name == 'push' && github.ref_name == 'main'
@@ -165,8 +165,8 @@ jobs:
     needs:
       - test
     steps:
-      - uses: actions/checkout@v6
-      - uses: actions/setup-python@v6
+      - uses: actions/checkout@v7
+      - uses: actions/setup-python@v7
         with:
           python-version: "3.13"
 
