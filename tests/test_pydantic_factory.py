@@ -308,6 +308,41 @@ def test_factory_use_examples_coverage() -> None:
     assert {instance.number for instance in instances} == set(example_numbers)
 
 
+@pytest.mark.skipif(_IS_PYDANTIC_V1, reason="Pydantic 1 doesn't support examples")
+def test_factory_use_examples_coverage_when_examples_in_annotations() -> None:
+    class TopLevel(BaseModel):
+        f: Annotated[int, Field(examples=[1, 2, 3, 4])]
+
+    class WithOptional(BaseModel):
+        f: Optional[Annotated[int, Field(examples=[1, 2, 3, 4])]]
+
+    class OrNone(BaseModel):
+        f: Union[Annotated[int, Field(examples=[1, 2, 3, 4])], None]
+
+    class ExamplesInBothSubtypes(BaseModel):
+        f: Union[Annotated[int, Field(examples=[1, 2])], Annotated[int, Field(examples=[3, 4])], None]
+
+    class OuterMostExampleIsRespected(BaseModel):
+        f: Annotated[
+            Union[Annotated[int, Field(examples=[1, 2])], Annotated[int, Field(examples=[3, 4])], None],
+            Field(examples=[6, 7, 8, 9]),
+        ]
+
+    for cls, expected in (
+        (TopLevel, [1, 2, 3, 4]),
+        (WithOptional, [1, 2, 3, 4, None]),
+        (OrNone, [1, 2, 3, 4, None]),
+        (ExamplesInBothSubtypes, [1, 2, 3, 4, None]),
+        (OuterMostExampleIsRespected, [6, 7, 8, 9]),
+    ):
+
+        class ClsFactory(ModelFactory[cls]):  # type: ignore[valid-type]
+            __use_examples__ = True
+
+        instances = list(ClsFactory.coverage())
+        assert {instance.f for instance in instances} == set(expected)  # type: ignore[attr-defined]
+
+
 def test_factory_use_construct_nested() -> None:
     class Child(BaseModel):
         a: int = Field(ge=0)
