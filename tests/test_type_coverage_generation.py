@@ -4,10 +4,12 @@ from __future__ import annotations
 from collections.abc import Iterable
 from dataclasses import dataclass, make_dataclass
 from datetime import date
-from typing import Any, Literal, Optional, Union
+from sys import version_info
+from typing import Annotated, Any, Literal, Optional, Union
 from uuid import UUID
 
 import pytest
+from annotated_types import Gt, Lt
 from typing_extensions import TypedDict
 
 from pydantic import BaseModel
@@ -371,3 +373,22 @@ def test_optional_mixed_collections() -> None:
     assert type_exists_at_path_any(results, ["maybe_uuids"], list)
     assert type_exists_at_path_any(results, ["maybe_uuids", "*"], UUID)
     assert type_exists_at_path_any(results, ["maybe_uuids"], NoneType)
+
+
+@pytest.mark.skipif(version_info < (3, 10), reason="Union with annotated and None not support on <3.10")
+def test_annotated_optional() -> None:
+    # Struggling a bit on how to properly test this.
+    # We are constraining random generation of an int value
+    # The actual constraint is actually under test
+    # here. But in case the constraint is not doing its job,
+    # there is a possibility where the generation falls within the constraint
+    # which actually results in a false positive.
+    @dataclass
+    class Model:
+        maybe_constraint_int: Annotated[int, Gt(0), Lt(3)] | None
+
+    results = list(DataclassFactory.create_factory(Model).coverage())
+
+    assert len(results) == 2
+    for result in results:
+        assert result.maybe_constraint_int in {1, 2, None}
