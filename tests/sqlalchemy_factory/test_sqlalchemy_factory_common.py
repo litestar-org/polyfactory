@@ -1,3 +1,4 @@
+import asyncio
 import warnings
 from collections.abc import Collection
 from datetime import datetime
@@ -19,9 +20,9 @@ from sqlalchemy import (
     types,
 )
 from sqlalchemy.engine import Engine
-from sqlalchemy.ext.asyncio import AsyncEngine, AsyncSession
+from sqlalchemy.ext.asyncio import AsyncEngine, AsyncSession, async_scoped_session
 from sqlalchemy.ext.hybrid import hybrid_property
-from sqlalchemy.orm import Session
+from sqlalchemy.orm import Session, scoped_session, sessionmaker
 
 try:
     from sqlalchemy.orm.collections import (
@@ -35,6 +36,11 @@ except ImportError:  # SQLAlchemy < 2.0
     attribute_keyed_dict = _collections.attribute_mapped_collection  # type: ignore[attr-defined]
     column_keyed_dict = _collections.column_mapped_collection  # type: ignore[attr-defined]
     keyfunc_mapping = _collections.mapped_collection  # type: ignore[attr-defined]
+
+try:
+    from sqlalchemy.ext.asyncio import async_sessionmaker
+except ImportError:
+    from sqlalchemy.orm import sessionmaker as async_sessionmaker  # type: ignore[assignment]
 
 from sqlalchemy.orm.decl_api import DeclarativeMeta, registry
 
@@ -144,6 +150,51 @@ def test_computed_column_sync_persistence(engine: Engine) -> None:
     assert instance.area == pow(instance.side, 2)
 
 
+def test_sessionmaker_created_sync_session_is_closed(engine: Engine) -> None:
+    class TrackingSession(Session):
+        created_sessions: list["TrackingSession"] = []
+
+        def __init__(self, *args: Any, **kwargs: Any) -> None:
+            super().__init__(*args, **kwargs)
+            self.close_calls = 0
+            TrackingSession.created_sessions.append(self)
+
+        def close(self) -> None:
+            self.close_calls += 1
+            super().close()
+
+    class ShapeFactory(SQLAlchemyFactory[Shape]):
+        __model__ = Shape
+        __session__ = sessionmaker(bind=engine, class_=TrackingSession)
+
+    ShapeFactory.create_sync()
+    assert len(TrackingSession.created_sessions) == 1
+    assert TrackingSession.created_sessions[0].close_calls == 1
+
+
+def test_scoped_sessionmaker_created_sync_session_is_closed(engine: Engine) -> None:
+    class TrackingSession(Session):
+        created_sessions: list["TrackingSession"] = []
+
+        def __init__(self, *args: Any, **kwargs: Any) -> None:
+            super().__init__(*args, **kwargs)
+            self.close_calls = 0
+            TrackingSession.created_sessions.append(self)
+
+        def close(self) -> None:
+            self.close_calls += 1
+            super().close()
+
+    class ShapeFactory(SQLAlchemyFactory[Shape]):
+        __model__ = Shape
+        __session__ = scoped_session(sessionmaker(bind=engine, class_=TrackingSession))
+
+    ShapeFactory.create_sync()
+    assert len(TrackingSession.created_sessions) == 1
+    assert TrackingSession.created_sessions[0].close_calls == 1
+    assert not ShapeFactory.__session__.registry.has()
+
+
 async def test_computed_column_async_persistence(engine: Engine, async_engine: AsyncEngine) -> None:
     class ShapeFactory(SQLAlchemyFactory[Shape]):
         __model__ = Shape
@@ -151,6 +202,57 @@ async def test_computed_column_async_persistence(engine: Engine, async_engine: A
 
     instance = await ShapeFactory.create_async()
     assert instance.area == pow(instance.side, 2)
+
+
+async def test_async_sessionmaker_created_session_is_closed(async_engine: AsyncEngine) -> None:
+    class TrackingAsyncSession(AsyncSession):
+        created_sessions: list["TrackingAsyncSession"] = []
+
+        def __init__(self, *args: Any, **kwargs: Any) -> None:
+            super().__init__(*args, **kwargs)
+            self.close_calls = 0
+            TrackingAsyncSession.created_sessions.append(self)
+
+        async def close(self) -> None:
+            self.close_calls += 1
+            await super().close()
+
+    class ShapeFactory(SQLAlchemyFactory[Shape]):
+        __model__ = Shape
+        __async_session__ = async_sessionmaker(bind=async_engine, class_=TrackingAsyncSession)
+
+    await ShapeFactory.create_async()
+    assert len(TrackingAsyncSession.created_sessions) == 1
+    created_session = TrackingAsyncSession.created_sessions[0]
+    assert created_session.close_calls == 1
+
+
+async def test_async_scoped_sessionmaker_created_session_is_closed(async_engine: AsyncEngine) -> None:
+    class TrackingAsyncSession(AsyncSession):
+        created_sessions: list["TrackingAsyncSession"] = []
+
+        def __init__(self, *args: Any, **kwargs: Any) -> None:
+            super().__init__(*args, **kwargs)
+            self.close_calls = 0
+            TrackingAsyncSession.created_sessions.append(self)
+
+        async def close(self) -> None:
+            self.close_calls += 1
+            await super().close()
+
+    scoped_factory = async_scoped_session(
+        async_sessionmaker(bind=async_engine, class_=TrackingAsyncSession),
+        scopefunc=asyncio.current_task,
+    )
+
+    class ShapeFactory(SQLAlchemyFactory[Shape]):
+        __model__ = Shape
+        __async_session__ = scoped_factory
+
+    await ShapeFactory.create_async()
+    assert len(TrackingAsyncSession.created_sessions) == 1
+    assert TrackingAsyncSession.created_sessions[0].close_calls == 1
+    assert not scoped_factory.registry.has()
 
 
 def test_computed_column_no_persistence() -> None:
