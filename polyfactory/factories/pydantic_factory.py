@@ -92,6 +92,9 @@ except ImportError:
         from pydantic.v1.fields import DeferredType, ModelField, Undefined
 
 
+_PYDANTIC_HAS_BY_NAME = tuple(map(int, VERSION.split(".")[:2])) >= (2, 11)
+
+
 if TYPE_CHECKING:
     from collections import abc
     from collections.abc import Iterable, Mapping, Sequence
@@ -567,7 +570,9 @@ class ModelFactory(BaseFactory[T], Generic[T]):
 
         # Use model_validate with by_name for Pydantic v2 models when requested
         if cls.__by_name__ and _is_pydantic_v2_model(cls.__model__):
-            return cls.__model__.model_validate(kwargs, by_name=True)  # type: ignore[return-value]
+            if _PYDANTIC_HAS_BY_NAME:
+                return cls.__model__.model_validate(kwargs, by_name=True)  # type: ignore[return-value]
+            return cls.__model__.model_validate(kwargs)  # type: ignore[return-value]
 
         return cls.__model__(**kwargs)
 
