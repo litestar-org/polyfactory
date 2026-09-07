@@ -1416,6 +1416,40 @@ def test_pep695_recursive_annotation_field(create_module: Callable[[str], Module
 
 @pytest.mark.skipif(sys.version_info < (3, 12), reason="PEP 695 requires Python 3.12+")
 @pytest.mark.skipif(IS_PYDANTIC_V1, reason="only for Pydantic v2")
+def test_pep695_self_referential_type_alias(create_module: Callable[[str], ModuleType]) -> None:
+    """A self-referential alias must not diverge while the factory is being defined."""
+    module = create_module(
+        textwrap.dedent("""
+            from pydantic import BaseModel, Field
+
+            type Json = None | bool | int | float | str | list[Json] | dict[str, Json]
+
+            class Document(BaseModel):
+                metadata: dict[str, Json] = Field(default_factory=dict)
+        """)
+    )
+    ModelFactory.create_factory(module.Document).build()
+
+
+@pytest.mark.skipif(sys.version_info < (3, 12), reason="PEP 695 requires Python 3.12+")
+@pytest.mark.skipif(IS_PYDANTIC_V1, reason="only for Pydantic v2")
+def test_pep695_directly_self_referential_type_alias(create_module: Callable[[str], ModuleType]) -> None:
+    """An alias referring to itself through a single container must terminate too."""
+    module = create_module(
+        textwrap.dedent("""
+            from pydantic import BaseModel
+
+            type Tree = int | list[Tree]
+
+            class Node(BaseModel):
+                value: Tree
+        """)
+    )
+    ModelFactory.create_factory(module.Node).build()
+
+
+@pytest.mark.skipif(sys.version_info < (3, 12), reason="PEP 695 requires Python 3.12+")
+@pytest.mark.skipif(IS_PYDANTIC_V1, reason="only for Pydantic v2")
 def test_pep695_complex_nested_unions(create_module: Callable[[str], ModuleType]) -> None:
     """Test complex nested unions with constraints."""
     module = create_module(

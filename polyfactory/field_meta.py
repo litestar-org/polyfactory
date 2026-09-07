@@ -122,6 +122,8 @@ class FieldMeta:
         constraints: Constraints | None = None,
         children: list[FieldMeta] | None = None,
         required: bool = True,
+        *,
+        _seen_annotations: frozenset[Any] = frozenset(),
     ) -> Self:
         """Builder method to create a FieldMeta from a type annotation.
 
@@ -129,6 +131,8 @@ class FieldMeta:
         :param name: Field name
         :param default: Default value, if any.
         :param constraints: A dictionary of constraints, if any.
+        :param _seen_annotations: Annotations already expanded on this branch, used to break
+            the cycle created by a self-referential PEP 695 type alias.
 
         :returns: A field meta instance.
         """
@@ -154,9 +158,21 @@ class FieldMeta:
         )
 
         if field.type_args and not field.children:
-            field.children = [
-                cls.from_type(annotation=unwrap_new_type(arg)) for arg in field.type_args if arg is not NoneType
-            ]
+            # A self-referential PEP 695 alias expands to a value that contains the annotation
+            # again, so expanding an annotation already open on this branch would never terminate.
+            child_seen = _seen_annotations
+            if isinstance(annotation, Hashable):
+                child_seen = child_seen | {annotation}
+
+            children = []
+            for arg in field.type_args:
+                if arg is NoneType:
+                    continue
+                child = unwrap_new_type(arg)
+                if isinstance(child, Hashable) and child in child_seen:
+                    continue
+                children.append(cls.from_type(annotation=child, _seen_annotations=child_seen))
+            field.children = children
         return field
 
     @classmethod

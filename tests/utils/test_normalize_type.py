@@ -134,6 +134,37 @@ class TestNormalizeTypePep695:
         result = normalize_type(module.Outer[int])
         assert result == list[list[int]]
 
+    def test_self_referential_type_alias(self, create_module: Callable[[str], ModuleType]) -> None:
+        """A self-referential alias is unwrapped once and then left intact instead of diverging."""
+        module = create_module(
+            textwrap.dedent(
+                """
+                type Json = None | bool | int | float | str | list[Json] | dict[str, Json]
+                """
+            )
+        )
+
+        result = normalize_type(module.Json)
+
+        # the union is unwrapped one level and the recursive members still reference the alias,
+        # which is what stops the expansion from repeating forever
+        assert set(get_args(result)) >= {bool, int, float, str}
+        assert list[module.Json] in get_args(result)
+        assert dict[str, module.Json] in get_args(result)
+
+    def test_mutually_recursive_type_aliases(self, create_module: Callable[[str], ModuleType]) -> None:
+        """Aliases that reference each other must terminate rather than expand forever."""
+        module = create_module(
+            textwrap.dedent(
+                """
+                type A = int | list[B]
+                type B = str | list[A]
+                """
+            )
+        )
+
+        assert int in get_args(normalize_type(module.A))
+
 
 @pytest.mark.parametrize(
     "type_hint,expected",
