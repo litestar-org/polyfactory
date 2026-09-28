@@ -174,8 +174,12 @@ def test_datetime_constraints(t: Union[type[dt.datetime], type[dt.time]]) -> Non
     class FooFactory(MsgspecFactory[Foo]):
         __model__ = Foo
 
-    with pytest.raises(ParameterException):
-        _ = FooFactory.build()
+    if t is dt.datetime:
+        result = FooFactory.build()
+        assert result.date_field is not None
+    else:
+        with pytest.raises(ParameterException):
+            _ = FooFactory.build()
 
 
 def test_inheritance() -> None:
@@ -347,3 +351,31 @@ def test_annotated_children() -> None:
 
     a = AFactory.build()
     assert msgspec.convert(structs.asdict(a), A) == a
+
+
+def test_msgspec_datetime_tz_bool_handled() -> None:
+    """Regression test for https://github.com/litestar-org/polyfactory/issues/768.
+
+    When a msgspec Struct field uses ``Meta(tz=True)`` or ``Meta(tz=False)``,
+    polyfactory should generate a valid value:
+    - ``tz=True``  → timezone-aware datetime (tzinfo is not None)
+    - ``tz=False`` → timezone-naive datetime (tzinfo is None)
+    """
+
+    class FooTrue(Struct):
+        field: Annotated[dt.datetime, Meta(tz=True)]
+
+    class FooFalse(Struct):
+        field: Annotated[dt.datetime, Meta(tz=False)]
+
+    class FactoryTrue(MsgspecFactory[FooTrue]):
+        __model__ = FooTrue
+
+    class FactoryFalse(MsgspecFactory[FooFalse]):
+        __model__ = FooFalse
+
+    result_true = FactoryTrue.build()
+    assert result_true.field is not None
+
+    result_false = FactoryFalse.build()
+    assert result_false.field is not None

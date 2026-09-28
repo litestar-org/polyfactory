@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 import enum
-from collections.abc import Collection, Mapping
+from collections.abc import Awaitable, Collection, Mapping
 from dataclasses import is_dataclass
 from datetime import date, datetime
 from typing import (
@@ -31,16 +31,22 @@ try:
     from sqlalchemy.dialects import mssql, mysql, postgresql, sqlite
     from sqlalchemy.exc import NoInspectionAvailable
     from sqlalchemy.ext.associationproxy import AssociationProxy
-    from sqlalchemy.orm import InstanceState, Mapper, RelationshipProperty
+    from sqlalchemy.ext.asyncio import async_scoped_session
+    from sqlalchemy.orm import InstanceState, Mapper, RelationshipProperty, scoped_session, sessionmaker
 except ImportError as e:
     msg = "sqlalchemy is not installed"
     raise MissingDependencyException(msg) from e
 
 if TYPE_CHECKING:
-    from sqlalchemy.ext.asyncio import AsyncSession, async_scoped_session
-    from sqlalchemy.orm import Session, scoped_session
+    from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker
+    from sqlalchemy.orm import Session
     from sqlalchemy.sql.type_api import TypeEngine
     from typing_extensions import NotRequired, TypeGuard
+else:
+    try:
+        from sqlalchemy.ext.asyncio import async_sessionmaker
+    except ImportError:
+        async_sessionmaker = sessionmaker
 
 
 T = TypeVar("T")
@@ -64,10 +70,12 @@ class SQLASyncPersistence(SyncPersistenceProtocol[T]):
         self,
         session: Session,
         persistence_method: SQLAlchemyPersistenceMethod = SQLAlchemyPersistenceMethod.COMMIT,
+        cleanup_callback: Callable[[], None] | None = None,
     ) -> None:
         """Sync persistence handler for SQLAFactory."""
         self.session = session
         self.persistence_method = persistence_method
+        self.cleanup_callback = cleanup_callback
 
     def _flush_or_commit(self) -> None:
         if self.persistence_method == SQLAlchemyPersistenceMethod.FLUSH:
@@ -76,14 +84,22 @@ class SQLASyncPersistence(SyncPersistenceProtocol[T]):
             self.session.commit()
 
     def save(self, data: T) -> T:
-        self.session.add(data)
-        self._flush_or_commit()
-        return data
+        try:
+            self.session.add(data)
+            self._flush_or_commit()
+            return data
+        finally:
+            if self.cleanup_callback is not None:
+                self.cleanup_callback()
 
     def save_many(self, data: list[T]) -> list[T]:
-        self.session.add_all(data)
-        self._flush_or_commit()
-        return data
+        try:
+            self.session.add_all(data)
+            self._flush_or_commit()
+            return data
+        finally:
+            if self.cleanup_callback is not None:
+                self.cleanup_callback()
 
 
 class SQLAASyncPersistence(AsyncPersistenceProtocol[T]):
@@ -91,10 +107,12 @@ class SQLAASyncPersistence(AsyncPersistenceProtocol[T]):
         self,
         session: AsyncSession,
         persistence_method: SQLAlchemyPersistenceMethod = SQLAlchemyPersistenceMethod.COMMIT,
+        cleanup_callback: Callable[[], Awaitable[None]] | None = None,
     ) -> None:
         """Async persistence handler for SQLAFactory."""
         self.session = session
         self.persistence_method = persistence_method
+        self.cleanup_callback = cleanup_callback
 
     async def _flush_or_commit(self, session: AsyncSession) -> None:
         if self.persistence_method == SQLAlchemyPersistenceMethod.FLUSH:
@@ -103,25 +121,32 @@ class SQLAASyncPersistence(AsyncPersistenceProtocol[T]):
             await session.commit()
 
     async def save(self, data: T) -> T:
-        self.session.add(data)
-        await self._flush_or_commit(self.session)
-        await self.session.refresh(data)
-        return data
+        try:
+            self.session.add(data)
+            await self._flush_or_commit(self.session)
+            await self.session.refresh(data)
+            return data
+        finally:
+            if self.cleanup_callback is not None:
+                await self.cleanup_callback()
 
     async def save_many(self, data: list[T]) -> list[T]:
-        self.session.add_all(data)
-        await self._flush_or_commit(self.session)
-        for batch_item in data:
-            await self.session.refresh(batch_item)
-        return data
+        try:
+            self.session.add_all(data)
+            await self._flush_or_commit(self.session)
+            for batch_item in data:
+                await self.session.refresh(batch_item)
+            return data
+        finally:
+            if self.cleanup_callback is not None:
+                await self.cleanup_callback()
 
 
 _T_co = TypeVar("_T_co", covariant=True)
 
 
 class _SessionMaker(Protocol[_T_co]):
-    @staticmethod
-    def __call__() -> _T_co: ...
+    def __call__(self, **kwargs: Any) -> _T_co: ...
 
 
 class SQLAlchemyFactory(BaseFactory[T], Generic[T]):
@@ -414,12 +439,36 @@ class SQLAlchemyFactory(BaseFactory[T], Generic[T]):
     def _get_sync_persistence(cls) -> SyncPersistenceProtocol[T]:
         if cls.__session__ is not None:
             session = cls.__session__() if callable(cls.__session__) else cls.__session__
-            return SQLASyncPersistence(session, persistence_method=cls.__persistence_method__)
+
+            if isinstance(cls.__session__, sessionmaker):
+                cleanup_callback = session.close
+            elif isinstance(cls.__session__, scoped_session):
+                cleanup_callback = cls.__session__.remove
+            else:
+                cleanup_callback = None
+
+            return SQLASyncPersistence(
+                session,
+                persistence_method=cls.__persistence_method__,
+                cleanup_callback=cleanup_callback,
+            )
         return super()._get_sync_persistence()
 
     @classmethod
     def _get_async_persistence(cls) -> AsyncPersistenceProtocol[T]:
         if cls.__async_session__ is not None:
             session = cls.__async_session__() if callable(cls.__async_session__) else cls.__async_session__
-            return SQLAASyncPersistence(session, persistence_method=cls.__persistence_method__)
+
+            if isinstance(cls.__async_session__, async_sessionmaker):
+                cleanup_callback = session.close
+            elif isinstance(cls.__async_session__, async_scoped_session):
+                cleanup_callback = cls.__async_session__.remove
+            else:
+                cleanup_callback = None
+
+            return SQLAASyncPersistence(
+                session,
+                persistence_method=cls.__persistence_method__,
+                cleanup_callback=cleanup_callback,
+            )
         return super()._get_async_persistence()
