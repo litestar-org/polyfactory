@@ -1005,23 +1005,41 @@ data-aria-dark="Switch to auto color mode">
 </span><span data-line="713">        <span class="k">if</span> <span class="bp">cls</span><span class="o">.</span><span class="n">is_ignored_type</span><span class="p">(</span><span class="n">field_meta</span><span class="o">.</span><span class="n">annotation</span><span class="p">):</span>
 </span><span data-line="714">            <span class="k">return</span>
 </span><span data-line="715">
-</span><span data-line="716">        <span class="k">if</span> <span class="bp">cls</span><span class="o">.</span><span class="n">__use_examples__</span><span class="p">:</span>
-</span><span data-line="717">            <span class="n">examples</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">field_meta</span><span class="p">,</span> <span class="s2">&quot;examples&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span> <span class="ow">or</span> <span class="p">[]</span>
-</span><span data-line="718">            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">examples</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
-</span><span data-line="719">                <span class="k">yield</span> <span class="n">CoverageContainer</span><span class="p">(</span><span class="n">examples</span><span class="p">)</span>
-</span><span data-line="720">                <span class="k">return</span>
-</span><span data-line="721">
-</span><span data-line="722">        <span class="k">yield from</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">get_field_value_coverage</span><span class="p">(</span><span class="n">field_meta</span><span class="p">,</span> <span class="n">field_build_parameters</span><span class="p">,</span> <span class="n">build_context</span><span class="p">)</span></div>
+</span><span data-line="716">        <span class="n">field_meta</span> <span class="o">=</span> <span class="n">cast</span><span class="p">(</span><span class="s2">&quot;PydanticFieldMeta&quot;</span><span class="p">,</span> <span class="n">field_meta</span><span class="p">)</span>
+</span><span data-line="717">        <span class="k">if</span> <span class="bp">cls</span><span class="o">.</span><span class="n">__use_examples__</span><span class="p">:</span>
+</span><span data-line="718">
+</span><span data-line="719">            <span class="k">def</span><span class="w"> </span><span class="nf">examples_coverage</span><span class="p">(</span><span class="n">field_meta</span><span class="p">:</span> <span class="n">PydanticFieldMeta</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Iterable</span><span class="p">[</span><span class="n">Any</span><span class="p">]:</span>
+</span><span data-line="720">                <span class="n">examples</span> <span class="o">=</span> <span class="n">field_meta</span><span class="o">.</span><span class="n">examples</span> <span class="ow">or</span> <span class="p">[]</span>
+</span><span data-line="721">                <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">examples</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+</span><span data-line="722">                    <span class="k">yield</span> <span class="n">CoverageContainer</span><span class="p">(</span><span class="n">examples</span><span class="p">)</span>
+</span><span data-line="723">                    <span class="k">return</span>
+</span><span data-line="724">                <span class="k">if</span> <span class="n">field_meta</span><span class="o">.</span><span class="n">children</span><span class="p">:</span>
+</span><span data-line="725">                    <span class="c1"># NoneType children aren&#39;t included in field_meta.children,</span>
+</span><span data-line="726">                    <span class="c1"># so to ensure that they are covered we need to check for them explicitly</span>
+</span><span data-line="727">                    <span class="k">if</span> <span class="n">NoneType</span> <span class="ow">in</span> <span class="n">field_meta</span><span class="o">.</span><span class="n">type_args</span><span class="p">:</span>
+</span><span data-line="728">                        <span class="k">yield</span> <span class="kc">None</span>
+</span><span data-line="729">                    <span class="k">for</span> <span class="n">child</span> <span class="ow">in</span> <span class="n">field_meta</span><span class="o">.</span><span class="n">children</span><span class="p">:</span>
+</span><span data-line="730">                        <span class="n">child</span> <span class="o">=</span> <span class="n">cast</span><span class="p">(</span><span class="s2">&quot;PydanticFieldMeta&quot;</span><span class="p">,</span> <span class="n">child</span><span class="p">)</span>
+</span><span data-line="731">                        <span class="k">yield from</span> <span class="n">examples_coverage</span><span class="p">(</span><span class="n">child</span><span class="p">)</span>
+</span><span data-line="732">                    <span class="k">return</span>
+</span><span data-line="733">                <span class="k">yield from</span> <span class="nb">super</span><span class="p">(</span><span class="n">ModelFactory</span><span class="p">,</span> <span class="bp">cls</span><span class="p">)</span><span class="o">.</span><span class="n">get_field_value_coverage</span><span class="p">(</span>
+</span><span data-line="734">                    <span class="n">field_meta</span><span class="p">,</span> <span class="n">field_build_parameters</span><span class="p">,</span> <span class="n">build_context</span>
+</span><span data-line="735">                <span class="p">)</span>
+</span><span data-line="736">
+</span><span data-line="737">            <span class="k">yield from</span> <span class="n">examples_coverage</span><span class="p">(</span><span class="n">field_meta</span><span class="p">)</span>
+</span><span data-line="738">            <span class="k">return</span>
+</span><span data-line="739">
+</span><span data-line="740">        <span class="k">yield from</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">get_field_value_coverage</span><span class="p">(</span><span class="n">field_meta</span><span class="p">,</span> <span class="n">field_build_parameters</span><span class="p">,</span> <span class="n">build_context</span><span class="p">)</span></div>
 </div>
 
-</span><span data-line="723">
-</span><span data-line="724">
-</span><span data-line="725"><span class="k">def</span><span class="w"> </span><span class="nf">_is_pydantic_v1_model</span><span class="p">(</span><span class="n">model</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">TypeGuard</span><span class="p">[</span><span class="n">BaseModelV1</span><span class="p">]:</span>
-</span><span data-line="726">    <span class="k">return</span> <span class="n">is_safe_subclass</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">BaseModelV1</span><span class="p">)</span>
-</span><span data-line="727">
-</span><span data-line="728">
-</span><span data-line="729"><span class="k">def</span><span class="w"> </span><span class="nf">_is_pydantic_v2_model</span><span class="p">(</span><span class="n">model</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">TypeGuard</span><span class="p">[</span><span class="n">BaseModelV2</span><span class="p">]:</span>  <span class="c1"># pyright: ignore[reportInvalidTypeForm]</span>
-</span><span data-line="730">    <span class="k">return</span> <span class="ow">not</span> <span class="n">_IS_PYDANTIC_V1</span> <span class="ow">and</span> <span class="n">is_safe_subclass</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">BaseModelV2</span><span class="p">)</span>
+</span><span data-line="741">
+</span><span data-line="742">
+</span><span data-line="743"><span class="k">def</span><span class="w"> </span><span class="nf">_is_pydantic_v1_model</span><span class="p">(</span><span class="n">model</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">TypeGuard</span><span class="p">[</span><span class="n">BaseModelV1</span><span class="p">]:</span>
+</span><span data-line="744">    <span class="k">return</span> <span class="n">is_safe_subclass</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">BaseModelV1</span><span class="p">)</span>
+</span><span data-line="745">
+</span><span data-line="746">
+</span><span data-line="747"><span class="k">def</span><span class="w"> </span><span class="nf">_is_pydantic_v2_model</span><span class="p">(</span><span class="n">model</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">TypeGuard</span><span class="p">[</span><span class="n">BaseModelV2</span><span class="p">]:</span>  <span class="c1"># pyright: ignore[reportInvalidTypeForm]</span>
+</span><span data-line="748">    <span class="k">return</span> <span class="ow">not</span> <span class="n">_IS_PYDANTIC_V1</span> <span class="ow">and</span> <span class="n">is_safe_subclass</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">BaseModelV2</span><span class="p">)</span>
 </span></pre></div>
         </article><button class="back-to-top" type="button">
   <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
