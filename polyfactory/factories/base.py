@@ -245,10 +245,10 @@ class BaseFactory(ABC, Generic[T]):
                     raise ConfigurationException(
                         msg,
                     )
-                msg = f"Model type {model.__name__} is not supported. To support it, register an appropriate base factory and subclass it for your factory."
-                raise ConfigurationException(
-                    msg,
-                )
+            msg = f"Model type {model.__name__} is not supported. To support it, register an appropriate base factory and subclass it for your factory."
+            raise ConfigurationException(
+                msg,
+            )
 
     @classmethod
     def _get_build_context(cls, build_context: BuildContext | None) -> BuildContext:
