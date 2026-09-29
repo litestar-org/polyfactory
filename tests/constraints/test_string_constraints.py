@@ -149,6 +149,22 @@ def test_handle_constrained_string_with_max_length(to_lower: bool, max_length: i
         if to_lower:
             assert result == result.lower()
         assert len(result) <= max_length
+        assert len(result) >= min(4, max_length)
+
+
+@pytest.mark.parametrize("max_length", (1, 3, 4, 10))
+def test_handle_constrained_string_with_max_length_is_not_empty(max_length: int) -> None:
+    random = Random(0)
+    for _ in range(100):
+        result = handle_constrained_string_or_bytes(
+            random=random,
+            t_type=str,
+            lower_case=False,
+            upper_case=False,
+            max_length=max_length,
+            pattern=None,
+        )
+        assert min(4, max_length) <= len(result) <= max_length
 
 
 def test_pattern() -> None:

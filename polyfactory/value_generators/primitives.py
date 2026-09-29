@@ -8,6 +8,9 @@ if TYPE_CHECKING:
     from random import Random
 
 
+DEFAULT_MIN_STRING_LENGTH = 4
+
+
 def create_random_float(
     random: Random,
     minimum: Decimal | float | None = None,
@@ -113,6 +116,10 @@ def create_random_string(
 
     :returns: A random string.
     """
+    if min_length is None:
+        # Avoid empty or very short strings when only a maximum length is given.
+        min_length = DEFAULT_MIN_STRING_LENGTH if max_length is None else min(DEFAULT_MIN_STRING_LENGTH, max_length)
+
     return create_random_bytes(
         random=random,
         min_length=min_length,
