@@ -734,6 +734,29 @@ def test_sqlalchemy_custom_type_from_type_decorator(python_type_: type) -> None:
     assert isinstance(instance.custom_type, expected_type)
 
 
+def test_constrained_string_is_not_empty() -> None:
+    _registry = registry()
+
+    class Base(metaclass=DeclarativeMeta):
+        __abstract__ = True
+        __allow_unmapped__ = True
+
+        registry = _registry
+        metadata = _registry.metadata
+
+    class Model(Base):
+        __tablename__ = "constrained_string_model"
+
+        id: Any = Column(Integer(), primary_key=True)
+        name: Any = Column(String(length=10), nullable=False)
+
+    class ModelFactory(SQLAlchemyFactory[Model]):
+        __model__ = Model
+
+    for instance in ModelFactory.batch(100):
+        assert 4 <= len(instance.name) <= 10
+
+
 def test_constrained_types() -> None:
     _registry = registry()
 
