@@ -54,11 +54,40 @@ def normalize_type(type_annotation: Any) -> Any:
         return __handle_generic_type_alias(origin, args)
 
     if args:
-        normalized_args = tuple(normalize_type(arg) for arg in args)
+        # Recursive aliases are left in place so that ``FieldMeta.from_type`` can detect the cycle.
+        normalized_args = tuple(
+            arg if is_type_alias(arg) and references_type_alias(arg.__value__, arg) else normalize_type(arg)
+            for arg in args
+        )
         if normalized_args != args:
             return origin[normalized_args[0] if len(normalized_args) == 1 else normalized_args]
 
     return type_annotation
+
+
+def references_type_alias(annotation: Any, alias: Any, seen: set[int] | None = None) -> bool:
+    """Check whether an annotation refers to the given type alias, directly or through other aliases.
+
+    Args:
+        annotation: Type annotation to inspect.
+        alias: Type alias to look for.
+        seen: Ids of the annotations already visited.
+
+    Returns:
+        Whether ``alias`` is reachable from ``annotation``.
+    """
+    if annotation is alias:
+        return True
+
+    seen = set() if seen is None else seen
+    if id(annotation) in seen:
+        return False
+    seen.add(id(annotation))
+
+    if is_type_alias(annotation) and references_type_alias(annotation.__value__, alias, seen):
+        return True
+
+    return any(references_type_alias(arg, alias, seen) for arg in get_args(annotation))
 
 
 def __handle_generic_type_alias(origin: Any, args: tuple) -> Any:

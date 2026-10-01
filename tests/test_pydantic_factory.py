@@ -1642,3 +1642,44 @@ def test_alias_overrides() -> None:
 
     instance = FooFactory.build()
     assert instance.name == "John"  # Should use the overridden alias
+
+
+@pytest.mark.skipif(sys.version_info < (3, 12), reason="PEP 695 requires Python 3.12+")
+@pytest.mark.skipif(IS_PYDANTIC_V1, reason="only for Pydantic v2")
+def test_pep695_recursive_type_alias(create_module: Callable[[str], ModuleType]) -> None:
+    """Test that a self-referential type alias does not recurse forever."""
+    module = create_module(
+        textwrap.dedent("""
+            from pydantic import BaseModel
+
+            type Json = None | bool | int | float | str | list[Json] | dict[str, Json]
+
+            class Foo(BaseModel):
+                data: Json
+                items: list[Json]
+        """)
+    )
+    factory = ModelFactory.create_factory(module.Foo)
+    for _ in range(50):
+        result = factory.build()
+        assert module.Foo.model_validate(result.model_dump()) == result
+
+
+@pytest.mark.skipif(sys.version_info < (3, 12), reason="PEP 695 requires Python 3.12+")
+@pytest.mark.skipif(IS_PYDANTIC_V1, reason="only for Pydantic v2")
+def test_pep695_mutually_recursive_type_aliases(create_module: Callable[[str], ModuleType]) -> None:
+    """Test that mutually recursive type aliases do not recurse forever."""
+    module = create_module(
+        textwrap.dedent("""
+            from pydantic import BaseModel
+
+            type Left = int | list[Right]
+            type Right = str | list[Left]
+
+            class Foo(BaseModel):
+                value: Left
+        """)
+    )
+    factory = ModelFactory.create_factory(module.Foo)
+    for _ in range(50):
+        assert isinstance(factory.build(), module.Foo)
