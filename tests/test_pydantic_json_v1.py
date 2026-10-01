@@ -5,7 +5,7 @@ import sys
 from datetime import date
 from importlib import import_module
 from types import GenericAlias
-from typing import Any, Optional
+from typing import Any, Optional, get_origin
 
 import pytest
 
@@ -33,7 +33,7 @@ def test_json_fields(inner_type: Any, optional: bool) -> None:
 
     for _ in range(3):
         instance = factory.build()
-        assert isinstance(instance.value, inner_type if isinstance(inner_type, type) else inner_type.__origin__)
+        assert isinstance(instance.value, get_origin(inner_type) or inner_type)
         constructed = factory.build(factory_use_construct=True)
         assert isinstance(constructed.value, (str, bytes, bytearray))
         model(value=constructed.value)
