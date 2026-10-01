@@ -3,8 +3,10 @@ from __future__ import annotations
 import warnings
 from collections.abc import Mapping
 from contextlib import suppress
+from copy import copy
 from datetime import timezone
 from functools import partial
+from json import dumps
 from os.path import realpath
 from pathlib import Path
 from typing import TYPE_CHECKING, Any, ClassVar, ForwardRef, Generic, TypeVar, cast
@@ -72,6 +74,7 @@ try:
         ModelField,  # pyright: ignore[attr-defined,reportAttributeAccessIssue]
         Undefined,  # pyright: ignore[attr-defined,reportAttributeAccessIssue]
     )
+    from pydantic.json import pydantic_encoder as pydantic_v1_encoder
 
     # prevent unbound variable warnings
     BaseModelV2 = BaseModelV1
@@ -90,6 +93,7 @@ except ImportError:
         from pydantic.v1 import BaseModel as BaseModelV1  # type: ignore[assignment]
         from pydantic.v1.color import Color  # type: ignore[assignment]
         from pydantic.v1.fields import DeferredType, ModelField, Undefined
+        from pydantic.v1.json import pydantic_encoder as pydantic_v1_encoder
 
 
 if TYPE_CHECKING:
@@ -253,6 +257,20 @@ class PydanticFieldMeta(FieldMeta):
             if isinstance(model_field.annotation, (DeferredType, ForwardRef))
             else unwrap_new_type(model_field.annotation)
         )
+
+        if model_field.parse_json:
+            # Generate the parsed inner value, then serialize it for Pydantic's JSON validator.
+            inner_field = copy(model_field)
+            inner_field.annotation = inner_field.outer_type_ = getattr(outer_type, "inner_type", Any)
+            inner_field.parse_json = False
+            return PydanticFieldMeta(
+                name=name,
+                annotation=annotation,
+                children=[cls.from_model_field(inner_field, use_alias=use_alias, required=required)],
+                default=default_value,
+                constraints={"json": True},
+                required=required,
+            )
 
         # In pydantic v1, we need to check if the annotation is directly annotated to properly extract constraints
         # from the metadata, as v1 doesn't automatically propagate constraints like v2 does
@@ -472,6 +490,14 @@ class ModelFactory(BaseFactory[T], Generic[T]):
         build_context: BuildContext | None = None,
     ) -> Any:
         constraints = cast("PydanticConstraints", field_meta.constraints)
+
+        if constraints.get("json") and is_safe_subclass(cls.__model__, BaseModelV1) and field_meta.children:
+            value = cls.get_field_value(
+                field_meta.children[0],
+                field_build_parameters=field_build_parameters,
+                build_context=build_context,
+            )
+            return dumps(value, default=pydantic_v1_encoder)
 
         if constraints.pop("json", None):
             value = cls.get_field_value(
