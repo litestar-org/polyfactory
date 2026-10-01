@@ -1,7 +1,9 @@
 """Tests to check that usage of pydantic v1 and v2 at the same time works."""
 
+import re
 import sys
-from typing import Annotated, Optional, Union
+from types import GenericAlias
+from typing import Annotated, Any, Optional, Union
 
 import pytest
 
@@ -77,6 +79,46 @@ def test_build_v1_with_constrained_fields() -> None:
         g: dict[ConstrainedInt, ConstrainedStr]
 
     ModelFactory.create_factory(Foo).build()
+
+
+@skip_pydantic_v1_on_py314
+@pytest.mark.parametrize("optional", [False, True])
+@pytest.mark.parametrize("constrain_keys", [False, True])
+def test_build_v1_with_constrained_dict_elements(optional: bool, constrain_keys: bool) -> None:
+    from pydantic.v1 import constr, create_model  # noqa: PLC0415
+
+    pattern = r"^[A-Za-z_]+$"
+    constrained_str = constr(regex=pattern)
+    annotation: Any = GenericAlias(dict, (constrained_str, str) if constrain_keys else (str, constrained_str))
+    if optional:
+        annotation = Optional[annotation]
+    model = create_model("ModelWithConstrainedDict", values=(annotation, ...))
+    factory = ModelFactory.create_factory(model, __allow_none_optionals__=False)
+    factory.seed_random(0)
+
+    for instance in factory.batch(10):
+        values = instance.__dict__["values"]
+        elements = values.keys() if constrain_keys else values.values()
+        assert elements
+        assert all(re.fullmatch(pattern, element) for element in elements)
+
+
+@skip_pydantic_v1_on_py314
+@pytest.mark.parametrize("optional", [False, True])
+def test_build_v1_with_constrained_list_elements(optional: bool) -> None:
+    from pydantic.v1 import conint, create_model  # noqa: PLC0415
+
+    annotation: Any = GenericAlias(list, conint(ge=100, le=200))
+    if optional:
+        annotation = Optional[annotation]
+    model = create_model("ModelWithConstrainedList", values=(annotation, ...))
+    factory = ModelFactory.create_factory(model, __allow_none_optionals__=False)
+    factory.seed_random(0)
+
+    for instance in factory.batch(10):
+        values = instance.__dict__["values"]
+        assert values
+        assert all(100 <= element <= 200 for element in values)
 
 
 def test_build_v2_with_constrained_fields() -> None:
