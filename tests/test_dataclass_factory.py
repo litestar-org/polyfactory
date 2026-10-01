@@ -374,3 +374,22 @@ def test_pep695_dict_union_types(create_module: Callable[[str], ModuleType]) -> 
         """)
     )
     DataclassFactory.create_factory(module.Foo).build()
+
+
+@pytest.mark.skipif(sys.version_info < (3, 12), reason="PEP 695 requires Python 3.12+")
+def test_pep695_recursive_type_alias(create_module: Callable[[str], ModuleType]) -> None:
+    """Test that a self-referential type alias does not recurse forever."""
+    module = create_module(
+        textwrap.dedent("""
+            from dataclasses import dataclass
+
+            type Json = None | bool | int | float | str | list[Json] | dict[str, Json]
+
+            @dataclass
+            class Foo:
+                data: Json
+        """)
+    )
+    factory = DataclassFactory.create_factory(module.Foo)
+    for _ in range(50):
+        assert isinstance(factory.build(), module.Foo)

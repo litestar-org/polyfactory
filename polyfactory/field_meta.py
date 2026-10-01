@@ -2,8 +2,9 @@ from __future__ import annotations
 
 import functools
 from collections.abc import Hashable, Mapping
+from contextvars import ContextVar
 from dataclasses import asdict
-from typing import TYPE_CHECKING, Any, Literal, TypedDict, cast
+from typing import TYPE_CHECKING, Any, Literal, TypedDict, Union, cast
 
 from typing_extensions import get_args, get_origin
 
@@ -14,8 +15,8 @@ from polyfactory.utils.helpers import (
     unwrap_annotated,
     unwrap_new_type,
 )
-from polyfactory.utils.normalize_type import normalize_type
-from polyfactory.utils.predicates import is_annotated
+from polyfactory.utils.normalize_type import normalize_type, references_type_alias
+from polyfactory.utils.predicates import is_annotated, is_type_alias, is_union
 from polyfactory.utils.types import NoneType
 
 if TYPE_CHECKING:
@@ -30,6 +31,25 @@ if TYPE_CHECKING:
 
 class Null:
     """Sentinel class for empty values"""
+
+
+# Type aliases whose children are currently being built by ``FieldMeta.from_type``.
+_expanding_type_aliases: ContextVar[tuple[Any, ...]] = ContextVar("_expanding_type_aliases", default=())
+
+
+def _break_type_alias_cycle(alias: Any) -> Any:
+    """Return the value of a recursive type alias without the union members that recurse into it.
+
+    :param alias: A type alias that is already being expanded.
+
+    :returns: A type annotation.
+    """
+    value = alias.__value__
+    if not is_union(value):
+        return value
+
+    members = tuple(arg for arg in get_args(value) if not references_type_alias(arg, alias))
+    return Union[members] if members else value
 
 
 class UrlConstraints(TypedDict):
@@ -132,6 +152,32 @@ class FieldMeta:
 
         :returns: A field meta instance.
         """
+        expanding = _expanding_type_aliases.get()
+        if is_type_alias(annotation):
+            if annotation in expanding:
+                # A recursive type alias would otherwise expand forever, so stop at the members
+                # that do not refer back to it.
+                return cls.from_type(
+                    annotation=_break_type_alias_cycle(annotation),
+                    name=name,
+                    default=default,
+                    constraints=constraints,
+                    children=children,
+                    required=required,
+                )
+            token = _expanding_type_aliases.set((*expanding, annotation))
+            try:
+                return cls.from_type(
+                    annotation=normalize_type(annotation),
+                    name=name,
+                    default=default,
+                    constraints=constraints,
+                    children=children,
+                    required=required,
+                )
+            finally:
+                _expanding_type_aliases.reset(token)
+
         annotation = normalize_type(annotation)
         annotated = is_annotated(annotation)
         if not constraints and annotated:
