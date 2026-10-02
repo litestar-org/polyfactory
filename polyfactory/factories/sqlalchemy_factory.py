@@ -301,6 +301,13 @@ class SQLAlchemyFactory(BaseFactory[T], Generic[T]):
         try:
             annotation = type_engine.python_type
         except NotImplementedError:
+            annotation = object
+
+        # SQLAlchemy 2.1 changed the default `python_type` implementation to return `object`
+        # instead of raising `NotImplementedError` (sqlalchemy/sqlalchemy#10646). Treat that as
+        # "unknown" as well, so unsupported type engines keep raising and `TypeDecorator`
+        # subclasses keep falling back to the type of their `impl`.
+        if annotation is object:
             if not hasattr(type_engine, "impl"):
                 msg = f"Unsupported type engine: {type_engine}.\nOverride get_sqlalchemy_types to support"
                 raise ParameterException(msg) from None
