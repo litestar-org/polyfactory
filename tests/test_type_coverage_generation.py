@@ -4,7 +4,7 @@ from __future__ import annotations
 from collections.abc import Iterable
 from dataclasses import dataclass, make_dataclass
 from datetime import date
-from typing import Any, Literal, Optional, Union
+from typing import Any, Dict, List, Literal, Optional, Union  # noqa: UP035
 from uuid import UUID
 
 import pytest
@@ -371,3 +371,16 @@ def test_optional_mixed_collections() -> None:
     assert type_exists_at_path_any(results, ["maybe_uuids"], list)
     assert type_exists_at_path_any(results, ["maybe_uuids", "*"], UUID)
     assert type_exists_at_path_any(results, ["maybe_uuids"], NoneType)
+
+
+def test_optional_typing_collections() -> None:
+    class Model(BaseModel):
+        maybe_strs: Optional[List[str]]  # noqa: UP006, UP045
+        maybe_mapping: Optional[Dict[str, int]]  # noqa: UP006, UP045
+
+    results = list(ModelFactory.create_factory(Model).coverage())
+    assert type_exists_at_path_any(results, ["maybe_strs"], list)
+    assert type_exists_at_path_any(results, ["maybe_strs", "*"], str)
+    assert type_exists_at_path_any(results, ["maybe_strs"], NoneType)
+    assert type_exists_at_path_any(results, ["maybe_mapping"], dict)
+    assert type_exists_at_path_any(results, ["maybe_mapping"], NoneType)
