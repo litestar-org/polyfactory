@@ -1,7 +1,7 @@
 from typing import Annotated, Optional
 
 from annotated_types import Ge
-from typing_extensions import NotRequired, Required, TypedDict
+from typing_extensions import NotRequired, ReadOnly, Required, TypedDict
 
 from pydantic import BaseModel
 
@@ -92,3 +92,27 @@ def test_total_false_and_not_required() -> None:
 
         assert any("name" not in result for result in results)
         assert any("name" in result for result in results)
+
+
+def test_typeddict_with_read_only_fields() -> None:
+    class ReadOnlyModel(TypedDict):
+        id: ReadOnly[int]
+        required: Required[ReadOnly[str]]
+        read_only_required: ReadOnly[Required[str]]
+        annotated: ReadOnly[Annotated[int, Ge(100)]]
+        optional_int: ReadOnly[Optional[int]]
+        name: NotRequired[ReadOnly[str]]
+        read_only_name: ReadOnly[NotRequired[str]]
+
+    class ReadOnlyFactory(TypedDictFactory[ReadOnlyModel]):
+        __model__ = ReadOnlyModel
+
+    for result in [ReadOnlyFactory.build(), *ReadOnlyFactory.coverage()]:
+        assert isinstance(result["id"], int)
+        assert isinstance(result["required"], str)
+        assert isinstance(result["read_only_required"], str)
+        assert isinstance(result["annotated"], int)
+        assert result["annotated"] >= 100
+        assert isinstance(result["optional_int"], (type(None), int))
+        assert "name" not in result or isinstance(result["name"], str)
+        assert "read_only_name" not in result or isinstance(result["read_only_name"], str)
