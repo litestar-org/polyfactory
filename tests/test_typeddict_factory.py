@@ -7,6 +7,7 @@ from pydantic import BaseModel
 
 from polyfactory.factories import TypedDictFactory
 from polyfactory.factories.pydantic_factory import ModelFactory
+from polyfactory.field_meta import Null
 
 
 class TypedDictModel(TypedDict):
@@ -92,3 +93,17 @@ def test_total_false_and_not_required() -> None:
 
         assert any("name" not in result for result in results)
         assert any("name" in result for result in results)
+
+
+def test_typeddict_get_model_fields_default() -> None:
+    class Model(TypedDict):
+        id: int
+        name: str
+
+    class Factory(TypedDictFactory[Model]):
+        __model__ = Model
+
+    fields = Factory.get_model_fields()
+    assert len(fields) == 2
+    for field in fields:
+        assert field.default is Null
