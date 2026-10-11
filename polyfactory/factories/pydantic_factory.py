@@ -310,12 +310,7 @@ class PydanticFieldMeta(FieldMeta):
 
         children: list[FieldMeta] = []
 
-        # Refer #412.
-        args = get_args(model_field.annotation)
-        if is_optional(model_field.annotation) and len(args) == 2:  # noqa: PLR2004
-            child_annotation = args[0] if args[0] is not NoneType else args[1]
-            children.append(PydanticFieldMeta.from_type(child_annotation))
-        elif model_field.key_field or model_field.sub_fields:
+        if model_field.key_field or model_field.sub_fields:
             fields_to_iterate = (
                 ([model_field.key_field, *model_field.sub_fields])
                 if model_field.key_field is not None
@@ -328,6 +323,12 @@ class PydanticFieldMeta(FieldMeta):
                 )
                 for arg in fields_to_iterate
             )
+
+        # Refer #412. Preserve pydantic's child constraints when wrapping an optional collection.
+        args = get_args(model_field.annotation)
+        if is_optional(model_field.annotation) and len(args) == 2:  # noqa: PLR2004
+            child_annotation = args[0] if args[0] is not NoneType else args[1]
+            children = [PydanticFieldMeta.from_type(child_annotation, children=children or None)]
 
         examples = None
 
