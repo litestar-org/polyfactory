@@ -197,11 +197,37 @@ class SQLAlchemyFactory(BaseFactory[T], Generic[T]):
         return super().create_sync(**kwargs)
 
     @classmethod
+    def create_batch_sync(cls, size: int, **kwargs: Any) -> list[T]:
+        """Build and persist a batch without assigning computed columns.
+
+        :param size: Number of model instances to create.
+        :param kwargs: Field values and build context.
+        :returns: Persisted model instances.
+        """
+        build_context = cls._get_build_context(kwargs.get("_build_context"))
+        build_context["skip_computed_fields"] = True
+        kwargs["_build_context"] = build_context
+        return super().create_batch_sync(size, **kwargs)
+
+    @classmethod
     async def create_async(cls, **kwargs: Any) -> T:
         build_context = cls._get_build_context(kwargs.get("_build_context"))
         build_context["skip_computed_fields"] = True
         kwargs["_build_context"] = build_context
         return await super().create_async(**kwargs)
+
+    @classmethod
+    async def create_batch_async(cls, size: int, **kwargs: Any) -> list[T]:
+        """Build and persist a batch without assigning computed columns.
+
+        :param size: Number of model instances to create.
+        :param kwargs: Field values and build context.
+        :returns: Persisted model instances.
+        """
+        build_context = cls._get_build_context(kwargs.get("_build_context"))
+        build_context["skip_computed_fields"] = True
+        kwargs["_build_context"] = build_context
+        return await super().create_batch_async(size, **kwargs)
 
     @classmethod
     def get_sqlalchemy_types(cls) -> dict[Any, Callable[[], Any]]:
