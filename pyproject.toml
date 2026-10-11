@@ -44,7 +44,7 @@ sqlalchemy = ["sqlalchemy>=1.4.29"]
 pydantic = ["eval-type-backport>=0.2.2", "pydantic[email]>=1.10"]
 msgspec = ["msgspec>=0.20.0"]
 odmantic = ["odmantic<1.0.0", "pydantic[email]"]
-beanie = ["beanie", "pydantic[email]", "pymongo<4.9"]
+beanie = ["beanie", "pydantic[email]", "pymongo<4.19"]
 attrs = ["attrs>=22.2.0"]
 full = ["pydantic", "odmantic", "msgspec", "beanie", "attrs", "sqlalchemy"]
 
