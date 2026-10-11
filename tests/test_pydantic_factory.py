@@ -68,14 +68,15 @@ from pydantic import (
     validator,
 )
 
-from polyfactory.exceptions import ParameterException
+from polyfactory.exceptions import ConfigurationException, ParameterException
 from polyfactory.factories import DataclassFactory
-from polyfactory.factories.pydantic_factory import _IS_PYDANTIC_V1, ModelFactory
+from polyfactory.factories.pydantic_factory import _IS_PYDANTIC_V1, _PYDANTIC_HAS_BY_NAME, ModelFactory
 from polyfactory.field_meta import FieldMeta
 from tests.models import Person, PetFactory
 
 IS_PYDANTIC_V1 = _IS_PYDANTIC_V1
 IS_PYDANTIC_V2 = not _IS_PYDANTIC_V1
+IS_PYDANTIC_HAS_BY_NAME = _PYDANTIC_HAS_BY_NAME
 REGEX_PATTERN = r"(a|b|c)zz"
 
 
@@ -529,7 +530,7 @@ def test_build_instance_by_field_alias_with_populate_by_name_flag_pydantic_v2() 
     assert instance.aliased_field == "some"
 
 
-@pytest.mark.skipif(IS_PYDANTIC_V1, reason="pydantic 2 only test")
+@pytest.mark.skipif(not IS_PYDANTIC_HAS_BY_NAME, reason="by_name requires pydantic>=2.11")
 def test_build_instance_with_by_name_class_variable() -> None:
     """Test that __by_name__ class variable enables by_name for model validation."""
     from pydantic import AliasPath  # noqa: PLC0415
@@ -553,7 +554,7 @@ def test_build_instance_with_by_name_class_variable() -> None:
     assert instance2.field_b == 42
 
 
-@pytest.mark.skipif(IS_PYDANTIC_V1, reason="pydantic 2 only test")
+@pytest.mark.skipif(not IS_PYDANTIC_HAS_BY_NAME, reason="by_name requires pydantic>=2.11")
 def test_build_instance_with_by_name_and_alias_path() -> None:
     """Test that __by_name__ class variable works with AliasPath validation aliases."""
     from pydantic import AliasPath  # noqa: PLC0415
@@ -570,7 +571,7 @@ def test_build_instance_with_by_name_and_alias_path() -> None:
     assert isinstance(instance.value, str)
 
 
-@pytest.mark.skipif(IS_PYDANTIC_V1, reason="pydantic 2 only test")
+@pytest.mark.skipif(not IS_PYDANTIC_HAS_BY_NAME, reason="by_name requires pydantic>=2.11")
 def test_build_instance_with_by_name_and_factory_field_values() -> None:
     """Test that __by_name__ class variable works with factory field value overrides."""
     from pydantic import AliasPath  # noqa: PLC0415
@@ -599,6 +600,36 @@ def test_build_instance_with_by_name_and_factory_field_values() -> None:
     assert instance2.field_a == "override_a"
     assert instance2.field_b == 99
     assert instance2.field_c == "factory_default_c"
+
+
+@pytest.mark.skipif(
+    IS_PYDANTIC_V1 or IS_PYDANTIC_HAS_BY_NAME, reason="only pydantic 2.0-2.10 lack the by_name argument"
+)
+def test_by_name_raises_configuration_exception_when_by_name_is_unavailable() -> None:
+    """__by_name__ fails at class definition time when the installed pydantic has no by_name argument."""
+
+    class MyModel(BaseModel):
+        field_a: str = Field(..., validation_alias="special_field_a")
+
+    with pytest.raises(ConfigurationException, match=r"requires pydantic>=2\.11"):
+
+        class MyFactory(ModelFactory):
+            __model__ = MyModel
+            __by_name__ = True
+
+
+@pytest.mark.skipif(IS_PYDANTIC_V2, reason="pydantic v1 only test")
+def test_by_name_is_ignored_for_pydantic_v1() -> None:
+    """With pydantic v1 installed the setting is documented as having no effect, so it must not raise."""
+
+    class MyModel(BaseModel):
+        field_a: str = Field(..., alias="special_field_a")
+
+    class MyFactory(ModelFactory):
+        __model__ = MyModel
+        __by_name__ = True
+
+    assert isinstance(MyFactory.build(), MyModel)
 
 
 def test_build_instance_by_field_name_with_allow_population_by_field_name_flag() -> None:

@@ -12,7 +12,7 @@ from uuid import NAMESPACE_DNS, uuid1, uuid3, uuid5
 
 from typing_extensions import Literal, get_args
 
-from polyfactory.exceptions import MissingDependencyException
+from polyfactory.exceptions import ConfigurationException, MissingDependencyException
 from polyfactory.factories.base import BaseFactory, BuildContext
 from polyfactory.factories.base import BuildContext as BaseBuildContext
 from polyfactory.field_meta import Constraints, FieldMeta, Null
@@ -104,6 +104,9 @@ if TYPE_CHECKING:
 T = TypeVar("T", bound="BaseModel")
 
 _IS_PYDANTIC_V1 = VERSION.startswith("1")
+
+# The `by_name` argument of `model_validate` was added in pydantic 2.11.
+_PYDANTIC_HAS_BY_NAME = tuple(map(int, VERSION.split(".")[:2])) >= (2, 11)
 
 
 class PydanticBuildContext(BaseBuildContext):
@@ -414,6 +417,14 @@ class ModelFactory(BaseFactory[T], Generic[T]):
         model = getattr(cls, "__model__", None)
         if model is None:
             return
+
+        if cls.__by_name__ and _is_pydantic_v2_model(model) and not _PYDANTIC_HAS_BY_NAME:
+            msg = (
+                f"__by_name__ requires pydantic>=2.11, but pydantic {VERSION} is installed. "
+                "Upgrade pydantic, or set `populate_by_name=True` on the model so that it also accepts "
+                "its field names, or remove `__by_name__` from the factory."
+            )
+            raise ConfigurationException(msg)
 
         if _is_pydantic_v1_model(model) and hasattr(cls.__model__, "update_forward_refs"):
             with suppress(NameError):  # pragma: no cover

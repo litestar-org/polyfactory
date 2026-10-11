@@ -164,6 +164,9 @@ By default, ``__by_name__`` is set to ``False.``
 
 .. note::
     This feature is only available for Pydantic V2 models. For Pydantic V1 models, this setting has no effect.
+    Within Pydantic V2 it additionally requires ``pydantic>=2.11``, where the ``by_name`` argument of
+    ``model_validate()`` was added. Setting ``__by_name__`` to ``True`` with an earlier version raises a
+    ``ConfigurationException``, either upgrade pydantic or set ``populate_by_name=True`` on the model.
 
 
 Forward References
