@@ -255,7 +255,7 @@ data-aria-dark="Switch to auto color mode">
 </span><span data-line="12"><span class="p">)</span>
 </span><span data-line="13">
 </span><span data-line="14"><span class="kn">from</span><span class="w"> </span><span class="nn">polyfactory.factories.base</span><span class="w"> </span><span class="kn">import</span> <span class="n">BaseFactory</span>
-</span><span data-line="15"><span class="kn">from</span><span class="w"> </span><span class="nn">polyfactory.field_meta</span><span class="w"> </span><span class="kn">import</span> <span class="n">FieldMeta</span><span class="p">,</span> <span class="n">Null</span>
+</span><span data-line="15"><span class="kn">from</span><span class="w"> </span><span class="nn">polyfactory.field_meta</span><span class="w"> </span><span class="kn">import</span> <span class="n">FieldMeta</span>
 </span><span data-line="16">
 </span><span data-line="17"><span class="n">TypedDictT</span> <span class="o">=</span> <span class="n">TypeVar</span><span class="p">(</span><span class="s2">&quot;TypedDictT&quot;</span><span class="p">,</span> <span class="n">bound</span><span class="o">=</span><span class="n">_TypedDictMeta</span><span class="p">)</span>
 </span><span data-line="18">
@@ -301,12 +301,11 @@ data-aria-dark="Switch to auto color mode">
 </span><span data-line="51">                <span class="n">FieldMeta</span><span class="o">.</span><span class="n">from_type</span><span class="p">(</span>
 </span><span data-line="52">                    <span class="n">annotation</span><span class="o">=</span><span class="n">annotation</span><span class="p">,</span>
 </span><span data-line="53">                    <span class="n">name</span><span class="o">=</span><span class="n">field_name</span><span class="p">,</span>
-</span><span data-line="54">                    <span class="n">default</span><span class="o">=</span><span class="nb">getattr</span><span class="p">(</span><span class="bp">cls</span><span class="o">.</span><span class="n">__model__</span><span class="p">,</span> <span class="n">field_name</span><span class="p">,</span> <span class="n">Null</span><span class="p">),</span>
-</span><span data-line="55">                    <span class="n">required</span><span class="o">=</span><span class="n">field_name</span> <span class="ow">in</span> <span class="bp">cls</span><span class="o">.</span><span class="n">__model__</span><span class="o">.</span><span class="n">__required_keys__</span><span class="p">,</span>
-</span><span data-line="56">                <span class="p">),</span>
-</span><span data-line="57">            <span class="p">)</span>
-</span><span data-line="58">
-</span><span data-line="59">        <span class="k">return</span> <span class="n">field_metas</span></div>
+</span><span data-line="54">                    <span class="n">required</span><span class="o">=</span><span class="n">field_name</span> <span class="ow">in</span> <span class="bp">cls</span><span class="o">.</span><span class="n">__model__</span><span class="o">.</span><span class="n">__required_keys__</span><span class="p">,</span>
+</span><span data-line="55">                <span class="p">),</span>
+</span><span data-line="56">            <span class="p">)</span>
+</span><span data-line="57">
+</span><span data-line="58">        <span class="k">return</span> <span class="n">field_metas</span></div>
 </div>
 
 </span></pre></div>
