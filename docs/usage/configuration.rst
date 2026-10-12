@@ -135,17 +135,31 @@ By default, ``__use_defaults__`` is set to ``False.`` If you need more fine grai
     :language: python
 
 
-Use Example Values (Pydantic >= V2)
------------------------------------
+Use Example Values
+------------------
 
 If ``__use_examples__`` is set to ``True``, then a random value from examples attribute will be used for a given field,
 provided there's a non-empty list of examples defined for that field.
 
-By default, ``__use_examples__`` is set to ``False.``
+By default, ``__use_examples__`` is set to ``False.`` If you need more fine grained control, you can override the
+:meth:`~polyfactory.factories.base.BaseFactory.should_use_example_value` classmethod.
+
+Examples are read from Pydantic's ``Field(examples=...)`` (Pydantic >= V2):
 
 .. literalinclude:: /examples/configuration/test_example_10.py
-    :caption: Use Examples Values
+    :caption: Use Examples Values with Pydantic
     :language: python
+
+They are also read from any ``Annotated`` metadata with an ``examples`` list attribute, such as msgspec's
+``Meta(examples=...)``. This works with every factory, including nested types like ``list[Annotated[int, Meta(examples=[1, 2])]]``:
+
+.. literalinclude:: /examples/configuration/test_example_13.py
+    :caption: Use Examples Values with msgspec
+    :language: python
+
+Custom factories can provide examples by setting ``examples`` on the
+:class:`~polyfactory.field_meta.FieldMeta` instances returned by
+:meth:`~polyfactory.factories.base.BaseFactory.get_model_fields`.
 
 
 Validation Aliases (Pydantic >= V2)
