@@ -61,6 +61,7 @@ from polyfactory.utils.helpers import (
 from polyfactory.utils.model_coverage import CoverageContainer, CoverageContainerCallable, resolve_kwargs_coverage
 from polyfactory.utils.predicates import (
     get_type_origin,
+    is_annotated,
     is_forward_ref,
     is_literal,
     is_optional,
@@ -170,6 +171,14 @@ class BaseFactory(ABC, Generic[T]):
     """
     Flag indicating whether to use the default value on a specific field, if provided.
     """
+    __use_examples__: ClassVar[bool] = False
+    """
+    Flag indicating whether to use a random example value on a specific field, if provided.
+
+    Examples are taken from the 'examples' attribute of the field's annotation metadata,
+    e.g. 'Annotated[str, msgspec.Meta(examples=["USD", "EUR"])]' or 'pydantic.Field(examples=["USD", "EUR"])'.
+    Custom factories can provide examples by setting 'FieldMeta.examples' in 'get_model_fields'.
+    """
     __forward_references__: ClassVar[dict[str, Any]] = {}
 
     __config_keys__: tuple[str, ...] = (
@@ -182,6 +191,7 @@ class BaseFactory(ABC, Generic[T]):
         "__min_collection_length__",
         "__max_collection_length__",
         "__use_defaults__",
+        "__use_examples__",
         "__forward_references__",
     )
     """Keys to be considered as config values to pass on to dynamically created factories."""
@@ -746,6 +756,9 @@ class BaseFactory(ABC, Generic[T]):
         :returns: An arbitrary value.
 
         """
+        if cls.should_use_example_value(field_meta):
+            return cls.__random__.choice(cast("list[Any]", field_meta.examples))
+
         build_context = cls._get_build_context(build_context)
         if cls.is_ignored_type(field_meta.annotation):
             return None
@@ -888,6 +901,25 @@ class BaseFactory(ABC, Generic[T]):
         if not field_meta.required:
             yield Null
 
+        if cls.__use_examples__:
+            if cls.should_use_example_value(field_meta):
+                yield CoverageContainer(cast("list[Any]", field_meta.examples))
+                return
+
+            annotation = field_meta.annotation
+            if is_annotated(annotation):
+                annotation = get_args(annotation)[0]
+
+            if is_union(annotation) and field_meta.children:
+                # Union members may define their own examples, so they are covered one by one.
+                # NoneType children aren't included in field_meta.children,
+                # so to ensure that they are covered we need to check for them explicitly
+                if NoneType in field_meta.type_args:
+                    yield None
+                for child in field_meta.children:
+                    yield from cls.get_field_value_coverage(child, field_build_parameters, build_context)
+                return
+
         for unwrapped_annotation in flatten_annotation(field_meta.annotation):
             unwrapped_annotation = cls._resolve_forward_references(unwrapped_annotation)  # noqa: PLW2901
 
@@ -1000,6 +1032,20 @@ class BaseFactory(ABC, Generic[T]):
 
         """
         return cls.__use_defaults__ and field_meta.default is not Null
+
+    @classmethod
+    def should_use_example_value(cls, field_meta: FieldMeta) -> bool:
+        """Determine whether to use a random example value for the given field.
+
+        :param field_meta: FieldMeta instance.
+
+        :notes:
+            - This method is distinct to allow overriding.
+
+        :returns: A boolean determining whether an example value should be used for the given field_meta.
+
+        """
+        return cls.__use_examples__ and bool(field_meta.examples)
 
     @classmethod
     def should_set_field_value(cls, field_meta: FieldMeta, **kwargs: Any) -> bool:
