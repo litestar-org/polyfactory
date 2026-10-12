@@ -151,7 +151,9 @@ Examples are read from Pydantic's ``Field(examples=...)`` (Pydantic >= V2):
     :language: python
 
 They are also read from any ``Annotated`` metadata with an ``examples`` list attribute, such as msgspec's
-``Meta(examples=...)``. This works with every factory, including nested types like ``list[Annotated[int, Meta(examples=[1, 2])]]``:
+``Meta(examples=...)``. Custom markers are supported too: any object with an ``examples`` list attribute works,
+e.g. ``Annotated[str, MyExamples("USD", "EUR")]`` where ``MyExamples`` sets ``self.examples = list(examples)``.
+This works with every factory, including nested types like ``list[Annotated[int, Meta(examples=[1, 2])]]``:
 
 .. literalinclude:: /examples/configuration/test_example_13.py
     :caption: Use Examples Values with msgspec

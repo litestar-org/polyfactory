@@ -4,10 +4,12 @@ from msgspec import Meta, Struct
 
 from polyfactory.factories.msgspec_factory import MsgspecFactory
 
+_SUPPORTED_CURRENCIES = ["USD", "EUR", "INR"]
+
 
 class Payment(Struct):
     amount: int
-    currency: Annotated[str, Meta(examples=["USD", "EUR", "INR"])]
+    currency: Annotated[str, Meta(examples=_SUPPORTED_CURRENCIES)]
 
 
 class PaymentFactory(MsgspecFactory[Payment]):
@@ -16,4 +18,4 @@ class PaymentFactory(MsgspecFactory[Payment]):
 
 def test_use_examples() -> None:
     instance = PaymentFactory.build()
-    assert instance.currency in ["USD", "EUR", "INR"]
+    assert instance.currency in _SUPPORTED_CURRENCIES
