@@ -186,3 +186,26 @@ def get_collection_type(annotation: Any) -> type[list | tuple | set | frozenset 
 
 def is_dataclass_instance(obj: Any) -> bool:
     return is_dataclass(obj) and not isinstance(obj, type)
+
+
+def is_same_annotation(a: Any, b: Any) -> bool:
+    """Check if two annotations are semantically equal, accounting for typing vs builtin generics.
+
+    :param a: A type annotation.
+    :param b: A type annotation.
+
+    :returns: A boolean indicating if annotations are semantically equivalent.
+    """
+    if a == b:
+        return True
+    a_origin = get_origin(a)
+    b_origin = get_origin(b)
+    if a_origin is not None and b_origin is not None:
+        a_origin = TYPE_MAPPING.get(a_origin, a_origin)
+        b_origin = TYPE_MAPPING.get(b_origin, b_origin)
+        if a_origin == b_origin:
+            a_args = get_args(a)
+            b_args = get_args(b)
+            if len(a_args) == len(b_args):
+                return all(is_same_annotation(a_arg, b_arg) for a_arg, b_arg in zip(a_args, b_args))
+    return False

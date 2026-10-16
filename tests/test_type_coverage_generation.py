@@ -371,3 +371,22 @@ def test_optional_mixed_collections() -> None:
     assert type_exists_at_path_any(results, ["maybe_uuids"], list)
     assert type_exists_at_path_any(results, ["maybe_uuids", "*"], UUID)
     assert type_exists_at_path_any(results, ["maybe_uuids"], NoneType)
+
+
+def test_optional_typing_collections() -> None:
+    from typing import Dict, List, Set  # noqa: PLC0415, UP035
+
+    class Model(BaseModel):
+        values: Optional[List[str]]  # noqa: UP045, UP006
+        mapping: Optional[Dict[str, int]]  # noqa: UP045, UP006
+        items: Optional[Set[int]]  # noqa: UP045, UP006
+
+    results = list(ModelFactory.create_factory(Model).coverage())
+    assert type_exists_at_path_any(results, ["values"], list)
+    assert type_exists_at_path_any(results, ["values", "*"], str)
+    assert type_exists_at_path_any(results, ["values"], NoneType)
+    assert type_exists_at_path_any(results, ["mapping"], dict)
+    assert type_exists_at_path_any(results, ["mapping"], NoneType)
+    assert type_exists_at_path_any(results, ["items"], set)
+    assert type_exists_at_path_any(results, ["items", "*"], int)
+    assert type_exists_at_path_any(results, ["items"], NoneType)
