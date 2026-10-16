@@ -14,7 +14,7 @@ from polyfactory.utils.helpers import (
     unwrap_annotated,
     unwrap_new_type,
 )
-from polyfactory.utils.normalize_type import normalize_type
+from polyfactory.utils.normalize_type import _seen_contains, normalize_type
 from polyfactory.utils.predicates import is_annotated
 from polyfactory.utils.types import NoneType
 
@@ -122,6 +122,7 @@ class FieldMeta:
         constraints: Constraints | None = None,
         children: list[FieldMeta] | None = None,
         required: bool = True,
+        _seen: tuple[Any, ...] | None = None,
     ) -> Self:
         """Builder method to create a FieldMeta from a type annotation.
 
@@ -129,10 +130,38 @@ class FieldMeta:
         :param name: Field name
         :param default: Default value, if any.
         :param constraints: A dictionary of constraints, if any.
+        :param children: Child field meta instances, if any.
+        :param required: Whether the field is required.
+        :param _seen: Internal tuple tracking types currently in progress to avoid recursion cycles.
 
         :returns: A field meta instance.
         """
-        annotation = normalize_type(annotation)
+        seen = _seen or ()
+        if _seen_contains(annotation, seen):
+            return cls(
+                annotation=annotation,
+                name=name,
+                default=default,
+                children=None,
+                constraints=constraints,
+                required=required,
+            )
+
+        raw_annotation = annotation
+        annotation = normalize_type(annotation, seen)
+
+        if _seen_contains(annotation, seen):
+            return cls(
+                annotation=raw_annotation,
+                name=name,
+                default=default,
+                children=None,
+                constraints=constraints,
+                required=required,
+            )
+
+        new_seen = (*seen, raw_annotation, annotation)
+
         annotated = is_annotated(annotation)
         if not constraints and annotated:
             metadata = cls.get_constraints_metadata(annotation)
@@ -155,7 +184,9 @@ class FieldMeta:
 
         if field.type_args and not field.children:
             field.children = [
-                cls.from_type(annotation=unwrap_new_type(arg)) for arg in field.type_args if arg is not NoneType
+                cls.from_type(annotation=unwrap_new_type(arg), _seen=new_seen)
+                for arg in field.type_args
+                if arg is not NoneType
             ]
         return field
 

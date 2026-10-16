@@ -49,7 +49,7 @@ from polyfactory.constants import (
     RANDOMIZE_COLLECTION_LENGTH,
 )
 from polyfactory.exceptions import ConfigurationException, MissingBuildKwargException, ParameterException
-from polyfactory.field_meta import Null
+from polyfactory.field_meta import FieldMeta, Null
 from polyfactory.fields import Ignore, PostGenerated, Require, Use
 from polyfactory.utils.helpers import (
     flatten_annotation,
@@ -59,12 +59,15 @@ from polyfactory.utils.helpers import (
     unwrap_optional,
 )
 from polyfactory.utils.model_coverage import CoverageContainer, CoverageContainerCallable, resolve_kwargs_coverage
+from polyfactory.utils.normalize_type import normalize_type
 from polyfactory.utils.predicates import (
     get_type_origin,
     is_forward_ref,
+    is_generic_alias,
     is_literal,
     is_optional,
     is_safe_subclass,
+    is_type_alias,
     is_type_var,
     is_union,
 )
@@ -89,7 +92,7 @@ from polyfactory.value_generators.primitives import create_random_boolean, creat
 if TYPE_CHECKING:
     from typing_extensions import TypeGuard
 
-    from polyfactory.field_meta import Constraints, FieldMeta
+    from polyfactory.field_meta import Constraints
     from polyfactory.persistence import AsyncPersistenceProtocol, SyncPersistenceProtocol
 
 
@@ -758,6 +761,10 @@ class BaseFactory(ABC, Generic[T]):
 
         unwrapped_annotation = unwrap_annotation(field_meta.annotation)
         unwrapped_annotation = cls._resolve_forward_references(unwrapped_annotation)
+        if is_type_alias(unwrapped_annotation) or (
+            is_generic_alias(unwrapped_annotation) and is_type_alias(get_origin(unwrapped_annotation))
+        ):
+            unwrapped_annotation = normalize_type(unwrapped_annotation)
 
         if is_literal(annotation=unwrapped_annotation) and (literal_args := get_args(unwrapped_annotation)):
             return cls.__random__.choice(literal_args)
@@ -773,16 +780,30 @@ class BaseFactory(ABC, Generic[T]):
                 build_context=build_context,
             )
 
-        if (is_union(unwrapped_annotation) or is_union(field_meta.annotation)) and field_meta.children:
-            seen_models = build_context["seen_models"]
-            children = [child for child in field_meta.children if child.annotation not in seen_models]
+        if is_union(unwrapped_annotation) or is_union(field_meta.annotation):
+            if field_meta.children:
+                seen_models = build_context["seen_models"]
+                children = [child for child in field_meta.children if child.annotation not in seen_models]
 
-            # `None` is removed from the children when creating FieldMeta so when `children`
-            # is empty, it must mean that the field meta is an optional type.
-            if not children:
+                # `None` is removed from the children when creating FieldMeta so when `children`
+                # is empty, it must mean that the field meta is an optional type.
+                if not children:
+                    return None
+
+                return cls.get_field_value(cls.__random__.choice(children), field_build_parameters, build_context)
+
+            union_type = unwrapped_annotation if is_union(unwrapped_annotation) else field_meta.annotation
+            variants = [
+                arg
+                for arg in get_args(union_type)
+                if arg not in (None, NoneType)
+                and not (get_type_origin(arg) and is_safe_subclass(get_type_origin(arg), Collection))
+            ]
+            if variants:
+                chosen = cls.__random__.choice(variants)
+                return cls.get_field_value(FieldMeta.from_type(chosen), field_build_parameters, build_context)
+            if is_optional(union_type):
                 return None
-
-            return cls.get_field_value(cls.__random__.choice(children), field_build_parameters, build_context)
 
         provider_map = cls.get_provider_map()
         if provider := (provider_map.get(field_meta.annotation) or provider_map.get(unwrapped_annotation)):
@@ -890,6 +911,10 @@ class BaseFactory(ABC, Generic[T]):
 
         for unwrapped_annotation in flatten_annotation(field_meta.annotation):
             unwrapped_annotation = cls._resolve_forward_references(unwrapped_annotation)  # noqa: PLW2901
+            if is_type_alias(unwrapped_annotation) or (
+                is_generic_alias(unwrapped_annotation) and is_type_alias(get_origin(unwrapped_annotation))
+            ):
+                unwrapped_annotation = normalize_type(unwrapped_annotation)  # noqa: PLW2901
 
             unwrapped_annotation_meta = field_meta
             if is_union(field_meta.annotation):
@@ -927,10 +952,10 @@ class BaseFactory(ABC, Generic[T]):
                     ),
                 )
 
-            elif (origin := get_type_origin(unwrapped_annotation)) and issubclass(origin, Collection):
+            elif (origin := get_type_origin(unwrapped_annotation)) and is_safe_subclass(origin, Collection):
                 if not field_meta.children:
-                    msg = "A subclass of Collection should always have children in its field_meta"
-                    raise ParameterException(msg)
+                    yield origin()
+                    continue
 
                 # We actually want to use the parent in cases where the collection is the parent
                 # such as tuple so default to the parent if this annotation is not present in the children
@@ -939,7 +964,24 @@ class BaseFactory(ABC, Generic[T]):
                     field_meta,
                 )
 
-                yield handle_collection_type_coverage(child_meta, origin, cls, build_context=build_context)
+                if not child_meta.children:
+                    yield origin()
+                else:
+                    yield handle_collection_type_coverage(child_meta, origin, cls, build_context=build_context)
+
+            elif is_union(unwrapped_annotation):
+                variants = [
+                    arg
+                    for arg in get_args(unwrapped_annotation)
+                    if arg not in (None, NoneType)
+                    and not (get_type_origin(arg) and is_safe_subclass(get_type_origin(arg), Collection))
+                ]
+                if variants:
+                    yield from cls.get_field_value_coverage(
+                        FieldMeta.from_type(variants[0]),
+                        field_build_parameters=field_build_parameters,
+                        build_context=build_context,
+                    )
 
             elif is_type_var(unwrapped_annotation):
                 yield create_random_string(cls.__random__, min_length=1, max_length=10)
@@ -966,6 +1008,20 @@ class BaseFactory(ABC, Generic[T]):
         # This is a workaround when forward references are resolved to strings
         if isinstance(annotation, str):
             return cls.__forward_references__.get(annotation, annotation)
+
+        if is_type_alias(annotation):
+            return cls.__forward_references__.get(
+                annotation, cls.__forward_references__.get(getattr(annotation, "__name__", None), annotation)
+            )
+
+        if is_generic_alias(annotation) and is_type_alias(origin := get_origin(annotation)):
+            return cls.__forward_references__.get(
+                annotation,
+                cls.__forward_references__.get(
+                    origin,
+                    cls.__forward_references__.get(getattr(origin, "__name__", None), annotation),
+                ),
+            )
 
         return annotation
 
