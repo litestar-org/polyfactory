@@ -13,7 +13,7 @@ from typing_extensions import (  # type: ignore[attr-defined]
 )
 
 from polyfactory.factories.base import BaseFactory
-from polyfactory.field_meta import FieldMeta, Null
+from polyfactory.field_meta import FieldMeta
 
 TypedDictT = TypeVar("TypedDictT", bound=_TypedDictMeta)
 _FIELD_QUALIFIERS = (Required, NotRequired, getattr(typing_extensions, "ReadOnly", None))
@@ -52,7 +52,6 @@ class TypedDictFactory(BaseFactory[TypedDictT], Generic[TypedDictT]):
                 FieldMeta.from_type(
                     annotation=annotation,
                     name=field_name,
-                    default=getattr(cls.__model__, field_name, Null),
                     required=field_name in cls.__model__.__required_keys__,
                 ),
             )

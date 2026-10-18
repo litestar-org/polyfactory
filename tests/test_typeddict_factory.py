@@ -7,6 +7,7 @@ from pydantic import BaseModel
 
 from polyfactory.factories import TypedDictFactory
 from polyfactory.factories.pydantic_factory import ModelFactory
+from polyfactory.field_meta import Null
 
 
 class TypedDictModel(TypedDict):
@@ -116,3 +117,17 @@ def test_typeddict_with_read_only_fields() -> None:
         assert isinstance(result["optional_int"], (type(None), int))
         assert "name" not in result or isinstance(result["name"], str)
         assert "read_only_name" not in result or isinstance(result["read_only_name"], str)
+
+
+def test_typeddict_get_model_fields_default() -> None:
+    class Model(TypedDict):
+        id: int
+        name: str
+
+    class Factory(TypedDictFactory[Model]):
+        __model__ = Model
+
+    fields = Factory.get_model_fields()
+    assert len(fields) == 2
+    for field in fields:
+        assert field.default is Null
