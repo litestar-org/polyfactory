@@ -68,7 +68,7 @@ class Constraints(TypedDict):
 class FieldMeta:
     """Factory field metadata container. This class is used to store the data about a field of a factory's model."""
 
-    __slots__ = ("__dict__", "annotation", "children", "constraints", "default", "name", "random")
+    __slots__ = ("__dict__", "annotation", "children", "constraints", "default", "examples", "name", "random")
 
     annotation: Any
     random: Random
@@ -76,6 +76,7 @@ class FieldMeta:
     default: Any
     name: str
     constraints: Constraints | None
+    examples: list[Any] | None
 
     def __init__(
         self,
@@ -85,6 +86,7 @@ class FieldMeta:
         default: Any = Null,
         children: list[FieldMeta] | None = None,
         constraints: Constraints | None = None,
+        examples: list[Any] | None = None,
         required: bool = True,
     ) -> None:
         """Create a factory field metadata instance."""
@@ -93,6 +95,7 @@ class FieldMeta:
         self.default = default
         self.name = name
         self.constraints = constraints
+        self.examples = examples
         self.required = required
 
     def __repr__(self) -> str:
@@ -122,6 +125,7 @@ class FieldMeta:
         constraints: Constraints | None = None,
         children: list[FieldMeta] | None = None,
         required: bool = True,
+        examples: list[Any] | None = None,
     ) -> Self:
         """Builder method to create a FieldMeta from a type annotation.
 
@@ -129,6 +133,7 @@ class FieldMeta:
         :param name: Field name
         :param default: Default value, if any.
         :param constraints: A dictionary of constraints, if any.
+        :param examples: A list of example values, if any.
 
         :returns: A field meta instance.
         """
@@ -137,6 +142,9 @@ class FieldMeta:
         if not constraints and annotated:
             metadata = cls.get_constraints_metadata(annotation)
             constraints = cls.parse_constraints(metadata)
+
+        if examples is None and annotated:
+            examples = cls.parse_examples(get_annotation_metadata(annotation))
 
         # annotations can take many forms: Optional, an Annotated type, or anything with __args__
         # in order to normalize the annotation, we need to unwrap the annotation.
@@ -150,6 +158,7 @@ class FieldMeta:
             default=default,
             children=children,
             constraints=constraints,
+            examples=examples,
             required=required,
         )
 
@@ -210,6 +219,23 @@ class FieldMeta:
                     },
                 )
         return cast("Constraints", constraints)
+
+    @classmethod
+    def parse_examples(cls, metadata: Sequence[Any]) -> list[Any] | None:
+        """Get the example values from the given annotation metadata.
+
+        Any metadata object with a non-empty ``examples`` list attribute is supported,
+        e.g. ``msgspec.Meta`` or ``pydantic.Field``. If several are given, the last one wins.
+
+        :param metadata: A list of annotation metadata.
+
+        :returns: A list of example values, if any.
+        """
+        examples = None
+        for value in metadata:
+            if isinstance(value_examples := getattr(value, "examples", None), list) and value_examples:
+                examples = value_examples
+        return examples
 
     @classmethod
     def get_constraints_metadata(cls, annotation: Any) -> Sequence[Any]:
