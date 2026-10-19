@@ -196,7 +196,7 @@ data-aria-dark="Switch to auto color mode">
 <li><a class="reference internal" href="#allow-none-optionals">Allow None Optionals</a></li>
 <li><a class="reference internal" href="#check-factory-fields">Check Factory Fields</a></li>
 <li><a class="reference internal" href="#use-default-values">Use Default Values</a></li>
-<li><a class="reference internal" href="#use-example-values-pydantic-v2">Use Example Values (Pydantic &gt;= V2)</a></li>
+<li><a class="reference internal" href="#use-example-values">Use Example Values</a></li>
 <li><a class="reference internal" href="#validation-aliases-pydantic-v2">Validation Aliases (Pydantic &gt;= V2)</a></li>
 <li><a class="reference internal" href="#forward-references">Forward References</a></li>
 </ul>
@@ -718,13 +718,15 @@ for a given field, provided there’s a default value for that field.</p>
 </div>
 </div>
 </section>
-<section id="use-example-values-pydantic-v2">
-<h2>Use Example Values (Pydantic &gt;= V2)<a class="headerlink" href="#use-example-values-pydantic-v2" title="Link to this heading">¶</a></h2>
+<section id="use-example-values">
+<h2>Use Example Values<a class="headerlink" href="#use-example-values" title="Link to this heading">¶</a></h2>
 <p>If <code class="docutils literal notranslate"><span class="pre">__use_examples__</span></code> is set to <code class="docutils literal notranslate"><span class="pre">True</span></code>, then a random value from examples attribute will be used for a given field,
 provided there’s a non-empty list of examples defined for that field.</p>
-<p>By default, <code class="docutils literal notranslate"><span class="pre">__use_examples__</span></code> is set to <code class="docutils literal notranslate"><span class="pre">False.</span></code></p>
+<p>By default, <code class="docutils literal notranslate"><span class="pre">__use_examples__</span></code> is set to <code class="docutils literal notranslate"><span class="pre">False.</span></code> If you need more fine grained control, you can override the
+<a class="reference internal" href="../reference/factories/base.html#polyfactory.factories.base.BaseFactory.should_use_example_value" title="polyfactory.factories.base.BaseFactory.should_use_example_value"><code class="xref py py-meth docutils literal notranslate"><span class="pre">should_use_example_value()</span></code></a> classmethod.</p>
+<p>Examples are read from Pydantic’s <code class="docutils literal notranslate"><span class="pre">Field(examples=...)</span></code> (Pydantic &gt;= V2):</p>
 <div class="literal-block-wrapper docutils container" id="id11">
-<div class="code-block-caption"><span class="caption-text">Use Examples Values</span><a class="headerlink" href="#id11" title="Link to this code">¶</a></div>
+<div class="code-block-caption"><span class="caption-text">Use Examples Values with Pydantic</span><a class="headerlink" href="#id11" title="Link to this code">¶</a></div>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span data-line="1"><span class="kn">from</span><span class="w"> </span><span class="nn">pydantic</span><span class="w"> </span><span class="kn">import</span> <span class="n">BaseModel</span><span class="p">,</span> <span class="n">Field</span>
 </span><span data-line="2">
 </span><span data-line="3"><span class="kn">from</span><span class="w"> </span><span class="nn">polyfactory.factories.pydantic_factory</span><span class="w"> </span><span class="kn">import</span> <span class="n">ModelFactory</span>
@@ -745,6 +747,39 @@ provided there’s a non-empty list of examples defined for that field.</p>
 </span></pre></div>
 </div>
 </div>
+<p>They are also read from any <code class="docutils literal notranslate"><span class="pre">Annotated</span></code> metadata with an <code class="docutils literal notranslate"><span class="pre">examples</span></code> list attribute, such as msgspec’s
+<code class="docutils literal notranslate"><span class="pre">Meta(examples=...)</span></code>. Custom markers are supported too: any object with an <code class="docutils literal notranslate"><span class="pre">examples</span></code> list attribute works,
+e.g. <code class="docutils literal notranslate"><span class="pre">Annotated[str,</span> <span class="pre">MyExamples(&quot;USD&quot;,</span> <span class="pre">&quot;EUR&quot;)]</span></code> where <code class="docutils literal notranslate"><span class="pre">MyExamples</span></code> sets <code class="docutils literal notranslate"><span class="pre">self.examples</span> <span class="pre">=</span> <span class="pre">list(examples)</span></code>.
+This works with every factory, including nested types like <code class="docutils literal notranslate"><span class="pre">list[Annotated[int,</span> <span class="pre">Meta(examples=[1,</span> <span class="pre">2])]]</span></code>:</p>
+<div class="literal-block-wrapper docutils container" id="id12">
+<div class="code-block-caption"><span class="caption-text">Use Examples Values with msgspec</span><a class="headerlink" href="#id12" title="Link to this code">¶</a></div>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span data-line="1"><span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Annotated</span>
+</span><span data-line="2">
+</span><span data-line="3"><span class="kn">from</span><span class="w"> </span><span class="nn">msgspec</span><span class="w"> </span><span class="kn">import</span> <span class="n">Meta</span><span class="p">,</span> <span class="n">Struct</span>
+</span><span data-line="4">
+</span><span data-line="5"><span class="kn">from</span><span class="w"> </span><span class="nn">polyfactory.factories.msgspec_factory</span><span class="w"> </span><span class="kn">import</span> <span class="n">MsgspecFactory</span>
+</span><span data-line="6">
+</span><span data-line="7"><span class="n">_SUPPORTED_CURRENCIES</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;USD&quot;</span><span class="p">,</span> <span class="s2">&quot;EUR&quot;</span><span class="p">,</span> <span class="s2">&quot;INR&quot;</span><span class="p">]</span>
+</span><span data-line="8">
+</span><span data-line="9">
+</span><span data-line="10"><span class="k">class</span><span class="w"> </span><span class="nc">Payment</span><span class="p">(</span><span class="n">Struct</span><span class="p">):</span>
+</span><span data-line="11">    <span class="n">amount</span><span class="p">:</span> <span class="nb">int</span>
+</span><span data-line="12">    <span class="n">currency</span><span class="p">:</span> <span class="n">Annotated</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Meta</span><span class="p">(</span><span class="n">examples</span><span class="o">=</span><span class="n">_SUPPORTED_CURRENCIES</span><span class="p">)]</span>
+</span><span data-line="13">
+</span><span data-line="14">
+</span><span data-line="15"><span class="k">class</span><span class="w"> </span><span class="nc">PaymentFactory</span><span class="p">(</span><span class="n">MsgspecFactory</span><span class="p">[</span><span class="n">Payment</span><span class="p">]):</span>
+</span><span data-line="16">    <span class="n">__use_examples__</span> <span class="o">=</span> <span class="kc">True</span>
+</span><span data-line="17">
+</span><span data-line="18">
+</span><span data-line="19"><span class="k">def</span><span class="w"> </span><span class="nf">test_use_examples</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+</span><span data-line="20">    <span class="n">instance</span> <span class="o">=</span> <span class="n">PaymentFactory</span><span class="o">.</span><span class="n">build</span><span class="p">()</span>
+</span><span data-line="21">    <span class="k">assert</span> <span class="n">instance</span><span class="o">.</span><span class="n">currency</span> <span class="ow">in</span> <span class="n">_SUPPORTED_CURRENCIES</span>
+</span></pre></div>
+</div>
+</div>
+<p>Custom factories can provide examples by setting <code class="docutils literal notranslate"><span class="pre">examples</span></code> on the
+<a class="reference internal" href="../reference/field_meta.html#polyfactory.field_meta.FieldMeta" title="polyfactory.field_meta.FieldMeta"><code class="xref py py-class docutils literal notranslate"><span class="pre">FieldMeta</span></code></a> instances returned by
+<a class="reference internal" href="../reference/factories/base.html#polyfactory.factories.base.BaseFactory.get_model_fields" title="polyfactory.factories.base.BaseFactory.get_model_fields"><code class="xref py py-meth docutils literal notranslate"><span class="pre">get_model_fields()</span></code></a>.</p>
 </section>
 <section id="validation-aliases-pydantic-v2">
 <h2>Validation Aliases (Pydantic &gt;= V2)<a class="headerlink" href="#validation-aliases-pydantic-v2" title="Link to this heading">¶</a></h2>
@@ -753,8 +788,8 @@ when creating model instances. This is useful when working with models that use 
 <code class="docutils literal notranslate"><span class="pre">validation_alias</span></code> or <code class="docutils literal notranslate"><span class="pre">AliasPath</span></code>, as it allows the factory to handle these aliases automatically without
 requiring additional model configuration.</p>
 <p>By default, <code class="docutils literal notranslate"><span class="pre">__by_name__</span></code> is set to <code class="docutils literal notranslate"><span class="pre">False.</span></code></p>
-<div class="literal-block-wrapper docutils container" id="id12">
-<div class="code-block-caption"><span class="caption-text">Validation Aliases with by_name</span><a class="headerlink" href="#id12" title="Link to this code">¶</a></div>
+<div class="literal-block-wrapper docutils container" id="id13">
+<div class="code-block-caption"><span class="caption-text">Validation Aliases with by_name</span><a class="headerlink" href="#id13" title="Link to this code">¶</a></div>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span data-line="1"><span class="kn">from</span><span class="w"> </span><span class="nn">pydantic</span><span class="w"> </span><span class="kn">import</span> <span class="n">AliasPath</span><span class="p">,</span> <span class="n">BaseModel</span><span class="p">,</span> <span class="n">Field</span>
 </span><span data-line="2">
 </span><span data-line="3"><span class="kn">from</span><span class="w"> </span><span class="nn">polyfactory.factories.pydantic_factory</span><span class="w"> </span><span class="kn">import</span> <span class="n">ModelFactory</span>
@@ -796,8 +831,8 @@ requiring additional model configuration.</p>
 This is useful when dealing with recursive types that cannot be resolved automatically.</p>
 <p>By default, <code class="docutils literal notranslate"><span class="pre">__forward_references__</span></code> is set to an empty dictionary. You can provide a mapping of
 forward reference names to their resolved types.</p>
-<div class="literal-block-wrapper docutils container" id="id13">
-<div class="code-block-caption"><span class="caption-text">Forward References Configuration</span><a class="headerlink" href="#id13" title="Link to this code">¶</a></div>
+<div class="literal-block-wrapper docutils container" id="id14">
+<div class="code-block-caption"><span class="caption-text">Forward References Configuration</span><a class="headerlink" href="#id14" title="Link to this code">¶</a></div>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span data-line="1"><span class="kn">from</span><span class="w"> </span><span class="nn">__future__</span><span class="w"> </span><span class="kn">import</span> <span class="n">annotations</span>
 </span><span data-line="2">
 </span><span data-line="3"><span class="kn">from</span><span class="w"> </span><span class="nn">dataclasses</span><span class="w"> </span><span class="kn">import</span> <span class="n">dataclass</span>

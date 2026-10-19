@@ -204,6 +204,7 @@ data-aria-dark="Switch to auto color mode">
 <li><a class="reference internal" href="#polyfactory.factories.base.BaseFactory.__min_collection_length__"><code class="docutils literal notranslate">__min_collection_length__</span></code></a></li>
 <li><a class="reference internal" href="#polyfactory.factories.base.BaseFactory.__max_collection_length__"><code class="docutils literal notranslate">__max_collection_length__</span></code></a></li>
 <li><a class="reference internal" href="#polyfactory.factories.base.BaseFactory.__use_defaults__"><code class="docutils literal notranslate">__use_defaults__</span></code></a></li>
+<li><a class="reference internal" href="#polyfactory.factories.base.BaseFactory.__use_examples__"><code class="docutils literal notranslate">__use_examples__</span></code></a></li>
 <li><a class="reference internal" href="#polyfactory.factories.base.BaseFactory.__config_keys__"><code class="docutils literal notranslate">__config_keys__</span></code></a></li>
 <li><a class="reference internal" href="#polyfactory.factories.base.BaseFactory.add_provider"><code class="docutils literal notranslate">add_provider()</span></code></a></li>
 <li><a class="reference internal" href="#polyfactory.factories.base.BaseFactory.is_factory_type"><code class="docutils literal notranslate">is_factory_type()</span></code></a></li>
@@ -218,6 +219,7 @@ data-aria-dark="Switch to auto color mode">
 <li><a class="reference internal" href="#polyfactory.factories.base.BaseFactory.get_field_value_coverage"><code class="docutils literal notranslate">get_field_value_coverage()</span></code></a></li>
 <li><a class="reference internal" href="#polyfactory.factories.base.BaseFactory.should_set_none_value"><code class="docutils literal notranslate">should_set_none_value()</span></code></a></li>
 <li><a class="reference internal" href="#polyfactory.factories.base.BaseFactory.should_use_default_value"><code class="docutils literal notranslate">should_use_default_value()</span></code></a></li>
+<li><a class="reference internal" href="#polyfactory.factories.base.BaseFactory.should_use_example_value"><code class="docutils literal notranslate">should_use_example_value()</span></code></a></li>
 <li><a class="reference internal" href="#polyfactory.factories.base.BaseFactory.should_set_field_value"><code class="docutils literal notranslate">should_set_field_value()</span></code></a></li>
 <li><a class="reference internal" href="#polyfactory.factories.base.BaseFactory.get_model_fields"><code class="docutils literal notranslate">get_model_fields()</span></code></a></li>
 <li><a class="reference internal" href="#polyfactory.factories.base.BaseFactory.get_factory_fields"><code class="docutils literal notranslate">get_factory_fields()</span></code></a></li>
@@ -404,8 +406,17 @@ This attribute can be used to control random generation.</p>
 </dd></dl>
 
 <dl class="py attribute">
+<dt class="sig sig-object py" id="polyfactory.factories.base.BaseFactory.__use_examples__">
+<span class="sig-name descname"><span class="pre">__use_examples__</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">ClassVar</span><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/builtins/functions.html#bool" title="(in Python v3.15)"><span class="pre">bool</span></a><span class="p"><span class="pre">]</span></span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">False</span></em><a class="headerlink" href="#polyfactory.factories.base.BaseFactory.__use_examples__" title="Link to this definition">¶</a></dt>
+<dd><p>Flag indicating whether to use a random example value on a specific field, if provided.</p>
+<p>Examples are taken from the ‘examples’ attribute of the field’s annotation metadata,
+e.g. ‘Annotated[str, msgspec.Meta(examples=[“USD”, “EUR”])]’ or ‘pydantic.Field(examples=[“USD”, “EUR”])’.
+Custom factories can provide examples by setting ‘FieldMeta.examples’ in ‘get_model_fields’.</p>
+</dd></dl>
+
+<dl class="py attribute">
 <dt class="sig sig-object py" id="polyfactory.factories.base.BaseFactory.__config_keys__">
-<span class="sig-name descname"><span class="pre">__config_keys__</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#tuple" title="(in Python v3.15)"><span class="pre">tuple</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.15)"><span class="pre">str</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="p"><span class="pre">...</span></span><span class="p"><span class="pre">]</span></span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">('__check_model__',</span> <span class="pre">'__allow_none_optionals__',</span> <span class="pre">'__set_as_default_factory_for_type__',</span> <span class="pre">'__faker__',</span> <span class="pre">'__random__',</span> <span class="pre">'__randomize_collection_length__',</span> <span class="pre">'__min_collection_length__',</span> <span class="pre">'__max_collection_length__',</span> <span class="pre">'__use_defaults__',</span> <span class="pre">'__forward_references__')</span></em><a class="headerlink" href="#polyfactory.factories.base.BaseFactory.__config_keys__" title="Link to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">__config_keys__</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#tuple" title="(in Python v3.15)"><span class="pre">tuple</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.15)"><span class="pre">str</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="p"><span class="pre">...</span></span><span class="p"><span class="pre">]</span></span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">('__check_model__',</span> <span class="pre">'__allow_none_optionals__',</span> <span class="pre">'__set_as_default_factory_for_type__',</span> <span class="pre">'__faker__',</span> <span class="pre">'__random__',</span> <span class="pre">'__randomize_collection_length__',</span> <span class="pre">'__min_collection_length__',</span> <span class="pre">'__max_collection_length__',</span> <span class="pre">'__use_defaults__',</span> <span class="pre">'__use_examples__',</span> <span class="pre">'__forward_references__')</span></em><a class="headerlink" href="#polyfactory.factories.base.BaseFactory.__config_keys__" title="Link to this definition">¶</a></dt>
 <dd><p>Keys to be considered as config values to pass on to dynamically created factories.</p>
 </dd></dl>
 
@@ -614,6 +625,25 @@ Otherwise, raise an error</p></li>
 </dd>
 <dt class="field-odd">Returns<span class="colon">:</span></dt>
 <dd class="field-odd"><p>A boolean determining whether the default value should be used for the given field_meta.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="polyfactory.factories.base.BaseFactory.should_use_example_value">
+<em class="property"><span class="k"><span class="pre">classmethod</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">should_use_example_value</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">field_meta</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="../field_meta.html#polyfactory.field_meta.FieldMeta" title="polyfactory.field_meta.FieldMeta"><span class="pre">FieldMeta</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/builtins/functions.html#bool" title="(in Python v3.15)"><span class="pre">bool</span></a></span></span><a class="reference internal" href="../../_modules/polyfactory/factories/base.html#BaseFactory.should_use_example_value"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#polyfactory.factories.base.BaseFactory.should_use_example_value" title="Link to this definition">¶</a></dt>
+<dd><p>Determine whether to use a random example value for the given field.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><span class="target" id="polyfactory.factories.base.BaseFactory.should_use_example_value.params.field_meta"></span><strong>field_meta</strong><a class="paramlink headerlink reference internal" href="#polyfactory.factories.base.BaseFactory.should_use_example_value.params.field_meta">¶</a> – FieldMeta instance.</p>
+</dd>
+<dt class="field-even">Notes<span class="colon">:</span></dt>
+<dd class="field-even"><ul class="simple">
+<li><p>This method is distinct to allow overriding.</p></li>
+</ul>
+</dd>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>A boolean determining whether an example value should be used for the given field_meta.</p>
 </dd>
 </dl>
 </dd></dl>
