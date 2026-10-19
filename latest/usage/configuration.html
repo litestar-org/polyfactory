@@ -822,7 +822,10 @@ requiring additional model configuration.</p>
 </div>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
-<p>This feature is only available for Pydantic V2 models. For Pydantic V1 models, this setting has no effect.</p>
+<p>This feature is only available for Pydantic V2 models. For Pydantic V1 models, this setting has no effect.
+Within Pydantic V2 it additionally requires <code class="docutils literal notranslate"><span class="pre">pydantic&gt;=2.11</span></code>, where the <code class="docutils literal notranslate"><span class="pre">by_name</span></code> argument of
+<code class="docutils literal notranslate"><span class="pre">model_validate()</span></code> was added. Setting <code class="docutils literal notranslate"><span class="pre">__by_name__</span></code> to <code class="docutils literal notranslate"><span class="pre">True</span></code> with an earlier version raises a
+<code class="docutils literal notranslate"><span class="pre">ConfigurationException</span></code>, either upgrade pydantic or set <code class="docutils literal notranslate"><span class="pre">populate_by_name=True</span></code> on the model.</p>
 </div>
 </section>
 <section id="forward-references">
