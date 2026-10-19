@@ -519,6 +519,24 @@
       "contributions": [
         "doc"
       ]
+    },
+    {
+      "login": "Fire162",
+      "name": "Abhinav Maurya",
+      "avatar_url": "https://avatars.githubusercontent.com/u/156442109?v=4",
+      "profile": "http://wegenz.in",
+      "contributions": [
+        "bug"
+      ]
+    },
+    {
+      "login": "vyhuholl",
+      "name": "Olga Pichuzhkina",
+      "avatar_url": "https://avatars.githubusercontent.com/u/22027864?v=4",
+      "profile": "https://github.com/vyhuholl",
+      "contributions": [
+        "code"
+      ]
     }
   ],
   "contributorsPerLine": 7,

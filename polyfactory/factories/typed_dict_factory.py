@@ -2,6 +2,7 @@ from __future__ import annotations
 
 from typing import Any, Generic, TypeVar, get_args, get_type_hints
 
+import typing_extensions
 from typing_extensions import (  # type: ignore[attr-defined]
     NotRequired,
     Required,
@@ -12,9 +13,10 @@ from typing_extensions import (  # type: ignore[attr-defined]
 )
 
 from polyfactory.factories.base import BaseFactory
-from polyfactory.field_meta import FieldMeta, Null
+from polyfactory.field_meta import FieldMeta
 
 TypedDictT = TypeVar("TypedDictT", bound=_TypedDictMeta)
+_FIELD_QUALIFIERS = (Required, NotRequired, getattr(typing_extensions, "ReadOnly", None))
 
 
 class TypedDictFactory(BaseFactory[TypedDictT], Generic[TypedDictT]):
@@ -43,15 +45,13 @@ class TypedDictFactory(BaseFactory[TypedDictT], Generic[TypedDictT]):
 
         field_metas: list[FieldMeta] = []
         for field_name, annotation in model_type_hints.items():
-            origin = get_origin(annotation)
-            if origin in (Required, NotRequired):
+            while (origin := get_origin(annotation)) is not None and origin in _FIELD_QUALIFIERS:
                 annotation = get_args(annotation)[0]  # noqa: PLW2901
 
             field_metas.append(
                 FieldMeta.from_type(
                     annotation=annotation,
                     name=field_name,
-                    default=getattr(cls.__model__, field_name, Null),
                     required=field_name in cls.__model__.__required_keys__,
                 ),
             )

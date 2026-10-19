@@ -17,7 +17,6 @@ from polyfactory.factories.base import BaseFactory, BuildContext
 from polyfactory.factories.base import BuildContext as BaseBuildContext
 from polyfactory.field_meta import Constraints, FieldMeta, Null
 from polyfactory.utils.helpers import unwrap_new_type, unwrap_optional
-from polyfactory.utils.model_coverage import CoverageContainer
 from polyfactory.utils.normalize_type import normalize_type
 from polyfactory.utils.predicates import is_annotated, is_optional, is_safe_subclass, is_union
 from polyfactory.utils.types import NoneType
@@ -94,7 +93,7 @@ except ImportError:
 
 if TYPE_CHECKING:
     from collections import abc
-    from collections.abc import Iterable, Mapping, Sequence
+    from collections.abc import Mapping, Sequence
     from typing import Callable
 
     from typing_extensions import NotRequired, TypeGuard
@@ -139,9 +138,9 @@ class PydanticFieldMeta(FieldMeta):
             default=default,
             children=children,
             constraints=constraints,
+            examples=examples,
             required=required,
         )
-        self.examples = examples
 
     @classmethod
     def from_field_info(
@@ -217,15 +216,14 @@ class PydanticFieldMeta(FieldMeta):
             if is_json:
                 constraints["json"] = True
 
-        result = super().from_type(
+        return super().from_type(
             annotation=annotation,
             children=children,
             constraints=cast("Constraints", {k: v for k, v in constraints.items() if v is not None}) or None,
             default=default_value,
             name=name,
+            examples=field_info.examples,
         )
-        result.examples = field_info.examples
-        return result
 
     @classmethod
     def from_model_field(
@@ -363,23 +361,6 @@ class ModelFactory(BaseFactory[T], Generic[T]):
 
     __forward_ref_resolution_type_mapping__: ClassVar[Mapping[str, type]] = {}
     __is_base_factory__ = True
-    __use_examples__: ClassVar[bool] = False  # for backwards compatibility
-    """
-    Flag indicating whether to use a random example, if provided (Pydantic >=V2)
-
-    Example code::
-
-        class Payment(BaseModel):
-            amount: int = Field(0)
-            currency: str = Field(examples=['USD', 'EUR', 'INR'])
-
-        class PaymentFactory(ModelFactory[Payment]):
-            __use_examples__ = True
-
-    >>> payment = PaymentFactory.build()
-    >>> payment
-    Payment(amount=120, currency="EUR")
-    """
     __by_name__: ClassVar[bool] = False
     """
     Flag indicating whether to use model_validate with by_name parameter (Pydantic V2 only)
@@ -406,7 +387,6 @@ class ModelFactory(BaseFactory[T], Generic[T]):
 
     __config_keys__ = (
         *BaseFactory.__config_keys__,
-        "__use_examples__",
         "__by_name__",
     )
 
@@ -493,34 +473,6 @@ class ModelFactory(BaseFactory[T], Generic[T]):
         return super().get_constrained_field_value(
             annotation, field_meta, field_build_parameters=field_build_parameters, build_context=build_context
         )
-
-    @classmethod
-    def get_field_value(
-        cls,
-        field_meta: FieldMeta,
-        field_build_parameters: Any | None = None,
-        build_context: BuildContext | None = None,
-    ) -> Any:
-        """Return a value from examples if exists, else random value.
-
-        :param field_meta: FieldMeta instance.
-        :param field_build_parameters: Any build parameters passed to the factory as kwarg values.
-        :param build_context: BuildContext data for current build.
-
-        :returns: An arbitrary value.
-
-        """
-        result: Any
-
-        field_meta = cast("PydanticFieldMeta", field_meta)
-
-        if cls.__use_examples__ and field_meta.examples:
-            result = cls.__random__.choice(field_meta.examples)
-        else:
-            result = super().get_field_value(
-                field_meta=field_meta, field_build_parameters=field_build_parameters, build_context=build_context
-            )
-        return result
 
     @classmethod
     def build(
@@ -704,51 +656,6 @@ class ModelFactory(BaseFactory[T], Generic[T]):
 
         mapping.update(super().get_provider_map())
         return mapping
-
-    @classmethod
-    def get_field_value_coverage(
-        cls,
-        field_meta: FieldMeta,
-        field_build_parameters: Any | None = None,
-        build_context: BuildContext | None = None,
-    ) -> Iterable[Any]:
-        """Return a field value on the subclass if existing, otherwise returns a mock value.
-
-        :param field_meta: FieldMeta instance.
-        :param field_build_parameters: Any build parameters passed to the factory as kwarg values.
-        :param build_context: BuildContext data for current build.
-
-        :returns: An iterable of values.
-
-        """
-        if cls.is_ignored_type(field_meta.annotation):
-            return
-
-        field_meta = cast("PydanticFieldMeta", field_meta)
-        if cls.__use_examples__:
-
-            def examples_coverage(field_meta: PydanticFieldMeta) -> Iterable[Any]:
-                examples = field_meta.examples or []
-                if len(examples) > 0:
-                    yield CoverageContainer(examples)
-                    return
-                if field_meta.children:
-                    # NoneType children aren't included in field_meta.children,
-                    # so to ensure that they are covered we need to check for them explicitly
-                    if NoneType in field_meta.type_args:
-                        yield None
-                    for child in field_meta.children:
-                        child = cast("PydanticFieldMeta", child)
-                        yield from examples_coverage(child)
-                    return
-                yield from super(ModelFactory, cls).get_field_value_coverage(
-                    field_meta, field_build_parameters, build_context
-                )
-
-            yield from examples_coverage(field_meta)
-            return
-
-        yield from super().get_field_value_coverage(field_meta, field_build_parameters, build_context)
 
 
 def _is_pydantic_v1_model(model: Any) -> TypeGuard[BaseModelV1]:

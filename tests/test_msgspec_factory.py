@@ -379,3 +379,84 @@ def test_msgspec_datetime_tz_bool_handled() -> None:
 
     result_false = FactoryFalse.build()
     assert result_false.field is not None
+
+
+@pytest.mark.parametrize("use_examples", (True, False))
+def test_use_examples(use_examples: bool) -> None:
+    class Payment(Struct):
+        amount: int
+        currency: Annotated[str, Meta(examples=["USD", "EUR", "INR"])]
+
+    class PaymentFactory(MsgspecFactory[Payment]):
+        __use_examples__ = use_examples
+
+    payment = PaymentFactory.build()
+    # faker generates longer strings, so random values cannot match the examples
+    assert (payment.currency in ["USD", "EUR", "INR"]) is use_examples
+
+
+def test_use_examples_value_override() -> None:
+    class Payment(Struct):
+        currency: Annotated[str, Meta(examples=["USD", "EUR", "INR"])]
+
+    class PaymentFactory(MsgspecFactory[Payment]):
+        __use_examples__ = True
+
+    assert PaymentFactory.build(currency="DKK").currency == "DKK"
+
+
+def test_use_examples_in_nested_annotations() -> None:
+    class A(Struct):
+        optional: Optional[Annotated[int, Meta(examples=[1, 2])]]
+        items: list[Annotated[int, Meta(gt=1000, examples=[1001, 1002])]]
+        mapping: dict[Annotated[str, Meta(examples=["a", "b"])], Annotated[int, Meta(examples=[3, 4])]]
+
+    class AFactory(MsgspecFactory[A]):
+        __use_examples__ = True
+        __allow_none_optionals__ = False
+
+    a = AFactory.build()
+    assert a.optional in (1, 2)
+    assert a.items
+    assert set(a.items) <= {1001, 1002}
+    assert a.mapping
+    assert set(a.mapping) <= {"a", "b"}
+    assert set(a.mapping.values()) <= {3, 4}
+
+
+def test_use_examples_in_nested_struct() -> None:
+    class Inner(Struct):
+        value: Annotated[int, Meta(examples=[1, 2])]
+
+    class Outer(Struct):
+        inner: Inner
+        inners: list[Inner]
+
+    class OuterFactory(MsgspecFactory[Outer]):
+        __use_examples__ = True
+
+    outer = OuterFactory.build()
+    assert outer.inner.value in (1, 2)
+    assert outer.inners
+    assert {inner.value for inner in outer.inners} <= {1, 2}
+
+
+def test_use_examples_coverage() -> None:
+    class A(Struct):
+        name: Annotated[str, Meta(examples=["a", "b", "c"])]
+        number: Optional[Union[Annotated[int, Meta(examples=[1, 2])], Annotated[float, Meta(examples=[3.5])]]]
+        items: list[int]
+        outer_most: Annotated[
+            Union[Annotated[int, Meta(examples=[1, 2])], Annotated[str, Meta(examples=["x"])]],
+            Meta(examples=[6, 7]),
+        ]
+
+    class AFactory(MsgspecFactory[A]):
+        __use_examples__ = True
+
+    instances = list(AFactory.coverage())
+    assert {instance.name for instance in instances} == {"a", "b", "c"}
+    assert {instance.number for instance in instances} == {1, 2, 3.5, None}
+    assert {instance.outer_most for instance in instances} == {6, 7}
+    for instance in instances:
+        assert msgspec.convert(structs.asdict(instance), A) == instance

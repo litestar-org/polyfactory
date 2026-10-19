@@ -344,6 +344,37 @@ def test_factory_use_examples_coverage_when_examples_in_annotations() -> None:
         assert {instance.f for instance in instances} == set(expected)  # type: ignore[attr-defined]
 
 
+@pytest.mark.skipif(_IS_PYDANTIC_V1, reason="Pydantic 1 doesn't support examples")
+def test_factory_use_examples_coverage_with_collections() -> None:
+    class Foo(BaseModel):
+        name: str = Field(examples=["a", "b"])
+        items: list[int]
+        mapping: dict[str, int]
+        optional_items: Optional[list[int]]
+
+    class FooFactory(ModelFactory[Foo]):
+        __use_examples__ = True
+
+    instances = list(FooFactory.coverage())
+    assert {instance.name for instance in instances} == {"a", "b"}
+    assert all(isinstance(instance.items, list) for instance in instances)
+    assert all(isinstance(instance.mapping, dict) for instance in instances)
+    assert {type(instance.optional_items) for instance in instances} == {list, type(None)}
+
+
+@pytest.mark.skipif(_IS_PYDANTIC_V1, reason="Pydantic 1 doesn't support examples")
+def test_use_examples_in_collection_items() -> None:
+    class Foo(BaseModel):
+        items: list[Annotated[int, Field(examples=[1, 2])]]
+
+    class FooFactory(ModelFactory[Foo]):
+        __use_examples__ = True
+
+    foo = FooFactory.build()
+    assert foo.items
+    assert set(foo.items) <= {1, 2}
+
+
 def test_factory_use_construct_nested() -> None:
     class Child(BaseModel):
         a: int = Field(ge=0)
