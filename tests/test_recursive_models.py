@@ -1,8 +1,11 @@
 from __future__ import annotations
 
+import sys
+import textwrap
 from collections.abc import Iterable
 from dataclasses import dataclass, field
-from typing import Any, TypeVar, Union
+from types import ModuleType
+from typing import Any, Callable, TypeVar, Union
 
 import pytest
 
@@ -133,3 +136,88 @@ _T = TypeVar("_T")
 
 def _get_types(items: Iterable[_T]) -> set[type[_T]]:
     return {type(item) for item in items}
+
+
+@pytest.mark.skipif(sys.version_info < (3, 12), reason="PEP 695 requires Python 3.12+")
+@pytest.mark.skipif(pydantic_version.startswith("1"), reason="Pydantic v2+ is required")
+def test_recursive_pep695_type_alias_cycle(create_module: Callable[[str], ModuleType]) -> None:
+    module = create_module(
+        textwrap.dedent("""
+            from typing import TypeVar
+            from pydantic import BaseModel, Field
+            from polyfactory.factories.pydantic_factory import ModelFactory
+
+            type Json = None | bool | int | float | str | list[Json] | dict[str, Json]
+
+            ModelT = TypeVar("ModelT", bound=BaseModel)
+
+            class BaseSchemaFactory(ModelFactory[ModelT]):
+                __is_base_factory__ = True
+
+            class Document(BaseModel):
+                metadata: dict[str, Json] = Field(default_factory=dict)
+
+            class DocumentFactory(BaseSchemaFactory[Document]):
+                __model__ = Document
+        """)
+    )
+
+    factory = module.DocumentFactory
+    doc = factory.build()
+    assert isinstance(doc, module.Document)
+    results = factory.batch(10)
+    assert len(results) == 10
+    cov = list(factory.coverage())
+    assert len(cov) > 0
+
+
+@pytest.mark.skipif(sys.version_info < (3, 12), reason="PEP 695 requires Python 3.12+")
+@pytest.mark.skipif(pydantic_version.startswith("1"), reason="Pydantic v2+ is required")
+def test_generic_recursive_pep695_type_alias(create_module: Callable[[str], ModuleType]) -> None:
+    module = create_module(
+        textwrap.dedent("""
+            from pydantic import BaseModel
+            from polyfactory.factories.pydantic_factory import ModelFactory
+
+            type Tree[T] = T | list[Tree[T]]
+
+            class TreeModel(BaseModel):
+                tree: Tree[int]
+
+            class TreeFactory(ModelFactory[TreeModel]):
+                __model__ = TreeModel
+        """)
+    )
+
+    factory = module.TreeFactory
+    t = factory.build()
+    assert isinstance(t, module.TreeModel)
+    results = factory.batch(10)
+    assert len(results) == 10
+    cov = list(factory.coverage())
+    assert len(cov) > 0
+
+
+@pytest.mark.skipif(sys.version_info < (3, 12), reason="PEP 695 requires Python 3.12+")
+@pytest.mark.skipif(pydantic_version.startswith("1"), reason="Pydantic v2+ is required")
+def test_recursive_pep695_type_alias_with_forward_reference(create_module: Callable[[str], ModuleType]) -> None:
+    module = create_module(
+        textwrap.dedent("""
+            from pydantic import BaseModel
+            from polyfactory.factories.pydantic_factory import ModelFactory
+
+            type Json = None | bool | int | float | str | list[Json] | dict[str, Json]
+
+            class Document(BaseModel):
+                metadata: dict[str, Json]
+
+            class DocumentFactory(ModelFactory[Document]):
+                __model__ = Document
+                __forward_references__ = {"Json": str}
+        """)
+    )
+
+    factory = module.DocumentFactory
+    results = factory.batch(20)
+    assert len(results) == 20
+    assert all(isinstance(r, module.Document) for r in results)

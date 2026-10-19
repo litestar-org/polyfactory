@@ -18,7 +18,7 @@ from polyfactory.factories.base import BuildContext as BaseBuildContext
 from polyfactory.field_meta import Constraints, FieldMeta, Null
 from polyfactory.utils.helpers import unwrap_new_type, unwrap_optional
 from polyfactory.utils.model_coverage import CoverageContainer
-from polyfactory.utils.normalize_type import normalize_type
+from polyfactory.utils.normalize_type import _seen_contains, normalize_type
 from polyfactory.utils.predicates import is_annotated, is_optional, is_safe_subclass, is_union
 from polyfactory.utils.types import NoneType
 from polyfactory.value_generators.primitives import create_random_bytes
@@ -141,23 +141,35 @@ class PydanticFieldMeta(FieldMeta):
         self.examples = examples
 
     @classmethod
-    def from_field_info(
+    def from_field_info(  # noqa: C901, PLR0912
         cls,
         field_name: str,
         field_info: FieldInfo,
         use_alias: bool,
+        _seen: tuple[Any, ...] | None = None,
     ) -> PydanticFieldMeta:
         """Create an instance from a pydantic field info.
 
         :param field_name: The name of the field.
         :param field_info: A pydantic FieldInfo instance.
         :param use_alias: Whether to use the field alias.
+        :param _seen: Internal tuple tracking types currently in progress to avoid recursion cycles.
 
         :returns: A PydanticFieldMeta instance.
         """
+        seen = _seen or ()
+        raw_annotation = field_info.annotation
+        if _seen_contains(raw_annotation, seen):
+            return cls(
+                name=field_name,
+                annotation=raw_annotation,
+                children=None,
+                default=field_info.default if field_info.default is not UndefinedV2 else Null,
+            )
+
         field_info = FieldInfo.merge_field_infos(
             field_info,
-            FieldInfo.from_annotation(normalize_type(field_info.annotation)),
+            FieldInfo.from_annotation(normalize_type(field_info.annotation, seen)),
             alias=field_info.alias,
         )
 
@@ -172,6 +184,7 @@ class PydanticFieldMeta(FieldMeta):
 
         constraints: PydanticConstraints
         # pydantic v2 does not always propagate metadata for Union types
+        new_seen = (*seen, raw_annotation, annotation)
         if is_union(annotation):
             constraints = {}
             children = []
@@ -181,6 +194,16 @@ class PydanticFieldMeta(FieldMeta):
                 # don't add the NoneType in an optional to the list of children
                 if arg is NoneType:
                     continue
+                if _seen_contains(arg, seen):
+                    children.append(
+                        cls(
+                            name=field_name,
+                            annotation=arg,
+                            children=None,
+                        )
+                    )
+                    continue
+
                 child_field_info = FieldInfo.from_annotation(arg)
                 merged_field_info = FieldInfo.merge_field_infos(field_info, child_field_info)
 
@@ -192,6 +215,7 @@ class PydanticFieldMeta(FieldMeta):
                         field_name=field_name,
                         field_info=merged_field_info,
                         use_alias=use_alias,
+                        _seen=new_seen,
                     ),
                 )
         else:
@@ -220,6 +244,7 @@ class PydanticFieldMeta(FieldMeta):
             constraints=cast("Constraints", {k: v for k, v in constraints.items() if v is not None}) or None,
             default=default_value,
             name=name,
+            _seen=seen,
         )
         result.examples = field_info.examples
         return result
