@@ -247,7 +247,9 @@ def _parse(tp: Any) -> TypeNode:  # noqa: PLR0911, PLR0912, C901
         return ForwardRefNode(raw=tp, constraints=None, name=tp.__forward_arg__)
     if isinstance(tp, TypeVar):
         return TypeVarNode(raw=tp, constraints=None)
-    if is_type_alias(tp):
+    # Before Python 3.12, a subscripted `typing_extensions.TypeAliasType` is a `types.GenericAlias`, which passes
+    # `isinstance` checks for its origin's class - so check it has no origin, or its arguments would be dropped.
+    if is_type_alias(tp) and get_origin(tp) is None:
         return AliasNode(raw=tp, constraints=None, alias=tp, args=())
     if is_new_type(tp):
         return NewTypeNode(raw=tp, constraints=None, supertype=parse(tp.__supertype__))
@@ -399,8 +401,8 @@ def _admits_none(alias: Any) -> bool:
     value = alias
     while True:
         origin = get_origin(value)
-        if is_type_alias(value) or is_type_alias(origin):
-            definition = value if is_type_alias(value) else origin
+        if is_type_alias(origin) or is_type_alias(value):
+            definition = origin if is_type_alias(origin) else value
             if definition in seen:
                 return False
             seen.add(definition)
