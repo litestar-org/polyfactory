@@ -71,7 +71,9 @@ jobs:
 
       - name: Install pydantic
         if: matrix.pydantic-version == '1.10'
-        run: uv add --group pydantic "pydantic[email]==1.10.17"
+        run: |
+          uv remove --group pydantic pydantic
+          uv add --group pydantic "pydantic[email]==1.10.17; python_version < '3.15'"
 
       - name: Pin hypothesis for pydantic 1.10
         if: matrix.pydantic-version == '1.10'
