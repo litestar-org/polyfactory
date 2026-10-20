@@ -104,6 +104,7 @@ dev = [
   "mongomock-motor>=0.0.21",
   "aiosqlite>=0.19.0",
   "sqlalchemy[asyncio]>=1.4.29",
+  "pydantic>=2.14 ; python_full_version >= '3.15'",
 ]
 pydantic = ["pydantic[email]>=2.10.4"]
 
