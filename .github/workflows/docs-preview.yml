@@ -10,7 +10,8 @@ jobs:
     if: ${{ github.event.workflow_run.conclusion == 'success' &&  github.event.workflow_run.event == 'pull_request' }}
     runs-on: ubuntu-latest
     permissions:
-      issues: write
+      actions: read
+      contents: read
       pull-requests: write
 
     steps:
@@ -20,15 +21,21 @@ jobs:
           persist-credentials: false
 
       - name: Download artifact
-        uses: dawidd6/action-download-artifact@v23
+        uses: dawidd6/action-download-artifact@v27
         with:
           workflow_conclusion: success
           run_id: ${{ github.event.workflow_run.id }}
           path: docs-preview
           name: docs-preview
 
-      - name: Set PR number
-        run: echo "PR_NUMBER=$(cat docs-preview/.pr_number)" >> $GITHUB_ENV
+      - name: Validate and set PR number
+        run: |
+          PR_NUMBER=$(cat docs-preview/.pr_number)
+          if ! [[ "$PR_NUMBER" =~ ^[0-9]+$ ]]; then
+            echo "Invalid PR number: $PR_NUMBER"
+            exit 1
+          fi
+          echo "PR_NUMBER=$PR_NUMBER" >> $GITHUB_ENV
 
       - name: Deploy docs preview
         uses: JamesIves/github-pages-deploy-action@v4
@@ -45,30 +52,33 @@ jobs:
           PR_NUMBER: ${{ env.PR_NUMBER }}
         with:
           script: |
-            const issue_number = process.env.PR_NUMBER
-            const body = "Documentation preview will be available shortly at https://litestar-org.github.io/polyfactory-docs-preview/" + issue_number
+            const issue_number = parseInt(process.env.PR_NUMBER, 10)
+            const previewUrl = "https://litestar-org.github.io/polyfactory-docs-preview/" + issue_number
+            const marker = "<!-- docs-preview -->"
+            const section = marker + `\n\n<hr>\n📚 Documentation preview 📚: <a href="${previewUrl}">${previewUrl}</a> \n`
 
-            const opts = github.rest.issues.listComments.endpoint.merge({
+            const { data: pr } = await github.rest.pulls.get({
               owner: context.repo.owner,
               repo: context.repo.repo,
-              issue_number: issue_number,
-            });
+              pull_number: issue_number,
+            })
 
-            const comments = await github.paginate(opts)
+            let body = pr.body || ""
 
-            for (const comment of comments) {
-              if (comment.user.id === 41898282 && comment.body === body) {
-                await github.rest.issues.deleteComment({
-                  owner: context.repo.owner,
-                  repo: context.repo.repo,
-                  comment_id: comment.id
-                })
-              }
+            if (body.includes(marker)) {
+              // Update existing section
+              body = body.replace(
+                new RegExp(marker + "[\\s\\S]*$"),
+                section,
+              )
+            } else {
+              // Append section
+              body = body + "\n\n" + section
             }
 
-            await github.rest.issues.createComment({
-                  owner: context.repo.owner,
-                  repo: context.repo.repo,
-                  issue_number: issue_number,
-                  body: body,
+            await github.rest.pulls.update({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              pull_number: issue_number,
+              body: body,
             })
