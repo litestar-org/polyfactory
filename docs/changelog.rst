@@ -4,11 +4,58 @@ Changelog
 
 All commits to this project will be documented in this file.
 
+`Release [v3.4.0] - 2026-10-20 <https://github.com/litestar-org/polyfactory/releases/tag/v3.4.0>`_
+----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+* `See All commits in v3.4.0 <https://github.com/litestar-org/polyfactory/commits/v3.4.0>`_
+
+`ef2e655 <https://github.com/litestar-org/polyfactory/commit/ef2e655ed271478e94821f84b9a01125e75e9372>`_ ... `88a52d5 <https://github.com/litestar-org/polyfactory/commit/88a52d580232d883986a8966fcf14bdc1ed8a532>`_ | `See diff for 3.4.0 <https://github.com/litestar-org/polyfactory/compare/ef2e655ed271478e94821f84b9a01125e75e9372...88a52d580232d883986a8966fcf14bdc1ed8a532>`_
+
+Bug Fixes
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+* (`4d911cb <https://github.com/litestar-org/polyfactory/commit/4d911cb3ada16385405200d06855e023af41dac6>`_)  - Update resolution order to favour provider types (#832)  by `@adhtruong <https://github.com/adhtruong>`_ in `#832 <https://github.com/litestar-org/polyfactory/pull/832>`_
+* (`ff75c2a <https://github.com/litestar-org/polyfactory/commit/ff75c2a734947bf67407938dda479477a8b0739c>`_)  - Fixes timezone handling for end_date (#833)  by `@vherr2 <https://github.com/vherr2>`_ in `#833 <https://github.com/litestar-org/polyfactory/pull/833>`_
+* (`79305b3 <https://github.com/litestar-org/polyfactory/commit/79305b361cacaa2c7fd5d1adf567f53b4b66b99d>`_)  - Handle bool tz constraint from msgspec.Meta in handle_constrained_date (#858)  by `@ceavinrufus <https://github.com/ceavinrufus>`_ in `#858 <https://github.com/litestar-org/polyfactory/pull/858>`_
+* (`53374f0 <https://github.com/litestar-org/polyfactory/commit/53374f0d89a02263f6ee4c4ac178e2fe72331d5d>`_)  - Support pydantic examples in nested type annotations (#852)  by `@bullfest <https://github.com/bullfest>`_ in `#852 <https://github.com/litestar-org/polyfactory/pull/852>`_
+* (`6234cf0 <https://github.com/litestar-org/polyfactory/commit/6234cf0af8dd66afd71d14ce5c034ff205485090>`_)  - Find more supporting BaseFactories for unsupported type (#870)  by `@SebAlbert <https://github.com/SebAlbert>`_ in `#870 <https://github.com/litestar-org/polyfactory/pull/870>`_
+* (`5de89ea <https://github.com/litestar-org/polyfactory/commit/5de89eaadf1329bff3f5746a367786ec1e439165>`_)  - Do not fetch default values from TypedDict models (#902)  by `@Fire162 <https://github.com/Fire162>`_ in `#902 <https://github.com/litestar-org/polyfactory/pull/902>`_
+* (`6984921 <https://github.com/litestar-org/polyfactory/commit/698492161fcd6b8f1e79c29fd734ce55aa5e9cf2>`_)  - Support ReadOnly fields in TypedDictFactory (#901)  by `@sricharanreddycheruku <https://github.com/sricharanreddycheruku>`_ in `#901 <https://github.com/litestar-org/polyfactory/pull/901>`_
+* (`88a52d5 <https://github.com/litestar-org/polyfactory/commit/88a52d580232d883986a8966fcf14bdc1ed8a532>`_)  - Guard by_name kwarg for pydantic < 2.11 (#883)  by `@xyf5432 <https://github.com/xyf5432>`_ in `#883 <https://github.com/litestar-org/polyfactory/pull/883>`_
+
+Documentation
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+* (`8f29781 <https://github.com/litestar-org/polyfactory/commit/8f29781a8268f3f0afe9e93758a9d8edf9fb4fd7>`_)  - Fix fixture type annotations in examples (#834)  by `@toroleapinc <https://github.com/toroleapinc>`_ in `#834 <https://github.com/litestar-org/polyfactory/pull/834>`_
+* (`0fd06a3 <https://github.com/litestar-org/polyfactory/commit/0fd06a362798a58334aacccdad50f7a8caf3bf3c>`_)  - Add toroleapinc as a contributor for doc (#838)  by `@allcontributors[bot] <https://github.com/allcontributors[bot]>`_ in `#838 <https://github.com/litestar-org/polyfactory/pull/838>`_
+* (`1a9b6e2 <https://github.com/litestar-org/polyfactory/commit/1a9b6e2fe2bd7ad876fe136a667f542d84237eae>`_)  - Add Fire162 as a contributor for bug (#904)  by `@allcontributors[bot] <https://github.com/allcontributors[bot]>`_ in `#904 <https://github.com/litestar-org/polyfactory/pull/904>`_
+* (`df1ff6e <https://github.com/litestar-org/polyfactory/commit/df1ff6e70df036ac72421010462c09999c72585c>`_)  - Add vyhuholl as a contributor for code (#910)  by `@allcontributors[bot] <https://github.com/allcontributors[bot]>`_ in `#910 <https://github.com/litestar-org/polyfactory/pull/910>`_
+
+Features
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+* (`86e8a16 <https://github.com/litestar-org/polyfactory/commit/86e8a16bd05b9867fe6c87e5efb04e051f05223a>`_)  - Manage session lifecycle when the session is created implicitly (#869)  by `@AlexPetul <https://github.com/AlexPetul>`_ in `#869 <https://github.com/litestar-org/polyfactory/pull/869>`_
+* (`823f667 <https://github.com/litestar-org/polyfactory/commit/823f6670fa3f8967e287d7b8589d9cb54a41fce1>`_)  - Support __use_examples__ in all factories (#906)  by `@vyhuholl <https://github.com/vyhuholl>`_ in `#906 <https://github.com/litestar-org/polyfactory/pull/906>`_
+
+Miscellaneous Tasks
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+* (`c79cebe <https://github.com/litestar-org/polyfactory/commit/c79cebee372fdf7bdde6df973e4996e31586d598>`_)  - Update pre-commit version (#847)  by `@adhtruong <https://github.com/adhtruong>`_ in `#847 <https://github.com/litestar-org/polyfactory/pull/847>`_
+* (`ac67d83 <https://github.com/litestar-org/polyfactory/commit/ac67d833ef3cc52692d4b5e0eba2642ae022d764>`_)  - Bump actions/download-artifact from 7 to 8 (#831)  by `@dependabot[bot] <https://github.com/dependabot[bot]>`_ in `#831 <https://github.com/litestar-org/polyfactory/pull/831>`_
+* (`62a8ff7 <https://github.com/litestar-org/polyfactory/commit/62a8ff758cabde318307cfe84f309814ddc838fc>`_)  - Bump actions/upload-artifact from 6 to 7 (#830)  by `@dependabot[bot] <https://github.com/dependabot[bot]>`_ in `#830 <https://github.com/litestar-org/polyfactory/pull/830>`_
+* (`7445a05 <https://github.com/litestar-org/polyfactory/commit/7445a050d9c194516bea8746f1a489ff5fb940c9>`_)  - Bump actions/setup-python from 6 to 7 (#871)  by `@dependabot[bot] <https://github.com/dependabot[bot]>`_ in `#871 <https://github.com/litestar-org/polyfactory/pull/871>`_
+* (`cbe0e52 <https://github.com/litestar-org/polyfactory/commit/cbe0e521e6b7888d2261ee0ec46a3f366b15d72b>`_)  - Bump actions/checkout from 6 to 7 (#872)  by `@dependabot[bot] <https://github.com/dependabot[bot]>`_ in `#872 <https://github.com/litestar-org/polyfactory/pull/872>`_
+* (`83ec55e <https://github.com/litestar-org/polyfactory/commit/83ec55e7b6b212976b6a292a568074d473315147>`_)  - Bump j178/prek-action from 1 to 2.0.6 (#873)  by `@dependabot[bot] <https://github.com/dependabot[bot]>`_ in `#873 <https://github.com/litestar-org/polyfactory/pull/873>`_
+* (`47c0eb8 <https://github.com/litestar-org/polyfactory/commit/47c0eb8e68aaab2bdbfbabd9cfbac139789b44c4>`_)  - Bump j178/prek-action from 2.0.6 to 3.0.0 (#876)  by `@dependabot[bot] <https://github.com/dependabot[bot]>`_ in `#876 <https://github.com/litestar-org/polyfactory/pull/876>`_
+* (`be416db <https://github.com/litestar-org/polyfactory/commit/be416db7a554675b55f82d895bd07f3f4a88b858>`_)  - Bump dawidd6/action-download-artifact from 14 to 23 (#879)  by `@dependabot[bot] <https://github.com/dependabot[bot]>`_ in `#879 <https://github.com/litestar-org/polyfactory/pull/879>`_
+* (`93f9525 <https://github.com/litestar-org/polyfactory/commit/93f95253490c5639672730121d607f8d0814a57f>`_)  - Bump actions/github-script from 8 to 9 (#862)  by `@dependabot[bot] <https://github.com/dependabot[bot]>`_ in `#862 <https://github.com/litestar-org/polyfactory/pull/862>`_
+* (`e420486 <https://github.com/litestar-org/polyfactory/commit/e420486b11b9f82b7816d86a8f53c20ce29df86f>`_)  - Bump soupsieve from 2.8 to 2.8.4 (#867)  by `@dependabot[bot] <https://github.com/dependabot[bot]>`_ in `#867 <https://github.com/litestar-org/polyfactory/pull/867>`_
+* (`e266feb <https://github.com/litestar-org/polyfactory/commit/e266feb055f3abe84a5c43303543934ae1498e65>`_)  - Bump j178/prek-action from 3.0.0 to 3.0.1 (#903)  by `@dependabot[bot] <https://github.com/dependabot[bot]>`_ in `#903 <https://github.com/litestar-org/polyfactory/pull/903>`_
+
 `Release [v3.3.0] - 2026-02-22 <https://github.com/litestar-org/polyfactory/releases/tag/v3.3.0>`_
 ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 * `See All commits in v3.3.0 <https://github.com/litestar-org/polyfactory/commits/v3.3.0>`_
 
-`530c192 <https://github.com/litestar-org/polyfactory/commit/530c19236d42b3353d3125af562e70aa73762e76>`_ ... `9fe33dd <https://github.com/litestar-org/polyfactory/commit/9fe33dd5c59a27a796a849751e362ac6b274dc1f>`_ | `See diff for 3.3.0 <https://github.com/litestar-org/polyfactory/compare/530c19236d42b3353d3125af562e70aa73762e76...9fe33dd5c59a27a796a849751e362ac6b274dc1f>`_
+`530c192 <https://github.com/litestar-org/polyfactory/commit/530c19236d42b3353d3125af562e70aa73762e76>`_ ... `ef2e655 <https://github.com/litestar-org/polyfactory/commit/ef2e655ed271478e94821f84b9a01125e75e9372>`_ | `See diff for 3.3.0 <https://github.com/litestar-org/polyfactory/compare/530c19236d42b3353d3125af562e70aa73762e76...ef2e655ed271478e94821f84b9a01125e75e9372>`_
 
 Bug Fixes
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -30,6 +77,7 @@ Miscellaneous Tasks
 * (`2549140 <https://github.com/litestar-org/polyfactory/commit/2549140dbcf6bed1e402c799d6660cc3547d0efb>`_)  - Bump urllib3 from 2.5.0 to 2.6.3 (#823)  by `@dependabot[bot] <https://github.com/dependabot[bot]>`_ in `#823 <https://github.com/litestar-org/polyfactory/pull/823>`_
 * (`cd48c81 <https://github.com/litestar-org/polyfactory/commit/cd48c812aa74409e9bbe8b7bba40a269f2fe3287>`_)  - Bump wheel from 0.45.1 to 0.46.2 (#822)  by `@dependabot[bot] <https://github.com/dependabot[bot]>`_ in `#822 <https://github.com/litestar-org/polyfactory/pull/822>`_
 * (`2c36e7d <https://github.com/litestar-org/polyfactory/commit/2c36e7d4938d22d2a9abd7bffe08809c1def99a4>`_)  - Bump dawidd6/action-download-artifact from 13 to 14 (#825)  by `@dependabot[bot] <https://github.com/dependabot[bot]>`_ in `#825 <https://github.com/litestar-org/polyfactory/pull/825>`_
+* (`ef2e655 <https://github.com/litestar-org/polyfactory/commit/ef2e655ed271478e94821f84b9a01125e75e9372>`_)  - Prepare v3.3.0 release (#828)  by `@adhtruong <https://github.com/adhtruong>`_ in `#828 <https://github.com/litestar-org/polyfactory/pull/828>`_
 
 `Release [v3.2.0] - 2025-12-21 <https://github.com/litestar-org/polyfactory/releases/tag/v3.2.0>`_
 ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -921,7 +969,7 @@ Bug Fixes
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 * (`2733497 <https://github.com/litestar-org/polyfactory/commit/2733497369a065cf7c50006921967b93a02e0434>`_)  - Add support for Json type in Pydantic factory (#315)  by `@vkcku <https://github.com/vkcku>`_ in `#315 <https://github.com/litestar-org/polyfactory/pull/315>`_
-* (`3aeaa0c <https://github.com/litestar-org/polyfactory/commit/3aeaa0cb290225e912ddda3d242b280839e04582>`_)  - Constrained strings not deterministic with seed because urandom not seedable (#319)  by `@klimantje <https://github.com/klimantje>`_ in `#319 <https://github.com/litestar-org/polyfactory/pull/319>`_
+* (`3aeaa0c <https://github.com/litestar-org/polyfactory/commit/3aeaa0cb290225e912ddda3d242b280839e04582>`_)  - Constrained strings not deterministic with seed because urandom not seedable (#319)  by `@aderijdt <https://github.com/aderijdt>`_ in `#319 <https://github.com/litestar-org/polyfactory/pull/319>`_
 * (`61f1e2e <https://github.com/litestar-org/polyfactory/commit/61f1e2e0d857ffd111ab8c8d7cfbab6f67230ae1>`_)  - Random seed configuration (#321)  by `@vkcku <https://github.com/vkcku>`_ in `#321 <https://github.com/litestar-org/polyfactory/pull/321>`_
 * (`2400fbe <https://github.com/litestar-org/polyfactory/commit/2400fbeb756deb5cdc32c666f2e27df31dff9387>`_)  - Include pydantic Field constraints when using Optional type (#323)  by `@tcrasset <https://github.com/tcrasset>`_ in `#323 <https://github.com/litestar-org/polyfactory/pull/323>`_
 
