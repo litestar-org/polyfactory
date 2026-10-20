@@ -441,8 +441,10 @@ class ModelFactory(BaseFactory[T], Generic[T]):
                     for field in cls.__model__.__fields__.values()
                 ]
             else:
-                use_alias = cls.__model__.model_config.get("validate_by_name", False) or cls.__model__.model_config.get(
-                    "populate_by_name", False
+                use_alias = (
+                    cls.__by_name__
+                    or cls.__model__.model_config.get("validate_by_name", False)
+                    or cls.__model__.model_config.get("populate_by_name", False)
                 )
                 cls._fields_metadata = [
                     PydanticFieldMeta.from_field_info(
