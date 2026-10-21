@@ -611,6 +611,7 @@ def test_build_instance_with_by_name_and_factory_field_values() -> None:
         field_a: str = Field(..., validation_alias="special_field_a")
         field_b: int = Field(..., validation_alias=AliasPath("nested", "field_b"))  # type: ignore[pydantic-alias]
         field_c: str = Field(default="default_c")
+        field_d: str = Field(..., alias="special_field_d")
 
     class MyFactory(ModelFactory):
         __model__ = MyModel
@@ -619,18 +620,21 @@ def test_build_instance_with_by_name_and_factory_field_values() -> None:
         # Set default values on the factory
         field_a = "factory_default_a"
         field_c = "factory_default_c"
+        field_d = "factory_default_d"
 
     # Build using factory defaults
     instance = MyFactory.build()
     assert instance.field_a == "factory_default_a"
     assert isinstance(instance.field_b, int)
     assert instance.field_c == "factory_default_c"
+    assert instance.field_d == "factory_default_d"
 
     # Override factory defaults
-    instance2 = MyFactory.build(field_a="override_a", field_b=99)
+    instance2 = MyFactory.build(field_a="override_a", field_b=99, field_d="override_d")
     assert instance2.field_a == "override_a"
     assert instance2.field_b == 99
     assert instance2.field_c == "factory_default_c"
+    assert instance2.field_d == "override_d"
 
 
 @pytest.mark.skipif(
