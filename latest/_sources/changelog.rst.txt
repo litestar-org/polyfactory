@@ -4,11 +4,38 @@ Changelog
 
 All commits to this project will be documented in this file.
 
+`Release [v3.5.0] - 2026-10-21 <https://github.com/litestar-org/polyfactory/releases/tag/v3.5.0>`_
+----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+* `See All commits in v3.5.0 <https://github.com/litestar-org/polyfactory/commits/v3.5.0>`_
+
+`3dffaa4 <https://github.com/litestar-org/polyfactory/commit/3dffaa4757f85bc5bba96203bdc40886ac79e3d3>`_ ... `b613633 <https://github.com/litestar-org/polyfactory/commit/b613633b30249b01b193445ad0a6023ec7d6249e>`_ | `See diff for 3.5.0 <https://github.com/litestar-org/polyfactory/compare/3dffaa4757f85bc5bba96203bdc40886ac79e3d3...b613633b30249b01b193445ad0a6023ec7d6249e>`_
+
+Bug Fixes
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+* (`2114f7f <https://github.com/litestar-org/polyfactory/commit/2114f7f175e8f60c52b1e33c34b40f3d01a7e610>`_)  - Update docs preview pipeline (#915)  by `@adhtruong <https://github.com/adhtruong>`_ in `#915 <https://github.com/litestar-org/polyfactory/pull/915>`_
+* (`a88ac00 <https://github.com/litestar-org/polyfactory/commit/a88ac007da436094127b076e7d4bb5c8c28470a3>`_)  - Respect ``__by_name__`` when fields define ``Field(alias=...)`` (#919)  by `@RS-ITACHI <https://github.com/RS-ITACHI>`_ in `#919 <https://github.com/litestar-org/polyfactory/pull/919>`_
+
+Documentation
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+* (`b613633 <https://github.com/litestar-org/polyfactory/commit/b613633b30249b01b193445ad0a6023ec7d6249e>`_)  - Add RS-ITACHI as a contributor for code (#920)  by `@allcontributors[bot] <https://github.com/allcontributors[bot]>`_ in `#920 <https://github.com/litestar-org/polyfactory/pull/920>`_
+
+Features
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+* (`152ee6c <https://github.com/litestar-org/polyfactory/commit/152ee6c1f84a73a2aa7225c5c54d441baf7c597e>`_)  - Support Python 3.15 (#909)  by `@adhtruong <https://github.com/adhtruong>`_ in `#909 <https://github.com/litestar-org/polyfactory/pull/909>`_
+
+Ci
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+* (`f7c4533 <https://github.com/litestar-org/polyfactory/commit/f7c4533e4d82a789749a609c1581c97ed655426d>`_)  - Update docs preview (#917)  by `@adhtruong <https://github.com/adhtruong>`_ in `#917 <https://github.com/litestar-org/polyfactory/pull/917>`_
+
 `Release [v3.4.0] - 2026-10-20 <https://github.com/litestar-org/polyfactory/releases/tag/v3.4.0>`_
 ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 * `See All commits in v3.4.0 <https://github.com/litestar-org/polyfactory/commits/v3.4.0>`_
 
-`ef2e655 <https://github.com/litestar-org/polyfactory/commit/ef2e655ed271478e94821f84b9a01125e75e9372>`_ ... `88a52d5 <https://github.com/litestar-org/polyfactory/commit/88a52d580232d883986a8966fcf14bdc1ed8a532>`_ | `See diff for 3.4.0 <https://github.com/litestar-org/polyfactory/compare/ef2e655ed271478e94821f84b9a01125e75e9372...88a52d580232d883986a8966fcf14bdc1ed8a532>`_
+`ef2e655 <https://github.com/litestar-org/polyfactory/commit/ef2e655ed271478e94821f84b9a01125e75e9372>`_ ... `3dffaa4 <https://github.com/litestar-org/polyfactory/commit/3dffaa4757f85bc5bba96203bdc40886ac79e3d3>`_ | `See diff for 3.4.0 <https://github.com/litestar-org/polyfactory/compare/ef2e655ed271478e94821f84b9a01125e75e9372...3dffaa4757f85bc5bba96203bdc40886ac79e3d3>`_
 
 Bug Fixes
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -50,6 +77,7 @@ Miscellaneous Tasks
 * (`93f9525 <https://github.com/litestar-org/polyfactory/commit/93f95253490c5639672730121d607f8d0814a57f>`_)  - Bump actions/github-script from 8 to 9 (#862)  by `@dependabot[bot] <https://github.com/dependabot[bot]>`_ in `#862 <https://github.com/litestar-org/polyfactory/pull/862>`_
 * (`e420486 <https://github.com/litestar-org/polyfactory/commit/e420486b11b9f82b7816d86a8f53c20ce29df86f>`_)  - Bump soupsieve from 2.8 to 2.8.4 (#867)  by `@dependabot[bot] <https://github.com/dependabot[bot]>`_ in `#867 <https://github.com/litestar-org/polyfactory/pull/867>`_
 * (`e266feb <https://github.com/litestar-org/polyfactory/commit/e266feb055f3abe84a5c43303543934ae1498e65>`_)  - Bump j178/prek-action from 3.0.0 to 3.0.1 (#903)  by `@dependabot[bot] <https://github.com/dependabot[bot]>`_ in `#903 <https://github.com/litestar-org/polyfactory/pull/903>`_
+* (`3dffaa4 <https://github.com/litestar-org/polyfactory/commit/3dffaa4757f85bc5bba96203bdc40886ac79e3d3>`_)  - Prepare v3.4.0 release (#912)  by `@adhtruong <https://github.com/adhtruong>`_ in `#912 <https://github.com/litestar-org/polyfactory/pull/912>`_
 
 `Release [v3.3.0] - 2026-02-22 <https://github.com/litestar-org/polyfactory/releases/tag/v3.3.0>`_
 ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
