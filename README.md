@@ -166,6 +166,9 @@ Thanks goes to these wonderful people ([emoji key](https://allcontributors.org/d
       <td align="center" valign="top" width="14.28%"><a href="http://wegenz.in"><img src="https://avatars.githubusercontent.com/u/156442109?v=4?s=100" width="100px;" alt="Abhinav Maurya"/><br /><sub><b>Abhinav Maurya</b></sub></a><br /><a href="https://github.com/litestar-org/polyfactory/issues?q=author%3AFire162" title="Bug reports">🐛</a></td>
       <td align="center" valign="top" width="14.28%"><a href="https://github.com/vyhuholl"><img src="https://avatars.githubusercontent.com/u/22027864?v=4?s=100" width="100px;" alt="Olga Pichuzhkina"/><br /><sub><b>Olga Pichuzhkina</b></sub></a><br /><a href="https://github.com/litestar-org/polyfactory/commits?author=vyhuholl" title="Code">💻</a></td>
     </tr>
+    <tr>
+      <td align="center" valign="top" width="14.28%"><a href="https://github.com/RS-ITACHI"><img src="https://avatars.githubusercontent.com/u/276741997?v=4?s=100" width="100px;" alt="Rhinkar Shah"/><br /><sub><b>Rhinkar Shah</b></sub></a><br /><a href="https://github.com/litestar-org/polyfactory/commits?author=RS-ITACHI" title="Code">💻</a></td>
+    </tr>
   </tbody>
 </table>
 
