@@ -65,7 +65,7 @@ build-backend = "hatchling.build"
 requires = ["hatchling"]
 
 [tool.uv]
-default-groups = ["dev", "lint", "test", "docs"]
+default-groups = ["dev", "lint", "test", "docs", "pydantic"]
 
 [tool.uv.sources]
 polyfactory = { workspace = true }
