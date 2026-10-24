@@ -12,6 +12,8 @@ from typing_extensions import TypedDict
 
 from pydantic import BaseModel
 
+from annotated_types import Gt, Lt
+
 from polyfactory.decorators import post_generated
 from polyfactory.exceptions import ParameterException
 from polyfactory.factories.dataclass_factory import DataclassFactory
@@ -20,6 +22,19 @@ from polyfactory.factories.typed_dict_factory import TypedDictFactory
 from polyfactory.field_meta import Constraints
 from polyfactory.utils.types import NoneType
 from tests.test_pydantic_factory import IS_PYDANTIC_V1
+
+
+@dataclass
+class _ConstrainedUnionModel:
+    values: Annotated[int, Gt(0), Lt(5)] | None
+
+
+def test_coverage_respects_constraints_on_a_union_branch() -> None:
+    """`Annotated[int, Gt(0), Lt(5)] | None` must not cover unconstrained ints."""
+    factory = DataclassFactory.create_factory(_ConstrainedUnionModel)
+    values = [model.values for model in factory.coverage() if model.values is not None]
+    assert values, "the int branch must be covered"
+    assert all(0 < value < 5 for value in values), values
 
 
 def test_coverage_count() -> None:
