@@ -4,7 +4,7 @@ from __future__ import annotations
 from collections.abc import Iterable
 from dataclasses import dataclass, make_dataclass
 from datetime import date
-from typing import Any, Literal, Optional, Union
+from typing import Annotated, Any, Literal, Optional, Union
 from uuid import UUID
 
 import pytest
@@ -17,6 +17,7 @@ from polyfactory.exceptions import ParameterException
 from polyfactory.factories.dataclass_factory import DataclassFactory
 from polyfactory.factories.pydantic_factory import ModelFactory
 from polyfactory.factories.typed_dict_factory import TypedDictFactory
+from polyfactory.field_meta import Constraints
 from polyfactory.utils.types import NoneType
 from tests.test_pydantic_factory import IS_PYDANTIC_V1
 
@@ -371,3 +372,14 @@ def test_optional_mixed_collections() -> None:
     assert type_exists_at_path_any(results, ["maybe_uuids"], list)
     assert type_exists_at_path_any(results, ["maybe_uuids", "*"], UUID)
     assert type_exists_at_path_any(results, ["maybe_uuids"], NoneType)
+
+
+def test_union_constraints_apply_with_examples() -> None:
+    @dataclass
+    class Model:
+        value: Annotated[Optional[int], Constraints(ge=100, le=105)]  # noqa: UP045
+
+    values = [result.value for result in DataclassFactory.create_factory(Model, __use_examples__=True).coverage()]
+
+    assert None in values
+    assert all(100 <= value <= 105 for value in values if value is not None)

@@ -15,7 +15,7 @@ from polyfactory.utils.helpers import (
     unwrap_new_type,
 )
 from polyfactory.utils.normalize_type import normalize_type
-from polyfactory.utils.predicates import is_annotated, is_new_type
+from polyfactory.utils.predicates import is_annotated, is_new_type, is_union
 from polyfactory.utils.types import NoneType
 
 if TYPE_CHECKING:
@@ -169,6 +169,12 @@ class FieldMeta:
             field.children = [
                 cls.from_type(annotation=unwrap_new_type(arg)) for arg in field.type_args if arg is not NoneType
             ]
+            if constraints and is_union(get_args(annotation)[0] if annotated else annotation):
+                # Constraints on a union apply to each of its members, under the member's own.
+                field.children = [
+                    cls.from_type(annotation=child.annotation, constraints={**constraints, **(child.constraints or {})})
+                    for child in field.children
+                ]
         return field
 
     @classmethod
