@@ -917,12 +917,6 @@ class BaseFactory(ABC, Generic[T]):
         for unwrapped_annotation in flatten_annotation(field_meta.annotation):
             unwrapped_annotation = cls._resolve_forward_references(unwrapped_annotation)  # noqa: PLW2901
 
-            unwrapped_annotation_meta = field_meta
-            if is_union(field_meta.annotation):
-                unwrapped_annotation_meta = next(
-                    (meta for meta in (field_meta.children or []) if meta.annotation == unwrapped_annotation),
-                    field_meta,
-                )
             if unwrapped_annotation in (None, NoneType):
                 yield None
 
@@ -932,11 +926,11 @@ class BaseFactory(ABC, Generic[T]):
             elif isinstance(unwrapped_annotation, EnumMeta):
                 yield CoverageContainer(list(unwrapped_annotation))
 
-            elif unwrapped_annotation_meta.constraints:
+            elif field_meta.constraints:
                 yield CoverageContainerCallable(
                     cls.get_constrained_field_value,
                     annotation=unwrapped_annotation,
-                    field_meta=unwrapped_annotation_meta,
+                    field_meta=field_meta,
                 )
 
             elif provider := (
@@ -958,14 +952,7 @@ class BaseFactory(ABC, Generic[T]):
                     msg = "A subclass of Collection should always have children in its field_meta"
                     raise ParameterException(msg)
 
-                # We actually want to use the parent in cases where the collection is the parent
-                # such as tuple so default to the parent if this annotation is not present in the children
-                child_meta = next(
-                    (meta for meta in field_meta.children if meta.annotation == unwrapped_annotation),
-                    field_meta,
-                )
-
-                yield handle_collection_type_coverage(child_meta, origin, cls, build_context=build_context)
+                yield handle_collection_type_coverage(field_meta, origin, cls, build_context=build_context)
 
             elif is_type_var(unwrapped_annotation):
                 yield create_random_string(cls.__random__, min_length=1, max_length=10)

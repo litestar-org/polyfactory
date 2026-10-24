@@ -15,12 +15,10 @@ from pydantic import BaseModel
 
 from polyfactory.decorators import post_generated
 from polyfactory.exceptions import ParameterException
-from polyfactory.factories.base import BaseFactory
 from polyfactory.factories.dataclass_factory import DataclassFactory
 from polyfactory.factories.pydantic_factory import ModelFactory
 from polyfactory.factories.typed_dict_factory import TypedDictFactory
-from polyfactory.field_meta import Constraints, FieldMeta
-from polyfactory.utils.model_coverage import CoverageContainerBase
+from polyfactory.field_meta import Constraints
 from polyfactory.utils.types import NoneType
 from tests.test_pydantic_factory import IS_PYDANTIC_V1
 
@@ -400,27 +398,6 @@ def test_optional_typing_collection_items() -> None:
     assert type_exists_at_path_any(results, ["values"], NoneType)
     assert type_exists_at_path_any(results, ["mapping"], dict)
     assert type_exists_at_path_any(results, ["mapping"], NoneType)
-
-
-def test_union_children_not_matching_members_keep_constraints() -> None:
-    field_meta = FieldMeta.from_type(
-        Union[int, str, bytes],
-        name="value",
-        children=[
-            FieldMeta(name="value", annotation=int, constraints={"ge": 100, "le": 105}),
-            FieldMeta(name="value", annotation=str, constraints={"min_length": 3, "max_length": 3}),
-        ],
-    )
-
-    values = [
-        container.next_value() if isinstance(container, CoverageContainerBase) else container
-        for _ in range(20)
-        for container in BaseFactory.get_field_value_coverage(field_meta)
-    ]
-
-    assert all(100 <= value <= 105 for value in values if isinstance(value, int))
-    assert all(len(value) == 3 for value in values if isinstance(value, str))
-    assert any(isinstance(value, bytes) for value in values)
 
 
 def test_provider_for_union_is_used_for_each_member() -> None:
