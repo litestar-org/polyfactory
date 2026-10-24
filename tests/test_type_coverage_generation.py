@@ -1,6 +1,7 @@
 # ruff: noqa: UP007
 from __future__ import annotations
 
+import typing
 from collections.abc import Iterable
 from dataclasses import dataclass, make_dataclass
 from datetime import date
@@ -383,3 +384,49 @@ def test_union_constraints_apply_with_examples() -> None:
 
     assert None in values
     assert all(100 <= value <= 105 for value in values if value is not None)
+
+
+def test_optional_typing_collection_items() -> None:
+    class Model(BaseModel):
+        values: Optional[typing.List[str]]  # noqa: UP006, UP045
+        mapping: Optional[typing.Dict[str, int]]  # noqa: UP006, UP045
+
+    results = list(ModelFactory.create_factory(Model).coverage())
+
+    assert type_exists_at_path_any(results, ["values"], list)
+    assert type_exists_at_path_any(results, ["values", "*"], str)
+    assert type_exists_at_path_any(results, ["values"], NoneType)
+    assert type_exists_at_path_any(results, ["mapping"], dict)
+    assert type_exists_at_path_any(results, ["mapping"], NoneType)
+
+
+class _Examples:
+    def __init__(self, *examples: str) -> None:
+        self.examples = list(examples)
+
+
+def test_union_members_with_examples_cover_none_in_written_order() -> None:
+    @dataclass
+    class Model:
+        value: Optional[Annotated[str, _Examples("a", "b")]]  # noqa: UP045
+
+    values = [result.value for result in DataclassFactory.create_factory(Model, __use_examples__=True).coverage()]
+
+    assert values == ["a", "b", None]
+
+
+def test_ignored_union_member_is_still_covered() -> None:
+    @dataclass
+    class Model:
+        either: Union[int, str]
+        maybe: Optional[str]  # noqa: UP045
+
+    class Factory(DataclassFactory[Model]):
+        @classmethod
+        def is_ignored_type(cls, value: Any) -> bool:
+            return value is str or super().is_ignored_type(value)
+
+    results = list(Factory.coverage())
+
+    assert {type(result.either) for result in results} == {int, str}
+    assert [type(result.maybe) for result in results] == [str, NoneType]

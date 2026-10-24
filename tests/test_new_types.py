@@ -173,8 +173,10 @@ def test_new_type_keeps_annotated_constraints() -> None:
     @dataclass
     class Model:
         value: ConstrainedId
+        maybe: Optional[ConstrainedId]
 
     factory = DataclassFactory.create_factory(Model)
 
     for instance in [*factory.batch(50), *factory.coverage()]:
         assert 100 <= instance.value <= 105
+        assert instance.maybe is None or 100 <= instance.maybe <= 105

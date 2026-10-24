@@ -901,34 +901,22 @@ class BaseFactory(ABC, Generic[T]):
         if not field_meta.required:
             yield Null
 
-        if cls.__use_examples__:
-            if cls.should_use_example_value(field_meta):
-                yield CoverageContainer(cast("list[Any]", field_meta.examples))
-                return
+        if cls.should_use_example_value(field_meta):
+            yield CoverageContainer(cast("list[Any]", field_meta.examples))
+            return
 
-            annotation = field_meta.annotation
-            if is_annotated(annotation):
-                annotation = get_args(annotation)[0]
-
-            if is_union(annotation) and field_meta.children:
-                # Union members may define their own examples, so they are covered one by one.
-                # NoneType children aren't included in field_meta.children,
-                # so to ensure that they are covered we need to check for them explicitly
-                if NoneType in field_meta.type_args:
+        members = cls._get_union_members_to_cover(field_meta)
+        if members is not None:
+            for member in members:
+                if member is None:
                     yield None
-                for child in field_meta.children:
-                    yield from cls.get_field_value_coverage(child, field_build_parameters, build_context)
-                return
+                else:
+                    yield from cls.get_field_value_coverage(member, field_build_parameters, build_context)
+            return
 
         for unwrapped_annotation in flatten_annotation(field_meta.annotation):
             unwrapped_annotation = cls._resolve_forward_references(unwrapped_annotation)  # noqa: PLW2901
 
-            unwrapped_annotation_meta = field_meta
-            if is_union(field_meta.annotation):
-                unwrapped_annotation_meta = next(
-                    (meta for meta in (field_meta.children or []) if meta.annotation == unwrapped_annotation),
-                    field_meta,
-                )
             if unwrapped_annotation in (None, NoneType):
                 yield None
 
@@ -938,11 +926,11 @@ class BaseFactory(ABC, Generic[T]):
             elif isinstance(unwrapped_annotation, EnumMeta):
                 yield CoverageContainer(list(unwrapped_annotation))
 
-            elif unwrapped_annotation_meta.constraints:
+            elif field_meta.constraints:
                 yield CoverageContainerCallable(
                     cls.get_constrained_field_value,
                     annotation=unwrapped_annotation,
-                    field_meta=unwrapped_annotation_meta,
+                    field_meta=field_meta,
                 )
 
             elif provider := (
@@ -964,14 +952,7 @@ class BaseFactory(ABC, Generic[T]):
                     msg = "A subclass of Collection should always have children in its field_meta"
                     raise ParameterException(msg)
 
-                # We actually want to use the parent in cases where the collection is the parent
-                # such as tuple so default to the parent if this annotation is not present in the children
-                child_meta = next(
-                    (meta for meta in field_meta.children if meta.annotation == unwrapped_annotation),
-                    field_meta,
-                )
-
-                yield handle_collection_type_coverage(child_meta, origin, cls, build_context=build_context)
+                yield handle_collection_type_coverage(field_meta, origin, cls, build_context=build_context)
 
             elif is_type_var(unwrapped_annotation):
                 yield create_random_string(cls.__random__, min_length=1, max_length=10)
@@ -985,6 +966,30 @@ class BaseFactory(ABC, Generic[T]):
                 raise ParameterException(
                     msg,
                 )
+
+    @classmethod
+    def _get_union_members_to_cover(cls, field_meta: FieldMeta) -> list[FieldMeta | None] | None:
+        """Return a union field's members to cover one by one, each from its own field meta, in the order written.
+
+        ``FieldMeta.from_type`` and the pydantic integrations build a union's children from its type args other than
+        ``None``, in order.
+
+        :param field_meta: FieldMeta instance.
+
+        :returns: The members, with ``None`` for ``None`` - or ``None`` to cover the field as a whole, if it is not a
+            union, if its children don't line up with its members, or if a member is an ignored type.
+        """
+        annotation, args, children = field_meta.annotation, field_meta.type_args, field_meta.children or []
+        if not is_union(get_args(annotation)[0] if is_annotated(annotation) else annotation):
+            return None
+        if not children or len(children) != sum(arg is not NoneType for arg in args):
+            return None
+        members: list[FieldMeta | None] = list(children)
+        if NoneType in args:
+            members.insert(args.index(NoneType), None)
+        if any(member is not None and cls.is_ignored_type(member.annotation) for member in members):
+            return None
+        return members
 
     @classmethod
     def _resolve_forward_references(cls, annotation: Any) -> Any:
