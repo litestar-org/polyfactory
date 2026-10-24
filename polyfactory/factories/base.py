@@ -906,7 +906,7 @@ class BaseFactory(ABC, Generic[T]):
             return
 
         members = cls._get_union_members_to_cover(field_meta)
-        if members:
+        if members is not None:
             for member in members:
                 if member is None:
                     yield None
@@ -968,34 +968,34 @@ class BaseFactory(ABC, Generic[T]):
                 )
 
     @classmethod
-    def _get_union_members_to_cover(cls, field_meta: FieldMeta) -> list[FieldMeta | None]:
+    def _get_union_members_to_cover(cls, field_meta: FieldMeta) -> list[FieldMeta | None] | None:
         """Return a union field's members to cover one by one, each from its own field meta, in the order written.
 
         ``FieldMeta.from_type`` and the pydantic integrations build a union's children from its type args other than
-        ``None``, in order. Returns an empty list - the field is covered as a whole - if the field is not a union or
-        its children don't line up with its members, if a provider is registered for the union itself, or if a member
-        is an ignored type.
+        ``None``, in order.
 
         :param field_meta: FieldMeta instance.
 
-        :returns: A list of field metas, with ``None`` for ``None``.
+        :returns: The members, with ``None`` for ``None`` - or ``None`` to cover the field as a whole, if it is not a
+            union, if its children don't line up with its members, if a provider is registered for the union itself,
+            or if a member is an ignored type.
         """
         annotation, args, children = field_meta.annotation, field_meta.type_args, field_meta.children or []
         if not is_union(get_args(annotation)[0] if is_annotated(annotation) else annotation):
-            return []
+            return None
         if not children or len(children) != sum(arg is not NoneType for arg in args):
-            return []
+            return None
         members: list[FieldMeta | None] = list(children)
         if NoneType in args:
             members.insert(args.index(NoneType), None)
         try:
             if field_meta.annotation in cls.get_provider_map():
-                return []
+                return None
         except TypeError:
             # Annotated metadata may be unhashable.
             pass
         if any(member is not None and cls.is_ignored_type(member.annotation) for member in members):
-            return []
+            return None
         return members
 
     @classmethod
