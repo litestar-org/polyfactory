@@ -1015,7 +1015,7 @@ class BaseFactory(ABC, Generic[T]):
         """
         return (
             cls.__allow_none_optionals__
-            and is_optional(field_meta.annotation)
+            and field_meta._type_node.allows_none
             and create_random_boolean(random=cls.__random__)
         )
 

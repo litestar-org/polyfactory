@@ -1,17 +1,16 @@
 from __future__ import annotations
 
 import functools
-from collections.abc import Hashable, Mapping
-from dataclasses import asdict
+from collections.abc import Hashable
 from typing import TYPE_CHECKING, Any, Literal, TypedDict, cast
 
 from typing_extensions import get_args, get_origin
 
 from polyfactory.constants import TYPE_MAPPING
+from polyfactory.utils._internal.constraints import parse_constraints
+from polyfactory.utils._internal.type_node import TypeNode, parse, with_children
 from polyfactory.utils.helpers import (
     get_annotation_metadata,
-    is_dataclass_instance,
-    unwrap_annotated,
     unwrap_new_type,
 )
 from polyfactory.utils.normalize_type import normalize_type
@@ -97,10 +96,38 @@ class FieldMeta:
         self.constraints = constraints
         self.examples = examples
         self.required = required
+        # Children passed in by a model integration (e.g. pydantic union members carrying their own constraints) are
+        # the source of truth for the parsed type's members. Children derived in ``from_type`` are not.
+        self._explicit_children = children is not None
 
     def __repr__(self) -> str:
         """Return a string representation of the field meta."""
         return f"FieldMeta(name={self.name!r}, annotation={self.annotation!r}, default={self.default!r}, children={self.children!r}, constraints={self.constraints!r})"
+
+    @property
+    def _type_node(self) -> TypeNode:
+        """The parsed type of this field.
+
+        Parsed on first access and cached. Re-parsed if ``annotation``, ``constraints`` or ``children`` is reassigned,
+        as some integrations do after construction.
+
+        :returns: A type node.
+        """
+        annotation, constraints, children = self.annotation, self.constraints, self.children
+        cached = self.__dict__.get("_type_node_cache")
+        if cached is not None and cached[0] is annotation and cached[1] is constraints and cached[2] is children:
+            return cast("TypeNode", cached[3])
+
+        # Parse the annotation as written - keeping type aliases nominal - unless it was reassigned after construction.
+        # Constraints `from_type` read from the annotation itself are already in the parsed node.
+        written, normalized, own_constraints = self.__dict__.get("_annotations", (annotation, annotation, None))
+        source = written if annotation is normalized else annotation
+        node = parse(source, None if constraints is own_constraints and source is written else constraints)
+        if self._explicit_children and children:
+            node = with_children(node, [child._type_node for child in children])
+
+        self.__dict__["_type_node_cache"] = (annotation, constraints, children, node)
+        return node
 
     @functools.cached_property
     def type_args(self) -> tuple[Any, ...]:
@@ -137,6 +164,7 @@ class FieldMeta:
 
         :returns: A field meta instance.
         """
+        written_annotation, passed_constraints = annotation, constraints
         annotation = normalize_type(annotation)
         annotated = is_annotated(annotation)
         if not constraints and annotated:
@@ -161,6 +189,11 @@ class FieldMeta:
             examples=examples,
             required=required,
         )
+        field.__dict__["_annotations"] = (
+            written_annotation,
+            annotation,
+            constraints if constraints is not passed_constraints else None,
+        )
 
         if field.type_args and not field.children:
             field.children = [
@@ -170,55 +203,13 @@ class FieldMeta:
 
     @classmethod
     def parse_constraints(cls, metadata: Sequence[Any]) -> "Constraints":
-        constraints = {}
+        """Parse constraints from ``Annotated`` metadata.
 
-        for value in metadata:
-            if is_annotated(value):
-                _, inner_metadata = unwrap_annotated(value)
-                constraints.update(cast("dict[str, Any]", cls.parse_constraints(metadata=inner_metadata)))
-            elif func := getattr(value, "func", None):
-                if func is str.islower:
-                    constraints["lower_case"] = True
-                elif func is str.isupper:
-                    constraints["upper_case"] = True
-                elif func is str.isascii:
-                    constraints["pattern"] = "[[:ascii:]]"
-                elif func is str.isdigit:
-                    constraints["pattern"] = "[[:digit:]]"
-            elif is_dataclass_instance(value) and (value_dict := asdict(value)) and ("allowed_schemes" in value_dict):
-                constraints["url"] = {k: v for k, v in value_dict.items() if v is not None}
-            # This is to support `Constraints`, but we can't do a isinstance with `Constraints` since isinstance
-            # checks with `TypedDict` is not supported.
-            elif isinstance(value, Mapping):
-                constraints.update(value)
-            else:
-                constraints.update(
-                    {
-                        k: v
-                        for k, v in {
-                            "allow_inf_nan": getattr(value, "allow_inf_nan", None),
-                            "decimal_places": getattr(value, "decimal_places", None),
-                            "ge": getattr(value, "ge", None),
-                            "gt": getattr(value, "gt", None),
-                            "item_type": getattr(value, "item_type", None),
-                            "le": getattr(value, "le", None),
-                            "lower_case": getattr(value, "to_lower", None),
-                            "lt": getattr(value, "lt", None),
-                            "max_digits": getattr(value, "max_digits", None),
-                            "max_length": getattr(value, "max_length", getattr(value, "max_length", None)),
-                            "min_length": getattr(value, "min_length", getattr(value, "min_items", None)),
-                            "multiple_of": getattr(value, "multiple_of", None),
-                            "path_type": getattr(value, "path_type", None),
-                            "pattern": getattr(value, "regex", getattr(value, "pattern", None)),
-                            "tz": getattr(value, "tz", None),
-                            "unique_items": getattr(value, "unique_items", None),
-                            "upper_case": getattr(value, "to_upper", None),
-                            "uuid_version": getattr(value, "uuid_version", None),
-                        }.items()
-                        if v is not None
-                    },
-                )
-        return cast("Constraints", constraints)
+        :param metadata: The metadata of an ``Annotated`` annotation.
+
+        :returns: The constraints found in it.
+        """
+        return parse_constraints(metadata)
 
     @classmethod
     def parse_examples(cls, metadata: Sequence[Any]) -> list[Any] | None:

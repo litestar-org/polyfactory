@@ -5,10 +5,12 @@ from collections.abc import Iterable
 from dataclasses import dataclass as vanilla_dataclass
 from dataclasses import field
 from types import ModuleType
-from typing import Any, Callable, Optional, TypeVar, Union
+from typing import Annotated, Any, Callable, Optional, TypeVar, Union
 from unittest.mock import ANY
 
 import pytest
+from annotated_types import Ge
+from typing_extensions import TypeAliasType
 
 from pydantic.dataclasses import dataclass as pydantic_dataclass
 
@@ -354,6 +356,37 @@ def test_optional_type(allow_none: bool) -> None:
 
         if isinstance(a.c, list):
             assert all(isinstance(value, int) for value in a.c)
+
+
+MaybeInt = TypeAliasType("MaybeInt", Optional[int])
+
+
+def test_optional_type_alias_can_be_none() -> None:
+    @vanilla_dataclass
+    class A:
+        a: MaybeInt
+
+    class AFactory(DataclassFactory[A]):
+        __allow_none_optionals__ = True
+
+    assert None in [result.a for result in AFactory.batch(100)]
+
+
+def test_optional_inside_annotated_can_be_none() -> None:
+    @vanilla_dataclass
+    class A:
+        a: Annotated[Optional[int], Ge(1)]
+        b: Optional[Annotated[int, Ge(1)]]
+
+    class AFactory(DataclassFactory[A]):
+        __allow_none_optionals__ = True
+
+    results = AFactory.batch(100)
+
+    for name in ("a", "b"):
+        values = [getattr(result, name) for result in results]
+        assert None in values
+        assert all(value >= 1 for value in values if value is not None)
 
 
 @pytest.mark.skipif(sys.version_info < (3, 12), reason="PEP 695 requires Python 3.12+")
