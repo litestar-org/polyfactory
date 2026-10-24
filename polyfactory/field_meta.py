@@ -12,10 +12,12 @@ from polyfactory.utils.helpers import (
     get_annotation_metadata,
     is_dataclass_instance,
     unwrap_annotated,
+    unwrap_annotation,
+    unwrap_args,
     unwrap_new_type,
 )
 from polyfactory.utils.normalize_type import normalize_type
-from polyfactory.utils.predicates import is_annotated, is_new_type, is_union
+from polyfactory.utils.predicates import is_annotated, is_new_type, is_optional, is_union
 from polyfactory.utils.types import NoneType
 
 if TYPE_CHECKING:
@@ -139,21 +141,33 @@ class FieldMeta:
         """
         annotation = normalize_type(annotation)
         annotated = is_annotated(annotation)
-        if not constraints and annotated:
-            metadata = cls.get_constraints_metadata(annotation)
-            constraints = cls.parse_constraints(metadata)
-        elif not constraints and is_new_type(annotation) and is_annotated(supertype := unwrap_new_type(annotation)):
-            # A NewType keeps the constraints of the annotated type it wraps.
-            constraints = cls.parse_constraints(cls.get_constraints_metadata(supertype))
+        bare = get_args(annotation)[0] if annotated else annotation
 
-        if examples is None and annotated:
-            examples = cls.parse_examples(get_annotation_metadata(annotation))
+        # A NewType has no metadata or type args of its own, so a field annotated with one takes its constraints,
+        # examples and children from the type it wraps - also through `Optional`, whose only other member is `None`.
+        wrapped = None
+        if is_new_type(bare):
+            wrapped = unwrap_new_type(bare)
+            members = [arg for arg in get_args(wrapped) if arg is not NoneType]
+            if is_optional(wrapped) and len(members) == 1:
+                wrapped = members[0]
+
+        metadata_source = annotation if annotated else wrapped
+        if is_annotated(metadata_source):
+            if not constraints:
+                constraints = cls.parse_constraints(cls.get_constraints_metadata(metadata_source))
+            if examples is None:
+                examples = cls.parse_examples(get_annotation_metadata(metadata_source))
 
         # annotations can take many forms: Optional, an Annotated type, or anything with __args__
         # in order to normalize the annotation, we need to unwrap the annotation.
         if not annotated and (origin := get_origin(annotation)) and origin in TYPE_MAPPING:
             container = TYPE_MAPPING[origin]
             annotation = container[get_args(annotation)]  # type: ignore[index]
+
+        if not children and wrapped is not None and unwrap_args(wrapped):
+            # e.g. the items of `NewType("UserIds", list[int])` or `NewType("Ids", Optional[list[int]])`.
+            children = cls.from_type(annotation=unwrap_annotation(wrapped)).children
 
         field = cls(
             annotation=annotation,
@@ -169,7 +183,7 @@ class FieldMeta:
             field.children = [
                 cls.from_type(annotation=unwrap_new_type(arg)) for arg in field.type_args if arg is not NoneType
             ]
-            if constraints and is_union(get_args(annotation)[0] if annotated else annotation):
+            if constraints and is_union(bare):
                 # Constraints on a union apply to each of its members, under the member's own.
                 field.children = [
                     cls.from_type(annotation=child.annotation, constraints={**constraints, **(child.constraints or {})})
