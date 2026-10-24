@@ -1,10 +1,12 @@
 import sys
+from dataclasses import dataclass
 from datetime import date
 from decimal import Decimal
 from types import ModuleType
-from typing import Any, Callable, NewType, Optional, Union
+from typing import Annotated, Any, Callable, NewType, Optional, Union
 
 import pytest
+from annotated_types import Ge, Le
 
 from pydantic import (
     VERSION,
@@ -163,3 +165,16 @@ class A:
     factory = DataclassFactory.create_factory(module.A)
     result = factory.build()
     assert result.field in {"a", "b"}
+
+
+def test_new_type_keeps_annotated_constraints() -> None:
+    ConstrainedId = NewType("ConstrainedId", Annotated[int, Ge(100), Le(105)])
+
+    @dataclass
+    class Model:
+        value: ConstrainedId
+
+    factory = DataclassFactory.create_factory(Model)
+
+    for instance in [*factory.batch(50), *factory.coverage()]:
+        assert 100 <= instance.value <= 105

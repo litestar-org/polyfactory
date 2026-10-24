@@ -15,7 +15,7 @@ from polyfactory.utils.helpers import (
     unwrap_new_type,
 )
 from polyfactory.utils.normalize_type import normalize_type
-from polyfactory.utils.predicates import is_annotated
+from polyfactory.utils.predicates import is_annotated, is_new_type
 from polyfactory.utils.types import NoneType
 
 if TYPE_CHECKING:
@@ -142,6 +142,9 @@ class FieldMeta:
         if not constraints and annotated:
             metadata = cls.get_constraints_metadata(annotation)
             constraints = cls.parse_constraints(metadata)
+        elif not constraints and is_new_type(annotation) and is_annotated(supertype := unwrap_new_type(annotation)):
+            # A NewType keeps the constraints of the annotated type it wraps.
+            constraints = cls.parse_constraints(cls.get_constraints_metadata(supertype))
 
         if examples is None and annotated:
             examples = cls.parse_examples(get_annotation_metadata(annotation))
