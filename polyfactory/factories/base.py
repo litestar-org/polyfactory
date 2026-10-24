@@ -52,6 +52,7 @@ from polyfactory.exceptions import ConfigurationException, MissingBuildKwargExce
 from polyfactory.field_meta import Null
 from polyfactory.fields import Ignore, PostGenerated, Require, Use
 from polyfactory.utils.helpers import (
+    annotation_signature,
     flatten_annotation,
     get_collection_type,
     unwrap_annotation,
@@ -966,8 +967,9 @@ class BaseFactory(ABC, Generic[T]):
 
                 # We actually want to use the parent in cases where the collection is the parent
                 # such as tuple so default to the parent if this annotation is not present in the children
+                wanted_signature = annotation_signature(unwrapped_annotation)
                 child_meta = next(
-                    (meta for meta in field_meta.children if meta.annotation == unwrapped_annotation),
+                    (meta for meta in field_meta.children if annotation_signature(meta.annotation) == wanted_signature),
                     field_meta,
                 )
 

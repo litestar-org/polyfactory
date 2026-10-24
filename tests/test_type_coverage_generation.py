@@ -22,6 +22,32 @@ from polyfactory.utils.types import NoneType
 from tests.test_pydantic_factory import IS_PYDANTIC_V1
 
 
+def test_coverage_optional_typing_collections() -> None:
+    """`typing.List`/`typing.Dict` inside `Optional` must not nest a value.
+
+    `FieldMeta` normalises children to the builtin generics, so a plain
+    annotation comparison missed the child and fell back to the union meta.
+    """
+    from typing import Dict, List
+
+    class ListModel(BaseModel):
+        values: Optional[List[str]]
+
+    class DictModel(BaseModel):
+        values: Optional[Dict[str, int]]
+
+    for factory, expected_type in (
+        (ModelFactory.create_factory(ListModel), list),
+        (ModelFactory.create_factory(DictModel), dict),
+    ):
+        values = [model.values for model in factory.coverage()]
+        assert any(value is not None for value in values), values
+        for value in values:
+            if value is not None:
+                assert isinstance(value, expected_type)
+                assert value, "a covered collection must not be empty"
+
+
 def test_coverage_count() -> None:
     @dataclass
     class Profile:

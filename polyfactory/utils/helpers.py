@@ -16,7 +16,7 @@ from polyfactory.utils.predicates import (
     is_type_alias,
     is_union,
 )
-from polyfactory.utils.types import NoneType
+from polyfactory.utils.types import UNION_TYPES, NoneType
 
 
 def unwrap_new_type(annotation: Any) -> Any:
@@ -63,6 +63,27 @@ def unwrap_annotation(annotation: Any) -> Any:
             annotation = annotation.__value__
 
     return annotation
+
+
+def annotation_signature(annotation: Any) -> Any:
+    """Return a hashable form of an annotation that compares generic spellings as equal.
+
+    ``typing.List[str]`` and ``list[str]`` are the same type but not ``==``, and
+    the same holds for ``Optional[X]`` and ``X | None``. Comparing only the
+    annotation objects therefore misses the match whenever a ``FieldMeta`` has
+    normalised a child to the builtin spelling while the annotation still spells
+    it the ``typing`` way.
+
+    :param annotation: A type annotation.
+
+    :returns: A nested tuple of origins and arguments, comparable with ``==``.
+    """
+    origin = get_origin(annotation)
+    if origin in UNION_TYPES:
+        return ("union", frozenset(annotation_signature(arg) for arg in get_args(annotation)))
+    if origin is None:
+        return annotation
+    return (origin, tuple(annotation_signature(arg) for arg in get_args(annotation)))
 
 
 def flatten_annotation(annotation: Any) -> list[Any]:
