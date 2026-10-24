@@ -315,7 +315,11 @@ class PydanticFieldMeta(FieldMeta):
         args = get_args(model_field.annotation)
         if is_optional(model_field.annotation) and len(args) == 2:  # noqa: PLR2004
             child_annotation = args[0] if args[0] is not NoneType else args[1]
-            children.append(PydanticFieldMeta.from_type(child_annotation))
+            # A union's children carry its constraints.
+            child_constraints = {key: value for key, value in constraints.items() if value is not None}
+            children.append(
+                PydanticFieldMeta.from_type(child_annotation, constraints=cast("Constraints", child_constraints) or None)
+            )
         elif model_field.key_field or model_field.sub_fields:
             fields_to_iterate = (
                 ([model_field.key_field, *model_field.sub_fields])
