@@ -66,6 +66,38 @@ def test_handle_constrained_string_with_min_length_and_max_length_and_regex(
             assert len(result) <= max_length
 
 
+def test_constrained_string_without_min_length_is_never_empty() -> None:
+    """A max-length-only constraint (SQLAlchemy ``String(64)``) must not fall
+    back to an empty value: empty strings collide on a unique column.
+    """
+    for max_length in (2, 4, 10, 64):
+        for _ in range(50):
+            result = handle_constrained_string_or_bytes(
+                random=Random(),
+                t_type=str,
+                lower_case=False,
+                upper_case=False,
+                min_length=None,
+                max_length=max_length,
+                pattern=None,
+            )
+            assert 0 < len(result) <= max_length
+
+
+def test_unconstrained_string_generation_is_unchanged() -> None:
+    """Without a max_length the generator keeps its old behaviour."""
+    result = handle_constrained_string_or_bytes(
+        random=Random(1),
+        t_type=str,
+        lower_case=False,
+        upper_case=False,
+        min_length=None,
+        max_length=None,
+        pattern=None,
+    )
+    assert isinstance(result, str)
+
+
 @given(booleans(), integers(max_value=10000), integers(max_value=10000))
 def test_handle_constrained_string_with_min_length_and_max_length(
     to_lower: bool,

@@ -69,7 +69,10 @@ def create_random_bytes(
     """Generate a random bytes given the constraints.
 
     :param random: An instance of random.
-    :param min_length: A minimum length.
+    :param min_length: A minimum length. ``None`` keeps an unconstrained
+        generator unbounded from below; with a ``max_length`` it floors the
+        result at 4 characters (or at ``max_length``) instead of allowing
+        an empty value.
     :param max_length: A maximum length.
     :param lower_case: Whether to lowercase the result.
     :param upper_case: Whether to uppercase the result.
@@ -77,7 +80,11 @@ def create_random_bytes(
     :returns: A random byte-string.
     """
     if min_length is None:
-        min_length = 0
+        # An unconstrained value comes from ``faker.pystr()``, which never
+        # returns fewer than 4 characters. A max-length constraint must not
+        # turn generated strings into empties: an empty value collides on a
+        # unique column and looks like a factory bug rather than a constraint.
+        min_length = 0 if max_length is None else min(4, max_length)
     if max_length is None:
         max_length = min_length + 1 * 2
 
