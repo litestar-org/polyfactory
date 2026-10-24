@@ -977,8 +977,7 @@ class BaseFactory(ABC, Generic[T]):
         :param field_meta: FieldMeta instance.
 
         :returns: The members, with ``None`` for ``None`` - or ``None`` to cover the field as a whole, if it is not a
-            union, if its children don't line up with its members, if a provider is registered for the union itself,
-            or if a member is an ignored type.
+            union, if its children don't line up with its members, or if a member is an ignored type.
         """
         annotation, args, children = field_meta.annotation, field_meta.type_args, field_meta.children or []
         if not is_union(get_args(annotation)[0] if is_annotated(annotation) else annotation):
@@ -988,12 +987,6 @@ class BaseFactory(ABC, Generic[T]):
         members: list[FieldMeta | None] = list(children)
         if NoneType in args:
             members.insert(args.index(NoneType), None)
-        try:
-            if field_meta.annotation in cls.get_provider_map():
-                return None
-        except TypeError:
-            # Annotated metadata may be unhashable.
-            pass
         if any(member is not None and cls.is_ignored_type(member.annotation) for member in members):
             return None
         return members

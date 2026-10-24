@@ -5,7 +5,7 @@ import typing
 from collections.abc import Iterable
 from dataclasses import dataclass, make_dataclass
 from datetime import date
-from typing import Annotated, Any, Callable, Literal, Optional, Union
+from typing import Annotated, Any, Literal, Optional, Union
 from uuid import UUID
 
 import pytest
@@ -398,23 +398,6 @@ def test_optional_typing_collection_items() -> None:
     assert type_exists_at_path_any(results, ["values"], NoneType)
     assert type_exists_at_path_any(results, ["mapping"], dict)
     assert type_exists_at_path_any(results, ["mapping"], NoneType)
-
-
-def test_provider_for_union_is_used_for_each_member() -> None:
-    @dataclass
-    class Model:
-        either: Union[int, str]
-        maybe: Optional[int]  # noqa: UP045
-
-    class Factory(DataclassFactory[Model]):
-        @classmethod
-        def get_provider_map(cls) -> dict[Any, Callable[[], Any]]:
-            return {**super().get_provider_map(), Union[int, str]: lambda: "provided", Optional[int]: lambda: -1}
-
-    results = list(Factory.coverage())
-
-    assert [result.either for result in results] == ["provided", "provided"]
-    assert [result.maybe for result in results] == [-1, None]
 
 
 class _Examples:
