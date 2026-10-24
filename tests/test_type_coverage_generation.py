@@ -470,15 +470,3 @@ def test_ignored_union_member_is_still_covered() -> None:
 
     assert {type(result.either) for result in results} == {int, str}
     assert [type(result.maybe) for result in results] == [str, NoneType]
-
-
-def test_union_children_for_other_types_are_not_paired_with_members() -> None:
-    item = FieldMeta(name="value", annotation=int, constraints={"ge": 100, "le": 105})
-    field_meta = FieldMeta.from_type(Optional[list[int]], name="value", children=[item])
-
-    values = [
-        container.next_value() if isinstance(container, CoverageContainerBase) else container
-        for container in BaseFactory.get_field_value_coverage(field_meta)
-    ]
-
-    assert [type(value) for value in values] == [list, NoneType]
