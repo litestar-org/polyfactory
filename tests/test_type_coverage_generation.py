@@ -1,10 +1,11 @@
 # ruff: noqa: UP007
 from __future__ import annotations
 
+import typing
 from collections.abc import Iterable
 from dataclasses import dataclass, make_dataclass
 from datetime import date
-from typing import Annotated, Any, Literal, Optional, Union
+from typing import Annotated, Any, Callable, Literal, Optional, Union
 from uuid import UUID
 
 import pytest
@@ -14,10 +15,12 @@ from pydantic import BaseModel
 
 from polyfactory.decorators import post_generated
 from polyfactory.exceptions import ParameterException
+from polyfactory.factories.base import BaseFactory
 from polyfactory.factories.dataclass_factory import DataclassFactory
 from polyfactory.factories.pydantic_factory import ModelFactory
 from polyfactory.factories.typed_dict_factory import TypedDictFactory
-from polyfactory.field_meta import Constraints
+from polyfactory.field_meta import Constraints, FieldMeta
+from polyfactory.utils.model_coverage import CoverageContainerBase
 from polyfactory.utils.types import NoneType
 from tests.test_pydantic_factory import IS_PYDANTIC_V1
 
@@ -383,3 +386,87 @@ def test_union_constraints_apply_with_examples() -> None:
 
     assert None in values
     assert all(100 <= value <= 105 for value in values if value is not None)
+
+
+def test_optional_typing_collection_items() -> None:
+    class Model(BaseModel):
+        values: Optional[typing.List[str]]  # noqa: UP006, UP045
+        mapping: Optional[typing.Dict[str, int]]  # noqa: UP006, UP045
+
+    results = list(ModelFactory.create_factory(Model).coverage())
+
+    assert type_exists_at_path_any(results, ["values"], list)
+    assert type_exists_at_path_any(results, ["values", "*"], str)
+    assert type_exists_at_path_any(results, ["values"], NoneType)
+    assert type_exists_at_path_any(results, ["mapping"], dict)
+    assert type_exists_at_path_any(results, ["mapping"], NoneType)
+
+
+def test_union_children_not_matching_members_keep_constraints() -> None:
+    field_meta = FieldMeta.from_type(
+        Union[int, str, bytes],
+        name="value",
+        children=[
+            FieldMeta(name="value", annotation=int, constraints={"ge": 100, "le": 105}),
+            FieldMeta(name="value", annotation=str, constraints={"min_length": 3, "max_length": 3}),
+        ],
+    )
+
+    values = [
+        container.next_value() if isinstance(container, CoverageContainerBase) else container
+        for _ in range(20)
+        for container in BaseFactory.get_field_value_coverage(field_meta)
+    ]
+
+    assert all(100 <= value <= 105 for value in values if isinstance(value, int))
+    assert all(len(value) == 3 for value in values if isinstance(value, str))
+    assert any(isinstance(value, bytes) for value in values)
+
+
+def test_provider_for_union_is_used_for_each_member() -> None:
+    @dataclass
+    class Model:
+        either: Union[int, str]
+        maybe: Optional[int]  # noqa: UP045
+
+    class Factory(DataclassFactory[Model]):
+        @classmethod
+        def get_provider_map(cls) -> dict[Any, Callable[[], Any]]:
+            return {**super().get_provider_map(), Union[int, str]: lambda: "provided", Optional[int]: lambda: -1}
+
+    results = list(Factory.coverage())
+
+    assert [result.either for result in results] == ["provided", "provided"]
+    assert [result.maybe for result in results] == [-1, None]
+
+
+class _Examples:
+    def __init__(self, *examples: str) -> None:
+        self.examples = list(examples)
+
+
+def test_union_members_with_examples_cover_none_in_written_order() -> None:
+    @dataclass
+    class Model:
+        value: Optional[Annotated[str, _Examples("a", "b")]]  # noqa: UP045
+
+    values = [result.value for result in DataclassFactory.create_factory(Model, __use_examples__=True).coverage()]
+
+    assert values == ["a", "b", None]
+
+
+def test_ignored_union_member_is_still_covered() -> None:
+    @dataclass
+    class Model:
+        either: Union[int, str]
+        maybe: Optional[str]  # noqa: UP045
+
+    class Factory(DataclassFactory[Model]):
+        @classmethod
+        def is_ignored_type(cls, value: Any) -> bool:
+            return value is str or super().is_ignored_type(value)
+
+    results = list(Factory.coverage())
+
+    assert {type(result.either) for result in results} == {int, str}
+    assert [type(result.maybe) for result in results] == [str, NoneType]
