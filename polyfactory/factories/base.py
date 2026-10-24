@@ -54,6 +54,7 @@ from polyfactory.fields import Ignore, PostGenerated, Require, Use
 from polyfactory.utils.helpers import (
     flatten_annotation,
     get_collection_type,
+    is_same_annotation,
     unwrap_annotation,
     unwrap_args,
     unwrap_optional,
@@ -926,7 +927,11 @@ class BaseFactory(ABC, Generic[T]):
             unwrapped_annotation_meta = field_meta
             if is_union(field_meta.annotation):
                 unwrapped_annotation_meta = next(
-                    (meta for meta in (field_meta.children or []) if meta.annotation == unwrapped_annotation),
+                    (
+                        meta
+                        for meta in (field_meta.children or [])
+                        if is_same_annotation(meta.annotation, unwrapped_annotation)
+                    ),
                     field_meta,
                 )
             if unwrapped_annotation in (None, NoneType):
@@ -967,7 +972,7 @@ class BaseFactory(ABC, Generic[T]):
                 # We actually want to use the parent in cases where the collection is the parent
                 # such as tuple so default to the parent if this annotation is not present in the children
                 child_meta = next(
-                    (meta for meta in field_meta.children if meta.annotation == unwrapped_annotation),
+                    (meta for meta in field_meta.children if is_same_annotation(meta.annotation, unwrapped_annotation)),
                     field_meta,
                 )
 
