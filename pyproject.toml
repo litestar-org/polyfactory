@@ -99,6 +99,7 @@ test = [
   "pytest-cov>=4.1.0",
   "hypothesis>=6.86.2",
   "annotated-types>=0.5.0",
+  "pytest-codspeed>=4.0.0",
 ]
 dev = [
   "polyfactory[full]",

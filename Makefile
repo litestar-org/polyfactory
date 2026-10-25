@@ -84,6 +84,10 @@ test:  												## Run the tests
 test-examples:            			              	## Run the examples tests
 	@uv run pytest docs/examples
 
+.PHONY: benchmark
+benchmark:            			              		## Run the benchmarks
+	@uv run pytest tests/benchmarks --codspeed
+
 .PHONY: test-all
 test-all: test test-examples 						## Run all tests
 
