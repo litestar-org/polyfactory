@@ -101,6 +101,8 @@ F = TypeVar("F", bound="BaseFactory[Any]")
 
 class BuildContext(TypedDict):
     seen_models: set[type]
+    # Each factory's ``get_provider_map()``, built once per build rather than once per field.
+    provider_maps: dict[type, dict[Any, Callable[[], Any]]]
 
 
 class BaseFactory(ABC, Generic[T]):
@@ -267,12 +269,29 @@ class BaseFactory(ABC, Generic[T]):
         :returns: BuildContext
         """
         if build_context is None:
-            return {"seen_models": set()}
+            return {"seen_models": set(), "provider_maps": {}}
 
+        # `provider_maps` is shared, not copied, so the whole build uses one cache.
         return {
             **build_context,
             "seen_models": copy.copy(build_context["seen_models"]),
         }
+
+    @classmethod
+    def _get_provider_map_for_build(cls, build_context: BuildContext | None) -> dict[Any, Callable[[], Any]]:
+        """Return ``get_provider_map()``, computed at most once per factory per build.
+
+        Falls back to an uncached call when the context has no cache, e.g. when called directly without one.
+
+        :param build_context: BuildContext data for current build.
+
+        :returns: a dictionary mapping types to callables.
+        """
+        if build_context is None or (provider_maps := build_context.get("provider_maps")) is None:
+            return cls.get_provider_map()
+        if (provider_map := provider_maps.get(cls)) is None:
+            provider_map = provider_maps[cls] = cls.get_provider_map()
+        return provider_map
 
     @classmethod
     def _infer_model_type(cls) -> type[T] | None:
@@ -388,24 +407,25 @@ class BaseFactory(ABC, Generic[T]):
         return CoverageContainerCallable(field_value) if callable(field_value) else field_value
 
     @classmethod
-    def _get_config(cls) -> dict[str, Any]:
+    def _get_config(cls, build_context: BuildContext | None = None) -> dict[str, Any]:
         return {
             **{key: getattr(cls, key) for key in cls.__config_keys__},
-            "_extra_providers": cls.get_provider_map(),
+            "_extra_providers": cls._get_provider_map_for_build(build_context),
         }
 
     @classmethod
-    def _get_or_create_factory(cls, model: type[U]) -> type[BaseFactory[U]]:
+    def _get_or_create_factory(cls, model: type[U], build_context: BuildContext | None = None) -> type[BaseFactory[U]]:
         """Get a factory from registered factories or generate a factory dynamically.
 
         :param model: A model type.
+        :param build_context: BuildContext data for current build.
         :returns: A Factory sub-class.
 
         """
         if factory := BaseFactory._factory_type_mapping.get(model):
             return factory
 
-        config = cls._get_config()
+        config = cls._get_config(build_context)
 
         if cls.__base_factory_overrides__:
             for model_ancestor in model.mro():
@@ -778,14 +798,7 @@ class BaseFactory(ABC, Generic[T]):
         if isinstance(unwrapped_annotation, EnumMeta):
             return cls.__random__.choice(list(unwrapped_annotation))
 
-        if field_meta.constraints:
-            return cls.get_constrained_field_value(
-                annotation=unwrapped_annotation,
-                field_meta=field_meta,
-                field_build_parameters=field_build_parameters,
-                build_context=build_context,
-            )
-
+        # A union's children carry its constraints, so choose one before applying constraints.
         if (is_union(unwrapped_annotation) or is_union(field_meta.annotation)) and field_meta.children:
             seen_models = build_context["seen_models"]
             children = [child for child in field_meta.children if child.annotation not in seen_models]
@@ -797,7 +810,15 @@ class BaseFactory(ABC, Generic[T]):
 
             return cls.get_field_value(cls.__random__.choice(children), field_build_parameters, build_context)
 
-        provider_map = cls.get_provider_map()
+        if field_meta.constraints:
+            return cls.get_constrained_field_value(
+                annotation=unwrapped_annotation,
+                field_meta=field_meta,
+                field_build_parameters=field_build_parameters,
+                build_context=build_context,
+            )
+
+        provider_map = cls._get_provider_map_for_build(build_context)
         if provider := (provider_map.get(field_meta.annotation) or provider_map.get(unwrapped_annotation)):
             return provider()
 
@@ -805,13 +826,13 @@ class BaseFactory(ABC, Generic[T]):
             if not field_build_parameters and unwrapped_annotation in build_context["seen_models"]:
                 return None if is_optional(field_meta.annotation) else Null
 
-            return cls._get_or_create_factory(model=unwrapped_annotation).build(
+            return cls._get_or_create_factory(model=unwrapped_annotation, build_context=build_context).build(
                 _build_context=build_context,
                 **(field_build_parameters if isinstance(field_build_parameters, Mapping) else {}),
             )
 
         if BaseFactory.is_batch_factory_type(annotation=unwrapped_annotation):
-            factory = cls._get_or_create_factory(model=field_meta.type_args[0])
+            factory = cls._get_or_create_factory(model=field_meta.type_args[0], build_context=build_context)
             if isinstance(field_build_parameters, Sequence):
                 return [
                     factory.build(_build_context=build_context, **field_parameters)
@@ -934,14 +955,14 @@ class BaseFactory(ABC, Generic[T]):
                 )
 
             elif provider := (
-                (provider_map := cls.get_provider_map()).get(field_meta.annotation)
+                (provider_map := cls._get_provider_map_for_build(build_context)).get(field_meta.annotation)
                 or provider_map.get(unwrapped_annotation)
             ):
                 yield CoverageContainerCallable(provider)
 
             elif BaseFactory.is_factory_type(annotation=unwrapped_annotation):
                 yield CoverageContainer(
-                    cls._get_or_create_factory(model=unwrapped_annotation).coverage(
+                    cls._get_or_create_factory(model=unwrapped_annotation, build_context=build_context).coverage(
                         _build_context=build_context,
                         **(field_build_parameters if isinstance(field_build_parameters, Mapping) else {}),
                     ),

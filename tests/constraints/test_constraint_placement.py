@@ -16,7 +16,6 @@ from typing_extensions import TypeAliasType
 
 from pydantic import create_model
 
-from polyfactory.exceptions import ParameterException
 from polyfactory.factories import DataclassFactory
 from polyfactory.factories.base import BaseFactory
 from polyfactory.factories.pydantic_factory import ModelFactory
@@ -80,7 +79,6 @@ def test_constraint_placement(create_factory: Callable[[Any], type[BaseFactory[A
     assert all(100 <= value <= 105 for value in covered)
 
 
-@pytest.mark.xfail(raises=ParameterException, strict=True, reason="constraints on a union apply to each member")
 def test_constraints_on_union_apply_to_each_member() -> None:
     factory = _dataclass_factory(Annotated[Union[int, str], Ge(100), Le(105)])
 
