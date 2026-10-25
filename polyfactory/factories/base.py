@@ -234,6 +234,9 @@ class BaseFactory(ABC, Generic[T]):
 
         random_seed = getattr(cls, "__random_seed__", None)
         if random_seed is not None:
+            if "__random__" not in cls.__dict__:
+                # A declarative seed must not reseed a parent factory's generator.
+                cls.__random__ = Random()
             cls.seed_random(random_seed)
 
         if cls.__set_as_default_factory_for_type__ and hasattr(cls, "__model__"):
@@ -503,13 +506,13 @@ class BaseFactory(ABC, Generic[T]):
 
     @classmethod
     def seed_random(cls, seed: int) -> None:
-        """Seed faker and random with the given integer.
+        """Seed the existing faker and random instances with the given integer.
 
         :param seed: An integer to set as seed.
         :returns: 'None'
 
         """
-        cls.__random__ = Random(seed)
+        cls.__random__.seed(seed)
         cls.__faker__.seed_instance(seed)
 
     @classmethod
