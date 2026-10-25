@@ -64,6 +64,8 @@ The factory parses the information stored in the dataclass and generates a dicti
 
 Usage and API reference documentation is available on https://polyfactory.litestar.dev/.
 
+SQLAlchemy factories generate system-column values for builds and leave their generation to the database during persistence.
+
 ## Installation
 
 ```shell

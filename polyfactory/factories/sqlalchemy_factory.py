@@ -58,6 +58,7 @@ class SQLAlchemyBuildContext(BaseBuildContext):
 
 class SQLAlchemyConstraints(Constraints):
     computed: NotRequired[bool]
+    system: NotRequired[bool]
 
 
 class SQLAlchemyPersistenceMethod(enum.Enum):
@@ -197,11 +198,27 @@ class SQLAlchemyFactory(BaseFactory[T], Generic[T]):
         return super().create_sync(**kwargs)
 
     @classmethod
+    def create_batch_sync(cls, size: int, **kwargs: Any) -> list[T]:
+        """Persist a batch without generating computed or system-column values."""
+        build_context = cls._get_build_context(kwargs.get("_build_context"))
+        build_context["skip_computed_fields"] = True
+        kwargs["_build_context"] = build_context
+        return super().create_batch_sync(size, **kwargs)
+
+    @classmethod
     async def create_async(cls, **kwargs: Any) -> T:
         build_context = cls._get_build_context(kwargs.get("_build_context"))
         build_context["skip_computed_fields"] = True
         kwargs["_build_context"] = build_context
         return await super().create_async(**kwargs)
+
+    @classmethod
+    async def create_batch_async(cls, size: int, **kwargs: Any) -> list[T]:
+        """Persist a batch without generating computed or system-column values."""
+        build_context = cls._get_build_context(kwargs.get("_build_context"))
+        build_context["skip_computed_fields"] = True
+        kwargs["_build_context"] = build_context
+        return await super().create_batch_async(size, **kwargs)
 
     @classmethod
     def get_sqlalchemy_types(cls) -> dict[Any, Callable[[], Any]]:
@@ -263,7 +280,7 @@ class SQLAlchemyFactory(BaseFactory[T], Generic[T]):
 
         if field_meta.constraints:
             constraints = cast("SQLAlchemyConstraints", field_meta.constraints)
-            if constraints.get("computed") and build_context.get("skip_computed_fields"):
+            if (constraints.get("computed") or constraints.get("system")) and build_context.get("skip_computed_fields"):
                 return False
 
         return super().should_set_field_value(field_meta, **kwargs)
@@ -337,8 +354,12 @@ class SQLAlchemyFactory(BaseFactory[T], Generic[T]):
         if column.nullable:
             annotation = Union[annotation, None]  # type: ignore[assignment]
 
+        constraints: SQLAlchemyConstraints = {}
         if column.computed:
-            constraints: SQLAlchemyConstraints = {"computed": True}
+            constraints["computed"] = True
+        if column.system:
+            constraints["system"] = True
+        if constraints:
             annotation = Annotated[annotation, Frozendict(constraints)]  # type: ignore[assignment]
 
         return annotation
