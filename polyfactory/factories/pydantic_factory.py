@@ -475,6 +475,7 @@ class ModelFactory(BaseFactory[T], Generic[T]):
         if "_build_context" not in kwargs:
             kwargs["_build_context"] = PydanticBuildContext(
                 seen_models=set(),
+                provider_maps={},
                 factory_use_construct=factory_use_construct,
             )
 
@@ -531,6 +532,7 @@ class ModelFactory(BaseFactory[T], Generic[T]):
         if "_build_context" not in kwargs:
             kwargs["_build_context"] = PydanticBuildContext(
                 seen_models=set(),
+                provider_maps={},
                 factory_use_construct=factory_use_construct,
             )
 

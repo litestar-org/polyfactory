@@ -121,3 +121,53 @@ def test_add_custom_provider() -> None:
 
     # after adding the provider, nothing should raise!
     assert FooFactory.build()
+
+
+def test_provider_map_is_built_once_per_build() -> None:
+    @dataclass
+    class Foo:
+        a: int
+        b: list[int]
+
+    calls = 0
+
+    class FooFactory(DataclassFactory[Foo]):
+        @classmethod
+        def get_provider_map(cls) -> dict[Any, Callable[[], Any]]:
+            nonlocal calls
+            calls += 1
+            return super().get_provider_map()
+
+    FooFactory.build()
+    assert calls == 1
+
+    list(FooFactory.coverage())
+    assert calls == 2
+
+
+def test_nested_factory_uses_its_own_provider_map() -> None:
+    @dataclass
+    class Inner:
+        b: int
+
+    @dataclass
+    class Outer:
+        a: int
+        inner: Inner
+
+    class InnerFactory(DataclassFactory[Inner]):
+        @classmethod
+        def get_provider_map(cls) -> dict[Any, Callable[[], Any]]:
+            return {**super().get_provider_map(), int: lambda: 2}
+
+    class OuterFactory(DataclassFactory[Outer]):
+        inner = InnerFactory
+
+        @classmethod
+        def get_provider_map(cls) -> dict[Any, Callable[[], Any]]:
+            return {**super().get_provider_map(), int: lambda: 1}
+
+    outer = OuterFactory.build()
+
+    assert outer.a == 1
+    assert outer.inner.b == 2
