@@ -6,7 +6,7 @@ from types import ModuleType
 from typing import Annotated, Any, Callable, NewType, Optional, Union
 
 import pytest
-from annotated_types import Ge, Le
+from annotated_types import Ge, Le, Len
 
 from pydantic import (
     VERSION,
@@ -180,3 +180,68 @@ def test_new_type_keeps_annotated_constraints() -> None:
     for instance in [*factory.batch(50), *factory.coverage()]:
         assert 100 <= instance.value <= 105
         assert instance.maybe is None or 100 <= instance.maybe <= 105
+
+
+def test_new_type_keeps_annotated_examples() -> None:
+    class Examples:
+        def __init__(self, *examples: str) -> None:
+            self.examples = list(examples)
+
+    Currency = NewType("Currency", Annotated[str, Examples("USD", "EUR")])
+
+    @dataclass
+    class Model:
+        value: Currency
+
+    factory = DataclassFactory.create_factory(Model, __use_examples__=True)
+
+    assert {instance.value for instance in factory.batch(20)} == {"USD", "EUR"}
+    assert [instance.value for instance in factory.coverage()] == ["USD", "EUR"]
+
+
+def test_new_type_over_optional_keeps_annotated_constraints() -> None:
+    MaybeId = NewType("MaybeId", Optional[Annotated[int, Ge(100), Le(105)]])  # type: ignore[valid-newtype]
+
+    @dataclass
+    class Model:
+        value: MaybeId
+
+    factory = DataclassFactory.create_factory(Model)
+
+    for instance in [*factory.batch(50), *factory.coverage()]:
+        assert instance.value is None or 100 <= instance.value <= 105
+
+
+UserIds = NewType("UserIds", list[int])
+Tags = NewType("Tags", dict[str, int])
+MaybeUserIds = NewType("MaybeUserIds", Optional[list[int]])  # type: ignore[valid-newtype]
+IntOrStr = NewType("IntOrStr", Union[int, str])  # type: ignore[valid-newtype]
+
+
+def test_new_type_over_collection_has_items() -> None:
+    @dataclass
+    class Model:
+        ids: UserIds
+        tags: Tags
+        maybe_ids: MaybeUserIds
+        constrained_ids: Annotated[UserIds, Len(2, 2)]
+        int_or_str: IntOrStr
+
+    class Factory(DataclassFactory[Model]):
+        __randomize_collection_length__ = True
+        __min_collection_length__ = 1
+
+    for result in Factory.batch(10):
+        assert result.ids
+        assert all(isinstance(value, int) for value in result.ids)
+        assert result.tags
+        assert all(isinstance(key, str) and isinstance(value, int) for key, value in result.tags.items())
+        assert result.maybe_ids
+        assert all(isinstance(value, int) for value in result.maybe_ids)
+        assert len(result.constrained_ids) == 2
+        assert all(isinstance(value, int) for value in result.constrained_ids)
+        assert isinstance(result.int_or_str, (int, str))
+
+    for result in Factory.coverage():
+        assert all(isinstance(value, int) for value in result.ids)
+        assert result.maybe_ids is None or all(isinstance(value, int) for value in result.maybe_ids)
