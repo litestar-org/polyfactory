@@ -1079,6 +1079,17 @@ class BaseFactory(ABC, Generic[T]):
         raise NotImplementedError
 
     @classmethod
+    def _get_model_fields_cached(cls) -> list[FieldMeta]:
+        """Return ``get_model_fields()``, computed once per factory class.
+
+        :returns: A list of field MetaData instances.
+
+        """
+        if "_fields_metadata" not in cls.__dict__:
+            cls._fields_metadata = cls.get_model_fields()
+        return cls._fields_metadata
+
+    @classmethod
     def get_factory_fields(cls) -> list[tuple[str, Any]]:
         """Retrieve a list of fields from the factory.
 
@@ -1096,7 +1107,7 @@ class BaseFactory(ABC, Generic[T]):
 
     @classmethod
     def _check_declared_fields_exist_in_model(cls) -> None:
-        model_fields_names = {field_meta.name for field_meta in cls.get_model_fields()}
+        model_fields_names = {field_meta.name for field_meta in cls._get_model_fields_cached()}
         factory_fields = cls.get_factory_fields()
 
         for field_name, field_value in factory_fields:
@@ -1121,7 +1132,7 @@ class BaseFactory(ABC, Generic[T]):
         """
         result, generate_post, _build_context = cls._get_initial_variables(kwargs)
 
-        for field_meta in cls.get_model_fields():
+        for field_meta in cls._get_model_fields_cached():
             field_build_parameters = cls.extract_field_build_parameters(field_meta=field_meta, build_args=kwargs)
             if cls.should_set_field_value(
                 field_meta, _build_context=_build_context, **kwargs
@@ -1173,7 +1184,7 @@ class BaseFactory(ABC, Generic[T]):
         """
         result, generate_post, _build_context = cls._get_initial_variables(kwargs)
 
-        for field_meta in cls.get_model_fields():
+        for field_meta in cls._get_model_fields_cached():
             field_build_parameters = cls.extract_field_build_parameters(field_meta=field_meta, build_args=kwargs)
 
             if cls.should_set_field_value(field_meta, _build_context=_build_context, **kwargs):
