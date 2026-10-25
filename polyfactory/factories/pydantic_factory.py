@@ -411,30 +411,28 @@ class ModelFactory(BaseFactory[T], Generic[T]):
         :returns: A list of field MetaData instances.
 
         """
-        if "_fields_metadata" not in cls.__dict__:
-            if _is_pydantic_v1_model(cls.__model__):
-                cls._fields_metadata = [
-                    PydanticFieldMeta.from_model_field(
-                        field,
-                        use_alias=not cls.__model__.__config__.allow_population_by_field_name,  # type: ignore[attr-defined]
-                    )
-                    for field in cls.__model__.__fields__.values()
-                ]
-            else:
-                use_alias = (
-                    cls.__by_name__
-                    or cls.__model__.model_config.get("validate_by_name", False)
-                    or cls.__model__.model_config.get("populate_by_name", False)
+        if _is_pydantic_v1_model(cls.__model__):
+            return [
+                PydanticFieldMeta.from_model_field(
+                    field,
+                    use_alias=not cls.__model__.__config__.allow_population_by_field_name,  # type: ignore[attr-defined]
                 )
-                cls._fields_metadata = [
-                    PydanticFieldMeta.from_field_info(
-                        field_info=field_info,
-                        field_name=field_name,
-                        use_alias=not use_alias,
-                    )
-                    for field_name, field_info in cls.__model__.model_fields.items()  # pyright: ignore[reportGeneralTypeIssues]
-                ]
-        return cls._fields_metadata
+                for field in cls.__model__.__fields__.values()
+            ]
+
+        use_alias = (
+            cls.__by_name__
+            or cls.__model__.model_config.get("validate_by_name", False)
+            or cls.__model__.model_config.get("populate_by_name", False)
+        )
+        return [
+            PydanticFieldMeta.from_field_info(
+                field_info=field_info,
+                field_name=field_name,
+                use_alias=not use_alias,
+            )
+            for field_name, field_info in cls.__model__.model_fields.items()  # pyright: ignore[reportGeneralTypeIssues]
+        ]
 
     @classmethod
     def get_constrained_field_value(
