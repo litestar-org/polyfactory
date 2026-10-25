@@ -18,7 +18,7 @@ from polyfactory.factories.base import BuildContext as BaseBuildContext
 from polyfactory.field_meta import Constraints, FieldMeta, Null
 from polyfactory.utils.helpers import unwrap_new_type, unwrap_optional
 from polyfactory.utils.normalize_type import normalize_type
-from polyfactory.utils.predicates import is_annotated, is_optional, is_safe_subclass, is_union
+from polyfactory.utils.predicates import is_annotated, is_optional, is_safe_subclass
 from polyfactory.utils.types import NoneType
 from polyfactory.value_generators.primitives import create_random_bytes
 
@@ -169,56 +169,30 @@ class PydanticFieldMeta(FieldMeta):
             default_value = field_info.default if field_info.default is not UndefinedV2 else Null
 
         annotation = unwrap_new_type(field_info.annotation)
-        children: list[FieldMeta,] | None = None
         name = field_info.alias if field_info.alias and use_alias else field_name
 
         constraints: PydanticConstraints
-        # pydantic v2 does not always propagate metadata for Union types
-        if is_union(annotation):
-            constraints = {}
-            children = []
+        metadata, is_json = [], False
+        for m in field_info.metadata:
+            if not is_json and isinstance(m, Json):  # type: ignore[misc]
+                is_json = True
+            elif m is not None:
+                metadata.append(m)
 
-            # create a child for each of the possible union values
-            for arg in get_args(annotation):
-                # don't add the NoneType in an optional to the list of children
-                if arg is NoneType:
-                    continue
-                child_field_info = FieldInfo.from_annotation(arg)
-                merged_field_info = FieldInfo.merge_field_infos(field_info, child_field_info)
+        constraints = cast(
+            "PydanticConstraints",
+            cls.parse_constraints(metadata=metadata) if metadata else {},
+        )
 
-                children.append(
-                    # recurse for each element of the union
-                    cls.from_field_info(
-                        # this is a fake field name, but it makes it possible to debug which type variant
-                        # is the source of an exception downstream
-                        field_name=field_name,
-                        field_info=merged_field_info,
-                        use_alias=use_alias,
-                    ),
-                )
-        else:
-            metadata, is_json = [], False
-            for m in field_info.metadata:
-                if not is_json and isinstance(m, Json):  # type: ignore[misc]
-                    is_json = True
-                elif m is not None:
-                    metadata.append(m)
+        if "url" in constraints:
+            # pydantic uses a sentinel value for url constraints
+            annotation = str
 
-            constraints = cast(
-                "PydanticConstraints",
-                cls.parse_constraints(metadata=metadata) if metadata else {},
-            )
-
-            if "url" in constraints:
-                # pydantic uses a sentinel value for url constraints
-                annotation = str
-
-            if is_json:
-                constraints["json"] = True
+        if is_json:
+            constraints["json"] = True
 
         return super().from_type(
             annotation=annotation,
-            children=children,
             constraints=cast("Constraints", {k: v for k, v in constraints.items() if v is not None}) or None,
             default=default_value,
             name=name,
@@ -315,7 +289,13 @@ class PydanticFieldMeta(FieldMeta):
         args = get_args(model_field.annotation)
         if is_optional(model_field.annotation) and len(args) == 2:  # noqa: PLR2004
             child_annotation = args[0] if args[0] is not NoneType else args[1]
-            children.append(PydanticFieldMeta.from_type(child_annotation))
+            # A union's children carry its constraints.
+            child_constraints = {key: value for key, value in constraints.items() if value is not None}
+            children.append(
+                PydanticFieldMeta.from_type(
+                    child_annotation, constraints=cast("Constraints", child_constraints) or None
+                )
+            )
         elif model_field.key_field or model_field.sub_fields:
             fields_to_iterate = (
                 ([model_field.key_field, *model_field.sub_fields])
