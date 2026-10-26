@@ -14,6 +14,7 @@ string 'jeronimo'.
 
 Explicit providers also apply to enum types in ``build()`` and ``coverage()``, including enum types nested in collections.
 A provider for an empty enum base can return a member of one of its concrete subclasses.
+Generated values must still satisfy model validation. Pydantic v1 rejects fields annotated with empty enum bases.
 Unconfigured enum fields retain random member generation and coverage of their declared members.
 
 Add a Type Provider

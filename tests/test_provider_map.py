@@ -4,7 +4,8 @@ from typing import Any, Callable, Generic, TypeVar
 
 import pytest
 
-from pydantic import BaseModel
+import pydantic
+from pydantic import BaseModel, ValidationError
 
 from polyfactory.exceptions import ParameterException
 from polyfactory.factories.base import BaseFactory
@@ -257,7 +258,7 @@ def test_default_enum_provider_fallback() -> None:
 
 @pytest.mark.parametrize("use_coverage", [False, True])
 def test_custom_enum_provider_for_pydantic_model(use_coverage: bool) -> None:
-    """Pydantic models use explicit enum providers for fields and nested keys."""
+    """Providers populate empty enum fields before the model validates them."""
 
     class BaseEnum(Enum):
         pass
@@ -269,13 +270,57 @@ def test_custom_enum_provider_for_pydantic_model(use_coverage: bool) -> None:
         value: BaseEnum
         mapping: dict[BaseEnum, int]
 
+    provided_values: list[BaseEnum] = []
+
+    def provide_enum() -> BaseEnum:
+        provided_values.append(ConcreteEnum.FIRST)
+        return ConcreteEnum.FIRST
+
     class EnumFactory(ModelFactory[Model]):
         @classmethod
         def get_provider_map(cls) -> dict[Any, Callable[[], Any]]:
-            return {**super().get_provider_map(), BaseEnum: lambda: ConcreteEnum.FIRST}
+            return {**super().get_provider_map(), BaseEnum: provide_enum}
+
+    if pydantic.VERSION.startswith("1"):
+        with pytest.raises(ValidationError) as exc_info:
+            list(EnumFactory.coverage()) if use_coverage else EnumFactory.build()
+
+        errors = exc_info.value.errors()
+        assert len(errors) == 2
+        assert {error["loc"] for error in errors} == {("value",), ("mapping", "__key__")}
+        assert all("no members" in error["msg"] for error in errors)
+        assert len(provided_values) >= 2
+        assert all(value is ConcreteEnum.FIRST for value in provided_values)
+        return
 
     results = list(EnumFactory.coverage()) if use_coverage else [EnumFactory.build()]
 
     assert len(results) == 1
     assert results[0].value is ConcreteEnum.FIRST
     assert set(results[0].mapping) == {ConcreteEnum.FIRST}
+
+
+@pytest.mark.parametrize("use_coverage", [False, True])
+def test_custom_enum_provider_for_populated_pydantic_enum(use_coverage: bool) -> None:
+    """Pydantic v1 and v2 accept custom members and nested keys of populated enums."""
+
+    class Choice(Enum):
+        FIRST = 1
+        SECOND = 2
+
+    class Model(BaseModel):
+        value: Choice
+        mapping: dict[Choice, int]
+
+    class EnumFactory(ModelFactory[Model]):
+        __random_seed__ = 0
+
+        @classmethod
+        def get_provider_map(cls) -> dict[Any, Callable[[], Any]]:
+            return {**super().get_provider_map(), Choice: lambda: Choice.FIRST}
+
+    results = list(EnumFactory.coverage()) if use_coverage else [EnumFactory.build()]
+
+    assert len(results) == 1
+    assert results[0].value is Choice.FIRST
+    assert set(results[0].mapping) == {Choice.FIRST}
