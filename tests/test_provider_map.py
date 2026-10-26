@@ -1,4 +1,5 @@
 from dataclasses import dataclass
+from enum import Enum
 from typing import Any, Callable, Generic, TypeVar
 
 import pytest
@@ -171,3 +172,110 @@ def test_nested_factory_uses_its_own_provider_map() -> None:
 
     assert outer.a == 1
     assert outer.inner.b == 2
+
+
+@pytest.mark.parametrize("use_coverage", [False, True])
+@pytest.mark.parametrize("use_registry", [False, True])
+def test_custom_enum_provider_for_empty_enum(
+    monkeypatch: pytest.MonkeyPatch, use_coverage: bool, use_registry: bool
+) -> None:
+    """Explicit providers populate empty enum bases, including nested mapping keys."""
+
+    class BaseEnum(Enum):
+        pass
+
+    class ConcreteEnum(BaseEnum):
+        FIRST = 1
+        SECOND = 2
+
+    @dataclass
+    class Model:
+        value: BaseEnum
+        mapping: dict[BaseEnum, int]
+
+    class ModelFactory(DataclassFactory[Model]):
+        @classmethod
+        def get_provider_map(cls) -> dict[Any, Callable[[], Any]]:
+            providers = super().get_provider_map()
+            if not use_registry:
+                providers[BaseEnum] = lambda: ConcreteEnum.FIRST
+            return providers
+
+    if use_registry:
+        monkeypatch.setattr(BaseFactory, "_providers", BaseFactory._providers.copy())
+        ModelFactory.add_provider(BaseEnum, lambda: ConcreteEnum.FIRST)
+
+    results = list(ModelFactory.coverage()) if use_coverage else [ModelFactory.build()]
+
+    assert len(results) == 1
+    assert results[0].value is ConcreteEnum.FIRST
+    assert set(results[0].mapping) == {ConcreteEnum.FIRST}
+
+
+@pytest.mark.parametrize("use_coverage", [False, True])
+def test_custom_enum_provider_for_populated_enum(use_coverage: bool) -> None:
+    """An explicit provider also overrides member generation for populated enums."""
+
+    class Choice(Enum):
+        FIRST = 1
+        SECOND = 2
+
+    @dataclass
+    class Model:
+        value: Choice
+
+    class ModelFactory(DataclassFactory[Model]):
+        __random_seed__ = 0
+
+        @classmethod
+        def get_provider_map(cls) -> dict[Any, Callable[[], Any]]:
+            return {**super().get_provider_map(), Choice: lambda: Choice.FIRST}
+
+    results = list(ModelFactory.coverage()) if use_coverage else [ModelFactory.build()]
+
+    assert len(results) == 1
+    assert results[0].value is Choice.FIRST
+
+
+def test_default_enum_provider_fallback() -> None:
+    """Unconfigured enum fields retain random member generation and full coverage."""
+
+    class Choice(Enum):
+        FIRST = 1
+        SECOND = 2
+
+    @dataclass
+    class Model:
+        value: Choice
+
+    class ModelFactory(DataclassFactory[Model]):
+        pass
+
+    assert ModelFactory.build().value in Choice
+    assert [result.value for result in ModelFactory.coverage()] == list(Choice)
+
+
+@pytest.mark.parametrize("use_coverage", [False, True])
+def test_custom_enum_provider_for_pydantic_model(use_coverage: bool) -> None:
+    """Pydantic models use explicit enum providers for fields and nested keys."""
+
+    class BaseEnum(Enum):
+        pass
+
+    class ConcreteEnum(BaseEnum):
+        FIRST = 1
+
+    class Model(BaseModel):
+        value: BaseEnum
+        mapping: dict[BaseEnum, int]
+
+    class EnumFactory(ModelFactory[Model]):
+        @classmethod
+        def get_provider_map(cls) -> dict[Any, Callable[[], Any]]:
+            return {**super().get_provider_map(), BaseEnum: lambda: ConcreteEnum.FIRST}
+
+    results = list(EnumFactory.coverage()) if use_coverage else [EnumFactory.build()]
+
+    assert len(results) == 1
+    assert results[0].value is ConcreteEnum.FIRST
+    assert set(results[0].mapping) == {ConcreteEnum.FIRST}

@@ -12,6 +12,10 @@ In the above example we override the `get_provider_map` class method, which maps
 returns an appropriate mock value for the type. In the above example, an instance of `CustomSecret` with the hardcoded
 string 'jeronimo'.
 
+Explicit providers also apply to enum types in ``build()`` and ``coverage()``, including enum types nested in collections.
+A provider for an empty enum base can return a member of one of its concrete subclasses.
+Unconfigured enum fields retain random member generation and coverage of their declared members.
+
 Add a Type Provider
 -------------------
 Alternatively, you can add a provider for your custom type to `BaseFactory`.
