@@ -288,7 +288,9 @@ def test_custom_enum_provider_for_pydantic_model(use_coverage: bool) -> None:
         errors = exc_info.value.errors()
         assert len(errors) == 2
         assert {error["loc"] for error in errors} == {("value",), ("mapping", "__key__")}
-        assert all("no members" in error["msg"] for error in errors)
+        with pytest.raises(ValidationError) as direct_exc_info:
+            Model(value=ConcreteEnum.FIRST, mapping={ConcreteEnum.FIRST: 1})
+        assert errors == direct_exc_info.value.errors()
         assert len(provided_values) >= 2
         assert all(value is ConcreteEnum.FIRST for value in provided_values)
         return
