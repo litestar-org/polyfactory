@@ -796,6 +796,9 @@ class BaseFactory(ABC, Generic[T]):
             return cls.__random__.choice(literal_args)
 
         if isinstance(unwrapped_annotation, EnumMeta):
+            provider_map = cls.get_provider_map()
+            if provider := (provider_map.get(field_meta.annotation) or provider_map.get(unwrapped_annotation)):
+                return provider()
             return cls.__random__.choice(list(unwrapped_annotation))
 
         # A union's children carry its constraints, so choose one before applying constraints.
@@ -945,7 +948,11 @@ class BaseFactory(ABC, Generic[T]):
                 yield CoverageContainer(literal_args)
 
             elif isinstance(unwrapped_annotation, EnumMeta):
-                yield CoverageContainer(list(unwrapped_annotation))
+                provider_map = cls.get_provider_map()
+                if provider := (provider_map.get(field_meta.annotation) or provider_map.get(unwrapped_annotation)):
+                    yield CoverageContainerCallable(provider)
+                else:
+                    yield CoverageContainer(list(unwrapped_annotation))
 
             elif field_meta.constraints:
                 yield CoverageContainerCallable(
