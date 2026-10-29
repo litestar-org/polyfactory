@@ -1715,19 +1715,23 @@ def test_alias_overrides() -> None:
 @pytest.mark.parametrize("minimum,maximum", [(100, None), (0, 1), (5, 5), (0, 0)])
 @pytest.mark.parametrize("generation", ["build", "coverage"])
 def test_pydantic_v1_config_string_length_defaults(minimum: int, maximum: Optional[int], generation: str) -> None:
-    class Model(pydantic_v1.BaseModel):
-        text: str
-        binary: bytes
-        strict_text: pydantic_v1.StrictStr
-        strict_binary: pydantic_v1.StrictBytes
-        optional: Optional[str]
-        items: list[str]
-        mapping: dict[str, bytes]
-        number: int
+    class Config(pydantic_v1.BaseConfig):
+        min_anystr_length = minimum
+        max_anystr_length = maximum
 
-        class Config:
-            min_anystr_length = minimum
-            max_anystr_length = maximum
+    # Explicit types keep legacy v1 fixtures independent of deferred class annotations.
+    Model = pydantic_v1.create_model(
+        "Model",
+        __config__=Config,
+        text=(str, ...),
+        binary=(bytes, ...),
+        strict_text=(pydantic_v1.StrictStr, ...),
+        strict_binary=(pydantic_v1.StrictBytes, ...),
+        optional=(Optional[str], ...),
+        items=(list[str], ...),
+        mapping=(dict[str, bytes], ...),
+        number=(int, ...),
+    )
 
     class Factory(ModelFactory):
         __model__ = Model
@@ -1755,16 +1759,19 @@ def test_pydantic_v1_config_string_length_defaults(minimum: int, maximum: Option
 
 @pytest.mark.parametrize("generation", ["build", "coverage"])
 def test_pydantic_v1_config_string_length_field_override(generation: str) -> None:
-    class Model(pydantic_v1.BaseModel):
-        text: str = pydantic_v1.Field(min_length=2, max_length=3)
-        binary: bytes = pydantic_v1.Field(min_length=2, max_length=3)
-        constrained: pydantic_v1.constr(min_length=2, max_length=3)  # type: ignore[valid-type]
-        constrained_binary: pydantic_v1.conbytes(min_length=2, max_length=3)  # type: ignore[valid-type]
-        items: list[int] = pydantic_v1.Field(min_items=2, max_items=2)
+    class Config(pydantic_v1.BaseConfig):
+        min_anystr_length = 100
+        max_anystr_length = 101
 
-        class Config:
-            min_anystr_length = 100
-            max_anystr_length = 101
+    Model = pydantic_v1.create_model(
+        "Model",
+        __config__=Config,
+        text=(str, pydantic_v1.Field(min_length=2, max_length=3)),
+        binary=(bytes, pydantic_v1.Field(min_length=2, max_length=3)),
+        constrained=(pydantic_v1.constr(min_length=2, max_length=3), ...),
+        constrained_binary=(pydantic_v1.conbytes(min_length=2, max_length=3), ...),
+        items=(list[int], pydantic_v1.Field(min_items=2, max_items=2)),
+    )
 
     class Factory(ModelFactory):
         __model__ = Model
@@ -1779,26 +1786,27 @@ def test_pydantic_v1_config_string_length_field_override(generation: str) -> Non
 
 
 def test_pydantic_v1_config_string_length_defaults_preserve_unconstrained_fields() -> None:
-    class Model(pydantic_v1.BaseModel):
-        text: str
-        binary: bytes
-        number: int
+    Model = pydantic_v1.create_model("Model", text=(str, ...), binary=(bytes, ...), number=(int, ...))
 
     class Factory(ModelFactory):
         __model__ = Model
 
+    assert {field.name for field in Factory.get_model_fields()} == {"text", "binary", "number"}
     assert all(field.constraints is None for field in Factory.get_model_fields())
     assert Factory.build()
 
 
 def test_pydantic_v1_config_string_length_zero_field_override() -> None:
-    class Model(pydantic_v1.BaseModel):
-        text: str = pydantic_v1.Field(min_length=0, max_length=0)
-        binary: bytes = pydantic_v1.Field(min_length=0, max_length=0)
+    class Config(pydantic_v1.BaseConfig):
+        min_anystr_length = 100
+        max_anystr_length = 101
 
-        class Config:
-            min_anystr_length = 100
-            max_anystr_length = 101
+    Model = pydantic_v1.create_model(
+        "Model",
+        __config__=Config,
+        text=(str, pydantic_v1.Field(min_length=0, max_length=0)),
+        binary=(bytes, pydantic_v1.Field(min_length=0, max_length=0)),
+    )
 
     class Factory(ModelFactory):
         __model__ = Model
