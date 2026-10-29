@@ -68,6 +68,8 @@ from pydantic import (
     validator,
 )
 
+import pydantic.v1 as pydantic_v1
+
 from polyfactory.exceptions import ConfigurationException, ParameterException
 from polyfactory.factories import DataclassFactory
 from polyfactory.factories.pydantic_factory import _IS_PYDANTIC_V1, _PYDANTIC_HAS_BY_NAME, ModelFactory
@@ -1708,3 +1710,99 @@ def test_alias_overrides() -> None:
 
     instance = FooFactory.build()
     assert instance.name == "John"  # Should use the overridden alias
+
+
+@pytest.mark.parametrize("minimum,maximum", [(100, None), (0, 1), (5, 5), (0, 0)])
+@pytest.mark.parametrize("generation", ["build", "coverage"])
+def test_pydantic_v1_config_string_length_defaults(minimum: int, maximum: Optional[int], generation: str) -> None:
+    class Model(pydantic_v1.BaseModel):
+        text: str
+        binary: bytes
+        strict_text: pydantic_v1.StrictStr
+        strict_binary: pydantic_v1.StrictBytes
+        optional: Optional[str]
+        items: list[str]
+        mapping: dict[str, bytes]
+        number: int
+
+        class Config:
+            min_anystr_length = minimum
+            max_anystr_length = maximum
+
+    class Factory(ModelFactory):
+        __model__ = Model
+        __allow_none_optionals__ = False
+        __random_seed__ = 0
+
+    models = [Factory.build()] if generation == "build" else list(Factory.coverage())
+    for model in models:
+        values = [model.text, model.binary, model.strict_text, model.strict_binary]
+        if generation == "build":
+            assert model.optional is not None
+        if model.optional is not None:
+            values.append(model.optional)
+        values.extend(model.items)
+        values.extend(model.mapping)
+        values.extend(model.mapping.values())
+        for value in values:
+            assert value is not None
+            assert len(value) >= minimum
+            if maximum is not None:
+                assert len(value) <= maximum
+        assert isinstance(model.number, int)
+    assert any(model.optional is not None for model in models)
+
+
+@pytest.mark.parametrize("generation", ["build", "coverage"])
+def test_pydantic_v1_config_string_length_field_override(generation: str) -> None:
+    class Model(pydantic_v1.BaseModel):
+        text: str = pydantic_v1.Field(min_length=2, max_length=3)
+        binary: bytes = pydantic_v1.Field(min_length=2, max_length=3)
+        constrained: pydantic_v1.constr(min_length=2, max_length=3)  # type: ignore[valid-type]
+        constrained_binary: pydantic_v1.conbytes(min_length=2, max_length=3)  # type: ignore[valid-type]
+        items: list[int] = pydantic_v1.Field(min_items=2, max_items=2)
+
+        class Config:
+            min_anystr_length = 100
+            max_anystr_length = 101
+
+    class Factory(ModelFactory):
+        __model__ = Model
+        __random_seed__ = 0
+
+    models = [Factory.build()] if generation == "build" else list(Factory.coverage())
+    for model in models:
+        assert all(
+            2 <= len(value) <= 3 for value in (model.text, model.binary, model.constrained, model.constrained_binary)
+        )
+        assert len(model.items) == 2
+
+
+def test_pydantic_v1_config_string_length_defaults_preserve_unconstrained_fields() -> None:
+    class Model(pydantic_v1.BaseModel):
+        text: str
+        binary: bytes
+        number: int
+
+    class Factory(ModelFactory):
+        __model__ = Model
+
+    assert all(field.constraints is None for field in Factory.get_model_fields())
+    assert Factory.build()
+
+
+def test_pydantic_v1_config_string_length_zero_field_override() -> None:
+    class Model(pydantic_v1.BaseModel):
+        text: str = pydantic_v1.Field(min_length=0, max_length=0)
+        binary: bytes = pydantic_v1.Field(min_length=0, max_length=0)
+
+        class Config:
+            min_anystr_length = 100
+            max_anystr_length = 101
+
+    class Factory(ModelFactory):
+        __model__ = Model
+
+    for model in [Factory.build(), *Factory.coverage()]:
+        assert model.text == ""
+        assert model.binary == b""

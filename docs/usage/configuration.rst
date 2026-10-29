@@ -5,6 +5,15 @@ Factories can be configured by setting special dunder (double underscore) class 
 You can read the reference for these in the API reference for
 :class:`BaseFactory <polyfactory.factories.base.BaseFactory>`. Below we discuss some configuration options in some depth.
 
+Pydantic v1 String Lengths
+--------------------------
+
+For Pydantic v1 models, ``ModelFactory`` uses ``Config.min_anystr_length`` and
+``Config.max_anystr_length`` as defaults for generated strings and bytes, including
+those inside collections. Length constraints declared on a field take precedence
+over these model defaults. This also applies to v1 models imported from ``pydantic.v1``
+when Pydantic v2 is installed.
+
 Seeding Randomness
 ------------------
 
