@@ -259,6 +259,9 @@ class PydanticFieldMeta(FieldMeta):
             "item_type": getattr(outer_type, "item_type", None),
         }
 
+        if is_safe_subclass(outer_type, (str, bytes)):
+            field_info_constraints.update(cls._get_model_string_constraints(model_field, outer_type))
+
         constraints = cast("Constraints", {**field_info_constraints, **annotation_constraints})
 
         # pydantic v1 has constraints set for these values, but we generate them using faker
@@ -321,6 +324,28 @@ class PydanticFieldMeta(FieldMeta):
             examples=examples,
             required=required,
         )
+
+    @staticmethod
+    def _get_model_string_constraints(model_field: ModelField, annotation: Any) -> dict[str, int]:
+        """Read v1 string length defaults without replacing field constraints.
+
+        :param model_field: The Pydantic model field.
+        :param annotation: The unwrapped field type.
+        :returns: Explicit or configured string length constraints.
+        """
+        constraints = {}
+        for key, default in (
+            ("min_length", model_field.model_config.min_anystr_length or None),
+            ("max_length", model_field.model_config.max_anystr_length),
+        ):
+            value = getattr(annotation, key, None)
+            if value is None:
+                value = getattr(model_field.field_info, key)
+            if value is not None:
+                constraints[key] = value
+            elif default is not None:
+                constraints[key] = default
+        return constraints
 
     if not _IS_PYDANTIC_V1:
 
