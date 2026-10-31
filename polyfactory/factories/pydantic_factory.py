@@ -20,6 +20,7 @@ from polyfactory.utils.helpers import unwrap_new_type, unwrap_optional
 from polyfactory.utils.normalize_type import normalize_type
 from polyfactory.utils.predicates import is_annotated, is_optional, is_safe_subclass
 from polyfactory.utils.types import NoneType
+from polyfactory.value_generators.constrained_email import handle_constrained_email
 from polyfactory.value_generators.primitives import create_random_bytes
 
 try:
@@ -451,6 +452,13 @@ class ModelFactory(BaseFactory[T], Generic[T]):
                 field_meta, field_build_parameters=field_build_parameters, build_context=build_context
             )
             return to_json(value)  # pyright: ignore[reportPossiblyUnboundVariable]
+
+        if annotation is EmailStr and constraints.keys() <= {"min_length", "max_length"}:
+            return handle_constrained_email(
+                random=cls.__random__,
+                min_length=constraints.get("min_length"),
+                max_length=constraints.get("max_length"),
+            )
 
         return super().get_constrained_field_value(
             annotation, field_meta, field_build_parameters=field_build_parameters, build_context=build_context

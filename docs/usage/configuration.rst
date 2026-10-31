@@ -5,6 +5,17 @@ Factories can be configured by setting special dunder (double underscore) class 
 You can read the reference for these in the API reference for
 :class:`BaseFactory <polyfactory.factories.base.BaseFactory>`. Below we discuss some configuration options in some depth.
 
+Pydantic Email Lengths
+----------------------
+
+For Pydantic v2 models, ``ModelFactory`` supports ``min_length`` and ``max_length``
+on ``EmailStr`` fields in both ``build()`` and ``coverage()``. Generated addresses
+use ASCII characters and fit the requested bounds, the 254-character email limit,
+the 64-character local-part limit and the 63-character domain-label limit.
+If the bounds cannot contain a valid address, generation raises ``ParameterException``.
+Unconstrained email fields continue to use the configured Faker provider. Other
+constraints, such as arbitrary regular expressions, are not supported for ``EmailStr``.
+
 Seeding Randomness
 ------------------
 
