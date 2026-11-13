@@ -138,12 +138,12 @@ def _get_types(items: Iterable[_T]) -> set[type[_T]]:
 @dataclass
 class ExplicitDataclassNode:
     value: int
-    child: ExplicitDataclassNode | None = None
+    child: Union[ExplicitDataclassNode, None] = None  # noqa: UP007
 
 
 class ExplicitPydanticNode(BaseModel):
     value: int
-    child: ExplicitPydanticNode | None = None
+    child: Union[ExplicitPydanticNode, None] = None  # noqa: UP007
 
 
 def test_explicit_recursive_dataclass_factory(monkeypatch: pytest.MonkeyPatch) -> None:
@@ -216,7 +216,7 @@ class ExplicitParent:
 @dataclass
 class ExplicitChild:
     value: int
-    parent: ExplicitParent | None = None
+    parent: Union[ExplicitParent, None] = None  # noqa: UP007
 
 
 def test_explicit_recursive_dataclass_factory_siblings(monkeypatch: pytest.MonkeyPatch) -> None:
