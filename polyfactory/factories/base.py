@@ -40,7 +40,7 @@ from uuid import UUID
 from zoneinfo import ZoneInfo
 
 from faker import Faker
-from typing_extensions import Self, get_args, get_origin, get_original_bases
+from typing_extensions import NotRequired, Self, get_args, get_origin, get_original_bases
 
 from polyfactory.constants import (
     DEFAULT_RANDOM,
@@ -101,6 +101,8 @@ F = TypeVar("F", bound="BaseFactory[Any]")
 
 class BuildContext(TypedDict):
     seen_models: set[type]
+    # Explicit factories for the same model may have different field overrides.
+    seen_factories: NotRequired[set[type]]
     # Each factory's ``get_provider_map()``, built once per build rather than once per field.
     provider_maps: dict[type, dict[Any, Callable[[], Any]]]
 
@@ -343,15 +345,24 @@ class BaseFactory(ABC, Generic[T]):
         )
 
     @classmethod
+    def _recursive_factory_field_value(cls, field_meta: FieldMeta) -> Any:
+        if cls.is_batch_factory_type(unwrap_optional(field_meta.annotation)):
+            return []
+        return None if is_optional(field_meta.annotation) else Null
+
+    @classmethod
     def _handle_factory_field(
         cls,
+        field_meta: FieldMeta,
         field_value: Any,
         build_context: BuildContext,
         field_build_parameters: Any | None = None,
     ) -> Any:
         """Handle a value defined on the factory class itself.
 
+        :param field_meta: Metadata for the model field.
         :param field_value: A value defined as an attribute on the factory class.
+        :param build_context: Build context for the current branch.
         :param field_build_parameters: Any build parameters passed to the factory as kwarg values.
 
         :returns: An arbitrary value correlating with the given field_meta value.
@@ -365,7 +376,11 @@ class BaseFactory(ABC, Generic[T]):
                     field_value.build(_build_context=build_context, **parameter) for parameter in field_build_parameters
                 ]
 
-            return field_value.build(_build_context=build_context)
+            return (
+                cls._recursive_factory_field_value(field_meta)
+                if field_value in build_context.get("seen_factories", ())
+                else field_value.build(_build_context=build_context)
+            )
 
         if isinstance(field_value, Use):
             return field_value.to_value()
@@ -378,13 +393,16 @@ class BaseFactory(ABC, Generic[T]):
     @classmethod
     def _handle_factory_field_coverage(
         cls,
+        field_meta: FieldMeta,
         field_value: Any,
+        build_context: BuildContext,
         field_build_parameters: Any | None = None,
-        build_context: BuildContext | None = None,
     ) -> Any:
         """Handle a value defined on the factory class itself.
 
+        :param field_meta: Metadata for the model field.
         :param field_value: A value defined as an attribute on the factory class.
+        :param build_context: Build context for the current branch.
         :param field_build_parameters: Any build parameters passed to the factory as kwarg values.
 
         :returns: An arbitrary value correlating with the given field_meta value.
@@ -399,7 +417,10 @@ class BaseFactory(ABC, Generic[T]):
                     for parameter in field_build_parameters
                 ]
 
-            return CoverageContainer(field_value.coverage())
+            if field_value in build_context.get("seen_factories", ()):
+                return cls._recursive_factory_field_value(field_meta)
+
+            return CoverageContainer(field_value.coverage(_build_context=build_context))
 
         if isinstance(field_value, Use):
             return field_value.to_value()
@@ -450,6 +471,7 @@ class BaseFactory(ABC, Generic[T]):
         """
         _build_context = cls._get_build_context(kwargs.pop("_build_context", None))
         _build_context["seen_models"].add(cls.__model__)
+        _build_context["seen_factories"] = {*_build_context.get("seen_factories", ()), cls}
 
         result: dict[str, Any] = {**kwargs}
         generate_post: dict[str, PostGenerated] = {}
@@ -1159,22 +1181,21 @@ class BaseFactory(ABC, Generic[T]):
                         generate_post[field_meta.name] = field_value
                         continue
 
-                    result[field_meta.name] = cls._handle_factory_field(
+                    field_result = cls._handle_factory_field(
+                        field_meta=field_meta,
                         field_value=field_value,
                         field_build_parameters=field_build_parameters,
                         build_context=_build_context,
                     )
-                    continue
+                else:
+                    field_result = cls.get_field_value(
+                        field_meta,
+                        field_build_parameters=field_build_parameters,
+                        build_context=_build_context,
+                    )
 
-                field_result = cls.get_field_value(
-                    field_meta,
-                    field_build_parameters=field_build_parameters,
-                    build_context=_build_context,
-                )
-                if field_result is Null:
-                    continue
-
-                result[field_meta.name] = field_result
+                if field_result is not Null:
+                    result[field_meta.name] = field_result
 
         for field_name, post_generator in generate_post.items():
             result[field_name] = post_generator.to_value(field_name, result)
@@ -1211,6 +1232,7 @@ class BaseFactory(ABC, Generic[T]):
                         continue
 
                     result[field_meta.name] = cls._handle_factory_field_coverage(
+                        field_meta=field_meta,
                         field_value=field_value,
                         field_build_parameters=field_build_parameters,
                         build_context=_build_context,

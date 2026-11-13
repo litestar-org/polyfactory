@@ -31,6 +31,11 @@ By default, ``__set_relationships__`` is set to ``True``. If it is ``True``, all
 .. note::
     The default for `__set_relationships__` is changed to `True` in v3. Set explicitly to retain existing behaviour.
 
+An explicit relationship factory stops automatic recursion when the same factory
+is already active on that branch. Pass a dictionary for a nested scalar
+relationship or a list of dictionaries for a nested sequence when you want
+to build a finite graph explicitly.
+
 Association Proxy
 +++++++++++++++++
 

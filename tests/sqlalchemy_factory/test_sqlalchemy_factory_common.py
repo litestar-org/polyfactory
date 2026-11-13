@@ -838,3 +838,37 @@ def test_check_deprecated_default_overridden_no_deprecation() -> None:
             __set_relationships__ = False
             __set_association_proxy__ = False
             __check_model__ = False
+
+
+def test_explicit_recursive_sqlalchemy_factory(monkeypatch: pytest.MonkeyPatch) -> None:
+    mapper_registry = registry()
+
+    @mapper_registry.mapped
+    class Node:
+        __tablename__ = "explicit_recursive_node"
+
+        id = Column(Integer(), primary_key=True)
+        parent_id: "Column[int]" = Column(ForeignKey("explicit_recursive_node.id"))
+        parent = orm.relationship("Node", remote_side="Node.id")
+
+    factory = SQLAlchemyFactory.create_factory(Node, __set_relationships__=True)
+    monkeypatch.setattr(factory, "parent", factory, raising=False)
+
+    assert factory.build().parent is None
+    assert all(node.parent is None for node in factory.batch(2))
+    results = list(factory.coverage())
+    assert results
+    assert all(node.parent is None for node in results)
+
+
+def test_explicit_recursive_sqlalchemy_factory_nested_parameters(monkeypatch: pytest.MonkeyPatch) -> None:
+    book_factory = SQLAlchemyFactory.create_factory(Book, id=7)
+    author_factory = SQLAlchemyFactory.create_factory(Author, books=book_factory, id=8)
+    monkeypatch.setattr(book_factory, "author", author_factory, raising=False)
+
+    for author in [author_factory.build(books=[{}]), *author_factory.coverage(books=[{}])]:
+        assert len(author.books) == 1
+        assert author.books[0].id == 7
+        assert author.books[0].author is author
+
+    assert author_factory.build(books=[]).books == []
