@@ -133,3 +133,98 @@ _T = TypeVar("_T")
 
 def _get_types(items: Iterable[_T]) -> set[type[_T]]:
     return {type(item) for item in items}
+
+
+@dataclass
+class ExplicitDataclassNode:
+    value: int
+    child: Union[ExplicitDataclassNode, None] = None  # noqa: UP007
+
+
+class ExplicitPydanticNode(BaseModel):
+    value: int
+    child: Union[ExplicitPydanticNode, None] = None  # noqa: UP007
+
+
+def test_explicit_recursive_dataclass_factory(monkeypatch: pytest.MonkeyPatch) -> None:
+    factory = DataclassFactory.create_factory(ExplicitDataclassNode, value=1)
+    monkeypatch.setattr(factory, "child", factory, raising=False)
+
+    assert factory.build().child is None
+    assert all(node.child is None for node in factory.batch(2))
+    assert [node.child for node in factory.coverage()] == [None]
+
+    supplied = factory.build(value=2, child=None)
+    assert factory.build(child=supplied).child is supplied
+    nested = factory.build(child={"value": 3})
+    assert nested.child is not None
+    assert nested.child.value == 3
+    assert nested.child.child is None
+    assert [node.child for node in factory.coverage(child={"value": 3})] == [nested.child]
+
+
+def test_explicit_recursive_pydantic_factory(monkeypatch: pytest.MonkeyPatch) -> None:
+    factory = ModelFactory.create_factory(ExplicitPydanticNode, value=1)
+    monkeypatch.setattr(factory, "child", factory, raising=False)
+
+    assert factory.build().child is None
+    assert all(node.child is None for node in factory.batch(2))
+    assert [node.child for node in factory.coverage()] == [None]
+
+
+def test_explicit_recursive_dataclass_factory_distinct_child_factory() -> None:
+    child_factory = DataclassFactory.create_factory(ExplicitDataclassNode, value=2, child=None)
+    factory = DataclassFactory.create_factory(ExplicitDataclassNode, value=1, child=child_factory)
+    expected = ExplicitDataclassNode(value=1, child=ExplicitDataclassNode(value=2))
+
+    assert factory.build() == expected
+    assert list(factory.coverage()) == [expected]
+
+
+@dataclass
+class ExplicitCollectionNode:
+    children: list[ExplicitCollectionNode]
+
+
+def test_explicit_recursive_dataclass_factory_collection(monkeypatch: pytest.MonkeyPatch) -> None:
+    factory = DataclassFactory.create_factory(ExplicitCollectionNode)
+    monkeypatch.setattr(factory, "children", factory, raising=False)
+
+    assert factory.build().children == []
+    assert [node.children for node in factory.coverage()] == [[]]
+
+    nested = factory.build(children=[{}])
+    assert nested.children == [ExplicitCollectionNode(children=[])]
+    assert list(factory.coverage(children=[{}])) == [nested]
+
+
+def test_explicit_recursive_dataclass_factory_default(monkeypatch: pytest.MonkeyPatch) -> None:
+    book_factory = DataclassFactory.create_factory(Book, name="book")
+    author_factory = DataclassFactory.create_factory(Author, name="author", books=book_factory)
+    monkeypatch.setattr(book_factory, "author", author_factory, raising=False)
+
+    assert author_factory.build(books=[{}]).books[0].author is _DEFAULT_AUTHOR
+    assert [author.books[0].author for author in author_factory.coverage(books=[{}])] == [_DEFAULT_AUTHOR]
+
+
+@dataclass
+class ExplicitParent:
+    left: ExplicitChild
+    right: ExplicitChild
+
+
+@dataclass
+class ExplicitChild:
+    value: int
+    parent: Union[ExplicitParent, None] = None  # noqa: UP007
+
+
+def test_explicit_recursive_dataclass_factory_siblings(monkeypatch: pytest.MonkeyPatch) -> None:
+    child_factory = DataclassFactory.create_factory(ExplicitChild, value=7)
+    parent_factory = DataclassFactory.create_factory(ExplicitParent, left=child_factory, right=child_factory)
+    monkeypatch.setattr(child_factory, "parent", parent_factory, raising=False)
+
+    for result in [parent_factory.build(), *parent_factory.coverage()]:
+        assert result.left.value == result.right.value == 7
+        assert result.left is not result.right
+        assert result.left.parent is result.right.parent is None

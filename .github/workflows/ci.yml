@@ -28,7 +28,7 @@ jobs:
       - uses: j178/prek-action@v3.1.0
 
   test:
-    runs-on: ubuntu-latest
+    runs-on: ${{ matrix.python-version == '3.9' && 'ubuntu-24.04' || 'ubuntu-latest' }}
     strategy:
       fail-fast: true
       matrix:
@@ -63,7 +63,7 @@ jobs:
       - name: Install uv
         uses: astral-sh/setup-uv@v7
         with:
-          version: "0.5.4"
+          version: "0.11.30"
           enable-cache: true
           cache-dependency-glob: |
             uv.lock
