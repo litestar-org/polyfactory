@@ -67,3 +67,62 @@ def test_handle_constrained_date_tz(tz: tzinfo) -> None:
 
         # Test 2: Do the same for the start_date logic using 'le'.
         assert handle_constrained_date(faker=faker, tz=tz, le=expected_start) == expected_start
+
+
+def test_constrained_datetime_returns_datetime() -> None:
+    """Regression test for https://github.com/litestar-org/polyfactory/issues/734.
+
+    A datetime field with constraints must receive a datetime, not a date.
+    """
+    from typing import Annotated
+
+    from pydantic import BeforeValidator, Field
+
+    def validate_datetime(value: datetime) -> datetime:
+        assert isinstance(value, datetime)
+        assert value.tzinfo == timezone.utc
+        return value
+
+    ValidatedDatetime = Annotated[datetime, BeforeValidator(validate_datetime)]
+
+    class MyModel(BaseModel):
+        value: ValidatedDatetime = Field(gt=datetime(2022, 1, 1, tzinfo=timezone.utc))
+
+    class MyFactory(ModelFactory[MyModel]):
+        pass
+
+    result = MyFactory.build()
+    assert isinstance(result.value, datetime)
+    assert result.value > datetime(2022, 1, 1, tzinfo=timezone.utc)
+
+
+def test_constrained_datetime_naive_constraints() -> None:
+    from pydantic import Field
+
+    class MyModel(BaseModel):
+        value: datetime = Field(gt=datetime(2022, 1, 1), lt=datetime(2030, 1, 1))
+
+    class MyFactory(ModelFactory[MyModel]):
+        pass
+
+    result = MyFactory.build()
+    assert isinstance(result.value, datetime)
+    assert result.value.tzinfo is None
+    assert datetime(2022, 1, 1) < result.value < datetime(2030, 1, 1)
+
+
+def test_handle_constrained_datetime_handler() -> None:
+    from polyfactory.value_generators.constrained_dates import handle_constrained_datetime
+
+    faker = Faker()
+    lower = datetime(2022, 1, 1, tzinfo=timezone.utc)
+    upper = datetime(2022, 12, 31, tzinfo=timezone.utc)
+    value = handle_constrained_datetime(faker, gt=lower, lt=upper)
+    assert isinstance(value, datetime)
+    assert lower < value < upper
+
+    naive_value = handle_constrained_datetime(
+        faker, gt=datetime(2022, 1, 1), lt=datetime(2022, 12, 31)
+    )
+    assert isinstance(naive_value, datetime)
+    assert naive_value.tzinfo is None
