@@ -655,7 +655,7 @@ class BaseFactory(ABC, Generic[T]):
         )
 
     @classmethod
-    def get_constrained_field_value(  # noqa: C901, PLR0911
+    def get_constrained_field_value(  # noqa: C901, PLR0911, PLR0912
         cls,
         annotation: Any,
         field_meta: FieldMeta,
